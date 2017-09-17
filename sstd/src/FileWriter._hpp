@@ -1,0 +1,18 @@
+#pragma once	//インクルードガード
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "./FileDef.hpp"
+#include "./pause.hpp"
+
+class FileWriter{
+public:
+	FileWriter(const char* FileName);
+	~FileWriter();
+
+	FILE* fp;
+
+	int FWrite(const char* str);
+
+private:
+};

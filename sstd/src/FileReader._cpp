@@ -1,0 +1,34 @@
+#include "FileReader.hpp"
+
+
+
+FileReader::FileReader(const char*& FileName){
+//	printf("Constructor is called.\n");
+	if(FOPEN_EQ(&(*this).fp, FileName, "r")){
+		fprintf(stderr, "fopen was failed: %s\n", FileName);
+		sstd::pauseIfWin32();
+		exit(EXIT_FAILURE);
+	}
+//	str_len = 1024;
+//	str = (char*)malloc(sizeof(char)*str_len);
+}
+FileReader::~FileReader(){
+//	printf("Distructer is called.\n");
+	fclose((*this).fp);
+//	free(str);
+}
+
+
+int FileReader::FRead(double& value){
+//char* FileReader::FRead(double& value){
+
+
+//	char* result = fgets(str, str_len, fp);
+//	printf("%s\n", str);
+//	sscanf(str, "%lf", &value);
+//	sscanf(str, "%lf", &value);
+//	printf("%lf\n", value);
+
+	if( fscanf((*this).fp, "%lf,", &value)!=EOF ){ return true; }else{ return false; }
+//	if( fscanf((*this).fp, ",%lf", &value)!=EOF ){ return true; }else{ return false; }
+}

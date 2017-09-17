@@ -1,0 +1,22 @@
+#include "FileWriter.hpp"
+
+
+
+FileWriter::FileWriter(const char* FileName){
+//	printf("Constructor is called.\n");
+	if (FOPEN_EQ(&fp,FileName, "wb")) {
+		fprintf(stderr, "%sのオープンに失敗しました.\n", FileName);
+		sstd::pauseIfWin32();	// コンソールを一時停止する
+		exit(EXIT_FAILURE);
+	}
+}
+FileWriter::~FileWriter(){
+//	printf("Distructer is called.\n");
+	fclose(fp);
+}
+
+
+int FileWriter::FWrite(const char* str){
+	return fprintf(fp, "%s", str);
+}
+

@@ -1,0 +1,22 @@
+#pragma once	//インクルードガード
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "./FileDef.hpp"
+#include "./LineFeedCode.h"
+#include "./pause.hpp"
+
+class FileReader{
+public:
+	FileReader(const char*& FileName);
+	~FileReader();
+
+	FILE* fp;
+//	char* str;
+//	int str_len;
+
+	int FRead(double& value);
+//	char* FRead(double& value);
+
+private:
+};
