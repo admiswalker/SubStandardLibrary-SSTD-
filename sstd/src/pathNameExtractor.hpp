@@ -1,8 +1,6 @@
 ﻿#pragma once
 
 #include <string> 
-#include <string.h>
-#include "typeDef.h"
 
 namespace sstd{
 	std::string  getPath                     (const char* pPath);

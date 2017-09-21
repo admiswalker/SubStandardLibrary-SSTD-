@@ -18,7 +18,7 @@
 void sstd::do_pause(){
 	printf("Press Enter to continue.\n");
 	int c = getchar();
-	c++; // in order to avoid warnings
+	c++; // in order to avoid a warning
 }
 void sstd::do_not_pause(){}
 

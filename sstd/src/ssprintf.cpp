@@ -43,12 +43,12 @@ std::string sstd::ssprintf(const char* format, ...){
 #endif
 
 	// std::string へ copy
-	std::string result = buf;
+	std::string ret = buf;
 
 	// メモリの解放
 	free(buf);
 
 	va_end(args);
 
-	return result;
+	return ret;
 }

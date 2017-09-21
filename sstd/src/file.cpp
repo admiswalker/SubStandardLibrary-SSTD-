@@ -2,11 +2,11 @@
 
 
 #ifdef _WIN32
-	bool fopen_win32(FILE**& fp, const char*& FileName, const char*& mode){
+	inline bool fopen_win32(FILE**& fp, const char*& FileName, const char*& mode){
 		return (fopen_s(fp, FileName, mode)==NULL);
 	}
 #else
-	bool fopen_linux(FILE**& fp, const char*& FileName, const char*& mode){
+	inline bool fopen_linux(FILE**& fp, const char*& FileName, const char*& mode){
 		*fp = fopen(FileName, mode);
 		return (fp!=NULL);
 	}

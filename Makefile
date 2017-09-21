@@ -54,7 +54,13 @@ LIBS = ./sstd/sstd_lib.a
 #============================================================
 
 $(TARGET): $(SRCS) FORCE
+	@echo -e "\n============================================================\n"
+	@echo -e "SRCS: \n$(SRCS)\n"
+	@echo -e "OBJS: \n$(OBJS)\n"
+	@echo -e "CFLAGS: \n$(CFLAGS)"
+	@echo -e "\n============================================================\n"
 	$(CXX) -o $(TARGET) $(SRCS) $(LIBS) $(CFLAGS)
+	@echo ""
 
 
 .PHONY: FORCE
@@ -72,7 +78,8 @@ all:
 clean:
 	-rm -rf $(TARGET)
 	@(cd ./sstd; make clean)
-
+	-rm -rf ./test_fopen.txt
+	-rm -rf ./test_mkdir
 
 .PHONY: steps
 steps: $(SRCS)

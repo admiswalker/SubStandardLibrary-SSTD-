@@ -1,27 +1,33 @@
 ﻿#include <stdio.h>
 #include <iostream>
 
-#define sstd_useTypeDef
+#define DEBUG
 //#define sstd_usePause		// Enable to switch "Pause" or "Not Pause" by "#define UseSysPause".
 #define sstd_usePauseIfWin32	// Enable to switch "Pause" or "Not Pause" by "#define UsePauseIfWin32".
 #define sstd_measureTime
 #include "./sstd/sstd.hpp"
 
 
-int main(){
-
-	printf("=== Hello SubStandard Library ! ===\n\n");
-
-	//===
+void TEST_sstd_src(){
 
 	printf("■ measureTime_start---------------\n\n");
 	time_m timem; sstd::measureTime_start(timem);
-//	usleep(1.2345*1000000);	// sleep 関数についても，統一したい．
-//	Sleep(1.2345*1000);		// sleep 関数についても，統一したい．
+
+	// something you want to mesure time.
+	printf("■ sleep\n\n");
+//	sstd::sleep_hour(1);
+//	sstd::sleep_min (1);
+//	sstd::sleep_s   (1);
+//	sstd::sleep_ms  (1000);
+//	sstd::sleep_us  (1000*1000);
+//	sstd::sleep_ns  (1000*1000*1000);
+
+	printf("■ measureTime_stop----------------\n");
+	sstd::measureTime_stop(timem);
 
 	//===
 	
-	printf("■ #define UseSstdDefs\n");
+	printf("■ typeDef\n");
 	uchar   uc =  1; printf("uchar:  %u\n",     uc);
 	uint    ui =  2; printf("uint:   %u\n",     ui);
 	uint8   u8 =  8; printf("uint8:  %u\n",     u8);
@@ -31,18 +37,32 @@ int main(){
 
 	//===
 
-	printf("■ ssprintf(const char* format, ...)\n");
-	printf("%s", sstd::ssprintf("Num: %d, Str: %s\n\n", 1234, "abcd").c_str());
+	printf("■ #define DEBUG\n");
+	printf("  □ pdbg (printf debugger)\n");
+	sstd::pdbg("abc\n");
+	printf("true: "); sstd::pdbg_if(true, "print txt"); printf("\n");
+	printf("false: "); sstd::pdbg_if(false, "not print txt"); printf("\n");
+//	printf("true: "); sstd::pdbg_if_exit(true, "exit");
+	printf("false: "); sstd::pdbg_if_exit(false, "not exit"); printf("\n");
+//	printf("true: "); sstd::pdbg_if_stop_exit(true, "exit"); printf("\n");
+//	printf("false: "); sstd::pdbg_if_stop_exit(false, "not exit"); printf("\n");
+	sstd::dbg(printf("run debug code."););
+	sstd::ndbg(printf("run ndebug code."););
+	printf("\n");
+
+	sstd::pdbg_always("%s\n", "always print message");
+//	sstd::pdbg_always_stop_exit("%s\n", "always print message, stop and exit.");
+	printf("\n");
 
 	//===
-	
+
 	printf("■ math\n");
-		// 最近接偶数への丸め (round to the nearest even; RN)
+		// 偶数への丸め (round to even)
 	 float re_f1 = sstd::round2even(1.5); printf("round to even: %lf ≒ %lf\n", 1.5, re_f1);
 	 float re_f2 = sstd::round2even(2.5); printf("round to even: %lf ≒ %lf\n", 2.5, re_f2);
 	double re_d1 = sstd::round2even(1.5); printf("round to even: %lf ≒ %lf\n", 1.5, re_d1);
 	double re_d2 = sstd::round2even(2.5); printf("round to even: %lf ≒ %lf\n", 2.5, re_d2);
-		// 最近接奇数への丸め (round to the nearest odd; RO)
+		// 奇数への丸め (round to odd)
 	 float ro_f1 = sstd::round2odd(1.5); printf("round to odd: %lf ≒ %lf\n", 1.5, ro_f1);
 	 float ro_f2 = sstd::round2odd(2.5); printf("round to odd: %lf ≒ %lf\n", 2.5, ro_f2);
 	double ro_d1 = sstd::round2odd(1.5); printf("round to odd: %lf ≒ %lf\n", 1.5, ro_d1);
@@ -105,25 +125,6 @@ int main(){
 	
 	//===
 
-	printf("■ strmatch\n");
-	const char* str = "abcdefghijk"; // str: 比較する文字列
-	const char* WildCard1 = "abc*";
-	const char* WildCard2 = "a?cdefghijk";
-	const char* WildCard3 = "a?";
-	printf("if(\"%s\" == \"%s\") -> %s\n", str, WildCard1, sstd::strmatch(str, WildCard1)?"true":"false");
-	printf("if(\"%s\" == \"%s\") -> %s\n", str, WildCard2, sstd::strmatch(str, WildCard2)?"true":"false");
-	printf("if(\"%s\" == \"%s\") -> %s\n", str, WildCard3, sstd::strmatch(str, WildCard3)?"true":"false");
-	printf("\n");
-
-	printf("  □ isNum, isAlphabet\n");
-	printf("    isNum               ('%c') -> %s\n", '0', sstd::isNum               ('0')?"true":"false");
-	printf("    isAlphabet          ('%c') -> %s\n", 'a', sstd::isAlphabet          ('a')?"true":"false");
-	printf("    isAlphabet_onlyUpper('%c') -> %s\n", 'A', sstd::isAlphabet_onlyUpper('A')?"true":"false");
-	printf("    isAlphabet_onlyLower('%c') -> %s\n", 'a', sstd::isAlphabet_onlyLower('a')?"true":"false");
-	printf("\n");
-
-	//===
-
 	printf("■ fopen\n");
 
 	FILE* fp;
@@ -144,6 +145,30 @@ int main(){
 	
 	printf("■ mkdir\n\n");
 	sstd::mkdir("./test_mkdir");	// <- 再帰的にディレクトリを生成できるようにすること．
+
+	//===
+
+	printf("■ ssprintf(const char* format, ...)\n");
+	printf("%s", sstd::ssprintf("Num: %d, Str: %s\n\n", 1234, "abcd").c_str());
+
+	//===
+	
+	printf("■ strmatch\n");
+	const char* str = "abcdefghijk"; // str: 比較する文字列
+	const char* WildCard1 = "abc*";
+	const char* WildCard2 = "a?cdefghijk";
+	const char* WildCard3 = "a?";
+	printf("if(\"%s\" == \"%s\") -> %s\n", str, WildCard1, sstd::strmatch(str, WildCard1)?"true":"false");
+	printf("if(\"%s\" == \"%s\") -> %s\n", str, WildCard2, sstd::strmatch(str, WildCard2)?"true":"false");
+	printf("if(\"%s\" == \"%s\") -> %s\n", str, WildCard3, sstd::strmatch(str, WildCard3)?"true":"false");
+	printf("\n");
+
+	printf("  □ isNum, isAlphabet\n");
+	printf("    isNum               ('%c') -> %s\n", '0', sstd::isNum               ('0')?"true":"false");
+	printf("    isAlphabet          ('%c') -> %s\n", 'a', sstd::isAlphabet          ('a')?"true":"false");
+	printf("    isAlphabet_onlyUpper('%c') -> %s\n", 'A', sstd::isAlphabet_onlyUpper('A')?"true":"false");
+	printf("    isAlphabet_onlyLower('%c') -> %s\n", 'a', sstd::isAlphabet_onlyLower('a')?"true":"false");
+	printf("\n");
 
 	//===
 
@@ -254,16 +279,94 @@ int main(){
 
 	//===
 
-	printf("■ measureTime_stop----------------\n");
-	sstd::measureTime_stop(timem);
-
-	//===
-
 //	printf("■ #define UsePause\n");
 	sstd::pause();
 //	printf("■ #define UsePauseIfWin32\n");
 	sstd::pauseIfWin32(); // win32 の場合のみ停止
 //	printf("\n");
+}
+
+
+void TEST_tmat(){
+	
+	printf("■ Init sstd::tmat<type>\n");
+	printf("\n");
+	
+	sstd::tmat<double> Matd(5, 3);
+	printf("RowNum: %d\n", Matd.rows());
+	printf("ColNum: %d\n", Matd.cols());
+	printf("Length: %d\n", Matd.len());
+
+	printf("Indication of column major\n");
+	uint i=0;
+	for(uint q=0; q<Matd.cols(); q++){
+		for(uint p=0; p<Matd.rows(); p++){
+			Matd(p, q) = i; i++;
+		}
+	}
+	tmat::print(Matd);
+	printf("\n");
+	
+	//===
+	
+	i=0;
+	for(uint q=0; q<Matd.len(); q++){ Matd[i] = i; i++; }
+	tmat::print(Matd);
+	printf("\n");
+
+	//===
+	
+	sstd::tmat<double>* pMatd = new sstd::tmat<double>(5, 3);
+	printf("RowNum: %d\n", pMatd->rows());
+	printf("ColNum: %d\n", pMatd->cols());
+	printf("Length: %d\n", pMatd->len());
+
+	printf("Indication of column major\n");
+	i=0;
+	for(uint q=0; q<pMatd->cols(); q++){
+		for(uint p=0; p<pMatd->rows(); p++){
+			(*pMatd)(p, q) = i; i++;
+		}
+	}
+
+	tmat::print(*pMatd);
+	printf("\n");
+	delete pMatd;
+	
+	//===
+
+	printf("■ copy\n");printf("\n");
+	sstd::tmat<double> Matd_copy = Matd;
+	Matd_copy = Matd; // "tmat::copy(Matd_copy, Matd);" is called.
+	tmat::print(Matd_copy); printf("\n");
+
+	//===
+
+	printf("■ copy row\n");printf("\n");
+	sstd::tmat<double> Matd_rowCopy(5, 3); tmat::zeros(Matd_rowCopy);
+	Matd_rowCopy(1, ':') = Matd(1, ':');
+	tmat::print(Matd_rowCopy); printf("\n");
+	
+	printf("■ copy col\n");printf("\n");
+	sstd::tmat<double> Matd_colCopy(5, 3); tmat::zeros(Matd_colCopy);
+	Matd_colCopy(':', 2) = Matd(':', 2);
+	tmat::print(Matd_colCopy); printf("\n");
+}
+
+
+int main(){
+
+	printf("=== Hello SubStandard Library ! ===\n\n");
+
+	printf("■ measureTime_start---------------\n\n"); time_m timem; sstd::measureTime_start(timem);
+
+//	printf("== sstd_src ==\n\n"); TEST_sstd_src();
+
+	printf("== sstd_src_MatrixStore_tmat ==\n\n"); TEST_tmat();
+	
+	printf("■ measureTime_stop----------------\n"); sstd::measureTime_stop(timem);
+
+	
 
 	return 0;
 }

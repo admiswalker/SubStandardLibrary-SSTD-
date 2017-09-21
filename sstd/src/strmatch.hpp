@@ -1,6 +1,5 @@
 ﻿#pragma once	//インクルードガード
 
-#include "./typeDef.h"
 
 namespace sstd{
 	bool strmatch(

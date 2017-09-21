@@ -39,7 +39,10 @@
 # Set files to do "$ make". If you cont line num of header files, you also need to add header files.
 # ソースファイルの場所 ($make steps コマンドで，ヘッダファイルの行数もカウントする場合は，
 # ヘッダファイルのディレクトリも追加する必要があります．また，拡張子を記述してはいけません)
-DIR = ./src/*.
+DIR  = ./*.
+DIR += ./src/*.
+DIR += ./src/MatrixStore_tmat/*.
+DIR += ./src/MatrixStore_bmat/*.
 
 # Name of generate file: 生成ファイル名
 TARGET = sstd_lib.a
@@ -71,7 +74,13 @@ DEPS  = $(addprefix $(TEMP_DIR)/, $(patsubst %.cpp, %.d, $(SRCS)))
 # $(TARGET) を生成する
 # .a ファイルとしてオブジェクトファイルを梱包する
 $(TARGET): $(OBJS)
+	@echo -e "\n============================================================\n"
+	@echo -e "SRCS: \n$(SRCS)\n"
+	@echo -e "OBJS: \n$(OBJS)\n"
+	@echo -e "CFLAGS: \n$(CFLAGS)"
+	@echo -e "\n============================================================\n"
 	ar rc $(TARGET) $(OBJS)
+	@echo ""
 
 
 # 各ファイルの分割コンパイル

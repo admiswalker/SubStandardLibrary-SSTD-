@@ -261,6 +261,7 @@ void sstd::url_encode_compare_speed(){
 	  --------------------------------
 	  Execution time:     0. 101 sec
 	  --------------------------------
+
 	  sstd::url_encode_type2
 	  --------------------------------
 	  Execution time:     0. 393 sec

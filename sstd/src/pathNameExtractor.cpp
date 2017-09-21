@@ -1,4 +1,6 @@
 ﻿#include "pathNameExtractor.hpp"
+#include "typeDef.h"
+#include <string.h>
 
 
 std::string sstd::getPath(const char* pPath){

@@ -1,13 +1,13 @@
 ﻿#include "./tinyInterpreter.hpp"
 #include "./file.hpp"
-#include "./printf_dbger.h"
+#include "./pdbg.hpp"
 #include "./pathNameExtractor.hpp"
 
 
 std::string sstd::readAll(const char* pReadFile){
 
 	FILE* fp;
-	if(!sstd::fopen(&fp, pReadFile, "rb")){ printf_ErrMsg_Stop_Exit("fopen was failed.\n"); }
+	if(!sstd::fopen(&fp, pReadFile, "rb")){ sstd::pdbg_always_stop_exit("fopen was failed.\n"); }
 
 	size_t size;
 	fseek(fp, 0, SEEK_END);		//ファイルポインタをファイルの最後に移動させる。
@@ -16,7 +16,7 @@ std::string sstd::readAll(const char* pReadFile){
 
 	std::string str(size+1, 0);	//0で初期化	//終端コード分を余分に確保
 
-	if(fread(&str[0], sizeof(char), (size_t)size, fp)!=size){ printf_ErrMsg_Stop_Exit("fread was failed.\n"); }
+	if(fread(&str[0], sizeof(char), (size_t)size, fp)!=size){ sstd::pdbg_always_stop_exit("fread was failed.\n"); }
 	fclose(fp);
 
 	return str;
@@ -44,7 +44,7 @@ void ignoreBOM(uchar* str, uint& r){
 std::string sstd::readAll_withoutBOM(const char* pReadFile){
 
 	FILE* fp;
-	if(!sstd::fopen(&fp, pReadFile, "rb")){ printf_ErrMsg_Stop_Exit("fopen was failed.\n"); }
+	if(!sstd::fopen(&fp, pReadFile, "rb")){ sstd::pdbg_always_stop_exit("fopen was failed.\n"); }
 
 	// check BOM (Byte Order Mark)
 	uint BOM_len=0;
@@ -59,7 +59,7 @@ std::string sstd::readAll_withoutBOM(const char* pReadFile){
 
 	std::string str(size+1, 0);		//0で初期化	//終端コード分を余分に確保
 
-	if(fread(&str[0], sizeof(char), (size_t)size, fp)!=size){ printf_ErrMsg_Stop_Exit("fread was failed.\n"); }
+	if(fread(&str[0], sizeof(char), (size_t)size, fp)!=size){ sstd::pdbg_always_stop_exit("fread was failed.\n"); }
 	fclose(fp);
 
 	return str;

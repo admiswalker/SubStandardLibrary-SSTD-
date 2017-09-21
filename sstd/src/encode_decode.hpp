@@ -3,6 +3,7 @@
 #include <string> // std::string
 #include "typeDef.h"
 
+
 namespace sstd{
 	std::string base64_encode(const char* str, const size_t strLen);
 	std::string base64_encode(const char* str);
