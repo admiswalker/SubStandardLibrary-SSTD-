@@ -1,0 +1,8 @@
+﻿#pragma once	//インクルードガード
+
+#ifdef _WIN32 //出力ファイルの改行コードを指定する
+	#define LineFeedCode "\r\n"
+#else
+	#define LineFeedCode "\r\n"
+//	#define LineFeedCode "\n"
+#endif

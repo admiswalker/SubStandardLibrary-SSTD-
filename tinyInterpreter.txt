@@ -1,0 +1,18 @@
+﻿// - In this file, middle of "/*~*/" and before "//" mean commnets.
+//   And a ";" means the end of command.
+
+// comment
+
+/* comment */
+
+/* 
+comment 
+comment 
+comment 
+*/
+
+
+cmd01, cmd02,      , cmd04; // comment
+cmd05, cmd06, cmd07;        // comment
+cmd09, cmd10, cmd11, cmd12;
+
