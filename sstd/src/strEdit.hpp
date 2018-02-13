@@ -11,7 +11,8 @@ namespace sstd{
 	std::string              readAll_withoutBOM(const char* pReadFile);
 	std::vector<std::string> splitByLine(const std::string& str);
 	
-	std::vector<std::string> split(const char* str, const char X);
+	std::vector<std::string> split(const char*        str, const char X);
+	std::vector<std::string> split(const std::string& str, const char X);
 	
 	std::string              removeHeadSpace(const uchar* str);
 	void                     removeTailSpace(std::string& str);

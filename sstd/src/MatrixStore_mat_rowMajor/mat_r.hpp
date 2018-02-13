@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string>
 #include <initializer_list>
 #include "../pdbg.hpp"
 #include "../typeDef.h"
@@ -20,34 +21,36 @@ namespace sstd{
 
 	template <typename T> class sstd::mat_r<T>* copyRect(class sstd::mat_r<T>*& pMat, const uint& rowStart, const uint& rowEnd, const uint& colStart, const uint& colEnd);
 	
-	void print(const class sstd::mat_r<  bool>& Mat);
-	void print(const class sstd::mat_r<  char>& Mat);
-//	void print(const class sstd::mat_r< uchar>& Mat); // same as uint8
-	void print(const class sstd::mat_r<  int8>& Mat);
-	void print(const class sstd::mat_r< int16>& Mat);
-	void print(const class sstd::mat_r< int32>& Mat);
-	void print(const class sstd::mat_r< int64>& Mat);
-	void print(const class sstd::mat_r< uint8>& Mat);
-	void print(const class sstd::mat_r<uint16>& Mat);
-	void print(const class sstd::mat_r<uint32>& Mat);
-	void print(const class sstd::mat_r<uint64>& Mat);
-	void print(const class sstd::mat_r< float>& Mat);
-	void print(const class sstd::mat_r<double>& Mat);
+	void print(const class sstd::mat_r<       bool>& Mat);
+	void print(const class sstd::mat_r<       char>& Mat);
+//	void print(const class sstd::mat_r<      uchar>& Mat); // same as uint8
+	void print(const class sstd::mat_r<       int8>& Mat);
+	void print(const class sstd::mat_r<      int16>& Mat);
+	void print(const class sstd::mat_r<      int32>& Mat);
+	void print(const class sstd::mat_r<      int64>& Mat);
+	void print(const class sstd::mat_r<      uint8>& Mat);
+	void print(const class sstd::mat_r<     uint16>& Mat);
+	void print(const class sstd::mat_r<     uint32>& Mat);
+	void print(const class sstd::mat_r<     uint64>& Mat);
+	void print(const class sstd::mat_r<      float>& Mat);
+	void print(const class sstd::mat_r<     double>& Mat);
+	void print(const class sstd::mat_r<std::string>& Mat);
 	
 	// for sstd::printn(); and sstd::printn_all();.
-	void for_printn(const class sstd::mat_r<  bool>& tMat);
-	void for_printn(const class sstd::mat_r<  char>& tMat);
-//	void for_printn(const class sstd::mat_r< uchar>& tMat); // same as uint8
-	void for_printn(const class sstd::mat_r<  int8>& tMat);
-	void for_printn(const class sstd::mat_r< int16>& tMat);
-	void for_printn(const class sstd::mat_r< int32>& tMat);
-	void for_printn(const class sstd::mat_r< int64>& tMat);
-	void for_printn(const class sstd::mat_r< uint8>& tMat);
-	void for_printn(const class sstd::mat_r<uint16>& tMat);
-	void for_printn(const class sstd::mat_r<uint32>& tMat);
-	void for_printn(const class sstd::mat_r<uint64>& tMat);
-	void for_printn(const class sstd::mat_r< float>& tMat);
-	void for_printn(const class sstd::mat_r<double>& tMat);
+	void for_printn(const class sstd::mat_r<       bool>& tMat);
+	void for_printn(const class sstd::mat_r<       char>& tMat);
+//	void for_printn(const class sstd::mat_r<      uchar>& tMat); // same as uint8
+	void for_printn(const class sstd::mat_r<       int8>& tMat);
+	void for_printn(const class sstd::mat_r<      int16>& tMat);
+	void for_printn(const class sstd::mat_r<      int32>& tMat);
+	void for_printn(const class sstd::mat_r<      int64>& tMat);
+	void for_printn(const class sstd::mat_r<      uint8>& tMat);
+	void for_printn(const class sstd::mat_r<     uint16>& tMat);
+	void for_printn(const class sstd::mat_r<     uint32>& tMat);
+	void for_printn(const class sstd::mat_r<     uint64>& tMat);
+	void for_printn(const class sstd::mat_r<      float>& tMat);
+	void for_printn(const class sstd::mat_r<     double>& tMat);
+	void for_printn(const class sstd::mat_r<std::string>& tMat);
 }
 
 //--------------------------------------------------------------------------------------------------------

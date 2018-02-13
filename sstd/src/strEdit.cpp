@@ -137,6 +137,9 @@ std::vector<std::string> sstd::split(const char* str, const char X){
 //	  
 //	  ように，関数を修正しておく．
 }
+std::vector<std::string> sstd::split(const std::string& str, const char X){
+	return std::move(sstd::split(str.c_str(), X));
+}
 
 //--------------------------------------------------------------------------------------------------------
 

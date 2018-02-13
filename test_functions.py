@@ -10,14 +10,27 @@ def py_emptyArg(): print("* * * Welcome to sstd::c2py<T> ! * * *")
 def py_bool(rhs):
     if rhs==True: print("T");
     else: print("F");
-    return rhs
+    return (rhs, True)
 def py_pBool(rhs):
     print(rhs)
     for i in range(len(rhs)): rhs[i]=~rhs[i]
     print(rhs)
-
-def py_char (rhs): print("char: %c" %  rhs); return rhs
+def py_pBool_builtin(rhs):
+    print(rhs)
+    for i in range(len(rhs)):
+        if rhs[i]: rhs[i]=False
+        else: rhs[i]=True
+    print(rhs)
+def py_pBool_pBuiltin(pRhs):
+    print(pRhs)
+    for i in range(len(pRhs[0])):
+        if pRhs[0][i]: pRhs[0][i]=False
+        else: pRhs[0][i]=True
+    print(pRhs)
+    
+def py_char (rhs): print("char: %c" %  rhs); return (rhs, 'W')
 def py_pChar(rhs): print("pChar: %s" % rhs)
+def py_pChar_pBuiltin(pRhs): pRhs[0]="writeX"
 
 def py_uchar (rhs): print("uchar: %u" % rhs); return rhs
 def py_pUchar(rhs):
@@ -81,7 +94,13 @@ def py_pVecDouble      (rhs):
     rhs = np.append(rhs, 88.0)
 #    rhs = np.hstack((rhs,88.0)) # 追加を行ったオブジェクトは別のオブジェクトとして扱われるようで，書き戻しは不可．
     print(rhs)
-
+def py_vecDouble_cnv2builtIn(rhs):
+    print(rhs)
+    rhs.append(88.0)
+def py_vecDouble_pointer(pRhs):
+    print(pRhs)
+    pRhs[0] = np.append(pRhs[0], 88) # uint64 でこれを実装すると，なぜか float 型になる．(おそらく numpy の仕様．dtype まで指定しないといけない．)
+    
 #def py_vecStr(rhs): print(rhs); return rhs
 def py_vecStr       (rhs): print(rhs); return ["01234", "ABCDEFGHIJKLMNOPQRRRRRRRRZ", "STUUUUUUUUUUUUUUUUUUUUUUUUZ"]
 def py_pVecStr_const(rhs): print(rhs); return 0
@@ -103,6 +122,11 @@ def py_pMatBool(rhs):
 #    rhs = np.hstack((rhs,88.0)) # 追加を行ったオブジェクトは別のオブジェクトとして扱われるようで，書き戻しは不可．
     print(rhs)
 
+def py_pMatStr(rhs):
+    print(rhs)
+    rhs[0][0]="reWrite"
+    print(rhs)
+
 def py_matX       (rhs): print(rhs); return rhs
 def py_pMatX_const(rhs): print(rhs);
 def py_pMatX      (rhs):
@@ -114,11 +138,13 @@ def py_pMatX      (rhs):
 
 #--------------------------------------------------------------------------------------------------------
 
-def py_writeBack(rhs):
-    print("begin: py_writeBack")
-    print(rhs)
-    print("end: py_writeBack")
-    return rhs
+def py_ret(pRhs):
+    ret1=1.0
+    ret2=[2.0, 3.0]
+    ret3=[4.0, 5.0, 6.0, 7.0]
+
+    pRhs[0].append(88.0)
+    return (ret1, ret2, ret3)
 
 #--------------------------------------------------------------------------------------------------------
 

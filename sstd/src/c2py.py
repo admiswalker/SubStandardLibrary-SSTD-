@@ -24,11 +24,14 @@ def readSplitLine(readPath):
 # typeSet struct
 class typeSet:
     def __init__(self):
-        self.name    = "x"    # void, int, vec<T>... and so on.
-        self.T       = "x"    # template<typename "T"> or ""
-        self.pointer = False  # *
-        self.ref     = False  # &
-        self.arrLen  = []     # array length
+        self.retTF              = False  # ret
+        self.constTF            = True   # const
+        self.name               = "x"    # void, int, vec<T>... and so on.
+        self.T                  = "x"    # template<typename "T"> or ""
+        self.pointer            = False  # *
+        self.pointer_sidePy     = False  # *
+        self.cnv2builtIn_sidePy = False  # ~
+        self.arrLen             = []     # array length
 
 def c2bool(rhs):
     if   rhs=='T': return True
@@ -39,8 +42,7 @@ def fopen(readPath, option):
     try:
         fp = open(readPath, option)
     except IOError:
-        print("ERROR: %s can not be opened.\n" % readPath)
-        exit(0)
+        print("ERROR: %s :: %s can not be opened.\n" % (location(), readPath))
     return fp
 def read_typeList(readPath):
     lines=readSplitLine(readPath)
@@ -49,14 +51,16 @@ def read_typeList(readPath):
     for line in lines:
         s_line = line.split()
         buf = typeSet()
-        buf.constTF = c2bool(s_line[0])
-        buf.name    =        s_line[1]
-        buf.T       =        s_line[2]
-        buf.pointer = c2bool(s_line[3])
-        buf.ref     = c2bool(s_line[4])
-        lenOfarrLen =    int(s_line[5])
+        buf.retTF              = c2bool(s_line[0])
+        buf.constTF            = c2bool(s_line[1])
+        buf.name               =        s_line[2]
+        buf.T                  =        s_line[3]
+        buf.pointer            = c2bool(s_line[4])
+        buf.pointer_sidePy     = c2bool(s_line[5])
+        buf.cnv2builtIn_sidePy = c2bool(s_line[6])
+        lenOfarrLen            =    int(s_line[7])
         for i in range(lenOfarrLen):
-            buf.arrLen.append(int(s_line[6+i]))
+            buf.arrLen.append(int(s_line[8+i]))
         argList.append(buf)
     return argList
 
@@ -124,6 +128,17 @@ def read_matChar(readPath, arrLen):
         for p in range(arrLen[0]):
             matChar[p][q] = charBuf[p+arrLen[0]*q]
     return matChar
+def read_matStr(readPath, arrLen):
+    fp=fopen(readPath, "rb");
+    strBuf=fp.read();
+    matStr=[[[] for i in range(arrLen[1])] for i in range(arrLen[0])]
+    s=0
+    for q in range(arrLen[1]): # col
+        for p in range(arrLen[0]): # row
+            i=2+p+arrLen[0]*q # adding 2, in order to pass rows and cols.
+            matStr[p][q] = strBuf[s : s + arrLen[i]]
+            s += arrLen[i]
+    return matStr
 def read_mat(readPath, arrLen, matType):
     fp=fopen(readPath, "rb")
     ret=(np.fromfile(fp, np.dtype(matType), arrLen[0]*arrLen[1])).reshape(arrLen[1], arrLen[0])
@@ -131,17 +146,28 @@ def read_mat(readPath, arrLen, matType):
     return ret.flatten('F').reshape(arrLen[0], arrLen[1]) # numpy は行優先のため，列優先の行列を受け取った場合は，このように転置が発生する．
 
 def read_mat_rChar(readPath, arrLen):
-    fp=fopen(readPath, "rb");
-    charBuf=fp.read();
+    fp=fopen(readPath, "rb")
+    charBuf=fp.read()
     mat_rChar=[[' ' for i in range(arrLen[1])] for i in range(arrLen[0])]
     for p in range(arrLen[0]):
         for q in range(arrLen[1]):
             mat_rChar[p][q] = charBuf[arrLen[1]*p+q]
     return mat_rChar
+def read_mat_rStr(readPath, arrLen):
+    fp=fopen(readPath, "rb")
+    strBuf=fp.read()
+    mat_rStr=[[[] for i in range(arrLen[1])] for i in range(arrLen[0])]
+    s=0
+    for p in range(arrLen[0]): # row
+        for q in range(arrLen[1]): # col
+            i=2+p*arrLen[1]+q # adding 2, in order to pass rows and cols.
+            mat_rStr[p][q] = strBuf[s : s + arrLen[i]]
+            s += arrLen[i]
+    return mat_rStr
 def read_mat_r(readPath, arrLen, matType):
-    fp=fopen(readPath, "rb");
-    ret=(np.fromfile(fp, np.dtype(matType), arrLen[0]*arrLen[1])).reshape(arrLen[0], arrLen[1]);
-    fp.close();
+    fp=fopen(readPath, "rb")
+    ret=(np.fromfile(fp, np.dtype(matType), arrLen[0]*arrLen[1])).reshape(arrLen[0], arrLen[1])
+    fp.close()
     return ret
 
 #--------------------------------------------------------------------------------------------------------
@@ -149,7 +175,17 @@ def read_mat_r(readPath, arrLen, matType):
 def builtIn_readFile(typeList, i, readPFunc, readFunc, readPath):
     if typeList[i].pointer: return readPFunc(readPath, typeList[i].arrLen)
     else: return readFunc(readPath)
-            
+
+#--------------------------------------------------------------------------------------------------------
+
+def cnv_numpy2builtin(val, typeInfo):
+    if   val.ndim==0: return np.asscalar(val) # scalar
+    elif val.ndim==1: return [np.asscalar(val[i]) for i in range(val.shape[0])] # vector
+    elif val.ndim==2: return [[np.asscalar(val[val.shape[1]*p+q]) for q in range(val.shape[0])] for p in range(val.shape[1])] # matrix
+    else: print("ERROR: %s :: \"%s<%s>\" is an unsupported type." % (location(), typeInfo.name, typeInfo.T))
+    
+    return np.asscalar(val)
+
 #--------------------------------------------------------------------------------------------------------
 
 def cnv2correctDtype(typeList, ret):
@@ -182,7 +218,7 @@ def cnv2correctDtype(typeList, ret):
         elif typeList[0].T=="double" and ret.dtype!=np.float64: return ret.astype(np.float64)
         else: return ret
     else: return ret
-            
+
 #--------------------------------------------------------------------------------------------------------
 
 def matChar_serialize(rhs):
@@ -191,6 +227,12 @@ def matChar_serialize(rhs):
         for p in range(len(rhs)):
             charBuf+=rhs[p][q]
     return charBuf
+def matStr_serialize(rhs):
+    strBuf=""
+    for q in range(len(rhs[0])):
+        for p in range(len(rhs)):
+            strBuf+=rhs[p][q]
+    return strBuf
 
 def mat_rChar_serialize(rhs):
     charBuf=""
@@ -198,66 +240,128 @@ def mat_rChar_serialize(rhs):
         for q in range(len(rhs[0])):
             charBuf+=rhs[p][q]
     return charBuf
+def mat_rStr_serialize(rhs):
+    strBuf=""
+    for p in range(len(rhs)):
+        for q in range(len(rhs[0])):
+            strBuf+=rhs[p][q]
+    return strBuf
     
-def cnv_builtin2numpy(typeList, rhs):
-    if   typeList[0].name==  "bool": return np.array(rhs, dtype =   "bool")
-    elif typeList[0].name==  "char": return np.array(rhs, dtype =   "int8")
-    elif typeList[0].name== "uchar": return np.array(rhs, dtype =  "uint8")
-    elif typeList[0].name==  "int8": return np.array(rhs, dtype =   "int8")
-    elif typeList[0].name== "int16": return np.array(rhs, dtype =  "int16")
-    elif typeList[0].name== "int32": return np.array(rhs, dtype =  "int32")
-    elif typeList[0].name== "int64": return np.array(rhs, dtype =  "int64")
-    elif typeList[0].name== "uint8": return np.array(rhs, dtype =  "uint8")
-    elif typeList[0].name=="uint16": return np.array(rhs, dtype = "uint16")
-    elif typeList[0].name=="uint32": return np.array(rhs, dtype = "uint32")
-    elif typeList[0].name=="uint64": return np.array(rhs, dtype = "uint64")
-    elif typeList[0].name== "float": return np.array(rhs, dtype ="float32")
-    elif typeList[0].name=="double": return np.array(rhs, dtype ="float64")
-    elif typeList[0].name==   "str": pass # there is nothing to do (pass is for just avoid syntax error)
-    elif typeList[0].name==   "vec":
-        if   typeList[0].T==  "bool": return np.array(rhs, dtype =   "bool")
-        elif typeList[0].T==  "char":
+def cnv_builtin2numpy(Type, rhs):
+    if   Type.name==  "bool": return np.array(rhs, dtype =   "bool")
+    elif Type.name==  "char": return rhs # there is nothing to do
+    elif Type.name== "uchar": return np.array(rhs, dtype =  "uint8")
+    elif Type.name==  "int8": return np.array(rhs, dtype =   "int8")
+    elif Type.name== "int16": return np.array(rhs, dtype =  "int16")
+    elif Type.name== "int32": return np.array(rhs, dtype =  "int32")
+    elif Type.name== "int64": return np.array(rhs, dtype =  "int64")
+    elif Type.name== "uint8": return np.array(rhs, dtype =  "uint8")
+    elif Type.name=="uint16": return np.array(rhs, dtype = "uint16")
+    elif Type.name=="uint32": return np.array(rhs, dtype = "uint32")
+    elif Type.name=="uint64": return np.array(rhs, dtype = "uint64")
+    elif Type.name== "float": return np.array(rhs, dtype ="float32")
+    elif Type.name=="double": return np.array(rhs, dtype ="float64")
+    elif Type.name==   "str": return rhs # there is nothing to do
+    elif Type.name==   "vec":
+        if   Type.T==  "bool": return np.array(rhs, dtype =   "bool")
+        elif Type.T==  "char":
             # reshape to one strign array
             retBuf=""
             for i in range(len(rhs)): retBuf+=rhs[i][0]
             return retBuf
-        elif typeList[0].T== "uchar": return np.array(rhs, dtype =  "uint8")
-        elif typeList[0].T==  "int8": return np.array(rhs, dtype =   "int8")
-        elif typeList[0].T== "int16": return np.array(rhs, dtype =  "int16")
-        elif typeList[0].T== "int32": return np.array(rhs, dtype =  "int32")
-        elif typeList[0].T== "int64": return np.array(rhs, dtype =  "int64")
-        elif typeList[0].T== "uint8": return np.array(rhs, dtype =  "uint8")
-        elif typeList[0].T=="uint16": return np.array(rhs, dtype = "uint16")
-        elif typeList[0].T=="uint32": return np.array(rhs, dtype = "uint32")
-        elif typeList[0].T=="uint64": return np.array(rhs, dtype = "uint64")
-        elif typeList[0].T== "float": return np.array(rhs, dtype ="float32")
-        elif typeList[0].T=="double": return np.array(rhs, dtype ="float64")
-        elif typeList[0].T==   "str":
+        elif Type.T== "uchar": return np.array(rhs, dtype =  "uint8")
+        elif Type.T==  "int8": return np.array(rhs, dtype =   "int8")
+        elif Type.T== "int16": return np.array(rhs, dtype =  "int16")
+        elif Type.T== "int32": return np.array(rhs, dtype =  "int32")
+        elif Type.T== "int64": return np.array(rhs, dtype =  "int64")
+        elif Type.T== "uint8": return np.array(rhs, dtype =  "uint8")
+        elif Type.T=="uint16": return np.array(rhs, dtype = "uint16")
+        elif Type.T=="uint32": return np.array(rhs, dtype = "uint32")
+        elif Type.T=="uint64": return np.array(rhs, dtype = "uint64")
+        elif Type.T== "float": return np.array(rhs, dtype ="float32")
+        elif Type.T=="double": return np.array(rhs, dtype ="float64")
+        elif Type.T==   "str":
             # reshape to one strign array
             retBuf=""
             for i in range(len(rhs)): retBuf+=rhs[i]
             return retBuf
-        else: print("ERROR: %s :: \"%s<%s>\" is an unsupported type." % (location(), typeList[0].name, typeList[0].T))
-    elif typeList[0].name==   "mat":
-        if typeList[0].T==  "char": return matChar_serialize(rhs) # reshape to one strign array
-        else: print("ERROR: %s :: \"%s<%s>\" is an unsupported type." % (location(), typeList[0].name, typeList[0].T))
-    elif typeList[0].name== "mat_r":
-        if typeList[0].T==  "char": return mat_rChar_serialize(rhs) # reshape to one strign array
-        else: print("ERROR: %s :: \"%s<%s>\" is an unsupported type." % (location(), typeList[0].name, typeList[0].T))
-    else: print("ERROR: %s :: \"%s\" is an unsupported type." % (location(), typeList[0].name))
+        else: print("ERROR: %s :: \"%s<%s>\" is an unsupported type." % (location(), Type.name, Type.T))
+    elif Type.name==   "mat":
+        if   Type.T==  "char": return matChar_serialize(rhs) # reshape to one strign array
+        elif Type.T==   "str": return matStr_serialize (rhs) # reshape to one strign array
+        else: print("ERROR: %s :: \"%s<%s>\" is an unsupported type." % (location(), Type.name, Type.T))
+    elif Type.name== "mat_r":
+        if   Type.T==  "char": return mat_rChar_serialize(rhs) # reshape to one strign array
+        elif Type.T==   "str": return mat_rStr_serialize (rhs) # reshape to one strign array
+        else: print("ERROR: %s :: \"%s<%s>\" is an unsupported type." % (location(), Type.name, Type.T))
+    else: print("ERROR: %s :: \"%s\" is an unsupported type." % (location(), Type.name))
+
+#--------------------------------------------------------------------------------------------------------
+
+def cnv_numpy2writeType(Type, val):
+    if Type.name=="mat":
+        if   Type.T=="char" or Type.T=="str": return val
+        else: return val.flatten('F').reshape(val.shape[0], val.shape[1]) # Corresponding column-major matrix or not is a problem of python, so this needs to deal in python side.
+    else: return val
+
+#--------------------------------------------------------------------------------------------------------
+# write back "argList.bin"
+
+def val2argLine_vecStr(val):
+    changeStr = ("F F vec str F F F %lu" % len(val))
+    for i in range(len(val)):
+        changeStr += (" %lu" % len(val[i]))
+    return changeStr
+
+def val2argLine_matStr(val):
+    rows=len(val   )
+    cols=len(val[0])
+    changeStr = ("F F mat str F F F %lu %lu %lu" % (rows*cols+2, rows, cols))
+    for q in range(cols): # col
+        for p in range(rows): # row
+            changeStr += (" %lu" % len(val[p][q]))
+    return changeStr
+
+def val2argLine_mat_rStr(val):
+    rows=len(val   )
+    cols=len(val[0])
+    changeStr = ("F F mat_r str F F F %lu %lu %lu" % (rows*cols+2, rows, cols))
+    for p in range(rows): # row
+        for q in range(cols): # col
+            changeStr += (" %lu" % len(val[p][q]))
+    return changeStr
+
+def generate_argListBin_line(Type, val, line):
+    if   Type.name==  "vec":
+        if   Type.T== "str": return val2argLine_vecStr(val)
+        else:                return ("F F vec %s F F F 1 %lu" % (Type.T, len(val)))
+    elif Type.name==  "mat":
+        if   Type.T=="char": return ("F F mat %s F F F 2 %lu %lu" % (Type.T, len(val), len(val[0])))
+        elif Type.T== "str": return val2argLine_matStr(val)
+        else:                return ("F F mat %s F F F 2 %lu %lu" % (Type.T, val.shape[0], val.shape[1]))
+    elif Type.name=="mat_r":
+        if   Type.T=="char": return ("F F mat_r %s F F F 2 %lu %lu" % (Type.T, len(val), len(val[0])))
+        elif Type.T== "str": return val2argLine_mat_rStr(val)
+        else:                return ("F F mat_r %s F F F 2 %lu %lu" % (Type.T, val.shape[0], val.shape[1]))
+    else: return line
 
 #--------------------------------------------------------------------------------------------------------
 
 def main():
     args = sys.argv
-    if len(args)<=1: print("ERROR: too few args"); return
+    if len(args)<=1: print("ERROR: %s :: too few args" % location()); return
     (basePath, importFile, funcName) = (args[1], args[2], args[3])
-
-    # return を リストの最後に変更するように．
     
     typeList = read_typeList(basePath + "/argList.bin")
     valList  = [[] for i in range(len(typeList))]
+    
+    retNum=int(0)
+    ignoreValList=[]
+    if(typeList[0].name=="void"): ignoreValList.append(0)
+    else:                         retNum+=1
+    
     for i in range(1, len(typeList)): # begin 1 for return value type. (passing the ret of "valList[0]".)
+        if(typeList[i].retTF): retNum+=1; continue;
         readPath = basePath + ("/arg%04u.bin" % i)
         if   typeList[i].name==  "bool": valList[i]=builtIn_readFile(typeList, i, read_pBool,   read_bool,   readPath)
         elif typeList[i].name==  "char": valList[i]=builtIn_readFile(typeList, i, read_pChar,   read_int8,   readPath)
@@ -272,7 +376,7 @@ def main():
         elif typeList[i].name=="uint64": valList[i]=builtIn_readFile(typeList, i, read_pUint64, read_uint64, readPath)
         elif typeList[i].name== "float": valList[i]=builtIn_readFile(typeList, i, read_pFloat,  read_float,  readPath)
         elif typeList[i].name=="double": valList[i]=builtIn_readFile(typeList, i, read_pDouble, read_double, readPath)
-#       elif typeList[i].name==   "len": pass # len element is not used on "c2py.py" (ignored in ), so argList.bin does not have this type.
+        elif typeList[i].name==   "len": ignoreValList.append(i); pass
         elif typeList[i].name==   "str": valList[i]=read_pChar(readPath, typeList[i].arrLen)
         elif typeList[i].name==   "vec":
             if   typeList[i].T==  "bool": valList[i]=read_vec    (readPath, typeList[i].arrLen,    'bool') # bool is 8 bits type in numpy
@@ -303,101 +407,95 @@ def main():
             elif typeList[i].T=="uint64": valList[i]=read_mat    (readPath, typeList[i].arrLen,  'uint64')
             elif typeList[i].T== "float": valList[i]=read_mat    (readPath, typeList[i].arrLen, 'float32')
             elif typeList[i].T=="double": valList[i]=read_mat    (readPath, typeList[i].arrLen, 'float64')
+            elif typeList[i].T==   "str": valList[i]=read_matStr (readPath, typeList[i].arrLen)
             else: print("ERROR: %s :: \"%s<%s>\" is an unsupported type." % (location(), typeList[i].name, typeList[i].T))
         elif typeList[i].name== "mat_r":
-            if   typeList[i].T==  "bool": valList[i]=read_mat_r  (readPath, typeList[i].arrLen,    'bool')
+            if   typeList[i].T==  "bool": valList[i]=read_mat_r    (readPath, typeList[i].arrLen,    'bool')
             elif typeList[i].T==  "char": valList[i]=read_mat_rChar(readPath, typeList[i].arrLen)
-            elif typeList[i].T==  "int8": valList[i]=read_mat_r  (readPath, typeList[i].arrLen,    'int8')
-            elif typeList[i].T== "int16": valList[i]=read_mat_r  (readPath, typeList[i].arrLen,   'int16')
-            elif typeList[i].T== "int32": valList[i]=read_mat_r  (readPath, typeList[i].arrLen,   'int32')
-            elif typeList[i].T== "int64": valList[i]=read_mat_r  (readPath, typeList[i].arrLen,   'int64')
-            elif typeList[i].T== "uint8": valList[i]=read_mat_r  (readPath, typeList[i].arrLen,   'uint8')
-            elif typeList[i].T=="uint16": valList[i]=read_mat_r  (readPath, typeList[i].arrLen,  'uint16')
-            elif typeList[i].T=="uint32": valList[i]=read_mat_r  (readPath, typeList[i].arrLen,  'uint32')
-            elif typeList[i].T=="uint64": valList[i]=read_mat_r  (readPath, typeList[i].arrLen,  'uint64')
-            elif typeList[i].T== "float": valList[i]=read_mat_r  (readPath, typeList[i].arrLen, 'float32')
-            elif typeList[i].T=="double": valList[i]=read_mat_r  (readPath, typeList[i].arrLen, 'float64')
+            elif typeList[i].T==  "int8": valList[i]=read_mat_r    (readPath, typeList[i].arrLen,    'int8')
+            elif typeList[i].T== "int16": valList[i]=read_mat_r    (readPath, typeList[i].arrLen,   'int16')
+            elif typeList[i].T== "int32": valList[i]=read_mat_r    (readPath, typeList[i].arrLen,   'int32')
+            elif typeList[i].T== "int64": valList[i]=read_mat_r    (readPath, typeList[i].arrLen,   'int64')
+            elif typeList[i].T== "uint8": valList[i]=read_mat_r    (readPath, typeList[i].arrLen,   'uint8')
+            elif typeList[i].T=="uint16": valList[i]=read_mat_r    (readPath, typeList[i].arrLen,  'uint16')
+            elif typeList[i].T=="uint32": valList[i]=read_mat_r    (readPath, typeList[i].arrLen,  'uint32')
+            elif typeList[i].T=="uint64": valList[i]=read_mat_r    (readPath, typeList[i].arrLen,  'uint64')
+            elif typeList[i].T== "float": valList[i]=read_mat_r    (readPath, typeList[i].arrLen, 'float32')
+            elif typeList[i].T=="double": valList[i]=read_mat_r    (readPath, typeList[i].arrLen, 'float64')
+            elif typeList[i].T==   "str": valList[i]=read_mat_rStr (readPath, typeList[i].arrLen)
             else: print("ERROR: %s :: \"%s<%s>\" is an unsupported type." % (location(), typeList[i].name, typeList[i].T))
         else: print("ERROR: %s :: \"%s\" is an unsupported type." % (location(), typeList[i].name))
 
+    # conversion of numpy type to builtin type while retTF is true.
+    for i in range(1,len(valList)):
+        if IsNumpy(valList[i])==False: continue
+        if typeList[i].cnv2builtIn_sidePy: valList[i]=cnv_numpy2builtin(valList[i], typeList[i])
+
+    # convert to a pseudo pointer type
+    for i in range(1,len(valList)):
+        if typeList[i].pointer_sidePy: valList[i]=[valList[i]]
+        
     # import running function
     exec ("sys.path.append(\"%s\")" % os.path.dirname(importFile))
     exec ("from %s import *" % os.path.basename(importFile))
     
     # run function
-    run_pyFunc = "valList[0]=eval(funcName)("
-    if len(valList)>=1:
-        run_pyFunc += "valList[1]"
-    for i in range(2,len(valList)):
-        run_pyFunc += (",valList[%d]" % i)
+    valNumList=[int(i) for i in range(len(valList))]
+    n=int(0)
+    for i in reversed(xrange(len(ignoreValList))):
+        valNumList.pop(ignoreValList[i])
+    run_pyFunc=""
+    if retNum>=1:
+        run_pyFunc = ("(valList[%d]" % valNumList[n]); n+=1
+        for i in range(1,retNum):
+            run_pyFunc += (",valList[%d]" % valNumList[n]); n+=1
+        run_pyFunc += ")="
+    run_pyFunc += "eval(funcName)("
+    if (len(valNumList)-retNum)>=1:
+        run_pyFunc += ("valList[%d]" % valNumList[n]); n+=1
+        for i in range(len(valNumList)-retNum-1):
+            run_pyFunc += (",valList[%d]" % valNumList[n]); n+=1
     run_pyFunc += ")"
     exec run_pyFunc
-
-    # arg と valList[0] で書き戻しの処理は同じだが，分割されているので，まどろっこしい．
-    # したがって，下記 2 つの処理は，統合するように．-> どう共通化すべきか，よくわからない．
     
-    # write back non const pointer args.
-    # ここ，ビルトイン型の場合に numpy 型へ変換する必要があるが，ひとますパス．
-    for i in range(1, len(typeList)): # minus 1 for return value type
-        if typeList[i].constTF==False and typeList[i].pointer==True:
-            if typeList[i].name=="vec" and typeList[i].T=="str":
-                strBuf=""
-                for v in range(len(valList[i])):
-                    strBuf+=valList[i][v]
-                valList[i]=strBuf
-            elif typeList[i].name=="vec" and typeList[i].T=="char":
-                charBuf=""
-                for v in range(len(valList[i])):
-                    charBuf+=valList[i][v][0]
-                valList[i]=charBuf
-            elif typeList[i].name=="mat":
-                if typeList[i].T=="char": valList[i]=matChar_serialize(valList[i])
-                else:
-                    # transpose args of sstd::mat<T>
-                    valList[i]=valList[i].flatten('F').reshape(valList[i].shape[0], valList[i].shape[1]) # Corresponding column-major matrix or not is a problem of python, so this needs to deal in python side.
-            elif typeList[i].name=="mat_r":
-                if typeList[i].T=="char": valList[i]=mat_rChar_serialize(valList[i])
-            fp = fopen(basePath + ("/arg%04u.bin" % i), "wb")
-            fp.write(valList[i])
-            fp.close()
+    # Inverse transformation of a pseudo pointer type
+    for i in range(1,len(valList)):
+        if typeList[i].pointer_sidePy: valList[i]=valList[i][0]
     
     # rewriting array length of return value to "./temp/sec_millisec/argList.bin"
     # needing to count array length before changing shape of "valList[0]".
     argListBin_lines=readSplitLine(basePath + "/argList.bin")
-    if   typeList[0].name==  "vec":
-        if typeList[0].T=="str":
-            changeStr = ("F vec str F F %lu" % len(valList[0]))
-            for i in range(len(valList[0])):
-                changeStr += (" %lu" % len(valList[0][i]))
-            argListBin_lines[0]=changeStr
-    elif typeList[0].name==  "mat":
-        if typeList[0].T=="char": argListBin_lines[0]=("F mat %s F F 2 %lu %lu" % (typeList[i].T, len(valList[0]),     len(valList[0][0]) ))
-        else:                     argListBin_lines[0]=("F mat %s F F 2 %lu %lu" % (typeList[i].T, valList[0].shape[0], valList[0].shape[1])); valList[0]=valList[0].flatten('F').reshape(valList[0].shape[0], valList[0].shape[1]) # Corresponding column-major matrix or not is a problem of python, so this needs to deal in python side.
-    elif typeList[0].name=="mat_r":
-        if typeList[0].T=="char": argListBin_lines[0]=("F mat_r %s F F 2 %lu %lu" % (typeList[i].T, len(valList[0]),     len(valList[0][0]) ))
-        else:                     argListBin_lines[0]=("F mat_r %s F F 2 %lu %lu" % (typeList[i].T, valList[0].shape[0], valList[0].shape[1]))
+    for i in range(0, len(typeList)):
+        if i==0 and typeList[i].name=="void": continue
+        if typeList[i].retTF==False and typeList[i].constTF==True: continue
+        if i!=0 and typeList[i].pointer==False: continue
+        argListBin_lines[i]=generate_argListBin_line(typeList[i], valList[i], argListBin_lines[i])
     writeBuf=""
-    if len(argListBin_lines)!=0:
-        writeBuf+=argListBin_lines[0]
-    for i in range(1,len(argListBin_lines)):
-        writeBuf+="\n"+argListBin_lines[i]
+    if len(argListBin_lines)!=0:             writeBuf+=     argListBin_lines[0]
+    for i in range(1,len(argListBin_lines)): writeBuf+="\n"+argListBin_lines[i]
     fp=fopen(basePath + "/argList.bin", "wb")
     fp.write(writeBuf)
     fp.close()
-
-    # Is return type is void
-    if typeList[0].name=="void": return
     
-    # If it is not correct return value (valList[0]), below lines will translate to a correct type.
-    if IsNumpy(valList[0]): valList[0]=cnv2correctDtype(typeList, valList[0])
+    # write back non const pointer args.
+    for i in range(len(typeList)):
+        if i==0 and typeList[i].name=="void": continue
+        if typeList[i].constTF==True: continue
+        if i!=0 and typeList[i].pointer==False: continue
+        #if IsBuiltinOfCpp(typeList[i]) and typeList[i].pointer==False: continue
+        
+        # If it is not correct return value (valList[0]), below lines will translate to a correct type.
+        if IsNumpy(valList[0]): valList[0]=cnv2correctDtype(typeList, valList[0])
     
-    # transition of builtin type to numpy
-    if IsBuiltin(valList[0]): valList[0]=cnv_builtin2numpy(typeList, valList[0])
+        # transition of builtin type to numpy
+        if IsBuiltin(valList[i]): valList[i]=cnv_builtin2numpy(typeList[i], valList[i])
 
-    # write return value to a file
-    fp = fopen(basePath + "/arg0000.bin", "wb")
-    fp.write(valList[0])
-    fp.close()
+        # conversion of numpy type
+        valList[i]=cnv_numpy2writeType(typeList[i], valList[i])
+
+        fp = fopen(basePath + ("/arg%04u.bin" % i), "wb")
+        fp.write(valList[i])
+        fp.close()
 
 #--------------------------------------------------------------------------------------------------------
 

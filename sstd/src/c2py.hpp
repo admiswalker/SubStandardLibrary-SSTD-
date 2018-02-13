@@ -26,17 +26,19 @@ namespace sstd_c2py{
 	struct typeSet{
 	private:
 	public:
-		typeSet(){ constTF=false; N_num=0; T_num=0; pointer=false; convert2builtIn=false; }
+		typeSet(){ constTF=false; N_num=0; T_num=0; pointer=false; pointer_sidePy=false; cnv2builtIn_sidePy=false; }
 		~typeSet(){}
+ 		bool retTF;                   // true: 戻り値として扱う．(true の場合は，値を書き戻すために，必ず，pointer も true でなければならない．) false: 引数として扱う．
  		bool constTF;                 // true: ポインタの先の書き戻しを行う．false: ポインタの先の書き戻しを行わない．
 		                              // const-> true, not const -> false.
 		std::string name; char N_num; // void, int, vec<T>... and so on. // number of value
 		std::string    T; char T_num; // template<typename "T"> or "" // number of value
-		bool pointer;                 // *
-		bool convert2builtIn;         // ~
+		bool pointer;                 // *: pointer type sybol on cpp side                         // on left than vertical line '|' as a symbol of split
+		bool pointer_sidePy;          // *: pointer type sybol on python side                      // on right than vertical line '|' as a symbol of split
+		bool cnv2builtIn_sidePy;      // ~: conversion command to built in function on python side // on right than vertical line '|' as a symbol of split
 		std::vector<uint32> arrLen;   // Array length of T*, str, vec<T>, mat<T> and mat_r<T>.
 	};
-
+	
 	template<typename T> void operator_brackets(T& ret, const char* writeDir_base, const char* iFile, const char* fName, std::vector<std::string>& fSList, std::vector<struct sstd_c2py::typeSet>& fList, int argc, ...);
 	
 	std::vector<struct typeSet> format_str2typeSet(const std::vector<std::string>& fSList);
@@ -85,13 +87,13 @@ namespace sstd_c2py{
 	bool c2py_ret(sstd::mat  <      int16>& inOut, sstd::file& fp, std::string& line);
 	bool c2py_ret(sstd::mat  <      int32>& inOut, sstd::file& fp, std::string& line);
 	bool c2py_ret(sstd::mat  <      int64>& inOut, sstd::file& fp, std::string& line);
-	bool c2py_ret(sstd::mat  <      uint8>& inOut, sstd::file& fp, std::string& line);
+	bool c2py_ret(sstd::mat  <      uint8>& inOut, sstd::file& fp, std::string& line); // same as uchar
 	bool c2py_ret(sstd::mat  <     uint16>& inOut, sstd::file& fp, std::string& line);
 	bool c2py_ret(sstd::mat  <     uint32>& inOut, sstd::file& fp, std::string& line);
 	bool c2py_ret(sstd::mat  <     uint64>& inOut, sstd::file& fp, std::string& line);
 	bool c2py_ret(sstd::mat  <      float>& inOut, sstd::file& fp, std::string& line);
 	bool c2py_ret(sstd::mat  <     double>& inOut, sstd::file& fp, std::string& line);
-//	bool c2py_ret(sstd::mat  <std::string>& inOut, sstd::file& fp, std::string& line);
+	bool c2py_ret(sstd::mat  <std::string>& inOut, sstd::file& fp, std::string& line);
 	
 	bool c2py_ret(sstd::mat_r<       bool>& inOut, sstd::file& fp, std::string& line);
 	bool c2py_ret(sstd::mat_r<       char>& inOut, sstd::file& fp, std::string& line);
@@ -100,13 +102,13 @@ namespace sstd_c2py{
 	bool c2py_ret(sstd::mat_r<      int16>& inOut, sstd::file& fp, std::string& line);
 	bool c2py_ret(sstd::mat_r<      int32>& inOut, sstd::file& fp, std::string& line);
 	bool c2py_ret(sstd::mat_r<      int64>& inOut, sstd::file& fp, std::string& line);
-	bool c2py_ret(sstd::mat_r<      uint8>& inOut, sstd::file& fp, std::string& line);
+	bool c2py_ret(sstd::mat_r<      uint8>& inOut, sstd::file& fp, std::string& line); // same as uchar
 	bool c2py_ret(sstd::mat_r<     uint16>& inOut, sstd::file& fp, std::string& line);
 	bool c2py_ret(sstd::mat_r<     uint32>& inOut, sstd::file& fp, std::string& line);
 	bool c2py_ret(sstd::mat_r<     uint64>& inOut, sstd::file& fp, std::string& line);
 	bool c2py_ret(sstd::mat_r<      float>& inOut, sstd::file& fp, std::string& line);
 	bool c2py_ret(sstd::mat_r<     double>& inOut, sstd::file& fp, std::string& line);
-//	bool c2py_ret(sstd::mat_r<std::string>& inOut, sstd::file& fp, std::string& line);
+	bool c2py_ret(sstd::mat_r<std::string>& inOut, sstd::file& fp, std::string& line);
 }
 
 //--------------------------------------------------------------------------------------------------------
@@ -176,7 +178,7 @@ public: c2py(const char* temporarilyDir, const char* importFile, const char* fun
 
 template<typename T>
 inline void sstd_c2py::operator_brackets(T& ret, const char* writeDir_base, const char* iFile, const char* fName, std::vector<std::string>& fSList, std::vector<struct sstd_c2py::typeSet>& fList, int argc, ...){
-	
+
 	// write args values to the files
 	va_list ap; va_start(ap, argc); // #define っぽいので，va_start を別関数にするとバグる．va_arg は関数やテンプレート関数でも問題なかった．
 	std::vector<void*> pArgList = sstd_c2py::getArg_and_write2file(ap, writeDir_base, fSList, fList);
