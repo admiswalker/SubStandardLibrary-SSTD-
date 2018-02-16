@@ -123,7 +123,7 @@ void TEST_time(){
 	printf("local: %s\n",  sstd::tm2str(c_tm_l).c_str());
 	printf("GMT: %s\n",    sstd::time2str(c_time_3).c_str());
 	printf("\n");
-
+	
 	time_t c_time_yday  = sstd::yday2time(c_tm.tm_year+1900, c_tm.tm_yday+1);
 	printf("GMT: %s\n",   sstd::time2str(c_time_yday).c_str());
 	struct tm c_tm_yday = sstd::yday2tm(c_tm.tm_year+1900, c_tm.tm_yday+1);
@@ -747,11 +747,13 @@ void TEST_pause(){
 
 //-----------------------------------------------------------------------
 
-#define TEST_c2py_builtIn(type, typeTEST, pConstTypeTEST, pTypeTEST)	\
+#define TEST_c2py_builtIn(type, typeTEST, pConstTypeTEST, pTypeTEST, builtinTypeTEST, pBuiltinTypeTEST)	\
 	type buf_builtIn=(type)0; buf_builtIn=~buf_builtIn;					\
 																		\
 	sstd::c2py<type> py_builtIn("./tmpDir", "test_functions", "py_builtIn", typeTEST); \
-	sstd::printn(buf_builtIn==py_builtIn(buf_builtIn));					\
+	type ret;															\
+	sstd::printn(buf_builtIn==py_builtIn(&ret, buf_builtIn));			\
+	sstd::printn(ret);													\
 	printf("\n");														\
 																		\
 	std::vector<type> vecBuiltIn={buf_builtIn, (type)(buf_builtIn-1), (type)(buf_builtIn-2), 0, 1, 2}; \
@@ -764,11 +766,23 @@ void TEST_pause(){
 	sstd::c2py<void> py_pBuiltIn("./tmpDir", "test_functions", "py_pBuiltIn", pTypeTEST); /*書き戻しを行う*/ \
 	py_pBuiltIn(&vecBuiltIn[0], vecBuiltIn.size());						\
 	sstd::printn(vecBuiltIn);											\
+	printf("\n");														\
+																		\
+	sstd::c2py<void> py_pBuiltIn_cnvBuiltin("./tmpDir", "test_functions", "py_pBuiltIn_cnvBuiltin", builtinTypeTEST); /*書き戻しを行う*/ \
+	py_pBuiltIn_cnvBuiltin(&vecBuiltIn[0], vecBuiltIn.size());			\
+	sstd::printn(vecBuiltIn);											\
+	printf("\n");														\
+																		\
+	sstd::c2py<void> py_pBuiltIn_pCnvBuiltin("./tmpDir", "test_functions", "py_pBuiltIn_pCnvBuiltin", pBuiltinTypeTEST); /*書き戻しを行う*/ \
+	py_pBuiltIn_pCnvBuiltin(&vecBuiltIn[0], vecBuiltIn.size());			\
+	sstd::printn(vecBuiltIn);											\
 	printf("\n");
 
-#define TEST_c2py_floatXX(type, typeTEST, pConstTypeTEST, pTypeTEST)	\
+#define TEST_c2py_floatXX(type, typeTEST, pConstTypeTEST, pTypeTEST, builtinTypeTEST, pBuiltinTypeTEST)	\
 	sstd::c2py<type> py_float("./tmpDir", "test_functions", "py_floatXX", typeTEST); \
-	sstd::printn(py_float((type)1.2345));								\
+	type ret;															\
+	sstd::printn(py_float(&ret, (type)1.2345));							\
+	sstd::printn(ret);													\
 	printf("\n");														\
 																		\
 	std::vector<type> vecFloat={1.23, 4.56, 7.0, 0, 1, 2};				\
@@ -781,9 +795,19 @@ void TEST_pause(){
 	sstd::c2py<void> py_pFloat("./tmpDir", "test_functions", "py_pFloatXX", pTypeTEST); /*書き戻しを行う*/ \
 	py_pFloat(&vecFloat[0], vecFloat.size());							\
 	sstd::printn(vecFloat);												\
+	printf("\n");														\
+																		\
+	sstd::c2py<void> py_pFloat_cnvBuiltin("./tmpDir", "test_functions", "py_pFloatXX_cnvBuiltin", builtinTypeTEST); /*書き戻しを行う*/ \
+	py_pFloat_cnvBuiltin(&vecFloat[0], vecFloat.size());				\
+	sstd::printn(vecFloat);												\
+	printf("\n");														\
+																		\
+	sstd::c2py<void> py_pFloat_pCnvBuiltin("./tmpDir", "test_functions", "py_pFloatXX_pCnvBuiltin", pBuiltinTypeTEST); /*書き戻しを行う*/ \
+	py_pFloat_pCnvBuiltin(&vecFloat[0], vecFloat.size());				\
+	sstd::printn(vecFloat);												\
 	printf("\n");
 
-#define TEST_c2py_vecXXX(type, typeTEST, pConstTypeTEST, pTypeTEST)		\
+#define TEST_c2py_vecXXX(type, typeTEST, pConstTypeTEST, pTypeTEST, builtinTypeTEST, pBuiltinTypeTEST) \
 	type buf_builtIn=(type)0; buf_builtIn=~buf_builtIn;					\
 																		\
 	std::vector<type> vecXXX={buf_builtIn, (type)(buf_builtIn-1), (type)(buf_builtIn-2), 0, 1, 2, 3}; \
@@ -791,25 +815,34 @@ void TEST_pause(){
 	printf("\n");														\
 																		\
 	sstd::c2py<std::vector<type>> py_vecXXX("./tmpDir", "test_functions", "py_vecX", typeTEST); \
-	sstd::printn(py_vecXXX(vecXXX));									\
+	std::vector<type> ret;												\
+	sstd::printn(py_vecXXX(&ret, vecXXX));								\
+	sstd::printn(ret);													\
 	printf("\n");														\
 																		\
 	sstd::c2py<void> py_pVecXXX_const("./tmpDir", "test_functions", "py_pVecX_const", pConstTypeTEST); /*書き戻しを行わない*/ \
 	py_pVecXXX_const(&vecXXX);											\
 	printf("\n");														\
 																		\
-	sstd::c2py<void> py_pVecXXX("./tmpDir", "test_functions", "py_pVecX", pTypeTEST); /*書き戻しを行う*/ \
-	py_pVecXXX(&vecXXX); /*ndarray で渡した場合は，追記できない*/		\
+	sstd::c2py<void> py_pVecXXX_cnvBuiltin("./tmpDir", "test_functions", "py_pVecX", builtinTypeTEST); /*書き戻しを行う*/ \
+	py_pVecXXX_cnvBuiltin(&vecXXX); /*ndarray で渡した場合は，追記できない*/ \
+	sstd::printn(vecXXX);												\
+	printf("\n");														\
+																		\
+	sstd::c2py<void> py_pVecXXX_pCnvBuiltin("./tmpDir", "test_functions", "py_pVecX_pCnvBuiltin", pBuiltinTypeTEST); /*書き戻しを行う*/ \
+	py_pVecXXX_pCnvBuiltin(&vecXXX); /*ndarray で渡した場合は，追記できない*/ \
 	sstd::printn(vecXXX);												\
 	printf("\n");
 
-#define TEST_c2py_vecFolatXX(type, typeTEST, pConstTypeTEST, pTypeTEST)	\
+#define TEST_c2py_vecFolatXX(type, typeTEST, pConstTypeTEST, pTypeTEST, builtinTypeTEST, pBuiltinTypeTEST)	\
 	std::vector<type> vecXXX={-3, -2, -1, 0, 1, 2, 3};					\
 	sstd::printn(vecXXX);												\
 	printf("\n");														\
 																		\
 	sstd::c2py<std::vector<type>> py_vecXXX("./tmpDir", "test_functions", "py_vecX", typeTEST); \
-	sstd::printn(py_vecXXX(vecXXX));									\
+	std::vector<type> ret;												\
+	sstd::printn(py_vecXXX(&ret, vecXXX));								\
+	sstd::printn(ret);													\
 	printf("\n");														\
 																		\
 	sstd::c2py<void> py_pVecXXX_const("./tmpDir", "test_functions", "py_pVecX_const", pConstTypeTEST); /*書き戻しを行わない*/ \
@@ -819,15 +852,27 @@ void TEST_pause(){
 	sstd::c2py<void> py_pVecXXX("./tmpDir", "test_functions", "py_pVecX", pTypeTEST); /*書き戻しを行う*/ \
 	py_pVecXXX(&vecXXX); /*ndarray で渡した場合は，追記できない*/		\
 	sstd::printn(vecXXX);												\
+	printf("\n");														\
+																		\
+	sstd::c2py<void> py_pVecXXX_cnvBuiltin("./tmpDir", "test_functions", "py_pVecX", builtinTypeTEST); /*書き戻しを行う*/ \
+	py_pVecXXX_cnvBuiltin(&vecXXX); /*ndarray で渡した場合は，追記できない*/ \
+	sstd::printn(vecXXX);												\
+	printf("\n");														\
+																		\
+	sstd::c2py<void> py_pVecXXX_pCnvBuiltin("./tmpDir", "test_functions", "py_pVecX_pCnvBuiltin", pBuiltinTypeTEST); /*書き戻しを行う*/ \
+	py_pVecXXX_pCnvBuiltin(&vecXXX); /*ndarray で渡した場合は，追記できない*/ \
+	sstd::printn(vecXXX);												\
 	printf("\n");
 
-#define TEST_c2py_matBool(typeMat, type, typeTEST, pConstTypeTEST, pTypeTEST) \
+#define TEST_c2py_matBool(typeMat, type, typeTEST, pConstTypeTEST, pTypeTEST, builtinTypeTEST, pBuiltinTypeTEST) \
 	typeMat<type> matB{{true, false, false},{false, true, false},{false, false, true},{true, false, false}}; \
 	sstd::printn(matB);													\
 	printf("\n");														\
 																		\
 	sstd::c2py<typeMat<type>> py_matB("./tmpDir", "test_functions", "py_matX", typeTEST); \
-	sstd::printn(py_matB(matB));										\
+	typeMat<type> ret;													\
+	sstd::printn(py_matB(&ret, matB));									\
+	sstd::printn(ret);													\
 	printf("\n");														\
 																		\
 	sstd::c2py<void> py_pMatB_const("./tmpDir", "test_functions", "py_pMatX_const", pConstTypeTEST); /*書き戻しを行わない*/	\
@@ -837,15 +882,27 @@ void TEST_pause(){
 	sstd::c2py<void> py_pMatB("./tmpDir", "test_functions", "py_pMatBool", pTypeTEST); /*書き戻しを行う*/ \
 	py_pMatB(&matB); /*ndarray で渡した場合は，追記できない*/			\
 	sstd::printn(matB);													\
+	printf("\n");														\
+																		\
+	sstd::c2py<void> py_pMatB_cnvBuiltin("./tmpDir", "test_functions", "py_pMatBool", builtinTypeTEST); /*書き戻しを行う*/ \
+	py_pMatB_cnvBuiltin(&matB); /*ndarray で渡した場合は，追記できない*/			\
+	sstd::printn(matB);													\
+	printf("\n");														\
+																		\
+	sstd::c2py<void> py_pMatB_pCnvBuiltin("./tmpDir", "test_functions", "py_pMatBool_pCnvBuiltin", pBuiltinTypeTEST); /*書き戻しを行う*/ \
+	py_pMatB_pCnvBuiltin(&matB); /*ndarray で渡した場合は，追記できない*/ \
+	sstd::printn(matB);													\
 	printf("\n");
 
-#define TEST_c2py_matChar(typeMat, type, typeTEST, pConstTypeTEST, pTypeTEST) \
+#define TEST_c2py_matChar(typeMat, type, typeTEST, pConstTypeTEST, pTypeTEST, builtinTypeTEST, pBuiltinTypeTEST) \
 	typeMat<type> matC{{'a', 'b', 'c'},{'d', 'e', 'f'},{'g', 'h', 'i'},{'j', 'k', 'l'}}; \
 	sstd::printn(matC);													\
 	printf("\n");														\
 																		\
 	sstd::c2py<typeMat<type>> py_matX("./tmpDir", "test_functions", "py_matX", typeTEST); \
-	sstd::printn(py_matX(matC));										\
+	typeMat<type> ret;													\
+	sstd::printn(py_matX(&ret, matC));									\
+	sstd::printn(ret);													\
 	printf("\n");														\
 																		\
 	sstd::c2py<void> py_pMatC_const("./tmpDir", "test_functions", "py_pMatX_const", pConstTypeTEST); /*書き戻しを行わない*/	\
@@ -855,9 +912,19 @@ void TEST_pause(){
 	sstd::c2py<void> py_pMatC("./tmpDir", "test_functions", "py_pMatChar", pTypeTEST); /*書き戻しを行う*/ \
 	py_pMatC(&matC); /*ndarray で渡した場合は，追記できない*/			\
 	sstd::printn(matC);													\
+	printf("\n");														\
+																		\
+	sstd::c2py<void> py_pMatC_cnvBuiltin("./tmpDir", "test_functions", "py_pMatChar", builtinTypeTEST); /*書き戻しを行う*/ \
+	py_pMatC_cnvBuiltin(&matC); /*ndarray で渡した場合は，追記できない*/ \
+	sstd::printn(matC);													\
+	printf("\n");														\
+																		\
+	sstd::c2py<void> py_pMatC_pCnvBuiltin("./tmpDir", "test_functions", "py_pMatChar_pCnvBuiltin", pBuiltinTypeTEST); /*書き戻しを行う*/ \
+	py_pMatC_pCnvBuiltin(&matC); /*ndarray で渡した場合は，追記できない*/ \
+	sstd::printn(matC);													\
 	printf("\n");
 
-#define TEST_c2py_matXXX(typeMat, type, typeTEST, pConstTypeTEST, pTypeTEST) \
+#define TEST_c2py_matXXX(typeMat, type, typeTEST, pConstTypeTEST, pTypeTEST, builtinTypeTEST, pBuiltinTypeTEST) \
 	type buf_builtIn=(type)0; buf_builtIn=~buf_builtIn;					\
 																		\
 	typeMat<type> matD{{buf_builtIn, (type)(buf_builtIn-1), 3},{4, 5, 6},{7, 8, 9},{10, 11, 12}}; \
@@ -865,7 +932,9 @@ void TEST_pause(){
 	printf("\n");														\
 																		\
 	sstd::c2py<typeMat<type>> py_matX("./tmpDir", "test_functions", "py_matX", typeTEST); \
-	sstd::printn(py_matX(matD));										\
+	typeMat<type> ret;													\
+	sstd::printn(py_matX(&ret, matD));									\
+	sstd::printn(ret);													\
 	printf("\n");														\
 																		\
 	sstd::c2py<void> py_pMatX_const("./tmpDir", "test_functions", "py_pMatX_const", pConstTypeTEST); /*書き戻しを行わない*/ \
@@ -875,15 +944,27 @@ void TEST_pause(){
 	sstd::c2py<void> py_pMatX("./tmpDir", "test_functions", "py_pMatX", pTypeTEST); /*書き戻しを行う*/ \
 	py_pMatX(&matD); /*ndarray で渡した場合は，追記できない*/			\
 	sstd::printn(matD);													\
+	printf("\n");														\
+																		\
+	sstd::c2py<void> py_pMatX_cnvBuiltin("./tmpDir", "test_functions", "py_pMatX", builtinTypeTEST); /*書き戻しを行う*/ \
+	py_pMatX_cnvBuiltin(&matD); /*ndarray で渡した場合は，追記できない*/ \
+	sstd::printn(matD);													\
+	printf("\n");														\
+																		\
+	sstd::c2py<void> py_pMatX_pCnvBuiltin("./tmpDir", "test_functions", "py_pMatX_pCnvBuiltin", pBuiltinTypeTEST); /*書き戻しを行う*/ \
+	py_pMatX_pCnvBuiltin(&matD); /*ndarray で渡した場合は，追記できない*/ \
+	sstd::printn(matD);													\
 	printf("\n");
 
-#define TEST_c2py_matFolatXX(typeMat, type, typeTEST, pConstTypeTEST, pTypeTEST) \
+#define TEST_c2py_matFolatXX(typeMat, type, typeTEST, pConstTypeTEST, pTypeTEST, builtinTypeTEST, pBuiltinTypeTEST) \
 	typeMat<type> matD{{1, 2, 3},{4, 5, 6},{7, 8, 9},{10, 11, 12}};		\
 	sstd::printn(matD);													\
 	printf("\n");														\
 																		\
 	sstd::c2py<typeMat<type>> py_matX("./tmpDir", "test_functions", "py_matX", typeTEST); \
-	sstd::printn(py_matX(matD));										\
+	typeMat<type> ret;													\
+	sstd::printn(py_matX(&ret, matD));									\
+	sstd::printn(ret);													\
 	printf("\n");														\
 																		\
 	sstd::c2py<void> py_pMatX_const("./tmpDir", "test_functions", "py_pMatX_const", pConstTypeTEST); /*書き戻しを行わない*/ \
@@ -893,9 +974,19 @@ void TEST_pause(){
 	sstd::c2py<void> py_pMatX("./tmpDir", "test_functions", "py_pMatX", pTypeTEST); /*書き戻しを行う*/ \
 	py_pMatX(&matD); /*ndarray で渡した場合は，追記できない*/			\
 	sstd::printn(matD);													\
+	printf("\n");														\
+																		\
+	sstd::c2py<void> py_pMatX_cnvBuiltin("./tmpDir", "test_functions", "py_pMatX", pTypeTEST); /*書き戻しを行う*/ \
+	py_pMatX_cnvBuiltin(&matD); /*ndarray で渡した場合は，追記できない*/ \
+	sstd::printn(matD);													\
+	printf("\n");														\
+																		\
+	sstd::c2py<void> py_pMatX_pCnvBuiltin("./tmpDir", "test_functions", "py_pMatX_pCnvBuiltin", pTypeTEST); /*書き戻しを行う*/ \
+	py_pMatX_pCnvBuiltin(&matD); /*ndarray で渡した場合は，追記できない*/ \
+	sstd::printn(matD);													\
 	printf("\n");
 
-#define TEST_c2py_matStr(typeMat, type, typeTEST, pConstTypeTEST, pTypeTEST) \
+#define TEST_c2py_matStr(typeMat, type, typeTEST, pConstTypeTEST, pTypeTEST, builtinTypeTEST, pBuiltinTypeTEST) \
 	typeMat<type> matStr{{"a", "ab", "abc"},{"abcd", "abcde", "abcdef"},{"7", "8", "9"},{"10", "11", "12"}}; \
 	sstd::printn(matStr);												\
 	printf("\n");														\
@@ -905,7 +996,9 @@ void TEST_pause(){
 	/* sstd::printn(py_matStr(matStr)); */								\
 	/* printf("\n"); */													\
 	sstd::c2py<typeMat<type>> py_matStr("./tmpDir", "test_functions", "py_matX", typeTEST); \
-	sstd::printn(py_matStr(&matStr));									\
+	typeMat<type> ret;													\
+	sstd::printn(py_matStr(&ret, &matStr));								\
+	sstd::printn(ret);													\
 	printf("\n");														\
 																		\
 	sstd::c2py<void> py_pMatX_const("./tmpDir", "test_functions", "py_pVecX_const", pConstTypeTEST); /*書き戻しを行わない*/ \
@@ -914,6 +1007,16 @@ void TEST_pause(){
 																		\
 	sstd::c2py<void> py_pMatX("./tmpDir", "test_functions", "py_pMatStr", pTypeTEST); /*書き戻しを行う*/ \
 	py_pMatX(&matStr); /* ndarray で渡した場合は，追記できない*/ 		\
+	sstd::printn(matStr);												\
+	printf("\n");														\
+																		\
+	sstd::c2py<void> py_pMatX_cnvBuiltin("./tmpDir", "test_functions", "py_pMatStr", builtinTypeTEST); /*書き戻しを行う*/ \
+	py_pMatX_cnvBuiltin(&matStr); /* ndarray で渡した場合は，追記できない*/	\
+	sstd::printn(matStr);												\
+	printf("\n");														\
+																		\
+	sstd::c2py<void> py_pMatX_pCnvBuiltin("./tmpDir", "test_functions", "py_pMatStr_pCnvBuiltin", pBuiltinTypeTEST); /*書き戻しを行う*/ \
+	py_pMatX_pCnvBuiltin(&matStr); /* ndarray で渡した場合は，追記できない*/ \
 	sstd::printn(matStr);												\
 	printf("\n");
 
@@ -927,118 +1030,162 @@ void TEST_c2py(){
 	py_emptyArg();
 	printf("\n");
 	//*/
-
-	//-----------------------------------------------------------------------
 	
 	/*
-	printf("  □ bool, const bool*, bool*\n");
-
-	sstd::c2py<bool> py_bool("./tmpDir", "test_functions", "py_bool", "bool, ret bool*, bool");
-	bool ret=false;
-	sstd::printn( true==py_bool(&ret,  true)); sstd::printn(ret);
-	sstd::printn(false==py_bool(&ret, false)); sstd::printn(ret);
-	printf("\n");
-
-	bool boolArr[] = {true, false, true, false, false, true}; bool* pBool = &boolArr[0];
-
-	sstd::c2py<void> py_pBool_const("./tmpDir", "test_functions", "py_pBool", "void, const bool*, len"); // 書き戻しを行わない
-	py_pBool_const(pBool, 6);
-	for(uint i=0; i<6; i++){ if(pBool[i]){printf("T ");}else{printf("F ");} }printf("\n");
-	printf("\n");
-
-	sstd::c2py<void> py_pBool("./tmpDir", "test_functions", "py_pBool", "void, bool*, len"); // 書き戻しを行う
-	py_pBool(pBool, 6);
-	for(uint i=0; i<6; i++){ if(pBool[i]){printf("T ");}else{printf("F ");} }printf("\n");
-	printf("\n");
+	// measure time 01
+	{
+		printf("■ measureTime_start---------------\n\n"); time_m timem; sstd::measureTime_start(timem);
+		
+		sstd::c2py<void> py_empty("./tmpDir", "test_functions", "py_empty", "void");
+		for(uint i=0; i<100; i++){ py_empty(); }
+		
+		printf("\n■ measureTime_stop----------------\n"); sstd::measureTime_stop(timem); sstd::pauseIfWin32();
+	}
+	//*/
 	
-	//---
-	
-	sstd::c2py<void> py_pBool_builtin("./tmpDir", "test_functions", "py_pBool_builtin", "void, bool*|~, len"); // 書き戻しを行う
-	py_pBool_builtin(pBool, 6);
-	for(uint i=0; i<6; i++){ if(pBool[i]){printf("T ");}else{printf("F ");} }printf("\n");
-	printf("\n");
-
-	sstd::c2py<void> py_pBool_pBuiltin("./tmpDir", "test_functions", "py_pBool_pBuiltin", "void, bool*|*~, len"); // 書き戻しを行う
-	py_pBool_pBuiltin(pBool, 6);
-	for(uint i=0; i<6; i++){ if(pBool[i]){printf("T ");}else{printf("F ");} }printf("\n");
-	printf("\n");
+	/*
+	// measure time 02
+	{
+		printf("■ measureTime_start---------------\n\n"); time_m timem; sstd::measureTime_start(timem);
+		
+		for(uint i=0; i<100; i++){
+			sstd::c2py<void> py_empty("./tmpDir", "test_functions", "py_empty", "void");
+			py_empty();
+		}
+		
+		printf("\n■ measureTime_stop----------------\n"); sstd::measureTime_stop(timem); sstd::pauseIfWin32();
+	}
 	//*/
 	
 	//-----------------------------------------------------------------------
 	
 	/*
-	printf("  □ char, const char*, char*\n");
+	{
+		printf("  □ bool, const bool*, bool*\n");
 
-	sstd::c2py<char> py_char("./tmpDir", "test_functions", "py_char", "char, ret char*, char");
-	char ret='0';
-	sstd::printn('C'==py_char(&ret, 'C')); sstd::printn(ret);
-	printf("\n");
+		sstd::c2py<bool> py_bool("./tmpDir", "test_functions", "py_bool", "bool, ret bool*, bool");
+		bool ret=false;
+		sstd::printn( true==py_bool(&ret,  true)); sstd::printn(ret);
+		sstd::printn(false==py_bool(&ret, false)); sstd::printn(ret);
+		printf("\n");
+
+		bool boolArr[] = {true, false, true, false, false, true}; bool* pBool = &boolArr[0];
+
+		sstd::c2py<void> py_pBool_const("./tmpDir", "test_functions", "py_pBool", "void, const bool*, len"); // 書き戻しを行わない
+		py_pBool_const(pBool, 6);
+		for(uint i=0; i<6; i++){ if(pBool[i]){printf("T ");}else{printf("F ");} }printf("\n");
+		printf("\n");
+
+		sstd::c2py<void> py_pBool("./tmpDir", "test_functions", "py_pBool", "void, bool*, len"); // 書き戻しを行う
+		py_pBool(pBool, 6);
+		for(uint i=0; i<6; i++){ if(pBool[i]){printf("T ");}else{printf("F ");} }printf("\n");
+		printf("\n");
 	
-//	sstd::c2py<void> py_pChar_const("./tmpDir", "test_functions", "py_pChar", "void, const char*, len"); // この場合，エラーを表示する．
-	sstd::c2py<void> py_pChar_const("./tmpDir", "test_functions", "py_pChar", "void, const char*"); // 書き戻しを行わない
-	py_pChar_const("string");
-	printf("\n");
+		//---
 	
-	std::string str_pChar="string";
-	char* pChar=&str_pChar[0];
-	
-	sstd::c2py<void> py_pChar("./tmpDir", "test_functions", "py_pChar", "void, char*"); // 書き戻しを行う // Python says [TypeError: 'str' object does not support item assignment] so, this might be impossible.
-	py_pChar(pChar);
-	sstd::printn(pChar);
-	printf("\n");
+		sstd::c2py<void> py_pBool_builtin("./tmpDir", "test_functions", "py_pBool_builtin", "void, bool*|~, len"); // 書き戻しを行う
+		py_pBool_builtin(pBool, 6);
+		for(uint i=0; i<6; i++){ if(pBool[i]){printf("T ");}else{printf("F ");} }printf("\n");
+		printf("\n");
 
-	//---
-
-	sstd::c2py<void> py_pChar_builtin("./tmpDir", "test_functions", "py_pChar", "void, char*|~"); // 書き戻しを行う // Python says [TypeError: 'str' object does not support item assignment] so, this might be impossible.
-	py_pChar_builtin(pChar);
-	sstd::printn(pChar);
-	printf("\n");
-
-	sstd::c2py<void> py_pChar_pBuiltin("./tmpDir", "test_functions", "py_pChar_pBuiltin", "void, char*|*~"); // 書き戻しを行う // Python says [TypeError: 'str' object does not support item assignment] so, this might be impossible.
-	py_pChar_pBuiltin(pChar);
-	sstd::printn(pChar);
-	printf("\n");
+		sstd::c2py<void> py_pBool_pBuiltin("./tmpDir", "test_functions", "py_pBool_pBuiltin", "void, bool*|*~, len"); // 書き戻しを行う
+		py_pBool_pBuiltin(pBool, 6);
+		for(uint i=0; i<6; i++){ if(pBool[i]){printf("T ");}else{printf("F ");} }printf("\n");
+		printf("\n");
+	}
 	//*/
 	
-	//-----------------------------------------------------------------------
-
-	// 次，ここのテストを追加するように．
-	//*
-	printf("  ■ uchar, const uchar*, uchar*\n"   ); { TEST_c2py_builtIn(uchar,  "uchar, uchar",   "void, const uchar*, len",  "void, uchar*, len" ); }
-	printf("  ■ int8, const int8*, int8*\n"      ); { TEST_c2py_builtIn(int8,   "int8, int8",     "void, const int8*, len",   "void, int8*, len"  ); }
-	printf("  ■ int16, const int16*, int16*\n"   ); { TEST_c2py_builtIn(int16,  "int16, int16",   "void, const int16*, len",  "void, int16*, len" ); }
-	printf("  ■ int32, const int32*, int32*\n"   ); { TEST_c2py_builtIn(int32,  "int32, int32",   "void, const int32*, len",  "void, int32*, len" ); }
-	printf("  ■ int64, const int64*, int64*\n"   ); { TEST_c2py_builtIn(int64,  "int64, int64",   "void, const int64*, len",  "void, int64*, len" ); }
-	printf("  ■ uint8, const uint8*, uint8*\n"   ); { TEST_c2py_builtIn(uint8,  "uint8, uint8",   "void, const uint8*, len",  "void, uint8*, len" ); }
-	printf("  ■ uint16, const uint16*, uint16*\n"); { TEST_c2py_builtIn(uint16, "uint16, uint16", "void, const uint16*, len", "void, uint16*, len"); }
-	printf("  ■ uint32, const uint32*, uint32*\n"); { TEST_c2py_builtIn(uint32, "uint32, uint32", "void, const uint32*, len", "void, uint32*, len"); }
-	printf("  ■ uint64, const uint64*, uint64*\n"); { TEST_c2py_builtIn(uint64, "uint64, uint64", "void, const uint64*, len", "void, uint64*, len"); }
-	//*/
-	//-----------------------------------------------------------------------
-	/*
-	printf("  ■ float\n"); { TEST_c2py_floatXX(float, "float, float", "void, const float*, len", "void, float*, len"); }
-	printf("  ■ double\n"); { TEST_c2py_floatXX(double, "double, double", "void, const double*, len", "void, double*, len"); }
-	//*/
 	//-----------------------------------------------------------------------
 	
 	/*
-	printf("  □ std::string\n");
-	
-	std::string str="01234abcdABCD";
-	
-	sstd::c2py<std::string> py_str("./tmpDir", "test_functions", "py_str", "str, str");
-	sstd::printn(py_str(str));
-	printf("\n");
+	{
+		printf("  □ char, const char*, char*\n");
 
-	sstd::c2py<void> py_pStr_const("./tmpDir", "test_functions", "py_pStr", "void, const str*"); // 書き戻しを行わない
-	py_pStr_const(&str);
-	sstd::printn(str);
-	printf("\n");
+		sstd::c2py<char> py_char("./tmpDir", "test_functions", "py_char", "char, ret char*, char");
+		char ret='0';
+		sstd::printn('C'==py_char(&ret, 'C')); sstd::printn(ret);
+		printf("\n");
+	
+		//	sstd::c2py<void> py_pChar_const("./tmpDir", "test_functions", "py_pChar", "void, const char*, len"); // この場合，エラーを表示する．
+		sstd::c2py<void> py_pChar_const("./tmpDir", "test_functions", "py_pChar", "void, const char*"); // 書き戻しを行わない
+		py_pChar_const("string");
+		printf("\n");
+	
+		std::string str_pChar="string";
+		char* pChar=&str_pChar[0];
+	
+		sstd::c2py<void> py_pChar("./tmpDir", "test_functions", "py_pChar", "void, char*"); // 書き戻しを行う // Python says [TypeError: 'str' object does not support item assignment] so, this might be impossible.
+		py_pChar(pChar);
+		sstd::printn(pChar);
+		printf("\n");
 
-	sstd::c2py<void> py_pStr("./tmpDir", "test_functions", "py_pStr", "void, str*"); // 書き戻しを行う // Python says "'str' object does not support item assignment".
-	py_pStr(&str);
-	sstd::printn(str);
-	printf("\n");
+		//---
+
+		sstd::c2py<void> py_pChar_builtin("./tmpDir", "test_functions", "py_pChar", "void, char*|~"); // 書き戻しを行う // Python says [TypeError: 'str' object does not support item assignment] so, this might be impossible.
+		py_pChar_builtin(pChar);
+		sstd::printn(pChar);
+		printf("\n");
+
+		sstd::c2py<void> py_pChar_pBuiltin("./tmpDir", "test_functions", "py_pChar_pBuiltin", "void, char*|*~"); // 書き戻しを行う // Python says [TypeError: 'str' object does not support item assignment] so, this might be impossible.
+		py_pChar_pBuiltin(pChar);
+		sstd::printn(pChar);
+		printf("\n");
+	}
+	//*/
+	
+	//-----------------------------------------------------------------------
+
+	/*
+	printf("  ■ uchar, const uchar*, uchar*\n"   ); { TEST_c2py_builtIn(uchar,  "uchar, ret uchar*, uchar",    "void, const uchar*, len",  "void, uchar*, len" , "void, uchar*|~, len",  "void, uchar*|*~, len" ); }
+	printf("  ■ int8, const int8*, int8*\n"      ); { TEST_c2py_builtIn(int8,   "int8, ret int8*, int8",       "void, const int8*, len",   "void, int8*, len",   "void, int8*|~, len",   "void, int8*|*~, len"  ); }
+	printf("  ■ int16, const int16*, int16*\n"   ); { TEST_c2py_builtIn(int16,  "int16, ret int16*, int16",    "void, const int16*, len",  "void, int16*, len",  "void, int16*|~, len",  "void, int16*|*~, len" ); }
+	printf("  ■ int32, const int32*, int32*\n"   ); { TEST_c2py_builtIn(int32,  "int32, ret int32*, int32",    "void, const int32*, len",  "void, int32*, len",  "void, int32*|~, len",  "void, int32*|*~, len" ); }
+	printf("  ■ int64, const int64*, int64*\n"   ); { TEST_c2py_builtIn(int64,  "int64, ret int64*, int64",    "void, const int64*, len",  "void, int64*, len",  "void, int64*|~, len",  "void, int64*|*~, len" ); }
+	printf("  ■ uint8, const uint8*, uint8*\n"   ); { TEST_c2py_builtIn(uint8,  "uint8, ret uint8*, uint8",    "void, const uint8*, len",  "void, uint8*, len",  "void, uint8*|~, len",  "void, uint8*|*~, len" ); }
+	printf("  ■ uint16, const uint16*, uint16*\n"); { TEST_c2py_builtIn(uint16, "uint16, ret uint16*, uint16", "void, const uint16*, len", "void, uint16*, len", "void, uint16*|~, len", "void, uint16*|*~, len"); }
+	printf("  ■ uint32, const uint32*, uint32*\n"); { TEST_c2py_builtIn(uint32, "uint32, ret uint32*, uint32", "void, const uint32*, len", "void, uint32*, len", "void, uint32*|~, len", "void, uint32*|*~, len"); }
+	printf("  ■ uint64, const uint64*, uint64*\n"); { TEST_c2py_builtIn(uint64, "uint64, ret uint64*, uint64", "void, const uint64*, len", "void, uint64*, len", "void, uint64*|~, len", "void, uint64*|*~, len"); }
+	
+	printf("  ■ float\n" ); { TEST_c2py_floatXX(float, "float, ret float*, float",     "void, const float*, len",  "void, float*, len",  "void, float*|~, len",  "void, float*|*~, len" ); }
+	printf("  ■ double\n"); { TEST_c2py_floatXX(double, "double, ret double*, double", "void, const double*, len", "void, double*, len", "void, double*|~, len", "void, double*|*~, len"); }
+	//*/
+	
+	//-----------------------------------------------------------------------
+	
+	/*
+	{
+		printf("  □ std::string\n");
+	
+		std::string str="01234abcdABCD";
+	
+		sstd::c2py<std::string> py_str("./tmpDir", "test_functions", "py_str", "str, ret str*, str");
+		std::string ret;
+		sstd::printn(py_str(&ret, str));
+		sstd::printn(ret);
+		printf("\n");
+
+		sstd::c2py<void> py_pStr_const("./tmpDir", "test_functions", "py_pStr", "void, const str*"); // 書き戻しを行わない
+		py_pStr_const(&str);
+		sstd::printn(str);
+		printf("\n");
+
+		sstd::c2py<void> py_pStr("./tmpDir", "test_functions", "py_pStr", "void, str*"); // 書き戻しを行う // Python says "'str' object does not support item assignment".
+		py_pStr(&str);
+		sstd::printn(str);
+		printf("\n");
+
+		//---
+	
+		sstd::c2py<void> py_pStr_cnvBuiltin("./tmpDir", "test_functions", "py_pStr", "void, str*|~"); // 書き戻しを行う // Python says "'str' object does not support item assignment".
+		py_pStr_cnvBuiltin(&str);
+		sstd::printn(str);
+		printf("\n");
+
+		sstd::c2py<void> py_pStr_pCnvBuiltin("./tmpDir", "test_functions", "py_pStr_pCnvBuiltin", "void, str*|*~"); // 書き戻しを行う
+		py_pStr_pCnvBuiltin(&str);
+		sstd::printn(str);
+		printf("\n");
+	}
 	//*/
 	
 	//-----------------------------------------------------------------------
@@ -1046,118 +1193,160 @@ void TEST_c2py(){
 	// std::vector<T>
 
 	/*
-	printf("  ■ std::vector<bool>\n");
+	{
+		printf("  ■ std::vector<bool>\n");
 	
-	std::vector<bool> vecBool={true, false, false, true};
-	sstd::printn(vecBool);
-	printf("\n");
+		std::vector<bool> vecBool={true, false, false, true};
+		sstd::printn(vecBool);
+		printf("\n");
 
-	sstd::c2py<std::vector<bool>> py_vecBool("./tmpDir", "test_functions", "py_vecBool", "vec<bool>, vec<bool>");
-	sstd::printn(py_vecBool(vecBool));
-	printf("\n");
+		sstd::c2py<std::vector<bool>> py_vecBool("./tmpDir", "test_functions", "py_vecBool", "vec<bool>, ret vec<bool>*, vec<bool>");
+		std::vector<bool> ret;
+		sstd::printn(py_vecBool(&ret, vecBool));
+		sstd::printn(ret);
+		printf("\n");
 	
-	sstd::c2py<void> py_pVecBool_const("./tmpDir", "test_functions", "py_pVecBool_const", "void, const vec<bool>*"); // 書き戻しを行わない
-	py_pVecBool_const(&vecBool);
-	printf("\n");
+		sstd::c2py<void> py_pVecBool_const("./tmpDir", "test_functions", "py_pVecBool_const", "void, const vec<bool>*"); // 書き戻しを行わない
+		py_pVecBool_const(&vecBool);
+		printf("\n");
 
-	sstd::c2py<void> py_pVecBool("./tmpDir", "test_functions", "py_pVecBool", "void, vec<bool>*"); // 書き戻しを行う
-	py_pVecBool(&vecBool);
-	sstd::printn(vecBool);
-	printf("\n");
-	//*/
+		sstd::c2py<void> py_pVecBool("./tmpDir", "test_functions", "py_pVecBool", "void, vec<bool>*"); // 書き戻しを行う
+		py_pVecBool(&vecBool);
+		sstd::printn(vecBool);
+		printf("\n");
 
-	/*
-	printf("  ■ std::vector<char>\n" );
+		//---
 	
-	std::vector<char> vecChar={'a', 'b', 'c', 'd'};
-	sstd::printn(vecChar);
-	printf("\n");
+		sstd::c2py<void> py_pVecBool_cnvBuiltin("./tmpDir", "test_functions", "py_pVecBool", "void, vec<bool>*|~"); // 書き戻しを行う
+		py_pVecBool_cnvBuiltin(&vecBool);
+		sstd::printn(vecBool);
+		printf("\n");
 
-	sstd::c2py<std::vector<char>> py_vecChar("./tmpDir", "test_functions", "py_vecChar", "vec<char>, vec<char>");
-	sstd::printn(py_vecChar(vecChar));
-	printf("\n");
-
-	sstd::c2py<void> py_pVecChar_const("./tmpDir", "test_functions", "py_pVecChar_const", "void, const vec<char>*"); // 書き戻しを行わない
-	py_pVecChar_const(&vecChar);
-	printf("\n");
-
-	sstd::c2py<void> py_pVecChar("./tmpDir", "test_functions", "py_pVecChar", "void, vec<char>*"); // 書き戻しを行う
-	py_pVecChar(&vecChar);
-	sstd::printn(vecChar);
-	printf("\n");
+		sstd::c2py<void> py_pVecBool_pCnvBuiltin("./tmpDir", "test_functions", "py_pVecBool_pCnvBuiltin", "void, vec<bool>*|*~"); // 書き戻しを行う
+		py_pVecBool_pCnvBuiltin(&vecBool);
+		sstd::printn(vecBool);
+		printf("\n");
+	}
 	//*/
 	
 	/*
-	printf("  ■ std::vector<uchar>\n" ); { TEST_c2py_vecXXX( uchar, "vec<uchar>, vec<uchar>",   "void, const vec<uchar>*",  "void, vec<uchar>*" ); }
-	printf("  ■ std::vector<int8>\n"  ); { TEST_c2py_vecXXX(  int8, "vec<int8>, vec<int8>",     "void, const vec<int8>*",   "void, vec<int8>*"  ); }
-	printf("  ■ std::vector<int16>\n" ); { TEST_c2py_vecXXX( int16, "vec<int16>, vec<int16>",   "void, const vec<int16>*",  "void, vec<int16>*" ); }
-	printf("  ■ std::vector<int32>\n" ); { TEST_c2py_vecXXX( int32, "vec<int32>, vec<int32>",   "void, const vec<int32>*",  "void, vec<int32>*" ); }
-	printf("  ■ std::vector<int64>\n" ); { TEST_c2py_vecXXX( int64, "vec<int64>, vec<int64>",   "void, const vec<int64>*",  "void, vec<int64>*" ); }
-	printf("  ■ std::vector<uint8>\n" ); { TEST_c2py_vecXXX( uint8, "vec<uint8>, vec<uint8>",   "void, const vec<uint8>*",  "void, vec<uint8>*" ); }
-	printf("  ■ std::vector<uint16>\n"); { TEST_c2py_vecXXX(uint16, "vec<uint16>, vec<uint16>", "void, const vec<uint16>*", "void, vec<uint16>*"); }
-	printf("  ■ std::vector<uint32>\n"); { TEST_c2py_vecXXX(uint32, "vec<uint32>, vec<uint32>", "void, const vec<uint32>*", "void, vec<uint32>*"); }
-	printf("  ■ std::vector<uint64>\n"); { TEST_c2py_vecXXX(uint64, "vec<uint64>, vec<uint64>", "void, const vec<uint64>*", "void, vec<uint64>*"); }
+	{
+		printf("  ■ std::vector<char>\n" );
+	
+		std::vector<char> vecChar={'a', 'b', 'c', 'd'};
+		sstd::printn(vecChar);
+		printf("\n");
 
-	printf("  ■ std::vector<float>\n" ); { TEST_c2py_vecFolatXX( float, "vec<float>, vec<float>",   "void, const vec<float>*",  "void, vec<float>*" ); }
-	printf("  ■ std::vector<double>\n"); { TEST_c2py_vecFolatXX(double, "vec<double>, vec<double>", "void, const vec<double>*", "void, vec<double>*"); }
+		sstd::c2py<std::vector<char>> py_vecChar("./tmpDir", "test_functions", "py_vecChar", "vec<char>, vec<char>");
+		sstd::printn(py_vecChar(vecChar));
+		printf("\n");
+
+		sstd::c2py<void> py_pVecChar_const("./tmpDir", "test_functions", "py_pVecChar_const", "void, const vec<char>*"); // 書き戻しを行わない
+		py_pVecChar_const(&vecChar);
+		printf("\n");
+
+		sstd::c2py<void> py_pVecChar("./tmpDir", "test_functions", "py_pVecChar", "void, vec<char>*"); // 書き戻しを行う
+		py_pVecChar(&vecChar);
+		sstd::printn(vecChar);
+		printf("\n");
+
+		//---
+	
+		sstd::c2py<void> py_pVecChar_cnvBuiltin("./tmpDir", "test_functions", "py_pVecChar", "void, vec<char>*|~"); // 書き戻しを行う
+		py_pVecChar_cnvBuiltin(&vecChar);
+		sstd::printn(vecChar);
+		printf("\n");
+	
+		sstd::c2py<void> py_pVecChar_pCnvBuiltin("./tmpDir", "test_functions", "py_pVecChar_pCnvBuiltin", "void, vec<char>*|*~"); // 書き戻しを行う
+		py_pVecChar_pCnvBuiltin(&vecChar);
+		sstd::printn(vecChar);
+		printf("\n");
+	}
 	//*/
 	
 	/*
-	printf("  ■ std::vector<std::string>\n");
-	std::vector<std::string> vecStr={"ABCD", "EF", "GHIJKLMNO"};
-	sstd::printn(vecStr.size());
-	printf("\n");
+	printf("  ■ std::vector<uchar>\n" ); { TEST_c2py_vecXXX( uchar, "vec<uchar>, ret vec<uchar>*, vec<uchar>",    "void, const vec<uchar>*",  "void, vec<uchar>*" , "void, vec<uchar>*|~" , "void, vec<uchar>*|*~" ); }
+	printf("  ■ std::vector<int8>\n"  ); { TEST_c2py_vecXXX(  int8, "vec<int8>, ret vec<int8>*, vec<int8>",       "void, const vec<int8>*",   "void, vec<int8>*"  , "void, vec<int8>*|~"  , "void, vec<int8>*|*~"  ); }
+	printf("  ■ std::vector<int16>\n" ); { TEST_c2py_vecXXX( int16, "vec<int16>, ret vec<int16>*, vec<int16>",    "void, const vec<int16>*",  "void, vec<int16>*" , "void, vec<int16>*|~" , "void, vec<int16>*|*~" ); }
+	printf("  ■ std::vector<int32>\n" ); { TEST_c2py_vecXXX( int32, "vec<int32>, ret vec<int32>*, vec<int32>",    "void, const vec<int32>*",  "void, vec<int32>*" , "void, vec<int32>*|~" , "void, vec<int32>*|*~" ); }
+	printf("  ■ std::vector<int64>\n" ); { TEST_c2py_vecXXX( int64, "vec<int64>, ret vec<int64>*, vec<int64>",    "void, const vec<int64>*",  "void, vec<int64>*" , "void, vec<int64>*|~" , "void, vec<int64>*|*~" ); }
+	printf("  ■ std::vector<uint8>\n" ); { TEST_c2py_vecXXX( uint8, "vec<uint8>, ret vec<uint8>*, vec<uint8>",    "void, const vec<uint8>*",  "void, vec<uint8>*" , "void, vec<uint8>*|~" , "void, vec<uint8>*|*~" ); }
+	printf("  ■ std::vector<uint16>\n"); { TEST_c2py_vecXXX(uint16, "vec<uint16>, ret vec<uint16>*, vec<uint16>", "void, const vec<uint16>*", "void, vec<uint16>*", "void, vec<uint16>*|~", "void, vec<uint16>*|*~"); }
+	printf("  ■ std::vector<uint32>\n"); { TEST_c2py_vecXXX(uint32, "vec<uint32>, ret vec<uint32>*, vec<uint32>", "void, const vec<uint32>*", "void, vec<uint32>*", "void, vec<uint32>*|~", "void, vec<uint32>*|*~"); }
+	printf("  ■ std::vector<uint64>\n"); { TEST_c2py_vecXXX(uint64, "vec<uint64>, ret vec<uint64>*, vec<uint64>", "void, const vec<uint64>*", "void, vec<uint64>*", "void, vec<uint64>*|~", "void, vec<uint64>*|*~"); }
+
+	printf("  ■ std::vector<float>\n" ); { TEST_c2py_vecFolatXX( float, "vec<float>, ret vec<float>*, vec<float>",   "void, const vec<float>*",  "void, vec<float>*" ,  "void, vec<float>*|~" ,  "void, vec<float>*|*~" ); }
+	printf("  ■ std::vector<double>\n"); { TEST_c2py_vecFolatXX(double, "vec<double>, ret vec<double>*, vec<double>", "void, const vec<double>*", "void, vec<double>*", "void, vec<double>*|~", "void, vec<double>*|*~"); }
+	//*/
 	
-	sstd::c2py<std::vector<std::string>> py_vecStr("./tmpDir", "test_functions", "py_vecStr", "vec<str>, vec<str>");
-	std::vector<std::string> ret_vecStr=py_vecStr(vecStr);
-	sstd::printn(ret_vecStr);
-	printf("\n");
+	/*
+	{
+		printf("  ■ std::vector<std::string>\n");
+		std::vector<std::string> vecStr={"ABCD", "EF", "GHIJKLMNO"};
+		sstd::printn(vecStr.size());
+		printf("\n");
+	
+		sstd::c2py<std::vector<std::string>> py_vecStr("./tmpDir", "test_functions", "py_vecStr", "vec<str>, ret vec<str>*, vec<str>");
+		std::vector<std::string> ret;
+		sstd::printn(py_vecStr(&ret, vecStr));
+		sstd::printn(ret);
+		printf("\n");
 
-	sstd::c2py<void> py_pVecStr_const("./tmpDir", "test_functions", "py_pVecStr_const", "void, const vec<str>*"); // 書き戻しを行わない
-	py_pVecStr_const(vecStr);
-	printf("\n");
+		sstd::c2py<void> py_pVecStr_const("./tmpDir", "test_functions", "py_pVecStr_const", "void, const vec<str>*"); // 書き戻しを行わない
+		py_pVecStr_const(&vecStr);
+		printf("\n");
 
-	sstd::c2py<void> py_pVecStr("./tmpDir", "test_functions", "py_pVecStr", "void, vec<str>*"); // 書き戻しを行う // Python says "'str' object does not support item assignment".
-	py_pVecStr(vecStr);
-	printf("\n");
+		sstd::c2py<void> py_pVecStr("./tmpDir", "test_functions", "py_pVecStr", "void, vec<str>*"); // 書き戻しを行う // Python says "'str' object does not support item assignment".
+		py_pVecStr(&vecStr);
+		printf("\n");
+
+		sstd::c2py<void> py_pVecStr_cnvBuiltin("./tmpDir", "test_functions", "py_pVecStr", "void, vec<str>*|~"); // 書き戻しを行う // Python says "'str' object does not support item assignment".
+		py_pVecStr_cnvBuiltin(&vecStr);
+		printf("\n");
+
+		sstd::c2py<void> py_pVecStr_pCnvBuiltin("./tmpDir", "test_functions", "py_pVecStr_pCnvBuiltin", "void, vec<str>*|*~"); // 書き戻しを行う
+		py_pVecStr_pCnvBuiltin(&vecStr);
+		sstd::printn(vecStr);
+		printf("\n");
+	}
 	//*/
 	
 	//-----------------------------------------------------------------------
 
 	// std::mat<T>
 	/*
-	printf("  ■ sstd::mat<bool>\n"       ); { TEST_c2py_matBool   (sstd::mat, bool,        "mat<bool>, mat<bool>",     "void, const mat<bool>*",   "void, mat<bool>*"  ); }
-	printf("  ■ sstd::mat<char>\n"       ); { TEST_c2py_matChar   (sstd::mat, char,        "mat<char>, mat<char>",     "void, const mat<char>*",   "void, mat<char>*"  ); }
-	printf("  ■ sstd::mat<int8>\n"       ); { TEST_c2py_matXXX    (sstd::mat, int8,        "mat<int8>, mat<int8>",     "void, const mat<int8>*",   "void, mat<int8>*"  ); }
-	printf("  ■ sstd::mat<int16>\n"      ); { TEST_c2py_matXXX    (sstd::mat, int16,       "mat<int16>, mat<int16>",   "void, const mat<int16>*",  "void, mat<int16>*" ); }
-	printf("  ■ sstd::mat<int32>\n"      ); { TEST_c2py_matXXX    (sstd::mat, int32,       "mat<int32>, mat<int32>",   "void, const mat<int32>*",  "void, mat<int32>*" ); }
-	printf("  ■ sstd::mat<int64>\n"      ); { TEST_c2py_matXXX    (sstd::mat, int64,       "mat<int64>, mat<int64>",   "void, const mat<int64>*",  "void, mat<int64>*" ); }
-	printf("  ■ sstd::mat<uint8>\n"      ); { TEST_c2py_matXXX    (sstd::mat, uint8,       "mat<uint8>, mat<uint8>",   "void, const mat<uint8>*",  "void, mat<uint8>*" ); }
-	printf("  ■ sstd::mat<uint16>\n"     ); { TEST_c2py_matXXX    (sstd::mat, uint16,      "mat<uint16>, mat<uint16>", "void, const mat<uint16>*", "void, mat<uint16>*"); }
-	printf("  ■ sstd::mat<uint32>\n"     ); { TEST_c2py_matXXX    (sstd::mat, uint32,      "mat<uint32>, mat<uint32>", "void, const mat<uint32>*", "void, mat<uint32>*"); }
-	printf("  ■ sstd::mat<uint64>\n"     ); { TEST_c2py_matXXX    (sstd::mat, uint64,      "mat<uint64>, mat<uint64>", "void, const mat<uint64>*", "void, mat<uint64>*"); }
-	printf("  ■ sstd::mat<float>\n"      ); { TEST_c2py_matFolatXX(sstd::mat, float,       "mat<float>, mat<float>",   "void, const mat<float>*",  "void, mat<float>*" ); }
-	printf("  ■ sstd::mat<double>\n"     ); { TEST_c2py_matFolatXX(sstd::mat, double,      "mat<double>, mat<double>", "void, const mat<double>*", "void, mat<double>*"); }
-	printf("  ■ sstd::mat<std::string>\n"); { TEST_c2py_matStr    (sstd::mat, std::string, "mat<str>, mat<str>*",      "void, const mat<str>*",    "void, mat<str>*"   ); } // "mat<str>, mat<str>" は，C++ の可変長引数で受け渡そうとすると，segmentation fault で落ちる．少なくとも gcc 5.4.0 では対応していないので，ポインタで渡しておく．
+	printf("  ■ sstd::mat<bool>\n"       ); { TEST_c2py_matBool   (sstd::mat, bool,        "mat<bool>, ret mat<bool>*, mat<bool>",       "void, const mat<bool>*",   "void, mat<bool>*",   "void, mat<bool>*|~",   "void, mat<bool>*|*~"  ); }
+	printf("  ■ sstd::mat<char>\n"       ); { TEST_c2py_matChar   (sstd::mat, char,        "mat<char>, ret mat<char>*, mat<char>",       "void, const mat<char>*",   "void, mat<char>*",   "void, mat<char>*|~",   "void, mat<char>*|*~"  ); }
+	printf("  ■ sstd::mat<int8>\n"       ); { TEST_c2py_matXXX    (sstd::mat, int8,        "mat<int8>, ret mat<int8>*, mat<int8>",       "void, const mat<int8>*",   "void, mat<int8>*",   "void, mat<int8>*|~",   "void, mat<int8>*|*~"  ); }
+	printf("  ■ sstd::mat<int16>\n"      ); { TEST_c2py_matXXX    (sstd::mat, int16,       "mat<int16>, ret mat<int16>*, mat<int16>",    "void, const mat<int16>*",  "void, mat<int16>*",  "void, mat<int16>*|~",  "void, mat<int16>*|*~" ); }
+	printf("  ■ sstd::mat<int32>\n"      ); { TEST_c2py_matXXX    (sstd::mat, int32,       "mat<int32>, ret mat<int32>*, mat<int32>",    "void, const mat<int32>*",  "void, mat<int32>*" , "void, mat<int32>*|~" , "void, mat<int32>*|*~" ); }
+	printf("  ■ sstd::mat<int64>\n"      ); { TEST_c2py_matXXX    (sstd::mat, int64,       "mat<int64>, ret mat<int64>*, mat<int64>",    "void, const mat<int64>*",  "void, mat<int64>*",  "void, mat<int64>*|~",  "void, mat<int64>*|*~" ); }
+	printf("  ■ sstd::mat<uint8>\n"      ); { TEST_c2py_matXXX    (sstd::mat, uint8,       "mat<uint8>, ret mat<uint8>*, mat<uint8>",    "void, const mat<uint8>*",  "void, mat<uint8>*",  "void, mat<uint8>*|~",  "void, mat<uint8>*|*~" ); }
+	printf("  ■ sstd::mat<uint16>\n"     ); { TEST_c2py_matXXX    (sstd::mat, uint16,      "mat<uint16>, ret mat<uint16>*, mat<uint16>", "void, const mat<uint16>*", "void, mat<uint16>*", "void, mat<uint16>*|~", "void, mat<uint16>*|*~"); }
+	printf("  ■ sstd::mat<uint32>\n"     ); { TEST_c2py_matXXX    (sstd::mat, uint32,      "mat<uint32>, ret mat<uint32>*, mat<uint32>", "void, const mat<uint32>*", "void, mat<uint32>*", "void, mat<uint32>*|~", "void, mat<uint32>*|*~"); }
+	printf("  ■ sstd::mat<uint64>\n"     ); { TEST_c2py_matXXX    (sstd::mat, uint64,      "mat<uint64>, ret mat<uint64>*, mat<uint64>", "void, const mat<uint64>*", "void, mat<uint64>*", "void, mat<uint64>*|~", "void, mat<uint64>*|*~"); }
+	printf("  ■ sstd::mat<float>\n"      ); { TEST_c2py_matFolatXX(sstd::mat, float,       "mat<float>, ret mat<float>*, mat<float>",    "void, const mat<float>*",  "void, mat<float>*" , "void, mat<float>*|~",  "void, mat<float>*|*~" ); }
+	printf("  ■ sstd::mat<double>\n"     ); { TEST_c2py_matFolatXX(sstd::mat, double,      "mat<double>, ret mat<double>*, mat<double>", "void, const mat<double>*", "void, mat<double>*", "void, mat<double>*|~", "void, mat<double>*|*~"); }
+	printf("  ■ sstd::mat<std::string>\n"); { TEST_c2py_matStr    (sstd::mat, std::string, "mat<str>, ret mat<str>*, mat<str>*",         "void, const mat<str>*",    "void, mat<str>*",    "void, mat<str>*|~",    "void, mat<str>*|*~"   ); } // "mat<str>, mat<str>" は，C++ の可変長引数で受け渡そうとすると，segmentation fault で落ちる．少なくとも gcc 5.4.0 では対応していないので，ポインタで渡しておく．
 	//*/
 	
 	//-----------------------------------------------------------------------
 	
 	// std::mat_r<T>
 	/*
-	printf("  ■ sstd::mat_r<bool>\n"  ); { TEST_c2py_matBool   (sstd::mat_r, bool,   "mat_r<bool>, mat_r<bool>",     "void, const mat_r<bool>*",   "void, mat_r<bool>*"  ); }
-	printf("  ■ sstd::mat_r<char>\n"  ); { TEST_c2py_matChar   (sstd::mat_r, char,   "mat_r<char>, mat_r<char>",     "void, const mat_r<char>*",   "void, mat_r<char>*"  ); }
-	printf("  ■ sstd::mat_r<int8>\n"  ); { TEST_c2py_matXXX    (sstd::mat_r, int8,   "mat_r<int8>, mat_r<int8>",     "void, const mat_r<int8>*",   "void, mat_r<int8>*"  ); }
-	printf("  ■ sstd::mat_r<int16>\n" ); { TEST_c2py_matXXX    (sstd::mat_r, int16,  "mat_r<int16>, mat_r<int16>",   "void, const mat_r<int16>*",  "void, mat_r<int16>*" ); }
-	printf("  ■ sstd::mat_r<int32>\n" ); { TEST_c2py_matXXX    (sstd::mat_r, int32,  "mat_r<int32>, mat_r<int32>",   "void, const mat_r<int32>*",  "void, mat_r<int32>*" ); }
-	printf("  ■ sstd::mat_r<int64>\n" ); { TEST_c2py_matXXX    (sstd::mat_r, int64,  "mat_r<int64>, mat_r<int64>",   "void, const mat_r<int64>*",  "void, mat_r<int64>*" ); }
-	printf("  ■ sstd::mat_r<uint8>\n" ); { TEST_c2py_matXXX    (sstd::mat_r, uint8,  "mat_r<uint8>, mat_r<uint8>",   "void, const mat_r<uint8>*",  "void, mat_r<uint8>*" ); }
-	printf("  ■ sstd::mat_r<uint16>\n"); { TEST_c2py_matXXX    (sstd::mat_r, uint16, "mat_r<uint16>, mat_r<uint16>", "void, const mat_r<uint16>*", "void, mat_r<uint16>*"); }
-	printf("  ■ sstd::mat_r<uint32>\n"); { TEST_c2py_matXXX    (sstd::mat_r, uint32, "mat_r<uint32>, mat_r<uint32>", "void, const mat_r<uint32>*", "void, mat_r<uint32>*"); }
-	printf("  ■ sstd::mat_r<uint64>\n"); { TEST_c2py_matXXX    (sstd::mat_r, uint64, "mat_r<uint64>, mat_r<uint64>", "void, const mat_r<uint64>*", "void, mat_r<uint64>*"); }
-	printf("  ■ sstd::mat_r<float>\n" ); { TEST_c2py_matFolatXX(sstd::mat_r, float,  "mat_r<float>, mat_r<float>",   "void, const mat_r<float>*",  "void, mat_r<float>*" ); }
-	printf("  ■ sstd::mat_r<double>\n"); { TEST_c2py_matFolatXX(sstd::mat_r, double, "mat_r<double>, mat_r<double>", "void, const mat_r<double>*", "void, mat_r<double>*"); }
-	printf("  ■ sstd::mat_r<std::string>\n"); { TEST_c2py_matStr(sstd::mat_r, std::string, "mat_r<str>, mat_r<str>*", "void, const mat_r<str>*", "void, mat_r<str>*"); } // "mat<str>_r, mat<str>_r" は，C++ の可変長引数で受け渡そうとすると，segmentation fault で落ちる．少なくとも gcc 5.4.0 では対応していないので，ポインタで渡しておく．
+	printf("  ■ sstd::mat_r<bool>\n"       ); { TEST_c2py_matBool   (sstd::mat_r, bool,        "mat_r<bool>, ret mat_r<bool>*, mat_r<bool>",       "void, const mat_r<bool>*",   "void, mat_r<bool>*",   "void, mat_r<bool>*|~",   "void, mat_r<bool>*|*~"  ); }
+	printf("  ■ sstd::mat_r<char>\n"       ); { TEST_c2py_matChar   (sstd::mat_r, char,        "mat_r<char>, ret mat_r<char>*, mat_r<char>",       "void, const mat_r<char>*",   "void, mat_r<char>*",   "void, mat_r<char>*|~",   "void, mat_r<char>*|*~"  ); }
+	printf("  ■ sstd::mat_r<int8>\n"       ); { TEST_c2py_matXXX    (sstd::mat_r, int8,        "mat_r<int8>, ret mat_r<int8>*, mat_r<int8>",       "void, const mat_r<int8>*",   "void, mat_r<int8>*",   "void, mat_r<int8>*|~",   "void, mat_r<int8>*|*~"  ); }
+	printf("  ■ sstd::mat_r<int16>\n"      ); { TEST_c2py_matXXX    (sstd::mat_r, int16,       "mat_r<int16>, ret mat_r<int16>*, mat_r<int16>",    "void, const mat_r<int16>*",  "void, mat_r<int16>*",  "void, mat_r<int16>*|~",  "void, mat_r<int16>*|*~" ); }
+	printf("  ■ sstd::mat_r<int32>\n"      ); { TEST_c2py_matXXX    (sstd::mat_r, int32,       "mat_r<int32>, ret mat_r<int32>*, mat_r<int32>",    "void, const mat_r<int32>*",  "void, mat_r<int32>*",  "void, mat_r<int32>*|~",  "void, mat_r<int32>*|*~" ); }
+	printf("  ■ sstd::mat_r<int64>\n"      ); { TEST_c2py_matXXX    (sstd::mat_r, int64,       "mat_r<int64>, ret mat_r<int64>*, mat_r<int64>",    "void, const mat_r<int64>*",  "void, mat_r<int64>*",  "void, mat_r<int64>*|~",  "void, mat_r<int64>*|*~" ); }
+	printf("  ■ sstd::mat_r<uint8>\n"      ); { TEST_c2py_matXXX    (sstd::mat_r, uint8,       "mat_r<uint8>, ret mat_r<uint8>*, mat_r<uint8>",    "void, const mat_r<uint8>*",  "void, mat_r<uint8>*",  "void, mat_r<uint8>*|~",  "void, mat_r<uint8>*|*~" ); }
+	printf("  ■ sstd::mat_r<uint16>\n"     ); { TEST_c2py_matXXX    (sstd::mat_r, uint16,      "mat_r<uint16>, ret mat_r<uint16>*, mat_r<uint16>", "void, const mat_r<uint16>*", "void, mat_r<uint16>*", "void, mat_r<uint16>*|~", "void, mat_r<uint16>*|*~"); }
+	printf("  ■ sstd::mat_r<uint32>\n"     ); { TEST_c2py_matXXX    (sstd::mat_r, uint32,      "mat_r<uint32>, ret mat_r<uint32>*, mat_r<uint32>", "void, const mat_r<uint32>*", "void, mat_r<uint32>*", "void, mat_r<uint32>*|~", "void, mat_r<uint32>*|*~"); }
+	printf("  ■ sstd::mat_r<uint64>\n"     ); { TEST_c2py_matXXX    (sstd::mat_r, uint64,      "mat_r<uint64>, ret mat_r<uint64>*, mat_r<uint64>", "void, const mat_r<uint64>*", "void, mat_r<uint64>*", "void, mat_r<uint64>*|~", "void, mat_r<uint64>*|*~"); }
+	printf("  ■ sstd::mat_r<float>\n"      ); { TEST_c2py_matFolatXX(sstd::mat_r, float,       "mat_r<float>, ret mat_r<float>*, mat_r<float>",    "void, const mat_r<float>*",  "void, mat_r<float>*",  "void, mat_r<float>*|~",  "void, mat_r<float>*|*~" ); }
+	printf("  ■ sstd::mat_r<double>\n"     ); { TEST_c2py_matFolatXX(sstd::mat_r, double,      "mat_r<double>, ret mat_r<double>*, mat_r<double>", "void, const mat_r<double>*", "void, mat_r<double>*", "void, mat_r<double>*|~", "void, mat_r<double>*|*~"); }
+	printf("  ■ sstd::mat_r<std::string>\n"); { TEST_c2py_matStr    (sstd::mat_r, std::string, "mat_r<str>, ret mat_r<str>*, mat_r<str>*",         "void, const mat_r<str>*",    "void, mat_r<str>*",    "void, mat_r<str>*|~",    "void, mat_r<str>*|*~"   ); } // "mat<str>_r, mat<str>_r" は，C++ の可変長引数で受け渡そうとすると，segmentation fault で落ちる．少なくとも gcc 5.4.0 では対応していないので，ポインタで渡しておく．
 	//*/
 
 	//-----------------------------------------------------------------------
@@ -1222,33 +1411,8 @@ void TEST_c2py(){
 	}
 	//*/
 
-	/*
-	{
-		sstd::c2py<sstd::mat_r<double>> path2mat_r_img("./tmpDir", "test_functions", "path2mat_r_img", "mat_r<double>, const char*");
-		sstd::mat_r<double> img = path2mat_r_img("./test.png");
-		sstd::printn(img.rows());
-		sstd::printn(img.cols());
-	
-		sstd::c2py<int> mat_r_img2png("./tmpDir", "test_functions", "mat_r_img2png", "int, const char*, mat_r<double>");
-		mat_r_img2png("./save.png", img);
-	}
-	//*/
-
-	/*
-	double freq2generate = 0.1; // 0.1 Hz sin wave
-	double freq2sample = 10;    // 10 Hz sampling
-	uint len=60*10 + 1;         // 60 sec
-	std::vector<double> vecY = sstd::sinWave(freq2generate, freq2sample, len);
-	std::vector<double> vecX(len); for(uint i=0; i<vecX.size(); i++){ vecX[i]=(double)i*(1/freq2sample); }
-	
-	sstd::c2py<int> vec2graph("./tmpDir", "test_functions", "vec2graph", "int, const char*, vec<double>, vec<double>");
-	vec2graph("./sin.png", vecX, vecY);
-	//*/
-
 	//-----------------------------------------------------------------------
 
-	// 次にこれ (の各型におけるテスト) を実装．
-	
 	/*
 	{
 		sstd::c2py<void> py_vecDouble_cnv2builtIn("./tmpDir", "test_functions", "py_vecDouble_cnv2builtIn", "void, vec<double>*|~");
@@ -1267,20 +1431,65 @@ void TEST_c2py(){
 	//-----------------------------------------------------------------------
 	
 	/*
-	// 追加の仕様．下記がコンパイルできるようにすること．
-	sstd::c2py<void> py_ret("./tmpDir", "test_functions", "py_ret", "void, ret double*, ret double*, len, ret vec<double>*, vec<double>*|*~");
-	double ret1=0.0;
-	double ret2[]={0.0, 0.0};
-	std::vector<double> ret3;
-	std::vector<double> inOut={0.0};
-	py_ret(&ret1, &ret2, 2, &ret3, &inOut);
-	sstd::printn(ret1   );
-	sstd::printn(ret2[0]);
-	sstd::printn(ret2[1]);
-	sstd::printn(ret3   );
-	sstd::printn(inOut  );
+	{
+		sstd::c2py<void> py_ret("./tmpDir", "test_functions", "py_ret", "void, ret double*, ret double*, len, ret vec<double>*, vec<double>*|*~");
+		double ret1=0.0;
+		double ret2[]={0.0, 0.0};
+		std::vector<double> ret3;
+		std::vector<double> inOut={0.0};
+		py_ret(&ret1, &ret2, 2, &ret3, &inOut);
+		sstd::printn(ret1   );
+		sstd::printn(ret2[0]);
+		sstd::printn(ret2[1]);
+		sstd::printn(ret3   );
+		sstd::printn(inOut  );
+	}
 	//*/
 	
+	//-----------------------------------------------------------------------
+
+	/*
+	{
+		double freq2generate = 0.1; // 0.1 Hz sin wave
+		double freq2sample = 10;    // 10 Hz sampling
+		uint len=60*10 + 1;         // 60 sec
+		std::vector<double> vecY = sstd::sinWave(freq2generate, freq2sample, len);
+		std::vector<double> vecX(len); for(uint i=0; i<vecX.size(); i++){ vecX[i]=(double)i*(1/freq2sample); }
+	
+		sstd::c2py<int> vec2graph("./tmpDir", "test_functions", "vec2graph", "int, const char*, vec<double>, vec<double>");
+		vec2graph("./sin.png", vecX, vecY);
+	}
+	//*/
+	
+	/*
+	{
+		sstd::c2py<sstd::mat_r<double>> path2mat_r_img("./tmpDir", "test_functions", "path2mat_r_img", "mat_r<double>, const char*");
+		sstd::mat_r<double> img = path2mat_r_img("./test.png");
+		sstd::printn(img.rows());
+		sstd::printn(img.cols());
+	
+		sstd::c2py<int> mat_r_img2png("./tmpDir", "test_functions", "mat_r_img2png", "int, const char*, mat_r<double>");
+		mat_r_img2png("./save.png", img);
+	}
+	//*/
+
+	//*
+	{
+		sstd::c2py<void> imgPath2mat_rRGB("./tmpDir", "test_functions", "imgPath2mat_rRGB", "void, ret mat_r<uint8>*, ret mat_r<uint8>*, ret mat_r<uint8>*, const char*");
+		sstd::mat_r<uint8> imgR, imgG, imgB;
+		imgPath2mat_rRGB(&imgR, &imgG, &imgB, "./test.png");
+
+		for(uint p=0; p<imgG.rows(); p++){
+			for(uint q=0; q<imgG.cols(); q++){
+				imgG(p, q) = sstd::round2even(0.5*((double)imgG(p, q)));
+			}
+		}
+	
+		sstd::c2py<void> mat_rRGB2img("./tmpDir", "test_functions", "mat_rRGB2img", "void, const char*, mat_r<uint8>*, mat_r<uint8>*, mat_r<uint8>*");
+		mat_rRGB2img("./test_reCombined.png", &imgR, &imgG, &imgB);
+	}
+	//*/
+
 	//-----------------------------------------------------------------------
 }
 

@@ -177,49 +177,123 @@ def builtIn_readFile(typeList, i, readPFunc, readFunc, readPath):
     else: return readFunc(readPath)
 
 #--------------------------------------------------------------------------------------------------------
-
-def cnv_numpy2builtin(val, typeInfo):
+    
+def cnv_numpy2builtin(Type, val):
     if   val.ndim==0: return np.asscalar(val) # scalar
     elif val.ndim==1: return [np.asscalar(val[i]) for i in range(val.shape[0])] # vector
-    elif val.ndim==2: return [[np.asscalar(val[val.shape[1]*p+q]) for q in range(val.shape[0])] for p in range(val.shape[1])] # matrix
-    else: print("ERROR: %s :: \"%s<%s>\" is an unsupported type." % (location(), typeInfo.name, typeInfo.T))
-    
-    return np.asscalar(val)
+    elif val.ndim==2: return [[np.asscalar(val[p][q]) for q in range(val.shape[1])] for p in range(val.shape[0])] # matrix
+    else: print("ERROR: %s :: \"%s<%s>\" is an unsupported type." % (location(), Type.name, Type.T))
 
 #--------------------------------------------------------------------------------------------------------
 
-def cnv2correctDtype(typeList, ret):
-    if   typeList[0].name==  "bool" and ret.dtype!=np.bool:    return ret.astype(np.bool   )
-    elif typeList[0].name==  "char" and ret.dtype!=np.int8:    return ret.astype(np.int8   )
-    elif typeList[0].name== "uchar" and ret.dtype!=np.uint8:   return ret.astype(np.uint8  )
-    elif typeList[0].name==  "int8" and ret.dtype!=np.int8:    return ret.astype(np.int8   )
-    elif typeList[0].name== "uint8" and ret.dtype!=np.uint8:   return ret.astype(np.uint8  )
-    elif typeList[0].name== "int16" and ret.dtype!=np.int16:   return ret.astype(np.int16  )
-    elif typeList[0].name=="uint16" and ret.dtype!=np.uint16:  return ret.astype(np.uint16 )
-    elif typeList[0].name== "int32" and ret.dtype!=np.int32:   return ret.astype(np.int32  )
-    elif typeList[0].name=="uint32" and ret.dtype!=np.uint32:  return ret.astype(np.uint32 )
-    elif typeList[0].name== "int64" and ret.dtype!=np.int64:   return ret.astype(np.int64  )
-    elif typeList[0].name=="uint64" and ret.dtype!=np.uint64:  return ret.astype(np.uint64 )
-    elif typeList[0].name== "float" and ret.dtype!=np.float32: return ret.astype(np.float32)
-    elif typeList[0].name=="double" and ret.dtype!=np.float64: return ret.astype(np.float64)
-    elif typeList[0].name=="vec" or typeList[0].name=="mat" or typeList[0].name=="mat_r":
-        if   typeList[0].T==  "bool" and ret.dtype!=np.bool:    return ret.astype(np.bool   )
-        elif typeList[0].T==  "char" and ret.dtype!=np.int8:    return ret.astype(np.int8   )
-        elif typeList[0].T== "uchar" and ret.dtype!=np.uint8:   return ret.astype(np.uint8  )
-        elif typeList[0].T==  "int8" and ret.dtype!=np.int8:    return ret.astype(np.int8   )
-        elif typeList[0].T== "uint8" and ret.dtype!=np.uint8:   return ret.astype(np.uint8  )
-        elif typeList[0].T== "int16" and ret.dtype!=np.int16:   return ret.astype(np.int16  )
-        elif typeList[0].T=="uint16" and ret.dtype!=np.uint16:  return ret.astype(np.uint16 )
-        elif typeList[0].T== "int32" and ret.dtype!=np.int32:   return ret.astype(np.int32  )
-        elif typeList[0].T=="uint32" and ret.dtype!=np.uint32:  return ret.astype(np.uint32 )
-        elif typeList[0].T== "int64" and ret.dtype!=np.int64:   return ret.astype(np.int64  )
-        elif typeList[0].T=="uint64" and ret.dtype!=np.uint64:  return ret.astype(np.uint64 )
-        elif typeList[0].T== "float" and ret.dtype!=np.float32: return ret.astype(np.float32)
-        elif typeList[0].T=="double" and ret.dtype!=np.float64: return ret.astype(np.float64)
+def cnv2correctDtype(Type, ret):
+    if   Type.name==  "bool" and ret.dtype!=np.bool:    return ret.astype(np.bool   )
+    elif Type.name==  "char" and ret.dtype!=np.int8:    return ret.astype(np.int8   )
+    elif Type.name== "uchar" and ret.dtype!=np.uint8:   return ret.astype(np.uint8  )
+    elif Type.name==  "int8" and ret.dtype!=np.int8:    return ret.astype(np.int8   )
+    elif Type.name== "uint8" and ret.dtype!=np.uint8:   return ret.astype(np.uint8  )
+    elif Type.name== "int16" and ret.dtype!=np.int16:   return ret.astype(np.int16  )
+    elif Type.name=="uint16" and ret.dtype!=np.uint16:  return ret.astype(np.uint16 )
+    elif Type.name== "int32" and ret.dtype!=np.int32:   return ret.astype(np.int32  )
+    elif Type.name=="uint32" and ret.dtype!=np.uint32:  return ret.astype(np.uint32 )
+    elif Type.name== "int64" and ret.dtype!=np.int64:   return ret.astype(np.int64  )
+    elif Type.name=="uint64" and ret.dtype!=np.uint64:  return ret.astype(np.uint64 )
+    elif Type.name== "float" and ret.dtype!=np.float32: return ret.astype(np.float32)
+    elif Type.name=="double" and ret.dtype!=np.float64: return ret.astype(np.float64)
+    elif Type.name=="vec" or Type.name=="mat" or Type.name=="mat_r":
+        if   Type.T==  "bool" and ret.dtype!=np.bool:    return ret.astype(np.bool   )
+        elif Type.T==  "char" and ret.dtype!=np.int8:    return ret.astype(np.int8   )
+        elif Type.T== "uchar" and ret.dtype!=np.uint8:   return ret.astype(np.uint8  )
+        elif Type.T==  "int8" and ret.dtype!=np.int8:    return ret.astype(np.int8   )
+        elif Type.T== "uint8" and ret.dtype!=np.uint8:   return ret.astype(np.uint8  )
+        elif Type.T== "int16" and ret.dtype!=np.int16:   return ret.astype(np.int16  )
+        elif Type.T=="uint16" and ret.dtype!=np.uint16:  return ret.astype(np.uint16 )
+        elif Type.T== "int32" and ret.dtype!=np.int32:   return ret.astype(np.int32  )
+        elif Type.T=="uint32" and ret.dtype!=np.uint32:  return ret.astype(np.uint32 )
+        elif Type.T== "int64" and ret.dtype!=np.int64:   return ret.astype(np.int64  )
+        elif Type.T=="uint64" and ret.dtype!=np.uint64:  return ret.astype(np.uint64 )
+        elif Type.T== "float" and ret.dtype!=np.float32: return ret.astype(np.float32)
+        elif Type.T=="double" and ret.dtype!=np.float64: return ret.astype(np.float64)
         else: return ret
     else: return ret
 
 #--------------------------------------------------------------------------------------------------------
+
+def cnv_builtin2numpy(Type, val):
+    if   Type.name==  "bool": return np.array(val, dtype =   "bool")
+    elif Type.name==  "char": return val # there is nothing to do
+    elif Type.name== "uchar": return np.array(val, dtype =  "uint8")
+    elif Type.name==  "int8": return np.array(val, dtype =   "int8")
+    elif Type.name== "int16": return np.array(val, dtype =  "int16")
+    elif Type.name== "int32": return np.array(val, dtype =  "int32")
+    elif Type.name== "int64": return np.array(val, dtype =  "int64")
+    elif Type.name== "uint8": return np.array(val, dtype =  "uint8")
+    elif Type.name=="uint16": return np.array(val, dtype = "uint16")
+    elif Type.name=="uint32": return np.array(val, dtype = "uint32")
+    elif Type.name=="uint64": return np.array(val, dtype = "uint64")
+    elif Type.name== "float": return np.array(val, dtype ="float32")
+    elif Type.name=="double": return np.array(val, dtype ="float64")
+    elif Type.name==   "str": return val # there is nothing to do
+    elif Type.name==   "vec":
+        if   Type.T==  "bool": return np.array(val, dtype =   "bool")
+        elif Type.T==  "char": return val # there is nothing to do
+        elif Type.T== "uchar": return np.array(val, dtype =  "uint8")
+        elif Type.T==  "int8": return np.array(val, dtype =   "int8")
+        elif Type.T== "int16": return np.array(val, dtype =  "int16")
+        elif Type.T== "int32": return np.array(val, dtype =  "int32")
+        elif Type.T== "int64": return np.array(val, dtype =  "int64")
+        elif Type.T== "uint8": return np.array(val, dtype =  "uint8")
+        elif Type.T=="uint16": return np.array(val, dtype = "uint16")
+        elif Type.T=="uint32": return np.array(val, dtype = "uint32")
+        elif Type.T=="uint64": return np.array(val, dtype = "uint64")
+        elif Type.T== "float": return np.array(val, dtype ="float32")
+        elif Type.T=="double": return np.array(val, dtype ="float64")
+        elif Type.T==   "str": return val # there is nothing to do
+        else: print("ERROR: %s :: \"%s<%s>\" is an unsupported type." % (location(), Type.name, Type.T))
+    elif Type.name==   "mat":
+        if   Type.T==  "bool": return np.array(val, dtype =   "bool")
+        elif Type.T==  "char": return val # there is nothing to do
+        elif Type.T== "uchar": return np.array(val, dtype =  "uint8")
+        elif Type.T==  "int8": return np.array(val, dtype =   "int8")
+        elif Type.T== "int16": return np.array(val, dtype =  "int16")
+        elif Type.T== "int32": return np.array(val, dtype =  "int32")
+        elif Type.T== "int64": return np.array(val, dtype =  "int64")
+        elif Type.T== "uint8": return np.array(val, dtype =  "uint8")
+        elif Type.T=="uint16": return np.array(val, dtype = "uint16")
+        elif Type.T=="uint32": return np.array(val, dtype = "uint32")
+        elif Type.T=="uint64": return np.array(val, dtype = "uint64")
+        elif Type.T== "float": return np.array(val, dtype ="float32")
+        elif Type.T=="double": return np.array(val, dtype ="float64")
+        elif Type.T==   "str": return val # there is nothing to do
+        else: print("ERROR: %s :: \"%s<%s>\" is an unsupported type." % (location(), Type.name, Type.T))
+    elif Type.name== "mat_r":
+        if   Type.T==  "bool": return np.array(val, dtype =   "bool")
+        elif Type.T==  "char": return val # there is nothing to do
+        elif Type.T== "uchar": return np.array(val, dtype =  "uint8")
+        elif Type.T==  "int8": return np.array(val, dtype =   "int8")
+        elif Type.T== "int16": return np.array(val, dtype =  "int16")
+        elif Type.T== "int32": return np.array(val, dtype =  "int32")
+        elif Type.T== "int64": return np.array(val, dtype =  "int64")
+        elif Type.T== "uint8": return np.array(val, dtype =  "uint8")
+        elif Type.T=="uint16": return np.array(val, dtype = "uint16")
+        elif Type.T=="uint32": return np.array(val, dtype = "uint32")
+        elif Type.T=="uint64": return np.array(val, dtype = "uint64")
+        elif Type.T== "float": return np.array(val, dtype ="float32")
+        elif Type.T=="double": return np.array(val, dtype ="float64")
+        elif Type.T==   "str": return val # there is nothing to do
+        else: print("ERROR: %s :: \"%s<%s>\" is an unsupported type." % (location(), Type.name, Type.T))
+    else: print("ERROR: %s :: \"%s\" is an unsupported type." % (location(), Type.name))
+
+#--------------------------------------------------------------------------------------------------------
+
+def vecChar_serialize(rhs):
+    charBuf=""
+    for i in range(len(rhs)): charBuf+=rhs[i][0]
+    return charBuf
+def vecStr_serialize(rhs):
+    strBuf=""
+    for i in range(len(rhs)): strBuf+=rhs[i]
+    return strBuf
 
 def matChar_serialize(rhs):
     charBuf=""
@@ -247,61 +321,19 @@ def mat_rStr_serialize(rhs):
             strBuf+=rhs[p][q]
     return strBuf
     
-def cnv_builtin2numpy(Type, rhs):
-    if   Type.name==  "bool": return np.array(rhs, dtype =   "bool")
-    elif Type.name==  "char": return rhs # there is nothing to do
-    elif Type.name== "uchar": return np.array(rhs, dtype =  "uint8")
-    elif Type.name==  "int8": return np.array(rhs, dtype =   "int8")
-    elif Type.name== "int16": return np.array(rhs, dtype =  "int16")
-    elif Type.name== "int32": return np.array(rhs, dtype =  "int32")
-    elif Type.name== "int64": return np.array(rhs, dtype =  "int64")
-    elif Type.name== "uint8": return np.array(rhs, dtype =  "uint8")
-    elif Type.name=="uint16": return np.array(rhs, dtype = "uint16")
-    elif Type.name=="uint32": return np.array(rhs, dtype = "uint32")
-    elif Type.name=="uint64": return np.array(rhs, dtype = "uint64")
-    elif Type.name== "float": return np.array(rhs, dtype ="float32")
-    elif Type.name=="double": return np.array(rhs, dtype ="float64")
-    elif Type.name==   "str": return rhs # there is nothing to do
-    elif Type.name==   "vec":
-        if   Type.T==  "bool": return np.array(rhs, dtype =   "bool")
-        elif Type.T==  "char":
-            # reshape to one strign array
-            retBuf=""
-            for i in range(len(rhs)): retBuf+=rhs[i][0]
-            return retBuf
-        elif Type.T== "uchar": return np.array(rhs, dtype =  "uint8")
-        elif Type.T==  "int8": return np.array(rhs, dtype =   "int8")
-        elif Type.T== "int16": return np.array(rhs, dtype =  "int16")
-        elif Type.T== "int32": return np.array(rhs, dtype =  "int32")
-        elif Type.T== "int64": return np.array(rhs, dtype =  "int64")
-        elif Type.T== "uint8": return np.array(rhs, dtype =  "uint8")
-        elif Type.T=="uint16": return np.array(rhs, dtype = "uint16")
-        elif Type.T=="uint32": return np.array(rhs, dtype = "uint32")
-        elif Type.T=="uint64": return np.array(rhs, dtype = "uint64")
-        elif Type.T== "float": return np.array(rhs, dtype ="float32")
-        elif Type.T=="double": return np.array(rhs, dtype ="float64")
-        elif Type.T==   "str":
-            # reshape to one strign array
-            retBuf=""
-            for i in range(len(rhs)): retBuf+=rhs[i]
-            return retBuf
-        else: print("ERROR: %s :: \"%s<%s>\" is an unsupported type." % (location(), Type.name, Type.T))
-    elif Type.name==   "mat":
-        if   Type.T==  "char": return matChar_serialize(rhs) # reshape to one strign array
-        elif Type.T==   "str": return matStr_serialize (rhs) # reshape to one strign array
-        else: print("ERROR: %s :: \"%s<%s>\" is an unsupported type." % (location(), Type.name, Type.T))
-    elif Type.name== "mat_r":
-        if   Type.T==  "char": return mat_rChar_serialize(rhs) # reshape to one strign array
-        elif Type.T==   "str": return mat_rStr_serialize (rhs) # reshape to one strign array
-        else: print("ERROR: %s :: \"%s<%s>\" is an unsupported type." % (location(), Type.name, Type.T))
-    else: print("ERROR: %s :: \"%s\" is an unsupported type." % (location(), Type.name))
-
-#--------------------------------------------------------------------------------------------------------
-
-def cnv_numpy2writeType(Type, val):
-    if Type.name=="mat":
-        if   Type.T=="char" or Type.T=="str": return val
+def cnv2writeType(Type, val):
+    if   Type.name=="vec":
+        if   Type.T==  "char": return vecChar_serialize(val) # reshape to one strign array
+        elif Type.T==   "str": return vecStr_serialize (val) # reshape to one strign array
+        else: return val
+    elif Type.name=="mat":
+        if   Type.T==  "char": return matChar_serialize(val) # reshape to one strign array
+        elif Type.T==   "str": return matStr_serialize (val) # reshape to one strign array
         else: return val.flatten('F').reshape(val.shape[0], val.shape[1]) # Corresponding column-major matrix or not is a problem of python, so this needs to deal in python side.
+    elif Type.name== "mat_r":
+        if   Type.T==  "char": return mat_rChar_serialize(val) # reshape to one strign array
+        elif Type.T==   "str": return mat_rStr_serialize (val) # reshape to one strign array
+        else: return val
     else: return val
 
 #--------------------------------------------------------------------------------------------------------
@@ -333,8 +365,9 @@ def val2argLine_mat_rStr(val):
 
 def generate_argListBin_line(Type, val, line):
     if   Type.name==  "vec":
-        if   Type.T== "str": return val2argLine_vecStr(val)
-        else:                return ("F F vec %s F F F 1 %lu" % (Type.T, len(val)))
+        if   Type.T=="char": return ("F F mat %s F F F 2 %lu %lu" % (Type.T, len(val), len(val[0])))
+        elif Type.T== "str": return val2argLine_vecStr(val)
+        else:                return ("F F vec %s F F F 1 %lu" % (Type.T, val.shape[0]))
     elif Type.name==  "mat":
         if   Type.T=="char": return ("F F mat %s F F F 2 %lu %lu" % (Type.T, len(val), len(val[0])))
         elif Type.T== "str": return val2argLine_matStr(val)
@@ -429,7 +462,7 @@ def main():
     # conversion of numpy type to builtin type while retTF is true.
     for i in range(1,len(valList)):
         if IsNumpy(valList[i])==False: continue
-        if typeList[i].cnv2builtIn_sidePy: valList[i]=cnv_numpy2builtin(valList[i], typeList[i])
+        if typeList[i].cnv2builtIn_sidePy: valList[i]=cnv_numpy2builtin(typeList[i], valList[i])
 
     # convert to a pseudo pointer type
     for i in range(1,len(valList)):
@@ -469,6 +502,13 @@ def main():
         if i==0 and typeList[i].name=="void": continue
         if typeList[i].retTF==False and typeList[i].constTF==True: continue
         if i!=0 and typeList[i].pointer==False: continue
+
+        # If it is not correct return value (valList[0]), below lines will translate to a correct type.
+        if IsNumpy(valList[i]): valList[i]=cnv2correctDtype(typeList[i], valList[i])
+
+        # transition of builtin type to numpy
+        if IsBuiltin(valList[i]): valList[i]=cnv_builtin2numpy(typeList[i], valList[i])
+        
         argListBin_lines[i]=generate_argListBin_line(typeList[i], valList[i], argListBin_lines[i])
     writeBuf=""
     if len(argListBin_lines)!=0:             writeBuf+=     argListBin_lines[0]
@@ -482,16 +522,9 @@ def main():
         if i==0 and typeList[i].name=="void": continue
         if typeList[i].constTF==True: continue
         if i!=0 and typeList[i].pointer==False: continue
-        #if IsBuiltinOfCpp(typeList[i]) and typeList[i].pointer==False: continue
-        
-        # If it is not correct return value (valList[0]), below lines will translate to a correct type.
-        if IsNumpy(valList[0]): valList[0]=cnv2correctDtype(typeList, valList[0])
-    
-        # transition of builtin type to numpy
-        if IsBuiltin(valList[i]): valList[i]=cnv_builtin2numpy(typeList[i], valList[i])
 
         # conversion of numpy type
-        valList[i]=cnv_numpy2writeType(typeList[i], valList[i])
+        valList[i]=cnv2writeType(typeList[i], valList[i])
 
         fp = fopen(basePath + ("/arg%04u.bin" % i), "wb")
         fp.write(valList[i])
@@ -499,7 +532,11 @@ def main():
 
 #--------------------------------------------------------------------------------------------------------
 
+#import time
+#startTime = time.time()
 main()
+#endTime   = time.time()
+#print (" Execution time: {0}".format(endTime-startTime) + " [sec]")
 
 #--------------------------------------------------------------------------------------------------------
 

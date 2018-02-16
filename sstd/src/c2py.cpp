@@ -261,7 +261,11 @@ std::vector<struct sstd_c2py::typeSet> sstd_c2py::format_str2typeSet(const std::
 			}else if(strCmp(type,  "mat")){ fList[i].name="mat";   fList[i].N_num=mat_num;   if(!setTandT_num(fList[i], tempT)){ sstd::pdbg_always("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
 			}else if(strCmp(type,"mat_r")){ fList[i].name="mat_r"; fList[i].N_num=mat_r_num; if(!setTandT_num(fList[i], tempT)){ sstd::pdbg_always("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
 			}else{ sstd::pdbg_always("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
-		}else{ sstd::pdbg_always("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
+		}else{
+			if(fSList[i].size()==0){ sstd::pdbg_always("ERROR: There is a empty token. (There might be invalid \",\".)\n");
+			}else{ sstd::pdbg_always("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); }
+			return std::vector<struct sstd_c2py::typeSet>(0);
+		}
 	}
 	return fList;
 }
@@ -389,7 +393,7 @@ bool sstd_c2py::c2py_ret(std::vector<std::string>& inOut, sstd::file& fp, std::s
 	uint vecLen=sstd::str2int(elements[elOffSet]);
 	inOut.resize(vecLen);
 	for(uint i=0; i<vecLen; i++){
-		inOut[i].resize(sstd::str2int(elements[elOffSet+i]));
+		inOut[i].resize(sstd::str2int(elements[elOffSet+1+i]));
 	}
 	
 	// write back

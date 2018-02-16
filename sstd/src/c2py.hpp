@@ -145,7 +145,7 @@ public: c2py(const char* temporarilyDir, const char* importFile, const char* fun
 		T ret; sstd_c2py::operator_brackets(ret, writeDir_base.c_str(), iFile.c_str(), fName.c_str(), fSList, fList, argc, args...);
 
 		// erase temp
-//		sstd::rm(writeDir_base); // when you debug c2py, commenting this line will remain data files in the tmp directory.
+		sstd::rm(writeDir_base); // when you debug c2py, commenting this line will remain data files in the tmp directory.
 		return ret;
 	}
 };
@@ -167,7 +167,7 @@ public: c2py(const char* temporarilyDir, const char* importFile, const char* fun
 		int ret; sstd_c2py::operator_brackets<int>(ret, writeDir_base.c_str(), iFile.c_str(), fName.c_str(), fSList, fList, argc, args...);
 
 		// erase tmp
-//		sstd::rm(writeDir_base); // when you debug c2py, commenting this line will remain data files in the tmp directory.
+		sstd::rm(writeDir_base); // when you debug c2py, commenting this line will remain data files in the tmp directory.
 	}
 };
 //----------------------------------------------------

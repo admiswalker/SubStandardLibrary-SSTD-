@@ -3,6 +3,7 @@
 
 #--------------------------------------------------------------------------------------------------------
 
+def py_empty(): return;
 def py_emptyArg(): print("* * * Welcome to sstd::c2py<T> ! * * *")
 
 #--------------------------------------------------------------------------------------------------------
@@ -38,35 +39,64 @@ def py_pUchar(rhs):
     for i in range(len(rhs)): rhs[i]=~rhs[i]
     print(rhs)
 
-def py_builtIn(rhs): print(rhs); return rhs
+def py_builtIn(rhs): print(rhs); return (rhs, rhs[0])
 def py_pBuiltIn(rhs):
     print(rhs)
     rhs[0]=9
     print(rhs)
+def py_pBuiltIn_cnvBuiltin(rhs):
+    print(rhs)
+    rhs[0]=9
+    print(rhs)
+def py_pBuiltIn_pCnvBuiltin(pRhs):
+    print(pRhs)
+    pRhs[0][1]=9
+    #pRhs[0]=9
+    print(pRhs)
 
-def py_floatXX (rhs): print(rhs); print(rhs.dtype); return rhs
+def py_floatXX (rhs): print(rhs); print(rhs.dtype); return (rhs, 9.876)
 def py_pFloatXX(rhs):
     print(rhs)
     for i in range(len(rhs)): rhs[i]=100*rhs[i]
     print(rhs)
+def py_pFloatXX_cnvBuiltin(rhs):
+    print(rhs)
+    for i in range(len(rhs)): rhs[i]=100*rhs[i]
+    print(rhs)
+def py_pFloatXX_pCnvBuiltin(pRhs):
+    print(pRhs)
+    for i in range(len(pRhs[0])): pRhs[0][i]=100*pRhs[0][i]
+    print(pRhs)
 
 #--------------------------------------------------------------------------------------------------------
 # std::string
 
-def py_str (rhs): print(rhs); return rhs
+def py_str (rhs): print(rhs); return (rhs, "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
 def py_pStr(rhs): print(rhs) # rhs[0]='X'; # TypeError: 'str' object does not support item assignment
+def py_pStr_pCnvBuiltin(rhs): print(rhs); rhs[0]="writeBack"
 
 #--------------------------------------------------------------------------------------------------------
 # std::vector<T>
 
-def py_vecBool       (rhs): print(rhs); return [True, True, False, False]
+def py_vecBool       (rhs): print(rhs); return ([True, True, False, False], [True, True, False, False])
 def py_pVecBool_const(rhs): print(rhs)
 def py_pVecBool      (rhs):
     print(rhs)
-    rhs[0]=False
-    rhs = np.append(rhs, True)
+    for i in range(len(rhs)):
+        if rhs[i]: rhs[i]=False
+        else:      rhs[i]=True
+#    rhs = np.append(rhs, True)
 #    rhs = np.hstack((rhs,True)) # 追加を行ったオブジェクトは別のオブジェクトとして扱われるようで，書き戻しは不可．
     print(rhs)
+def py_pVecBool_pCnvBuiltin(pRhs):
+    print(pRhs)
+    for i in range(len(pRhs[0])):
+        if pRhs[0][i]: pRhs[0][i]=False
+        else:      pRhs[0][i]=True
+    pRhs[0].append(True)
+    pRhs[0].append(True)
+    pRhs[0].append(True)
+    print(pRhs)
 
 def py_vecChar       (rhs): print(rhs); return ['W', 'X', 'Y', 'Z']
 def py_pVecChar_const(rhs): print(rhs)
@@ -75,8 +105,13 @@ def py_pVecChar      (rhs):
     rhs[0]='9'
     rhs.append('8')
     print(rhs)
+def py_pVecChar_pCnvBuiltin(pRhs):
+    print(pRhs)
+    pRhs[0][0]='9'
+    pRhs[0].append('8')
+    print(pRhs)
     
-def py_vecX       (rhs): print(rhs); return [9, 8, 7, 6]
+def py_vecX       (rhs): print(rhs); return ([9.0, 8.0, 7.0, 6.0], [5.0, 4.0, 3.0, 2.0, 1.0, 0.0])
 def py_pVecX_const(rhs): print(rhs)
 def py_pVecX      (rhs):
     print(rhs)
@@ -84,6 +119,13 @@ def py_pVecX      (rhs):
     rhs = np.append(rhs, 88) # uint64 でこれを実装すると，なぜか float 型になる．(おそらく numpy の仕様．dtype まで指定しないといけない．)
 #    rhs = np.hstack((rhs,88.0)) # 追加を行ったオブジェクトは別のオブジェクトとして扱われるようで，書き戻しは不可．
     print(rhs)
+def py_pVecX_pCnvBuiltin(pRhs):
+    print(pRhs)
+    #pRhs[0]=9
+    #pRhs[0].append(88) # 'int' object has no attribute 'append'
+    pRhs[0]=pRhs[0]+[88]
+    #pRhs[0]=[9, 254, 253, 0, 1, 2, 3, 88]
+    print(pRhs)
 
 #def py_vecDouble       (rhs): print(rhs); return rhs
 def py_vecDouble       (rhs): print(rhs); return [9.0, 8.0, 7.0, 6.0]
@@ -102,18 +144,15 @@ def py_vecDouble_pointer(pRhs):
     pRhs[0] = np.append(pRhs[0], 88) # uint64 でこれを実装すると，なぜか float 型になる．(おそらく numpy の仕様．dtype まで指定しないといけない．)
     
 #def py_vecStr(rhs): print(rhs); return rhs
-def py_vecStr       (rhs): print(rhs); return ["01234", "ABCDEFGHIJKLMNOPQRRRRRRRRZ", "STUUUUUUUUUUUUUUUUUUUUUUUUZ"]
-def py_pVecStr_const(rhs): print(rhs); return 0
-def py_pVecStr      (rhs): print(rhs); return 0
+def py_vecStr       (rhs): print(rhs); return (["01234", "ABCDEFGHIJKLMNOPQRRRRRRRRZ", "STUUUUUUUUUUUUUUUUUUUUUUUUZ"], ["XXXXXXX", "YYYYYY", "ZZ"])
+def py_pVecStr_const(rhs): print(rhs)
+def py_pVecStr      (rhs): print(rhs)
+def py_pVecStr_pCnvBuiltin(pRhs):
+    print(pRhs)
+    pRhs[0]=["ABCDEFGHIJKLMNOPQRST", "UV"]
+    print(pRhs)
 
 #--------------------------------------------------------------------------------------------------------
-
-def py_pMatChar(rhs):
-    print(rhs)
-    rhs[0][0]='A'
-    rhs = np.append(rhs, 'X') # uint64 でこれを実装すると，なぜか float 型になる．(おそらく numpy の仕様．dtype まで指定しないといけない．)
-#    rhs = np.hstack((rhs,88.0)) # 追加を行ったオブジェクトは別のオブジェクトとして扱われるようで，書き戻しは不可．
-    print(rhs)
 
 def py_pMatBool(rhs):
     print(rhs)
@@ -121,13 +160,31 @@ def py_pMatBool(rhs):
     rhs = np.append(rhs, True)
 #    rhs = np.hstack((rhs,88.0)) # 追加を行ったオブジェクトは別のオブジェクトとして扱われるようで，書き戻しは不可．
     print(rhs)
+def py_pMatBool_pCnvBuiltin(pRhs):
+    pRhs[0][0]=[True, True, True]
+    print(pRhs)
 
+def py_pMatChar(rhs):
+    print(rhs)
+    rhs[0][0]='A'
+    rhs = np.append(rhs, 'X') # uint64 でこれを実装すると，なぜか float 型になる．(おそらく numpy の仕様．dtype まで指定しないといけない．)
+#    rhs = np.hstack((rhs,88.0)) # 追加を行ったオブジェクトは別のオブジェクトとして扱われるようで，書き戻しは不可．
+    print(rhs)
+def py_pMatChar_pCnvBuiltin(pRhs):
+    print(pRhs)
+    pRhs[0][0]=['X', 'Y', 'Z']
+    print(pRhs)
+    
 def py_pMatStr(rhs):
     print(rhs)
     rhs[0][0]="reWrite"
     print(rhs)
-
-def py_matX       (rhs): print(rhs); return rhs
+def py_pMatStr_pCnvBuiltin(pRhs):
+    print(pRhs)
+    pRhs[0][0][1]="reWrite"
+    print(pRhs)
+    
+def py_matX       (rhs): print(rhs); return (rhs, rhs)
 def py_pMatX_const(rhs): print(rhs);
 def py_pMatX      (rhs):
     print(rhs)
@@ -135,6 +192,8 @@ def py_pMatX      (rhs):
     rhs = np.append(rhs, 88) # uint64 でこれを実装すると，なぜか float 型になる．(おそらく numpy の仕様．dtype まで指定しないといけない．)
 #    rhs = np.hstack((rhs,88.0)) # 追加を行ったオブジェクトは別のオブジェクトとして扱われるようで，書き戻しは不可．
     print(rhs)
+def py_pMatX_pCnvBuiltin(pRhs):
+    print(pRhs)
 
 #--------------------------------------------------------------------------------------------------------
 
@@ -182,36 +241,25 @@ def ret_mat_r(mat):
     print(mat)
     return mat
 
+#--------------------------------------------------------------------------------------------------------
 
 from PIL import Image
 from io import BytesIO
-def path2mat_r_img(path):
-    img = np.array(Image.open(path).convert("L"))
-    return img
-    #print(img.shape[0])
-    #print(img.shape[1])
-    #print(img.shape[2])
-    #img_mid_v = np.max(img, axis = 2)/2 +np.min(img, axis = 2)/2 # https://qiita.com/secang0/items/1229212a37d8c9922901 # 中間値法による白黒化
-    #return img_mid_v
+def imgPath2mat_rRGB(path):
+    imgRaw =Image.open(path)
+    imgRGB = imgRaw.split()
+    imgR = np.array(imgRGB[0], dtype='uint8')
+    imgG = np.array(imgRGB[1], dtype='uint8')
+    imgB = np.array(imgRGB[2], dtype='uint8')
+    return (imgR, imgG, imgB)
+def mat_rRGB2img(path, imgR, imgG, imgB):
+    imgCombined = np.dstack((np.dstack((imgR, imgG)), imgB))
+    imgPIL      = Image.fromarray(imgCombined)
+    imgPIL.save(path)
 
 import matplotlib as mpl        # "QXcbConnection: Could not connect to display" への対策
 mpl.use('Agg')                  # "QXcbConnection: Could not connect to display" への対策
 import matplotlib.pyplot as plt # "QXcbConnection: Could not connect to display" への対策
-def mat_r_img2png(writePath, mat_r_img):
-    plt.clf()#メモリのクリア
-    ax = plt.imshow(mat_r_img, cmap='gray')
-    
-    SetFontSize = 11
-    #plt.title("Title",fontsize=SetFontSize)
-    plt.xlabel("pixel", fontsize=SetFontSize)
-    plt.ylabel("pixel",fontsize=SetFontSize)
-    
-    cb = plt.colorbar(ax)
-    plt.savefig(writePath, bbox_inches="tight")
-    
-    return 0
-
-
 import matplotlib.ticker as tick
 def vec2graph(writeName, vecX, vecY):
     plt.clf()
@@ -237,3 +285,4 @@ def vec2graph(writeName, vecX, vecY):
     plt.savefig(writeName, bbox_inches="tight") # , dpi=100
     return 0
 
+#--------------------------------------------------------------------------------------------------------
