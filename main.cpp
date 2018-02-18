@@ -1461,18 +1461,6 @@ void TEST_c2py(){
 	}
 	//*/
 	
-	/*
-	{
-		sstd::c2py<sstd::mat_r<double>> path2mat_r_img("./tmpDir", "test_functions", "path2mat_r_img", "mat_r<double>, const char*");
-		sstd::mat_r<double> img = path2mat_r_img("./test.png");
-		sstd::printn(img.rows());
-		sstd::printn(img.cols());
-	
-		sstd::c2py<int> mat_r_img2png("./tmpDir", "test_functions", "mat_r_img2png", "int, const char*, mat_r<double>");
-		mat_r_img2png("./save.png", img);
-	}
-	//*/
-
 	//*
 	{
 		sstd::c2py<void> imgPath2mat_rRGB("./tmpDir", "test_functions", "imgPath2mat_rRGB", "void, ret mat_r<uint8>*, ret mat_r<uint8>*, ret mat_r<uint8>*, const char*");

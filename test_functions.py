@@ -248,14 +248,16 @@ from io import BytesIO
 def imgPath2mat_rRGB(path):
     imgRaw =Image.open(path)
     imgRGB = imgRaw.split()
-    imgR = np.array(imgRGB[0], dtype='uint8')
-    imgG = np.array(imgRGB[1], dtype='uint8')
-    imgB = np.array(imgRGB[2], dtype='uint8')
+    imgR = imgRGB[0]
+    imgG = imgRGB[1]
+    imgB = imgRGB[2]
     return (imgR, imgG, imgB)
 def mat_rRGB2img(path, imgR, imgG, imgB):
     imgCombined = np.dstack((np.dstack((imgR, imgG)), imgB))
     imgPIL      = Image.fromarray(imgCombined)
     imgPIL.save(path)
+
+#--------------------------------------------------------------------------------------------------------
 
 import matplotlib as mpl        # "QXcbConnection: Could not connect to display" への対策
 mpl.use('Agg')                  # "QXcbConnection: Could not connect to display" への対策

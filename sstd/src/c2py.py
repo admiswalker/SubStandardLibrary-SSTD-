@@ -219,7 +219,7 @@ def cnv2correctDtype(Type, ret):
 
 #--------------------------------------------------------------------------------------------------------
 
-def cnv_builtin2numpy(Type, val):
+def cnv2numpy(Type, val):
     if   Type.name==  "bool": return np.array(val, dtype =   "bool")
     elif Type.name==  "char": return val # there is nothing to do
     elif Type.name== "uchar": return np.array(val, dtype =  "uint8")
@@ -505,9 +505,7 @@ def main():
 
         # If it is not correct return value (valList[0]), below lines will translate to a correct type.
         if IsNumpy(valList[i]): valList[i]=cnv2correctDtype(typeList[i], valList[i])
-
-        # transition of builtin type to numpy
-        if IsBuiltin(valList[i]): valList[i]=cnv_builtin2numpy(typeList[i], valList[i])
+        else:                   valList[i]=cnv2numpy       (typeList[i], valList[i]) # translating to numpy type
         
         argListBin_lines[i]=generate_argListBin_line(typeList[i], valList[i], argListBin_lines[i])
     writeBuf=""
