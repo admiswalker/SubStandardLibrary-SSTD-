@@ -14,7 +14,7 @@ def location():
 #--------------------------------------------------------------------------------------------------------
 
 def readSplitLine(readPath):
-    fp = fopen(readPath, "rb")
+    fp = fopen(readPath, "r")
     lines = (fp.read()).split('\n')
     fp.close()
     return lines
@@ -86,7 +86,7 @@ def read_float  (readPath): return read_double(readPath).astype(np.float32)
 def read_double (readPath):         fp=fopen(readPath, "rb"); ret= np.fromfile(fp, np.dtype('float64'), 1        ); fp.close(); return ret
 
 def read_pBool  (readPath, arrLen): fp=fopen(readPath, "rb"); ret= np.fromfile(fp, np.dtype(   'bool'), arrLen[0]); fp.close(); return ret
-def read_pChar  (readPath, arrLen): fp=fopen(readPath, "rb"); ret= fp.read(arrLen[0]);                              fp.close(); return ret
+def read_pChar  (readPath, arrLen): fp=fopen(readPath, "r" ); ret= fp.read(arrLen[0]);                              fp.close(); return ret
 def read_pInt8  (readPath, arrLen): fp=fopen(readPath, "rb"); ret= np.fromfile(fp, np.dtype(   'int8'), arrLen[0]); fp.close(); return ret
 def read_pInt16 (readPath, arrLen): fp=fopen(readPath, "rb"); ret= np.fromfile(fp, np.dtype(  'int16'), arrLen[0]); fp.close(); return ret
 def read_pInt32 (readPath, arrLen): fp=fopen(readPath, "rb"); ret= np.fromfile(fp, np.dtype(  'int32'), arrLen[0]); fp.close(); return ret
@@ -99,14 +99,14 @@ def read_pFloat (readPath, arrLen): fp=fopen(readPath, "rb"); ret= np.fromfile(f
 def read_pDouble(readPath, arrLen): fp=fopen(readPath, "rb"); ret= np.fromfile(fp, np.dtype('float64'), arrLen[0]); fp.close(); return ret
 
 def read_vecChar(readPath):
-    fp=fopen(readPath, "rb");
+    fp=fopen(readPath, "r");
     charBuf=fp.read();
     vecChar=['' for i in range(len(charBuf))]
     for i in range(len(charBuf)):
         vecChar[i] = charBuf[i]
     return vecChar
 def read_vecStr(readPath, arrLen):
-    fp=fopen(readPath, "rb");
+    fp=fopen(readPath, "r");
     strBuf=fp.read();
     s=0
     vecStr=[[] for v in range(len(arrLen))]
@@ -121,7 +121,7 @@ def read_vec(readPath, arrLen, vecType):
     return ret
 
 def read_matChar(readPath, arrLen):
-    fp=fopen(readPath, "rb");
+    fp=fopen(readPath, "r");
     charBuf=fp.read();
     matChar=[[' ' for i in range(arrLen[1])] for i in range(arrLen[0])]
     for q in range(arrLen[1]):
@@ -129,7 +129,7 @@ def read_matChar(readPath, arrLen):
             matChar[p][q] = charBuf[p+arrLen[0]*q]
     return matChar
 def read_matStr(readPath, arrLen):
-    fp=fopen(readPath, "rb");
+    fp=fopen(readPath, "r");
     strBuf=fp.read();
     matStr=[[[] for i in range(arrLen[1])] for i in range(arrLen[0])]
     s=0
@@ -146,7 +146,7 @@ def read_mat(readPath, arrLen, matType):
     return ret.flatten('F').reshape(arrLen[0], arrLen[1]) # numpy は行優先のため，列優先の行列を受け取った場合は，このように転置が発生する．
 
 def read_mat_rChar(readPath, arrLen):
-    fp=fopen(readPath, "rb")
+    fp=fopen(readPath, "r")
     charBuf=fp.read()
     mat_rChar=[[' ' for i in range(arrLen[1])] for i in range(arrLen[0])]
     for p in range(arrLen[0]):
@@ -154,7 +154,7 @@ def read_mat_rChar(readPath, arrLen):
             mat_rChar[p][q] = charBuf[arrLen[1]*p+q]
     return mat_rChar
 def read_mat_rStr(readPath, arrLen):
-    fp=fopen(readPath, "rb")
+    fp=fopen(readPath, "r")
     strBuf=fp.read()
     mat_rStr=[[[] for i in range(arrLen[1])] for i in range(arrLen[0])]
     s=0
@@ -469,13 +469,14 @@ def main():
         if typeList[i].pointer_sidePy: valList[i]=[valList[i]]
         
     # import running function
-    exec ("sys.path.append(\"%s\")" % os.path.dirname(importFile))
-    exec ("from %s import *" % os.path.basename(importFile))
+    exec("sys.path.append(\"%s\")" % os.path.dirname(importFile))
+    exec("import %s" % importFile)
+    funcName=importFile+'.'+funcName
     
     # run function
     valNumList=[int(i) for i in range(len(valList))]
     n=int(0)
-    for i in reversed(xrange(len(ignoreValList))):
+    for i in reversed(range(len(ignoreValList))):
         valNumList.pop(ignoreValList[i])
     run_pyFunc=""
     if retNum>=1:
@@ -489,7 +490,7 @@ def main():
         for i in range(len(valNumList)-retNum-1):
             run_pyFunc += (",valList[%d]" % valNumList[n]); n+=1
     run_pyFunc += ")"
-    exec run_pyFunc
+    exec(run_pyFunc)
     
     # Inverse transformation of a pseudo pointer type
     for i in range(1,len(valList)):
@@ -511,7 +512,7 @@ def main():
     writeBuf=""
     if len(argListBin_lines)!=0:             writeBuf+=     argListBin_lines[0]
     for i in range(1,len(argListBin_lines)): writeBuf+="\n"+argListBin_lines[i]
-    fp=fopen(basePath + "/argList.bin", "wb")
+    fp=fopen(basePath + "/argList.bin", "w")
     fp.write(writeBuf)
     fp.close()
     
@@ -524,7 +525,9 @@ def main():
         # conversion of numpy type
         valList[i]=cnv2writeType(typeList[i], valList[i])
 
-        fp = fopen(basePath + ("/arg%04u.bin" % i), "wb")
+        fp
+        if isinstance(valList[i], str): fp = fopen(basePath + ("/arg%04u.bin" % i), "w" )
+        else:                           fp = fopen(basePath + ("/arg%04u.bin" % i), "wb")
         fp.write(valList[i])
         fp.close()
 

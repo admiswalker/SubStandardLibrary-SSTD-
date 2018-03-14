@@ -1461,7 +1461,7 @@ void TEST_c2py(){
 	}
 	//*/
 	
-	//*
+	/*
 	{
 		sstd::c2py<void> imgPath2mat_rRGB("./tmpDir", "test_functions", "imgPath2mat_rRGB", "void, ret mat_r<uint8>*, ret mat_r<uint8>*, ret mat_r<uint8>*, const char*");
 		sstd::mat_r<uint8> imgR, imgG, imgB;

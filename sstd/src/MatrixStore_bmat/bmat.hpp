@@ -24,7 +24,7 @@ namespace sstd{
 	void               eye(class sstd::bmat& bMat);
 	void              ones(class sstd::bmat& bMat);
 	void             zeros(class sstd::bmat& bMat);
-	class sstd::bmat   eye(const uint& row, const uint& col);
+	class sstd::bmat   eye(const uint& row, const uint& col); // このあたり，戻り値で関数はオーバーロードできないので，他の型についても実装すると，衝突する危険がある．(書き直し．
 	class sstd::bmat  ones(const uint& row, const uint& col);
 	class sstd::bmat zeros(const uint& row, const uint& col);
 	class sstd::bmat   eye(const uint& size);
@@ -46,7 +46,7 @@ namespace sstd{
 
 	class sstd::bmat     and_(class sstd::bmat& lhs, class sstd::bmat& rhs);	// lhs & rhs (AND)	// _ を付加しないと，何かと名前が衝突した．
 	class sstd::bmat      or_(class sstd::bmat& lhs, class sstd::bmat& rhs);	// lhs | rhs (OR)	// _ を付加しないと，何かと名前が衝突した．
-	class sstd::bmat     not_(class sstd::bmat& rhs);								// ~rhs (NOT)		// _ を付加しないと，何かと名前が衝突した．
+	class sstd::bmat     not_(class sstd::bmat& rhs);							// ~rhs (NOT)		// _ を付加しないと，何かと名前が衝突した．
 	class sstd::bmat     xor_(class sstd::bmat& lhs, class sstd::bmat& rhs);	// lhs + rhs (XOR)	// _ を付加しないと，何かと名前が衝突した．
 	void           and_myself(class sstd::bmat& lhs, class sstd::bmat& rhs);	// lhs & rhs (AND)
 	void            or_myself(class sstd::bmat& lhs, class sstd::bmat& rhs);	// lhs | rhs (OR)

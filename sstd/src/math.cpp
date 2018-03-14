@@ -36,7 +36,7 @@ float sstd::sum(const std::vector<float>& rhs, uint a, uint b){
 }
 float sstd::sum_abs(const std::vector<float>& rhs){
 	float lhs=0;
-	KAHAN_SUM_i(float, lhs, abs(rhs[i]), 0, rhs.size());
+	KAHAN_SUM_i(float, lhs, std::abs(rhs[i]), 0, rhs.size());
 	return lhs;
 }
 float sstd::ave(const std::vector<float>& rhs){
@@ -62,8 +62,8 @@ float sstd::max(const std::vector<float>& rhs){
 }
 float sstd::max_abs(const std::vector<float>& rhs){
 	if(rhs.size()==0){ return 0.0; }
-	float lhs=rhs[0], buf=abs(rhs[0]);
-	for(uint i=1; i<rhs.size(); i++){ if(buf<abs(rhs[i])){ lhs=rhs[i]; buf=abs(rhs[i]); } }
+	float lhs=rhs[0], buf=std::abs(rhs[0]);
+	for(uint i=1; i<rhs.size(); i++){ if(buf<std::abs(rhs[i])){ lhs=rhs[i]; buf=std::abs(rhs[i]); } }
 	return lhs;
 }
 float sstd::min(const std::vector<float>& rhs){
@@ -74,8 +74,8 @@ float sstd::min(const std::vector<float>& rhs){
 }
 float sstd::min_abs(const std::vector<float>& rhs){
 	if(rhs.size()==0){ return 0.0; }
-	float lhs=rhs[0], buf=abs(rhs[0]);
-	for(uint i=1; i<rhs.size(); i++){ if(buf>abs(rhs[i])){ lhs=rhs[i]; buf=abs(rhs[i]); } }
+	float lhs=rhs[0], buf=std::abs(rhs[0]);
+	for(uint i=1; i<rhs.size(); i++){ if(buf>std::abs(rhs[i])){ lhs=rhs[i]; buf=std::abs(rhs[i]); } }
 	return lhs;
 }
 // 不偏分散/標本分散 (variance): u^2 = (1/(n-1))*Σ(x_i-μ)^2
@@ -117,7 +117,7 @@ double sstd::sum(const std::vector<double>& rhs, uint a, uint b){
 }
 double sstd::sum_abs(const std::vector<double>& rhs){
 	double lhs=0;
-	KAHAN_SUM_i(double, lhs, abs(rhs[i]), 0, rhs.size());
+	KAHAN_SUM_i(double, lhs, std::abs(rhs[i]), 0, rhs.size());
 	return lhs;
 }
 double sstd::ave(const std::vector<double>& rhs){
@@ -143,8 +143,8 @@ double sstd::max(const std::vector<double>& rhs){
 }
 double sstd::max_abs(const std::vector<double>& rhs){
 	if(rhs.size()==0){ return 0.0; }
-	double lhs=rhs[0], buf=abs(rhs[0]);
-	for(uint i=1; i<rhs.size(); i++){ if(buf<abs(rhs[i])){ lhs=rhs[i]; buf=abs(rhs[i]); } }
+	double lhs=rhs[0], buf=std::abs(rhs[0]);
+	for(uint i=1; i<rhs.size(); i++){ if(buf<std::abs(rhs[i])){ lhs=rhs[i]; buf=std::abs(rhs[i]); } }
 	return lhs;
 }
 double sstd::min(const std::vector<double>& rhs){
@@ -155,8 +155,8 @@ double sstd::min(const std::vector<double>& rhs){
 }
 double sstd::min_abs(const std::vector<double>& rhs){
 	if(rhs.size()==0){ return 0.0; }
-	double lhs=rhs[0], buf=abs(rhs[0]);
-	for(uint i=1; i<rhs.size(); i++){ if(buf>abs(rhs[i])){ lhs=rhs[i]; buf=abs(rhs[i]); } }
+	double lhs=rhs[0], buf=std::abs(rhs[0]);
+	for(uint i=1; i<rhs.size(); i++){ if(buf>std::abs(rhs[i])){ lhs=rhs[i]; buf=std::abs(rhs[i]); } }
 	return lhs;
 }
 // 不偏分散/標本分散 (variance): u^2 = (1/(n-1))*Σ(x_i-μ)^2
