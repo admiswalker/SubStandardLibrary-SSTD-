@@ -11,9 +11,9 @@
 
 namespace sstd{
 	template <typename T> class mat_r;
-	template <typename T> void copy(class sstd::mat_r<T>& lhs, class sstd::mat_r<T>& rhs);
-	template <typename T> void move(class sstd::mat_r<T>& lhs, class sstd::mat_r<T>& rhs);
-	template <typename T> void swap(class sstd::mat_r<T>& lhs, class sstd::mat_r<T>& rhs);
+	template <typename T> void copy(class sstd::mat_r<T>& lhs, const class sstd::mat_r<T>& rhs);
+	template <typename T> void move(class sstd::mat_r<T>& lhs,       class sstd::mat_r<T>& rhs);
+	template <typename T> void swap(class sstd::mat_r<T>& lhs,       class sstd::mat_r<T>& rhs);
 
 	template <typename T> void zeros(class sstd::mat_r<T>& Mat);
 	template <typename T> class sstd::mat_r<T> Tr(class sstd::mat_r<T>& rhs);		// lhs = Transpose(rhs)
@@ -87,8 +87,8 @@ public:
 			}
 		}
 	}
-	inline mat_r(class mat_r&  rhs){ rowNum=0; colNum=0; length=0; MatX=0; sstd::copy<T>(*this, rhs); }	// called by "sstd::tmat_r buf1(N, N); sstd::tmat_r buf2(buf1);"
-	inline mat_r(class mat_r&& rhs){ rowNum=0; colNum=0; length=0; MatX=0; sstd::move<T>(*this, rhs); }	// called by "return std::move(rhs);" or "std::swap(buf1, buf2)".
+	inline mat_r(const class mat_r&  rhs){ rowNum=0; colNum=0; length=0; MatX=0; sstd::copy<T>(*this, rhs); }	// called by "sstd::tmat_r buf1(N, N); sstd::tmat_r buf2(buf1);"
+	inline mat_r(      class mat_r&& rhs){ rowNum=0; colNum=0; length=0; MatX=0; sstd::move<T>(*this, rhs); }	// called by "return std::move(rhs);" or "std::swap(buf1, buf2)".
 	// std::move(lhs, rhs): "move to uninitalized object" will be called.
 	// std::swap(lhs, rhs): "move to uninitalized object" -> "copy to lhs or rhs" -> "copy to lhs or rhs" will be called.
 	inline mat_r(const uint& row, const uint& col){
@@ -111,7 +111,7 @@ public:
 	inline uint&  cols_RW(){ return colNum; }
 	inline uint&  len_RW (){ return length; }
 
-	class mat_r& operator=(const class mat_r& rhs){ sstd::copy<T>(*this, (class mat_r&)rhs); return *this; }	// called by "lhs = tmat_r::tmat_r(3, 3);".
+	class mat_r& operator=(const class mat_r& rhs){ sstd::copy<T>(*this, rhs); return *this; }	// called by "lhs = tmat_r::tmat_r(3, 3);".
 
 	T& operator[](const uint& q)       { return MatX[      q]; }
 	T& operator[](const  int& q)       { return MatX[(uint)q]; }
@@ -148,7 +148,7 @@ inline void sstd::zeros(class sstd::mat_r<T>& Mat){
 //--------------------------------------------------------------------------------------------------------
 
 template <typename T>
-inline void copy_withoutAllocate(class sstd::mat_r<T>& lhs, class sstd::mat_r<T>& rhs){
+inline void copy_withoutAllocate(class sstd::mat_r<T>& lhs, const class sstd::mat_r<T>& rhs){
 	for(uint p=0; p<rhs.rows(); p++){
 		for(uint q=0; q<rhs.cols(); q++){
 			lhs(p, q) = rhs(p, q);
@@ -156,7 +156,7 @@ inline void copy_withoutAllocate(class sstd::mat_r<T>& lhs, class sstd::mat_r<T>
 	}
 }
 template <typename T>
-inline void sstd::copy(class sstd::mat_r<T>& lhs, class sstd::mat_r<T>& rhs){
+inline void sstd::copy(class sstd::mat_r<T>& lhs, const class sstd::mat_r<T>& rhs){
 
 	if(lhs.len() != rhs.len()){
 		free(lhs.pMat_RW()); lhs.pMat_RW() = 0;
