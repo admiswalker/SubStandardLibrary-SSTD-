@@ -470,8 +470,9 @@ def main():
         
     # import running function
     exec("sys.path.append(\"%s\")" % os.path.dirname(importFile))
-    exec("import %s" % importFile)
-    funcName=importFile+'.'+funcName
+    importFile_baseName = os.path.basename(importFile)
+    exec("import %s" % importFile_baseName)
+    funcName=importFile_baseName+'.'+funcName
     
     # run function
     valNumList=[int(i) for i in range(len(valList))]
