@@ -6,13 +6,13 @@
 
 
 namespace sstd{
-	std::string base64_encode(const char* str, size_t strLen);
-	std::string base64_encode(const char* str);
-	std::string base64_encode(std::string& str);
+	std::string base64_encode(const uchar* str, size_t strLen);
+	std::string base64_encode(const uchar* str);
+	std::string base64_encode(const std::string& str);
 
-	std::string base64_decode(const char* str, size_t strLen); // when it was error, return 0 size std::string.
-	std::string base64_decode(const char* str);                      // when it was error, return 0 size std::string.
-	std::string base64_decode(std::string& str);                     // when it was error, return 0 size std::string.
+	std::string base64_decode(const uchar* str, size_t strLen); // when it was error, return 0 size std::string.
+	std::string base64_decode(const uchar* str);                      // when it was error, return 0 size std::string.
+	std::string base64_decode(const std::string& str);                     // when it was error, return 0 size std::string.
 	void print_base64_decode_table(); // for developers
 
 	extern const char bin2str_table[256][3];

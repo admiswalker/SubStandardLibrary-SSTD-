@@ -4,27 +4,16 @@
 
 //--------------------------------------------------------------------------------------------------------
 
-// file exist
-bool sstd::fexist(const char* pCheckFile){
-	sstd::file fp;
-	return fp.fopen(pCheckFile, "rb");
-}
-bool sstd::fexist(const std::string&  checkFile){
-	return fexist(checkFile.c_str());
-}
-
-//--------------------------------------------------------------------------------------------------------
-
 std::string sstd::readAll(const char* pReadFile){
 
 	sstd::file fp;
-	if(!fp.fopen(pReadFile, "rb")){ sstd::pdbg_always("ERROR: fopen was failed.\n"); }
+	if(!fp.fopen(pReadFile, "rb")){ sstd::pdbg("ERROR: fopen was failed.\n"); }
 
 	size_t size = fp.fsize(); // ファイルサイズを取得
 
 	std::string str(size+1, 0);	//0で初期化	//終端コード分を余分に確保
 
-	if(fp.fread(&str[0], sizeof(char), size)!=size){ sstd::pdbg_always("ERROR: fread was failed.\n"); }
+	if(fp.fread((uchar*)&str[0], sizeof(char), size)!=size){ sstd::pdbg("ERROR: fread was failed.\n"); }
 
 	return str;
 }
@@ -54,7 +43,7 @@ void ignoreBOM(uchar* str, uint& r){
 std::string sstd::readAll_withoutBOM(const char* pReadFile){
 
 	sstd::file fp;
-	if(!fp.fopen(pReadFile, "rb")){ sstd::pdbg_always("ERROR: fopen was failed.\n"); }
+	if(!fp.fopen(pReadFile, "rb")){ sstd::pdbg("ERROR: fopen was failed.\n"); }
 
 	// check BOM (Byte Order Mark)
 	uint BOM_len=0;
@@ -67,7 +56,7 @@ std::string sstd::readAll_withoutBOM(const char* pReadFile){
 
 	std::string str(size+1, 0);		//0で初期化	//終端コード分を余分に確保
 
-	if(fp.fread(&str[0], sizeof(char), size)!=size){ sstd::pdbg_always("ERROR: fread was failed.\n"); }
+	if(fp.fread(&str[0], sizeof(char), size)!=size){ sstd::pdbg("ERROR: fread was failed.\n"); }
 
 	return str;
 }
@@ -114,28 +103,32 @@ std::vector<std::string> asASpcase(const char* str){
 	if(buf.size()!=0){ splitList.push_back(buf); }
 	return splitList;
 }
+std::vector<std::string> asAX(const char* str, const char X){
+	std::vector<std::string> splitList;
+	
+	std::string buf;
+	uint i=0;
+	while(str[i]!=0){ if(' '==str[i]){i++;}else{break;} } // skip space
+	while(str[i]!=0){
+		if(X==str[i]){
+			sstd::removeTailSpace(buf); splitList.push_back(buf); buf.clear();
+			i++;
+			while(str[i]!=0){ if(' '==str[i]){i++;}else{break;} } // skip space
+		}else{
+			buf+=str[i];
+			i++;
+		}
+	}
+	if(buf.size()!=0){ sstd::removeTailSpace(buf); splitList.push_back(buf); }
+	return splitList;
+}
+
 
 // この関数，' ', ',', に対してスプリットした後，前後の余分な空白を削除するように作り直して，
 // sstd に追加しておくと，後が楽．
 std::vector<std::string> sstd::split(const char* str, const char X){
 	if(X==' '){ return asASpcase(str);
-	}else{
-		std::vector<std::string> splitList;
-
-		std::string buf;
-		for(uint i=0; str[i]!=0; i++){
-			if(X==str[i]){ splitList.push_back(buf); buf.clear();
-			}    else    { buf+=str[i]; }
-		}
-		splitList.push_back(buf);
-	
-		return splitList;
-	}
-
-//	  X==',': -> ',' で分割したのち，前後の空白を削除する．
-//	  X==' ': -> 任意個の ' ' に対して分割を行う．(例: "ABC DEF" -> ["ABC", "DEF"], " ABC   D EF  " -> ["ABC", "D", "EF"])
-//	  
-//	  ように，関数を修正しておく．
+	}  else   { return asAX     (str, X); }
 }
 std::vector<std::string> sstd::split(const std::string& str, const char X){
 	return std::move(sstd::split(str.c_str(), X));

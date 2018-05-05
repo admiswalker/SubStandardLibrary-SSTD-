@@ -1,6 +1,8 @@
 ﻿#include "path.hpp"
 #include "typeDef.h"
 #include <string.h>
+#include "file.hpp"   // for fileExist
+#include <sys/stat.h> // for  dirExist
 
 
 std::string sstd::getPath(const char* pPath){
@@ -119,3 +121,29 @@ std::vector<std::string> sstd::parsePath_withBase(const char* pPath){
 
 	return ret;
 }
+
+//--------------------------------------------------------------------------------------------------------
+
+bool sstd::isFile(const char* pPath){
+	struct stat st;
+	if(stat(pPath, &st)!=0){ return false; /* file or directory is not found. */ }
+	return (st.st_mode&S_IFMT)==S_IFREG;
+}
+bool sstd::isDir (const char* pPath){
+	struct stat st;
+	if(stat(pPath, &st)!=0){ return false; /* file or directory is not found. */ }
+	return (st.st_mode&S_IFMT)==S_IFDIR;
+}
+bool sstd::fileExist(const char* pPath){ return sstd::isFile(pPath); }
+bool sstd::dirExist (const char* pPath){ return sstd::isDir (pPath); }
+bool sstd::pathExist(const char* pPath){
+	struct stat buf;
+	return stat(pPath, &buf)==0;
+}
+bool sstd::isFile   (const std::string& path){ return sstd::isFile   (path.c_str()); }
+bool sstd::isDir    (const std::string& path){ return sstd::isDir    (path.c_str()); }
+bool sstd::fileExist(const std::string& path){ return sstd::fileExist(path.c_str()); }
+bool sstd::dirExist (const std::string& path){ return sstd::dirExist (path.c_str()); }
+bool sstd::pathExist(const std::string& path){ return sstd::pathExist(path.c_str()); }
+
+//--------------------------------------------------------------------------------------------------------

@@ -12,6 +12,7 @@
 #include "./rm.hpp"
 #include "./time.hpp"
 #include "./strEdit.hpp"
+#include "./path.hpp"
 #include "./str2num.hpp"
 #include "./MatrixStore_mat/mat.hpp"
 #include "./MatrixStore_mat_rowMajor/mat_r.hpp"
@@ -194,11 +195,11 @@ inline void sstd_c2py::operator_brackets(T& ret, const char* writeDir_base, cons
 		// システムにインストールされている場合は，ヘッダと一緒にコピーされているはずなので，そこへ path を通す．
 		// 幾つか可能性のある path を file exist して確認する．
 	std::string path_to_c2py_py;
-	if      (sstd::fexist("./sstd/src/c2py.py"             )){ path_to_c2py_py = "./sstd/src/c2py.py";
-	}else if(sstd::fexist("./sstd/include/sstd/src/c2py.py")){ path_to_c2py_py = "./sstd/include/sstd/src/c2py.py";
-	}else if(sstd::fexist("/usr/include/sstd/src/c2py.py"  )){ path_to_c2py_py = "/usr/include/sstd/src/c2py.py";
-	}else if(sstd::fexist("./c2py.py"                      )){ path_to_c2py_py = "./c2py.py";
-	}                       else                             { sstd::pdbg_always("ERROR: \"c2py.py\" is not found."); return; }
+	if      (sstd::fileExist("./sstd/src/c2py.py"             )){ path_to_c2py_py = "./sstd/src/c2py.py";
+	}else if(sstd::fileExist("./sstd/include/sstd/src/c2py.py")){ path_to_c2py_py = "./sstd/include/sstd/src/c2py.py";
+	}else if(sstd::fileExist("/usr/include/sstd/src/c2py.py"  )){ path_to_c2py_py = "/usr/include/sstd/src/c2py.py";
+	}else if(sstd::fileExist("./c2py.py"                      )){ path_to_c2py_py = "./c2py.py";
+	}                        else                               { sstd::pdbg("ERROR: \"c2py.py\" is not found."); return; }
 	system(sstd::ssprintf("python -u %s %s %s %s", path_to_c2py_py.c_str(), writeDir_base, iFile, fName).c_str());
 	
 	// write back non const pointer args.
@@ -211,7 +212,7 @@ inline void sstd_c2py::operator_brackets(T& ret, const char* writeDir_base, cons
 		if(sstd_c2py::isRetVoid(fList)){ return; }
 		
 		sstd::file fp; std::string readDir=sstd::ssprintf("%s/arg0000.bin", writeDir_base);
-		if(!fp.fopen(readDir.c_str(), "rb")){ sstd::pdbg_always("ERROR: fopen was failed. (%s can't open.)\n", readDir.c_str()); return; }
+		if(!fp.fopen(readDir.c_str(), "rb")){ sstd::pdbg("ERROR: fopen was failed. (%s can't open.)\n", readDir.c_str()); return; }
 		if(!sstd_c2py::c2py_ret(ret, fp, lines[0])){ return; }
 	}
 	return;

@@ -11,6 +11,18 @@ namespace sstd{
 
 	std::vector<std::string> parsePath         (const char* pPath);
 	std::vector<std::string> parsePath_withBase(const char* pPath);
+	
+	bool isFile(const char*        pPath);
+	bool isFile(const std::string&  path);
+	bool isDir (const char*        pPath);
+	bool isDir (const std::string&  path);
+	
+	bool fileExist(const char*        pPath);
+	bool fileExist(const std::string&  path);
+	bool  dirExist(const char*        pPath);
+	bool  dirExist(const std::string&  path);
+	bool pathExist(const char*        pPath);
+	bool pathExist(const std::string&  path);
 }
 
 /*

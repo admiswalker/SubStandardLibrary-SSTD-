@@ -95,7 +95,7 @@ public:
 		colNum = col;
 		length = row * col;
 		MatX = new T[length];
-		if(MatX==0){ sstd::pdbg_always("ERROR: This pointer is not allocated.\n"); }
+		if(MatX==0){ sstd::pdbg("ERROR: This pointer is not allocated.\n"); }
 	}
 	inline ~mat(){ delete[] MatX; }
 

@@ -102,7 +102,7 @@ bool sstd::rm(const char* pPath){
 	for(int i=fileList.size()-1; i>=0; i--){
 		if      ('f'==fileList[i].type){ if(!     DeleteFile(fileList[i].path.c_str())){ retVal=false; } //ファイルの消去
 		}else if('d'==fileList[i].type){ if(!RemoveDirectory(fileList[i].path.c_str())){ retVal=false; } //ディレクトリの消去 // _rmdir(path_of_erase_file_or_directory);//を使ってもokのはず
-		}             else             { sstd::pdbg_always("ERROR: sstd::rm\n"); retVal=false;         }
+		}             else             { sstd::pdbg("ERROR: sstd::rm\n"); retVal=false;         }
 	}
 	return retVal;
 }
@@ -113,7 +113,7 @@ std::vector<std::string> fileInASingleDir(bool& result, std::vector<struct pathA
 
 	// ディレクトリを開く
 	DIR *pDir = opendir(pPath);
-	if(NULL==pDir){ sstd::pdbg_always("ERROR: opendir() was failed.\n"); result=false; return std::vector<std::string>(); } // there is no file or directory.
+	if(NULL==pDir){ sstd::pdbg("ERROR: opendir() was failed.\n"); result=false; return std::vector<std::string>(); } // there is no file or directory.
 
 	std::vector<std::string> dirList;
 	for(struct dirent* pEnt=readdir(pDir); pEnt!=0; pEnt=readdir(pDir)){
@@ -124,7 +124,7 @@ std::vector<std::string> fileInASingleDir(bool& result, std::vector<struct pathA
 		std::string pathName = pPath+std::string(R"(/)")+std::string(pEnt->d_name);
 //		printf("pathName: %s\n", pathName.c_str());
 		struct stat st;
-		if(stat(pathName.c_str(), &st)){ sstd::pdbg_always("ERROR: Failed to get stat \"%s\"\n", pathName.c_str()); result=false; break; }
+		if(stat(pathName.c_str(), &st)){ sstd::pdbg("ERROR: Failed to get stat \"%s\"\n", pathName.c_str()); result=false; break; }
 
 		if(S_ISDIR(st.st_mode)){
 			// directory found
@@ -197,7 +197,7 @@ bool sstd::rm(const char* pPath){
 	for(int i=fileList.size()-1; i>=0; i--){
 		if      ('f'==fileList[i].type){ if(unlink(fileList[i].path.c_str())!=0){ retVal=false; } //ファイルの消去
 		}else if('d'==fileList[i].type){ if( rmdir(fileList[i].path.c_str())!=0){ retVal=false; } //ディレクトリの消去 // remove なら，ファイルかディレクトリか自動で判別して，呼び出す関数をスイッチしてくれるらしい
-		}             else             { sstd::pdbg_always("ERROR: sstd::rm\n"); retVal=false;         }
+		}             else             { sstd::pdbg("ERROR: sstd::rm\n"); retVal=false;         }
 	}
 
 	return retVal;

@@ -3,10 +3,6 @@
 #include <vector>
 
 namespace sstd{
-	// file exist
-	bool fexist(const char*        pCheckFile);
-	bool fexist(const std::string&  checkFile);
-	
 	std::string              readAll(const char* pReadFile);
 	std::string              readAll_withoutBOM(const char* pReadFile);
 	std::vector<std::string> splitByLine(const std::string& str);

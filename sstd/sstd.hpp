@@ -275,7 +275,7 @@ namespace sstd{
 	extern bool isAlphabet_onlyUpper(char rhs);
 	extern bool isAlphabet_onlyLower(char rhs);
 
-	// #include "./src/pathNameExtractor.hpp" // <- 不足する関数を追加する必要がある．
+	// #include "./src/path.hpp" // <- 不足する関数を追加する必要がある．
 	// GetDirectoryName
 	extern std::string  getPath                     (const char* pPath);
 	extern        char* getFileName                 (const char* pPath);
@@ -289,8 +289,20 @@ namespace sstd{
 	// getParent
 	extern std::vector<std::string> parsePath         (const char* pPath);
 	extern std::vector<std::string> parsePath_withBase(const char* pPath);
-//	isDir
-//  fileExist
+
+	extern bool isFile(const char*        pPath);
+	extern bool isFile(const std::string&  path);
+	extern bool isDir (const char*        pPath);
+	extern bool isDir (const std::string&  path);
+	
+	extern bool fileExist(const char*        pPath);
+	extern bool fileExist(const std::string&  path);
+	extern bool  dirExist(const char*        pPath);
+	extern bool  dirExist(const std::string&  path);
+	extern bool pathExist(const char*        pPath);
+	extern bool pathExist(const std::string&  path);
+//   dirExist
+//	bool pathExist(const char* path){ return fileExist(path) || dirExist(path); }
 //	命名規則に関しては，"http://docs.python.jp/2/library/os.path.html" 等を参考にしてもよさそう．
 	
 
@@ -320,13 +332,13 @@ namespace sstd{
 	extern std::vector<std::vector<std::string>> parseCSV(const char* pReadFile);
 
 	// #include "./src/encode_decode.hpp"
-	extern std::string base64_encode(const char* str, size_t strLen);
-	extern std::string base64_encode(const char* str);
-	extern std::string base64_encode(std::string& str);
+	extern std::string base64_encode(const uchar* str, size_t strLen);
+	extern std::string base64_encode(const uchar* str);
+	extern std::string base64_encode(const std::string& str);
 
-	extern std::string base64_decode(const char* str, size_t strLen); // when it was error, return 0 size std::string.
-	extern std::string base64_decode(const char* str);                // when it was error, return 0 size std::string.
-	extern std::string base64_decode(std::string& str);               // when it was error, return 0 size std::string.
+	extern std::string base64_decode(const uchar* str, size_t strLen); // when it was error, return 0 size std::string.
+	extern std::string base64_decode(const uchar* str);                // when it was error, return 0 size std::string.
+	extern std::string base64_decode(const std::string& str);          // when it was error, return 0 size std::string.
 
 	extern const  char bin2str_table[256][3];
 	extern const uchar str2bin_table[256];

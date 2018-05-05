@@ -20,26 +20,17 @@ bool sstd::file::fopen(const char* fileName, const char* mode){
 }
 bool sstd::file::fopen(const std::string& fileName, const char* mode){ return sstd::file::fopen(fileName.c_str(), mode); }
 
-bool sstd_file_fclose(FILE*& stream){ if(fclose(stream)==0){return true;}else{return false;} }
-bool sstd::file::fclose(){ if(fp!=0){ return sstd_file_fclose(fp); }else{ return false; } }
-
-inline size_t sstd_file_fread(void*& ptr, const size_t& size, const size_t& nmemb, FILE*& fp){ return fread(ptr, size, nmemb, fp); }
-size_t sstd::file::fread(void* ptr, const size_t& size, const size_t& nmemb){ return sstd_file_fread(ptr, size, nmemb, this->fp); }
-
-inline size_t sstd_file_fwrite(const void*& ptr, const size_t& size, const size_t& nmemb, FILE*& fp){ return fwrite(ptr, size, nmemb, fp); }
-size_t sstd::file::fwrite(const void* ptr, const size_t& size, const size_t& nmemb){ return sstd_file_fwrite(ptr, size, nmemb, this->fp); }
-
-long sstd_file_fseek(FILE*& fp, const long& offset, const int& whence){ return fseek(fp, offset, whence); }
-int sstd::file::fseek(const long& offset, const int& whence){ return sstd_file_fseek(this->fp, offset, whence); }
-
-long sstd_file_ftell(FILE*& fp){ return ftell(fp); }
-long sstd::file::ftell(){ return sstd_file_ftell(this->fp); }
+bool sstd::file::fclose(){ if(fp!=0){ return ::fclose(fp)==0; }else{ return false; } }
+size_t sstd::file::fread(void* ptr, const size_t& size, const size_t& nmemb){ return ::fread(ptr, size, nmemb, this->fp); }
+size_t sstd::file::fwrite(const void* ptr, const size_t& size, const size_t& nmemb){ return ::fwrite(ptr, size, nmemb, this->fp); }
+int sstd::file::fseek(const long& offset, const int& whence){ return ::fseek(this->fp, offset, whence); }
+long sstd::file::ftell(){ return ::ftell(this->fp); }
 
 size_t sstd::file::fsize(){
-	size_t size_buf = sstd_file_ftell(fp); // ファイルポインタの位置を記録しておく．
-	sstd_file_fseek(fp, 0, SEEK_END);      // ファイルポインタをファイルの最後に移動させる．
-	size_t size = sstd_file_ftell(fp);     // ファイルサイズを取得する．        // fgetpos(fp, &size);
-	sstd_file_fseek(fp, 0, size_buf);      // ファイルポインタを元の位置に戻す．// fseek(fp, 0L, SEEK_SET); ファイルポインタを先頭に戻す．
+	size_t size_buf = ::ftell(fp); // ファイルポインタの位置を記録しておく．
+	::fseek(fp, 0, SEEK_END);      // ファイルポインタをファイルの最後に移動させる．
+	size_t size = ::ftell(fp);     // ファイルサイズを取得する．        // fgetpos(fp, &size);
+	::fseek(fp, 0, size_buf);      // ファイルポインタを元の位置に戻す．// fseek(fp, 0L, SEEK_SET); ファイルポインタを先頭に戻す．
 	return size;
 }
 

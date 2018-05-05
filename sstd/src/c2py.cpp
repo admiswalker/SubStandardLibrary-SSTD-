@@ -128,9 +128,9 @@ bool Is_type_tempT(const std::string& str, std::string& retType, std::string& re
 		if(str[i]=='>'){ flagR=true; break;
 		}      else    { retTempT+=str[i]; }
 	}
-	if(i!=str.size()-1 && flagL==true && flagR==true){ sstd::pdbg_always("ERROR: Invalid token. There is something after '>'.\n"); return false; }
-	if(flagL==true  && flagR==false){ sstd::pdbg_always("ERROR: Invalid token. '>' is not found while there is '<'.\n"); return false; }
-	if(flagL==false && flagR==true ){ sstd::pdbg_always("ERROR: Invalid token. '<' is not found while there is '>', or order of '<' and '>' is incorrect.\n"); return false; }
+	if(i!=str.size()-1 && flagL==true && flagR==true){ sstd::pdbg("ERROR: Invalid token. There is something after '>'.\n"); return false; }
+	if(flagL==true  && flagR==false){ sstd::pdbg("ERROR: Invalid token. '>' is not found while there is '<'.\n"); return false; }
+	if(flagL==false && flagR==true ){ sstd::pdbg("ERROR: Invalid token. '<' is not found while there is '>', or order of '<' and '>' is incorrect.\n"); return false; }
 	
 	return (retTempT.size()!=0);
 }
@@ -174,9 +174,9 @@ void split_verticalLine(struct sstd_c2py::typeSet& f, std::string& fS){
 			if      (verLineLR[1][i]=='*'){ f.pointer_sidePy    =true; // *: pointer type sybol on python side                      // on right than vertical line '|' as a symbol of split
 			}else if(verLineLR[1][i]=='~'){ f.cnv2builtIn_sidePy=true; // ~: conversion command to built in function on python side // on right than vertical line '|' as a symbol of split
 			}else if(verLineLR[1][i]==' '){ // pass
-			}             else            { sstd::pdbg_always("ERROR: \"%s\" has invalid token.\n", verLineLR[1].c_str()); }
+			}             else            { sstd::pdbg("ERROR: \"%s\" has invalid token.\n", verLineLR[1].c_str()); }
 		}
-	}else if(verLineLR.size()>=3){ sstd::pdbg_always("ERROR: \"%s\" has too many vartical line '|'.\n", fS.c_str());
+	}else if(verLineLR.size()>=3){ sstd::pdbg("ERROR: \"%s\" has too many vartical line '|'.\n", fS.c_str());
 	}else{}
 }
 bool setTandT_num(struct sstd_c2py::typeSet& out, std::string& in){
@@ -207,7 +207,7 @@ bool IsNext_Len(const std::vector<std::string>& fSList, const std::vector<struct
 	   !(fList[i].N_num==  vec_num&&fList[i].pointer)&&
 	   !(fList[i].N_num==  mat_num&&fList[i].pointer)&&
 	   !(fList[i].N_num==mat_r_num&&fList[i].pointer)){
-		sstd::pdbg_always("ERROR: \"%s\": Next of a pointer type (T*) must be len (len is a length of pointer and treated as a uint32), without \"char*\", \"str* (std::string*)\", \"vec<T>* (std::vector<T>*)\", \"mat<T>* (sstd::mat<T>*)\" and \"mat_r<T>* (sstd::mat_r<T>*)\".\n", fSList[i].c_str());
+		sstd::pdbg("ERROR: \"%s\": Next of a pointer type (T*) must be len (len is a length of pointer and treated as a uint32), without \"char*\", \"str* (std::string*)\", \"vec<T>* (std::vector<T>*)\", \"mat<T>* (sstd::mat<T>*)\" and \"mat_r<T>* (sstd::mat_r<T>*)\".\n", fSList[i].c_str());
 	}
 	// uint32 as a len type is better than uint64.
 	// Because in the case of "uint64 x; x = 123", "123" is a uint32 type while the user dosen't type "123ull" and 
@@ -217,12 +217,12 @@ bool IsNext_Len(const std::vector<std::string>& fSList, const std::vector<struct
 }
 bool IsPrevious_pointer(const std::vector<std::string>& fSList, const std::vector<struct sstd_c2py::typeSet>& fList, uint i){
 	if(i>0 && fList[i-1].pointer){ return true; }
-	sstd::pdbg_always("ERROR: \"%s\": Previous of a len type must be a type of pointer.\n", fSList[i].c_str());
+	sstd::pdbg("ERROR: \"%s\": Previous of a len type must be a type of pointer.\n", fSList[i].c_str());
 	return false;
 }
 bool IsPrevious_pChar(const std::vector<std::string>& fSList, const std::vector<struct sstd_c2py::typeSet>& fList, uint i){
 	if(i>0 && fList[i-1].N_num==char_num && fList[i-1].pointer==true){
-		sstd::pdbg_always("ERROR: \"%s\": Previous of a len type can't have \"char*\". Because \"char*\" check its length by \"strlen()\" and doesn't need to be send its length.\n", fSList[i].c_str());
+		sstd::pdbg("ERROR: \"%s\": Previous of a len type can't have \"char*\". Because \"char*\" check its length by \"strlen()\" and doesn't need to be send its length.\n", fSList[i].c_str());
 	}
 	return false;
 }
@@ -235,9 +235,9 @@ std::vector<struct sstd_c2py::typeSet> sstd_c2py::format_str2typeSet(const std::
 		split_ret         (fList[i], fS); //   "ret type*|*~" ->   "ret", "type*|*~"
 		split_verticalLine(fList[i], fS); //                              "type*|*~" -> "type*", "*~"           // vartical line is just a splitting symbol
 		split_pointer     (fList[i], fS); //                                            "type*" -> "type",  "*" // setting "true" or "false" of pointer
-		if      (strCmp(fS,  "void")){ fList[i].name=  "void"; fList[i].N_num=  void_num; if(fList[i].pointer){ sstd::pdbg_always("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
+		if      (strCmp(fS,  "void")){ fList[i].name=  "void"; fList[i].N_num=  void_num; if(fList[i].pointer){ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
 		}else if(strCmp(fS,  "bool")){ fList[i].name=  "bool"; fList[i].N_num=  bool_num;
-		}else if(strCmp(fS,  "char")){ fList[i].name=  "char"; fList[i].N_num=  char_num; if(fList[i].pointer&& IsNext_Len(fSList, fList, i)){ sstd::pdbg_always("ERROR: \"%s\": Previous of a len type can't have \"char*\". Because \"char*\" check its length by \"strlen()\" and doesn't need to be send its length.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
+		}else if(strCmp(fS,  "char")){ fList[i].name=  "char"; fList[i].N_num=  char_num; if(fList[i].pointer&& IsNext_Len(fSList, fList, i)){ sstd::pdbg("ERROR: \"%s\": Previous of a len type can't have \"char*\". Because \"char*\" check its length by \"strlen()\" and doesn't need to be send its length.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
 		}else if(strCmp(fS, "uchar")){ fList[i].name= "uchar"; fList[i].N_num= uchar_num;
 		}else if(strCmp(fS,   "int")){ fList[i].name= "int32"; fList[i].N_num= int32_num;
 		}else if(strCmp(fS,  "int8")){ fList[i].name=  "int8"; fList[i].N_num=  int8_num;
@@ -250,20 +250,20 @@ std::vector<struct sstd_c2py::typeSet> sstd_c2py::format_str2typeSet(const std::
 		}else if(strCmp(fS,"uint64")){ fList[i].name="uint64"; fList[i].N_num=uint64_num;
 		}else if(strCmp(fS, "float")){ fList[i].name= "float"; fList[i].N_num= float_num;
 		}else if(strCmp(fS,"double")){ fList[i].name="double"; fList[i].N_num=double_num;
-		}else if(strCmp(fS,   "len")){ fList[i].name=   "len"; fList[i].N_num=   len_num; if(!IsPrevious_pointer(fSList, fList, i)){ sstd::pdbg_always("ERROR: \"%s\": Previous of a len type must be a pointer type without \"char*\". Because \"char*\" check its length by \"strlen()\" and doesn't need to be send its length.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
+		}else if(strCmp(fS,   "len")){ fList[i].name=   "len"; fList[i].N_num=   len_num; if(!IsPrevious_pointer(fSList, fList, i)){ sstd::pdbg("ERROR: \"%s\": Previous of a len type must be a pointer type without \"char*\". Because \"char*\" check its length by \"strlen()\" and doesn't need to be send its length.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
 		}else if(strCmp(fS,"string")){ fList[i].name=   "str"; fList[i].N_num=   str_num;
 		}else if(strCmp(fS,   "str")){ fList[i].name=   "str"; fList[i].N_num=   str_num;
 		}else if(Is_type_tempT(fS, type, tempT)){
 			// Example: fS=="vec<double>"
 			//  - type =="vec"
 			//  - tempT=="double"
-			if      (strCmp(type,  "vec")){ fList[i].name="vec";   fList[i].N_num=vec_num;   if(!setTandT_num(fList[i], tempT)){ sstd::pdbg_always("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
-			}else if(strCmp(type,  "mat")){ fList[i].name="mat";   fList[i].N_num=mat_num;   if(!setTandT_num(fList[i], tempT)){ sstd::pdbg_always("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
-			}else if(strCmp(type,"mat_r")){ fList[i].name="mat_r"; fList[i].N_num=mat_r_num; if(!setTandT_num(fList[i], tempT)){ sstd::pdbg_always("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
-			}else{ sstd::pdbg_always("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
+			if      (strCmp(type,  "vec")){ fList[i].name="vec";   fList[i].N_num=vec_num;   if(!setTandT_num(fList[i], tempT)){ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
+			}else if(strCmp(type,  "mat")){ fList[i].name="mat";   fList[i].N_num=mat_num;   if(!setTandT_num(fList[i], tempT)){ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
+			}else if(strCmp(type,"mat_r")){ fList[i].name="mat_r"; fList[i].N_num=mat_r_num; if(!setTandT_num(fList[i], tempT)){ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
+			}else{ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
 		}else{
-			if(fSList[i].size()==0){ sstd::pdbg_always("ERROR: There is a empty token. (There might be invalid \",\".)\n");
-			}else{ sstd::pdbg_always("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); }
+			if(fSList[i].size()==0){ sstd::pdbg("ERROR: There is a empty token. (There might be invalid \",\".)\n");
+			}else{ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); }
 			return std::vector<struct sstd_c2py::typeSet>(0);
 		}
 	}
@@ -329,7 +329,7 @@ std::string sstd_c2py::format_typeSet2str(const std::vector<struct sstd_c2py::ty
 bool sstd_c2py::make_argList(const std::string& writeDir_base, std::string typeStr){
 	sstd::file fp;
 	std::string writeDir = sstd::ssprintf("%s/argList.bin", writeDir_base.c_str());
-	if(!fp.fopen(writeDir.c_str(), "wb")){ sstd::pdbg_always("ERROR: fopen was failed. (%s can't open.)\n", writeDir.c_str()); return false; }
+	if(!fp.fopen(writeDir.c_str(), "wb")){ sstd::pdbg("ERROR: fopen was failed. (%s can't open.)\n", writeDir.c_str()); return false; }
 	fp.fwrite(&typeStr[0], sizeof(char), typeStr.size());
 	return true;
 }
@@ -623,7 +623,7 @@ std::vector<void*> sstd_c2py::getArg_and_write2file(va_list& ap, const char* wri
 	std::vector<void*> pArgList(fList.size(), 0); // note noly pointer type
 	for(uint i=1; i<fList.size(); i++){ // begin 1 to avoid return value
 		if(fList[i].retTF){
-			if(!fList[i].pointer){ sstd::pdbg_always("ERROR: ret type must be a pointer type."); return std::vector<void*>(); }
+			if(!fList[i].pointer){ sstd::pdbg("ERROR: ret type must be a pointer type."); return std::vector<void*>(); }
 
 			pArgList[i]=va_arg(ap, void*);
 			fList[i].arrLen.clear();
@@ -637,7 +637,7 @@ std::vector<void*> sstd_c2py::getArg_and_write2file(va_list& ap, const char* wri
 		}
 		
 		sstd::file fp; std::string writeDir = sstd::ssprintf("%s/arg%04d.bin", writeDir_base, i);
-		if(!fp.fopen(writeDir.c_str(), "wb")){ sstd::pdbg_always("ERROR: fopen was failed. (%s can't open.)\n", writeDir.c_str()); return std::vector<void*>(); }
+		if(!fp.fopen(writeDir.c_str(), "wb")){ sstd::pdbg("ERROR: fopen was failed. (%s can't open.)\n", writeDir.c_str()); return std::vector<void*>(); }
 
 		// 条件分岐は少なくとも選択肢が連続した整数の場合は switch case を利用することにより，選択肢 5 つ以上でテーブルジャンプで最適化が行われ，定数時間で終了するはず．vec_num 内も <T> ごとに個別の番号を振る方がよい．
 		// 加えて，ポインタかどうかの判定も，全て #define で番号を振っておけば，より高速に処理できるはず．ただし，データファイルを 1 つにまとめて読み込みを高速化したり，パイプ等でプロセス間通信をした方が，オーバーヘッドは減る気がするので，後回し．
@@ -655,7 +655,7 @@ std::vector<void*> sstd_c2py::getArg_and_write2file(va_list& ap, const char* wri
 		}else if(uint64_num==fList[i].N_num){ builtIn_write2file(uint64, uint64);
 		}else if( float_num==fList[i].N_num){ builtIn_write2file(uint64, uint64); // ‘float’ is promoted to ‘double’ when passed through ‘...’// va_arg() ではなく，opertor() で読み込まれる時点で，既に double 型として扱われているので，uint32 で読み込んでも，壊れたデータしか読み込めない．
 		}else if(double_num==fList[i].N_num){ builtIn_write2file(double, double);
-		}else if(   len_num==fList[i].N_num){ if((int)i-1<0 || !fList[i-1].pointer){ sstd::pdbg_always("ERROR: \"%s\": Previous of len (len is a length of pointer and treated as a uint32) must be pointer type (T*), without \"char*\", \"str* (std::string*)\", \"vec<T>* (std::vector<T>*)\", \"mat<T>* (sstd::mat<T>*)\" and \"mat_r<T>* (sstd::mat_r<T>*)\".\n", fSList[i].c_str()); }
+		}else if(   len_num==fList[i].N_num){ if((int)i-1<0 || !fList[i-1].pointer){ sstd::pdbg("ERROR: \"%s\": Previous of len (len is a length of pointer and treated as a uint32) must be pointer type (T*), without \"char*\", \"str* (std::string*)\", \"vec<T>* (std::vector<T>*)\", \"mat<T>* (sstd::mat<T>*)\" and \"mat_r<T>* (sstd::mat_r<T>*)\".\n", fSList[i].c_str()); }
 		}else if(   str_num==fList[i].N_num){ builtIn_write2file_pStr();
 		}else if(   vec_num==fList[i].N_num){ 
 			if      (  bool_num==fList[i].T_num){ vec_write2file_bool();
@@ -672,7 +672,7 @@ std::vector<void*> sstd_c2py::getArg_and_write2file(va_list& ap, const char* wri
 			}else if( float_num==fList[i].T_num){ vec_write2file( float);
 			}else if(double_num==fList[i].T_num){ vec_write2file(double);
 			}else if(   str_num==fList[i].T_num){ vec_write2file_str();
-			}else{ sstd::pdbg_always("ERROR: \"%s\" is an unsupported type of vec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }
+			}else{ sstd::pdbg("ERROR: \"%s\" is an unsupported type of vec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }
 		}else if(   mat_num==fList[i].N_num){
 			if      (  bool_num==fList[i].T_num){ mat_write2file    (sstd::mat,   bool);
 			}else if(  char_num==fList[i].T_num){ mat_write2file    (sstd::mat,   char);
@@ -688,7 +688,7 @@ std::vector<void*> sstd_c2py::getArg_and_write2file(va_list& ap, const char* wri
 			}else if( float_num==fList[i].T_num){ mat_write2file    (sstd::mat,  float);
 			}else if(double_num==fList[i].T_num){ mat_write2file    (sstd::mat, double);
 			}else if(   str_num==fList[i].T_num){ mat_write2file_str(sstd::mat);
-			}else{ sstd::pdbg_always("ERROR: \"%s\" is an unsupported type of mat<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }
+			}else{ sstd::pdbg("ERROR: \"%s\" is an unsupported type of mat<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }
 		}else if( mat_r_num==fList[i].N_num){
 			if      (  bool_num==fList[i].T_num){ mat_write2file    (sstd::mat_r,   bool);
 			}else if(  char_num==fList[i].T_num){ mat_write2file    (sstd::mat_r,   char);
@@ -704,8 +704,8 @@ std::vector<void*> sstd_c2py::getArg_and_write2file(va_list& ap, const char* wri
 			}else if( float_num==fList[i].T_num){ mat_write2file    (sstd::mat_r,  float);
 			}else if(double_num==fList[i].T_num){ mat_write2file    (sstd::mat_r, double);
 			}else if(   str_num==fList[i].T_num){ mat_write2file_str(sstd::mat_r);
-			}else{ sstd::pdbg_always("ERROR: \"%s\" is an unsupported type of mat_r<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }
-		}else{ sstd::pdbg_always("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<void*>(); }
+			}else{ sstd::pdbg("ERROR: \"%s\" is an unsupported type of mat_r<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }
+		}else{ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<void*>(); }
 	}
 	return pArgList;
 }
@@ -714,7 +714,7 @@ std::vector<void*> sstd_c2py::getArg_and_write2file(va_list& ap, const char* wri
 
 //   writeBack: WB
 bool checkError_WB(uint fSize, uint arrSize){
-	if(fSize>arrSize){ sstd::pdbg_always("ERROR: Write back size is larger than giving size. Only the length of pointer will be written back.\n"); return false;
+	if(fSize>arrSize){ sstd::pdbg("ERROR: Write back size is larger than giving size. Only the length of pointer will be written back.\n"); return false;
 	}      else      { return true; }
 }
 
@@ -735,7 +735,7 @@ bool sstd_c2py::writeBack(std::vector<std::string>& lines, std::vector<void*>& p
 		if(pArgList[i]==0 || fList[i].constTF==true || fList[i].N_num==len_num){ continue; }
 		
 		sstd::file fp; std::string readDir=sstd::ssprintf("%s/arg%04d.bin", writeDir_base, i);
-		if(!fp.fopen(readDir.c_str(), "rb")){ sstd::pdbg_always("ERROR: fopen was failed. (%s can't open.)\n", readDir.c_str()); return false; }
+		if(!fp.fopen(readDir.c_str(), "rb")){ sstd::pdbg("ERROR: fopen was failed. (%s can't open.)\n", readDir.c_str()); return false; }
 
 		// For built in types: If the length of pointer is smaller than return value, below lines will write back only pointer length.
 		if      (  bool_num==fList[i].N_num){ readLenOfPointer(  bool);
@@ -767,7 +767,7 @@ bool sstd_c2py::writeBack(std::vector<std::string>& lines, std::vector<void*>& p
 			}else if( float_num==fList[i].T_num){ if(!sstd_c2py::c2py_ret(*((std::vector<      float>*)pArgList[i]), fp, lines[i])){ return false; }
 			}else if(double_num==fList[i].T_num){ if(!sstd_c2py::c2py_ret(*((std::vector<     double>*)pArgList[i]), fp, lines[i])){ return false; }
 			}else if(   str_num==fList[i].T_num){ if(!sstd_c2py::c2py_ret(*((std::vector<std::string>*)pArgList[i]), fp, lines[i])){ return false; }
-			}else{ sstd::pdbg_always("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return false; }
+			}else{ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return false; }
 		}else if(   mat_num==fList[i].N_num){
 			if      (  bool_num==fList[i].T_num){ if(!sstd_c2py::c2py_ret(*((sstd::mat<       bool>*)pArgList[i]), fp, lines[i])){ return false; }
 			}else if(  char_num==fList[i].T_num){ if(!sstd_c2py::c2py_ret(*((sstd::mat<       char>*)pArgList[i]), fp, lines[i])){ return false; }
@@ -783,7 +783,7 @@ bool sstd_c2py::writeBack(std::vector<std::string>& lines, std::vector<void*>& p
 			}else if( float_num==fList[i].T_num){ if(!sstd_c2py::c2py_ret(*((sstd::mat<      float>*)pArgList[i]), fp, lines[i])){ return false; }
 			}else if(double_num==fList[i].T_num){ if(!sstd_c2py::c2py_ret(*((sstd::mat<     double>*)pArgList[i]), fp, lines[i])){ return false; }
 			}else if(   str_num==fList[i].T_num){ if(!sstd_c2py::c2py_ret(*((sstd::mat<std::string>*)pArgList[i]), fp, lines[i])){ return false; }
-			}else{ sstd::pdbg_always("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return false; }
+			}else{ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return false; }
 		}else if( mat_r_num==fList[i].N_num){
 			if      (  bool_num==fList[i].T_num){ if(!sstd_c2py::c2py_ret(*((sstd::mat_r<       bool>*)pArgList[i]), fp, lines[i])){ return false; }
 			}else if(  char_num==fList[i].T_num){ if(!sstd_c2py::c2py_ret(*((sstd::mat_r<       char>*)pArgList[i]), fp, lines[i])){ return false; }
@@ -799,8 +799,8 @@ bool sstd_c2py::writeBack(std::vector<std::string>& lines, std::vector<void*>& p
 			}else if( float_num==fList[i].T_num){ if(!sstd_c2py::c2py_ret(*((sstd::mat_r<      float>*)pArgList[i]), fp, lines[i])){ return false; }
 			}else if(double_num==fList[i].T_num){ if(!sstd_c2py::c2py_ret(*((sstd::mat_r<     double>*)pArgList[i]), fp, lines[i])){ return false; }
 			}else if(   str_num==fList[i].T_num){ if(!sstd_c2py::c2py_ret(*((sstd::mat_r<std::string>*)pArgList[i]), fp, lines[i])){ return false; }
-			}else{ sstd::pdbg_always("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return false; }
-		}else{ sstd::pdbg_always("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return false; }
+			}else{ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return false; }
+		}else{ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return false; }
 	}
 	return true;
 }

@@ -25,7 +25,7 @@ void TEST_rm();
 void TEST_str2num();
 void TEST_ssprintf();
 void TEST_strmatch();
-void TEST_pathNameExtractor();
+void TEST_path();
 void TEST_getFilePathInDir();
 void TEST_strEdit();        // テストを書くように．
 void TEST_tinyInterpreter();
@@ -67,14 +67,14 @@ int main(){
 //	TEST_str2num();
 //	TEST_ssprintf();
 //	TEST_strmatch();
-//	TEST_pathNameExtractor();
+//	TEST_path();
 //	TEST_getFilePathInDir();
-//	TEST_strEdit();        // テストを書くように．
+	TEST_strEdit();        // テストを書くように．
 //	TEST_tinyInterpreter();
 //	TEST_parseCSV();
 //	TEST_encode_decode();
 //	TEST_pause();
-	TEST_c2py();
+//	TEST_c2py();
 	
 	
 //	TEST_mat_colMajor(); // TODO: write tests (zeros, Tr) // sstd::print 関数のテストを書くように
@@ -158,10 +158,6 @@ void TEST_pdbg(){
 //	printf("false: "); sstd::pdbg_if_stop_exit(false, "not exit"); printf("\n");
 	sstd::dbg(printf("run debug code."););
 	sstd::ndbg(printf("run ndebug code."););
-	printf("\n");
-
-	sstd::pdbg_always("%s\n", "always print message");
-//	sstd::pdbg_always_stop_exit("%s\n", "always print message, stop and exit.");
 	printf("\n");
 }
 void TEST_print(){
@@ -578,8 +574,8 @@ void TEST_strmatch(){
 	printf("    isAlphabet_onlyLower('%c') -> %s\n", 'a', sstd::isAlphabet_onlyLower('a')?"true":"false");
 	printf("\n");
 }
-void TEST_pathNameExtractor(){
-	printf("■ pathNameExtractor\n"); // <- 不足する関数を追加する必要がある．
+void TEST_path(){
+	printf("■ path\n"); // <- 不足する関数を追加する必要がある．
 	
 	const char* pPath="./abc/def/text.abc.txt\0";
 	
@@ -604,6 +600,37 @@ void TEST_pathNameExtractor(){
 	sstd::printn(sstd::parsePath_withBase(R"(../a/b)"));
 	sstd::printn(sstd::parsePath_withBase(R"(../a/b/)"));
 	sstd::printn(sstd::parsePath_withBase(R"(a/b/)"));
+	printf("\n");
+	
+	printf("  □ isFile\n");
+	sstd::printn(sstd::isFile("./main.cpp"));
+	sstd::printn(sstd::isFile("./notExist"));
+	sstd::printn(sstd::isFile("./sstd"));
+	printf("\n");
+	
+	printf("  □ isDir\n");
+	sstd::printn(sstd::isDir("./main.cpp"));
+	sstd::printn(sstd::isDir("./notExist"));
+	sstd::printn(sstd::isDir("./sstd"));
+	printf("\n");
+	
+	printf("  □ file exist\n");
+	sstd::printn(sstd::fileExist("./main.cpp"));
+	sstd::printn(sstd::fileExist("./notExist"));
+	sstd::printn(sstd::fileExist("./sstd"));
+	printf("\n");
+	
+	printf("  □ dir exist\n");
+	sstd::printn(sstd::dirExist("./main.cpp"));
+	sstd::printn(sstd::dirExist("./notExist"));
+	sstd::printn(sstd::dirExist("./sstd"));
+	printf("\n");
+	
+	printf("  □ path exist\n");
+	sstd::printn(sstd::pathExist("./main.cpp"));
+	sstd::printn(sstd::pathExist("./notExist"));
+	sstd::printn(sstd::pathExist("./sstd"));
+	printf("\n");
 }
 void TEST_getFilePathInDir(){
 	printf("■ getFilePathInDir\n");
@@ -615,12 +642,6 @@ void TEST_getFilePathInDir(){
 }
 void TEST_strEdit(){
 	printf("■ strEdit\n");
-	printf("  □ file exist\n");
-	sstd::printn(sstd::fexist("./main.cpp"));
-	sstd::printn(sstd::fexist("./main.c"));
-	
-	printf("\n");
-	
 	printf("  □ readAll_withoutBOM & splitByLine\n");
 	std::string str_tI = sstd::readAll_withoutBOM(R"(./tinyInterpreter.txt)");
 	std::vector<std::string> splitLList = sstd::splitByLine(str_tI);
@@ -633,15 +654,21 @@ void TEST_strEdit(){
 	printf("+----+----------------------------------------------------------------------------+\n");
 	printf("\n");
 	
+	printf("  □ splitByX\n");
+	std::vector<std::string> vecRow;
+	vecRow = sstd::split("ABC DEF",       ' ');        sstd::printn(vecRow); // "ABC DEF" -> ["ABC", "DEF"]
+	vecRow = sstd::split(" ABC   D EF  ", ' ');        sstd::printn(vecRow); // " ABC   D EF  " -> ["ABC", "D", "EF"]
+	
+	vecRow = sstd::split("ABC,DEF",              ','); sstd::printn(vecRow); // "ABC,DEF" -> ["ABC", "DEF"]
+	vecRow = sstd::split(" ABC  , D,  EF ,GH  ", ','); sstd::printn(vecRow); // " ABC  , D,  EF ,GH  " -> ["ABC", "D", "EF",  "GH"]
+	
 	// テストを書くように．
 	/*
-	std::vector<std::string> sstd::split(const char* str, const char X); // 内部の修正 (一般化) が必要．
-	
 	std::string sstd::removeHeadSpace(const uchar* str);
 	void sstd::removeTailSpace(std::string& str);
 	std::string sstd::removeSpace_of_HeadAndTail(const uchar* str);
 	std::vector<std::string> sstd::removeSpace_of_HeadAndTail(const std::vector<std::string>& vec);
-	*/
+	//*/
 }
 void TEST_tinyInterpreter(){
 	printf("■ tinyInterpreter\n");
@@ -673,13 +700,13 @@ void TEST_encode_decode(){
 
 	printf("  □ base64_encode\n");
 	std::string str_b64  = "#include \"./sstd/sstd.hpp\".+=ABCD";
-	printf("    %s ->[base64 encode]-> %s\n", str_b64.c_str(), sstd::base64_encode(str_b64.c_str(), str_b64.size()).c_str());
-	printf("    %s ->[base64 encode]-> %s\n", str_b64.c_str(), sstd::base64_encode(str_b64.c_str()).c_str());
+	printf("    %s ->[base64 encode]-> %s\n", str_b64.c_str(), sstd::base64_encode((uchar*)str_b64.c_str(), str_b64.size()).c_str());
+	printf("    %s ->[base64 encode]-> %s\n", str_b64.c_str(), sstd::base64_encode(str_b64).c_str());
 	printf("    %s ->[base64 encode]-> %s\n", str_b64.c_str(), sstd::base64_encode(str_b64).c_str());
 
 	printf("  □ base64_decode\n");
 	std::string str_b64e = sstd::base64_encode(str_b64);
-	printf("    %s ->[base64 decode]-> %s\n", str_b64e.c_str(), sstd::base64_decode(str_b64e.c_str(), str_b64e.size()).c_str());
+	printf("    %s ->[base64 decode]-> %s\n", str_b64e.c_str(), sstd::base64_decode((uchar*)str_b64e.c_str(), str_b64e.size()).c_str());
 	printf("    %s ->[base64 decode]-> %s\n", str_b64e.c_str(), sstd::base64_decode(str_b64e.c_str()).c_str());
 	printf("    %s ->[base64 decode]-> %s\n", str_b64e.c_str(), sstd::base64_decode(str_b64e).c_str());
 
@@ -1024,14 +1051,24 @@ void TEST_c2py(){
 	printf("■ C++ to Python. (Running any python function from C++.)\n");
 	// テストを書きながら開発を進める．
 
+	//*
+	{
+		printf("  □ empty args\n");
+		sstd::c2py<void> py_emptyArg("./tmpDir", "test_functions", "py_emptyArg", "void");
+		py_emptyArg();
+		printf("\n");
+	}
+	//*/
 	/*
-	printf("  □ empty args\n");
-	sstd::c2py<void> py_emptyArg("./tmpDir", "test_functions", "py_emptyArg", "void");
-	py_emptyArg();
-	printf("\n");
+	{
+		printf("  □ empty args (other dir)\n");
+		sstd::c2py<void> py_emptyArg("./tmpDir", "./testPy/test_functions", "py_emptyArg", "void");
+		py_emptyArg();
+		printf("\n");
+	}
 	//*/
 	
-	/*
+	//*
 	// measure time 01
 	{
 		printf("■ measureTime_start---------------\n\n"); time_m timem; sstd::measureTime_start(timem);

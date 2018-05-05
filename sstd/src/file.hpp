@@ -14,7 +14,7 @@ public:
 	FILE* fp;
 	file(){ fp=0; }
 //	file(const char*& fileName, const char*& mode){ fopen(&fp, fileName, mode); } // コンストラクタでは，fopen の失敗を検知できないので，これは実装しないように!!!
-	~file(){ if(fp!=0){ sstd_file_fclose(fp); } }
+	~file(){ if(fp!=0){ ::fclose(fp); } }
 	
 	bool fopen(const char* fileName, const char* mode);
 	bool fopen(const std::string& fileName, const char* mode);

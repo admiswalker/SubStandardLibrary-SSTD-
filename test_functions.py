@@ -278,10 +278,12 @@ def vec2graph(writeName, vecX, vecY):
     title += "a graph through the matplotlib in Python. Python function is called by  \n"
     title += "C++ only 2 lines enabled by \"sstd::c2py()\".                                           "
     ax1.set_title(title)
-    ax1.set_xlabel("Time [sec]\nFig 1.  0.1 Hz sin wave sampled by 10 Hz.")
-    ax1.set_xlim(0, 60)
+    
     ax1.tick_params(pad=5, which='major', direction='in', bottom='on', top='on', left='on', right='on', length=4) # 軸の余白 # which: major tick と minor tick に対して変更を適用 # tick を内側方向に # tick を bottom, top, left, right に付加 # tick width # tick length
     ax1.tick_params(pad=5, which='minor', direction='in', bottom='on', top='on', left='on', right='on', length=2) # 軸の余白 # which: major tick と minor tick に対して変更を適用 # tick を内側方向に # tick を bottom, top, left, right に付加 # tick width # tick length
+    
+    ax1.set_xlabel("Time [sec]\nFig 1.  0.1 Hz sin wave sampled by 10 Hz.")
+    ax1.set_xlim(0, 60)
     ax1.xaxis.set_major_locator(tick.MultipleLocator(5))
     ax1.xaxis.set_minor_locator(tick.MultipleLocator(1))
     
