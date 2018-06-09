@@ -2,7 +2,7 @@
 
 Convenient functions for GCC(g++) and MSVC++.
 
-Functions: `sstd/sstd.hpp` 
+List of functions: `sstd/sstd.hpp` 
 
 Usages of functions: `main.cpp` 
 
@@ -27,3 +27,9 @@ CFLAGS += -std=gnu++0x
 
 ## License
 MIT licence.
+
+## Documents
+・./Makefile: https://admiswalker.blogspot.com/2017/02/makefile.html  
+・./sstd/src/c2py.cpp-.hpp: https://admiswalker.blogspot.com/2018/02/c-python.html  
+・./sstd/src/bmat/*.cpp-.hpp: https://admiswalker.blogspot.com/2017/11/bit-xorshift.html, https://admiswalker.blogspot.com/2017/11/bit-xorshift.html  
+・The others: https://sstd-lib.blogspot.com/p/index.html  
