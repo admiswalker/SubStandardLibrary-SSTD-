@@ -121,9 +121,9 @@ void sstd::eye(class sstd::bmat& bMat){
 }
 class sstd::bmat sstd::eye(const uint& row, const uint& col){
 
-	class sstd::bmat result(row, col);
-	sstd::eye(result);
-	return result;
+	class sstd::bmat ret(row, col);
+	sstd::eye(ret);
+	return ret;
 }
 class sstd::bmat sstd::eye(const uint& size){
 	return sstd::eye(size, size);
@@ -169,9 +169,9 @@ void sstd::ones(class sstd::bmat& bMat){
 }
 class sstd::bmat sstd::ones(const uint& row, const uint& col){
 
-	class sstd::bmat result(row, col);
-	sstd::ones(result);
-	return result;
+	class sstd::bmat ret(row, col);
+	sstd::ones(ret);
+	return ret;
 }
 class sstd::bmat sstd::ones(const uint& size){
 	return sstd::ones(size, size);
@@ -189,9 +189,9 @@ void sstd::zeros(class sstd::bmat& bMat){
 }
 class sstd::bmat sstd::zeros(const uint& row, const uint& col){
 
-	class sstd::bmat result(row, col);
-	sstd::zeros(result);
-	return result;
+	class sstd::bmat ret(row, col);
+	sstd::zeros(ret);
+	return ret;
 }
 class sstd::bmat sstd::zeros(const uint& size){
 	return sstd::zeros(size, size);
@@ -324,17 +324,17 @@ void TrBit8x8(uint64& rhs){
 }
 class sstd::bmat sstd::Tr(class sstd::bmat& rhs){
 
-	class sstd::bmat result(rhs.cols(), rhs.rows());
+	class sstd::bmat ret(rhs.cols(), rhs.rows());
 
 	for(uint q=0; q<rhs.bMat8x8_RW().cols(); q++){
 		for(uint p=q; p<rhs.bMat8x8_RW().rows(); p++){
-			if(p==q){ result.bMat8x8_RW()(p, q) = rhs.bMat8x8_RW()(p, q); TrBit8x8(result.bMat8x8_RW()(p, q)); }
-			result.bMat8x8_RW()(p, q) = rhs.bMat8x8_RW()(q, p); TrBit8x8(result.bMat8x8_RW()(p, q));
-			result.bMat8x8_RW()(q, p) = rhs.bMat8x8_RW()(p, q); TrBit8x8(result.bMat8x8_RW()(q, p));
+			if(p==q){ ret.bMat8x8_RW()(p, q) = rhs.bMat8x8_RW()(p, q); TrBit8x8(ret.bMat8x8_RW()(p, q)); }
+			ret.bMat8x8_RW()(p, q) = rhs.bMat8x8_RW()(q, p); TrBit8x8(ret.bMat8x8_RW()(p, q));
+			ret.bMat8x8_RW()(q, p) = rhs.bMat8x8_RW()(p, q); TrBit8x8(ret.bMat8x8_RW()(q, p));
 		}
 	}
 
-	return result;
+	return ret;
 }
 void sstd::Tr_myself(class sstd::bmat& rhs){
 
@@ -358,8 +358,8 @@ void sstd::Tr_myself(class sstd::bmat& rhs){
 		std::swap(rhs.rows_RW(), rhs.cols_RW());
 		std::swap(rhs.bMat8x8_RW().rows_RW(), rhs.bMat8x8_RW().cols_RW());
 	}else{
-		sstd::bmat result = sstd::Tr(rhs);
-		sstd::move(rhs, result);
+		sstd::bmat ret = sstd::Tr(rhs);
+		sstd::move(rhs, ret);
 	}
 }
 
@@ -367,14 +367,14 @@ void sstd::Tr_myself(class sstd::bmat& rhs){
 
 class sstd::bmat sstd::add(class sstd::bmat& lhs, class sstd::bmat& rhs){
 
-	class sstd::bmat result(lhs.rows(), lhs.cols());
+	class sstd::bmat ret(lhs.rows(), lhs.cols());
 
 	for(uint q=0; q<rhs.bMat8x8_RW().cols(); q++){
 		for(uint p=0; p<rhs.bMat8x8_RW().rows(); p++){
-			result.bMat8x8_RW()(p, q) = lhs.bMat8x8_RW()(p, q) | rhs.bMat8x8_RW()(p, q);
+			ret.bMat8x8_RW()(p, q) = lhs.bMat8x8_RW()(p, q) | rhs.bMat8x8_RW()(p, q);
 		}
 	}
-	return result;
+	return ret;
 }
 void sstd::add_myself(class sstd::bmat& lhs, class sstd::bmat& rhs){
 
@@ -390,47 +390,47 @@ uint64 mulBit8x8(uint64 lhs, uint64 rhs){
 
 	const uint64 col_FF = (uint64)0x0000000000000FF;
 	const uint64 row_FF = (uint64)0x101010101010101;
-	uint64 result = (uint64)0;
+	uint64 ret = (uint64)0;
 
 	for(; lhs&&rhs; lhs=lhs>>1, rhs=rhs>>8){
-		result ^= (((lhs & row_FF) * col_FF) & ((rhs & col_FF) * row_FF));
+		ret ^= (((lhs & row_FF) * col_FF) & ((rhs & col_FF) * row_FF));
 	}
-	return result;
+	return ret;
 }
 class sstd::bmat sstd::mul(class sstd::bmat& lhs, class sstd::bmat& rhs){
 
-	class sstd::bmat result(lhs.rows(), rhs.cols());
-	sstd::zeros(result);
+	class sstd::bmat ret(lhs.rows(), rhs.cols());
+	sstd::zeros(ret);
 
 	for(uint q=0; q<rhs.bMat8x8_RW().cols(); q++){
 		for(uint i=0; i<rhs.bMat8x8_RW().rows(); i++){
 			for(uint p=0; p<lhs.bMat8x8_RW().rows(); p++){
-				result.bMat8x8_RW()(p, q) ^= mulBit8x8(lhs.bMat8x8_RW()(p, i), rhs.bMat8x8_RW()(i, q));
+				ret.bMat8x8_RW()(p, q) ^= mulBit8x8(lhs.bMat8x8_RW()(p, i), rhs.bMat8x8_RW()(i, q));
 			}
 		}
 	}
-	return result;
+	return ret;
 }
 void sstd::mul_myself(class sstd::bmat& lhs, class sstd::bmat& rhs){
 
-	sstd::bmat result = sstd::mul(lhs, rhs); // 最適化の余地なし．
-	lhs = result;
+	sstd::bmat ret = sstd::mul(lhs, rhs); // 最適化の余地なし．
+	lhs = ret;
 }
 
 /*
 class sstd::bmat sstd::pow(class sstd::bmat base, uint64 exponent){
 
-	sstd::bmat result(base.rows(), base.cols());
-	sstd::eye(result);
+	sstd::bmat ret(base.rows(), base.cols());
+	sstd::eye(ret);
 
 	for(; exponent>(uint64)0; exponent>>=1){
 		if(exponent & 1){
-			result = sstd::mul(result, base);
+			ret = sstd::mul(ret, base);
 		}
 		base = sstd::mul(base, base);
 	}
 
-	return result;
+	return ret;
 }
 // 下記のように最適化．
 */
@@ -470,14 +470,14 @@ void sstd::pow_myself(class sstd::bmat& base, uint64 exponent){
 
 class sstd::bmat sstd::and_(class sstd::bmat& lhs, class sstd::bmat& rhs){
 
-	class sstd::bmat result(rhs.rows(), rhs.cols());
+	class sstd::bmat ret(rhs.rows(), rhs.cols());
 
 	for(uint q=0; q<rhs.bMat8x8_RW().cols(); q++){
 		for(uint p=0; p<rhs.bMat8x8_RW().rows(); p++){
-			result.bMat8x8_RW()(p, q) = lhs.bMat8x8_RW()(p, q) & rhs.bMat8x8_RW()(p, q);
+			ret.bMat8x8_RW()(p, q) = lhs.bMat8x8_RW()(p, q) & rhs.bMat8x8_RW()(p, q);
 		}
 	}
-	return result;
+	return ret;
 }
 void sstd::and_myself(class sstd::bmat& lhs, class sstd::bmat& rhs){
 
@@ -491,14 +491,14 @@ void sstd::and_myself(class sstd::bmat& lhs, class sstd::bmat& rhs){
 
 class sstd::bmat sstd::or_(class sstd::bmat& lhs, class sstd::bmat& rhs){
 
-	class sstd::bmat result(rhs.rows(), rhs.cols());
+	class sstd::bmat ret(rhs.rows(), rhs.cols());
 
 	for(uint q=0; q<rhs.bMat8x8_RW().cols(); q++){
 		for(uint p=0; p<rhs.bMat8x8_RW().rows(); p++){
-			result.bMat8x8_RW()(p, q) = lhs.bMat8x8_RW()(p, q) | rhs.bMat8x8_RW()(p, q);
+			ret.bMat8x8_RW()(p, q) = lhs.bMat8x8_RW()(p, q) | rhs.bMat8x8_RW()(p, q);
 		}
 	}
-	return result;
+	return ret;
 }
 void sstd::or_myself(class sstd::bmat& lhs, class sstd::bmat& rhs){
 
@@ -512,14 +512,14 @@ void sstd::or_myself(class sstd::bmat& lhs, class sstd::bmat& rhs){
 
 class sstd::bmat sstd::not_(class sstd::bmat& rhs){
 
-	class sstd::bmat result(rhs.rows(), rhs.cols());
+	class sstd::bmat ret(rhs.rows(), rhs.cols());
 
 	for(uint q=0; q<rhs.bMat8x8_RW().cols(); q++){
 		for(uint p=0; p<rhs.bMat8x8_RW().rows(); p++){
-			result.bMat8x8_RW()(p, q) = ~rhs.bMat8x8_RW()(p, q);
+			ret.bMat8x8_RW()(p, q) = ~rhs.bMat8x8_RW()(p, q);
 		}
 	}
-	return result;
+	return ret;
 }
 
 
@@ -529,15 +529,15 @@ class sstd::bmat sstd::xor_(class sstd::bmat& lhs, class sstd::bmat& rhs){ retur
 
 bool sstd::eq(class sstd::bmat& lhs, class sstd::bmat& rhs){
 
-	bool result=true;
+	bool ret=true;
 
 	for(uint q=0; q<rhs.bMat8x8_RW().cols(); q++){
 		for(uint p=0; p<rhs.bMat8x8_RW().rows(); p++){
-			if(lhs.bMat8x8_RW()(p, q) != rhs.bMat8x8_RW()(p, q)){ result=false; return result; }
+			if(lhs.bMat8x8_RW()(p, q) != rhs.bMat8x8_RW()(p, q)){ ret=false; return ret; }
 		}
 	}
 
-	return result;
+	return ret;
 }
 bool sstd::ne(class sstd::bmat& lhs, class sstd::bmat& rhs){
 	return !sstd::eq(lhs, rhs);
@@ -559,33 +559,33 @@ uint64 onesBitRow8xM_Inv[] = { 0x0000000000000000		// Ones8x0
 class sstd::bmat REShift_arg(class sstd::bmat& rhs,
 	uint& shift, uint shiftDiv8, uint& shiftMod8, uint shiftDiv8Plus1, uint& shiftMod8_Inv){
 
-	class sstd::bmat result(rhs.rows(), rhs.cols()+shift); sstd::zeros(result);
+	class sstd::bmat ret(rhs.rows(), rhs.cols()+shift); sstd::zeros(ret);
 
 	if(shiftMod8==0){
 		for(uint q=0; q<rhs.bMat8x8_RW().cols(); q++){
 			for(uint p=0; p<rhs.bMat8x8_RW().rows(); p++){
-				result.bMat8x8_RW()(p, q+shiftDiv8) = rhs.bMat8x8_RW()(p, q);
+				ret.bMat8x8_RW()(p, q+shiftDiv8) = rhs.bMat8x8_RW()(p, q);
 			}
 		}
 	}else{
 		uint q = 0;
 		for(uint p=0; p<rhs.bMat8x8_RW().rows(); p++){
-			result.bMat8x8_RW()(p, q+shiftDiv8) = RShift8x8(rhs.bMat8x8_RW()(p, q), shiftMod8, shiftMod8_Inv);
+			ret.bMat8x8_RW()(p, q+shiftDiv8) = RShift8x8(rhs.bMat8x8_RW()(p, q), shiftMod8, shiftMod8_Inv);
 		}
 		for(q=1; q<rhs.bMat8x8_RW().cols(); q++){
 			for(uint p=0; p<rhs.bMat8x8_RW().rows(); p++){
-				result.bMat8x8_RW()(p, q+shiftDiv8) = LShift8x8(rhs.bMat8x8_RW()(p, q-1), shiftMod8_Inv, shiftMod8)
-					                                | RShift8x8(rhs.bMat8x8_RW()(p, q  ), shiftMod8, shiftMod8_Inv);
+				ret.bMat8x8_RW()(p, q+shiftDiv8) = LShift8x8(rhs.bMat8x8_RW()(p, q-1), shiftMod8_Inv, shiftMod8)
+					                             | RShift8x8(rhs.bMat8x8_RW()(p, q  ), shiftMod8, shiftMod8_Inv);
 			}
 		}
 		if(rhs.cols()<8 && (rhs.cols()+shift)>8){
 			q = rhs.bMat8x8_RW().cols()-1;
 			for(uint p=0; p<rhs.bMat8x8_RW().rows(); p++){
-				result.bMat8x8_RW()(p, q+shiftDiv8Plus1) = LShift8x8(rhs.bMat8x8_RW()(p, q), shiftMod8_Inv, shiftMod8);
+				ret.bMat8x8_RW()(p, q+shiftDiv8Plus1) = LShift8x8(rhs.bMat8x8_RW()(p, q), shiftMod8_Inv, shiftMod8);
 			}
 		}
 	}
-	return result;
+	return ret;
 }
 class sstd::bmat sstd::REShift(class sstd::bmat& rhs, uint shift){
 
@@ -613,31 +613,31 @@ uint64 onesBitNxCol8_Inv[] = { 0x0000000000000000		// Ones8x0
 class sstd::bmat DEShift_arg(class sstd::bmat& rhs,
 	uint& shift, uint shiftDiv8, uint& shiftMod8, uint shiftDiv8Plus1, uint& shiftMod8_Inv){
 
-	class sstd::bmat result(rhs.rows()+shift, rhs.cols()); sstd::zeros(result);
+	class sstd::bmat ret(rhs.rows()+shift, rhs.cols()); sstd::zeros(ret);
 
 	if(shiftMod8==0){
 		for(uint q=0; q<rhs.bMat8x8_RW().cols(); q++){
 			for(uint p=0; p<rhs.bMat8x8_RW().rows(); p++){
-				result.bMat8x8_RW()(p+shiftDiv8, q) = rhs.bMat8x8_RW()(p, q);
+				ret.bMat8x8_RW()(p+shiftDiv8, q) = rhs.bMat8x8_RW()(p, q);
 			}
 		}
 	}else{
 		for(uint q=0; q<rhs.bMat8x8_RW().cols(); q++){
 			
 			uint p = 0;
-			result.bMat8x8_RW()(p+shiftDiv8, q) = DShift8x8(rhs.bMat8x8_RW()(p, q), shiftMod8, shiftMod8_Inv);
+			ret.bMat8x8_RW()(p+shiftDiv8, q) = DShift8x8(rhs.bMat8x8_RW()(p, q), shiftMod8, shiftMod8_Inv);
 
 			for(p=1; p<rhs.bMat8x8_RW().rows(); p++){
-				result.bMat8x8_RW()(p+shiftDiv8, q) = UShift8x8(rhs.bMat8x8_RW()(p-1, q), shiftMod8_Inv, shiftMod8)
-			                                        | DShift8x8(rhs.bMat8x8_RW()(p  , q), shiftMod8, shiftMod8_Inv);
+				ret.bMat8x8_RW()(p+shiftDiv8, q) = UShift8x8(rhs.bMat8x8_RW()(p-1, q), shiftMod8_Inv, shiftMod8)
+			                                     | DShift8x8(rhs.bMat8x8_RW()(p  , q), shiftMod8, shiftMod8_Inv);
 			}
 			if(rhs.rows()<8 && (rhs.rows()+shift)>8){
 				p = rhs.bMat8x8_RW().rows()-1;
-				result.bMat8x8_RW()(p+shiftDiv8Plus1, q) = UShift8x8(rhs.bMat8x8_RW()(p, q), shiftMod8_Inv, shiftMod8);
+				ret.bMat8x8_RW()(p+shiftDiv8Plus1, q) = UShift8x8(rhs.bMat8x8_RW()(p, q), shiftMod8_Inv, shiftMod8);
 			}
 		}
 	}
-	return result;
+	return ret;
 }
 class sstd::bmat sstd::DEShift(class sstd::bmat& rhs, uint shift){
 
@@ -652,50 +652,56 @@ class sstd::bmat sstd::DEShift(class sstd::bmat& rhs, uint shift){
 //--------------------------------------------------------------------------------------------------------
 
 class sstd::bmat sstd::horzcat2(class sstd::bmat& lhs, class sstd::bmat& rhs){
-
-	uint row_size; if(lhs.rows()>rhs.rows()){ row_size=lhs.rows(); }else{ row_size = rhs.rows(); }
-	class sstd::bmat result(row_size, lhs.cols() + rhs.cols()); sstd::zeros(result);
-
+	
+	uint row_size; if(lhs.rows()>rhs.rows()){ row_size=lhs.rows(); }else{ row_size=rhs.rows(); }
+	class sstd::bmat ret(row_size, lhs.cols() + rhs.cols()); sstd::zeros(ret);
+	
 	for(uint q=0; q<lhs.bMat8x8_RW().cols(); q++){
 		for(uint p=0; p<lhs.bMat8x8_RW().rows(); p++){
-			result.bMat8x8_RW()(p, q) = lhs.bMat8x8_RW()(p, q);
+			ret.bMat8x8_RW()(p, q) = lhs.bMat8x8_RW()(p, q);
 		}
 	}
-
-	uint shift          = lhs.cols();
-	uint shiftDiv8      = shift / 8;
-	uint shiftMod8      = shift - shiftDiv8 * 8;	// shift % 8;
-	uint shiftMod8_Inv  =     8 - shiftMod8;
+	
+	uint shift         = lhs.cols();
+	uint shiftDiv8     = shift / 8;
+	uint shiftMod8     = shift - shiftDiv8 * 8;	// shift % 8;
+	uint shiftMod8_Inv =     8 - shiftMod8;
 	class sstd::bmat rhs_buf = REShift_arg(rhs, shiftMod8, 0, shiftMod8, 1, shiftMod8_Inv);
+
+	uint pos; if(shiftMod8==0){ pos=0; }else{ pos=1; } // pos: position
+	
 	for(uint q=0; q<rhs_buf.bMat8x8_RW().cols(); q++){
 		for(uint p=0; p<rhs_buf.bMat8x8_RW().rows(); p++){
-			result.bMat8x8_RW()(p, q+lhs.bMat8x8_RW().cols()-1) |= rhs_buf.bMat8x8_RW()(p, q);
+			ret.bMat8x8_RW()(p, q+lhs.bMat8x8_RW().cols()-pos) |= rhs_buf.bMat8x8_RW()(p, q);
 		}
 	}
-	return result;
+	return ret;
 }
 class sstd::bmat sstd::vertcat2(class sstd::bmat& us, class sstd::bmat& ds){
 
 	uint col_size; if(us.cols()>ds.cols()){ col_size=us.cols(); }else{ col_size=ds.cols(); }
-	class sstd::bmat result(us.rows() + ds.rows(), col_size); sstd::zeros(result);
+	class sstd::bmat ret(us.rows() + ds.rows(), col_size); sstd::zeros(ret);
 
 	for(uint q=0; q<us.bMat8x8_RW().cols(); q++){
 		for(uint p=0; p<us.bMat8x8_RW().rows(); p++){
-			result.bMat8x8_RW()(p, q) = us.bMat8x8_RW()(p, q);
+			ret.bMat8x8_RW()(p, q) = us.bMat8x8_RW()(p, q);
 		}
 	}
 
-	uint shift          = us.rows();
-	uint shiftDiv8      = shift / 8;
-	uint shiftMod8      = shift - shiftDiv8 * 8;	// shift % 8;
-	uint shiftMod8_Inv  =     8 - shiftMod8;
+	uint shift         = us.rows();
+	uint shiftDiv8     = shift / 8;
+	uint shiftMod8     = shift - shiftDiv8 * 8;	// shift % 8;
+	uint shiftMod8_Inv =     8 - shiftMod8;
 	class sstd::bmat ds_buf = DEShift_arg(ds, shiftMod8, 0, shiftMod8, 1, shiftMod8_Inv);
+
+	uint pos; if(shiftMod8==0){ pos=0; }else{ pos=1; } // pos: position
+	
 	for(uint q=0; q<ds_buf.bMat8x8_RW().cols(); q++){
 		for(uint p=0; p<ds_buf.bMat8x8_RW().rows(); p++){
-			result.bMat8x8_RW()(p+us.bMat8x8_RW().rows()-1, q) |= ds_buf.bMat8x8_RW()(p, q);
+			ret.bMat8x8_RW()(p+us.bMat8x8_RW().rows()-pos, q) |= ds_buf.bMat8x8_RW()(p, q);
 		}
 	}
-	return result;
+	return ret;
 }
 /*
 // 上記のように，一般化
@@ -703,36 +709,36 @@ class sstd::bmat sstd::vertcat2(class sstd::bmat& us, class sstd::bmat& ds){
 class sstd::bmat sstd::horzcat2(class sstd::bmat& lhs, class sstd::bmat& rhs){
 
 	uint row_size, bMat8x8_row_size; if(lhs.rows()>rhs.rows()){ row_size=lhs.rows(); bMat8x8_row_size=lhs.bMat8x8.rows(); }else{ row_size = rhs.rows(); bMat8x8_row_size=rhs.bMat8x8.rows(); }
-	class sstd::bmat result(row_size, lhs.cols() + rhs.cols()); sstd::zeros(result);
+	class sstd::bmat ret(row_size, lhs.cols() + rhs.cols()); sstd::zeros(ret);
 
 	for(uint q=0; q<lhs.bMat8x8_RW().cols(); q++){
 		for(uint p=0; p<lhs.bMat8x8_RW().rows(); p++){
-			result.bMat8x8_RW()(p, q) = lhs.bMat8x8_RW()(p, q);
+			ret.bMat8x8_RW()(p, q) = lhs.bMat8x8_RW()(p, q);
 		}
 	}
 	for(uint q=0; q<rhs.bMat8x8_RW().cols(); q++){
 		for(uint p=0; p<rhs.bMat8x8_RW().rows(); p++){
-			result.bMat8x8_RW()(p, lhs.bMat8x8_RW().cols+q) = rhs.bMat8x8_RW()(p, q);
+			ret.bMat8x8_RW()(p, lhs.bMat8x8_RW().cols+q) = rhs.bMat8x8_RW()(p, q);
 		}
 	}
-	return result;
+	return ret;
 }
 class sstd::bmat sstd::vertcat2(class sstd::bmat& us, class sstd::bmat& ds){	// us , ds    // upside, downside.
 
 	uint col_size, bMat8x8_col_size; if(us.cols()>ds.cols()){ col_size=us.cols(); bMat8x8_col_size=us.bMat8x8.cols(); }else{ col_size=ds.cols(); bMat8x8_col_size=ds.bMat8x8.cols(); }
-	class sstd::bmat result(us.rows() + ds.rows(), col_size);
+	class sstd::bmat ret(us.rows() + ds.rows(), col_size);
 
 	for(uint q=0; q<us.bMat8x8.cols(); q++){
 		for(uint p=0; p<us.bMat8x8_RW().rows(); p++){
-			result.bMat8x8_RW()(p, q) = us.bMat8x8_RW()(p, q);
+			ret.bMat8x8_RW()(p, q) = us.bMat8x8_RW()(p, q);
 		}
 	}
 	for(uint q=0; q<ds.bMat8x8_RW().cols(); q++){
 		for(uint p=0; p<ds.bMat8x8_RW().rows(); p++){
-			result.bMat8x8_RW()(us.bMat8x8_RW().rows()+p, q) = ds.bMat8x8_RW()(p, q);
+			ret.bMat8x8_RW()(us.bMat8x8_RW().rows()+p, q) = ds.bMat8x8_RW()(p, q);
 		}
 	}
-	return result;
+	return ret;
 }
 */
 //--------------------------------------------------------------------------------------------------------

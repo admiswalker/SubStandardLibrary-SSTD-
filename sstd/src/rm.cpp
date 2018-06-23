@@ -1,11 +1,7 @@
 ﻿#include "rm.hpp"
 #include "typeDef.h"
+#include "path.hpp"
 #include "pdbg.hpp"
-//#include "path.hpp"
-//#include "strmatch.hpp"
-//#include "path.hpp"
-
-
 
 #include <vector>
 #ifdef _WIN32
@@ -19,11 +15,39 @@
 	#include <unistd.h>   // rmdir(), unlink()
 #endif
 
+//-------------------------------------------------------------------------------------------------------
 
-struct pathAndType{
-	std::string path;
-	char type;        // 'f': file, 'd': directory
-};
+bool sstd::unlink(const char* pPath){
+	#ifdef _WIN32
+		return DeleteFile(pPath);
+	#else
+		if(::unlink(pPath)==0){ return true; }else{ sstd::pdbg("ERROR: sstd::unlink(): %s.\n", strerror(errno)); return false; };
+	#endif
+}
+bool sstd::unlink(const std::string& path){ return sstd::unlink(path.c_str()); }
+
+//--------------------------------------------------------------------------------------------------------
+
+bool sstd::rmdir(const char* pPath){
+	#ifdef _WIN32
+		return RemoveDirectory(pPath);
+	#else
+		return ::rmdir(pPath)==0;
+	#endif
+}
+bool sstd::rmdir(const std::string& path){ return sstd::rmdir(path.c_str()); }
+
+
+//--------------------------------------------------------------------------------------------------------
+
+// -> ヘッダへ移動．
+//
+//struct pathAndType{
+//	std::string path;
+//	char type;        // 'f': file, 'd': directory
+//};
+
+//--------------------------------------------------------------------------------------------------------
 
 #ifdef _WIN32
 
@@ -71,45 +95,11 @@ std::vector<std::string> fileInASingleDir(std::vector<struct pathAndType>& ret, 
 	FindClose(hFind);
 	return dirList;
 }
-
-bool getAllInDir(std::vector<struct pathAndType>& ret, const char* pPath){
-	if(!PathFileExists(pPath)){ return false; } // there is no file or directory.
-
-	struct pathAndType retBuf;
-	retBuf.path = pPath;
-	if(!PathIsDirectory(pPath)){
-		retBuf.type='f';
-		ret.push_back(retBuf);
-		return true;
-	}
-	retBuf.type = 'd';
-	ret.push_back(retBuf);
-	
-	std::vector<std::string> dirList;
-	dirList.push_back(pPath);
-	for(uint i=0; i<dirList.size(); i++){
-		std::vector<std::string> buf = fileInASingleDir(ret, dirList[i].c_str());
-		dirList.insert(dirList.end(), buf.begin(), buf.end());
-	}
-	return true;
-}
-
-bool sstd::rm(const char* pPath){
-	std::vector<struct pathAndType> fileList;
-	if(!getAllInDir(fileList, pPath)){ return false; } // there is no file or directory.
-
-	bool retVal = true;
-	for(int i=fileList.size()-1; i>=0; i--){
-		if      ('f'==fileList[i].type){ if(!     DeleteFile(fileList[i].path.c_str())){ retVal=false; } //ファイルの消去
-		}else if('d'==fileList[i].type){ if(!RemoveDirectory(fileList[i].path.c_str())){ retVal=false; } //ディレクトリの消去 // _rmdir(path_of_erase_file_or_directory);//を使ってもokのはず
-		}             else             { sstd::pdbg("ERROR: sstd::rm\n"); retVal=false;         }
-	}
-	return retVal;
-}
-
 #else
 
-std::vector<std::string> fileInASingleDir(bool& result, std::vector<struct pathAndType>& ret, const char* pPath){
+//----------------------------------------------------
+
+std::vector<std::string> fileInASingleDir(bool& result, std::vector<struct sstd::pathAndType>& ret, const char* pPath){
 
 	// ディレクトリを開く
 	DIR *pDir = opendir(pPath);
@@ -135,13 +125,13 @@ std::vector<std::string> fileInASingleDir(bool& result, std::vector<struct pathA
 
 				std::string pathBuf = pPath+std::string(R"(/)")+pEnt->d_name;
 
-				struct pathAndType retBuf;
+				struct sstd::pathAndType retBuf;
 				retBuf.path = pathBuf;
 				retBuf.type = 'd';
 				ret.push_back(retBuf);
-
+				
 				dirList.push_back(pathBuf);
-
+				
 				//printf("retBuf.path.c_str(): %s\n", retBuf.path.c_str());
 			}else{
 				//  . current directory (カレントディレクトリ)
@@ -152,7 +142,7 @@ std::vector<std::string> fileInASingleDir(bool& result, std::vector<struct pathA
 			// file found
 //			printf("file: %s\n", pEnt->d_name);
 
-			struct pathAndType retBuf;
+			struct sstd::pathAndType retBuf;
 			retBuf.path = pPath+std::string(R"(/)")+pEnt->d_name; 
 			retBuf.type = 'f';
 			ret.push_back(retBuf);
@@ -160,25 +150,27 @@ std::vector<std::string> fileInASingleDir(bool& result, std::vector<struct pathA
 			//printf("retBuf.path.c_str(): %s\n", retBuf.path.c_str());
 		}
 	}
-
+	
 	closedir(pDir);
 	return dirList;
 }
+#endif
 
-bool getAllInDir(std::vector<struct pathAndType>& ret, const char* pPath){
-	struct stat st;
-	if(stat(pPath, &st)!=0){ return false; } // there is no file or directory.
+//--------------------------------------------------------------------------------------------------------
 
+bool sstd::getAllInDir(std::vector<struct sstd::pathAndType>& ret, const char* pPath){
+	if(!sstd::pathExist(pPath)){ return false; } // there is no file or directory.
+	
 	struct pathAndType retBuf;
 	retBuf.path = pPath;
-	if(!S_ISDIR(st.st_mode)){
+	if(!sstd::isDir(pPath)){
 		retBuf.type='f';
 		ret.push_back(retBuf);
 		return true;
 	}
 	retBuf.type = 'd';
 	ret.push_back(retBuf);
-
+	
 	bool result=true;
 	std::vector<std::string> dirList;
 	dirList.push_back(pPath);
@@ -189,19 +181,22 @@ bool getAllInDir(std::vector<struct pathAndType>& ret, const char* pPath){
 	return result;
 }
 
+//--------------------------------------------------------------------------------------------------------
+
 bool sstd::rm(const char* pPath){
-	std::vector<struct pathAndType> fileList;
-	if(!getAllInDir(fileList, pPath)){ return false; } // there is no file or directory.
+	std::vector<struct sstd::pathAndType> fileList;
+	if(!sstd::getAllInDir(fileList, pPath)){ return false; } // there is no file or directory.
 
 	bool retVal = true;
 	for(int i=fileList.size()-1; i>=0; i--){
-		if      ('f'==fileList[i].type){ if(unlink(fileList[i].path.c_str())!=0){ retVal=false; } //ファイルの消去
-		}else if('d'==fileList[i].type){ if( rmdir(fileList[i].path.c_str())!=0){ retVal=false; } //ディレクトリの消去 // remove なら，ファイルかディレクトリか自動で判別して，呼び出す関数をスイッチしてくれるらしい
+		if      ('f'==fileList[i].type){ if(!sstd::unlink(fileList[i].path)){ retVal=false; } //ファイルの消去
+		}else if('d'==fileList[i].type){ if(!sstd::rmdir (fileList[i].path)){ retVal=false; } //ディレクトリの消去 // remove なら，ファイルかディレクトリか自動で判別して，呼び出す関数をスイッチしてくれるらしい
 		}             else             { sstd::pdbg("ERROR: sstd::rm\n"); retVal=false;         }
 	}
 
 	return retVal;
 }
-#endif
-
 bool sstd::rm(const std::string& path){ return sstd::rm(path.c_str()); }
+
+//--------------------------------------------------------------------------------------------------------
+

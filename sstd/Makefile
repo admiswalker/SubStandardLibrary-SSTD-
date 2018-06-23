@@ -44,6 +44,7 @@ DIR += ./src/*.
 DIR += ./src/MatrixStore_mat/*.
 DIR += ./src/MatrixStore_mat_rowMajor/*.
 DIR += ./src/MatrixStore_bmat/*.
+DIR += ./src/hashFnc_of_MD5_SHA1_SHA2/*.
 
 # Name of generate file: 生成ファイル名
 TARGET = libsstd.a

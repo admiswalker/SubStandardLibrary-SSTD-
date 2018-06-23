@@ -33,3 +33,15 @@ CFLAGS += -std=gnu++0x
 
 ## License
 MIT licence or Public domain. (You can choose whichever you want.)
+
+## Below libraries are incorporated in sstd.
+
+library name    | URL | used version | license
+--------------------- | ---- | -------- | --------------------------------
+md5 | https://github.com/kalven/md5 | committed on 1 Jan 2014 | Public domain
+WjCryptLib | https://github.com/WaterJuice/WjCryptLib | committed on 16 Mar 2018 | Public domain
+SHA-2 | https://github.com/kalven/sha-2 | committed on 27 Aug 2012 | Public domain
+
+
+
+

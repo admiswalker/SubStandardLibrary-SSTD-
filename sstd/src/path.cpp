@@ -130,15 +130,23 @@ bool sstd::isFile(const char* pPath){
 	return (st.st_mode&S_IFMT)==S_IFREG;
 }
 bool sstd::isDir (const char* pPath){
-	struct stat st;
-	if(stat(pPath, &st)!=0){ return false; /* file or directory is not found. */ }
-	return (st.st_mode&S_IFMT)==S_IFDIR;
+	#ifdef _WIN32
+		return PathIsDirectory(pPath);
+	#else
+		struct stat st;
+		if(stat(pPath, &st)!=0){ return false; /* file or directory is not found. */ }
+		return (st.st_mode&S_IFMT)==S_IFDIR;
+	#endif
 }
 bool sstd::fileExist(const char* pPath){ return sstd::isFile(pPath); }
 bool sstd::dirExist (const char* pPath){ return sstd::isDir (pPath); }
 bool sstd::pathExist(const char* pPath){
-	struct stat buf;
-	return stat(pPath, &buf)==0;
+	#ifdef _WIN32
+		return PathFileExists(pPath);
+	#else
+		struct stat buf;
+		return stat(pPath, &buf)==0;
+	#endif
 }
 bool sstd::isFile   (const std::string& path){ return sstd::isFile   (path.c_str()); }
 bool sstd::isDir    (const std::string& path){ return sstd::isDir    (path.c_str()); }

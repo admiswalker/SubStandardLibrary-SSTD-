@@ -31,6 +31,7 @@ void TEST_strEdit();        // テストを書くように．
 void TEST_tinyInterpreter();
 void TEST_parseCSV();
 void TEST_encode_decode();
+void TEST_hashFnc();
 void TEST_pause();
 void TEST_c2py();
 
@@ -50,8 +51,6 @@ int main(){
 	printf("\n");
 	printf("■ measureTime_start---------------\n\n"); time_m timem; sstd::measureTime_start(timem);
 
-	
-	printf("== sstd_src ==\n\n");
 //	TEST_measureTime_sleep();
 //	TEST_time();
 //	TEST_typeDef();
@@ -69,19 +68,18 @@ int main(){
 //	TEST_strmatch();
 //	TEST_path();
 //	TEST_getFilePathInDir();
-	TEST_strEdit();        // テストを書くように．
+//	TEST_strEdit();        // テストを書くように．
 //	TEST_tinyInterpreter();
 //	TEST_parseCSV();
 //	TEST_encode_decode();
+	TEST_hashFnc();
 //	TEST_pause();
 //	TEST_c2py();
-	
 	
 //	TEST_mat_colMajor(); // TODO: write tests (zeros, Tr) // sstd::print 関数のテストを書くように
 //	TEST_mat_rowMajor(); // TODO: write tests (zeros, Tr) // sstd::print 関数のテストを書くように
 //	TEST_bmat();
 
-	
 	printf("\n■ measureTime_stop----------------\n"); sstd::measureTime_stop(timem); sstd::pauseIfWin32();
 	return 0;
 }
@@ -529,8 +527,17 @@ void TEST_mkdir(){
 	sstd::mkdir(std::string("./test_mkdir/abc/def")); // enable to make multilayer directory by one step.
 }
 void TEST_rm(){
-	printf("■ rm\n\n");
+	printf("■ rm\n");
+	printf("  □ unlink\n");
+	{ sstd::file fp; fp.fopen("./unlink.txt", "w"); }
+	sstd::printn(sstd::unlink("./unlink.txt"));
+	printf("\n");
 
+	printf("  □ rmdir\n");
+	sstd::mkdir("./test_rmdir");
+	sstd::printn(sstd::rmdir("./test_rmdir"));
+	printf("\n");
+	
 	sstd::mkdir("./test_rm/abc/def");
 	sstd::mkdir("./test_rm/abc2/def");
 	{ sstd::file fp; fp.fopen("./test_rm/abc/def/abc.txt", "w"); }
@@ -538,7 +545,18 @@ void TEST_rm(){
 	{ sstd::file fp; fp.fopen("./test_rm/abc/xxx",         "w"); }
 	{ sstd::file fp; fp.fopen("./test_rm/abc2/xxx",        "w"); }
 	{ sstd::file fp; fp.fopen("./test_rm/123.txt",         "w"); }
-
+	
+	printf("  □ getAllInDir\n");
+	std::vector<struct sstd::pathAndType> ret;
+	sstd::printn(sstd::getAllInDir(ret, "./test_rm"));
+	for(uint i=0; i<ret.size(); i++){
+		if      (ret[i].type=='f'){ sstd::printn(sstd::ssprintf("type: file,      path: %s", ret[i].path.c_str()));
+		}else if(ret[i].type=='d'){ sstd::printn(sstd::ssprintf("type: directory, path: %s", ret[i].path.c_str()));
+		}          else           { sstd::pdbg("ERROR: sstd::getAllInDir() is failed.\n"); }
+	}
+	printf("\n");
+	
+	printf("  □ rm\n");
 	sstd::printn(sstd::rm("./test_rm")); // enable to delete not empty directory by one step.
 }
 void TEST_str2num(){
@@ -642,8 +660,13 @@ void TEST_getFilePathInDir(){
 }
 void TEST_strEdit(){
 	printf("■ strEdit\n");
+	printf("  □ readAll_bin\n");
+	std::vector<uint8> raw = sstd::readAll_bin("./test.png");
+	sstd::printn_all(raw.size());
+	
 	printf("  □ readAll_withoutBOM & splitByLine\n");
-	std::string str_tI = sstd::readAll_withoutBOM(R"(./tinyInterpreter.txt)");
+//	std::string str_tI = sstd::readAll_withoutBOM(R"(./tinyInterpreter.txt)");
+	std::string str_tI = sstd::readAll_withoutBOM(std::string(R"(./tinyInterpreter.txt)"));
 	std::vector<std::string> splitLList = sstd::splitByLine(str_tI);
 	printf("\n");
 	printf("  tinyInterpreter.txt\n");
@@ -764,6 +787,40 @@ void TEST_encode_decode(){
 	sstd::print_unicodeEscape_decode_table();
 	printf("\n");
 }
+
+void print_vecUint8_hex(std::vector<uint8>& rhs){ for(uint i=0; i<rhs.size(); i++){ printf("%.2x", rhs[i]); } printf("\n"); }
+void TEST_hashFnc(){
+	
+	const char* pFilePath = "./test.png";
+	std::vector<uint8> data = sstd::readAll_bin(pFilePath);
+	
+	printf("fnc_MD5   ( %s ) = ", pFilePath); { std::vector<uint8> hash = sstd::md5   (data); print_vecUint8_hex(hash); }
+	printf("fnc_SHA1  ( %s ) = ", pFilePath); { std::vector<uint8> hash = sstd::sha1  (data); print_vecUint8_hex(hash); }
+	printf("fnc_SHA224( %s ) = ", pFilePath); { std::vector<uint8> hash = sstd::sha224(data); print_vecUint8_hex(hash); }
+	printf("fnc_SHA256( %s ) = ", pFilePath); { std::vector<uint8> hash = sstd::sha256(data); print_vecUint8_hex(hash); }
+	printf("fnc_SHA384( %s ) = ", pFilePath); { std::vector<uint8> hash = sstd::sha384(data); print_vecUint8_hex(hash); }
+	printf("fnc_SHA512( %s ) = ", pFilePath); { std::vector<uint8> hash = sstd::sha512(data); print_vecUint8_hex(hash); }
+}
+// --- hash calculation by command ---
+//
+// $ md5sum ./test.png
+// 80764a9c59629dca04ee00c125726a01  ./test.png
+//
+// $ sha1sum ./test.png
+// 3361cc4368ae3369f3f115df78d186a887ee8b46  ./test.png
+//
+// $ sha224sum ./test.png
+// b5d2e3bface35276977ededd5941b52c0547ba4aa63a9571a9a81ac7  ./test.png
+//
+// $ sha256sum ./test.png
+// 58aeaf1a74a46e37bad7d2161d629537440df5e2fcb0ee97837209335cf1fee7  ./test.png
+//
+// sha384sum ./test.png
+// bbc9239c8266ab4b86b7b9435d1ade6f7c47af11ffac78dbb5cdcbe15c3fdaf96e9e720e2c2fa14178d96304ec8185ef  ./test.png
+//
+// $ sha512sum ./test.png
+// 021c3d7da0cedd5aa780ca765f9071f210ed3e19db3c08ee74aa6531aaf6552c3daaa8d0f30abeb10a30793bffbb86d39e3b019b865d54c2793dbd3b62c243e6  ./test.png
+
 void TEST_pause(){
 //	printf("■ #define UsePause\n");
 	sstd::pause();
@@ -1705,6 +1762,7 @@ void TEST_mat_rowMajor(){
 
 
 void TEST_bmat(){
+	//*
 	// init test
 	sstd::bmat bMat4x4(4, 4);
 	sstd::eye(bMat4x4);   sstd::printn(bMat4x4);
@@ -1712,11 +1770,28 @@ void TEST_bmat(){
 	sstd::zeros(bMat4x4); sstd::printn(bMat4x4);
 	sstd::print(bMat4x4);     // for print debug
 	sstd::print_all(bMat4x4); // for bmat debug // Internaly, the bit matrix is processed as a set of 8x8 matrices.
+	//*/
 
 	sstd::bmat bonded8x8 = sstd::zeros(4, 4) << sstd::eye(4, 4) &&
-                           sstd::ones(4, 4)  << sstd::eye(4, 4);
+                           sstd::ones (4, 4) << sstd::eye(4, 4);
 	sstd::printn(bonded8x8);
+
+	sstd::bmat bonded8x8_2 = sstd::zeros(5, 5) << sstd::eye(3, 3) &&
+                             sstd::ones (3, 5) << sstd::eye(3, 3);
+	sstd::printn(bonded8x8_2);
 	
+	sstd::bmat bonded16x16_horzcat2_2 = sstd::ones(16, 16) << sstd::eye(16, 16);
+	sstd::printn(bonded16x16_horzcat2_2);
+	
+	sstd::bmat bonded16x16_vertcat2_2 = sstd::ones(16, 16) &&
+		                                sstd::eye (16, 16);
+	sstd::printn(bonded16x16_vertcat2_2);
+	
+	sstd::bmat bonded16x16 = sstd::zeros(16, 16) << sstd::eye(16, 16) &&
+                             sstd::ones (16, 16) << sstd::eye(16, 16);
+	sstd::printn(bonded16x16);
+	
+	//*
 	sstd::bmat bMat8x9 = sstd::eye(8, 9);
 	sstd::printn(bMat8x9);
 	sstd::print_all(bMat8x9); // for debug // Internaly, the bit matrix is processed as a set of 8x8 matrices.
@@ -1787,6 +1862,7 @@ void TEST_bmat(){
 	I(2, 2) = I[0];
 
 	sstd::printn(I);
+	//*/
 }
 
 

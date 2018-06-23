@@ -1,25 +1,35 @@
 ﻿#include "strEdit.hpp"
 #include "file.hpp"
 #include "pdbg.hpp"
+#include <string.h> // for ::strcmp()
+
+//--------------------------------------------------------------------------------------------------------
+
+// read all of the file as a binary
+std::vector<uint8> sstd::readAll_bin(const char* pReadFile){
+	sstd::file fp; if(!fp.fopen(pReadFile, "rb")){ sstd::pdbg("ERROR: fopen was failed.\n"); }
+	size_t size = fp.fsize(); // ファイルサイズを取得
+	std::vector<uint8> raw(size, 0); //0で初期化
+	if(fp.fread((uchar*)&raw[0], sizeof(char), size)!=size){ sstd::pdbg("ERROR: fread was failed.\n"); }
+	return raw;
+}
+std::vector<uint8> sstd::readAll_bin(const std::string& readFile){ return sstd::readAll_bin(readFile.c_str()); }
 
 //--------------------------------------------------------------------------------------------------------
 
 std::string sstd::readAll(const char* pReadFile){
-
-	sstd::file fp;
-	if(!fp.fopen(pReadFile, "rb")){ sstd::pdbg("ERROR: fopen was failed.\n"); }
-
+	sstd::file fp; if(!fp.fopen(pReadFile, "rb")){ sstd::pdbg("ERROR: fopen was failed.\n"); }
 	size_t size = fp.fsize(); // ファイルサイズを取得
-
 	std::string str(size+1, 0);	//0で初期化	//終端コード分を余分に確保
-
 	if(fp.fread((uchar*)&str[0], sizeof(char), size)!=size){ sstd::pdbg("ERROR: fread was failed.\n"); }
-
 	return str;
 }
+std::string sstd::readAll(const std::string& readFile){ return sstd::readAll(readFile.c_str()); }
+
 void ignoreBOM(uchar* str, uint& r){
 
 	// UTF-8 以外の場合は，UTF-8 に変換するコードを追加するとよい．
+	// it will be better to add functions which will translate to UTF-8 while input file is not UTF-8.
 	
 	if      (str[0]==0xEF && str[1]==0xBB && str[2]==0xBF){ r+=3;                 // UTF-8
 	}else if(str[0]==0xFE && str[1]==0xFF){ r+=2;                                 // UTF-16 BE (Big endian): Not compatible with ASCII code
@@ -60,6 +70,7 @@ std::string sstd::readAll_withoutBOM(const char* pReadFile){
 
 	return str;
 }
+std::string sstd::readAll_withoutBOM(const std::string& readFile){ return sstd::readAll_withoutBOM(readFile.c_str()); }
 
 //--------------------------------------------------------------------------------------------------------
 
@@ -83,7 +94,6 @@ std::vector<std::string> sstd::splitByLine(const std::string& str){
 
 //--------------------------------------------------------------------------------------------------------
 
-// 急場しのぎの実装．(これを元にして ',' の方も実装するとよい．)
 std::vector<std::string> asASpcase(const char* str){
 	std::vector<std::string> splitList;
 	
@@ -122,10 +132,6 @@ std::vector<std::string> asAX(const char* str, const char X){
 	if(buf.size()!=0){ sstd::removeTailSpace(buf); splitList.push_back(buf); }
 	return splitList;
 }
-
-
-// この関数，' ', ',', に対してスプリットした後，前後の余分な空白を削除するように作り直して，
-// sstd に追加しておくと，後が楽．
 std::vector<std::string> sstd::split(const char* str, const char X){
 	if(X==' '){ return asASpcase(str);
 	}  else   { return asAX     (str, X); }
@@ -170,3 +176,11 @@ std::vector<std::string> sstd::removeSpace_of_HeadAndTail(const std::vector<std:
 }
 
 //--------------------------------------------------------------------------------------------------------
+
+bool sstd::strcmp(const char*        str1, const char*        str2){ return (::strcmp(str1,         str2        )==0); }
+bool sstd::strcmp(const char*        str1, const std::string& str2){ return (::strcmp(str1,         str2.c_str())==0); }
+bool sstd::strcmp(const std::string& str1, const char*        str2){ return (::strcmp(str1.c_str(), str2        )==0); }
+bool sstd::strcmp(const std::string& str1, const std::string& str2){ return (::strcmp(str1.c_str(), str2.c_str())==0); }
+
+//--------------------------------------------------------------------------------------------------------
+

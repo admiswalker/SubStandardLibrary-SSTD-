@@ -137,12 +137,6 @@ bool Is_type_tempT(const std::string& str, std::string& retType, std::string& re
 
 //------------------------------------------------------------------------------------------------------------------------------------
 
-// bool type of strcmp
-bool strCmp(const char*        str1, const char*        str2){ return (strcmp(str1,         str2        )==0); }
-bool strCmp(const char*        str1, const std::string& str2){ return (strcmp(str1,         str2.c_str())==0); }
-bool strCmp(const std::string& str1, const char*        str2){ return (strcmp(str1.c_str(), str2        )==0); }
-bool strCmp(const std::string& str1, const std::string& str2){ return (strcmp(str1.c_str(), str2.c_str())==0); }
-
 bool split_leftStr(const char* pStr, struct sstd_c2py::typeSet& f, std::string& fS){
 	uint len=strlen(pStr);
 	
@@ -180,28 +174,28 @@ void split_verticalLine(struct sstd_c2py::typeSet& f, std::string& fS){
 	}else{}
 }
 bool setTandT_num(struct sstd_c2py::typeSet& out, std::string& in){
-	if      (strCmp(in,  "bool")){ out.T=  "bool"; out.T_num=  bool_num;
-	}else if(strCmp(in,  "char")){ out.T=  "char"; out.T_num=  char_num;
-	}else if(strCmp(in, "uchar")){ out.T= "uchar"; out.T_num= uchar_num;
-	}else if(strCmp(in,   "int")){ out.T= "int32"; out.T_num= int32_num;
-	}else if(strCmp(in,  "int8")){ out.T=  "int8"; out.T_num=  int8_num;
-	}else if(strCmp(in, "int16")){ out.T= "int16"; out.T_num= int16_num;
-	}else if(strCmp(in, "int32")){ out.T= "int32"; out.T_num= int32_num;
-	}else if(strCmp(in, "int64")){ out.T= "int64"; out.T_num= int64_num;
-	}else if(strCmp(in, "uint8")){ out.T= "uint8"; out.T_num= uint8_num;
-	}else if(strCmp(in,"uint16")){ out.T="uint16"; out.T_num=uint16_num;
-	}else if(strCmp(in,"uint32")){ out.T="uint32"; out.T_num=uint32_num;
-	}else if(strCmp(in,"uint64")){ out.T="uint64"; out.T_num=uint64_num;
-	}else if(strCmp(in, "float")){ out.T= "float"; out.T_num= float_num;
-	}else if(strCmp(in,"double")){ out.T="double"; out.T_num=double_num;
-	}else if(strCmp(in,"string")){ out.T=   "str"; out.T_num=   str_num;
-	}else if(strCmp(in,   "str")){ out.T=   "str"; out.T_num=   str_num;
+	if      (sstd::strcmp(in,  "bool")){ out.T=  "bool"; out.T_num=  bool_num;
+	}else if(sstd::strcmp(in,  "char")){ out.T=  "char"; out.T_num=  char_num;
+	}else if(sstd::strcmp(in, "uchar")){ out.T= "uchar"; out.T_num= uchar_num;
+	}else if(sstd::strcmp(in,   "int")){ out.T= "int32"; out.T_num= int32_num;
+	}else if(sstd::strcmp(in,  "int8")){ out.T=  "int8"; out.T_num=  int8_num;
+	}else if(sstd::strcmp(in, "int16")){ out.T= "int16"; out.T_num= int16_num;
+	}else if(sstd::strcmp(in, "int32")){ out.T= "int32"; out.T_num= int32_num;
+	}else if(sstd::strcmp(in, "int64")){ out.T= "int64"; out.T_num= int64_num;
+	}else if(sstd::strcmp(in, "uint8")){ out.T= "uint8"; out.T_num= uint8_num;
+	}else if(sstd::strcmp(in,"uint16")){ out.T="uint16"; out.T_num=uint16_num;
+	}else if(sstd::strcmp(in,"uint32")){ out.T="uint32"; out.T_num=uint32_num;
+	}else if(sstd::strcmp(in,"uint64")){ out.T="uint64"; out.T_num=uint64_num;
+	}else if(sstd::strcmp(in, "float")){ out.T= "float"; out.T_num= float_num;
+	}else if(sstd::strcmp(in,"double")){ out.T="double"; out.T_num=double_num;
+	}else if(sstd::strcmp(in,"string")){ out.T=   "str"; out.T_num=   str_num;
+	}else if(sstd::strcmp(in,   "str")){ out.T=   "str"; out.T_num=   str_num;
 	}else{ return false; }
 	return true;
 }
 bool IsNext_Len(const std::vector<std::string>& fSList, const std::vector<struct sstd_c2py::typeSet>& fList, uint& i){
 	if(i<(fList.size()-1)){
-		if(strCmp(fSList[i+1],"len")){ return true; }
+		if(sstd::strcmp(fSList[i+1],"len")){ return true; }
 	}
 	if(!(fList[i].N_num== char_num&&fList[i].pointer)&&
 	   !(fList[i].N_num==  vec_num&&fList[i].pointer)&&
@@ -235,31 +229,31 @@ std::vector<struct sstd_c2py::typeSet> sstd_c2py::format_str2typeSet(const std::
 		split_ret         (fList[i], fS); //   "ret type*|*~" ->   "ret", "type*|*~"
 		split_verticalLine(fList[i], fS); //                              "type*|*~" -> "type*", "*~"           // vartical line is just a splitting symbol
 		split_pointer     (fList[i], fS); //                                            "type*" -> "type",  "*" // setting "true" or "false" of pointer
-		if      (strCmp(fS,  "void")){ fList[i].name=  "void"; fList[i].N_num=  void_num; if(fList[i].pointer){ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
-		}else if(strCmp(fS,  "bool")){ fList[i].name=  "bool"; fList[i].N_num=  bool_num;
-		}else if(strCmp(fS,  "char")){ fList[i].name=  "char"; fList[i].N_num=  char_num; if(fList[i].pointer&& IsNext_Len(fSList, fList, i)){ sstd::pdbg("ERROR: \"%s\": Previous of a len type can't have \"char*\". Because \"char*\" check its length by \"strlen()\" and doesn't need to be send its length.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
-		}else if(strCmp(fS, "uchar")){ fList[i].name= "uchar"; fList[i].N_num= uchar_num;
-		}else if(strCmp(fS,   "int")){ fList[i].name= "int32"; fList[i].N_num= int32_num;
-		}else if(strCmp(fS,  "int8")){ fList[i].name=  "int8"; fList[i].N_num=  int8_num;
-		}else if(strCmp(fS, "int16")){ fList[i].name= "int16"; fList[i].N_num= int16_num;
-		}else if(strCmp(fS, "int32")){ fList[i].name= "int32"; fList[i].N_num= int32_num;
-		}else if(strCmp(fS, "int64")){ fList[i].name= "int64"; fList[i].N_num= int64_num;
-		}else if(strCmp(fS, "uint8")){ fList[i].name= "uint8"; fList[i].N_num= uint8_num;
-		}else if(strCmp(fS,"uint16")){ fList[i].name="uint16"; fList[i].N_num=uint16_num;
-		}else if(strCmp(fS,"uint32")){ fList[i].name="uint32"; fList[i].N_num=uint32_num;
-		}else if(strCmp(fS,"uint64")){ fList[i].name="uint64"; fList[i].N_num=uint64_num;
-		}else if(strCmp(fS, "float")){ fList[i].name= "float"; fList[i].N_num= float_num;
-		}else if(strCmp(fS,"double")){ fList[i].name="double"; fList[i].N_num=double_num;
-		}else if(strCmp(fS,   "len")){ fList[i].name=   "len"; fList[i].N_num=   len_num; if(!IsPrevious_pointer(fSList, fList, i)){ sstd::pdbg("ERROR: \"%s\": Previous of a len type must be a pointer type without \"char*\". Because \"char*\" check its length by \"strlen()\" and doesn't need to be send its length.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
-		}else if(strCmp(fS,"string")){ fList[i].name=   "str"; fList[i].N_num=   str_num;
-		}else if(strCmp(fS,   "str")){ fList[i].name=   "str"; fList[i].N_num=   str_num;
+		if      (sstd::strcmp(fS,  "void")){ fList[i].name=  "void"; fList[i].N_num=  void_num; if(fList[i].pointer){ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
+		}else if(sstd::strcmp(fS,  "bool")){ fList[i].name=  "bool"; fList[i].N_num=  bool_num;
+		}else if(sstd::strcmp(fS,  "char")){ fList[i].name=  "char"; fList[i].N_num=  char_num; if(fList[i].pointer&& IsNext_Len(fSList, fList, i)){ sstd::pdbg("ERROR: \"%s\": Previous of a len type can't have \"char*\". Because \"char*\" check its length by \"strlen()\" and doesn't need to be send its length.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
+		}else if(sstd::strcmp(fS, "uchar")){ fList[i].name= "uchar"; fList[i].N_num= uchar_num;
+		}else if(sstd::strcmp(fS,   "int")){ fList[i].name= "int32"; fList[i].N_num= int32_num;
+		}else if(sstd::strcmp(fS,  "int8")){ fList[i].name=  "int8"; fList[i].N_num=  int8_num;
+		}else if(sstd::strcmp(fS, "int16")){ fList[i].name= "int16"; fList[i].N_num= int16_num;
+		}else if(sstd::strcmp(fS, "int32")){ fList[i].name= "int32"; fList[i].N_num= int32_num;
+		}else if(sstd::strcmp(fS, "int64")){ fList[i].name= "int64"; fList[i].N_num= int64_num;
+		}else if(sstd::strcmp(fS, "uint8")){ fList[i].name= "uint8"; fList[i].N_num= uint8_num;
+		}else if(sstd::strcmp(fS,"uint16")){ fList[i].name="uint16"; fList[i].N_num=uint16_num;
+		}else if(sstd::strcmp(fS,"uint32")){ fList[i].name="uint32"; fList[i].N_num=uint32_num;
+		}else if(sstd::strcmp(fS,"uint64")){ fList[i].name="uint64"; fList[i].N_num=uint64_num;
+		}else if(sstd::strcmp(fS, "float")){ fList[i].name= "float"; fList[i].N_num= float_num;
+		}else if(sstd::strcmp(fS,"double")){ fList[i].name="double"; fList[i].N_num=double_num;
+		}else if(sstd::strcmp(fS,   "len")){ fList[i].name=   "len"; fList[i].N_num=   len_num; if(!IsPrevious_pointer(fSList, fList, i)){ sstd::pdbg("ERROR: \"%s\": Previous of a len type must be a pointer type without \"char*\". Because \"char*\" check its length by \"strlen()\" and doesn't need to be send its length.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
+		}else if(sstd::strcmp(fS,"string")){ fList[i].name=   "str"; fList[i].N_num=   str_num;
+		}else if(sstd::strcmp(fS,   "str")){ fList[i].name=   "str"; fList[i].N_num=   str_num;
 		}else if(Is_type_tempT(fS, type, tempT)){
 			// Example: fS=="vec<double>"
 			//  - type =="vec"
 			//  - tempT=="double"
-			if      (strCmp(type,  "vec")){ fList[i].name="vec";   fList[i].N_num=vec_num;   if(!setTandT_num(fList[i], tempT)){ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
-			}else if(strCmp(type,  "mat")){ fList[i].name="mat";   fList[i].N_num=mat_num;   if(!setTandT_num(fList[i], tempT)){ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
-			}else if(strCmp(type,"mat_r")){ fList[i].name="mat_r"; fList[i].N_num=mat_r_num; if(!setTandT_num(fList[i], tempT)){ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
+			if      (sstd::strcmp(type,  "vec")){ fList[i].name="vec";   fList[i].N_num=vec_num;   if(!setTandT_num(fList[i], tempT)){ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
+			}else if(sstd::strcmp(type,  "mat")){ fList[i].name="mat";   fList[i].N_num=mat_num;   if(!setTandT_num(fList[i], tempT)){ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
+			}else if(sstd::strcmp(type,"mat_r")){ fList[i].name="mat_r"; fList[i].N_num=mat_r_num; if(!setTandT_num(fList[i], tempT)){ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
 			}else{ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
 		}else{
 			if(fSList[i].size()==0){ sstd::pdbg("ERROR: There is a empty token. (There might be invalid \",\".)\n");

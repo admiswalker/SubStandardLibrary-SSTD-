@@ -72,6 +72,7 @@
 #include "./src/tinyInterpreter.hpp"
 #include "./src/csv.hpp"
 #include "./src/encode_decode.hpp"
+#include "./src/hashFnc_of_MD5_SHA1_SHA2/sstd_md5_sha1_sha2_wrapper.hpp"
 #include "./src/pause.hpp"
 
 namespace sstd{
@@ -257,9 +258,13 @@ namespace sstd{
 	extern void mkdir(const std::string&  path);
 
 	// #include "./src/rm.hpp"
-	extern bool rm(const char*        pPath);
-	extern bool rm(const std::string&  path);
-
+	extern bool unlink(const char*        pPath); // delete file
+	extern bool unlink(const std::string&  path); // delete file
+	extern bool rmdir (const char*        pPath); // delete empty directory
+	extern bool rmdir (const std::string&  path); // delete empty directory
+	extern bool rm    (const char*        pPath); // delete all under the pPath
+	extern bool rm    (const std::string&  path); // delete all under the path
+	
 	// #include "./src/str2num.hpp" // using std::stod and std::stoi, but probably it might be slow in parse.
 	extern double str2double(const std::string& rhs);
 	extern int str2int(const std::string& rhs); // 小数点以下，切り捨て
@@ -308,25 +313,36 @@ namespace sstd{
 
 	// #include "./src/getFilePathInDir.hpp"
 	extern std::vector<std::string> getFilePathInDir(const char* DirAndFileName_withWildCard);
-
+	
 	// #include "./src/strEdit.hpp"
-	extern std::vector<std::string> split(const char* str, const char X);
+	extern std::vector<uint8> readAll_bin         (const char*        pReadFile); // read all of the file as a binary
+	extern std::vector<uint8> readAll_bin         (const std::string&  readFile); // read all of the file as a binary
+	extern std::string readAll                    (const char*        pReadFile); // readAll_str()
+	extern std::string readAll                    (const std::string&  readFile); // readAll_str()
+	extern std::string readAll_withoutBOM         (const char*        pReadFile);
+	extern std::string readAll_withoutBOM         (const std::string&  readFile);
+	extern std::vector<std::string> getCommandList(const char* pReadFile);
+	
+	extern std::vector<std::string> splitByLine   (const std::string& str);
+	extern std::vector<std::string> split         (const char*        str, const char X);
+	extern std::vector<std::string> split         (const std::string& str, const char X);
 	
 	extern std::string              removeHeadSpace(const uchar* str);
 	extern void                     removeTailSpace(std::string& str);
 	extern std::string              removeSpace_of_HeadAndTail(const uchar* str);
 	extern std::vector<std::string> removeSpace_of_HeadAndTail(const std::vector<std::string>& vec);
 
+	extern bool strcmp(const char*        str1, const char*        str2);
+	extern bool strcmp(const char*        str1, const std::string& str2);
+	extern bool strcmp(const std::string& str1, const char*        str2);
+	extern bool strcmp(const std::string& str1, const std::string& str2);
+	
 	// #include "./src/tinyInterpreter.hpp"
 		// How to use GetCommandList(); function.
 		//
 		// TinyInterPrinter define middle of "/*~*/" and before "//" as a commnet.
 		// And a ";" mean the end of command. Return value is the list of command.
-	extern std::string readAll                    (const char* pReadFile);
-	extern std::string readAll_withoutBOM         (const char* pReadFile);
-	extern std::vector<std::string> getCommandList(const char* pReadFile);
 	extern std::vector<std::string> splitByComma  (const std::string& str);	// str をカンマで分割する
-	extern std::vector<std::string> splitByLine   (const std::string& str);
 
 	// #include "./src/csv.hpp"
 	extern std::vector<std::vector<std::string>> parseCSV(const char* pReadFile);
@@ -365,6 +381,21 @@ namespace sstd{
 	extern std::u16string unicodeEscape_decode(const char* str);
 	extern std::u16string unicodeEscape_decode(const std::string& str);
 
+	// #include "./src/MD5_SHA1_SHA2/sstd_MD5_sha1_sha2_wrapper.hpp"
+	extern std::vector<uint8> md5   (const uchar* in, size_t in_len);
+	extern std::vector<uint8> sha1  (const uchar* in, size_t in_len);
+	extern std::vector<uint8> sha224(const uchar* in, size_t in_len);
+	extern std::vector<uint8> sha256(const uchar* in, size_t in_len);
+	extern std::vector<uint8> sha384(const uchar* in, size_t in_len);
+	extern std::vector<uint8> sha512(const uchar* in, size_t in_len);
+	
+	extern std::vector<uint8> md5   (const std::vector<uint8>& in);
+	extern std::vector<uint8> sha1  (const std::vector<uint8>& in);
+	extern std::vector<uint8> sha224(const std::vector<uint8>& in);
+	extern std::vector<uint8> sha256(const std::vector<uint8>& in);
+	extern std::vector<uint8> sha384(const std::vector<uint8>& in);
+	extern std::vector<uint8> sha512(const std::vector<uint8>& in);
+	
 	// #include "./src/pause.h"
 	extern void pause();
 	extern void pauseIfWin32();
