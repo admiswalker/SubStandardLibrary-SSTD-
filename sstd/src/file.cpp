@@ -27,10 +27,10 @@ int sstd::file::fseek(const long& offset, const int& whence){ return ::fseek(thi
 long sstd::file::ftell(){ return ::ftell(this->fp); }
 
 size_t sstd::file::fsize(){
-	size_t size_buf = ::ftell(fp); // ファイルポインタの位置を記録しておく．
-	::fseek(fp, 0, SEEK_END);      // ファイルポインタをファイルの最後に移動させる．
-	size_t size = ::ftell(fp);     // ファイルサイズを取得する．        // fgetpos(fp, &size);
-	::fseek(fp, 0, size_buf);      // ファイルポインタを元の位置に戻す．// fseek(fp, 0L, SEEK_SET); ファイルポインタを先頭に戻す．
+	size_t size_buf = ::ftell(fp);   // ファイルポインタの位置を記録しておく
+	::fseek(fp, 0, SEEK_END);        // ファイルポインタをファイルの最後に移動させる
+	size_t size = ::ftell(fp);       // ファイルサイズを取得する        // fgetpos(fp, &size);
+	::fseek(fp, size_buf, SEEK_SET); // ファイルポインタを元の位置に戻す
 	return size;
 }
 

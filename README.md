@@ -1,4 +1,4 @@
-# SubStandardLibrary
+# SubStandardLibrary (SSTD)
 
 Convenient functions for GCC(g++) and MSVC++.
 

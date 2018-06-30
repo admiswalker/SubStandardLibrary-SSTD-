@@ -107,15 +107,12 @@ namespace sstd{
 	extern void print(const struct tm& rhs);
 	
 	// #include "./src/pdbg.hpp"     // printf debugger
-	extern void pdbg();              // This function is enabled when DEBUG is #define d.
-	extern void pdbg_if();           // This function is enabled when DEBUG is #define d.
-	extern void pdbg_if_exit();      // This function is enabled when DEBUG is #define d.
-	extern void pdbg_if_stop_exit(); // This function is enabled when DEBUG is #define d.
-	extern void  dbg();              // This function is enabled when DEBUG is #define d.
-	extern void ndbg();              // This function is enabled when DEBUG is #define d.
-
-	extern void pdbg_always();
-	extern void pdbg_always_stop_exit();
+//	extern void pdbg();              // This function is enabled when DEBUG is #define d.
+//	extern void pdbg_if();           // This function is enabled when DEBUG is #define d.
+//	extern void pdbg_if_exit();      // This function is enabled when DEBUG is #define d.
+//	extern void pdbg_if_stop_exit(); // This function is enabled when DEBUG is #define d.
+//	extern void  dbg();              // This function is enabled when DEBUG is #define d.
+//	extern void ndbg();              // This function is enabled when DEBUG is #define d.
 
 	// #include "./src/print.hpp"
 	extern void print  (bool rhs);
@@ -228,8 +225,149 @@ namespace sstd{
 	extern double stdev  (const std::vector<double>& rhs); // 標本標準偏差 (sample standard deviation): u = SQRT( (1/(n-1))*Σ(x_i-μ)^2 )
 	extern double stdev_p(const std::vector<double>& rhs); // 標準偏差 (standard deviation): σ = SQRT( (1/n)*Σ(x_i-μ)^2 )
 
+	//------------------------------------------------------------------------
+	
+	extern   char max    (const std::vector< char >& rhs);
+	extern   int8 max    (const std::vector< int8 >& rhs);
+	extern  int16 max    (const std::vector< int16>& rhs);
+	extern  int32 max    (const std::vector< int32>& rhs);
+	extern  int64 max    (const std::vector< int64>& rhs);
+//	extern  uchar max    (const std::vector<uchar >& rhs); // same as a uint8
+	extern  uint8 max    (const std::vector<uint8 >& rhs);
+	extern uint16 max    (const std::vector<uint16>& rhs);
+	extern uint32 max    (const std::vector<uint32>& rhs);
+	extern uint64 max    (const std::vector<uint64>& rhs);
+	extern   char max_abs(const std::vector< char >& rhs);
+	extern   int8 max_abs(const std::vector< int8 >& rhs);
+	extern  int16 max_abs(const std::vector< int16>& rhs);
+	extern  int32 max_abs(const std::vector< int32>& rhs);
+	extern  int64 max_abs(const std::vector< int64>& rhs);
+	
+	extern   char min    (const std::vector< char >& rhs);
+	extern   int8 min    (const std::vector< int8 >& rhs);
+	extern  int16 min    (const std::vector< int16>& rhs);
+	extern  int32 min    (const std::vector< int32>& rhs);
+	extern  int64 min    (const std::vector< int64>& rhs);
+//	extern  uchar min    (const std::vector<uchar >& rhs); // same as a uint8
+	extern  uint8 min    (const std::vector<uint8 >& rhs);
+	extern uint16 min    (const std::vector<uint16>& rhs);
+	extern uint32 min    (const std::vector<uint32>& rhs);
+	extern uint64 min    (const std::vector<uint64>& rhs);
+	extern   char min_abs(const std::vector< char >& rhs);
+	extern   int8 min_abs(const std::vector< int8 >& rhs);
+	extern  int16 min_abs(const std::vector< int16>& rhs);
+	extern  int32 min_abs(const std::vector< int32>& rhs);
+	extern  int64 min_abs(const std::vector< int64>& rhs);
+	
+	extern   char max    (const sstd::mat  < char >& rhs);
+	extern   int8 max    (const sstd::mat  < int8 >& rhs);
+	extern  int16 max    (const sstd::mat  < int16>& rhs);
+	extern  int32 max    (const sstd::mat  < int32>& rhs);
+	extern  int64 max    (const sstd::mat  < int64>& rhs);
+//	extern  uchar max    (const sstd::mat  <uchar >& rhs); // same as a uint8
+	extern  uint8 max    (const sstd::mat  <uint8 >& rhs);
+	extern uint16 max    (const sstd::mat  <uint16>& rhs);
+	extern uint32 max    (const sstd::mat  <uint32>& rhs);
+	extern uint64 max    (const sstd::mat  <uint64>& rhs);
+	extern  float max    (const sstd::mat  < float>& rhs);
+	extern double max    (const sstd::mat  <double>& rhs);
+	extern   char max_abs(const sstd::mat  < char >& rhs);
+	extern   int8 max_abs(const sstd::mat  < int8 >& rhs);
+	extern  int16 max_abs(const sstd::mat  < int16>& rhs);
+	extern  int32 max_abs(const sstd::mat  < int32>& rhs);
+	extern  int64 max_abs(const sstd::mat  < int64>& rhs);
+	extern  float max_abs(const sstd::mat  < float>& rhs);
+	extern double max_abs(const sstd::mat  <double>& rhs);
+	
+	extern   char min    (const sstd::mat  < char >& rhs);
+	extern   int8 min    (const sstd::mat  < int8 >& rhs);
+	extern  int16 min    (const sstd::mat  < int16>& rhs);
+	extern  int32 min    (const sstd::mat  < int32>& rhs);
+	extern  int64 min    (const sstd::mat  < int64>& rhs);
+//	extern  uchar min    (const sstd::mat  <uchar >& rhs); // same as a uint8
+	extern  uint8 min    (const sstd::mat  <uint8 >& rhs);
+	extern uint16 min    (const sstd::mat  <uint16>& rhs);
+	extern uint32 min    (const sstd::mat  <uint32>& rhs);
+	extern uint64 min    (const sstd::mat  <uint64>& rhs);
+	extern  float min    (const sstd::mat  < float>& rhs);
+	extern double min    (const sstd::mat  <double>& rhs);
+	extern   char min_abs(const sstd::mat  < char >& rhs);
+	extern   int8 min_abs(const sstd::mat  < int8 >& rhs);
+	extern  int16 min_abs(const sstd::mat  < int16>& rhs);
+	extern  int32 min_abs(const sstd::mat  < int32>& rhs);
+	extern  int64 min_abs(const sstd::mat  < int64>& rhs);
+	extern  float min_abs(const sstd::mat  < float>& rhs);
+	extern double min_abs(const sstd::mat  <double>& rhs);
+	
+	extern   char max    (const sstd::mat_r< char >& rhs);
+	extern   int8 max    (const sstd::mat_r< int8 >& rhs);
+	extern  int16 max    (const sstd::mat_r< int16>& rhs);
+	extern  int32 max    (const sstd::mat_r< int32>& rhs);
+	extern  int64 max    (const sstd::mat_r< int64>& rhs);
+//	extern  uchar max    (const sstd::mat_r<uchar >& rhs); // same as a uint8
+	extern  uint8 max    (const sstd::mat_r<uint8 >& rhs);
+	extern uint16 max    (const sstd::mat_r<uint16>& rhs);
+	extern uint32 max    (const sstd::mat_r<uint32>& rhs);
+	extern uint64 max    (const sstd::mat_r<uint64>& rhs);
+	extern  float max    (const sstd::mat_r< float>& rhs);
+	extern double max    (const sstd::mat_r<double>& rhs);
+	extern   char max_abs(const sstd::mat_r< char >& rhs);
+	extern   int8 max_abs(const sstd::mat_r< int8 >& rhs);
+	extern  int16 max_abs(const sstd::mat_r< int16>& rhs);
+	extern  int32 max_abs(const sstd::mat_r< int32>& rhs);
+	extern  int64 max_abs(const sstd::mat_r< int64>& rhs);
+	extern  float max_abs(const sstd::mat_r< float>& rhs);
+	extern double max_abs(const sstd::mat_r<double>& rhs);
+	
+	extern   char min    (const sstd::mat_r< char >& rhs);
+	extern   int8 min    (const sstd::mat_r< int8 >& rhs);
+	extern  int16 min    (const sstd::mat_r< int16>& rhs);
+	extern  int32 min    (const sstd::mat_r< int32>& rhs);
+	extern  int64 min    (const sstd::mat_r< int64>& rhs);
+//	extern  uchar min    (const sstd::mat_r<uchar >& rhs); // same as a uint8
+	extern  uint8 min    (const sstd::mat_r<uint8 >& rhs);
+	extern uint16 min    (const sstd::mat_r<uint16>& rhs);
+	extern uint32 min    (const sstd::mat_r<uint32>& rhs);
+	extern uint64 min    (const sstd::mat_r<uint64>& rhs);
+	extern  float min    (const sstd::mat_r< float>& rhs);
+	extern double min    (const sstd::mat_r<double>& rhs);
+	extern   char min_abs(const sstd::mat_r< char >& rhs);
+	extern   int8 min_abs(const sstd::mat_r< int8 >& rhs);
+	extern  int16 min_abs(const sstd::mat_r< int16>& rhs);
+	extern  int32 min_abs(const sstd::mat_r< int32>& rhs);
+	extern  int64 min_abs(const sstd::mat_r< int64>& rhs);
+	extern  float min_abs(const sstd::mat_r< float>& rhs);
+	extern double min_abs(const sstd::mat_r<double>& rhs);
+	
+	//------------------------------------------------------------------------
+
 	extern std::vector<double> sort   (std::vector<double> rhs); // Ascending: 昇順: 0, 1, 2, ...
 	extern std::vector<double> sort_de(std::vector<double> rhs); // Descending: 降順: 9, 8, 7, ...
+
+	//------------------------------------------------------------------------
+	
+	extern std::vector< char > sort   (std::vector< char > rhs);
+	extern std::vector< int8 > sort   (std::vector< int8 > rhs);
+	extern std::vector< int16> sort   (std::vector< int16> rhs);
+	extern std::vector< int32> sort   (std::vector< int32> rhs);
+	extern std::vector< int64> sort   (std::vector< int64> rhs);
+//	extern std::vector< uchar> sort   (std::vector<uchar > rhs); // same as a uint8
+	extern std::vector< uint8> sort   (std::vector<uint8 > rhs);
+	extern std::vector<uint16> sort   (std::vector<uint16> rhs);
+	extern std::vector<uint32> sort   (std::vector<uint32> rhs);
+	extern std::vector<uint64> sort   (std::vector<uint64> rhs);
+	extern std::vector<  char> sort_de(std::vector< char > rhs);
+	extern std::vector< int8 > sort_de(std::vector< int8 > rhs);
+	extern std::vector< int16> sort_de(std::vector< int16> rhs);
+	extern std::vector< int32> sort_de(std::vector< int32> rhs);
+	extern std::vector< int64> sort_de(std::vector< int64> rhs);
+//	extern std::vector< uchar> sort_de(std::vector<uchar > rhs); // same as a uint8
+	extern std::vector< uint8> sort_de(std::vector<uint8 > rhs);
+	extern std::vector<uint16> sort_de(std::vector<uint16> rhs);
+	extern std::vector<uint32> sort_de(std::vector<uint32> rhs);
+	extern std::vector<uint64> sort_de(std::vector<uint64> rhs);
+	
+	//------------------------------------------------------------------------
 	
 	extern std::vector<uint64> prime(uint64 rhs);                                  // get a list of prime number
 	extern std::vector<struct fact> factor(uint64 rhs);                            // get a list of prime factorization

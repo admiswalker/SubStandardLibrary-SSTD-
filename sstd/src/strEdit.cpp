@@ -7,10 +7,10 @@
 
 // read all of the file as a binary
 std::vector<uint8> sstd::readAll_bin(const char* pReadFile){
-	sstd::file fp; if(!fp.fopen(pReadFile, "rb")){ sstd::pdbg("ERROR: fopen was failed.\n"); }
+	sstd::file fp; if(!fp.fopen(pReadFile, "rb")){ sstd::pdbg("ERROR: fopen was failed.\n"); return std::vector<uint8>(); }
 	size_t size = fp.fsize(); // ファイルサイズを取得
 	std::vector<uint8> raw(size, 0); //0で初期化
-	if(fp.fread((uchar*)&raw[0], sizeof(char), size)!=size){ sstd::pdbg("ERROR: fread was failed.\n"); }
+	if(fp.fread((uchar*)&raw[0], sizeof(char), size)!=size){ sstd::pdbg("ERROR: fread was failed.\n"); return std::vector<uint8>(); }
 	return raw;
 }
 std::vector<uint8> sstd::readAll_bin(const std::string& readFile){ return sstd::readAll_bin(readFile.c_str()); }
@@ -18,10 +18,10 @@ std::vector<uint8> sstd::readAll_bin(const std::string& readFile){ return sstd::
 //--------------------------------------------------------------------------------------------------------
 
 std::string sstd::readAll(const char* pReadFile){
-	sstd::file fp; if(!fp.fopen(pReadFile, "rb")){ sstd::pdbg("ERROR: fopen was failed.\n"); }
+	sstd::file fp; if(!fp.fopen(pReadFile, "rb")){ sstd::pdbg("ERROR: fopen was failed.\n"); return std::string(); }
 	size_t size = fp.fsize(); // ファイルサイズを取得
 	std::string str(size+1, 0);	//0で初期化	//終端コード分を余分に確保
-	if(fp.fread((uchar*)&str[0], sizeof(char), size)!=size){ sstd::pdbg("ERROR: fread was failed.\n"); }
+	if(fp.fread((uchar*)&str[0], sizeof(char), size)!=size){ sstd::pdbg("ERROR: fread was failed.\n"); return std::string(); }
 	return str;
 }
 std::string sstd::readAll(const std::string& readFile){ return sstd::readAll(readFile.c_str()); }

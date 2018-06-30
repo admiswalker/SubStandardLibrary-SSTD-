@@ -58,7 +58,7 @@ int main(){
 //	TEST_print();
 //	TEST_printn();
 //	TEST_printn_all();
-//	TEST_math();
+	TEST_math();
 //	TEST_signal();
 //	TEST_file();
 //	TEST_mkdir();
@@ -72,7 +72,7 @@ int main(){
 //	TEST_tinyInterpreter();
 //	TEST_parseCSV();
 //	TEST_encode_decode();
-	TEST_hashFnc();
+//	TEST_hashFnc();
 //	TEST_pause();
 //	TEST_c2py();
 	
@@ -381,6 +381,18 @@ void TEST_printn_all(){
 	std::vector<std::vector<std::string>> vv_str = {{std::string("abc"), std::string("def")}, {std::string("ghi"), std::string("jkl")}}; sstd::printn_all(vv_str); // gcc 4.4.7
 	printf("\n");
 }
+#define TEST_vec_sort_sort_de(Type)									\
+	std::vector<Type> buf = {-5, -4, -3, -2, -1, 0, 1, 2, 3, 4};	\
+	std::vector<Type> sortDe = sstd::sort_de(buf);					\
+	sstd::printn(sortDe);											\
+	sstd::printn(sstd::sort(sortDe));								\
+	printf("\n");
+#define TEST_vec_sort_sort_de_u(Type)								\
+	std::vector<Type> buf = {0, 1, 2, 3, 4};						\
+	std::vector<Type> sortDe = sstd::sort_de(buf);					\
+	sstd::printn(sortDe);											\
+	sstd::printn(sstd::sort(sortDe));								\
+	printf("\n");
 void TEST_math(){
 	printf("■ math\n");
 		// 偶数への丸め (round to even)
@@ -488,6 +500,86 @@ void TEST_math(){
 	uint16 u16 = sstd::pow((uint16)2, (uint16) 8); printf("%u\n",  u16);
 	uint32 u32 = sstd::pow((uint32)2, (uint32) 9); printf("%u\n",  u32);
 	uint64 u64 = sstd::pow((uint64)2, (uint64)10); printf("%lu\n", u64);
+	printf("\n");
+
+	//-------------------------------------------------------------------------------------------------------------------------------------------
+	
+	{ std::vector< char > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("max: %i\n",  sstd::max(buf)); }
+	{ std::vector< int8 > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("max: %i\n",  sstd::max(buf)); }
+	{ std::vector< int16> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("max: %i\n",  sstd::max(buf)); }
+	{ std::vector< int32> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("max: %i\n",  sstd::max(buf)); }
+	{ std::vector< int64> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("max: %li\n", sstd::max(buf)); }
+//	{ std::vector<uchar > buf={               0,1,2,3,4}; printf("max: %u\n",  sstd::max(buf)); }
+	{ std::vector<uint8 > buf={               0,1,2,3,4}; printf("max: %u\n",  sstd::max(buf)); }
+	{ std::vector<uint16> buf={               0,1,2,3,4}; printf("max: %u\n",  sstd::max(buf)); }
+	{ std::vector<uint32> buf={               0,1,2,3,4}; printf("max: %u\n",  sstd::max(buf)); }
+	{ std::vector<uint64> buf={               0,1,2,3,4}; printf("max: %lu\n", sstd::max(buf)); }
+	printf("\n");
+	
+	{ std::vector< char > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("max_abs: %i\n",  sstd::max_abs(buf)); }
+	{ std::vector< int8 > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("max_abs: %i\n",  sstd::max_abs(buf)); }
+	{ std::vector< int16> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("max_abs: %i\n",  sstd::max_abs(buf)); }
+	{ std::vector< int32> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("max_abs: %i\n",  sstd::max_abs(buf)); }
+	{ std::vector< int64> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("max_abs: %li\n", sstd::max_abs(buf)); }
+	printf("\n");
+	
+	{ std::vector< char > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("min: %i\n",  sstd::min(buf)); }
+	{ std::vector< int8 > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("min: %i\n",  sstd::min(buf)); }
+	{ std::vector< int16> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("min: %i\n",  sstd::min(buf)); }
+	{ std::vector< int32> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("min: %i\n",  sstd::min(buf)); }
+	{ std::vector< int64> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("min: %li\n", sstd::min(buf)); }
+//	{ std::vector<uchar > buf={               0,1,2,3,4}; printf("min: %u\n",  sstd::min(buf)); }
+	{ std::vector<uint8 > buf={               0,1,2,3,4}; printf("min: %u\n",  sstd::min(buf)); }
+	{ std::vector<uint16> buf={               0,1,2,3,4}; printf("min: %u\n",  sstd::min(buf)); }
+	{ std::vector<uint32> buf={               0,1,2,3,4}; printf("min: %u\n",  sstd::min(buf)); }
+	{ std::vector<uint64> buf={               0,1,2,3,4}; printf("min: %lu\n", sstd::min(buf)); }
+	printf("\n");
+	
+	{ std::vector< char > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("min_abs: %i\n",  sstd::min_abs(buf)); }
+	{ std::vector< int8 > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("min_abs: %i\n",  sstd::min_abs(buf)); }
+	{ std::vector< int16> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("min_abs: %i\n",  sstd::min_abs(buf)); }
+	{ std::vector< int32> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("min_abs: %i\n",  sstd::min_abs(buf)); }
+	{ std::vector< int64> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("min_abs: %li\n", sstd::min_abs(buf)); }
+	printf("\n");
+	
+	{ sstd::mat< char > buf={{-2, -1}, {0, 1}};           printf("max: %i\n",  sstd::max(buf)); }
+	{ sstd::mat< int8 > buf={{-2, -1}, {0, 1}};           printf("max: %i\n",  sstd::max(buf)); }
+	{ sstd::mat< int16> buf={{-2, -1}, {0, 1}};           printf("max: %i\n",  sstd::max(buf)); }
+	{ sstd::mat< int32> buf={{-2, -1}, {0, 1}};           printf("max: %i\n",  sstd::max(buf)); }
+	{ sstd::mat< int64> buf={{-2, -1}, {0, 1}};           printf("max: %li\n", sstd::max(buf)); }
+	{ sstd::mat<uint8 > buf={{ 0,  1}, {2, 3}};           printf("max: %u\n",  sstd::max(buf)); }
+	{ sstd::mat<uint16> buf={{ 0,  1}, {2, 3}};           printf("max: %u\n",  sstd::max(buf)); }
+	{ sstd::mat<uint32> buf={{ 0,  1}, {2, 3}};           printf("max: %u\n",  sstd::max(buf)); }
+	{ sstd::mat<uint64> buf={{ 0,  1}, {2, 3}};           printf("max: %lu\n", sstd::max(buf)); }
+	{ sstd::mat< float> buf={{-2, -1}, {0, 1}};           printf("max: %f\n",  sstd::max(buf)); }
+	{ sstd::mat<double> buf={{-2, -1}, {0, 1}};           printf("max: %lf\n", sstd::max(buf)); }
+	printf("\n");
+	
+	{ sstd::mat_r< char > buf={{-2, -1}, {0, 1}};         printf("max: %i\n",  sstd::max(buf)); }
+	{ sstd::mat_r< int8 > buf={{-2, -1}, {0, 1}};         printf("max: %i\n",  sstd::max(buf)); }
+	{ sstd::mat_r< int16> buf={{-2, -1}, {0, 1}};         printf("max: %i\n",  sstd::max(buf)); }
+	{ sstd::mat_r< int32> buf={{-2, -1}, {0, 1}};         printf("max: %i\n",  sstd::max(buf)); }
+	{ sstd::mat_r< int64> buf={{-2, -1}, {0, 1}};         printf("max: %li\n", sstd::max(buf)); }
+	{ sstd::mat_r<uint8 > buf={{ 0,  1}, {2, 3}};         printf("max: %u\n",  sstd::max(buf)); }
+	{ sstd::mat_r<uint16> buf={{ 0,  1}, {2, 3}};         printf("max: %u\n",  sstd::max(buf)); }
+	{ sstd::mat_r<uint32> buf={{ 0,  1}, {2, 3}};         printf("max: %u\n",  sstd::max(buf)); }
+	{ sstd::mat_r<uint64> buf={{ 0,  1}, {2, 3}};         printf("max: %lu\n", sstd::max(buf)); }
+	{ sstd::mat_r< float> buf={{-2, -1}, {0, 1}};         printf("max: %f\n",  sstd::max(buf)); }
+	{ sstd::mat_r<double> buf={{-2, -1}, {0, 1}};         printf("max: %lf\n", sstd::max(buf)); }
+	printf("\n");
+	
+	//-------------------------------------------------------------------------------------------------------------------------------------------
+	
+	{ TEST_vec_sort_sort_de  ( int8 ); }
+	{ TEST_vec_sort_sort_de  ( int16); }
+	{ TEST_vec_sort_sort_de  ( int32); }
+	{ TEST_vec_sort_sort_de  ( int64); }
+	{ TEST_vec_sort_sort_de_u(uint8 ); }
+	{ TEST_vec_sort_sort_de_u(uint16); }
+	{ TEST_vec_sort_sort_de_u(uint32); }
+	{ TEST_vec_sort_sort_de_u(uint64); }
+	
+	//-------------------------------------------------------------------------------------------------------------------------------------------
 }
 void TEST_signal(){
 	printf("■ generate signal\n");
@@ -815,7 +907,7 @@ void TEST_hashFnc(){
 // $ sha256sum ./test.png
 // 58aeaf1a74a46e37bad7d2161d629537440df5e2fcb0ee97837209335cf1fee7  ./test.png
 //
-// sha384sum ./test.png
+// $ sha384sum ./test.png
 // bbc9239c8266ab4b86b7b9435d1ade6f7c47af11ffac78dbb5cdcbe15c3fdaf96e9e720e2c2fa14178d96304ec8185ef  ./test.png
 //
 // $ sha512sum ./test.png
