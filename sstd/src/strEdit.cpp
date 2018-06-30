@@ -17,6 +17,17 @@ std::vector<uint8> sstd::readAll_bin(const std::string& readFile){ return sstd::
 
 //--------------------------------------------------------------------------------------------------------
 
+// write all data to one file as a binary
+bool sstd::writeAll_bin(const char* pWritePath, std::vector<uint8>& rhs){
+	sstd::file fp;
+	if(!fp.fopen(pWritePath, "wb")){ sstd::pdbg("ERROR: sstd::file::fopen(%s) was failed.\n", pWritePath); return false; }
+	if(!fp.fwrite(&rhs[0], sizeof(char), rhs.size())){ sstd::pdbg("ERROR: sstd::file::fwrite(%s) was failed.\n", pWritePath); return false; }
+	return true;
+}
+bool sstd::writeAll_bin(const std::string& writePath, std::vector<uint8>& rhs){ return sstd::writeAll_bin(writePath.c_str(), rhs); }
+
+//--------------------------------------------------------------------------------------------------------
+
 std::string sstd::readAll(const char* pReadFile){
 	sstd::file fp; if(!fp.fopen(pReadFile, "rb")){ sstd::pdbg("ERROR: fopen was failed.\n"); return std::string(); }
 	size_t size = fp.fsize(); // ファイルサイズを取得

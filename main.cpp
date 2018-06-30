@@ -20,6 +20,7 @@ void TEST_printn_all();
 void TEST_math();
 void TEST_signal();
 void TEST_file();
+void TEST_file_c();
 void TEST_mkdir();
 void TEST_rm();
 void TEST_str2num();
@@ -58,9 +59,10 @@ int main(){
 //	TEST_print();
 //	TEST_printn();
 //	TEST_printn_all();
-	TEST_math();
+//	TEST_math();
 //	TEST_signal();
 //	TEST_file();
+	TEST_file_c();
 //	TEST_mkdir();
 //	TEST_rm();
 //	TEST_str2num();
@@ -613,6 +615,31 @@ void TEST_file(){
 		}
 	}
 }
+void TEST_file_c(){
+	// $ sha512sum ./test.png
+	// 021c3d7da0cedd5aa780ca765f9071f210ed3e19db3c08ee74aa6531aaf6552c3daaa8d0f30abeb10a30793bffbb86d39e3b019b865d54c2793dbd3b62c243e6  ./test.png
+
+	const char* pFilePath_c = "./test_file_c.png";
+	{
+		const char* pFilePath = "./test.png";
+		std::vector<uint8> data = sstd::readAll_bin(pFilePath);
+		
+		sstd::file_c fp_c;
+		if(!fp_c.fopen_wbp(pFilePath_c)){ sstd::pdbg("ERROR: sstd::file_c::fopen_wbp(%s) was failed.\n", pFilePath); return; }
+		if(!fp_c.fwriteAll(data)       ){ sstd::pdbg("ERROR: sstd::file_c::fwriteAll(%s) was failed.\n", pFilePath); return; }
+	}
+	
+	const char* pFilePath_c2f = "./test_file_c2f.png";
+	{
+		std::vector<uint8> data;
+		
+		sstd::file_c fp_c;
+		if(!fp_c.fopen_rbp(pFilePath_c)){ sstd::pdbg("ERROR: sstd::file_c::fopen_rbp(%s) was failed.\n", pFilePath_c); return; }
+		if(!fp_c.freadAll (data)       ){ sstd::pdbg("ERROR: sstd::file_c::freadAll() was failed.\n"); return; }
+
+		if(!sstd::writeAll_bin(pFilePath_c2f, data)){ sstd::pdbg("ERROR: sstd::fwriteAll(%s) was failed.\n", pFilePath_c2f); return; }
+	}
+}
 void TEST_mkdir(){
 	printf("■ mkdir\n\n");
 	sstd::mkdir("./test_mkdir/abc/def"); // enable to make multilayer directory by one step.
@@ -755,6 +782,9 @@ void TEST_strEdit(){
 	printf("  □ readAll_bin\n");
 	std::vector<uint8> raw = sstd::readAll_bin("./test.png");
 	sstd::printn_all(raw.size());
+	printf("  □ writeAll_bin\n");
+	if(!sstd::writeAll_bin("./test__writeAll_bin_char.png",             raw)){ sstd::pdbg("ERROR: sstd::writeAll_bin()\n"); }
+	if(!sstd::writeAll_bin(std::string("./test__writeAll_bin_str.png"), raw)){ sstd::pdbg("ERROR: sstd::writeAll_bin()\n"); }
 	
 	printf("  □ readAll_withoutBOM & splitByLine\n");
 //	std::string str_tI = sstd::readAll_withoutBOM(R"(./tinyInterpreter.txt)");

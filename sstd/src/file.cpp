@@ -1,6 +1,5 @@
 ﻿#include "file.hpp"
 
-
 #ifdef _WIN32
 	inline bool sstd_file_fopen_win32(FILE** fp, const char*& fileName, const char*& mode){
 		return (fopen_s(fp, fileName, mode)==NULL);
@@ -34,22 +33,3 @@ size_t sstd::file::fsize(){
 	return size;
 }
 
-
-/*
- * How to use this.
- *
- * printf("■ fopen\n");
- *
- * FILE* fp;
- * const char* FileName = "./test_fopen.txt";
- *
- * if(!sstd::fopen(&fp, FileName, "wb")){ // Enable to open file by the same code between MSVC++ and GCC.
- *     // falied
- *     printf("false\n\n");
- * }else{
- *     // success
- *     printf("example.txt was made.\n\n");
- *     fwrite("abc", 3, 1, fp);
- * }
- * fclose(fp);
- */

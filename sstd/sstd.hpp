@@ -61,6 +61,7 @@
 #include "./src/math.hpp"
 #include "./src/signal.hpp"
 #include "./src/file.hpp"
+#include "./src/file_c.hpp"
 #include "./src/mkdir.hpp"
 #include "./src/rm.hpp"
 #include "./src/str2num.hpp"
@@ -390,6 +391,8 @@ namespace sstd{
 //	class file;
 //    fopen(), fclose(), fread(), fwrite(), fseek(), ftell()
 //	There is no needing to call "fclose", because destructor call "fclose" at end of the scope.
+	// #include "./src/file_c.hpp"
+//	class file_c;
 	
 	// #include "./src/mkdir.hpp"
 	extern void mkdir(const char*        pPath);
@@ -455,6 +458,8 @@ namespace sstd{
 	// #include "./src/strEdit.hpp"
 	extern std::vector<uint8> readAll_bin         (const char*        pReadFile); // read all of the file as a binary
 	extern std::vector<uint8> readAll_bin         (const std::string&  readFile); // read all of the file as a binary
+	extern bool               writeAll_bin        (const char*        pWritePath, std::vector<uint8>& rhs);
+	extern bool               writeAll_bin        (const std::string&  writePath, std::vector<uint8>& rhs);
 	extern std::string readAll                    (const char*        pReadFile); // readAll_str()
 	extern std::string readAll                    (const std::string&  readFile); // readAll_str()
 	extern std::string readAll_withoutBOM         (const char*        pReadFile);
