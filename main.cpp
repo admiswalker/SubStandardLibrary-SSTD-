@@ -1230,7 +1230,7 @@ void TEST_c2py(){
 	printf("■ C++ to Python. (Running any python function from C++.)\n");
 	// テストを書きながら開発を進める．
 
-	//*
+	/*
 	{
 		printf("  □ empty args\n");
 		sstd::c2py<void> py_emptyArg("./tmpDir", "test_functions", "py_emptyArg", "void");
@@ -1247,7 +1247,7 @@ void TEST_c2py(){
 	}
 	//*/
 	
-	//*
+	/*
 	// measure time 01
 	{
 		printf("■ measureTime_start---------------\n\n"); time_m timem; sstd::measureTime_start(timem);
@@ -1677,7 +1677,7 @@ void TEST_c2py(){
 	}
 	//*/
 	
-	/*
+	//*
 	{
 		sstd::c2py<void> imgPath2mat_rRGB("./tmpDir", "test_functions", "imgPath2mat_rRGB", "void, ret mat_r<uint8>*, ret mat_r<uint8>*, ret mat_r<uint8>*, const char*");
 		sstd::mat_r<uint8> imgR, imgG, imgB;

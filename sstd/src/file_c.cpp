@@ -10,14 +10,6 @@ bool sstd::file_c::fopen_wbp(const char* pFileName){ return fp.fopen(pFileName, 
 bool sstd::file_c::fopen_rbp(const std::string& fileName){ return sstd::file_c::fopen_rbp(fileName.c_str()); }
 bool sstd::file_c::fopen_wbp(const std::string& fileName){ return sstd::file_c::fopen_wbp(fileName.c_str()); }
 
-// この定義は，sstd 組み込み後，sstd_md5_sha1_sha2_wrapper.hpp より読み込むこと．
-#define    MD5_DIGEST_LENGTH 16
-#define   SHA1_DIGEST_LENGTH 20
-#define SHA224_DIGEST_LENGTH 28
-#define SHA256_DIGEST_LENGTH 32
-#define SHA384_DIGEST_LENGTH 48
-#define SHA512_DIGEST_LENGTH 64
-
 // for debug
 //void print_pUint8(const uchar* pRhs, const uint len){ for(uint i=0; i<len; i++){ printf("%.2x", pRhs[i]); } printf("\n"); }
 //void print_vUint8(std::vector<uint8>& rhs){ print_pUint8(&rhs[0], rhs.size()); }
@@ -43,7 +35,7 @@ bool sstd::file_c::freadAll(std::vector<uint8>& rawOut){
 	
 	// get raw data
 	rawOut.resize(rawSize); // rawOut.reserve(rawSize); こっちだとバグる
-	if(fp.fread((uchar*)&rawOut[0], sizeof(char), rawOut.size())!=rawSize){ sstd::pdbg("ERROR: fread() was failed: %s\n", strerror(errno)); return false; }
+	if((int64)fp.fread((uchar*)&rawOut[0], sizeof(char), rawOut.size())!=rawSize){ sstd::pdbg("ERROR: fread() was failed: %s\n", strerror(errno)); return false; }
 	
 	// check hash value
 	std::vector<uint8> hashNow;

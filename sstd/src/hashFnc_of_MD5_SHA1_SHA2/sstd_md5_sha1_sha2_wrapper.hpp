@@ -4,6 +4,13 @@
 #include <stddef.h>
 #include <vector>
 
+#define    MD5_DIGEST_LENGTH 16
+#define   SHA1_DIGEST_LENGTH 20
+#define SHA224_DIGEST_LENGTH 28
+#define SHA256_DIGEST_LENGTH 32
+#define SHA384_DIGEST_LENGTH 48
+#define SHA512_DIGEST_LENGTH 64
+
 namespace sstd{
 	std::vector<uint8> md5   (const uchar* in, size_t in_len);
 	std::vector<uint8> md5   (const std::vector<uint8>& in);

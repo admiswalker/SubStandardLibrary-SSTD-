@@ -5,8 +5,6 @@
 
 #include "./md5.hpp"
 
-#define MD5_DIGEST_LENGTH 16
-
 std::vector<uint8> sstd::md5(const uint8* in, size_t in_len){
 	std::vector<uint8> hash(MD5_DIGEST_LENGTH);
 	
@@ -26,12 +24,6 @@ std::vector<uint8> sstd::md5(const std::vector<uint8>& in){ return sstd::md5(&in
 #include "./sha256.hpp"
 #include "./sha384.hpp"
 #include "./sha512.hpp"
-
-#define SHA1_DIGEST_LENGTH   20
-#define SHA224_DIGEST_LENGTH 28
-#define SHA256_DIGEST_LENGTH 32
-#define SHA384_DIGEST_LENGTH 48
-#define SHA512_DIGEST_LENGTH 64
 
 template <typename sha_state, uint SHA_DIGEST_LENGTH>
 inline std::vector<uint8> sstd_sha(const uint8* in, const size_t in_len){
