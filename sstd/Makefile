@@ -41,9 +41,11 @@
 # ヘッダファイルのディレクトリも追加する必要があります．また，拡張子を記述してはいけません)
 DIR  = ./*.
 DIR += ./src/*.
-DIR += ./src/MatrixStore_mat/*.
-DIR += ./src/MatrixStore_mat_rowMajor/*.
-DIR += ./src/MatrixStore_bmat/*.
+DIR += ./src/linearAlgebra/*.
+DIR += ./src/stdVector_expansion/*.
+DIR += ./src/matrixContainer_binary/*.
+DIR += ./src/matrixContainer_colMajor/*.
+DIR += ./src/matrixContainer_rowMajor/*.
 DIR += ./src/hashFnc_of_MD5_SHA1_SHA2/*.
 
 # Name of generate file: 生成ファイル名

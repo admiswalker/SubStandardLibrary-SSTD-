@@ -137,12 +137,8 @@ public:
 //--------------------------------------------------------------------------------------------------------
 
 template <typename T>
-inline void sstd::zeros(class sstd::mat_r<T>& Mat){
-	for(uint p=0; p<Mat.rows(); p++){
-		for(uint q=0; q<Mat.cols(); q++){
-			Mat(p, q) = (T)0;
-		}
-	}
+inline void sstd::zeros(class sstd::mat_r<T>& mat){
+	for(uint p=0; p<mat.len(); p++){ mat[p]=(T)0; }
 }
 
 //--------------------------------------------------------------------------------------------------------

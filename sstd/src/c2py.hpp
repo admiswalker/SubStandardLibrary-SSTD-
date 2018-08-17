@@ -14,8 +14,8 @@
 #include "./strEdit.hpp"
 #include "./path.hpp"
 #include "./str2num.hpp"
-#include "./MatrixStore_mat/mat.hpp"
-#include "./MatrixStore_mat_rowMajor/mat_r.hpp"
+#include "./matrixContainer_colMajor/mat.hpp"
+#include "./matrixContainer_rowMajor/mat_r.hpp"
 
 #include "./print.hpp" // for debug (リリース時に削除するように)
 
@@ -128,7 +128,7 @@ namespace sstd_c2py{
 	fSList = sstd::removeSpace_of_HeadAndTail(sstd::split(format, ','));\
 	fList  = sstd_c2py::format_str2typeSet(fSList)
 #define sstd_c2py_destructor()											\
-	//sstd::printn(sstd::rm(tmpDir.c_str())); // Don't enable this line, because if some one share "tmpDir", some times you may delete files that running other "sstd::c2py" function.
+	//sstd::printn(sstd::rm(tmpDir.c_str())); // Don't enable this line, because if some one share "tmpDir", some times you may delete files that running on the other "sstd::c2py" function.
 //----------------------------------------------------
 namespace sstd{ template<typename T> class c2py; }
 

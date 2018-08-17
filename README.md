@@ -32,7 +32,8 @@ CFLAGS += -std=gnu++0x
 ・The others: https://sstd-lib.blogspot.com/p/index.html  
 
 ## License
-MIT licence or Public domain. (You can choose whichever you want.)
+MIT licence or Public domain.
+(This software is dual license, so you can choose whichever you want.)
 
 ## Below libraries are incorporated in sstd.
 

@@ -55,3 +55,4 @@ void sstd::for_printn(const class sstd::mat<     uint64>& mat){ printf(" = \n");
 void sstd::for_printn(const class sstd::mat<      float>& mat){ printf(" = \n");sstd::print(mat); }
 void sstd::for_printn(const class sstd::mat<     double>& mat){ printf(" = \n");sstd::print(mat); }
 void sstd::for_printn(const class sstd::mat<std::string>& mat){ printf(" = \n");sstd::print(mat); }
+

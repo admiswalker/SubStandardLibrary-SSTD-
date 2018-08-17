@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 #include <vector>
-#include "./MatrixStore_mat/mat.hpp"
-#include "./MatrixStore_mat_rowMajor/mat_r.hpp"
+#include "./matrixContainer_colMajor/mat.hpp"
+#include "./matrixContainer_rowMajor/mat_r.hpp"
 
 namespace sstd{
 	// 偶数丸め (round to even, round to the nearest even; RN)
@@ -62,10 +62,12 @@ namespace sstd{
 	std::vector<uint64> divisor(const std::vector<struct sstd::fact>& rhs); // get a list of all divisors
 	std::vector<uint64> divisor(uint64 rhs);                                // get a list of all of the divisors.
 
-	uint8  pow(uint8  base, uint8  exp);
-	uint16 pow(uint16 base, uint16 exp);
-	uint32 pow(uint32 base, uint32 exp);
-	uint64 pow(uint64 base, uint64 exp);
+	uint8  pow(const uint8 & base, const uint8 & exp);
+	uint16 pow(const uint16& base, const uint16& exp);
+	uint32 pow(const uint32& base, const uint32& exp);
+	uint64 pow(const uint64& base, const uint64& exp);
+	 float pow(const  float& base, const  float& exp);
+	double pow(const double& base, const double& exp);
 
 	//-----------------------------------------------------------------------------------------------------------------------------------------------
 	
@@ -186,7 +188,8 @@ namespace sstd{
 	double min_abs(const sstd::mat_r<double>& rhs);
 	
 	//-----------------------------------------------------------------------------------------------------------------------------------------------
-	
+
+	// ここ，テンプレートで書きなおせば，ベタ書きする必要がなくなり，さらに，一般の type T について，ソート可能になるので，書き直す．
 	std::vector< char > sort   (std::vector< char > rhs);
 	std::vector<  int8> sort   (std::vector< int8 > rhs);
 	std::vector< int16> sort   (std::vector< int16> rhs);

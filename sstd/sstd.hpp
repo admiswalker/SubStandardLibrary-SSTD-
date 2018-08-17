@@ -357,7 +357,7 @@ namespace sstd{
 	extern std::vector<uint16> sort   (std::vector<uint16> rhs);
 	extern std::vector<uint32> sort   (std::vector<uint32> rhs);
 	extern std::vector<uint64> sort   (std::vector<uint64> rhs);
-	extern std::vector<  char> sort_de(std::vector< char > rhs);
+	extern std::vector< char > sort_de(std::vector< char > rhs);
 	extern std::vector< int8 > sort_de(std::vector< int8 > rhs);
 	extern std::vector< int16> sort_de(std::vector< int16> rhs);
 	extern std::vector< int32> sort_de(std::vector< int32> rhs);
@@ -376,12 +376,13 @@ namespace sstd{
 	extern void for_printn(const std::vector<struct fact>& factList);
 	extern std::vector<uint64> divisor(const std::vector<struct sstd::fact>& rhs); // get a list of all divisors
 	extern std::vector<uint64> divisor(uint64 rhs);                                // get a list of all divisors
-
-	extern uint   pow(uint   base, uint   exp);
-	extern uint8  pow(uint8  base, uint8  exp);
-	extern uint16 pow(uint16 base, uint16 exp);
-	extern uint32 pow(uint32 base, uint32 exp);
-	extern uint64 pow(uint64 base, uint64 exp);
+	
+	extern uint8  pow(const uint8 & base, const uint8 & exp);
+	extern uint16 pow(const uint16& base, const uint16& exp);
+	extern uint32 pow(const uint32& base, const uint32& exp);
+	extern uint64 pow(const uint64& base, const uint64& exp);
+	extern  float pow(const  float& base, const  float& exp);
+	extern double pow(const double& base, const double& exp);
 	
 	// #include "signal.hpp"
 	extern std::vector<double> sinWave(double freq2generate, double freq2sample, uint len);
@@ -545,9 +546,11 @@ namespace sstd{
 }
 
 
-#include "./src/MatrixStore_mat/mat.hpp"            // Because of this header use "pdbg.hpp", we need to define after namespace sstd{}.
-#include "./src/MatrixStore_mat_rowMajor/mat_r.hpp" // Because of this header use "pdbg.hpp", we need to define after namespace sstd{}.
-#include "./src/MatrixStore_bmat/bmat.hpp"
+#include "./src/linearAlgebra/matCal.hpp"
+#include "./src/matrixContainer_binary/bmat.hpp"
+#include "./src/stdVector_expansion/stdVector_expansion.hpp"
+#include "./src/matrixContainer_colMajor/mat.hpp"   // Because of this header use "pdbg.hpp", we need to define after namespace sstd{}.
+#include "./src/matrixContainer_rowMajor/mat_r.hpp" // Because of this header use "pdbg.hpp", we need to define after namespace sstd{}.
 
 #include "./src/pdbg.hpp"                           // In order to avoid conflict of "pdbg.hpp", we need to define after namespace sstd{}.
 #include "./src/print.hpp"                          // In order to avoid conflict of "print.hpp", we need to define after namespace sstd{}.

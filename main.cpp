@@ -36,6 +36,9 @@ void TEST_hashFnc();
 void TEST_pause();
 void TEST_c2py();
 
+// stdVector_expansion of operators
+void TEST_stdVector_expansion();
+
 // sstd/src/MatrixStore_mat
 void TEST_mat_colMajor();
 void TEST_mat_rowMajor();
@@ -46,7 +49,7 @@ int main(){
 	printf("\n");
 	printf("+---------------------------------------------------+\n");
 	printf("|                                                   |\n");
-	printf("|         Welcome to Sub Standard Library !         |\n");
+	printf("|     Welcome to Sub Standard Library (SSTD) !      |\n");
 	printf("|                                                   |\n");
 	printf("+---------------------------------------------------+\n");
 	printf("\n");
@@ -62,7 +65,7 @@ int main(){
 //	TEST_math();
 //	TEST_signal();
 //	TEST_file();
-	TEST_file_c();
+//	TEST_file_c();
 //	TEST_mkdir();
 //	TEST_rm();
 //	TEST_str2num();
@@ -77,6 +80,8 @@ int main(){
 //	TEST_hashFnc();
 //	TEST_pause();
 //	TEST_c2py();
+	
+	TEST_stdVector_expansion();
 	
 //	TEST_mat_colMajor(); // TODO: write tests (zeros, Tr) // sstd::print 関数のテストを書くように
 //	TEST_mat_rowMajor(); // TODO: write tests (zeros, Tr) // sstd::print 関数のテストを書くように
@@ -1699,8 +1704,109 @@ void TEST_c2py(){
 
 //-----------------------------------------------------------------------
 
+void TEST_stdVector_expansion(){
+	printf("== sstd_stdVector_expansion ==\n\n");
+	
+	// 算術演算子以外にも，<< 演算や，| 演算子によって，結合を定義するとよい．
+	
+	std::vector<double> lhs={1, 2, 3}, rhs={1, 2, 3};
+//	std::vector<int> lhsInt={1, 2, 3}, rhsInt={1, 2, 3};
+	std::vector<uint32> lhsInt={1, 2, 3}, rhsInt={1, 2, 3};
+
+	printf("■ plus\n");
+	sstd::printn_all(lhs+rhs);
+	
+	sstd::printn_all(lhs+(int8)10);
+	sstd::printn_all(lhs+(uint32)10);
+	sstd::printn_all(lhs+(double)10);
+	sstd::printn_all(lhsInt+(double)10);
+	
+	sstd::printn_all((int8)10+lhs);
+	// XXX 次はこれを実装する XXX
+	sstd::printn_all(lhs+=rhs);
+	sstd::printn_all(lhs+=(double)10);
+	// ++
+	printf("\n");
+	
+	printf("■ minus\n");
+	sstd::printn_all(lhs-=(double)10);
+	sstd::printn_all(lhs-=rhs);
+	sstd::printn_all(lhs-rhs);
+	sstd::printn_all(lhs-(int8)10);
+	sstd::printn_all((int8)10-lhs);
+	// XXX 次はこれを実装する XXX
+	// --
+	printf("\n");
+	
+	printf("■ multiplication\n");
+	sstd::printn_all(lhs*rhs);
+	sstd::printn_all(lhs*(int8)10);
+	sstd::printn_all((int8)10*lhs);
+	sstd::printn_all(lhs*=rhs);
+	sstd::printn_all(lhs*=(double)10);
+	printf("\n");
+	
+	printf("■ division\n");
+	sstd::printn_all(lhs/=(double)10);
+	sstd::printn_all(lhs/=rhs);
+	sstd::printn_all(lhs/rhs);
+	sstd::printn_all(lhs/(int8)10);
+	sstd::printn_all((int8)10/lhs);
+	printf("\n");
+	
+	printf("■ modulo\n");
+	sstd::printn_all(lhsInt%rhsInt);
+	sstd::printn_all(lhsInt%(int8)10);
+	sstd::printn_all((int8)10%lhsInt);
+	sstd::printn_all(lhsInt%=(int8)10);
+	sstd::printn_all(lhsInt%=rhsInt);
+	printf("\n");
+
+	printf("■ power\n");
+	sstd::printn_all(lhs^rhs);
+	sstd::printn_all(lhsInt^rhsInt);
+	sstd::printn_all(lhsInt^(uint32)2);
+	sstd::printn_all((uint32)2^lhsInt);
+	sstd::printn_all(lhs^=2);
+	sstd::printn_all(lhs^=rhs);
+	printf("\n");
+	
+	printf("■ inclement and decrement\n");
+	sstd::printn_all(lhsInt++);
+	sstd::printn_all(++lhsInt);
+	sstd::printn_all(lhsInt--);
+	sstd::printn_all(--lhsInt);
+	printf("\n");
+	
+	printf("■ operator <<\n");
+	sstd::printn_all(lhs<<rhs);
+	sstd::printn_all(lhs<<(double)3.14);
+	sstd::printn_all((double)3.14<<lhs);
+	std::vector<double> buf={123};
+	buf <<= lhs;
+	buf <<= (double)1.23;
+	sstd::printn_all(buf);
+}
+
+//-----------------------------------------------------------------------
+
 void TEST_mat_colMajor(){
 	printf("== sstd_src_MatrixStore_mat ==\n\n"); // col-major
+	
+	printf("■ Init sstd::eye()\n");
+	{ sstd::mat<double> buf(3, 3); sstd::eye(buf); sstd::printn(buf); printf("\n"); }
+	{ sstd::mat<double> buf(3, 2); sstd::eye(buf); sstd::printn(buf); printf("\n"); }
+	{ sstd::mat<double> buf(2, 3); sstd::eye(buf); sstd::printn(buf); printf("\n"); }
+		
+	printf("■ Init sstd::ones()\n");
+	{ sstd::mat<double> buf(3, 3); sstd::ones(buf); sstd::printn(buf); printf("\n"); }
+	{ sstd::mat<double> buf(3, 2); sstd::ones(buf); sstd::printn(buf); printf("\n"); }
+	{ sstd::mat<double> buf(2, 3); sstd::ones(buf); sstd::printn(buf); printf("\n"); }
+		
+	printf("■ Init sstd::zeros()\n");
+	{ sstd::mat<double> buf(3, 3); sstd::zeros(buf); sstd::printn(buf); printf("\n"); }
+	{ sstd::mat<double> buf(3, 2); sstd::zeros(buf); sstd::printn(buf); printf("\n"); }
+	{ sstd::mat<double> buf(2, 3); sstd::zeros(buf); sstd::printn(buf); printf("\n"); }
 
 	printf("■ Init sstd::mat<type> by \"std::initializer_list<T>\"\n");
 	printf("\n");
@@ -1787,6 +1893,79 @@ void TEST_mat_colMajor(){
 	printf("■ print(type& rhs)\n");printf("\n");
 	sstd::mat<std::string> matStr{{"a", "ab", "abc"},{"abcd", "abcde", "abcdef"},{"7", "8", "9"},{"10", "11", "12"}};
 	sstd::printn(matStr);
+	
+	//===
+
+	printf("■ Operators for linearAlgebra\n");printf("\n");
+	{
+		// このあたりは順次テストを書くこと
+		
+		sstd::mat<double> lhs={{1,2,3}, {4, 5, 6}, {7, 8, 9}};
+		sstd::mat<double> rhs={{1,2,3}, {4, 5, 6}, {7, 8, 9}};
+		
+		sstd::mat<double> lhs23={{1,2,3}, {4, 5, 6}};
+		sstd::mat<double> rhs32={{1,2}, {3, 4}, {5, 6}};
+		
+		sstd::mat<int> lhsInt={{1,2,3}, {4, 5, 6}, {7, 8, 9}};
+		sstd::mat<int> rhsInt={{1,2,3}, {4, 5, 6}, {7, 8, 9}};
+		
+		printf("  □ plus\n");printf("\n");
+		sstd::printn(lhs+rhs); printf("\n");
+		sstd::printn(lhs+(uint)1); printf("\n");
+		sstd::printn((uint)1+lhs); printf("\n");
+		
+		sstd::printn(lhs+(int)-1); printf("\n");
+		sstd::printn((int)-1+lhs); printf("\n");
+		
+		printf("  □ minus\n");printf("\n");
+		sstd::printn(lhs-rhs); printf("\n");
+		
+		sstd::printn(lhs-(int)1); printf("\n");
+		sstd::printn((int)1-lhs); printf("\n");
+		
+		printf("  □ multiplication\n");printf("\n");
+		sstd::printn(lhs*rhs); printf("\n");
+		sstd::printn(lhs23*rhs32); printf("\n");
+		sstd::printn(lhs23*(uint)2); printf("\n");
+		sstd::printn((uint)2*lhs23); printf("\n");
+		
+		sstd::printn(lhs()*rhs()); printf("\n");
+		sstd::printn(lhs  *rhs()); printf("\n");
+		sstd::printn(lhs()*rhs  ); printf("\n");
+		sstd::printn(lhs.vec()*rhs.vec()); printf("\n");
+		
+		printf("  □ division\n");printf("\n");
+		sstd::printn(lhs()/rhs()); printf("\n");
+		sstd::printn(lhs  /rhs()); printf("\n");
+		sstd::printn(lhs()/rhs  ); printf("\n");
+
+		printf("  □ power\n");printf("\n");
+		sstd::printn(lhs^(uint32)0); printf("\n");
+		sstd::printn(lhs^(uint32)1); printf("\n");
+		sstd::printn(lhs^(uint32)2); printf("\n");
+		sstd::printn(lhs*lhs); printf("\n");
+		sstd::printn(lhs^(uint32)3); printf("\n");
+		sstd::printn(lhs*lhs*lhs); printf("\n");
+
+		
+		sstd::printn(lhs^(int32)3); printf("\n");
+		
+		sstd::printn(lhs()^rhs()); printf("\n");
+		sstd::printn(lhs  ^rhs()); printf("\n");
+		sstd::printn(lhs()^rhs  ); printf("\n");
+		
+		// 未実装
+		//sstd::printn(lhs^(int32)-1); printf("\n");
+		//sstd::printn(lhs^(float)-1); printf("\n");
+		//sstd::printn(lhs^(double)-1); printf("\n");
+		
+		printf("  □ modulo\n");printf("\n");
+		sstd::printn(lhsInt % 2); printf("\n");
+		
+		sstd::printn(lhsInt()%rhsInt()); printf("\n");
+		sstd::printn(lhsInt  %rhsInt()); printf("\n");
+		sstd::printn(lhsInt()%rhsInt  ); printf("\n");
+	}
 }
 
 //-----------------------------------------------------------------------

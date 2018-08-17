@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include "../typeDef.h"
-#include "../MatrixStore_mat/mat.hpp"
+#include "../matrixContainer_colMajor/mat.hpp"
 
 // 8x8 binary matrix is column-major order, 
 // and outside of the 8x8 martix is row-major order.

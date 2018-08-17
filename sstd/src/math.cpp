@@ -26,6 +26,19 @@ double sstd::round2odd(double n){ return std::ceil((n + 0.5) / 2) + std::floor((
 		lhs=r2;											\
 	}
 
+//   Kahan summation algorithm
+// 以外の選択肢として
+//   Pairwise summation: https://en.wikipedia.org/wiki/Pairwise_summation
+// が知られている．(Kahan より精度は劣るがほぼ等価で，ずっと高速)
+//
+// また，分散の計算には
+//   Algorithms for calculating variance - Wikipedia
+// が知られている．
+//
+// Ref: http://iwiwi.hatenadiary.jp/entry/2016/11/23/144034
+
+// -> ここのアルゴリズムは，Pairwise summation に置き換えるべき．
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 #define MAX_vec_mat(Type, lhs, rhs, rhs_len)							\
@@ -273,17 +286,49 @@ std::vector<uint64> sstd::divisor(uint64 rhs){
 	return divisor(sstd::factor(rhs));
 }
 
+/*
 // base ^ exponent
-#define sstd_pow(type, base, exp)\
-	if(exp==0){ return 1; }\
-	type ret=base;\
-	for(type i=1; i<exp; i++){ ret *= base; }\
+#define sstd_pow_unsigned(type, base, exp)		\
+	if(exp==0){ return 1; }						\
+	type ret=base;								\
+	for(type i=1; i<exp; i++){ ret *= base; }	\
 	return ret
+//下記のように最適化
+// 高速化と言っても O(sqrt(n)/2) 程度なので，特に必要がなければ，double ::pow(double, double) で計算するのがよい (たぶん)．
+*/
+// base ^ exponent
+#define SSTD_DEF_pow_unsigned(T, base, exp)		\
+	T b=base, e=exp;							\
+												\
+	if(e==(T)0){ return (T)1; }					\
+												\
+	for(; e>(T)0; e>>=1){						\
+		if(e & 1){								\
+			if(e==(T)1){ return b; }			\
+			break;								\
+		}										\
+		b *= b;									\
+	}											\
+	T buf = b;									\
+	buf *= buf;									\
+	e>>=1;										\
+												\
+	for(;;e>>=1){								\
+		if(e & 1){								\
+			b = b * buf;						\
+			if(e==(T)1){ return b; }			\
+		}										\
+		buf *= buf;								\
+	}											\
+	return b;
+uint8  sstd::pow(const uint8 & base, const uint8 & exp){ SSTD_DEF_pow_unsigned(uint8,  base, exp); }
+uint16 sstd::pow(const uint16& base, const uint16& exp){ SSTD_DEF_pow_unsigned(uint16, base, exp); }
+uint32 sstd::pow(const uint32& base, const uint32& exp){ SSTD_DEF_pow_unsigned(uint32, base, exp); }
+uint64 sstd::pow(const uint64& base, const uint64& exp){ SSTD_DEF_pow_unsigned(uint64, base, exp); }
+float  sstd::pow(const  float& base, const  float& exp){ return std::pow( (float)base,  (float)exp); }
+double sstd::pow(const double& base, const double& exp){ return std::pow((double)base, (double)exp); }
 
-uint8  sstd::pow(uint8  base, uint8  exp){ sstd_pow(uint8,  base, exp); }
-uint16 sstd::pow(uint16 base, uint16 exp){ sstd_pow(uint16, base, exp); }
-uint32 sstd::pow(uint32 base, uint32 exp){ sstd_pow(uint32, base, exp); }
-uint64 sstd::pow(uint64 base, uint64 exp){ sstd_pow(uint64, base, exp); }
+#undef SSTD_DEF_pow_unsigned
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -405,6 +450,7 @@ double sstd::min_abs(const sstd::mat_r<double>& rhs){ MIN_ABS_vec_mat(double, lh
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+// ここ，テンプレートで書きなおせば，ベタ書きする必要がなくなり，さらに，一般の type T について，ソート可能になるので，書き直す．
 std::vector< char > sstd::sort   (std::vector< char > rhs){ std::sort(rhs.begin(), rhs.end()); return rhs; }
 std::vector< int8 > sstd::sort   (std::vector< int8 > rhs){ std::sort(rhs.begin(), rhs.end()); return rhs; }
 std::vector< int16> sstd::sort   (std::vector< int16> rhs){ std::sort(rhs.begin(), rhs.end()); return rhs; }
