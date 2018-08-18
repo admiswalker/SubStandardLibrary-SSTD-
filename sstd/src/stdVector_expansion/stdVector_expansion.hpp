@@ -1,53 +1,38 @@
 #pragma once
 #include "../math.hpp"
 
-//-----------------------------------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------------------f
+
+#define SSTD_DEF_stdVecEx_defInNamespace(Func)							\
+	template <typename T>                   std::vector<T>  Func(const std::vector<T>& lhs, const std::vector<T>& rhs); \
+	template <typename T, typename rhsType> std::vector<T>  Func(const std::vector<T>& lhs, const        rhsType& rhs); \
+	template <typename T, typename lhsType> std::vector<T>  Func(const        lhsType& lhs, const std::vector<T>& rhs);
+#define SSTD_DEF_stdVecEx_defInNamespace_eq(Func)						\
+	template <typename T>                   std::vector<T>& Func(      std::vector<T>& lhs, const std::vector<T>& rhs); \
+	template <typename T, typename rhsType> std::vector<T>& Func(      std::vector<T>& lhs, const        rhsType& rhs);
 
 namespace sstd_stdVecEx{
 	// operators for mathematics
-	template <typename T>                   std::vector<T>  add   (const std::vector<T>& lhs, const std::vector<T>& rhs); // +
-	template <typename T, typename rhsType> std::vector<T>  add   (const std::vector<T>& lhs, const        rhsType& rhs);
-	template <typename T, typename lhsType> std::vector<T>  add   (const        lhsType& lhs, const std::vector<T>& rhs);
-	template <typename T>                   std::vector<T>& add_eq(      std::vector<T>& lhs, const std::vector<T>& rhs); // +=
-	template <typename T, typename rhsType> std::vector<T>& add_eq(      std::vector<T>& lhs, const        rhsType& rhs);
-	
-	template <typename T>                   std::vector<T>  sub   (const std::vector<T>& lhs, const std::vector<T>& rhs); // -
-	template <typename T, typename rhsType> std::vector<T>  sub   (const std::vector<T>& lhs, const        rhsType& rhs);
-	template <typename T, typename lhsType> std::vector<T>  sub   (const        lhsType& lhs, const std::vector<T>& rhs);
-	template <typename T>                   std::vector<T>& sub_eq(      std::vector<T>& lhs, const std::vector<T>& rhs); // -=
-	template <typename T, typename rhsType> std::vector<T>& sub_eq(      std::vector<T>& lhs, const        rhsType& rhs);
-	
-	template <typename T>                   std::vector<T>  mul   (const std::vector<T>& lhs, const std::vector<T>& rhs); // *
-	template <typename T, typename rhsType> std::vector<T>  mul   (const std::vector<T>& lhs, const        rhsType& rhs);
-	template <typename T, typename lhsType> std::vector<T>  mul   (const        lhsType& lhs, const std::vector<T>& rhs);
-	template <typename T>                   std::vector<T>& mul_eq(      std::vector<T>& lhs, const std::vector<T>& rhs); // *=
-	template <typename T, typename rhsType> std::vector<T>& mul_eq(      std::vector<T>& lhs, const        rhsType& rhs);
-	
-	template <typename T>                   std::vector<T>  div   (const std::vector<T>& lhs, const std::vector<T>& rhs); // /
-	template <typename T, typename rhsType> std::vector<T>  div   (const std::vector<T>& lhs, const        rhsType& rhs);
-	template <typename T, typename lhsType> std::vector<T>  div   (const        lhsType& lhs, const std::vector<T>& rhs);
-	template <typename T>                   std::vector<T>& div_eq(      std::vector<T>& lhs, const std::vector<T>& rhs); // /=
-	template <typename T, typename rhsType> std::vector<T>& div_eq(      std::vector<T>& lhs, const        rhsType& rhs);
-	
-	template <typename T>                   std::vector<T>  mod   (const std::vector<T>& lhs, const std::vector<T>& rhs); // %
-	template <typename T, typename rhsType> std::vector<T>  mod   (const std::vector<T>& lhs, const        rhsType& rhs);
-	template <typename T, typename lhsType> std::vector<T>  mod   (const        lhsType& lhs, const std::vector<T>& rhs);
-	template <typename T>                   std::vector<T>& mod_eq(      std::vector<T>& lhs, const std::vector<T>& rhs); // %=
-	template <typename T, typename rhsType> std::vector<T>& mod_eq(      std::vector<T>& lhs, const        rhsType& rhs);
-	
-	template <typename T>                   std::vector<T>  pow   (const std::vector<T>& lhs, const std::vector<T>& rhs); // ^
-	template <typename T, typename rhsType> std::vector<T>  pow   (const std::vector<T>& lhs, const        rhsType& rhs);
-	template <typename T, typename lhsType> std::vector<T>  pow   (const        lhsType& lhs, const std::vector<T>& rhs);
-	template <typename T>                   std::vector<T>& pow_eq(      std::vector<T>& lhs, const std::vector<T>& rhs); // ^=
-	template <typename T, typename rhsType> std::vector<T>& pow_eq(      std::vector<T>& lhs, const        rhsType& rhs);
+	SSTD_DEF_stdVecEx_defInNamespace   (add   ); // +
+	SSTD_DEF_stdVecEx_defInNamespace_eq(add_eq); // +=
+	SSTD_DEF_stdVecEx_defInNamespace   (sub   ); // -
+	SSTD_DEF_stdVecEx_defInNamespace_eq(sub_eq); // -=
+	SSTD_DEF_stdVecEx_defInNamespace   (mul   ); // *
+	SSTD_DEF_stdVecEx_defInNamespace_eq(mul_eq); // *=
+	SSTD_DEF_stdVecEx_defInNamespace   (div   ); // /
+	SSTD_DEF_stdVecEx_defInNamespace_eq(div_eq); // /=
+	SSTD_DEF_stdVecEx_defInNamespace   (mod   ); // %
+	SSTD_DEF_stdVecEx_defInNamespace_eq(mod_eq); // %=
+	SSTD_DEF_stdVecEx_defInNamespace   (pow   ); // ^
+	SSTD_DEF_stdVecEx_defInNamespace_eq(pow_eq); // ^=
 	
 	// operators for std::vector
-	template <typename T>                   std::vector<T>  push_back   (const std::vector<T>& lhs, const std::vector<T>& rhs); // <<
-	template <typename T, typename rhsType> std::vector<T>  push_back   (const std::vector<T>& lhs, const        rhsType& rhs);
-	template <typename T, typename lhsType> std::vector<T>  push_back   (const        lhsType& lhs, const std::vector<T>& rhs);
-	template <typename T>                   std::vector<T>& push_back_eq(      std::vector<T>& lhs, const std::vector<T>& rhs); // <<=
-	template <typename T, typename rhsType> std::vector<T>& push_back_eq(      std::vector<T>& lhs, const        rhsType& rhs);
+	SSTD_DEF_stdVecEx_defInNamespace   (push_back   ); // <<
+	SSTD_DEF_stdVecEx_defInNamespace_eq(push_back_eq); // <<=
 }
+
+#undef SSTD_DEF_stdVecEx_defInNamespace    // Deletion of used definition, in order not to pollute the namespace
+#undef SSTD_DEF_stdVecEx_defInNamespace_eq // Deletion of used definition, in order not to pollute the namespace
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
