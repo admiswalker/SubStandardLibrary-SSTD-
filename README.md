@@ -29,6 +29,7 @@ CFLAGS += -std=gnu++0x
 ・./Makefile: https://admiswalker.blogspot.com/2017/02/makefile.html  
 ・./sstd/src/c2py.cpp-.hpp: https://admiswalker.blogspot.com/2018/02/c-python.html  
 ・./sstd/src/bmat/*.cpp-.hpp: https://admiswalker.blogspot.com/2017/11/bit-xorshift.html, https://admiswalker.blogspot.com/2017/11/bit-xorshift.html  
+・./sstd/src/stdVector_expansion/stdVector_expansion.hpp: https://admiswalker.blogspot.com/2018/08/stdvectorexpansion.html  
 ・The others: https://sstd-lib.blogspot.com/p/index.html  
 
 ## License
