@@ -8,8 +8,8 @@ void sstd::copy(class sstd::bmat& lhs, class sstd::bmat& rhs){
 	lhs.cols_RW() = rhs.cols();
 
 	if(lhs.bMat8x8_RW().rows()*lhs.bMat8x8_RW().cols() != rhs.bMat8x8_RW().rows()*rhs.bMat8x8_RW().cols()){
-		free(lhs.bMat8x8_RW().pMat_RW()); lhs.bMat8x8_RW().pMat_RW()=0;
-		if(lhs.rows()!=0 && lhs.cols()!=0){ lhs.bMat8x8_RW().pMat_RW() = (uint64*)malloc(sizeof(uint64) * rhs.bMat8x8_RW().rows() * rhs.bMat8x8_RW().cols()); }
+		delete[] lhs.bMat8x8_RW().pMatT_RW(); lhs.bMat8x8_RW().pMatT_RW()=0;
+		if(lhs.rows()!=0 && lhs.cols()!=0){ lhs.bMat8x8_RW().pMatT_RW() = (uint64*)malloc(sizeof(uint64) * rhs.bMat8x8_RW().rows() * rhs.bMat8x8_RW().cols()); }
 	}
 
 	sstd::copy(lhs.bMat8x8_RW(), rhs.bMat8x8_RW());	// lhs.bMat8x8_RW() = rhs.bMat8x8_RW(); // 本来は，これでオーバーロードされるはずだが，GCC 5.4.0 だとバグるので，明示的に書く．(他の場合でもバグりかねないのが，問題)

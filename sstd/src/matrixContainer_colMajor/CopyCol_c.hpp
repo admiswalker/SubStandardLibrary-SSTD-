@@ -8,7 +8,7 @@ public:
 	CopyCol(){}
 	~CopyCol(){}
 
-	class sstd::mat<T>* pMxs;
+	class sstd::mat_c<T>* pMxs;
 	uint CopyColNum;
 
 	class CopyCol<T> operator=(class CopyCol<T> CC);
@@ -27,7 +27,7 @@ inline class CopyCol<T> CopyCol<T>::operator=(class CopyCol<T> CC)
 
 // 列のコピー, 例: MatB(':', 1) = MatB(':', 0) = MatA(':', 0);
 template <typename T>
-inline class CopyCol<T> OpCopyCol(sstd::mat<T>* pthis, const char& c_dummy, uint q)
+inline class CopyCol<T> OpCopyCol(sstd::mat_c<T>* pthis, const char& c_dummy, uint q)
 {
 	class CopyCol<T> CC;
 	CC.pMxs = pthis;

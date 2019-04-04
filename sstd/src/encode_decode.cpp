@@ -1,7 +1,6 @@
 ﻿#include "encode_decode.hpp"
 #include "ssprintf.hpp"
 
-#define sstd_measureTime
 #include "measureTime.hpp"
 
 #include <iostream>
@@ -250,12 +249,12 @@ void sstd::url_encode_compare_speed(){
 	printf("sstd::url_encode\n");
 	time_m t1; sstd::measureTime_start(t1);
 	for(uint i=0; i<10000; i++){ sstd::url_encode(str_url.c_str(), str_url.size()); }
-	sstd::measureTime_stop(t1);
+	sstd::measureTime_stop_print(t1);
 	
 	printf("sstd::url_encode_type2\n");
 	time_m t2; sstd::measureTime_start(t2);
 	for(uint i=0; i<10000; i++){ sstd::url_encode_type2(str_url.c_str(), str_url.size()); }
-	sstd::measureTime_stop(t2);
+	sstd::measureTime_stop_print(t2);
 	
 	/*
 	  sstd::url_encode
@@ -510,13 +509,13 @@ void sstd::unicodeEscape_compare_speed(){
 	printf("sstd::url_encode\n");
 	time_m t1; sstd::measureTime_start(t1);
 	for(uint i=0; i<25; i++){ sstd::url_encode(str_encoded.c_str(), str_encoded.size()); }
-	sstd::measureTime_stop(t1);
+	sstd::measureTime_stop_print(t1);
 	printf("\n");
 	
 	printf("sstd::url_encode_type2\n");
 	time_m t2; sstd::measureTime_start(t2);
 	for(uint i=0; i<25; i++){ sstd::url_encode_type2(str_encoded.c_str(), str_encoded.size()); }
-	sstd::measureTime_stop(t2);
+	sstd::measureTime_stop_print(t2);
 	
 	/*
 	  sstd::url_encode

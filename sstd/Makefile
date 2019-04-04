@@ -15,7 +15,7 @@
 #       |
 #       + Makefile (Makefile that you need to '$ make'): This file
 #       |
-#       + make_temp/
+#       + tmpMake/
 #       |   |
 #       |   + *.d
 #       |   |
@@ -71,7 +71,7 @@ PYS      = $(wildcard $(PYDIR))
 HPPDIR   = $(patsubst %., %.hpp, $(DIR))
 HEADppS  = $(wildcard $(HPPDIR))
 
-TEMP_DIR = makeTemp
+TEMP_DIR = tmpMake
 OBJS     = $(addprefix $(TEMP_DIR)/, $(patsubst %.cpp, %.o, $(SRCS)))
 #OBJS     = $(addprefix $(TEMP_DIR)/, $(SRCS:%.cpp=%.o))#別表記
 

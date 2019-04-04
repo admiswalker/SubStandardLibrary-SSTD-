@@ -158,7 +158,7 @@ std::vector<std::string> fileInASingleDir(bool& result, std::vector<struct sstd:
 
 //--------------------------------------------------------------------------------------------------------
 
-bool sstd::getAllInDir(std::vector<struct sstd::pathAndType>& ret, const char* pPath){
+bool sstd::getAllPath(std::vector<struct sstd::pathAndType>& ret, const char* pPath){
 	if(!sstd::pathExist(pPath)){ return false; } // there is no file or directory.
 	
 	struct pathAndType retBuf;
@@ -180,12 +180,56 @@ bool sstd::getAllInDir(std::vector<struct sstd::pathAndType>& ret, const char* p
 	}
 	return result;
 }
+bool sstd::getAllPath(std::vector<std::string>& ret, const char* pPath){
+	ret.clear();
+	uint rSize=0;
+	
+	std::vector<struct sstd::pathAndType> allPath;
+	if(!sstd::getAllPath(allPath, pPath)){ sstd::pdbg("ERROR: getAllInDir() is failed\n"); return false; }
+	
+	// In order to avoid directory traversal
+	for(uint i=0; i<allPath.size(); i++){
+		ret.push_back(std::string());
+		ret[rSize].swap(allPath[i].path); rSize++;
+	}
+	return true;
+}
+bool sstd::getAllFile(std::vector<std::string>& ret, const char* pPath){
+	ret.clear();
+	uint rSize=0;
+	
+	std::vector<struct sstd::pathAndType> allPath;
+	if(!sstd::getAllPath(allPath, pPath)){ sstd::pdbg("ERROR: getAllInDir() is failed\n"); return false; }
+	
+	// In order to avoid directory traversal
+	for(uint i=0; i<allPath.size(); i++){
+		if(allPath[i].type!='f'){ continue; } // remove directory
+		ret.push_back(std::string());
+		ret[rSize].swap(allPath[i].path); rSize++;
+	}
+	return true;
+}
+bool sstd::getAllDir(std::vector<std::string>& ret, const char* pPath){
+	ret.clear();
+	uint rSize=0;
+	
+	std::vector<struct sstd::pathAndType> allPath;
+	if(!sstd::getAllPath(allPath, pPath)){ sstd::pdbg("ERROR: getAllInDir() is failed\n"); return false; }
+	
+	// In order to avoid directory traversal
+	for(uint i=0; i<allPath.size(); i++){
+		if(allPath[i].type!='d'){ continue; } // remove directory
+		ret.push_back(std::string());
+		ret[rSize].swap(allPath[i].path); rSize++;
+	}
+	return true;
+}
 
 //--------------------------------------------------------------------------------------------------------
 
 bool sstd::rm(const char* pPath){
 	std::vector<struct sstd::pathAndType> fileList;
-	if(!sstd::getAllInDir(fileList, pPath)){ return false; } // there is no file or directory.
+	if(!sstd::getAllPath(fileList, pPath)){ return false; } // there is no file or directory.
 
 	bool retVal = true;
 	for(int i=fileList.size()-1; i>=0; i--){

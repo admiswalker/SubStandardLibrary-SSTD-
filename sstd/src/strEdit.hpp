@@ -21,11 +21,17 @@ namespace sstd{
 	std::string              removeHeadSpace(const uchar* str);
 	void                     removeTailSpace(std::string& str);
 	std::string              removeSpace_of_HeadAndTail(const uchar* str);
+	void                     removeSpace_of_HeadAndTail(std::string& str);
 	std::vector<std::string> removeSpace_of_HeadAndTail(const std::vector<std::string>& vec);
 	
 	bool strcmp(const char*        str1, const char*        str2);
 	bool strcmp(const char*        str1, const std::string& str2);
 	bool strcmp(const std::string& str1, const char*        str2);
 	bool strcmp(const std::string& str1, const std::string& str2);
+	
+	bool strIn(const char*        lhs, const char*        rhs); // is lhs in rhs ? (is rhs include lhs ?)
+	bool strIn(const char*        lhs, const std::string& rhs);
+	bool strIn(const std::string& lhs, const char*        rhs);
+	bool strIn(const std::string& lhs, const std::string& rhs);
 }
 

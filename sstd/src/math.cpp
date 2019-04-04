@@ -3,8 +3,6 @@
 #include <stdio.h>    // printf
 #include <stdlib.h>   // abs()
 #include <cmath>      // ceil(), floor()
-#include <algorithm>  // std::sort()
-#include <functional> // std::greater<T>()
 
 // 偶数丸め (round to even, round to the nearest even; RN)
 float  sstd::round2even(float n){ return std::ceil((n - 0.5) / 2) + std::floor((n + 0.5) / 2); }
@@ -41,30 +39,30 @@ double sstd::round2odd(double n){ return std::ceil((n + 0.5) / 2) + std::floor((
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-#define MAX_vec_mat(Type, lhs, rhs, rhs_len)							\
-	if(rhs_len==0){ return (Type)0; }									\
+#define MAX_vec_mat(Type, lhs, rhs)										\
+	if(rhs.size()==0){ return (Type)0; }								\
 	Type lhs=rhs[0];													\
-	for(uint i=1; i<rhs_len; i++){ if(lhs<rhs[i]){ lhs=rhs[i]; } }		\
+	for(uint i=1; i<rhs.size(); i++){ if(lhs<rhs[i]){ lhs=rhs[i]; } }	\
 	return lhs;
 
-#define MAX_ABS_vec_mat(Type, lhs, rhs, rhs_len)						\
-	if(rhs_len==0){ return (Type)0; }									\
+#define MAX_ABS_vec_mat(Type, lhs, rhs)									\
+	if(rhs.size()==0){ return (Type)0; }								\
 	Type lhs=rhs[0], buf=std::abs(rhs[0]);								\
-	for(uint i=1; i<rhs_len; i++){ if(buf<std::abs(rhs[i])){ lhs=rhs[i]; buf=std::abs(rhs[i]); } } \
+	for(uint i=1; i<rhs.size(); i++){ if(buf<std::abs(rhs[i])){ lhs=rhs[i]; buf=std::abs(rhs[i]); } } \
 	return lhs;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-#define MIN_vec_mat(Type, lhs, rhs, rhs_len)							\
-	if(rhs_len==0){ return (Type)0; }									\
+#define MIN_vec_mat(Type, lhs, rhs)										\
+	if(rhs.size()==0){ return (Type)0; }								\
 	Type lhs=rhs[0];													\
-	for(uint i=1; i<rhs_len; i++){ if(lhs>rhs[i]){ lhs=rhs[i]; } }		\
+	for(uint i=1; i<rhs.size(); i++){ if(lhs>rhs[i]){ lhs=rhs[i]; } }	\
 	return lhs;
 
-#define MIN_ABS_vec_mat(Type, lhs, rhs, rhs_len)						\
-	if(rhs_len==0){ return (Type)0; }									\
+#define MIN_ABS_vec_mat(Type, lhs, rhs)									\
+	if(rhs.size()==0){ return (Type)0; }								\
 	Type lhs=rhs[0], buf=std::abs(rhs[0]);								\
-	for(uint i=1; i<rhs_len; i++){ if(buf>std::abs(rhs[i])){ lhs=rhs[i]; buf=std::abs(rhs[i]); } } \
+	for(uint i=1; i<rhs.size(); i++){ if(buf>std::abs(rhs[i])){ lhs=rhs[i]; buf=std::abs(rhs[i]); } } \
 	return lhs;
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -100,10 +98,10 @@ float sstd::med(std::vector<float> rhs){ // copy rhs
 	if(size_mod==0){ return (rhs[size_div2-1] + rhs[size_div2])/(float)2.0; // rhs.size() is even number
 	}     else     { return rhs[size_div2]; }                               // rhs.size() is odd number
 }
-float sstd::max    (const std::vector<float>& rhs){ MAX_vec_mat    (float, lhs, rhs, rhs.size()); return lhs; }
-float sstd::max_abs(const std::vector<float>& rhs){ MAX_ABS_vec_mat(float, lhs, rhs, rhs.size()); return lhs; }
-float sstd::min    (const std::vector<float>& rhs){ MIN_vec_mat    (float, lhs, rhs, rhs.size()); return lhs; }
-float sstd::min_abs(const std::vector<float>& rhs){ MIN_ABS_vec_mat(float, lhs, rhs, rhs.size()); return lhs; }
+float sstd::max    (const std::vector<float>& rhs){ MAX_vec_mat    (float, lhs, rhs); return lhs; }
+float sstd::max_abs(const std::vector<float>& rhs){ MAX_ABS_vec_mat(float, lhs, rhs); return lhs; }
+float sstd::min    (const std::vector<float>& rhs){ MIN_vec_mat    (float, lhs, rhs); return lhs; }
+float sstd::min_abs(const std::vector<float>& rhs){ MIN_ABS_vec_mat(float, lhs, rhs); return lhs; }
 // 不偏分散/標本分散 (variance): u^2 = (1/(n-1))*Σ(x_i-μ)^2
 float sstd::var(const std::vector<float>& rhs){
 	float a=sstd::ave(rhs);
@@ -125,10 +123,7 @@ float sstd::stdev(const std::vector<float>& rhs){ return sqrt(sstd::var(rhs)); }
 // 標準偏差 (standard deviation): σ = SQRT( (1/n)*Σ(x_i-μ)^2 )
 float sstd::stdev_p(const std::vector<float>& rhs){ return sqrt(sstd::var_p(rhs)); }
 
-// Ascending: 昇順: 0, 1, 2, ...
-std::vector<float> sstd::sort   (std::vector<float> rhs){ std::sort(rhs.begin(), rhs.end()); return rhs; }
-// Descending: 降順: 9, 8, 7, ...
-std::vector<float> sstd::sort_de(std::vector<float> rhs){ std::sort(rhs.begin(), rhs.end(), std::greater<float>()); return rhs; }
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 double sstd::sum(const std::vector<double>& rhs){
 	double lhs=0;
@@ -161,10 +156,10 @@ double sstd::med(std::vector<double> rhs){ // copy rhs
 	if(size_mod==0){ return (rhs[size_div2-1] + rhs[size_div2])/(double)2.0; // rhs.size() is even number
 	}     else     { return rhs[size_div2]; }                                // rhs.size() is odd number
 }
-double sstd::max    (const std::vector<double>& rhs){ MAX_vec_mat    (double, lhs, rhs, rhs.size()); return lhs; }
-double sstd::max_abs(const std::vector<double>& rhs){ MAX_ABS_vec_mat(double, lhs, rhs, rhs.size()); return lhs; }
-double sstd::min    (const std::vector<double>& rhs){ MIN_vec_mat    (double, lhs, rhs, rhs.size()); return lhs; }
-double sstd::min_abs(const std::vector<double>& rhs){ MIN_ABS_vec_mat(double, lhs, rhs, rhs.size()); return lhs; }
+double sstd::max    (const std::vector<double>& rhs){ MAX_vec_mat    (double, lhs, rhs); return lhs; }
+double sstd::max_abs(const std::vector<double>& rhs){ MAX_ABS_vec_mat(double, lhs, rhs); return lhs; }
+double sstd::min    (const std::vector<double>& rhs){ MIN_vec_mat    (double, lhs, rhs); return lhs; }
+double sstd::min_abs(const std::vector<double>& rhs){ MIN_ABS_vec_mat(double, lhs, rhs); return lhs; }
 // 不偏分散/標本分散 (variance): u^2 = (1/(n-1))*Σ(x_i-μ)^2
 double sstd::var(const std::vector<double>& rhs){
 	double a=sstd::ave(rhs);
@@ -185,11 +180,6 @@ double sstd::var_p(const std::vector<double>& rhs){
 double sstd::stdev(const std::vector<double>& rhs){ return sqrt(sstd::var(rhs)); }
 // 標準偏差 (standard deviation): σ = SQRT( (1/n)*Σ(x_i-μ)^2 )
 double sstd::stdev_p(const std::vector<double>& rhs){ return sqrt(sstd::var_p(rhs)); }
-
-// Ascending: 昇順: 0, 1, 2, ...
-std::vector<double> sstd::sort   (std::vector<double> rhs){ std::sort(rhs.begin(), rhs.end()); return rhs; }
-// Descending: 降順: 9, 8, 7, ...
-std::vector<double> sstd::sort_de(std::vector<double> rhs){ std::sort(rhs.begin(), rhs.end(), std::greater<double>()); return rhs; }
 
 // get a list of prime number under rhs.
 std::vector<uint64> sstd::prime(uint64 rhs){
@@ -332,144 +322,121 @@ double sstd::pow(const double& base, const double& exp){ return std::pow((double
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-  char sstd::max    (const std::vector< char >& rhs){ MAX_vec_mat    ( char , lhs, rhs, rhs.size()); return lhs; }
-  int8 sstd::max    (const std::vector< int8 >& rhs){ MAX_vec_mat    ( int8 , lhs, rhs, rhs.size()); return lhs; }
- int16 sstd::max    (const std::vector< int16>& rhs){ MAX_vec_mat    ( int16, lhs, rhs, rhs.size()); return lhs; }
- int32 sstd::max    (const std::vector< int32>& rhs){ MAX_vec_mat    ( int32, lhs, rhs, rhs.size()); return lhs; }
- int64 sstd::max    (const std::vector< int64>& rhs){ MAX_vec_mat    ( int64, lhs, rhs, rhs.size()); return lhs; }
-//uchar sstd::max    (const std::vector< uchar>& rhs){ MAX_vec_mat    ( uchar, lhs, rhs, rhs.size()); return lhs; } // same as a uint8
- uint8 sstd::max    (const std::vector<uint8 >& rhs){ MAX_vec_mat    (uint8 , lhs, rhs, rhs.size()); return lhs; }
-uint16 sstd::max    (const std::vector<uint16>& rhs){ MAX_vec_mat    (uint16, lhs, rhs, rhs.size()); return lhs; }
-uint32 sstd::max    (const std::vector<uint32>& rhs){ MAX_vec_mat    (uint32, lhs, rhs, rhs.size()); return lhs; }
-uint64 sstd::max    (const std::vector<uint64>& rhs){ MAX_vec_mat    (uint64, lhs, rhs, rhs.size()); return lhs; }
-  char sstd::max_abs(const std::vector< char >& rhs){ MAX_ABS_vec_mat( char , lhs, rhs, rhs.size()); return lhs; }
-  int8 sstd::max_abs(const std::vector< int8 >& rhs){ MAX_ABS_vec_mat( int8 , lhs, rhs, rhs.size()); return lhs; }
- int16 sstd::max_abs(const std::vector< int16>& rhs){ MAX_ABS_vec_mat( int16, lhs, rhs, rhs.size()); return lhs; }
- int32 sstd::max_abs(const std::vector< int32>& rhs){ MAX_ABS_vec_mat( int32, lhs, rhs, rhs.size()); return lhs; }
- int64 sstd::max_abs(const std::vector< int64>& rhs){ MAX_ABS_vec_mat( int64, lhs, rhs, rhs.size()); return lhs; }
+  char sstd::max    (const std::vector< char >& rhs){ MAX_vec_mat    ( char , lhs, rhs); return lhs; }
+  int8 sstd::max    (const std::vector< int8 >& rhs){ MAX_vec_mat    ( int8 , lhs, rhs); return lhs; }
+ int16 sstd::max    (const std::vector< int16>& rhs){ MAX_vec_mat    ( int16, lhs, rhs); return lhs; }
+ int32 sstd::max    (const std::vector< int32>& rhs){ MAX_vec_mat    ( int32, lhs, rhs); return lhs; }
+ int64 sstd::max    (const std::vector< int64>& rhs){ MAX_vec_mat    ( int64, lhs, rhs); return lhs; }
+//uchar sstd::max    (const std::vector< uchar>& rhs){ MAX_vec_mat    ( uchar, lhs, rhs); return lhs; } // same as a uint8
+ uint8 sstd::max    (const std::vector<uint8 >& rhs){ MAX_vec_mat    (uint8 , lhs, rhs); return lhs; }
+uint16 sstd::max    (const std::vector<uint16>& rhs){ MAX_vec_mat    (uint16, lhs, rhs); return lhs; }
+uint32 sstd::max    (const std::vector<uint32>& rhs){ MAX_vec_mat    (uint32, lhs, rhs); return lhs; }
+uint64 sstd::max    (const std::vector<uint64>& rhs){ MAX_vec_mat    (uint64, lhs, rhs); return lhs; }
+  char sstd::max_abs(const std::vector< char >& rhs){ MAX_ABS_vec_mat( char , lhs, rhs); return lhs; }
+  int8 sstd::max_abs(const std::vector< int8 >& rhs){ MAX_ABS_vec_mat( int8 , lhs, rhs); return lhs; }
+ int16 sstd::max_abs(const std::vector< int16>& rhs){ MAX_ABS_vec_mat( int16, lhs, rhs); return lhs; }
+ int32 sstd::max_abs(const std::vector< int32>& rhs){ MAX_ABS_vec_mat( int32, lhs, rhs); return lhs; }
+ int64 sstd::max_abs(const std::vector< int64>& rhs){ MAX_ABS_vec_mat( int64, lhs, rhs); return lhs; }
 
-  char sstd::min    (const std::vector< char >& rhs){ MIN_vec_mat    ( char , lhs, rhs, rhs.size()); return lhs; }
-  int8 sstd::min    (const std::vector< int8 >& rhs){ MIN_vec_mat    ( int8 , lhs, rhs, rhs.size()); return lhs; }
- int16 sstd::min    (const std::vector< int16>& rhs){ MIN_vec_mat    ( int16, lhs, rhs, rhs.size()); return lhs; }
- int32 sstd::min    (const std::vector< int32>& rhs){ MIN_vec_mat    ( int32, lhs, rhs, rhs.size()); return lhs; }
- int64 sstd::min    (const std::vector< int64>& rhs){ MIN_vec_mat    ( int64, lhs, rhs, rhs.size()); return lhs; }
-//uchar sstd::min    (const std::vector< uchar>& rhs){ MIN_vec_mat    (uchar , lhs, rhs, rhs.size()); return lhs; }
- uint8 sstd::min    (const std::vector< uint8>& rhs){ MIN_vec_mat    (uint8 , lhs, rhs, rhs.size()); return lhs; }
-uint16 sstd::min    (const std::vector<uint16>& rhs){ MIN_vec_mat    (uint16, lhs, rhs, rhs.size()); return lhs; }
-uint32 sstd::min    (const std::vector<uint32>& rhs){ MIN_vec_mat    (uint32, lhs, rhs, rhs.size()); return lhs; }
-uint64 sstd::min    (const std::vector<uint64>& rhs){ MIN_vec_mat    (uint64, lhs, rhs, rhs.size()); return lhs; }
-  char sstd::min_abs(const std::vector< char >& rhs){ MIN_ABS_vec_mat( char , lhs, rhs, rhs.size()); return lhs; }
-  int8 sstd::min_abs(const std::vector< int8 >& rhs){ MIN_ABS_vec_mat( int8 , lhs, rhs, rhs.size()); return lhs; }
- int16 sstd::min_abs(const std::vector< int16>& rhs){ MIN_ABS_vec_mat( int16, lhs, rhs, rhs.size()); return lhs; }
- int32 sstd::min_abs(const std::vector< int32>& rhs){ MIN_ABS_vec_mat( int32, lhs, rhs, rhs.size()); return lhs; }
- int64 sstd::min_abs(const std::vector< int64>& rhs){ MIN_ABS_vec_mat( int64, lhs, rhs, rhs.size()); return lhs; }
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
-
-  char sstd::max    (const sstd::mat  < char >& rhs){ MAX_vec_mat    ( char , lhs, rhs, rhs.len()); return lhs; }
-  int8 sstd::max    (const sstd::mat  < int8 >& rhs){ MAX_vec_mat    ( int8 , lhs, rhs, rhs.len()); return lhs; }
- int16 sstd::max    (const sstd::mat  < int16>& rhs){ MAX_vec_mat    ( int16, lhs, rhs, rhs.len()); return lhs; }
- int32 sstd::max    (const sstd::mat  < int32>& rhs){ MAX_vec_mat    ( int32, lhs, rhs, rhs.len()); return lhs; }
- int64 sstd::max    (const sstd::mat  < int64>& rhs){ MAX_vec_mat    ( int64, lhs, rhs, rhs.len()); return lhs; }
-//uchar sstd::max    (const sstd::mat  < uchar>& rhs){ MAX_vec_mat    ( uchar, lhs, rhs, rhs.len()); return lhs; } // same as a uint8
- uint8 sstd::max    (const sstd::mat  <uint8 >& rhs){ MAX_vec_mat    (uint8 , lhs, rhs, rhs.len()); return lhs; }
-uint16 sstd::max    (const sstd::mat  <uint16>& rhs){ MAX_vec_mat    (uint16, lhs, rhs, rhs.len()); return lhs; }
-uint32 sstd::max    (const sstd::mat  <uint32>& rhs){ MAX_vec_mat    (uint32, lhs, rhs, rhs.len()); return lhs; }
-uint64 sstd::max    (const sstd::mat  <uint64>& rhs){ MAX_vec_mat    (uint64, lhs, rhs, rhs.len()); return lhs; }
- float sstd::max    (const sstd::mat  < float>& rhs){ MAX_vec_mat    ( float, lhs, rhs, rhs.len()); return lhs; }
-double sstd::max    (const sstd::mat  <double>& rhs){ MAX_vec_mat    (double, lhs, rhs, rhs.len()); return lhs; }
-  char sstd::max_abs(const sstd::mat  < char >& rhs){ MAX_ABS_vec_mat( char , lhs, rhs, rhs.len()); return lhs; }
-  int8 sstd::max_abs(const sstd::mat  < int8 >& rhs){ MAX_ABS_vec_mat( int8 , lhs, rhs, rhs.len()); return lhs; }
- int16 sstd::max_abs(const sstd::mat  < int16>& rhs){ MAX_ABS_vec_mat( int16, lhs, rhs, rhs.len()); return lhs; }
- int32 sstd::max_abs(const sstd::mat  < int32>& rhs){ MAX_ABS_vec_mat( int32, lhs, rhs, rhs.len()); return lhs; }
- int64 sstd::max_abs(const sstd::mat  < int64>& rhs){ MAX_ABS_vec_mat( int64, lhs, rhs, rhs.len()); return lhs; }
- float sstd::max_abs(const sstd::mat  < float>& rhs){ MAX_ABS_vec_mat( float, lhs, rhs, rhs.len()); return lhs; }
-double sstd::max_abs(const sstd::mat  <double>& rhs){ MAX_ABS_vec_mat(double, lhs, rhs, rhs.len()); return lhs; }
-
-  char sstd::min    (const sstd::mat  < char >& rhs){ MIN_vec_mat    ( char , lhs, rhs, rhs.len()); return lhs; }
-  int8 sstd::min    (const sstd::mat  < int8 >& rhs){ MIN_vec_mat    ( int8 , lhs, rhs, rhs.len()); return lhs; }
- int16 sstd::min    (const sstd::mat  < int16>& rhs){ MIN_vec_mat    ( int16, lhs, rhs, rhs.len()); return lhs; }
- int32 sstd::min    (const sstd::mat  < int32>& rhs){ MIN_vec_mat    ( int32, lhs, rhs, rhs.len()); return lhs; }
- int64 sstd::min    (const sstd::mat  < int64>& rhs){ MIN_vec_mat    ( int64, lhs, rhs, rhs.len()); return lhs; }
-//uchar sstd::min    (const sstd::mat  < uchar>& rhs){ MIN_vec_mat    ( uchar, lhs, rhs, rhs.len()); return lhs; } // same as a uint8
- uint8 sstd::min    (const sstd::mat  <uint8 >& rhs){ MIN_vec_mat    (uint8 , lhs, rhs, rhs.len()); return lhs; }
-uint16 sstd::min    (const sstd::mat  <uint16>& rhs){ MIN_vec_mat    (uint16, lhs, rhs, rhs.len()); return lhs; }
-uint32 sstd::min    (const sstd::mat  <uint32>& rhs){ MIN_vec_mat    (uint32, lhs, rhs, rhs.len()); return lhs; }
-uint64 sstd::min    (const sstd::mat  <uint64>& rhs){ MIN_vec_mat    (uint64, lhs, rhs, rhs.len()); return lhs; }
- float sstd::min    (const sstd::mat  < float>& rhs){ MIN_vec_mat    ( float, lhs, rhs, rhs.len()); return lhs; }
-double sstd::min    (const sstd::mat  <double>& rhs){ MIN_vec_mat    (double, lhs, rhs, rhs.len()); return lhs; }
-  char sstd::min_abs(const sstd::mat  < char >& rhs){ MIN_ABS_vec_mat( char , lhs, rhs, rhs.len()); return lhs; }
-  int8 sstd::min_abs(const sstd::mat  < int8 >& rhs){ MIN_ABS_vec_mat( int8 , lhs, rhs, rhs.len()); return lhs; }
- int16 sstd::min_abs(const sstd::mat  < int16>& rhs){ MIN_ABS_vec_mat( int16, lhs, rhs, rhs.len()); return lhs; }
- int32 sstd::min_abs(const sstd::mat  < int32>& rhs){ MIN_ABS_vec_mat( int32, lhs, rhs, rhs.len()); return lhs; }
- int64 sstd::min_abs(const sstd::mat  < int64>& rhs){ MIN_ABS_vec_mat( int64, lhs, rhs, rhs.len()); return lhs; }
- float sstd::min_abs(const sstd::mat  < float>& rhs){ MIN_ABS_vec_mat( float, lhs, rhs, rhs.len()); return lhs; }
-double sstd::min_abs(const sstd::mat  <double>& rhs){ MIN_ABS_vec_mat(double, lhs, rhs, rhs.len()); return lhs; }
+  char sstd::min    (const std::vector< char >& rhs){ MIN_vec_mat    ( char , lhs, rhs); return lhs; }
+  int8 sstd::min    (const std::vector< int8 >& rhs){ MIN_vec_mat    ( int8 , lhs, rhs); return lhs; }
+ int16 sstd::min    (const std::vector< int16>& rhs){ MIN_vec_mat    ( int16, lhs, rhs); return lhs; }
+ int32 sstd::min    (const std::vector< int32>& rhs){ MIN_vec_mat    ( int32, lhs, rhs); return lhs; }
+ int64 sstd::min    (const std::vector< int64>& rhs){ MIN_vec_mat    ( int64, lhs, rhs); return lhs; }
+//uchar sstd::min    (const std::vector< uchar>& rhs){ MIN_vec_mat    (uchar , lhs, rhs); return lhs; }
+ uint8 sstd::min    (const std::vector< uint8>& rhs){ MIN_vec_mat    (uint8 , lhs, rhs); return lhs; }
+uint16 sstd::min    (const std::vector<uint16>& rhs){ MIN_vec_mat    (uint16, lhs, rhs); return lhs; }
+uint32 sstd::min    (const std::vector<uint32>& rhs){ MIN_vec_mat    (uint32, lhs, rhs); return lhs; }
+uint64 sstd::min    (const std::vector<uint64>& rhs){ MIN_vec_mat    (uint64, lhs, rhs); return lhs; }
+  char sstd::min_abs(const std::vector< char >& rhs){ MIN_ABS_vec_mat( char , lhs, rhs); return lhs; }
+  int8 sstd::min_abs(const std::vector< int8 >& rhs){ MIN_ABS_vec_mat( int8 , lhs, rhs); return lhs; }
+ int16 sstd::min_abs(const std::vector< int16>& rhs){ MIN_ABS_vec_mat( int16, lhs, rhs); return lhs; }
+ int32 sstd::min_abs(const std::vector< int32>& rhs){ MIN_ABS_vec_mat( int32, lhs, rhs); return lhs; }
+ int64 sstd::min_abs(const std::vector< int64>& rhs){ MIN_ABS_vec_mat( int64, lhs, rhs); return lhs; }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-  char sstd::max    (const sstd::mat_r< char >& rhs){ MAX_vec_mat    ( char , lhs, rhs, rhs.len()); return lhs; }
-  int8 sstd::max    (const sstd::mat_r< int8 >& rhs){ MAX_vec_mat    ( int8 , lhs, rhs, rhs.len()); return lhs; }
- int16 sstd::max    (const sstd::mat_r< int16>& rhs){ MAX_vec_mat    ( int16, lhs, rhs, rhs.len()); return lhs; }
- int32 sstd::max    (const sstd::mat_r< int32>& rhs){ MAX_vec_mat    ( int32, lhs, rhs, rhs.len()); return lhs; }
- int64 sstd::max    (const sstd::mat_r< int64>& rhs){ MAX_vec_mat    ( int64, lhs, rhs, rhs.len()); return lhs; }
-//uchar sstd::max    (const sstd::mat_r< uchar>& rhs){ MAX_vec_mat    ( uchar, lhs, rhs, rhs.len()); return lhs; } // same as a uint8
- uint8 sstd::max    (const sstd::mat_r<uint8 >& rhs){ MAX_vec_mat    (uint8 , lhs, rhs, rhs.len()); return lhs; }
-uint16 sstd::max    (const sstd::mat_r<uint16>& rhs){ MAX_vec_mat    (uint16, lhs, rhs, rhs.len()); return lhs; }
-uint32 sstd::max    (const sstd::mat_r<uint32>& rhs){ MAX_vec_mat    (uint32, lhs, rhs, rhs.len()); return lhs; }
-uint64 sstd::max    (const sstd::mat_r<uint64>& rhs){ MAX_vec_mat    (uint64, lhs, rhs, rhs.len()); return lhs; }
- float sstd::max    (const sstd::mat_r< float>& rhs){ MAX_vec_mat    ( float, lhs, rhs, rhs.len()); return lhs; }
-double sstd::max    (const sstd::mat_r<double>& rhs){ MAX_vec_mat    (double, lhs, rhs, rhs.len()); return lhs; }
-  char sstd::max_abs(const sstd::mat_r< char >& rhs){ MAX_ABS_vec_mat( char , lhs, rhs, rhs.len()); return lhs; }
-  int8 sstd::max_abs(const sstd::mat_r< int8 >& rhs){ MAX_ABS_vec_mat( int8 , lhs, rhs, rhs.len()); return lhs; }
- int16 sstd::max_abs(const sstd::mat_r< int16>& rhs){ MAX_ABS_vec_mat( int16, lhs, rhs, rhs.len()); return lhs; }
- int32 sstd::max_abs(const sstd::mat_r< int32>& rhs){ MAX_ABS_vec_mat( int32, lhs, rhs, rhs.len()); return lhs; }
- int64 sstd::max_abs(const sstd::mat_r< int64>& rhs){ MAX_ABS_vec_mat( int64, lhs, rhs, rhs.len()); return lhs; }
- float sstd::max_abs(const sstd::mat_r< float>& rhs){ MAX_ABS_vec_mat( float, lhs, rhs, rhs.len()); return lhs; }
-double sstd::max_abs(const sstd::mat_r<double>& rhs){ MAX_ABS_vec_mat(double, lhs, rhs, rhs.len()); return lhs; }
+  char sstd::max    (const sstd::mat_c< char >& rhs){ MAX_vec_mat    ( char , lhs, rhs); return lhs; }
+  int8 sstd::max    (const sstd::mat_c< int8 >& rhs){ MAX_vec_mat    ( int8 , lhs, rhs); return lhs; }
+ int16 sstd::max    (const sstd::mat_c< int16>& rhs){ MAX_vec_mat    ( int16, lhs, rhs); return lhs; }
+ int32 sstd::max    (const sstd::mat_c< int32>& rhs){ MAX_vec_mat    ( int32, lhs, rhs); return lhs; }
+ int64 sstd::max    (const sstd::mat_c< int64>& rhs){ MAX_vec_mat    ( int64, lhs, rhs); return lhs; }
+//uchar sstd::max    (const sstd::mat_c< uchar>& rhs){ MAX_vec_mat    ( uchar, lhs, rhs); return lhs; } // same as a uint8
+ uint8 sstd::max    (const sstd::mat_c<uint8 >& rhs){ MAX_vec_mat    (uint8 , lhs, rhs); return lhs; }
+uint16 sstd::max    (const sstd::mat_c<uint16>& rhs){ MAX_vec_mat    (uint16, lhs, rhs); return lhs; }
+uint32 sstd::max    (const sstd::mat_c<uint32>& rhs){ MAX_vec_mat    (uint32, lhs, rhs); return lhs; }
+uint64 sstd::max    (const sstd::mat_c<uint64>& rhs){ MAX_vec_mat    (uint64, lhs, rhs); return lhs; }
+ float sstd::max    (const sstd::mat_c< float>& rhs){ MAX_vec_mat    ( float, lhs, rhs); return lhs; }
+double sstd::max    (const sstd::mat_c<double>& rhs){ MAX_vec_mat    (double, lhs, rhs); return lhs; }
+  char sstd::max_abs(const sstd::mat_c< char >& rhs){ MAX_ABS_vec_mat( char , lhs, rhs); return lhs; }
+  int8 sstd::max_abs(const sstd::mat_c< int8 >& rhs){ MAX_ABS_vec_mat( int8 , lhs, rhs); return lhs; }
+ int16 sstd::max_abs(const sstd::mat_c< int16>& rhs){ MAX_ABS_vec_mat( int16, lhs, rhs); return lhs; }
+ int32 sstd::max_abs(const sstd::mat_c< int32>& rhs){ MAX_ABS_vec_mat( int32, lhs, rhs); return lhs; }
+ int64 sstd::max_abs(const sstd::mat_c< int64>& rhs){ MAX_ABS_vec_mat( int64, lhs, rhs); return lhs; }
+ float sstd::max_abs(const sstd::mat_c< float>& rhs){ MAX_ABS_vec_mat( float, lhs, rhs); return lhs; }
+double sstd::max_abs(const sstd::mat_c<double>& rhs){ MAX_ABS_vec_mat(double, lhs, rhs); return lhs; }
 
-  char sstd::min    (const sstd::mat_r< char >& rhs){ MIN_vec_mat    ( char , lhs, rhs, rhs.len()); return lhs; }
-  int8 sstd::min    (const sstd::mat_r< int8 >& rhs){ MIN_vec_mat    ( int8 , lhs, rhs, rhs.len()); return lhs; }
- int16 sstd::min    (const sstd::mat_r< int16>& rhs){ MIN_vec_mat    ( int16, lhs, rhs, rhs.len()); return lhs; }
- int32 sstd::min    (const sstd::mat_r< int32>& rhs){ MIN_vec_mat    ( int32, lhs, rhs, rhs.len()); return lhs; }
- int64 sstd::min    (const sstd::mat_r< int64>& rhs){ MIN_vec_mat    ( int64, lhs, rhs, rhs.len()); return lhs; }
-//uchar sstd::min    (const sstd::mat_r< uchar>& rhs){ MIN_vec_mat    ( uchar, lhs, rhs, rhs.len()); return lhs; } // same as a uint8
- uint8 sstd::min    (const sstd::mat_r<uint8 >& rhs){ MIN_vec_mat    (uint8 , lhs, rhs, rhs.len()); return lhs; }
-uint16 sstd::min    (const sstd::mat_r<uint16>& rhs){ MIN_vec_mat    (uint16, lhs, rhs, rhs.len()); return lhs; }
-uint32 sstd::min    (const sstd::mat_r<uint32>& rhs){ MIN_vec_mat    (uint32, lhs, rhs, rhs.len()); return lhs; }
-uint64 sstd::min    (const sstd::mat_r<uint64>& rhs){ MIN_vec_mat    (uint64, lhs, rhs, rhs.len()); return lhs; }
- float sstd::min    (const sstd::mat_r< float>& rhs){ MIN_vec_mat    ( float, lhs, rhs, rhs.len()); return lhs; }
-double sstd::min    (const sstd::mat_r<double>& rhs){ MIN_vec_mat    (double, lhs, rhs, rhs.len()); return lhs; }
-  char sstd::min_abs(const sstd::mat_r< char >& rhs){ MIN_ABS_vec_mat( char , lhs, rhs, rhs.len()); return lhs; }
-  int8 sstd::min_abs(const sstd::mat_r< int8 >& rhs){ MIN_ABS_vec_mat( int8 , lhs, rhs, rhs.len()); return lhs; }
- int16 sstd::min_abs(const sstd::mat_r< int16>& rhs){ MIN_ABS_vec_mat( int16, lhs, rhs, rhs.len()); return lhs; }
- int32 sstd::min_abs(const sstd::mat_r< int32>& rhs){ MIN_ABS_vec_mat( int32, lhs, rhs, rhs.len()); return lhs; }
- int64 sstd::min_abs(const sstd::mat_r< int64>& rhs){ MIN_ABS_vec_mat( int64, lhs, rhs, rhs.len()); return lhs; }
- float sstd::min_abs(const sstd::mat_r< float>& rhs){ MIN_ABS_vec_mat( float, lhs, rhs, rhs.len()); return lhs; }
-double sstd::min_abs(const sstd::mat_r<double>& rhs){ MIN_ABS_vec_mat(double, lhs, rhs, rhs.len()); return lhs; }
+  char sstd::min    (const sstd::mat_c< char >& rhs){ MIN_vec_mat    ( char , lhs, rhs); return lhs; }
+  int8 sstd::min    (const sstd::mat_c< int8 >& rhs){ MIN_vec_mat    ( int8 , lhs, rhs); return lhs; }
+ int16 sstd::min    (const sstd::mat_c< int16>& rhs){ MIN_vec_mat    ( int16, lhs, rhs); return lhs; }
+ int32 sstd::min    (const sstd::mat_c< int32>& rhs){ MIN_vec_mat    ( int32, lhs, rhs); return lhs; }
+ int64 sstd::min    (const sstd::mat_c< int64>& rhs){ MIN_vec_mat    ( int64, lhs, rhs); return lhs; }
+//uchar sstd::min    (const sstd::mat_c< uchar>& rhs){ MIN_vec_mat    ( uchar, lhs, rhs); return lhs; } // same as a uint8
+ uint8 sstd::min    (const sstd::mat_c<uint8 >& rhs){ MIN_vec_mat    (uint8 , lhs, rhs); return lhs; }
+uint16 sstd::min    (const sstd::mat_c<uint16>& rhs){ MIN_vec_mat    (uint16, lhs, rhs); return lhs; }
+uint32 sstd::min    (const sstd::mat_c<uint32>& rhs){ MIN_vec_mat    (uint32, lhs, rhs); return lhs; }
+uint64 sstd::min    (const sstd::mat_c<uint64>& rhs){ MIN_vec_mat    (uint64, lhs, rhs); return lhs; }
+ float sstd::min    (const sstd::mat_c< float>& rhs){ MIN_vec_mat    ( float, lhs, rhs); return lhs; }
+double sstd::min    (const sstd::mat_c<double>& rhs){ MIN_vec_mat    (double, lhs, rhs); return lhs; }
+  char sstd::min_abs(const sstd::mat_c< char >& rhs){ MIN_ABS_vec_mat( char , lhs, rhs); return lhs; }
+  int8 sstd::min_abs(const sstd::mat_c< int8 >& rhs){ MIN_ABS_vec_mat( int8 , lhs, rhs); return lhs; }
+ int16 sstd::min_abs(const sstd::mat_c< int16>& rhs){ MIN_ABS_vec_mat( int16, lhs, rhs); return lhs; }
+ int32 sstd::min_abs(const sstd::mat_c< int32>& rhs){ MIN_ABS_vec_mat( int32, lhs, rhs); return lhs; }
+ int64 sstd::min_abs(const sstd::mat_c< int64>& rhs){ MIN_ABS_vec_mat( int64, lhs, rhs); return lhs; }
+ float sstd::min_abs(const sstd::mat_c< float>& rhs){ MIN_ABS_vec_mat( float, lhs, rhs); return lhs; }
+double sstd::min_abs(const sstd::mat_c<double>& rhs){ MIN_ABS_vec_mat(double, lhs, rhs); return lhs; }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+  char sstd::max    (const sstd::mat_r< char >& rhs){ MAX_vec_mat    ( char , lhs, rhs); return lhs; }
+  int8 sstd::max    (const sstd::mat_r< int8 >& rhs){ MAX_vec_mat    ( int8 , lhs, rhs); return lhs; }
+ int16 sstd::max    (const sstd::mat_r< int16>& rhs){ MAX_vec_mat    ( int16, lhs, rhs); return lhs; }
+ int32 sstd::max    (const sstd::mat_r< int32>& rhs){ MAX_vec_mat    ( int32, lhs, rhs); return lhs; }
+ int64 sstd::max    (const sstd::mat_r< int64>& rhs){ MAX_vec_mat    ( int64, lhs, rhs); return lhs; }
+//uchar sstd::max    (const sstd::mat_r< uchar>& rhs){ MAX_vec_mat    ( uchar, lhs, rhs); return lhs; } // same as a uint8
+ uint8 sstd::max    (const sstd::mat_r<uint8 >& rhs){ MAX_vec_mat    (uint8 , lhs, rhs); return lhs; }
+uint16 sstd::max    (const sstd::mat_r<uint16>& rhs){ MAX_vec_mat    (uint16, lhs, rhs); return lhs; }
+uint32 sstd::max    (const sstd::mat_r<uint32>& rhs){ MAX_vec_mat    (uint32, lhs, rhs); return lhs; }
+uint64 sstd::max    (const sstd::mat_r<uint64>& rhs){ MAX_vec_mat    (uint64, lhs, rhs); return lhs; }
+ float sstd::max    (const sstd::mat_r< float>& rhs){ MAX_vec_mat    ( float, lhs, rhs); return lhs; }
+double sstd::max    (const sstd::mat_r<double>& rhs){ MAX_vec_mat    (double, lhs, rhs); return lhs; }
+  char sstd::max_abs(const sstd::mat_r< char >& rhs){ MAX_ABS_vec_mat( char , lhs, rhs); return lhs; }
+  int8 sstd::max_abs(const sstd::mat_r< int8 >& rhs){ MAX_ABS_vec_mat( int8 , lhs, rhs); return lhs; }
+ int16 sstd::max_abs(const sstd::mat_r< int16>& rhs){ MAX_ABS_vec_mat( int16, lhs, rhs); return lhs; }
+ int32 sstd::max_abs(const sstd::mat_r< int32>& rhs){ MAX_ABS_vec_mat( int32, lhs, rhs); return lhs; }
+ int64 sstd::max_abs(const sstd::mat_r< int64>& rhs){ MAX_ABS_vec_mat( int64, lhs, rhs); return lhs; }
+ float sstd::max_abs(const sstd::mat_r< float>& rhs){ MAX_ABS_vec_mat( float, lhs, rhs); return lhs; }
+double sstd::max_abs(const sstd::mat_r<double>& rhs){ MAX_ABS_vec_mat(double, lhs, rhs); return lhs; }
+
+  char sstd::min    (const sstd::mat_r< char >& rhs){ MIN_vec_mat    ( char , lhs, rhs); return lhs; }
+  int8 sstd::min    (const sstd::mat_r< int8 >& rhs){ MIN_vec_mat    ( int8 , lhs, rhs); return lhs; }
+ int16 sstd::min    (const sstd::mat_r< int16>& rhs){ MIN_vec_mat    ( int16, lhs, rhs); return lhs; }
+ int32 sstd::min    (const sstd::mat_r< int32>& rhs){ MIN_vec_mat    ( int32, lhs, rhs); return lhs; }
+ int64 sstd::min    (const sstd::mat_r< int64>& rhs){ MIN_vec_mat    ( int64, lhs, rhs); return lhs; }
+//uchar sstd::min    (const sstd::mat_r< uchar>& rhs){ MIN_vec_mat    ( uchar, lhs, rhs); return lhs; } // same as a uint8
+ uint8 sstd::min    (const sstd::mat_r<uint8 >& rhs){ MIN_vec_mat    (uint8 , lhs, rhs); return lhs; }
+uint16 sstd::min    (const sstd::mat_r<uint16>& rhs){ MIN_vec_mat    (uint16, lhs, rhs); return lhs; }
+uint32 sstd::min    (const sstd::mat_r<uint32>& rhs){ MIN_vec_mat    (uint32, lhs, rhs); return lhs; }
+uint64 sstd::min    (const sstd::mat_r<uint64>& rhs){ MIN_vec_mat    (uint64, lhs, rhs); return lhs; }
+ float sstd::min    (const sstd::mat_r< float>& rhs){ MIN_vec_mat    ( float, lhs, rhs); return lhs; }
+double sstd::min    (const sstd::mat_r<double>& rhs){ MIN_vec_mat    (double, lhs, rhs); return lhs; }
+  char sstd::min_abs(const sstd::mat_r< char >& rhs){ MIN_ABS_vec_mat( char , lhs, rhs); return lhs; }
+  int8 sstd::min_abs(const sstd::mat_r< int8 >& rhs){ MIN_ABS_vec_mat( int8 , lhs, rhs); return lhs; }
+ int16 sstd::min_abs(const sstd::mat_r< int16>& rhs){ MIN_ABS_vec_mat( int16, lhs, rhs); return lhs; }
+ int32 sstd::min_abs(const sstd::mat_r< int32>& rhs){ MIN_ABS_vec_mat( int32, lhs, rhs); return lhs; }
+ int64 sstd::min_abs(const sstd::mat_r< int64>& rhs){ MIN_ABS_vec_mat( int64, lhs, rhs); return lhs; }
+ float sstd::min_abs(const sstd::mat_r< float>& rhs){ MIN_ABS_vec_mat( float, lhs, rhs); return lhs; }
+double sstd::min_abs(const sstd::mat_r<double>& rhs){ MIN_ABS_vec_mat(double, lhs, rhs); return lhs; }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-// ここ，テンプレートで書きなおせば，ベタ書きする必要がなくなり，さらに，一般の type T について，ソート可能になるので，書き直す．
-std::vector< char > sstd::sort   (std::vector< char > rhs){ std::sort(rhs.begin(), rhs.end()); return rhs; }
-std::vector< int8 > sstd::sort   (std::vector< int8 > rhs){ std::sort(rhs.begin(), rhs.end()); return rhs; }
-std::vector< int16> sstd::sort   (std::vector< int16> rhs){ std::sort(rhs.begin(), rhs.end()); return rhs; }
-std::vector< int32> sstd::sort   (std::vector< int32> rhs){ std::sort(rhs.begin(), rhs.end()); return rhs; }
-std::vector< int64> sstd::sort   (std::vector< int64> rhs){ std::sort(rhs.begin(), rhs.end()); return rhs; }
-//std::vector<uchar> sstd::sort   (std::vector<uchar > rhs){ std::sort(rhs.begin(), rhs.end()); return rhs; } // same as a uint8
-std::vector< uint8> sstd::sort   (std::vector<uint8 > rhs){ std::sort(rhs.begin(), rhs.end()); return rhs; }
-std::vector<uint16> sstd::sort   (std::vector<uint16> rhs){ std::sort(rhs.begin(), rhs.end()); return rhs; }
-std::vector<uint32> sstd::sort   (std::vector<uint32> rhs){ std::sort(rhs.begin(), rhs.end()); return rhs; }
-std::vector<uint64> sstd::sort   (std::vector<uint64> rhs){ std::sort(rhs.begin(), rhs.end()); return rhs; }
-std::vector<  char> sstd::sort_de(std::vector< char > rhs){ std::sort(rhs.begin(), rhs.end(), std::greater< char >()); return rhs; }
-std::vector<  int8> sstd::sort_de(std::vector< int8 > rhs){ std::sort(rhs.begin(), rhs.end(), std::greater< int8 >()); return rhs; }
-std::vector< int16> sstd::sort_de(std::vector< int16> rhs){ std::sort(rhs.begin(), rhs.end(), std::greater< int16>()); return rhs; }
-std::vector< int32> sstd::sort_de(std::vector< int32> rhs){ std::sort(rhs.begin(), rhs.end(), std::greater< int32>()); return rhs; }
-std::vector< int64> sstd::sort_de(std::vector< int64> rhs){ std::sort(rhs.begin(), rhs.end(), std::greater< int64>()); return rhs; }
-//std::vector<uchar> sstd::sort_de(std::vector<uchar > rhs){ std::sort(rhs.begin(), rhs.end(), std::greater<uchar >()); return rhs; } // same as a uint8
-std::vector< uint8> sstd::sort_de(std::vector<uint8 > rhs){ std::sort(rhs.begin(), rhs.end(), std::greater<uint8 >()); return rhs; }
-std::vector<uint16> sstd::sort_de(std::vector<uint16> rhs){ std::sort(rhs.begin(), rhs.end(), std::greater<uint16>()); return rhs; }
-std::vector<uint32> sstd::sort_de(std::vector<uint32> rhs){ std::sort(rhs.begin(), rhs.end(), std::greater<uint32>()); return rhs; }
-std::vector<uint64> sstd::sort_de(std::vector<uint64> rhs){ std::sort(rhs.begin(), rhs.end(), std::greater<uint64>()); return rhs; }
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------

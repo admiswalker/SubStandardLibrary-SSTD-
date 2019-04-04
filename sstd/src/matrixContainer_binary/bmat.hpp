@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include "../typeDef.h"
-#include "../matrixContainer_colMajor/mat.hpp"
+#include "../matrixContainer_colMajor/mat_c.hpp"
 
 // 8x8 binary matrix is column-major order, 
 // and outside of the 8x8 martix is row-major order.
@@ -92,7 +92,7 @@ private:
 	// 初期化する順番で宣言する必要がある
 	uint rowNum;	// 行数
 	uint colNum;	// 列数
-	sstd::mat<uint64> binMat8x8;	// 8x8 の BinMartix 行列の集合
+	sstd::mat_c<uint64> binMat8x8;	// 8x8 の BinMartix 行列の集合
 	
 public:
 	bmat(): rowNum(0), colNum(0) {}
@@ -103,13 +103,13 @@ public:
 	// std::swap(lhs, rhs): "move to uninitalized object" -> "copy to lhs or rhs" -> "copy to lhs or rhs" will be called.
 	~bmat(){}
 	
-	// inline sstd::mat<uint64> bMat8x8(){ return binMat8x8; } // Do not do this to avoid object copy
-	inline const sstd::mat<uint64>& bMat8x8_R() const { return binMat8x8; }
+	// inline sstd::mat_c<uint64> bMat8x8(){ return binMat8x8; } // Do not do this to avoid object copy
+	inline const sstd::mat_c<uint64>& bMat8x8_R() const { return binMat8x8; }
 	inline const uint rows() const { return rowNum; }
 	inline const uint cols() const { return colNum; }
 
 	// RW: read and write
-	inline sstd::mat<uint64>& bMat8x8_RW(){ return binMat8x8; }
+	inline sstd::mat_c<uint64>& bMat8x8_RW(){ return binMat8x8; }
 	inline uint& rows_RW(){ return rowNum; }
 	inline uint& cols_RW(){ return colNum; }
 

@@ -176,13 +176,17 @@ std::string sstd::removeSpace_of_HeadAndTail(const uchar* str){
 	sstd::removeTailSpace(ret);
 	return ret;
 }
+void sstd::removeSpace_of_HeadAndTail(std::string& str){
+	str = sstd::removeHeadSpace((const uchar*)str.c_str());
+	sstd::removeTailSpace(str);
+}
 std::vector<std::string> sstd::removeSpace_of_HeadAndTail(const std::vector<std::string>& vec){
 	std::vector<std::string> ret(vec.size()); ret.clear();
 	
 	for(uint i=0; i<vec.size(); i++){
 		ret.push_back(sstd::removeSpace_of_HeadAndTail((const uchar*)vec[i].c_str()));
 	}
-
+	
 	return ret;
 }
 
@@ -192,6 +196,25 @@ bool sstd::strcmp(const char*        str1, const char*        str2){ return (::s
 bool sstd::strcmp(const char*        str1, const std::string& str2){ return (::strcmp(str1,         str2.c_str())==0); }
 bool sstd::strcmp(const std::string& str1, const char*        str2){ return (::strcmp(str1.c_str(), str2        )==0); }
 bool sstd::strcmp(const std::string& str1, const std::string& str2){ return (::strcmp(str1.c_str(), str2.c_str())==0); }
+
+//--------------------------------------------------------------------------------------------------------
+
+bool sstd::strIn(const char*        lhs, const char*        rhs){
+	bool ret=true;
+	uint l=0, r=0;
+	for(;;){
+		if(lhs[l]=='\0'){ return ret;   }
+		if(rhs[r]=='\0'){ return false; }
+		
+		if(lhs[l]==rhs[r]){ ret=true;
+		}       else      { ret=false; l=0; }
+		
+		l++; r++;
+	}
+}
+bool sstd::strIn(const char*        lhs, const std::string& rhs){ return sstd::strIn(lhs        , rhs.c_str()); }
+bool sstd::strIn(const std::string& lhs, const char*        rhs){ return sstd::strIn(lhs.c_str(), rhs        ); }
+bool sstd::strIn(const std::string& lhs, const std::string& rhs){ return sstd::strIn(lhs.c_str(), rhs.c_str()); }
 
 //--------------------------------------------------------------------------------------------------------
 

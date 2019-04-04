@@ -2,6 +2,11 @@
 #include "../math.hpp"
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------f
+// need to add
+//  - push_front(): <<, <<=
+//  - enable std::move() on push_front() and push_back()
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------f
 
 #define SSTD_DEF_stdVecEx_defInNamespace(Func)							\
 	template <typename T>                   std::vector<T>  Func(const std::vector<T>& lhs, const std::vector<T>& rhs); \
@@ -27,6 +32,8 @@ namespace sstd_stdVecEx{
 	SSTD_DEF_stdVecEx_defInNamespace_eq(pow_eq); // ^=
 	
 	// operators for std::vector
+//	SSTD_DEF_stdVecEx_defInNamespace   (push_front   ); // >>
+//	SSTD_DEF_stdVecEx_defInNamespace_eq(push_front_eq); // >>=
 	SSTD_DEF_stdVecEx_defInNamespace   (push_back   ); // <<
 	SSTD_DEF_stdVecEx_defInNamespace_eq(push_back_eq); // <<=
 }

@@ -14,7 +14,7 @@
 #include "./strEdit.hpp"
 #include "./path.hpp"
 #include "./str2num.hpp"
-#include "./matrixContainer_colMajor/mat.hpp"
+#include "./matrixContainer_colMajor/mat_c.hpp"
 #include "./matrixContainer_rowMajor/mat_r.hpp"
 
 #include "./print.hpp" // for debug (リリース時に削除するように)
@@ -27,17 +27,18 @@ namespace sstd_c2py{
 	struct typeSet{
 	private:
 	public:
-		typeSet(){ constTF=false; N_num=0; T_num=0; pointer=false; pointer_sidePy=false; cnv2builtIn_sidePy=false; }
+		typeSet(){ constTF=false; case_num=0; N_num=0; T_num=0; pointer=false; pointer_sidePy=false; cnv2builtIn_sidePy=false; }
 		~typeSet(){}
- 		bool retTF;                   // true: 戻り値として扱う．(true の場合は，値を書き戻すために，必ず，pointer も true でなければならない．) false: 引数として扱う．
- 		bool constTF;                 // true: ポインタの先の書き戻しを行う．false: ポインタの先の書き戻しを行わない．
-		                              // const-> true, not const -> false.
-		std::string name; char N_num; // void, int, vec<T>... and so on. // number of value
-		std::string    T; char T_num; // template<typename "T"> or "" // number of value
-		bool pointer;                 // *: pointer type sybol on cpp side                         // on left than vertical line '|' as a symbol of split
-		bool pointer_sidePy;          // *: pointer type sybol on python side                      // on right than vertical line '|' as a symbol of split
-		bool cnv2builtIn_sidePy;      // ~: conversion command to built in function on python side // on right than vertical line '|' as a symbol of split
-		std::vector<uint32> arrLen;   // Array length of T*, str, vec<T>, mat<T> and mat_r<T>.
+ 		bool retTF;                    // true: 戻り値として扱う．(true の場合は，値を書き戻すために，必ず，pointer も true でなければならない．) false: 引数として扱う．
+ 		bool constTF;                  // true: ポインタの先の書き戻しを行う．false: ポインタの先の書き戻しを行わない．
+		                               // const-> true, not const -> false.
+		uchar case_num;                // case number is an id number identified by N_num and T_num.
+		std::string name; uchar N_num; // void, int, vec<T>... and so on. // number of value
+		std::string    T; uchar T_num; // template<typename "T"> or "" // number of value
+		bool pointer;                  // *: pointer type sybol on cpp side                         // on left than vertical line '|' as a symbol of split
+		bool pointer_sidePy;           // *: pointer type sybol on python side                      // on right than vertical line '|' as a symbol of split
+		bool cnv2builtIn_sidePy;       // ~: conversion command to built in function on python side // on right than vertical line '|' as a symbol of split
+		std::vector<uint32> arrLen;    // Array length of T*, str, vec<T>, mat<T> and mat_r<T>.
 	};
 	
 	template<typename T> void operator_brackets(T& ret, const char* writeDir_base, const char* iFile, const char* fName, std::vector<std::string>& fSList, std::vector<struct sstd_c2py::typeSet>& fList, int argc, ...);
@@ -81,20 +82,35 @@ namespace sstd_c2py{
 	bool c2py_ret(std::vector<     double>& inOut, sstd::file& fp, std::string& line);
 	bool c2py_ret(std::vector<std::string>& inOut, sstd::file& fp, std::string& line);
 	
-	bool c2py_ret(sstd::mat  <       bool>& inOut, sstd::file& fp, std::string& line);
-	bool c2py_ret(sstd::mat  <       char>& inOut, sstd::file& fp, std::string& line);
-//	bool c2py_ret(sstd::mat  <      uchar>& inOut, sstd::file& fp, std::string& line); // same as uint8
-	bool c2py_ret(sstd::mat  <       int8>& inOut, sstd::file& fp, std::string& line);
-	bool c2py_ret(sstd::mat  <      int16>& inOut, sstd::file& fp, std::string& line);
-	bool c2py_ret(sstd::mat  <      int32>& inOut, sstd::file& fp, std::string& line);
-	bool c2py_ret(sstd::mat  <      int64>& inOut, sstd::file& fp, std::string& line);
-	bool c2py_ret(sstd::mat  <      uint8>& inOut, sstd::file& fp, std::string& line); // same as uchar
-	bool c2py_ret(sstd::mat  <     uint16>& inOut, sstd::file& fp, std::string& line);
-	bool c2py_ret(sstd::mat  <     uint32>& inOut, sstd::file& fp, std::string& line);
-	bool c2py_ret(sstd::mat  <     uint64>& inOut, sstd::file& fp, std::string& line);
-	bool c2py_ret(sstd::mat  <      float>& inOut, sstd::file& fp, std::string& line);
-	bool c2py_ret(sstd::mat  <     double>& inOut, sstd::file& fp, std::string& line);
-	bool c2py_ret(sstd::mat  <std::string>& inOut, sstd::file& fp, std::string& line);
+//	bool c2py_ret(std::vector<std::vector<       bool>>& inOut, sstd::file& fp, std::string& line);
+//	bool c2py_ret(std::vector<std::vector<       char>>& inOut, sstd::file& fp, std::string& line);
+////	bool c2py_ret(std::vector<std::vector<      uchar>>& inOut, sstd::file& fp, std::string& line); // same as uint8
+//	bool c2py_ret(std::vector<std::vector<       int8>>& inOut, sstd::file& fp, std::string& line);
+//	bool c2py_ret(std::vector<std::vector<      int16>>& inOut, sstd::file& fp, std::string& line);
+//	bool c2py_ret(std::vector<std::vector<      int32>>& inOut, sstd::file& fp, std::string& line);
+//	bool c2py_ret(std::vector<std::vector<      int64>>& inOut, sstd::file& fp, std::string& line);
+//	bool c2py_ret(std::vector<std::vector<      uint8>>& inOut, sstd::file& fp, std::string& line); // same as uchar
+//	bool c2py_ret(std::vector<std::vector<     uint16>>& inOut, sstd::file& fp, std::string& line);
+//	bool c2py_ret(std::vector<std::vector<     uint32>>& inOut, sstd::file& fp, std::string& line);
+//	bool c2py_ret(std::vector<std::vector<     uint64>>& inOut, sstd::file& fp, std::string& line);
+//	bool c2py_ret(std::vector<std::vector<      float>>& inOut, sstd::file& fp, std::string& line);
+	bool c2py_ret(std::vector<std::vector<     double>>& inOut, sstd::file& fp, std::string& line);
+//	bool c2py_ret(std::vector<std::vector<std::string>>& inOut, sstd::file& fp, std::string& line);
+	
+	bool c2py_ret(sstd::mat_c<       bool>& inOut, sstd::file& fp, std::string& line);
+	bool c2py_ret(sstd::mat_c<       char>& inOut, sstd::file& fp, std::string& line);
+//	bool c2py_ret(sstd::mat_c<      uchar>& inOut, sstd::file& fp, std::string& line); // same as uint8
+	bool c2py_ret(sstd::mat_c<       int8>& inOut, sstd::file& fp, std::string& line);
+	bool c2py_ret(sstd::mat_c<      int16>& inOut, sstd::file& fp, std::string& line);
+	bool c2py_ret(sstd::mat_c<      int32>& inOut, sstd::file& fp, std::string& line);
+	bool c2py_ret(sstd::mat_c<      int64>& inOut, sstd::file& fp, std::string& line);
+	bool c2py_ret(sstd::mat_c<      uint8>& inOut, sstd::file& fp, std::string& line); // same as uchar
+	bool c2py_ret(sstd::mat_c<     uint16>& inOut, sstd::file& fp, std::string& line);
+	bool c2py_ret(sstd::mat_c<     uint32>& inOut, sstd::file& fp, std::string& line);
+	bool c2py_ret(sstd::mat_c<     uint64>& inOut, sstd::file& fp, std::string& line);
+	bool c2py_ret(sstd::mat_c<      float>& inOut, sstd::file& fp, std::string& line);
+	bool c2py_ret(sstd::mat_c<     double>& inOut, sstd::file& fp, std::string& line);
+	bool c2py_ret(sstd::mat_c<std::string>& inOut, sstd::file& fp, std::string& line);
 	
 	bool c2py_ret(sstd::mat_r<       bool>& inOut, sstd::file& fp, std::string& line);
 	bool c2py_ret(sstd::mat_r<       char>& inOut, sstd::file& fp, std::string& line);
@@ -144,9 +160,9 @@ public: c2py(const char* temporarilyDir, const char* importFile, const char* fun
 		
 		int argc = fList.size()-1;
 		T ret; sstd_c2py::operator_brackets(ret, writeDir_base.c_str(), iFile.c_str(), fName.c_str(), fSList, fList, argc, args...);
-
+		
 		// erase temp
-		sstd::rm(writeDir_base); // when you debug c2py, commenting this line will remain data files in the tmp directory.
+		sstd::rm(writeDir_base); // when you debug c2py, commentting out this line will remain data files in the tmp directory.
 		return ret;
 	}
 };
@@ -168,7 +184,7 @@ public: c2py(const char* temporarilyDir, const char* importFile, const char* fun
 		int ret; sstd_c2py::operator_brackets<int>(ret, writeDir_base.c_str(), iFile.c_str(), fName.c_str(), fSList, fList, argc, args...);
 
 		// erase tmp
-		sstd::rm(writeDir_base); // when you debug c2py, commenting this line will remain data files in the tmp directory.
+		sstd::rm(writeDir_base); // when you debug c2py, commentting out this line will remain data files in the tmp directory.
 	}
 };
 //----------------------------------------------------
@@ -179,7 +195,7 @@ public: c2py(const char* temporarilyDir, const char* importFile, const char* fun
 
 template<typename T>
 inline void sstd_c2py::operator_brackets(T& ret, const char* writeDir_base, const char* iFile, const char* fName, std::vector<std::string>& fSList, std::vector<struct sstd_c2py::typeSet>& fList, int argc, ...){
-
+	
 	// write args values to the files
 	va_list ap; va_start(ap, argc); // #define っぽいので，va_start を別関数にするとバグる．va_arg は関数やテンプレート関数でも問題なかった．
 	std::vector<void*> pArgList = sstd_c2py::getArg_and_write2file(ap, writeDir_base, fSList, fList);

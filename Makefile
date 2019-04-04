@@ -1,6 +1,3 @@
-# The MIT License (MIT)
-# Copyright (c) 2017 ADMIS_Walker (Blog: https://admiswalker.blogspot.jp/)
-
 # Example directory structure: ディレクトリ構成例
 #
 # root/
@@ -35,7 +32,6 @@
 # .d: Depends file
 
 #============================================================
-
 # Please set each item: 各項目を設定してください
 
 # Source files
@@ -44,27 +40,54 @@ SRCS = ./main.cpp
 # Name of generate file: 生成ファイル名
 TARGET = exe
 
+# remove files
+RMs = *.stackdump tmpDir
+
 # Options: コンパイルオプション
-CFLAGS  = -L./sstd/lib -I./sstd/include -lsstd
-CFLAGS += -std=gnu++0x
+CFLAGS  = -L./sstd/lib -I./sstd/include -lsstd # sstd
+CFLAGS += -L./googletest-master/build/lib -I./googletest-master/googletest/include -lgtest -pthread # google test
+CFLAGS += -std=c++11 # CFLAGS += -std=gnu++0x
 CFLAGS += -Wall
 CFLAGS += -O3
 
+# remove file name
+RMFLIES  = test_file_c.png
+RMFLIES += test_file_c2f.png
+
 #============================================================
 
-$(TARGET): FORCE $(SRCS)
-	@echo -e "\n============================================================\n"
-	@echo -e "SRCS: \n$(SRCS)\n"
-	@echo -e "OBJS: \n$(OBJS)\n"
-	@echo -e "CFLAGS: \n$(CFLAGS)"
-	@echo -e "\n============================================================\n"
+BACKUP_DIR   = ./backup
+ALL_FILES    = $(wildcard ./*)
+TMP_DIRS     = $(wildcard ./tmp_*)
+LIBS_DIRS    = ./googletest-master
+BACKUP_FILES = $(filter-out ./$(TARGET) $(TMP_DIRS) $(BACKUP_DIR) $(LIBS_DIRS), $(ALL_FILES))
+TIME_STAMP   = `date +%Y_%m%d_%H%M`
+
+
+# when you need to check the change of files in lib, you need to change file name to a not-existing name like "FORCE_XXX".
+LIB_SSTD       = FORCE_SSTD
+#LIB_GOOGLETEST = FORCE_GOOGLETEST
+#LIB_SSTD       = ./sstd/lib/libsstd.a
+LIB_GOOGLETEST = ./googletest-master/build/lib/libgtest.a
+
+
+$(TARGET): $(LIB_SSTD) $(LIB_GOOGLETEST) $(SRCS)
+	@echo "\n============================================================\n"
+	@echo "SRCS: \n$(SRCS)\n"
+	@echo "CFLAGS: \n$(CFLAGS)"
+	@echo "\n============================================================\n"
 	$(CXX) -o $(TARGET) $(SRCS) $(CFLAGS)
 	@echo ""
 
 
-.PHONY: FORCE
-FORCE:
+$(LIB_SSTD):
 	@(cd ./sstd; make -j)
+
+
+$(LIB_GOOGLETEST):
+	@echo ""
+	@unzip -n googletest-master.zip
+	@(cd ./googletest-master; mkdir -p build; cd build; cmake ..; make)
 
 
 .PHONY: all
@@ -81,7 +104,11 @@ clean:
 	@(cd ./sstd; make clean)
 	-rm -rf ./test_fopen.txt
 	-rm -rf ./test_mkdir
+	-rm -rf googletest-master
+	-rm -rf $(RMs)
+	@(find . -name "__pycache__" -type d | xargs rm -rf)
 	$(if $(patch_txt_exists) ,$(rm *.stackdump))
+	-rm -rf $(RMFLIES)
 
 
 .PHONY: steps
@@ -89,3 +116,18 @@ steps: $(SRCS)
 	@(cd ./sstd; make steps)
 	@echo ""
 	@echo "$^" | xargs wc -l
+
+
+.PHONY: zip
+zip:
+	@mkdir -p $(BACKUP_DIR)
+	zip -r $(BACKUP_DIR)/${TIME_STAMP}$(m).zip $(BACKUP_FILES)
+.PHONY: backup
+backup:
+	@(make clean)
+	@(make zip)
+	@(make)
+# when you need comments for backup, just type
+# $ make backup m=_comment_will_be_inserted_after_the_date
+
+

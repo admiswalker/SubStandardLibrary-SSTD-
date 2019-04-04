@@ -1,22 +1,24 @@
 ﻿#define DEBUG
 //#define use_sstd_pause		// Enable to switch "Pause" or "Not Pause" by "#define UseSysPause".
 #define use_sstd_pauseIfWin32	// Enable to switch "Pause" or "Not Pause" by "#define UsePauseIfWin32".
-#define use_sstd_measureTime
 #ifdef _WIN32
 	#include "./sstd/sstd.hpp"
 #else
 	#include <sstd/sstd.hpp>
 #endif
 
+#include <gtest/gtest.h>
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// 順次 google test へ移行すること．
+
 // sstd/src
-void TEST_measureTime_sleep();
+//#include "test_measureTime.hpp"
 void TEST_time();
 void TEST_typeDef();
 void TEST_pdbg();
 // void pdbg(){ printf("======p\n"); } // #define DEBUG を定義しない場合でも，マクロでこの名前は使えなくなるので，名前空間を汚しており，本当はよくない．
-void TEST_print();
-void TEST_printn();
-void TEST_printn_all();
+//#include "./test_print_printn_printn_all.hpp"
 void TEST_math();
 void TEST_signal();
 void TEST_file();
@@ -34,7 +36,7 @@ void TEST_parseCSV();
 void TEST_encode_decode();
 void TEST_hashFnc();
 void TEST_pause();
-void TEST_c2py();
+#include "./test_c2py.hpp"
 
 // stdVector_expansion of operators
 void TEST_stdVector_expansion();
@@ -44,8 +46,9 @@ void TEST_mat_colMajor();
 void TEST_mat_rowMajor();
 void TEST_bmat();
 
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
-int main(){
+int main(int argc, char** argv){
 	printf("\n");
 	printf("+---------------------------------------------------+\n");
 	printf("|                                                   |\n");
@@ -54,14 +57,13 @@ int main(){
 	printf("+---------------------------------------------------+\n");
 	printf("\n");
 	printf("■ measureTime_start---------------\n\n"); time_m timem; sstd::measureTime_start(timem);
-
-//	TEST_measureTime_sleep();
+	::testing::InitGoogleTest(&argc, argv);
+	
+	auto ret = RUN_ALL_TESTS();
+	
 //	TEST_time();
 //	TEST_typeDef();
 //	TEST_pdbg();
-//	TEST_print();
-//	TEST_printn();
-//	TEST_printn_all();
 //	TEST_math();
 //	TEST_signal();
 //	TEST_file();
@@ -79,37 +81,22 @@ int main(){
 //	TEST_encode_decode();
 //	TEST_hashFnc();
 //	TEST_pause();
-//	TEST_c2py();
 	
-	TEST_stdVector_expansion();
+//	TEST_stdVector_expansion();
 	
 //	TEST_mat_colMajor(); // TODO: write tests (zeros, Tr) // sstd::print 関数のテストを書くように
 //	TEST_mat_rowMajor(); // TODO: write tests (zeros, Tr) // sstd::print 関数のテストを書くように
 //	TEST_bmat();
-
-	printf("\n■ measureTime_stop----------------\n"); sstd::measureTime_stop(timem); sstd::pauseIfWin32();
-	return 0;
-}
-
-//-----------------------------------------------------------------------
-
-void TEST_measureTime_sleep(){
-	printf("■ measureTime_start---------------\n\n");
-	time_m timem; sstd::measureTime_start(timem);
-
-	// something you want to mesure time.
-	printf("■ sleep\n\n");
-//	sstd::sleep_hour(1);
-//	sstd::sleep_min (1);
-	sstd::sleep_s   (1);
-	sstd::sleep_ms  (1000);
-	sstd::sleep_us  (1000*1000);
-	sstd::sleep_ns  (1000*1000*1000);
-
-	printf("■ measureTime_stop----------------\n");
-	sstd::measureTime_stop(timem);
+	
 	printf("\n");
+	printf("■ measureTime_stop----------------\n");
+	sstd::measureTime_stop_print(timem);
+	sstd::pauseIfWin32();
+	return ret;
 }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
 void TEST_time(){
 	printf("■ time\n");
 	time_t      c_time    = time(0); // get current time
@@ -163,229 +150,6 @@ void TEST_pdbg(){
 //	printf("false: "); sstd::pdbg_if_stop_exit(false, "not exit"); printf("\n");
 	sstd::dbg(printf("run debug code."););
 	sstd::ndbg(printf("run ndebug code."););
-	printf("\n");
-}
-void TEST_print(){
-	sstd::print("■ sstd::print");
-
-	//===
-
-	bool tf1 = true;  sstd::print(tf1);
-	bool tf2 = false; sstd::print(tf2);
-	
-	//===
-	
-	char c = 'c';  sstd::print(c);
-	
-	//===
-
-	// signed
-	int8  s8  = -1; sstd::print(s8);
-	int16 s16 = -2; sstd::print(s16);
-	int32 s32 = -3; sstd::print(s32);
-	int64 s64 = -4; sstd::print(s64);
-
-	// unsigned
-	uint8  u8  = 1; sstd::print(u8);
-	uint16 u16 = 2; sstd::print(u16);
-	uint32 u32 = 3; sstd::print(u32);
-	uint64 u64 = 4; sstd::print(u64);
-
-	float  f  = -1.23; sstd::print(f);
-	double d  = -1.23; sstd::print(d);
-
-	sstd::print("char*");
-	sstd::print(std::string("std::string"));
-	sstd::print(sstd::ssprintf("std::string"));
-	
-	//===
-
-	std::vector<bool> v_bool = {true, false, true, false}; sstd::print(v_bool);
-	std::vector<char> v_char = {'a', 'b', 'c', 'd'}; sstd::print(v_char);
-
-	std::vector<int8>  v_s8  = {-1, 2, 3, 4}; sstd::print(v_s8);
-	std::vector<int16> v_s16 = {1, -2, 3, 4}; sstd::print(v_s16);
-	std::vector<int32> v_s32 = {1, 2, -3, 4}; sstd::print(v_s32);
-	std::vector<int64> v_s64 = {1, 2, 3, -4}; sstd::print(v_s64);
-
-	std::vector<uint8>  v_u8  = {1, 2, 3, 4}; sstd::print(v_u8);
-	std::vector<uint16> v_u16 = {1, 2, 3, 4}; sstd::print(v_u16);
-	std::vector<uint32> v_u32 = {1, 2, 3, 4}; sstd::print(v_u32);
-	std::vector<uint64> v_u64 = {1, 2, 3, 4}; sstd::print(v_u64);
-
-	std::vector<float>  v_f = {1.1f, 2.2f, 3.3f, 4.4f}; sstd::print(v_f);
-	std::vector<double> v_d = {1.1, 2.2, 3.3, 4.4}; sstd::print(v_d);
-
-	std::vector<std::string> v_str = {"abc", "def"}; sstd::print(v_str);
-	
-	//===
-
-	std::vector<std::vector<bool>> vv_bool = {{true, false, true, false}, {false, true, false, true}}; sstd::print(vv_bool);
-	std::vector<std::vector<char>> vv_char = {{'a', 'b'}, {'c', 'd'}}; sstd::print(vv_char);
-	
-	std::vector<std::vector<int8>>  vv_s8  = {{-1, 2, 3, 4}, {5, 6, 7, 8}}; sstd::print(vv_s8);
-	std::vector<std::vector<int16>> vv_s16 = {{1, -2, 3, 4}, {5, 6, 7, 8}}; sstd::print(vv_s16);
-	std::vector<std::vector<int32>> vv_s32 = {{1, 2, -3, 4}, {5, 6, 7, 8}}; sstd::print(vv_s32);
-	std::vector<std::vector<int64>> vv_s64 = {{1, 2, 3, -4}, {5, 6, 7, 8}}; sstd::print(vv_s64);
-	
-	std::vector<std::vector<uint8>>  vv_u8  = {{1, 2, 3, 4}, {5, 6, 7, 8}}; sstd::print(vv_u8);
-	std::vector<std::vector<uint16>> vv_u16 = {{1, 2, 3, 4}, {5, 6, 7, 8}}; sstd::print(vv_u16);
-	std::vector<std::vector<uint32>> vv_u32 = {{1, 2, 3, 4}, {5, 6, 7, 8}}; sstd::print(vv_u32);
-	std::vector<std::vector<uint64>> vv_u64 = {{1, 2, 3, 4}, {5, 6, 7, 8}}; sstd::print(vv_u64);
-
-	std::vector<std::vector<float>>  vv_f = {{1.1f, 2.2f, 3.3f, 4.4f}, {5.5f, 6.6f, 7.7f, 8.8f}}; sstd::print(vv_f);
-	std::vector<std::vector<double>> vv_d = {{1.1, 2.2, 3.3, 4.4}, {5.5, 6.6, 7.7, 8.8}}; sstd::print(vv_d);
-	
-//	std::vector<std::vector<std::string>> vv_str = {{"abc", "def"}, {"ghi", "jkl"}}; sstd::print(vv_str); // gcc 5.4.0
-	std::vector<std::vector<std::string>> vv_str = {{std::string("abc"), std::string("def")}, {std::string("ghi"), std::string("jkl")}}; sstd::print(vv_str); // gcc 4.4.7
-	printf("\n");
-}
-void TEST_printn(){
-	sstd::print("■ sstd::printn");
-	
-	//===
-
-	bool tf1 = true;  sstd::printn(tf1);
-	bool tf2 = false; sstd::printn(tf2);
-	
-	//===
-
-	char c = 'c';  sstd::printn(c);
-	
-	//===
-
-	// signed
-	int8  s8  = -1; sstd::printn(s8);
-	int16 s16 = -2; sstd::printn(s16);
-	int32 s32 = -3; sstd::printn(s32);
-	int64 s64 = -4; sstd::printn(s64);
-
-	// unsigned
-	uint8  u8  = 1; sstd::printn(u8);
-	uint16 u16 = 2; sstd::printn(u16);
-	uint32 u32 = 3; sstd::printn(u32);
-	uint64 u64 = 4; sstd::printn(u64);
-
-	float  f  = -1.23; sstd::printn(f);
-	double d  = -1.23; sstd::printn(d);
-
-	sstd::printn("char*");
-	sstd::printn(std::string("std::string"));
-	
-	//===
-
-	std::vector<bool> v_bool = {true, false, true, false}; sstd::printn(v_bool);
-	std::vector<char> v_char = {'a', 'b', 'c', 'd'}; sstd::printn(v_char);
-
-	std::vector<int8>  v_s8  = {-1, 2, 3, 4}; sstd::printn(v_s8);
-	std::vector<int16> v_s16 = {1, -2, 3, 4}; sstd::printn(v_s16);
-	std::vector<int32> v_s32 = {1, 2, -3, 4}; sstd::printn(v_s32);
-	std::vector<int64> v_s64 = {1, 2, 3, -4}; sstd::printn(v_s64);
-
-	std::vector<uint8>  v_u8  = {1, 2, 3, 4}; sstd::printn(v_u8);
-	std::vector<uint16> v_u16 = {1, 2, 3, 4}; sstd::printn(v_u16);
-	std::vector<uint32> v_u32 = {1, 2, 3, 4}; sstd::printn(v_u32);
-	std::vector<uint64> v_u64 = {1, 2, 3, 4}; sstd::printn(v_u64);
-
-	std::vector<float>  v_f = {1.1f, 2.2f, 3.3f, 4.4f}; sstd::printn(v_f);
-	std::vector<double> v_d = {1.1, 2.2, 3.3, 4.4}; sstd::printn(v_d);
-
-	std::vector<std::string> v_str = {"abc", "def"}; sstd::printn(v_str);
-	
-	//===
-
-	std::vector<std::vector<bool>> vv_bool = {{true, false, true, false}, {false, true, false, true}}; sstd::printn(vv_bool);
-	std::vector<std::vector<char>> vv_char = {{'a', 'b'}, {'c', 'd'}}; sstd::printn(vv_char);
-	
-	std::vector<std::vector<int8>>  vv_s8  = {{-1, 2, 3, 4}, {5, 6, 7, 8}}; sstd::printn(vv_s8);
-	std::vector<std::vector<int16>> vv_s16 = {{1, -2, 3, 4}, {5, 6, 7, 8}}; sstd::printn(vv_s16);
-	std::vector<std::vector<int32>> vv_s32 = {{1, 2, -3, 4}, {5, 6, 7, 8}}; sstd::printn(vv_s32);
-	std::vector<std::vector<int64>> vv_s64 = {{1, 2, 3, -4}, {5, 6, 7, 8}}; sstd::printn(vv_s64);
-	
-	std::vector<std::vector<uint8>>  vv_u8  = {{1, 2, 3, 4}, {5, 6, 7, 8}}; sstd::printn(vv_u8);
-	std::vector<std::vector<uint16>> vv_u16 = {{1, 2, 3, 4}, {5, 6, 7, 8}}; sstd::printn(vv_u16);
-	std::vector<std::vector<uint32>> vv_u32 = {{1, 2, 3, 4}, {5, 6, 7, 8}}; sstd::printn(vv_u32);
-	std::vector<std::vector<uint64>> vv_u64 = {{1, 2, 3, 4}, {5, 6, 7, 8}}; sstd::printn(vv_u64);
-
-	std::vector<std::vector<float>>  vv_f = {{1.1f, 2.2f, 3.3f, 4.4f}, {5.5f, 6.6f, 7.7f, 8.8f}}; sstd::printn(vv_f);
-	std::vector<std::vector<double>> vv_d = {{1.1, 2.2, 3.3, 4.4}, {5.5, 6.6, 7.7, 8.8}}; sstd::printn(vv_d);
-	
-//	std::vector<std::vector<std::string>> vv_str = {{"abc", "def"}, {"ghi", "jkl"}}; sstd::printn(vv_str); // gcc 5.4.0
-	std::vector<std::vector<std::string>> vv_str = {{std::string("abc"), std::string("def")}, {std::string("ghi"), std::string("jkl")}}; sstd::printn(vv_str); // gcc 4.4.7
-	printf("\n");
-}
-void TEST_printn_all(){
-	sstd::print("■ sstd::printn_all");
-
-	//===
-
-	bool tf1 = true;  sstd::printn_all(tf1);
-	bool tf2 = false; sstd::printn_all(tf2);
-	
-	//===
-
-	char c = 'c'; sstd::printn_all(c);
-	
-	//===
-
-	// signed
-	int8  s8  = -1; sstd::printn_all(s8);
-	int16 s16 = -2; sstd::printn_all(s16);
-	int32 s32 = -3; sstd::printn_all(s32);
-	int64 s64 = -4; sstd::printn_all(s64);
-
-	// unsigned
-	uint8  u8  = 1; sstd::printn_all(u8);
-	uint16 u16 = 2; sstd::printn_all(u16);
-	uint32 u32 = 3; sstd::printn_all(u32);
-	uint64 u64 = 4; sstd::printn_all(u64);
-
-	float  f  = -1.23; sstd::printn_all(f);
-	double d  = -1.23; sstd::printn_all(d);
-
-	sstd::printn_all("char*");
-	sstd::printn_all(std::string("std::string"));
-	
-	//===
-
-	std::vector<bool> v_bool = {true, false, true, false}; sstd::printn_all(v_bool);
-	std::vector<char> v_char = {'a', 'b', 'c', 'd'}; sstd::printn_all(v_char);
-
-	std::vector<int8>  v_s8  = {-1, 2, 3, 4}; sstd::printn_all(v_s8);
-	std::vector<int16> v_s16 = {1, -2, 3, 4}; sstd::printn_all(v_s16);
-	std::vector<int32> v_s32 = {1, 2, -3, 4}; sstd::printn_all(v_s32);
-	std::vector<int64> v_s64 = {1, 2, 3, -4}; sstd::printn_all(v_s64);
-
-	std::vector<uint8>  v_u8  = {1, 2, 3, 4}; sstd::printn_all(v_u8);
-	std::vector<uint16> v_u16 = {1, 2, 3, 4}; sstd::printn_all(v_u16);
-	std::vector<uint32> v_u32 = {1, 2, 3, 4}; sstd::printn_all(v_u32);
-	std::vector<uint64> v_u64 = {1, 2, 3, 4}; sstd::printn_all(v_u64);
-
-	std::vector<float>  v_f = {1.1f, 2.2f, 3.3f, 4.4f}; sstd::printn_all(v_f);
-	std::vector<double> v_d = {1.1, 2.2, 3.3, 4.4}; sstd::printn_all(v_d);
-
-	std::vector<std::string> v_str = {"abc", "def"}; sstd::printn_all(v_str);
-	
-	//===
-
-	std::vector<std::vector<bool>> vv_bool = {{true, false, true, false}, {false, true, false, true}}; sstd::printn_all(vv_bool);
-	std::vector<std::vector<char>> vv_char = {{'a', 'b'}, {'c', 'd'}}; sstd::printn_all(vv_char);
-
-	std::vector<std::vector<int8>>  vv_s8  = {{-1, 2, 3, 4}, {5, 6, 7, 8}}; sstd::printn_all(vv_s8);
-	std::vector<std::vector<int16>> vv_s16 = {{1, -2, 3, 4}, {5, 6, 7, 8}}; sstd::printn_all(vv_s16);
-	std::vector<std::vector<int32>> vv_s32 = {{1, 2, -3, 4}, {5, 6, 7, 8}}; sstd::printn_all(vv_s32);
-	std::vector<std::vector<int64>> vv_s64 = {{1, 2, 3, -4}, {5, 6, 7, 8}}; sstd::printn_all(vv_s64);
-	
-	std::vector<std::vector<uint8>>  vv_u8  = {{1, 2, 3, 4}, {5, 6, 7, 8}}; sstd::printn_all(vv_u8);
-	std::vector<std::vector<uint16>> vv_u16 = {{1, 2, 3, 4}, {5, 6, 7, 8}}; sstd::printn_all(vv_u16);
-	std::vector<std::vector<uint32>> vv_u32 = {{1, 2, 3, 4}, {5, 6, 7, 8}}; sstd::printn_all(vv_u32);
-	std::vector<std::vector<uint64>> vv_u64 = {{1, 2, 3, 4}, {5, 6, 7, 8}}; sstd::printn_all(vv_u64);
-
-	std::vector<std::vector<float>>  vv_f = {{1.1f, 2.2f, 3.3f, 4.4f}, {5.5f, 6.6f, 7.7f, 8.8f}}; sstd::printn_all(vv_f);
-	std::vector<std::vector<double>> vv_d = {{1.1, 2.2, 3.3, 4.4}, {5.5, 6.6, 7.7, 8.8}}; sstd::printn_all(vv_d);
-	
-//	std::vector<std::vector<std::string>> vv_str = {{"abc", "def"}, {"ghi", "jkl"}}; sstd::printn_all(vv_str); // gcc 5.4.0
-	std::vector<std::vector<std::string>> vv_str = {{std::string("abc"), std::string("def")}, {std::string("ghi"), std::string("jkl")}}; sstd::printn_all(vv_str); // gcc 4.4.7
 	printf("\n");
 }
 #define TEST_vec_sort_sort_de(Type)									\
@@ -549,17 +313,17 @@ void TEST_math(){
 	{ std::vector< int64> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("min_abs: %li\n", sstd::min_abs(buf)); }
 	printf("\n");
 	
-	{ sstd::mat< char > buf={{-2, -1}, {0, 1}};           printf("max: %i\n",  sstd::max(buf)); }
-	{ sstd::mat< int8 > buf={{-2, -1}, {0, 1}};           printf("max: %i\n",  sstd::max(buf)); }
-	{ sstd::mat< int16> buf={{-2, -1}, {0, 1}};           printf("max: %i\n",  sstd::max(buf)); }
-	{ sstd::mat< int32> buf={{-2, -1}, {0, 1}};           printf("max: %i\n",  sstd::max(buf)); }
-	{ sstd::mat< int64> buf={{-2, -1}, {0, 1}};           printf("max: %li\n", sstd::max(buf)); }
-	{ sstd::mat<uint8 > buf={{ 0,  1}, {2, 3}};           printf("max: %u\n",  sstd::max(buf)); }
-	{ sstd::mat<uint16> buf={{ 0,  1}, {2, 3}};           printf("max: %u\n",  sstd::max(buf)); }
-	{ sstd::mat<uint32> buf={{ 0,  1}, {2, 3}};           printf("max: %u\n",  sstd::max(buf)); }
-	{ sstd::mat<uint64> buf={{ 0,  1}, {2, 3}};           printf("max: %lu\n", sstd::max(buf)); }
-	{ sstd::mat< float> buf={{-2, -1}, {0, 1}};           printf("max: %f\n",  sstd::max(buf)); }
-	{ sstd::mat<double> buf={{-2, -1}, {0, 1}};           printf("max: %lf\n", sstd::max(buf)); }
+	{ sstd::mat_c< char > buf={{-2, -1}, {0, 1}};           printf("max: %i\n",  sstd::max(buf)); }
+	{ sstd::mat_c< int8 > buf={{-2, -1}, {0, 1}};           printf("max: %i\n",  sstd::max(buf)); }
+	{ sstd::mat_c< int16> buf={{-2, -1}, {0, 1}};           printf("max: %i\n",  sstd::max(buf)); }
+	{ sstd::mat_c< int32> buf={{-2, -1}, {0, 1}};           printf("max: %i\n",  sstd::max(buf)); }
+	{ sstd::mat_c< int64> buf={{-2, -1}, {0, 1}};           printf("max: %li\n", sstd::max(buf)); }
+	{ sstd::mat_c<uint8 > buf={{ 0,  1}, {2, 3}};           printf("max: %u\n",  sstd::max(buf)); }
+	{ sstd::mat_c<uint16> buf={{ 0,  1}, {2, 3}};           printf("max: %u\n",  sstd::max(buf)); }
+	{ sstd::mat_c<uint32> buf={{ 0,  1}, {2, 3}};           printf("max: %u\n",  sstd::max(buf)); }
+	{ sstd::mat_c<uint64> buf={{ 0,  1}, {2, 3}};           printf("max: %lu\n", sstd::max(buf)); }
+	{ sstd::mat_c< float> buf={{-2, -1}, {0, 1}};           printf("max: %f\n",  sstd::max(buf)); }
+	{ sstd::mat_c<double> buf={{-2, -1}, {0, 1}};           printf("max: %lf\n", sstd::max(buf)); }
 	printf("\n");
 	
 	{ sstd::mat_r< char > buf={{-2, -1}, {0, 1}};         printf("max: %i\n",  sstd::max(buf)); }
@@ -672,12 +436,18 @@ void TEST_rm(){
 	
 	printf("  □ getAllInDir\n");
 	std::vector<struct sstd::pathAndType> ret;
-	sstd::printn(sstd::getAllInDir(ret, "./test_rm"));
+	sstd::printn(sstd::getAllPath(ret, "./test_rm"));
 	for(uint i=0; i<ret.size(); i++){
 		if      (ret[i].type=='f'){ sstd::printn(sstd::ssprintf("type: file,      path: %s", ret[i].path.c_str()));
 		}else if(ret[i].type=='d'){ sstd::printn(sstd::ssprintf("type: directory, path: %s", ret[i].path.c_str()));
 		}          else           { sstd::pdbg("ERROR: sstd::getAllInDir() is failed.\n"); }
 	}
+	printf("\n");
+	
+	std::vector<std::string> retStr;
+	sstd::printn(sstd::getAllPath(retStr, "./test_rm")); sstd::printn(retStr); printf("\n");
+	sstd::printn(sstd::getAllFile(retStr, "./test_rm")); sstd::printn(retStr); printf("\n");
+	sstd::printn(sstd::getAllDir (retStr, "./test_rm")); sstd::printn(retStr); printf("\n");
 	printf("\n");
 	
 	printf("  □ rm\n");
@@ -816,10 +586,45 @@ void TEST_strEdit(){
 	/*
 	std::string sstd::removeHeadSpace(const uchar* str);
 	void sstd::removeTailSpace(std::string& str);
-	std::string sstd::removeSpace_of_HeadAndTail(const uchar* str);
+	std::string              sstd::removeSpace_of_HeadAndTail(const uchar* str);
+	void                     sstd::removeSpace_of_HeadAndTail(std::string& str);
 	std::vector<std::string> sstd::removeSpace_of_HeadAndTail(const std::vector<std::string>& vec);
 	//*/
 }
+/*
+// 実装完了 (処理時間短縮のため，コメントアウト)
+TEST(strEdit, strIn){
+	{
+		std::string lhs = "";
+		std::string rhs = "";
+		bool ret=sstd::strIn(lhs, rhs); ASSERT_TRUE(ret);
+	}
+	{
+		std::string lhs = "ABCD";
+		std::string rhs = "ABCDEFG";
+		bool ret=sstd::strIn(lhs, rhs); ASSERT_TRUE(ret);
+	}
+	{
+		std::string lhs = "BCD";
+		std::string rhs = "ABCDEFG";
+		bool ret=sstd::strIn(lhs, rhs); ASSERT_TRUE(ret);
+	}
+	{
+		std::string lhs = "DEFG";
+		std::string rhs = "ABCDEFG";
+		bool ret=sstd::strIn(lhs, rhs); ASSERT_TRUE(ret);
+	}
+	{
+		std::string lhs = "ABCDEFG";
+		std::string rhs = "ABCDEFG";
+		bool ret=sstd::strIn(lhs, rhs); ASSERT_TRUE(ret);
+	}
+	{
+		std::string lhs = "AXCDEFG";
+		std::string rhs = "ABCDEFG";
+		bool ret=sstd::strIn(lhs, rhs); ASSERT_TRUE(!ret);
+	}
+}//*/
 void TEST_tinyInterpreter(){
 	printf("■ tinyInterpreter\n");
 	printf("  □ getCommandList & splitByComma\n");
@@ -958,752 +763,6 @@ void TEST_pause(){
 
 //-----------------------------------------------------------------------
 
-#define TEST_c2py_builtIn(type, typeTEST, pConstTypeTEST, pTypeTEST, builtinTypeTEST, pBuiltinTypeTEST)	\
-	type buf_builtIn=(type)0; buf_builtIn=~buf_builtIn;					\
-																		\
-	sstd::c2py<type> py_builtIn("./tmpDir", "test_functions", "py_builtIn", typeTEST); \
-	type ret;															\
-	sstd::printn(buf_builtIn==py_builtIn(&ret, buf_builtIn));			\
-	sstd::printn(ret);													\
-	printf("\n");														\
-																		\
-	std::vector<type> vecBuiltIn={buf_builtIn, (type)(buf_builtIn-1), (type)(buf_builtIn-2), 0, 1, 2}; \
-																		\
-	sstd::c2py<void> py_pBuiltIn_const("./tmpDir", "test_functions", "py_pBuiltIn", pConstTypeTEST); /*書き戻しを行わない*/ \
-	py_pBuiltIn_const(&vecBuiltIn[0], vecBuiltIn.size());				\
-	sstd::printn(vecBuiltIn);											\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pBuiltIn("./tmpDir", "test_functions", "py_pBuiltIn", pTypeTEST); /*書き戻しを行う*/ \
-	py_pBuiltIn(&vecBuiltIn[0], vecBuiltIn.size());						\
-	sstd::printn(vecBuiltIn);											\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pBuiltIn_cnvBuiltin("./tmpDir", "test_functions", "py_pBuiltIn_cnvBuiltin", builtinTypeTEST); /*書き戻しを行う*/ \
-	py_pBuiltIn_cnvBuiltin(&vecBuiltIn[0], vecBuiltIn.size());			\
-	sstd::printn(vecBuiltIn);											\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pBuiltIn_pCnvBuiltin("./tmpDir", "test_functions", "py_pBuiltIn_pCnvBuiltin", pBuiltinTypeTEST); /*書き戻しを行う*/ \
-	py_pBuiltIn_pCnvBuiltin(&vecBuiltIn[0], vecBuiltIn.size());			\
-	sstd::printn(vecBuiltIn);											\
-	printf("\n");
-
-#define TEST_c2py_floatXX(type, typeTEST, pConstTypeTEST, pTypeTEST, builtinTypeTEST, pBuiltinTypeTEST)	\
-	sstd::c2py<type> py_float("./tmpDir", "test_functions", "py_floatXX", typeTEST); \
-	type ret;															\
-	sstd::printn(py_float(&ret, (type)1.2345));							\
-	sstd::printn(ret);													\
-	printf("\n");														\
-																		\
-	std::vector<type> vecFloat={1.23, 4.56, 7.0, 0, 1, 2};				\
-																		\
-	sstd::c2py<void> py_pFloat_const("./tmpDir", "test_functions", "py_pFloatXX", pConstTypeTEST); /*書き戻しを行わない*/ \
-	py_pFloat_const(&vecFloat[0], vecFloat.size());						\
-	sstd::printn(vecFloat);												\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pFloat("./tmpDir", "test_functions", "py_pFloatXX", pTypeTEST); /*書き戻しを行う*/ \
-	py_pFloat(&vecFloat[0], vecFloat.size());							\
-	sstd::printn(vecFloat);												\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pFloat_cnvBuiltin("./tmpDir", "test_functions", "py_pFloatXX_cnvBuiltin", builtinTypeTEST); /*書き戻しを行う*/ \
-	py_pFloat_cnvBuiltin(&vecFloat[0], vecFloat.size());				\
-	sstd::printn(vecFloat);												\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pFloat_pCnvBuiltin("./tmpDir", "test_functions", "py_pFloatXX_pCnvBuiltin", pBuiltinTypeTEST); /*書き戻しを行う*/ \
-	py_pFloat_pCnvBuiltin(&vecFloat[0], vecFloat.size());				\
-	sstd::printn(vecFloat);												\
-	printf("\n");
-
-#define TEST_c2py_vecXXX(type, typeTEST, pConstTypeTEST, pTypeTEST, builtinTypeTEST, pBuiltinTypeTEST) \
-	type buf_builtIn=(type)0; buf_builtIn=~buf_builtIn;					\
-																		\
-	std::vector<type> vecXXX={buf_builtIn, (type)(buf_builtIn-1), (type)(buf_builtIn-2), 0, 1, 2, 3}; \
-	sstd::printn(vecXXX);												\
-	printf("\n");														\
-																		\
-	sstd::c2py<std::vector<type>> py_vecXXX("./tmpDir", "test_functions", "py_vecX", typeTEST); \
-	std::vector<type> ret;												\
-	sstd::printn(py_vecXXX(&ret, vecXXX));								\
-	sstd::printn(ret);													\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pVecXXX_const("./tmpDir", "test_functions", "py_pVecX_const", pConstTypeTEST); /*書き戻しを行わない*/ \
-	py_pVecXXX_const(&vecXXX);											\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pVecXXX_cnvBuiltin("./tmpDir", "test_functions", "py_pVecX", builtinTypeTEST); /*書き戻しを行う*/ \
-	py_pVecXXX_cnvBuiltin(&vecXXX); /*ndarray で渡した場合は，追記できない*/ \
-	sstd::printn(vecXXX);												\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pVecXXX_pCnvBuiltin("./tmpDir", "test_functions", "py_pVecX_pCnvBuiltin", pBuiltinTypeTEST); /*書き戻しを行う*/ \
-	py_pVecXXX_pCnvBuiltin(&vecXXX); /*ndarray で渡した場合は，追記できない*/ \
-	sstd::printn(vecXXX);												\
-	printf("\n");
-
-#define TEST_c2py_vecFolatXX(type, typeTEST, pConstTypeTEST, pTypeTEST, builtinTypeTEST, pBuiltinTypeTEST)	\
-	std::vector<type> vecXXX={-3, -2, -1, 0, 1, 2, 3};					\
-	sstd::printn(vecXXX);												\
-	printf("\n");														\
-																		\
-	sstd::c2py<std::vector<type>> py_vecXXX("./tmpDir", "test_functions", "py_vecX", typeTEST); \
-	std::vector<type> ret;												\
-	sstd::printn(py_vecXXX(&ret, vecXXX));								\
-	sstd::printn(ret);													\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pVecXXX_const("./tmpDir", "test_functions", "py_pVecX_const", pConstTypeTEST); /*書き戻しを行わない*/ \
-	py_pVecXXX_const(&vecXXX);											\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pVecXXX("./tmpDir", "test_functions", "py_pVecX", pTypeTEST); /*書き戻しを行う*/ \
-	py_pVecXXX(&vecXXX); /*ndarray で渡した場合は，追記できない*/		\
-	sstd::printn(vecXXX);												\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pVecXXX_cnvBuiltin("./tmpDir", "test_functions", "py_pVecX", builtinTypeTEST); /*書き戻しを行う*/ \
-	py_pVecXXX_cnvBuiltin(&vecXXX); /*ndarray で渡した場合は，追記できない*/ \
-	sstd::printn(vecXXX);												\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pVecXXX_pCnvBuiltin("./tmpDir", "test_functions", "py_pVecX_pCnvBuiltin", pBuiltinTypeTEST); /*書き戻しを行う*/ \
-	py_pVecXXX_pCnvBuiltin(&vecXXX); /*ndarray で渡した場合は，追記できない*/ \
-	sstd::printn(vecXXX);												\
-	printf("\n");
-
-#define TEST_c2py_matBool(typeMat, type, typeTEST, pConstTypeTEST, pTypeTEST, builtinTypeTEST, pBuiltinTypeTEST) \
-	typeMat<type> matB{{true, false, false},{false, true, false},{false, false, true},{true, false, false}}; \
-	sstd::printn(matB);													\
-	printf("\n");														\
-																		\
-	sstd::c2py<typeMat<type>> py_matB("./tmpDir", "test_functions", "py_matX", typeTEST); \
-	typeMat<type> ret;													\
-	sstd::printn(py_matB(&ret, matB));									\
-	sstd::printn(ret);													\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pMatB_const("./tmpDir", "test_functions", "py_pMatX_const", pConstTypeTEST); /*書き戻しを行わない*/	\
-	py_pMatB_const(&matB);												\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pMatB("./tmpDir", "test_functions", "py_pMatBool", pTypeTEST); /*書き戻しを行う*/ \
-	py_pMatB(&matB); /*ndarray で渡した場合は，追記できない*/			\
-	sstd::printn(matB);													\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pMatB_cnvBuiltin("./tmpDir", "test_functions", "py_pMatBool", builtinTypeTEST); /*書き戻しを行う*/ \
-	py_pMatB_cnvBuiltin(&matB); /*ndarray で渡した場合は，追記できない*/			\
-	sstd::printn(matB);													\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pMatB_pCnvBuiltin("./tmpDir", "test_functions", "py_pMatBool_pCnvBuiltin", pBuiltinTypeTEST); /*書き戻しを行う*/ \
-	py_pMatB_pCnvBuiltin(&matB); /*ndarray で渡した場合は，追記できない*/ \
-	sstd::printn(matB);													\
-	printf("\n");
-
-#define TEST_c2py_matChar(typeMat, type, typeTEST, pConstTypeTEST, pTypeTEST, builtinTypeTEST, pBuiltinTypeTEST) \
-	typeMat<type> matC{{'a', 'b', 'c'},{'d', 'e', 'f'},{'g', 'h', 'i'},{'j', 'k', 'l'}}; \
-	sstd::printn(matC);													\
-	printf("\n");														\
-																		\
-	sstd::c2py<typeMat<type>> py_matX("./tmpDir", "test_functions", "py_matX", typeTEST); \
-	typeMat<type> ret;													\
-	sstd::printn(py_matX(&ret, matC));									\
-	sstd::printn(ret);													\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pMatC_const("./tmpDir", "test_functions", "py_pMatX_const", pConstTypeTEST); /*書き戻しを行わない*/	\
-	py_pMatC_const(&matC);												\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pMatC("./tmpDir", "test_functions", "py_pMatChar", pTypeTEST); /*書き戻しを行う*/ \
-	py_pMatC(&matC); /*ndarray で渡した場合は，追記できない*/			\
-	sstd::printn(matC);													\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pMatC_cnvBuiltin("./tmpDir", "test_functions", "py_pMatChar", builtinTypeTEST); /*書き戻しを行う*/ \
-	py_pMatC_cnvBuiltin(&matC); /*ndarray で渡した場合は，追記できない*/ \
-	sstd::printn(matC);													\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pMatC_pCnvBuiltin("./tmpDir", "test_functions", "py_pMatChar_pCnvBuiltin", pBuiltinTypeTEST); /*書き戻しを行う*/ \
-	py_pMatC_pCnvBuiltin(&matC); /*ndarray で渡した場合は，追記できない*/ \
-	sstd::printn(matC);													\
-	printf("\n");
-
-#define TEST_c2py_matXXX(typeMat, type, typeTEST, pConstTypeTEST, pTypeTEST, builtinTypeTEST, pBuiltinTypeTEST) \
-	type buf_builtIn=(type)0; buf_builtIn=~buf_builtIn;					\
-																		\
-	typeMat<type> matD{{buf_builtIn, (type)(buf_builtIn-1), 3},{4, 5, 6},{7, 8, 9},{10, 11, 12}}; \
-	sstd::printn(matD);													\
-	printf("\n");														\
-																		\
-	sstd::c2py<typeMat<type>> py_matX("./tmpDir", "test_functions", "py_matX", typeTEST); \
-	typeMat<type> ret;													\
-	sstd::printn(py_matX(&ret, matD));									\
-	sstd::printn(ret);													\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pMatX_const("./tmpDir", "test_functions", "py_pMatX_const", pConstTypeTEST); /*書き戻しを行わない*/ \
-	py_pMatX_const(&matD);												\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pMatX("./tmpDir", "test_functions", "py_pMatX", pTypeTEST); /*書き戻しを行う*/ \
-	py_pMatX(&matD); /*ndarray で渡した場合は，追記できない*/			\
-	sstd::printn(matD);													\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pMatX_cnvBuiltin("./tmpDir", "test_functions", "py_pMatX", builtinTypeTEST); /*書き戻しを行う*/ \
-	py_pMatX_cnvBuiltin(&matD); /*ndarray で渡した場合は，追記できない*/ \
-	sstd::printn(matD);													\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pMatX_pCnvBuiltin("./tmpDir", "test_functions", "py_pMatX_pCnvBuiltin", pBuiltinTypeTEST); /*書き戻しを行う*/ \
-	py_pMatX_pCnvBuiltin(&matD); /*ndarray で渡した場合は，追記できない*/ \
-	sstd::printn(matD);													\
-	printf("\n");
-
-#define TEST_c2py_matFolatXX(typeMat, type, typeTEST, pConstTypeTEST, pTypeTEST, builtinTypeTEST, pBuiltinTypeTEST) \
-	typeMat<type> matD{{1, 2, 3},{4, 5, 6},{7, 8, 9},{10, 11, 12}};		\
-	sstd::printn(matD);													\
-	printf("\n");														\
-																		\
-	sstd::c2py<typeMat<type>> py_matX("./tmpDir", "test_functions", "py_matX", typeTEST); \
-	typeMat<type> ret;													\
-	sstd::printn(py_matX(&ret, matD));									\
-	sstd::printn(ret);													\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pMatX_const("./tmpDir", "test_functions", "py_pMatX_const", pConstTypeTEST); /*書き戻しを行わない*/ \
-	py_pMatX_const(&matD);												\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pMatX("./tmpDir", "test_functions", "py_pMatX", pTypeTEST); /*書き戻しを行う*/ \
-	py_pMatX(&matD); /*ndarray で渡した場合は，追記できない*/			\
-	sstd::printn(matD);													\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pMatX_cnvBuiltin("./tmpDir", "test_functions", "py_pMatX", pTypeTEST); /*書き戻しを行う*/ \
-	py_pMatX_cnvBuiltin(&matD); /*ndarray で渡した場合は，追記できない*/ \
-	sstd::printn(matD);													\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pMatX_pCnvBuiltin("./tmpDir", "test_functions", "py_pMatX_pCnvBuiltin", pTypeTEST); /*書き戻しを行う*/ \
-	py_pMatX_pCnvBuiltin(&matD); /*ndarray で渡した場合は，追記できない*/ \
-	sstd::printn(matD);													\
-	printf("\n");
-
-#define TEST_c2py_matStr(typeMat, type, typeTEST, pConstTypeTEST, pTypeTEST, builtinTypeTEST, pBuiltinTypeTEST) \
-	typeMat<type> matStr{{"a", "ab", "abc"},{"abcd", "abcde", "abcdef"},{"7", "8", "9"},{"10", "11", "12"}}; \
-	sstd::printn(matStr);												\
-	printf("\n");														\
-																		\
-	/* mat<str> 引数は，不可．恐らく，gcc 5.4.0 の可変長引数の実装が，そもそもクラス型を想定していないので，バグを踏む．-> ポインタ渡しなら問題ない．*/ \
-	/* sstd::c2py<sstd::mat<std::string>> py_matStr("./tmpDir", "test_functions", "py_matX", "mat<str>, mat<str>"); */ \
-	/* sstd::printn(py_matStr(matStr)); */								\
-	/* printf("\n"); */													\
-	sstd::c2py<typeMat<type>> py_matStr("./tmpDir", "test_functions", "py_matX", typeTEST); \
-	typeMat<type> ret;													\
-	sstd::printn(py_matStr(&ret, &matStr));								\
-	sstd::printn(ret);													\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pMatX_const("./tmpDir", "test_functions", "py_pVecX_const", pConstTypeTEST); /*書き戻しを行わない*/ \
-	py_pMatX_const(&matStr);											\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pMatX("./tmpDir", "test_functions", "py_pMatStr", pTypeTEST); /*書き戻しを行う*/ \
-	py_pMatX(&matStr); /* ndarray で渡した場合は，追記できない*/ 		\
-	sstd::printn(matStr);												\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pMatX_cnvBuiltin("./tmpDir", "test_functions", "py_pMatStr", builtinTypeTEST); /*書き戻しを行う*/ \
-	py_pMatX_cnvBuiltin(&matStr); /* ndarray で渡した場合は，追記できない*/	\
-	sstd::printn(matStr);												\
-	printf("\n");														\
-																		\
-	sstd::c2py<void> py_pMatX_pCnvBuiltin("./tmpDir", "test_functions", "py_pMatStr_pCnvBuiltin", pBuiltinTypeTEST); /*書き戻しを行う*/ \
-	py_pMatX_pCnvBuiltin(&matStr); /* ndarray で渡した場合は，追記できない*/ \
-	sstd::printn(matStr);												\
-	printf("\n");
-
-void TEST_c2py(){
-	printf("■ C++ to Python. (Running any python function from C++.)\n");
-	// テストを書きながら開発を進める．
-
-	/*
-	{
-		printf("  □ empty args\n");
-		sstd::c2py<void> py_emptyArg("./tmpDir", "test_functions", "py_emptyArg", "void");
-		py_emptyArg();
-		printf("\n");
-	}
-	//*/
-	/*
-	{
-		printf("  □ empty args (other dir)\n");
-		sstd::c2py<void> py_emptyArg("./tmpDir", "./testPy/test_functions", "py_emptyArg", "void");
-		py_emptyArg();
-		printf("\n");
-	}
-	//*/
-	
-	/*
-	// measure time 01
-	{
-		printf("■ measureTime_start---------------\n\n"); time_m timem; sstd::measureTime_start(timem);
-		
-		sstd::c2py<void> py_empty("./tmpDir", "test_functions", "py_empty", "void");
-		for(uint i=0; i<100; i++){ py_empty(); }
-		
-		printf("\n■ measureTime_stop----------------\n"); sstd::measureTime_stop(timem); sstd::pauseIfWin32();
-	}
-	//*/
-	
-	/*
-	// measure time 02
-	{
-		printf("■ measureTime_start---------------\n\n"); time_m timem; sstd::measureTime_start(timem);
-		
-		for(uint i=0; i<100; i++){
-			sstd::c2py<void> py_empty("./tmpDir", "test_functions", "py_empty", "void");
-			py_empty();
-		}
-		
-		printf("\n■ measureTime_stop----------------\n"); sstd::measureTime_stop(timem); sstd::pauseIfWin32();
-	}
-	//*/
-	
-	//-----------------------------------------------------------------------
-	
-	/*
-	{
-		printf("  □ bool, const bool*, bool*\n");
-
-		sstd::c2py<bool> py_bool("./tmpDir", "test_functions", "py_bool", "bool, ret bool*, bool");
-		bool ret=false;
-		sstd::printn( true==py_bool(&ret,  true)); sstd::printn(ret);
-		sstd::printn(false==py_bool(&ret, false)); sstd::printn(ret);
-		printf("\n");
-
-		bool boolArr[] = {true, false, true, false, false, true}; bool* pBool = &boolArr[0];
-
-		sstd::c2py<void> py_pBool_const("./tmpDir", "test_functions", "py_pBool", "void, const bool*, len"); // 書き戻しを行わない
-		py_pBool_const(pBool, 6);
-		for(uint i=0; i<6; i++){ if(pBool[i]){printf("T ");}else{printf("F ");} }printf("\n");
-		printf("\n");
-
-		sstd::c2py<void> py_pBool("./tmpDir", "test_functions", "py_pBool", "void, bool*, len"); // 書き戻しを行う
-		py_pBool(pBool, 6);
-		for(uint i=0; i<6; i++){ if(pBool[i]){printf("T ");}else{printf("F ");} }printf("\n");
-		printf("\n");
-	
-		//---
-	
-		sstd::c2py<void> py_pBool_builtin("./tmpDir", "test_functions", "py_pBool_builtin", "void, bool*|~, len"); // 書き戻しを行う
-		py_pBool_builtin(pBool, 6);
-		for(uint i=0; i<6; i++){ if(pBool[i]){printf("T ");}else{printf("F ");} }printf("\n");
-		printf("\n");
-
-		sstd::c2py<void> py_pBool_pBuiltin("./tmpDir", "test_functions", "py_pBool_pBuiltin", "void, bool*|*~, len"); // 書き戻しを行う
-		py_pBool_pBuiltin(pBool, 6);
-		for(uint i=0; i<6; i++){ if(pBool[i]){printf("T ");}else{printf("F ");} }printf("\n");
-		printf("\n");
-	}
-	//*/
-	
-	//-----------------------------------------------------------------------
-	
-	/*
-	{
-		printf("  □ char, const char*, char*\n");
-
-		sstd::c2py<char> py_char("./tmpDir", "test_functions", "py_char", "char, ret char*, char");
-		char ret='0';
-		sstd::printn('C'==py_char(&ret, 'C')); sstd::printn(ret);
-		printf("\n");
-	
-		//	sstd::c2py<void> py_pChar_const("./tmpDir", "test_functions", "py_pChar", "void, const char*, len"); // この場合，エラーを表示する．
-		sstd::c2py<void> py_pChar_const("./tmpDir", "test_functions", "py_pChar", "void, const char*"); // 書き戻しを行わない
-		py_pChar_const("string");
-		printf("\n");
-	
-		std::string str_pChar="string";
-		char* pChar=&str_pChar[0];
-	
-		sstd::c2py<void> py_pChar("./tmpDir", "test_functions", "py_pChar", "void, char*"); // 書き戻しを行う // Python says [TypeError: 'str' object does not support item assignment] so, this might be impossible.
-		py_pChar(pChar);
-		sstd::printn(pChar);
-		printf("\n");
-
-		//---
-
-		sstd::c2py<void> py_pChar_builtin("./tmpDir", "test_functions", "py_pChar", "void, char*|~"); // 書き戻しを行う // Python says [TypeError: 'str' object does not support item assignment] so, this might be impossible.
-		py_pChar_builtin(pChar);
-		sstd::printn(pChar);
-		printf("\n");
-
-		sstd::c2py<void> py_pChar_pBuiltin("./tmpDir", "test_functions", "py_pChar_pBuiltin", "void, char*|*~"); // 書き戻しを行う // Python says [TypeError: 'str' object does not support item assignment] so, this might be impossible.
-		py_pChar_pBuiltin(pChar);
-		sstd::printn(pChar);
-		printf("\n");
-	}
-	//*/
-	
-	//-----------------------------------------------------------------------
-
-	/*
-	printf("  ■ uchar, const uchar*, uchar*\n"   ); { TEST_c2py_builtIn(uchar,  "uchar, ret uchar*, uchar",    "void, const uchar*, len",  "void, uchar*, len" , "void, uchar*|~, len",  "void, uchar*|*~, len" ); }
-	printf("  ■ int8, const int8*, int8*\n"      ); { TEST_c2py_builtIn(int8,   "int8, ret int8*, int8",       "void, const int8*, len",   "void, int8*, len",   "void, int8*|~, len",   "void, int8*|*~, len"  ); }
-	printf("  ■ int16, const int16*, int16*\n"   ); { TEST_c2py_builtIn(int16,  "int16, ret int16*, int16",    "void, const int16*, len",  "void, int16*, len",  "void, int16*|~, len",  "void, int16*|*~, len" ); }
-	printf("  ■ int32, const int32*, int32*\n"   ); { TEST_c2py_builtIn(int32,  "int32, ret int32*, int32",    "void, const int32*, len",  "void, int32*, len",  "void, int32*|~, len",  "void, int32*|*~, len" ); }
-	printf("  ■ int64, const int64*, int64*\n"   ); { TEST_c2py_builtIn(int64,  "int64, ret int64*, int64",    "void, const int64*, len",  "void, int64*, len",  "void, int64*|~, len",  "void, int64*|*~, len" ); }
-	printf("  ■ uint8, const uint8*, uint8*\n"   ); { TEST_c2py_builtIn(uint8,  "uint8, ret uint8*, uint8",    "void, const uint8*, len",  "void, uint8*, len",  "void, uint8*|~, len",  "void, uint8*|*~, len" ); }
-	printf("  ■ uint16, const uint16*, uint16*\n"); { TEST_c2py_builtIn(uint16, "uint16, ret uint16*, uint16", "void, const uint16*, len", "void, uint16*, len", "void, uint16*|~, len", "void, uint16*|*~, len"); }
-	printf("  ■ uint32, const uint32*, uint32*\n"); { TEST_c2py_builtIn(uint32, "uint32, ret uint32*, uint32", "void, const uint32*, len", "void, uint32*, len", "void, uint32*|~, len", "void, uint32*|*~, len"); }
-	printf("  ■ uint64, const uint64*, uint64*\n"); { TEST_c2py_builtIn(uint64, "uint64, ret uint64*, uint64", "void, const uint64*, len", "void, uint64*, len", "void, uint64*|~, len", "void, uint64*|*~, len"); }
-	
-	printf("  ■ float\n" ); { TEST_c2py_floatXX(float, "float, ret float*, float",     "void, const float*, len",  "void, float*, len",  "void, float*|~, len",  "void, float*|*~, len" ); }
-	printf("  ■ double\n"); { TEST_c2py_floatXX(double, "double, ret double*, double", "void, const double*, len", "void, double*, len", "void, double*|~, len", "void, double*|*~, len"); }
-	//*/
-	
-	//-----------------------------------------------------------------------
-	
-	/*
-	{
-		printf("  □ std::string\n");
-	
-		std::string str="01234abcdABCD";
-	
-		sstd::c2py<std::string> py_str("./tmpDir", "test_functions", "py_str", "str, ret str*, str");
-		std::string ret;
-		sstd::printn(py_str(&ret, str));
-		sstd::printn(ret);
-		printf("\n");
-
-		sstd::c2py<void> py_pStr_const("./tmpDir", "test_functions", "py_pStr", "void, const str*"); // 書き戻しを行わない
-		py_pStr_const(&str);
-		sstd::printn(str);
-		printf("\n");
-
-		sstd::c2py<void> py_pStr("./tmpDir", "test_functions", "py_pStr", "void, str*"); // 書き戻しを行う // Python says "'str' object does not support item assignment".
-		py_pStr(&str);
-		sstd::printn(str);
-		printf("\n");
-
-		//---
-	
-		sstd::c2py<void> py_pStr_cnvBuiltin("./tmpDir", "test_functions", "py_pStr", "void, str*|~"); // 書き戻しを行う // Python says "'str' object does not support item assignment".
-		py_pStr_cnvBuiltin(&str);
-		sstd::printn(str);
-		printf("\n");
-
-		sstd::c2py<void> py_pStr_pCnvBuiltin("./tmpDir", "test_functions", "py_pStr_pCnvBuiltin", "void, str*|*~"); // 書き戻しを行う
-		py_pStr_pCnvBuiltin(&str);
-		sstd::printn(str);
-		printf("\n");
-	}
-	//*/
-	
-	//-----------------------------------------------------------------------
-
-	// std::vector<T>
-
-	/*
-	{
-		printf("  ■ std::vector<bool>\n");
-	
-		std::vector<bool> vecBool={true, false, false, true};
-		sstd::printn(vecBool);
-		printf("\n");
-
-		sstd::c2py<std::vector<bool>> py_vecBool("./tmpDir", "test_functions", "py_vecBool", "vec<bool>, ret vec<bool>*, vec<bool>");
-		std::vector<bool> ret;
-		sstd::printn(py_vecBool(&ret, vecBool));
-		sstd::printn(ret);
-		printf("\n");
-	
-		sstd::c2py<void> py_pVecBool_const("./tmpDir", "test_functions", "py_pVecBool_const", "void, const vec<bool>*"); // 書き戻しを行わない
-		py_pVecBool_const(&vecBool);
-		printf("\n");
-
-		sstd::c2py<void> py_pVecBool("./tmpDir", "test_functions", "py_pVecBool", "void, vec<bool>*"); // 書き戻しを行う
-		py_pVecBool(&vecBool);
-		sstd::printn(vecBool);
-		printf("\n");
-
-		//---
-	
-		sstd::c2py<void> py_pVecBool_cnvBuiltin("./tmpDir", "test_functions", "py_pVecBool", "void, vec<bool>*|~"); // 書き戻しを行う
-		py_pVecBool_cnvBuiltin(&vecBool);
-		sstd::printn(vecBool);
-		printf("\n");
-
-		sstd::c2py<void> py_pVecBool_pCnvBuiltin("./tmpDir", "test_functions", "py_pVecBool_pCnvBuiltin", "void, vec<bool>*|*~"); // 書き戻しを行う
-		py_pVecBool_pCnvBuiltin(&vecBool);
-		sstd::printn(vecBool);
-		printf("\n");
-	}
-	//*/
-	
-	/*
-	{
-		printf("  ■ std::vector<char>\n" );
-	
-		std::vector<char> vecChar={'a', 'b', 'c', 'd'};
-		sstd::printn(vecChar);
-		printf("\n");
-
-		sstd::c2py<std::vector<char>> py_vecChar("./tmpDir", "test_functions", "py_vecChar", "vec<char>, vec<char>");
-		sstd::printn(py_vecChar(vecChar));
-		printf("\n");
-
-		sstd::c2py<void> py_pVecChar_const("./tmpDir", "test_functions", "py_pVecChar_const", "void, const vec<char>*"); // 書き戻しを行わない
-		py_pVecChar_const(&vecChar);
-		printf("\n");
-
-		sstd::c2py<void> py_pVecChar("./tmpDir", "test_functions", "py_pVecChar", "void, vec<char>*"); // 書き戻しを行う
-		py_pVecChar(&vecChar);
-		sstd::printn(vecChar);
-		printf("\n");
-
-		//---
-	
-		sstd::c2py<void> py_pVecChar_cnvBuiltin("./tmpDir", "test_functions", "py_pVecChar", "void, vec<char>*|~"); // 書き戻しを行う
-		py_pVecChar_cnvBuiltin(&vecChar);
-		sstd::printn(vecChar);
-		printf("\n");
-	
-		sstd::c2py<void> py_pVecChar_pCnvBuiltin("./tmpDir", "test_functions", "py_pVecChar_pCnvBuiltin", "void, vec<char>*|*~"); // 書き戻しを行う
-		py_pVecChar_pCnvBuiltin(&vecChar);
-		sstd::printn(vecChar);
-		printf("\n");
-	}
-	//*/
-	
-	/*
-	printf("  ■ std::vector<uchar>\n" ); { TEST_c2py_vecXXX( uchar, "vec<uchar>, ret vec<uchar>*, vec<uchar>",    "void, const vec<uchar>*",  "void, vec<uchar>*" , "void, vec<uchar>*|~" , "void, vec<uchar>*|*~" ); }
-	printf("  ■ std::vector<int8>\n"  ); { TEST_c2py_vecXXX(  int8, "vec<int8>, ret vec<int8>*, vec<int8>",       "void, const vec<int8>*",   "void, vec<int8>*"  , "void, vec<int8>*|~"  , "void, vec<int8>*|*~"  ); }
-	printf("  ■ std::vector<int16>\n" ); { TEST_c2py_vecXXX( int16, "vec<int16>, ret vec<int16>*, vec<int16>",    "void, const vec<int16>*",  "void, vec<int16>*" , "void, vec<int16>*|~" , "void, vec<int16>*|*~" ); }
-	printf("  ■ std::vector<int32>\n" ); { TEST_c2py_vecXXX( int32, "vec<int32>, ret vec<int32>*, vec<int32>",    "void, const vec<int32>*",  "void, vec<int32>*" , "void, vec<int32>*|~" , "void, vec<int32>*|*~" ); }
-	printf("  ■ std::vector<int64>\n" ); { TEST_c2py_vecXXX( int64, "vec<int64>, ret vec<int64>*, vec<int64>",    "void, const vec<int64>*",  "void, vec<int64>*" , "void, vec<int64>*|~" , "void, vec<int64>*|*~" ); }
-	printf("  ■ std::vector<uint8>\n" ); { TEST_c2py_vecXXX( uint8, "vec<uint8>, ret vec<uint8>*, vec<uint8>",    "void, const vec<uint8>*",  "void, vec<uint8>*" , "void, vec<uint8>*|~" , "void, vec<uint8>*|*~" ); }
-	printf("  ■ std::vector<uint16>\n"); { TEST_c2py_vecXXX(uint16, "vec<uint16>, ret vec<uint16>*, vec<uint16>", "void, const vec<uint16>*", "void, vec<uint16>*", "void, vec<uint16>*|~", "void, vec<uint16>*|*~"); }
-	printf("  ■ std::vector<uint32>\n"); { TEST_c2py_vecXXX(uint32, "vec<uint32>, ret vec<uint32>*, vec<uint32>", "void, const vec<uint32>*", "void, vec<uint32>*", "void, vec<uint32>*|~", "void, vec<uint32>*|*~"); }
-	printf("  ■ std::vector<uint64>\n"); { TEST_c2py_vecXXX(uint64, "vec<uint64>, ret vec<uint64>*, vec<uint64>", "void, const vec<uint64>*", "void, vec<uint64>*", "void, vec<uint64>*|~", "void, vec<uint64>*|*~"); }
-
-	printf("  ■ std::vector<float>\n" ); { TEST_c2py_vecFolatXX( float, "vec<float>, ret vec<float>*, vec<float>",   "void, const vec<float>*",  "void, vec<float>*" ,  "void, vec<float>*|~" ,  "void, vec<float>*|*~" ); }
-	printf("  ■ std::vector<double>\n"); { TEST_c2py_vecFolatXX(double, "vec<double>, ret vec<double>*, vec<double>", "void, const vec<double>*", "void, vec<double>*", "void, vec<double>*|~", "void, vec<double>*|*~"); }
-	//*/
-	
-	/*
-	{
-		printf("  ■ std::vector<std::string>\n");
-		std::vector<std::string> vecStr={"ABCD", "EF", "GHIJKLMNO"};
-		sstd::printn(vecStr.size());
-		printf("\n");
-	
-		sstd::c2py<std::vector<std::string>> py_vecStr("./tmpDir", "test_functions", "py_vecStr", "vec<str>, ret vec<str>*, vec<str>");
-		std::vector<std::string> ret;
-		sstd::printn(py_vecStr(&ret, vecStr));
-		sstd::printn(ret);
-		printf("\n");
-
-		sstd::c2py<void> py_pVecStr_const("./tmpDir", "test_functions", "py_pVecStr_const", "void, const vec<str>*"); // 書き戻しを行わない
-		py_pVecStr_const(&vecStr);
-		printf("\n");
-
-		sstd::c2py<void> py_pVecStr("./tmpDir", "test_functions", "py_pVecStr", "void, vec<str>*"); // 書き戻しを行う // Python says "'str' object does not support item assignment".
-		py_pVecStr(&vecStr);
-		printf("\n");
-
-		sstd::c2py<void> py_pVecStr_cnvBuiltin("./tmpDir", "test_functions", "py_pVecStr", "void, vec<str>*|~"); // 書き戻しを行う // Python says "'str' object does not support item assignment".
-		py_pVecStr_cnvBuiltin(&vecStr);
-		printf("\n");
-
-		sstd::c2py<void> py_pVecStr_pCnvBuiltin("./tmpDir", "test_functions", "py_pVecStr_pCnvBuiltin", "void, vec<str>*|*~"); // 書き戻しを行う
-		py_pVecStr_pCnvBuiltin(&vecStr);
-		sstd::printn(vecStr);
-		printf("\n");
-	}
-	//*/
-	
-	//-----------------------------------------------------------------------
-
-	// std::mat<T>
-	/*
-	printf("  ■ sstd::mat<bool>\n"       ); { TEST_c2py_matBool   (sstd::mat, bool,        "mat<bool>, ret mat<bool>*, mat<bool>",       "void, const mat<bool>*",   "void, mat<bool>*",   "void, mat<bool>*|~",   "void, mat<bool>*|*~"  ); }
-	printf("  ■ sstd::mat<char>\n"       ); { TEST_c2py_matChar   (sstd::mat, char,        "mat<char>, ret mat<char>*, mat<char>",       "void, const mat<char>*",   "void, mat<char>*",   "void, mat<char>*|~",   "void, mat<char>*|*~"  ); }
-	printf("  ■ sstd::mat<int8>\n"       ); { TEST_c2py_matXXX    (sstd::mat, int8,        "mat<int8>, ret mat<int8>*, mat<int8>",       "void, const mat<int8>*",   "void, mat<int8>*",   "void, mat<int8>*|~",   "void, mat<int8>*|*~"  ); }
-	printf("  ■ sstd::mat<int16>\n"      ); { TEST_c2py_matXXX    (sstd::mat, int16,       "mat<int16>, ret mat<int16>*, mat<int16>",    "void, const mat<int16>*",  "void, mat<int16>*",  "void, mat<int16>*|~",  "void, mat<int16>*|*~" ); }
-	printf("  ■ sstd::mat<int32>\n"      ); { TEST_c2py_matXXX    (sstd::mat, int32,       "mat<int32>, ret mat<int32>*, mat<int32>",    "void, const mat<int32>*",  "void, mat<int32>*" , "void, mat<int32>*|~" , "void, mat<int32>*|*~" ); }
-	printf("  ■ sstd::mat<int64>\n"      ); { TEST_c2py_matXXX    (sstd::mat, int64,       "mat<int64>, ret mat<int64>*, mat<int64>",    "void, const mat<int64>*",  "void, mat<int64>*",  "void, mat<int64>*|~",  "void, mat<int64>*|*~" ); }
-	printf("  ■ sstd::mat<uint8>\n"      ); { TEST_c2py_matXXX    (sstd::mat, uint8,       "mat<uint8>, ret mat<uint8>*, mat<uint8>",    "void, const mat<uint8>*",  "void, mat<uint8>*",  "void, mat<uint8>*|~",  "void, mat<uint8>*|*~" ); }
-	printf("  ■ sstd::mat<uint16>\n"     ); { TEST_c2py_matXXX    (sstd::mat, uint16,      "mat<uint16>, ret mat<uint16>*, mat<uint16>", "void, const mat<uint16>*", "void, mat<uint16>*", "void, mat<uint16>*|~", "void, mat<uint16>*|*~"); }
-	printf("  ■ sstd::mat<uint32>\n"     ); { TEST_c2py_matXXX    (sstd::mat, uint32,      "mat<uint32>, ret mat<uint32>*, mat<uint32>", "void, const mat<uint32>*", "void, mat<uint32>*", "void, mat<uint32>*|~", "void, mat<uint32>*|*~"); }
-	printf("  ■ sstd::mat<uint64>\n"     ); { TEST_c2py_matXXX    (sstd::mat, uint64,      "mat<uint64>, ret mat<uint64>*, mat<uint64>", "void, const mat<uint64>*", "void, mat<uint64>*", "void, mat<uint64>*|~", "void, mat<uint64>*|*~"); }
-	printf("  ■ sstd::mat<float>\n"      ); { TEST_c2py_matFolatXX(sstd::mat, float,       "mat<float>, ret mat<float>*, mat<float>",    "void, const mat<float>*",  "void, mat<float>*" , "void, mat<float>*|~",  "void, mat<float>*|*~" ); }
-	printf("  ■ sstd::mat<double>\n"     ); { TEST_c2py_matFolatXX(sstd::mat, double,      "mat<double>, ret mat<double>*, mat<double>", "void, const mat<double>*", "void, mat<double>*", "void, mat<double>*|~", "void, mat<double>*|*~"); }
-	printf("  ■ sstd::mat<std::string>\n"); { TEST_c2py_matStr    (sstd::mat, std::string, "mat<str>, ret mat<str>*, mat<str>*",         "void, const mat<str>*",    "void, mat<str>*",    "void, mat<str>*|~",    "void, mat<str>*|*~"   ); } // "mat<str>, mat<str>" は，C++ の可変長引数で受け渡そうとすると，segmentation fault で落ちる．少なくとも gcc 5.4.0 では対応していないので，ポインタで渡しておく．
-	//*/
-	
-	//-----------------------------------------------------------------------
-	
-	// std::mat_r<T>
-	/*
-	printf("  ■ sstd::mat_r<bool>\n"       ); { TEST_c2py_matBool   (sstd::mat_r, bool,        "mat_r<bool>, ret mat_r<bool>*, mat_r<bool>",       "void, const mat_r<bool>*",   "void, mat_r<bool>*",   "void, mat_r<bool>*|~",   "void, mat_r<bool>*|*~"  ); }
-	printf("  ■ sstd::mat_r<char>\n"       ); { TEST_c2py_matChar   (sstd::mat_r, char,        "mat_r<char>, ret mat_r<char>*, mat_r<char>",       "void, const mat_r<char>*",   "void, mat_r<char>*",   "void, mat_r<char>*|~",   "void, mat_r<char>*|*~"  ); }
-	printf("  ■ sstd::mat_r<int8>\n"       ); { TEST_c2py_matXXX    (sstd::mat_r, int8,        "mat_r<int8>, ret mat_r<int8>*, mat_r<int8>",       "void, const mat_r<int8>*",   "void, mat_r<int8>*",   "void, mat_r<int8>*|~",   "void, mat_r<int8>*|*~"  ); }
-	printf("  ■ sstd::mat_r<int16>\n"      ); { TEST_c2py_matXXX    (sstd::mat_r, int16,       "mat_r<int16>, ret mat_r<int16>*, mat_r<int16>",    "void, const mat_r<int16>*",  "void, mat_r<int16>*",  "void, mat_r<int16>*|~",  "void, mat_r<int16>*|*~" ); }
-	printf("  ■ sstd::mat_r<int32>\n"      ); { TEST_c2py_matXXX    (sstd::mat_r, int32,       "mat_r<int32>, ret mat_r<int32>*, mat_r<int32>",    "void, const mat_r<int32>*",  "void, mat_r<int32>*",  "void, mat_r<int32>*|~",  "void, mat_r<int32>*|*~" ); }
-	printf("  ■ sstd::mat_r<int64>\n"      ); { TEST_c2py_matXXX    (sstd::mat_r, int64,       "mat_r<int64>, ret mat_r<int64>*, mat_r<int64>",    "void, const mat_r<int64>*",  "void, mat_r<int64>*",  "void, mat_r<int64>*|~",  "void, mat_r<int64>*|*~" ); }
-	printf("  ■ sstd::mat_r<uint8>\n"      ); { TEST_c2py_matXXX    (sstd::mat_r, uint8,       "mat_r<uint8>, ret mat_r<uint8>*, mat_r<uint8>",    "void, const mat_r<uint8>*",  "void, mat_r<uint8>*",  "void, mat_r<uint8>*|~",  "void, mat_r<uint8>*|*~" ); }
-	printf("  ■ sstd::mat_r<uint16>\n"     ); { TEST_c2py_matXXX    (sstd::mat_r, uint16,      "mat_r<uint16>, ret mat_r<uint16>*, mat_r<uint16>", "void, const mat_r<uint16>*", "void, mat_r<uint16>*", "void, mat_r<uint16>*|~", "void, mat_r<uint16>*|*~"); }
-	printf("  ■ sstd::mat_r<uint32>\n"     ); { TEST_c2py_matXXX    (sstd::mat_r, uint32,      "mat_r<uint32>, ret mat_r<uint32>*, mat_r<uint32>", "void, const mat_r<uint32>*", "void, mat_r<uint32>*", "void, mat_r<uint32>*|~", "void, mat_r<uint32>*|*~"); }
-	printf("  ■ sstd::mat_r<uint64>\n"     ); { TEST_c2py_matXXX    (sstd::mat_r, uint64,      "mat_r<uint64>, ret mat_r<uint64>*, mat_r<uint64>", "void, const mat_r<uint64>*", "void, mat_r<uint64>*", "void, mat_r<uint64>*|~", "void, mat_r<uint64>*|*~"); }
-	printf("  ■ sstd::mat_r<float>\n"      ); { TEST_c2py_matFolatXX(sstd::mat_r, float,       "mat_r<float>, ret mat_r<float>*, mat_r<float>",    "void, const mat_r<float>*",  "void, mat_r<float>*",  "void, mat_r<float>*|~",  "void, mat_r<float>*|*~" ); }
-	printf("  ■ sstd::mat_r<double>\n"     ); { TEST_c2py_matFolatXX(sstd::mat_r, double,      "mat_r<double>, ret mat_r<double>*, mat_r<double>", "void, const mat_r<double>*", "void, mat_r<double>*", "void, mat_r<double>*|~", "void, mat_r<double>*|*~"); }
-	printf("  ■ sstd::mat_r<std::string>\n"); { TEST_c2py_matStr    (sstd::mat_r, std::string, "mat_r<str>, ret mat_r<str>*, mat_r<str>*",         "void, const mat_r<str>*",    "void, mat_r<str>*",    "void, mat_r<str>*|~",    "void, mat_r<str>*|*~"   ); } // "mat<str>_r, mat<str>_r" は，C++ の可変長引数で受け渡そうとすると，segmentation fault で落ちる．少なくとも gcc 5.4.0 では対応していないので，ポインタで渡しておく．
-	//*/
-
-	//-----------------------------------------------------------------------
-	
-	/*
-	{
-		//         int                          plusAandB(int a, int b){ return a+b; } // <- you can write this as a python function.
-		sstd::c2py<int32> plus_A_B("./tmpDir", "test_functions", "plus_A_B", "int32, int32, int32");
-		int32 a = 1, b = 2;
-		int32 c = plus_A_B(a, b);
-		sstd::printn(c);
-	}
-	//*/
-	
-	/*
-	{
-		sstd::c2py<std::vector<double>> plus_vecA_vecB("./tmpDir", "test_functions", "plus_vecA_vecB", "vec<double>, vec<double>, vec<double>");
-		std::vector<double> vecA = {1.0, 2.0, 3.0}, vecB = {4.0, 5.0, 6.0};
-		std::vector<double> vecC = plus_vecA_vecB(vecA, vecB);
-		sstd::printn(vecC);
-	}
-	//*/
-
-	/*
-	{
-		// write back test
-		//	sstd::c2py<int> writeBack_vecA("./tmpDir", "test_functions", "writeBack_vecA", "int, const vec<double>*"); // const assignment will not be written back.
-		//	sstd::c2py<int> writeBack_vecA("./tmpDir", "./test_c2py/test_functions", "writeBack_vecA", "int, vec<double>*");
-		sstd::c2py<int> writeBack_vecA("./tmpDir", "test_functions", "writeBack_vecA", "int, vec<double>*");
-		std::vector<double> vecA = {1.0, 2.0, 3.0};
-		int ret = writeBack_vecA(&vecA);
-		sstd::printn(ret);
-		sstd::printn(vecA);
-	}
-	//*/
-	
-	/*
-	{
-		// numpy は行優先のため，列優先の行列を渡すと，python 側で転置処理が発生する．
-		sstd::mat<double> matA{{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}, {7.0, 8.0, 9.0}, {11.0, 12.0, 13.0}};
-		sstd::printn(matA);
-		sstd::c2py<int> mat2print("./tmpDir", "test_functions", "mat2print", "int, mat<double>");
-		mat2print(matA);
-	}
-	//*/
-	
-	/*
-	{
-		sstd::mat<double> mat_rA{{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}, {7.0, 8.0, 9.0}, {11.0, 12.0, 13.0}};
-		sstd::printn(mat_rA);
-		sstd::c2py<int> mat_r2print("./tmpDir", "test_functions", "mat_r2print", "int, mat_r<double>");
-		mat_r2print(mat_rA);
-	}
-	//*/
-
-	/*
-	{
-		sstd::mat<double> mat_rA{{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}, {7.0, 8.0, 9.0}, {11.0, 12.0, 13.0}};
-		sstd::printn(mat_rA);
-		sstd::c2py<sstd::mat_r<double>> ret_mat_r("./tmpDir", "test_functions", "ret_mat_r", "mat_r<double>, mat_r<double>");
-		sstd::printn(ret_mat_r(mat_rA));
-	}
-	//*/
-
-	//-----------------------------------------------------------------------
-
-	/*
-	{
-		sstd::c2py<void> py_vecDouble_cnv2builtIn("./tmpDir", "test_functions", "py_vecDouble_cnv2builtIn", "void, vec<double>*|~");
-		std::vector<double> inOut={1.0, 2.0, 3.0};
-		py_vecDouble_cnv2builtIn(&inOut);
-		sstd::printn(inOut);
-	}
-	{
-		sstd::c2py<void> py_vecDouble_pointer("./tmpDir", "test_functions", "py_vecDouble_pointer", "void, vec<double>*|*");
-		std::vector<double> inOut={1.0, 2.0, 3.0};
-		py_vecDouble_pointer(&inOut);
-		sstd::printn(inOut);
-	}
-	//*/
-	
-	//-----------------------------------------------------------------------
-	
-	/*
-	{
-		sstd::c2py<void> py_ret("./tmpDir", "test_functions", "py_ret", "void, ret double*, ret double*, len, ret vec<double>*, vec<double>*|*~");
-		double ret1=0.0;
-		double ret2[]={0.0, 0.0};
-		std::vector<double> ret3;
-		std::vector<double> inOut={0.0};
-		py_ret(&ret1, &ret2, 2, &ret3, &inOut);
-		sstd::printn(ret1   );
-		sstd::printn(ret2[0]);
-		sstd::printn(ret2[1]);
-		sstd::printn(ret3   );
-		sstd::printn(inOut  );
-	}
-	//*/
-	
-	//-----------------------------------------------------------------------
-
-	/*
-	{
-		double freq2generate = 0.1; // 0.1 Hz sin wave
-		double freq2sample = 10;    // 10 Hz sampling
-		uint len=60*10 + 1;         // 60 sec
-		std::vector<double> vecY = sstd::sinWave(freq2generate, freq2sample, len);
-		std::vector<double> vecX(len); for(uint i=0; i<vecX.size(); i++){ vecX[i]=(double)i*(1/freq2sample); }
-	
-		sstd::c2py<int> vec2graph("./tmpDir", "test_functions", "vec2graph", "int, const char*, vec<double>, vec<double>");
-		vec2graph("./sin.png", vecX, vecY);
-	}
-	//*/
-	
-	//*
-	{
-		sstd::c2py<void> imgPath2mat_rRGB("./tmpDir", "test_functions", "imgPath2mat_rRGB", "void, ret mat_r<uint8>*, ret mat_r<uint8>*, ret mat_r<uint8>*, const char*");
-		sstd::mat_r<uint8> imgR, imgG, imgB;
-		imgPath2mat_rRGB(&imgR, &imgG, &imgB, "./test.png");
-
-		for(uint p=0; p<imgG.rows(); p++){
-			for(uint q=0; q<imgG.cols(); q++){
-				imgG(p, q) = sstd::round2even(0.5*((double)imgG(p, q)));
-			}
-		}
-	
-		sstd::c2py<void> mat_rRGB2img("./tmpDir", "test_functions", "mat_rRGB2img", "void, const char*, mat_r<uint8>*, mat_r<uint8>*, mat_r<uint8>*");
-		mat_rRGB2img("./test_reCombined.png", &imgR, &imgG, &imgB);
-	}
-	//*/
-
-	//-----------------------------------------------------------------------
-}
-
-//-----------------------------------------------------------------------
-
 void TEST_stdVector_expansion(){
 	printf("== sstd_stdVector_expansion ==\n\n");
 	
@@ -1778,7 +837,7 @@ void TEST_stdVector_expansion(){
 	sstd::printn_all(--lhsInt);
 	printf("\n");
 	
-	printf("■ operator <<\n");
+	printf("■ operator >>\n");
 	sstd::printn_all(lhs<<rhs);
 	sstd::printn_all(lhs<<(double)3.14);
 	sstd::printn_all((double)3.14<<lhs);
@@ -1794,36 +853,36 @@ void TEST_mat_colMajor(){
 	printf("== sstd_src_MatrixStore_mat ==\n\n"); // col-major
 	
 	printf("■ Init sstd::eye()\n");
-	{ sstd::mat<double> buf(3, 3); sstd::eye(buf); sstd::printn(buf); printf("\n"); }
-	{ sstd::mat<double> buf(3, 2); sstd::eye(buf); sstd::printn(buf); printf("\n"); }
-	{ sstd::mat<double> buf(2, 3); sstd::eye(buf); sstd::printn(buf); printf("\n"); }
+	{ sstd::mat_c<double> buf(3, 3); sstd::eye(buf); sstd::printn(buf); printf("\n"); }
+	{ sstd::mat_c<double> buf(3, 2); sstd::eye(buf); sstd::printn(buf); printf("\n"); }
+	{ sstd::mat_c<double> buf(2, 3); sstd::eye(buf); sstd::printn(buf); printf("\n"); }
 		
 	printf("■ Init sstd::ones()\n");
-	{ sstd::mat<double> buf(3, 3); sstd::ones(buf); sstd::printn(buf); printf("\n"); }
-	{ sstd::mat<double> buf(3, 2); sstd::ones(buf); sstd::printn(buf); printf("\n"); }
-	{ sstd::mat<double> buf(2, 3); sstd::ones(buf); sstd::printn(buf); printf("\n"); }
+	{ sstd::mat_c<double> buf(3, 3); sstd::ones(buf); sstd::printn(buf); printf("\n"); }
+	{ sstd::mat_c<double> buf(3, 2); sstd::ones(buf); sstd::printn(buf); printf("\n"); }
+	{ sstd::mat_c<double> buf(2, 3); sstd::ones(buf); sstd::printn(buf); printf("\n"); }
 		
 	printf("■ Init sstd::zeros()\n");
-	{ sstd::mat<double> buf(3, 3); sstd::zeros(buf); sstd::printn(buf); printf("\n"); }
-	{ sstd::mat<double> buf(3, 2); sstd::zeros(buf); sstd::printn(buf); printf("\n"); }
-	{ sstd::mat<double> buf(2, 3); sstd::zeros(buf); sstd::printn(buf); printf("\n"); }
+	{ sstd::mat_c<double> buf(3, 3); sstd::zeros(buf); sstd::printn(buf); printf("\n"); }
+	{ sstd::mat_c<double> buf(3, 2); sstd::zeros(buf); sstd::printn(buf); printf("\n"); }
+	{ sstd::mat_c<double> buf(2, 3); sstd::zeros(buf); sstd::printn(buf); printf("\n"); }
 
-	printf("■ Init sstd::mat<type> by \"std::initializer_list<T>\"\n");
+	printf("■ Init sstd::mat_c<type> by \"std::initializer_list<T>\"\n");
 	printf("\n");
 	
-	sstd::mat<double> matD_initializer{{1, 2, 3},{4, 5, 6},{7, 8, 9},{10, 11, 12}}; // これは，sstd::mat<T> 側にもテストを書くように．
+	sstd::mat_c<double> matD_initializer{{1, 2, 3},{4, 5, 6},{7, 8, 9},{10, 11, 12}}; // これは，sstd::mat_c<T> 側にもテストを書くように．
 	sstd::printn(matD_initializer);
 	printf("\n");
 	
 	//===
 	
-	printf("■ Init sstd::mat<type>\n");
+	printf("■ Init sstd::mat_c<type>\n");
 	printf("\n");
 	
-	sstd::mat<double> Matd(5, 3);
-	printf("RowNum: %d\n", Matd.rows());
-	printf("ColNum: %d\n", Matd.cols());
-	printf("Length: %d\n", Matd.len());
+	sstd::mat_c<double> Matd(5, 3);
+	printf("RowSize: %d\n", Matd.rows());
+	printf("ColSize: %d\n", Matd.cols());
+	printf("Length:  %d\n", Matd.size());
 
 	printf("Indication of column major\n");
 	uint i=0;
@@ -1838,16 +897,16 @@ void TEST_mat_colMajor(){
 	//===
 	
 	i=0;
-	for(uint q=0; q<Matd.len(); q++){ Matd[i] = i; i++; }
+	for(uint q=0; q<Matd.size(); q++){ Matd[i] = i; i++; }
 	sstd::print(Matd);
 	printf("\n");
 
 	//===
 	
-	sstd::mat<double>* pMatd = new sstd::mat<double>(5, 3);
-	printf("RowNum: %d\n", pMatd->rows());
-	printf("ColNum: %d\n", pMatd->cols());
-	printf("Length: %d\n", pMatd->len());
+	sstd::mat_c<double>* pMatd = new sstd::mat_c<double>(5, 3);
+	printf("RowSize: %d\n", pMatd->rows());
+	printf("ColSize: %d\n", pMatd->cols());
+	printf("Length:  %d\n", pMatd->size());
 
 	printf("Indication of column major\n");
 	i=0;
@@ -1864,19 +923,19 @@ void TEST_mat_colMajor(){
 	//===
 
 	printf("■ copy\n");printf("\n");
-	sstd::mat<double> Matd_copy = Matd;
+	sstd::mat_c<double> Matd_copy = Matd;
 	Matd_copy = Matd; // "sstd::copy(Matd_copy, Matd);" is called.
 	sstd::print(Matd_copy); printf("\n");
 
 	//===
 
 	printf("■ copy row\n");printf("\n");
-	sstd::mat<double> Matd_rowCopy(5, 3); sstd::zeros(Matd_rowCopy);
+	sstd::mat_c<double> Matd_rowCopy(5, 3); sstd::zeros(Matd_rowCopy);
 	Matd_rowCopy(1, ':') = Matd(1, ':');
 	sstd::print(Matd_rowCopy); printf("\n");
 	
 	printf("■ copy col\n");printf("\n");
-	sstd::mat<double> Matd_colCopy(5, 3); sstd::zeros(Matd_colCopy);
+	sstd::mat_c<double> Matd_colCopy(5, 3); sstd::zeros(Matd_colCopy);
 	Matd_colCopy(':', 2) = Matd(':', 2);
 	sstd::print(Matd_colCopy); printf("\n");
 
@@ -1887,11 +946,11 @@ void TEST_mat_colMajor(){
 	//===
 	
 	printf("■ print(type& rhs)\n");printf("\n");
-	sstd::mat<bool> matB{{true, false, false},{false, true, false},{false, false, true},{true, false, false}};
+	sstd::mat_c<bool> matB{{true, false, false},{false, true, false},{false, false, true},{true, false, false}};
 	sstd::printn(matB);
 
 	printf("■ print(type& rhs)\n");printf("\n");
-	sstd::mat<std::string> matStr{{"a", "ab", "abc"},{"abcd", "abcde", "abcdef"},{"7", "8", "9"},{"10", "11", "12"}};
+	sstd::mat_c<std::string> matStr{{"a", "ab", "abc"},{"abcd", "abcde", "abcdef"},{"7", "8", "9"},{"10", "11", "12"}};
 	sstd::printn(matStr);
 	
 	//===
@@ -1900,14 +959,14 @@ void TEST_mat_colMajor(){
 	{
 		// このあたりは順次テストを書くこと
 		
-		sstd::mat<double> lhs={{1,2,3}, {4, 5, 6}, {7, 8, 9}};
-		sstd::mat<double> rhs={{1,2,3}, {4, 5, 6}, {7, 8, 9}};
+		sstd::mat_c<double> lhs={{1,2,3}, {4, 5, 6}, {7, 8, 9}};
+		sstd::mat_c<double> rhs={{1,2,3}, {4, 5, 6}, {7, 8, 9}};
 		
-		sstd::mat<double> lhs23={{1,2,3}, {4, 5, 6}};
-		sstd::mat<double> rhs32={{1,2}, {3, 4}, {5, 6}};
+		sstd::mat_c<double> lhs23={{1,2,3}, {4, 5, 6}};
+		sstd::mat_c<double> rhs32={{1,2}, {3, 4}, {5, 6}};
 		
-		sstd::mat<int> lhsInt={{1,2,3}, {4, 5, 6}, {7, 8, 9}};
-		sstd::mat<int> rhsInt={{1,2,3}, {4, 5, 6}, {7, 8, 9}};
+		sstd::mat_c<int> lhsInt={{1,2,3}, {4, 5, 6}, {7, 8, 9}};
+		sstd::mat_c<int> rhsInt={{1,2,3}, {4, 5, 6}, {7, 8, 9}};
 		
 		printf("  □ plus\n");printf("\n");
 		sstd::printn(lhs+rhs); printf("\n");
@@ -1967,7 +1026,34 @@ void TEST_mat_colMajor(){
 		sstd::printn(lhsInt()%rhsInt  ); printf("\n");
 	}
 }
+/*
+// 実装完了 (処理時間短縮のため，コメントアウト)
 
+TEST(c2py, mat_ope_eq_ne){
+	// sstd::mat_c (col-major)
+	
+	sstd::mat_c<double> matIn(5, 3);
+	sstd::mat_c<double> ansT0(5, 3);
+	sstd::mat_c<double> ansF0(5, 3);
+	sstd::mat_c<double> ansF1(3, 5);
+	
+	for(uint i=0; i<matIn.size(); i++){
+		matIn[i]=i;
+		ansT0[i]=i;
+		ansF0[i]=i;
+		ansF1[i]=i;
+	}
+	ansF0[0]=(double)999;
+	
+	ASSERT_TRUE (matIn==ansT0);
+	ASSERT_FALSE(matIn==ansF0);
+	ASSERT_FALSE(matIn==ansF1);
+	
+	ASSERT_FALSE(matIn!=ansT0);
+	ASSERT_TRUE (matIn!=ansF0);
+	ASSERT_TRUE (matIn!=ansF1);
+}
+//*/
 //-----------------------------------------------------------------------
 
 void TEST_mat_rowMajor(){
@@ -1986,9 +1072,9 @@ void TEST_mat_rowMajor(){
 	printf("\n");
 	
 	sstd::mat_r<double> Matd(5, 3);
-	printf("RowNum: %d\n", Matd.rows());
-	printf("ColNum: %d\n", Matd.cols());
-	printf("Length: %d\n", Matd.len());
+	printf("RowSize: %d\n", Matd.rows());
+	printf("ColSize: %d\n", Matd.cols());
+	printf("Length:  %d\n", Matd.size());
 
 	printf("Indication of row major\n");
 	uint i=0;
@@ -2003,16 +1089,16 @@ void TEST_mat_rowMajor(){
 	//===
 	
 	i=0;
-	for(uint q=0; q<Matd.len(); q++){ Matd[i] = i; i++; }
+	for(uint q=0; q<Matd.size(); q++){ Matd[i] = i; i++; }
 	sstd::print(Matd);
 	printf("\n");
 
 	//===
 	
 	sstd::mat_r<double>* pMatd = new sstd::mat_r<double>(5, 3);
-	printf("RowNum: %d\n", pMatd->rows());
-	printf("ColNum: %d\n", pMatd->cols());
-	printf("Length: %d\n", pMatd->len());
+	printf("RowSize: %d\n", pMatd->rows());
+	printf("ColSize: %d\n", pMatd->cols());
+	printf("Length:  %d\n", pMatd->size());
 
 	printf("Indication of row major\n");
 	i=0;
@@ -2059,8 +1145,110 @@ void TEST_mat_rowMajor(){
 	printf("■ print(type& rhs)\n");printf("\n");
 	sstd::mat_r<std::string> mat_rStr{{"a", "ab", "abc"},{"abcd", "abcde", "abcdef"},{"7", "8", "9"},{"10", "11", "12"}};
 	sstd::printn(mat_rStr);
-}
+	
+	//===
 
+	printf("■ Operators for linearAlgebra\n");printf("\n");
+	{
+		// このあたりは順次テストを書くこと
+		
+		sstd::mat_r<double> lhs={{1,2,3}, {4, 5, 6}, {7, 8, 9}};
+		sstd::mat_r<double> rhs={{1,2,3}, {4, 5, 6}, {7, 8, 9}};
+		
+		sstd::mat_r<double> lhs23={{1,2,3}, {4, 5, 6}};
+		sstd::mat_r<double> rhs32={{1,2}, {3, 4}, {5, 6}};
+		
+		sstd::mat_r<int> lhsInt={{1,2,3}, {4, 5, 6}, {7, 8, 9}};
+		sstd::mat_r<int> rhsInt={{1,2,3}, {4, 5, 6}, {7, 8, 9}};
+		
+		printf("  □ plus\n");printf("\n");
+		sstd::printn(lhs+rhs); printf("\n");
+		sstd::printn(lhs+(uint)1); printf("\n");
+		sstd::printn((uint)1+lhs); printf("\n");
+		
+		sstd::printn(lhs+(int)-1); printf("\n");
+		sstd::printn((int)-1+lhs); printf("\n");
+		
+		printf("  □ minus\n");printf("\n");
+		sstd::printn(lhs-rhs); printf("\n");
+		
+		sstd::printn(lhs-(int)1); printf("\n");
+		sstd::printn((int)1-lhs); printf("\n");
+		
+		printf("  □ multiplication\n");printf("\n");
+		sstd::printn(lhs*rhs); printf("\n");
+		sstd::printn(lhs23*rhs32); printf("\n");
+		sstd::printn(lhs23*(uint)2); printf("\n");
+		sstd::printn((uint)2*lhs23); printf("\n");
+		
+		sstd::printn(lhs()*rhs()); printf("\n");
+		sstd::printn(lhs  *rhs()); printf("\n");
+		sstd::printn(lhs()*rhs  ); printf("\n");
+		sstd::printn(lhs.vec()*rhs.vec()); printf("\n");
+		
+		printf("  □ division\n");printf("\n");
+		sstd::printn(lhs()/rhs()); printf("\n");
+		sstd::printn(lhs  /rhs()); printf("\n");
+		sstd::printn(lhs()/rhs  ); printf("\n");
+		
+		printf("  □ power\n");printf("\n");
+		sstd::printn(lhs^(uint32)0); printf("\n");
+		sstd::printn(lhs^(uint32)1); printf("\n");
+		sstd::printn(lhs^(uint32)2); printf("\n");
+		sstd::printn(lhs*lhs); printf("\n");
+		sstd::printn(lhs^(uint32)3); printf("\n");
+		sstd::printn(lhs*lhs*lhs); printf("\n");
+
+		
+		sstd::printn(lhs^(int32)3); printf("\n");
+		
+		sstd::printn(lhs()^rhs()); printf("\n");
+		sstd::printn(lhs  ^rhs()); printf("\n");
+		sstd::printn(lhs()^rhs  ); printf("\n");
+		
+		// 未実装
+		//sstd::printn(lhs^(int32)-1); printf("\n");
+		//sstd::printn(lhs^(float)-1); printf("\n");
+		//sstd::printn(lhs^(double)-1); printf("\n");
+		
+		printf("  □ modulo\n");printf("\n");
+		sstd::printn(lhsInt % 2); printf("\n");
+		
+		sstd::printn(lhsInt()%rhsInt()); printf("\n");
+		sstd::printn(lhsInt  %rhsInt()); printf("\n");
+		sstd::printn(lhsInt()%rhsInt  ); printf("\n");
+	}
+}
+/*
+// 実装完了 (処理時間短縮のため，コメントアウト)
+
+TEST(c2py, mat_r_ope_eq_ne){
+	// sstd::mat (col-major)
+	
+	sstd::mat_r<double> matIn(5, 3);
+	sstd::mat_r<double> ansT0(5, 3);
+	sstd::mat_r<double> ansF0(5, 3);
+	sstd::mat_r<double> ansF1(3, 5);
+	
+	for(uint i=0; i<matIn.size(); i++){
+		matIn[i]=i;
+		ansT0[i]=i;
+		ansF0[i]=i;
+		ansF1[i]=i;
+	}
+	ansF0[0]=(double)999;
+	
+	ASSERT_TRUE (matIn==ansT0);
+	ASSERT_FALSE(matIn==ansF0);
+	ASSERT_FALSE(matIn==ansF1);
+	
+	ASSERT_FALSE(matIn!=ansT0);
+	ASSERT_TRUE (matIn!=ansF0);
+	ASSERT_TRUE (matIn!=ansF1);
+}
+//*/
+
+//-----------------------------------------------------------------------
 
 void TEST_bmat(){
 	//*

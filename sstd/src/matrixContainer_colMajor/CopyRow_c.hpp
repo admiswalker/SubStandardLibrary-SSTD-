@@ -8,7 +8,7 @@ public:
 	CopyRow(){}
 	~CopyRow(){}
 
-	class sstd::mat<T>* pMxs;
+	class sstd::mat_c<T>* pMxs;
 	uint CopyRowNum;
 
 	class CopyRow<T> operator=(class CopyRow<T> CR);
@@ -27,7 +27,7 @@ inline class CopyRow<T> CopyRow<T>::operator=(class CopyRow<T> CR)
 
 // 行のコピー, 例: MatB(1, ':') = MatB(0, ':') = MatA(0, ':');
 template <typename T>
-inline class CopyRow<T> OpCopyRow(sstd::mat<T>* pthis, uint p, const char& c_dummy)
+inline class CopyRow<T> OpCopyRow(sstd::mat_c<T>* pthis, uint p, const char& c_dummy)
 {
 	class CopyRow<T> CR;
 	CR.pMxs = pthis;

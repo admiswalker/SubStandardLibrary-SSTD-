@@ -1,8 +1,11 @@
 ﻿#pragma once
 
 #include <vector>
-#include "./matrixContainer_colMajor/mat.hpp"
+#include "./matrixContainer_colMajor/mat_c.hpp"
 #include "./matrixContainer_rowMajor/mat_r.hpp"
+
+#include <algorithm>  // std::sort()
+#include <functional> // std::greater<T>()
 
 namespace sstd{
 	// 偶数丸め (round to even, round to the nearest even; RN)
@@ -29,9 +32,6 @@ namespace sstd{
 	float  stdev  (const std::vector<float>& rhs); // 標本標準偏差 (sample standard deviation): u = SQRT( (1/(n-1))*Σ(x_i-μ)^2 )
 	float  stdev_p(const std::vector<float>& rhs); // 標準偏差 (standard deviation): σ = SQRT( (1/n)*Σ(x_i-μ)^2 )
 	
-	std::vector<float> sort   (std::vector<float> rhs); // Ascending: 昇順: 0, 1, 2, ...
-	std::vector<float> sort_de(std::vector<float> rhs); // Descending: 順降: 9, 8, 7, ...
-
 	double sum    (const std::vector<double>& rhs);
 	double sum    (const std::vector<double>& rhs, uint a, uint b); // 配列の a 番目から b 番目までの合計. sum of the a th to b th of array.
 	double sum_abs(const std::vector<double>& rhs);
@@ -48,9 +48,6 @@ namespace sstd{
 	double stdev  (const std::vector<double>& rhs); // 標本標準偏差 (sample standard deviation): u = SQRT( (1/(n-1))*Σ(x_i-μ)^2 )
 	double stdev_p(const std::vector<double>& rhs); // 標準偏差 (standard deviation): σ = SQRT( (1/n)*Σ(x_i-μ)^2 )
 
-	std::vector<double> sort   (std::vector<double> rhs); // Ascending: 昇順: 0, 1, 2, ...
-	std::vector<double> sort_de(std::vector<double> rhs); // Descending: 降順: 9, 8, 7, ...
-	
 	std::vector<uint64> prime(uint64 rhs);                                  // get a list of prime number under rhs.
 	struct fact{
 		uint64 prime;
@@ -70,6 +67,17 @@ namespace sstd{
 	double pow(const double& base, const double& exp);
 
 	//-----------------------------------------------------------------------------------------------------------------------------------------------
+	
+	// ここ，テンプレートで書きなおせば，ベタ書きする必要がなくなり，さらに，一般の type T について，ソート可能になるので，書き直す．
+	// ここ，テンプレートで書きなおせば，ベタ書きする必要がなくなり，さらに，一般の type T について，ソート可能になるので，書き直す．
+	// ここ，テンプレートで書きなおせば，ベタ書きする必要がなくなり，さらに，一般の type T について，ソート可能になるので，書き直す．
+	// ここ，テンプレートで書きなおせば，ベタ書きする必要がなくなり，さらに，一般の type T について，ソート可能になるので，書き直す．
+	// XXXXXXXXXXXXXXXXXXXXX
+	// XXXXXXXXXXXXXXXXXXXXX
+	// XXXXXXXXXXXXXXXXXXXXX
+	// XXXXXXXXXXXXXXXXXXXXX
+	// XXXXXXXXXXXXXXXXXXXXX
+	// -> 開発当初は，float と double にしか対応する予定がなかったため．
 	
 	  char max    (const std::vector< char >& rhs);
 	  int8 max    (const std::vector< int8 >& rhs);
@@ -105,45 +113,45 @@ namespace sstd{
 	
 	//-----------------------------------------------------------------------------------------------------------------------------------------------
 	
-	  char max    (const sstd::mat  < char >& rhs);
-	  int8 max    (const sstd::mat  < int8 >& rhs);
-	 int16 max    (const sstd::mat  < int16>& rhs);
-	 int32 max    (const sstd::mat  < int32>& rhs);
-	 int64 max    (const sstd::mat  < int64>& rhs);
-//	 uchar max    (const sstd::mat  <uchar >& rhs); // same as a uint8
-	 uint8 max    (const sstd::mat  <uint8 >& rhs);
-	uint16 max    (const sstd::mat  <uint16>& rhs);
-	uint32 max    (const sstd::mat  <uint32>& rhs);
-	uint64 max    (const sstd::mat  <uint64>& rhs);
-	 float max    (const sstd::mat  < float>& rhs);
-	double max    (const sstd::mat  <double>& rhs);
-	  char max_abs(const sstd::mat  < char >& rhs);
-	  int8 max_abs(const sstd::mat  < int8 >& rhs);
-	 int16 max_abs(const sstd::mat  < int16>& rhs);
-	 int32 max_abs(const sstd::mat  < int32>& rhs);
-	 int64 max_abs(const sstd::mat  < int64>& rhs);
-	 float max_abs(const sstd::mat  < float>& rhs);
-	double max_abs(const sstd::mat  <double>& rhs);
+	  char max    (const sstd::mat_c< char >& rhs);
+	  int8 max    (const sstd::mat_c< int8 >& rhs);
+	 int16 max    (const sstd::mat_c< int16>& rhs);
+	 int32 max    (const sstd::mat_c< int32>& rhs);
+	 int64 max    (const sstd::mat_c< int64>& rhs);
+//	 uchar max    (const sstd::mat_c<uchar >& rhs); // same as a uint8
+	 uint8 max    (const sstd::mat_c<uint8 >& rhs);
+	uint16 max    (const sstd::mat_c<uint16>& rhs);
+	uint32 max    (const sstd::mat_c<uint32>& rhs);
+	uint64 max    (const sstd::mat_c<uint64>& rhs);
+	 float max    (const sstd::mat_c< float>& rhs);
+	double max    (const sstd::mat_c<double>& rhs);
+	  char max_abs(const sstd::mat_c< char >& rhs);
+	  int8 max_abs(const sstd::mat_c< int8 >& rhs);
+	 int16 max_abs(const sstd::mat_c< int16>& rhs);
+	 int32 max_abs(const sstd::mat_c< int32>& rhs);
+	 int64 max_abs(const sstd::mat_c< int64>& rhs);
+	 float max_abs(const sstd::mat_c< float>& rhs);
+	double max_abs(const sstd::mat_c<double>& rhs);
 	
-	  char min    (const sstd::mat  < char >& rhs);
-	  int8 min    (const sstd::mat  < int8 >& rhs);
-	 int16 min    (const sstd::mat  < int16>& rhs);
-	 int32 min    (const sstd::mat  < int32>& rhs);
-	 int64 min    (const sstd::mat  < int64>& rhs);
-//	 uchar min    (const sstd::mat  <uchar >& rhs); // same as a uint8
-	 uint8 min    (const sstd::mat  <uint8 >& rhs);
-	uint16 min    (const sstd::mat  <uint16>& rhs);
-	uint32 min    (const sstd::mat  <uint32>& rhs);
-	uint64 min    (const sstd::mat  <uint64>& rhs);
-	 float min    (const sstd::mat  < float>& rhs);
-	double min    (const sstd::mat  <double>& rhs);
-	  char min_abs(const sstd::mat  < char >& rhs);
-	  int8 min_abs(const sstd::mat  < int8 >& rhs);
-	 int16 min_abs(const sstd::mat  < int16>& rhs);
-	 int32 min_abs(const sstd::mat  < int32>& rhs);
-	 int64 min_abs(const sstd::mat  < int64>& rhs);
-	 float min_abs(const sstd::mat  < float>& rhs);
-	double min_abs(const sstd::mat  <double>& rhs);
+	  char min    (const sstd::mat_c< char >& rhs);
+	  int8 min    (const sstd::mat_c< int8 >& rhs);
+	 int16 min    (const sstd::mat_c< int16>& rhs);
+	 int32 min    (const sstd::mat_c< int32>& rhs);
+	 int64 min    (const sstd::mat_c< int64>& rhs);
+//	 uchar min    (const sstd::mat_c<uchar >& rhs); // same as a uint8
+	 uint8 min    (const sstd::mat_c<uint8 >& rhs);
+	uint16 min    (const sstd::mat_c<uint16>& rhs);
+	uint32 min    (const sstd::mat_c<uint32>& rhs);
+	uint64 min    (const sstd::mat_c<uint64>& rhs);
+	 float min    (const sstd::mat_c< float>& rhs);
+	double min    (const sstd::mat_c<double>& rhs);
+	  char min_abs(const sstd::mat_c< char >& rhs);
+	  int8 min_abs(const sstd::mat_c< int8 >& rhs);
+	 int16 min_abs(const sstd::mat_c< int16>& rhs);
+	 int32 min_abs(const sstd::mat_c< int32>& rhs);
+	 int64 min_abs(const sstd::mat_c< int64>& rhs);
+	 float min_abs(const sstd::mat_c< float>& rhs);
+	double min_abs(const sstd::mat_c<double>& rhs);
 	
 	//-----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -189,27 +197,9 @@ namespace sstd{
 	
 	//-----------------------------------------------------------------------------------------------------------------------------------------------
 
-	// ここ，テンプレートで書きなおせば，ベタ書きする必要がなくなり，さらに，一般の type T について，ソート可能になるので，書き直す．
-	std::vector< char > sort   (std::vector< char > rhs);
-	std::vector<  int8> sort   (std::vector< int8 > rhs);
-	std::vector< int16> sort   (std::vector< int16> rhs);
-	std::vector< int32> sort   (std::vector< int32> rhs);
-	std::vector< int64> sort   (std::vector< int64> rhs);
-//	std::vector< uchar> sort   (std::vector<uchar > rhs); // same as a uint8
-	std::vector< uint8> sort   (std::vector<uint8 > rhs);
-	std::vector<uint16> sort   (std::vector<uint16> rhs);
-	std::vector<uint32> sort   (std::vector<uint32> rhs);
-	std::vector<uint64> sort   (std::vector<uint64> rhs);
-	std::vector<  char> sort_de(std::vector< char > rhs);
-	std::vector<  int8> sort_de(std::vector< int8 > rhs);
-	std::vector< int16> sort_de(std::vector< int16> rhs);
-	std::vector< int32> sort_de(std::vector< int32> rhs);
-	std::vector< int64> sort_de(std::vector< int64> rhs);
-//	std::vector< uchar> sort_de(std::vector<uchar > rhs); // same as a uint8
-	std::vector< uint8> sort_de(std::vector<uint8 > rhs);
-	std::vector<uint16> sort_de(std::vector<uint16> rhs);
-	std::vector<uint32> sort_de(std::vector<uint32> rhs);
-	std::vector<uint64> sort_de(std::vector<uint64> rhs);
-
+	// これだど，コピーが不要な場合も必ずコピーされるので，ダメでは？
+	template <typename T> inline std::vector<T> sort   (std::vector<T> rhs){ std::sort(rhs.begin(), rhs.end()); return rhs; }                    // Ascending: 昇順: 0, 1, 2, ...
+	template <typename T> inline std::vector<T> sort_de(std::vector<T> rhs){ std::sort(rhs.begin(), rhs.end(), std::greater<T>()); return rhs; } // Descending: 降順: 9, 8, 7, ...
+	
 	//-----------------------------------------------------------------------------------------------------------------------------------------------
 }
