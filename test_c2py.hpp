@@ -1556,7 +1556,7 @@ void TEST__c2py__vvec_builtin(){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-/*
+//*
 TEST(c2py, empty_args             ){ TEST__c2py__empty_args();            }
 TEST(c2py, empty_args__other_dir  ){ TEST__c2py__empty_args__other_dir(); }
 TEST(c2py, bench_withoutInit      ){ TEST__c2py__bench_withoutInit();     }
@@ -1571,13 +1571,13 @@ TEST(c2py, vec_builtin            ){ TEST__c2py__vec_builtin();           }
 TEST(c2py, vec_str                ){ TEST__c2py__vec_str();               }
 TEST(c2py, mat_c                  ){ TEST__c2py__mat_c();                 }
 TEST(c2py, mat_r                  ){ TEST__c2py__mat_r();                 }
-TEST(c2py, return_null            ){ TEST__c2py__return_null();           }//*/
+TEST(c2py, return_null            ){ TEST__c2py__return_null();           }
 TEST(c2py, sample_codes           ){ TEST__c2py__sample_codes();          }
 //*/
 
 //TEST(c2py, vvec_bool              ){ TEST__c2py__vvec_bool();           } // not implimented
 //TEST(c2py, vvec_char              ){ TEST__c2py__vvec_char();           } // not implimented
-//TEST(c2py, vvec_builtin           ){ TEST__c2py__vvec_builtin();        } // under construction #################
+TEST(c2py, vvec_builtin           ){ TEST__c2py__vvec_builtin();        } // under construction #################
 //TEST(c2py, vvec_str               ){ TEST__c2py__vvec_str();            } // not implimented
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

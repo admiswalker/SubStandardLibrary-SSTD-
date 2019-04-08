@@ -21,8 +21,8 @@ namespace sstd{
 	template <typename T> void   eye(sstd::mat_r<T>& rhs);
 	template <typename T> void  ones(sstd::mat_r<T>& rhs);
 	template <typename T> void zeros(sstd::mat_r<T>& Mat);
-	template <typename T> sstd::mat_r<T> Tr        (sstd::mat_r<T>& rhs); // lhs = Transpose(rhs)
-	template <typename T> void           Tr_myself(sstd::mat_r<T>& rhs); // Transpose(rhs)
+	template <typename T> sstd::mat_r<T> Tr       (const sstd::mat_r<T>& rhs); // lhs = Transpose(rhs)
+	template <typename T> void           Tr_myself(      sstd::mat_r<T>& rhs); // Transpose(rhs)
 	template <typename T> sstd::mat_r<T>* copyRect(sstd::mat_r<T>*& pMat, const uint& rowStart, const uint& rowEnd, const uint& colStart, const uint& colEnd);
 	
 	void print(const sstd::mat_r<       bool>& Mat);
@@ -68,68 +68,66 @@ namespace sstd{
 template <typename T>
 class sstd::mat_r{
 private:
-	T* pMatT;
-	uint rowSize;
-	uint colSize;
-	uint elems; // number of elements
+	T* _pMatT;
+	uint _rows; // row size
+	uint _cols; // column size
+	uint _size; // number of element
 
 public:
-	inline mat_r(){ rowSize=0; colSize=0; elems=0; pMatT=0; }
-	inline mat_r(const std::initializer_list<std::initializer_list<T>>& rhs){ // ={{1, 2, 3}, {4, 5, 6}, {7, 8, 9}} の初期化形式
-		rowSize=rhs.size();
-		if(rowSize==0){ colSize=0; elems=0; return; }
-		colSize=(rhs.begin()[0]).size();
-		elems=rowSize*colSize;
-		pMatT = new T[elems];
+	inline mat_r(){ _rows=0; _cols=0; _size=0; _pMatT=0; }
+	inline mat_r(const std::initializer_list<std::initializer_list<T>>& rhs){ // called by "sstd::mat_r<T> mat = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};".
+		_rows=rhs.size();
+		if(_rows==0){ _cols=0; _size=0; return; }
+		_cols=(rhs.begin()[0]).size();
+		_size=_rows*_cols;
+		_pMatT = new T[_size];
 		
 		const std::initializer_list<T>* pRhs=rhs.begin();
-		for(uint p=0; p<rowSize; p++){
+		for(uint p=0; p<_rows; p++){
 			const T* ppRhs=pRhs[p].begin();
-			for(uint q=0; q<colSize; q++){
+			for(uint q=0; q<_cols; q++){
 				if(q>=pRhs[p].size()){break;}
-				pMatT[p*colSize+q]=ppRhs[q];
+				_pMatT[p*_cols+q]=ppRhs[q];
 			}
 		}
 	}
-	inline mat_r(const class mat_r&  rhs){ rowSize=0; colSize=0; elems=0; pMatT=0; sstd::copy<T>(*this, rhs); }	// called by "sstd::tmat_r buf1(N, N); sstd::tmat_r buf2(buf1);"
-	inline mat_r(      class mat_r&& rhs){ rowSize=0; colSize=0; elems=0; pMatT=0; sstd::move<T>(*this, rhs); }	// called by "return std::move(rhs);" or "std::swap(buf1, buf2)".
-	// std::move(lhs, rhs): "move to uninitalized object" will be called.
-	// std::swap(lhs, rhs): "move to uninitalized object" -> "copy to lhs or rhs" -> "copy to lhs or rhs" will be called.
-	inline mat_r(const uint& row, const uint& col){
-		rowSize = row;
-		colSize = col;
-		elems = row * col;
-		pMatT = new T[elems];
-		sstd::pdbg_if_stop_exit(pMatT==0, "ERROR: This pointer is not allocated.\n");
+	inline mat_r(const class mat_r&  rhs){ _rows=0; _cols=0; _size=0; _pMatT=0; sstd::copy<T>(*this, rhs); } // called by "sstd::mat_r<T> buf1(N, N); sstd::mat_r<T> buf2(buf1);"
+	inline mat_r(      class mat_r&& rhs){ _rows=0; _cols=0; _size=0; _pMatT=0; sstd::move<T>(*this, rhs); } // called by "return std::move(rhs);" or "std::swap(buf1, buf2)".
+	inline mat_r(const uint& rowSize, const uint& colSize){
+		_rows = rowSize;
+		_cols = colSize;
+		_size = _rows * _cols;
+		_pMatT = new T[_size];
+		sstd::pdbg_if_stop_exit(_pMatT==0, "ERROR: This pointer is not allocated.\n");
 	}
-	inline ~mat_r(){ delete[] pMatT; }
+	inline ~mat_r(){ delete[] _pMatT; }
 
-	// R: read only
-	inline const uint& rows() const { return rowSize; }
-	inline const uint& cols() const { return colSize; }
-	inline const uint& size() const { return elems; }
+	// Read only: R
+	inline const uint rows() const { return _rows; }
+	inline const uint cols() const { return _cols; }
+	inline const uint size() const { return _size; }
 
-	// RW: read and write
-	inline T*& pMatT_RW(){ return pMatT; }
-	inline uint& rows_RW(){ return rowSize; }
-	inline uint& cols_RW(){ return colSize; }
-	inline uint& size_RW(){ return elems; }
+	// Read and Write: RW
+	inline T*& pMatT_RW(){ return _pMatT; }
+	inline uint& rows_RW(){ return _rows; }
+	inline uint& cols_RW(){ return _cols; }
+	inline uint& size_RW(){ return _size; }
 
-	class mat_r& operator=(const class mat_r& rhs){ sstd::copy<T>(*this, rhs); return *this; }	// called by "lhs = tmat_r::tmat_r(3, 3);".
+	class mat_r& operator=(const class mat_r& rhs){ sstd::copy<T>(*this, rhs); return *this; } // called by "lhs = sstd::mat_r<T>(3, 3);".
 
-	inline       T& operator[](const uint q)       { return pMatT[      q]; }
-	inline       T& operator[](const  int q)       { return pMatT[(uint)q]; }
-	inline const T& operator[](const uint q) const { return pMatT[      q]; }
-	inline const T& operator[](const  int q) const { return pMatT[(uint)q]; }
+	inline       T& operator[](const uint i)       { return _pMatT[      i]; }
+	inline       T& operator[](const  int i)       { return _pMatT[(uint)i]; }
+	inline const T& operator[](const uint i) const { return _pMatT[      i]; }
+	inline const T& operator[](const  int i) const { return _pMatT[(uint)i]; }
 
-	inline       T& operator()(const uint p, const uint q)       { return pMatT[colSize*      p +       q]; }
-	inline       T& operator()(const  int p, const uint q)       { return pMatT[colSize*(uint)p +       q]; }
-	inline       T& operator()(const uint p, const  int q)       { return pMatT[colSize*      p + (uint)q]; }
-	inline       T& operator()(const  int p, const  int q)       { return pMatT[colSize*(uint)p + (uint)q]; }
-	inline const T& operator()(const uint p, const uint q) const { return pMatT[colSize*      p +       q]; }
-	inline const T& operator()(const  int p, const uint q) const { return pMatT[colSize*(uint)p +       q]; }
-	inline const T& operator()(const uint p, const  int q) const { return pMatT[colSize*      p + (uint)q]; }
-	inline const T& operator()(const  int p, const  int q) const { return pMatT[colSize*(uint)p + (uint)q]; }
+	inline       T& operator()(const uint p, const uint q)       { return _pMatT[_cols*      p +       q]; }
+	inline       T& operator()(const  int p, const uint q)       { return _pMatT[_cols*(uint)p +       q]; }
+	inline       T& operator()(const uint p, const  int q)       { return _pMatT[_cols*      p + (uint)q]; }
+	inline       T& operator()(const  int p, const  int q)       { return _pMatT[_cols*(uint)p + (uint)q]; }
+	inline const T& operator()(const uint p, const uint q) const { return _pMatT[_cols*      p +       q]; }
+	inline const T& operator()(const  int p, const uint q) const { return _pMatT[_cols*(uint)p +       q]; }
+	inline const T& operator()(const uint p, const  int q) const { return _pMatT[_cols*      p + (uint)q]; }
+	inline const T& operator()(const  int p, const  int q) const { return _pMatT[_cols*(uint)p + (uint)q]; }
 	
 	class CopyRow_r<T> operator()(const uint& p, const char& c_dummy){ return OpCopyRow_r<T>(this, p, c_dummy); }
 	class CopyRow_r<T> operator()(const  int& p, const char& c_dummy){ return OpCopyRow_r<T>(this, p, c_dummy); }
@@ -138,8 +136,8 @@ public:
 	class CopyCol_r<T> operator()(const char& c_dummy, const  int& q){ return OpCopyCol_r<T>(this, c_dummy, q); }
 	
 	// for element operations (elements multiplication)
-	inline sstd::mat_r_elements<T> operator()(){ return sstd::mat_r_elements<T>((const T*&)pMatT, (const uint&)rowSize, (const uint&)colSize, (const uint&)elems); }
-	inline sstd::mat_r_elements<T>        vec(){ return sstd::mat_r_elements<T>((const T*&)pMatT, (const uint&)rowSize, (const uint&)colSize, (const uint&)elems); }
+	inline sstd::mat_r_elements<T> operator()(){ return sstd::mat_r_elements<T>((const T*&)_pMatT, (const uint&)_rows, (const uint&)_cols, (const uint&)_size); }
+	inline sstd::mat_r_elements<T>        vec(){ return sstd::mat_r_elements<T>((const T*&)_pMatT, (const uint&)_rows, (const uint&)_cols, (const uint&)_size); }
 };
 
 //--------------------------------------------------------------------------------------------------------
@@ -156,12 +154,12 @@ inline void sstd::eye(sstd::mat_r<T>& rhs){
 
 template <typename T>
 inline void sstd::ones(sstd::mat_r<T>& rhs){
-	for(uint p=0; p<rhs.size(); p++){ rhs[p]=(T)1; }
+	for(uint i=0; i<rhs.size(); i++){ rhs[i]=(T)1; }
 }
 
 template <typename T>
 inline void sstd::zeros(sstd::mat_r<T>& mat){
-	for(uint p=0; p<mat.size(); p++){ mat[p]=(T)0; }
+	for(uint i=0; i<mat.size(); i++){ mat[i]=(T)0; }
 }
 
 //--------------------------------------------------------------------------------------------------------
@@ -195,7 +193,7 @@ template <typename T>
 inline void sstd::move(sstd::mat_r<T>& lhs, sstd::mat_r<T>& rhs){	
 	lhs.rows_RW() = rhs.rows(); rhs.rows_RW() = 0;
 	lhs.cols_RW() = rhs.cols(); rhs.cols_RW() = 0;
-	lhs.size_RW()  = rhs.size(); rhs.size_RW()  = 0;
+	lhs.size_RW() = rhs.size(); rhs.size_RW()  = 0;
 
 	delete[] lhs.pMatT_RW();
 	lhs.pMatT_RW() = rhs.pMatT_RW();
@@ -216,7 +214,7 @@ void swap(sstd::mat_r<T>& lhs, sstd::mat_r<T>& rhs){
 //--------------------------------------------------------------------------------------------------------
 
 template <typename T>
-sstd::mat_r<T> sstd::Tr(sstd::mat_r<T>& rhs){
+sstd::mat_r<T> sstd::Tr(const sstd::mat_r<T>& rhs){
 	sstd::mat_r<T> lhs(rhs.cols(), rhs.rows());
 	for(uint p=0; p<rhs.rows(); p++){
 		for(uint q=0; q<rhs.cols(); q++){
