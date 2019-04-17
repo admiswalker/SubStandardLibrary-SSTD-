@@ -25,6 +25,8 @@ CFLAGS += -std=gnu++0x
 1. Copy all of under `./sstd/*`. 
 2. Include a header (`#include "./sstd/sstd.hpp"`) in your code.
 
+Note: Recently, sstd has not been tested on Windows (MSVC++), while codes locked on linux is not so many.
+
 ## Documents
 ・./Makefile: https://admiswalker.blogspot.com/2017/02/makefile.html  
 ・./sstd/src/c2py.cpp-.hpp: https://admiswalker.blogspot.com/2018/02/c-python.html  
