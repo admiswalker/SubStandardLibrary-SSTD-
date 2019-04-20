@@ -6,6 +6,13 @@
 #include <string.h>
 #include <random>
 
+#ifdef _OPENMP
+   #include <omp.h>
+#else
+   #define omp_get_thread_num() 0
+   #define omp_get_max_threads() 1
+#endif
+
 #include "./typeDef.h"
 #include "./file.hpp"
 #include "./ssprintf.hpp"
@@ -158,9 +165,10 @@ public: c2py(const char* temporarilyDir, const char* importFile, const char* fun
 	T operator()(ARGS... args){
 		// make temporary directory
 		struct timeval time_v=sstd::getTimeval();
-		uint32 pid = (uint32)sstd::getpid(); // To avoid conflicts with multiprocessing
 		std::random_device rng; uint rand=rng();
-		std::string writeDir_base=sstd::ssprintf("%s/%lu_%06lu_%u_%u", tmpDir.c_str(), time_v.tv_sec, time_v.tv_usec, pid, rand);
+		uint32 pid = (uint32)sstd::getpid(); // To avoid conflicts with multiprocessing
+		uint32 otn = (uint32)omp_get_thread_num();
+		std::string writeDir_base=sstd::ssprintf("%s/%lu_%06lu_%lu_%lu_%lu", tmpDir.c_str(), time_v.tv_sec, time_v.tv_usec, rand, pid, otn);
 		sstd::mkdir(writeDir_base);
 		
 		int argc = fList.size()-1;
@@ -183,9 +191,10 @@ public: c2py(const char* temporarilyDir, const char* importFile, const char* fun
 	void operator()(ARGS... args){
 		// make temporary directory
 		struct timeval time_v=sstd::getTimeval();
-		uint32 pid = (uint32)sstd::getpid(); // To avoid conflicts with multiprocessing
 		std::random_device rng; uint rand=rng();
-		std::string writeDir_base=sstd::ssprintf("%s/%lu_%06lu_%u_%u", tmpDir.c_str(), time_v.tv_sec, time_v.tv_usec, pid, rand);
+		uint32 pid = (uint32)sstd::getpid(); // To avoid conflicts with multiprocessing
+		uint32 otn = (uint32)omp_get_thread_num();
+		std::string writeDir_base=sstd::ssprintf("%s/%lu_%06lu_%lu_%lu_%lu", tmpDir.c_str(), time_v.tv_sec, time_v.tv_usec, rand, pid, otn);
 		sstd::mkdir(writeDir_base);
 		
 		int argc = fList.size()-1;
