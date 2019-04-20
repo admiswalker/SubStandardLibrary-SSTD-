@@ -1,7 +1,8 @@
 exe
 __pycache__/
+testPy/__pycache__/
 googletest-master/
 sstd/
-testPy/__pycache__/
+backup/
 
 

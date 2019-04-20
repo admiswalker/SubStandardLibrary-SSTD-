@@ -4,6 +4,7 @@
 #include <vector>
 #include <time.h>
 #include <string.h>
+#include <random>
 
 #include "./typeDef.h"
 #include "./file.hpp"
@@ -14,6 +15,7 @@
 #include "./strEdit.hpp"
 #include "./path.hpp"
 #include "./str2num.hpp"
+#include "./pid.hpp"
 #include "./matrixContainer_colMajor/mat_c.hpp"
 #include "./matrixContainer_rowMajor/mat_r.hpp"
 
@@ -155,7 +157,10 @@ public: c2py(const char* temporarilyDir, const char* importFile, const char* fun
 	template<typename... ARGS>
 	T operator()(ARGS... args){
 		// make temporary directory
-		struct timeval time_v=sstd::getTimeval(); std::string writeDir_base=sstd::ssprintf("%s/%lu_%06lu", tmpDir.c_str(), time_v.tv_sec, time_v.tv_usec);
+		struct timeval time_v=sstd::getTimeval();
+		uint32 pid = (uint32)sstd::getpid(); // To avoid conflicts with multiprocessing
+		std::random_device rng; uint rand=rng();
+		std::string writeDir_base=sstd::ssprintf("%s/%lu_%06lu_%u_%u", tmpDir.c_str(), time_v.tv_sec, time_v.tv_usec, pid, rand);
 		sstd::mkdir(writeDir_base);
 		
 		int argc = fList.size()-1;
@@ -177,7 +182,10 @@ public: c2py(const char* temporarilyDir, const char* importFile, const char* fun
 	template<typename... ARGS>
 	void operator()(ARGS... args){
 		// make temporary directory
-		struct timeval time_v=sstd::getTimeval(); std::string writeDir_base=sstd::ssprintf("%s/%lu_%06lu", tmpDir.c_str(), time_v.tv_sec, time_v.tv_usec);
+		struct timeval time_v=sstd::getTimeval();
+		uint32 pid = (uint32)sstd::getpid(); // To avoid conflicts with multiprocessing
+		std::random_device rng; uint rand=rng();
+		std::string writeDir_base=sstd::ssprintf("%s/%lu_%06lu_%u_%u", tmpDir.c_str(), time_v.tv_sec, time_v.tv_usec, pid, rand);
 		sstd::mkdir(writeDir_base);
 		
 		int argc = fList.size()-1;

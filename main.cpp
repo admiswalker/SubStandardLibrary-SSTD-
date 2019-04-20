@@ -36,7 +36,8 @@ void TEST_parseCSV();
 void TEST_encode_decode();
 void TEST_hashFnc();
 void TEST_pause();
-//#include "./test_c2py.hpp"
+#include "./test_c2py.hpp"
+//void TEST_getpid();        // テストを書くように．
 
 // stdVector_expansion of operators
 void TEST_stdVector_expansion();
