@@ -34,6 +34,23 @@ namespace sstd{
 
 	struct timeval getTimeval();
 
+	//---
+
+	double unixtime2JulianDate(time_t unixtime);
+	
+	// 経過ユリウス年の計算
+	double Julius_T(time_t unixtime);
+	double JulianDate2Julius_T(double JulianDate);
+	
+	// Truncated Julian Day (TJD)
+	// TJD=JD-2440000.5
+	// で定義されたもので、起算時点は1968年5月24日世界時0時である。
+	// これはNASAが導入したもので、天文計算に用いる。MJDに似ているが、これより１桁少ない数字で日付を表すことが出来る。
+	double TJuliusD(time_t unixtime);
+	double JulianDate2TJuliusD(double JulianDate);
+	
+	//---
+
 //	print(time_t unixtime);
 	void print(const struct tm& rhs);
 	void for_printn(const struct tm& rhs);

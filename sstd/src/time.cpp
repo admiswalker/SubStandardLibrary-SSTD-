@@ -98,5 +98,57 @@ struct timeval sstd::getTimeval(){
 	return ret;
 }
 
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+double sstd::unixtime2JulianDate(time_t unixtime){
+	// ユリウス日: ユリウス暦を -4712 年 (紀元前 4713 年) 01 月 01 日まで遡って適用し、そこから数えた経過日数です。ユリウス通日ということもあります。-4712年 (紀元前4713年) 1月1日はユリウス日では0日 - https://eco.mtk.nao.ac.jp/koyomi/wiki/A5E6A5EAA5A6A5B9C6FC.html - 2019 年 05 月 26 日閲覧．
+	// unixtime: 1970/01/01からの経過秒数．
+	// [1970/01/01] - [-4712/01/01] = 2440587.5[日](0.5は、ユリウス日が正午に日付が入れ替わるから。)
+	// 1970年1月1日AM0:0:0（世界時） がユリウス日の 2440587.5日に相当
+	
+	// ユリウス通日 = (unixtime/(24*60*60))+2440587.5
+	// ただし、ここでは閏秒を考慮せず。
+	double JulianDate = (((double)unixtime)/((double)(24*60*60)))+(double)2440587.5;
+	return JulianDate;
+}
+
+// 経過ユリウス年の計算
+double sstd::Julius_T(time_t unixtime){
+	double JulianDate = unixtime2JulianDate(unixtime);
+	
+	// 2000年1月1日12時(世界時)からのユリウス世紀
+	// J2000.0からの経過日数をユリウス世紀単位(36525日単位)で測った時間をユリウス世紀数といいます。
+	// ユリウス世紀数 T = (ユリウス日 - 2451545) / 36525
+	// 経過ユリウス年 T = (ユリウス日 - 2451545) / 365.25
+	double JuliusT = (JulianDate-(double)2451545.0)/(double)365.25;
+	return JuliusT;
+}
+double sstd::JulianDate2Julius_T(double JulianDate){
+	
+	// 2000 年 01 月 01 日 12 時 (世界時) からのユリウス世紀
+	// J2000.0からの経過日数をユリウス世紀単位(36525日単位)で測った時間をユリウス世紀数といいます。
+	// ユリウス世紀数 T = (ユリウス日 - 2451545) / 36525
+	// 経過ユリウス年 T = (ユリウス日 - 2451545) / 365.25
+	double JuliusT = (JulianDate-(double)2451545.0)/(double)365.25;
+	return JuliusT;
+}
+
+// Truncated Julian Day (TJD)
+// TJD = JD - 2440000.5
+// で定義されたもので、起算時点は1968年5月24日世界時0時である。
+// これはNASAが導入したもので、天文計算に用いる。MJDに似ているが、これより１桁少ない数字で日付を表すことが出来る。
+double sstd::TJuliusD(time_t unixtime){
+	double TJD = unixtime2JulianDate(unixtime) - (double)2440000.5;
+	return TJD;
+}
+double sstd::JulianDate2TJuliusD(double JulianDate){
+	double TJD = JulianDate - (double)2440000.5;
+	return TJD;
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
 void sstd::print(const struct tm& rhs){ printf("%s\n", sstd::tm2str((struct tm&)rhs).c_str()); }
 void sstd::for_printn(const struct tm& rhs){ printf(" = %s\n", sstd::tm2str((struct tm&)rhs).c_str()); }
+
+
