@@ -2,7 +2,9 @@ exe
 __pycache__/
 testPy/__pycache__/
 googletest-master/
-sstd/
+sstd/include/
+sstd/lib/
+sstd/tmpMake/
 backup/
 
 tmpDir/
