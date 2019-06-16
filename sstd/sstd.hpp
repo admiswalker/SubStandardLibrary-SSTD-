@@ -51,6 +51,7 @@
 #include "./src/hashFnc_of_MD5_SHA1_SHA2/sstd_md5_sha1_sha2_wrapper.hpp"
 #include "./src/pause.hpp"
 #include "./src/pid.hpp"
+#include "./src/status.hpp"
 
 namespace sstd{
 

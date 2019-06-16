@@ -447,7 +447,6 @@ def vec2graph(writeName, vecX, vecY):
     ax1.yaxis.set_minor_locator(tick.MultipleLocator(0.1))
     
     plt.savefig(writeName, bbox_inches="tight") # , dpi=100
-    return 0
 #---
 #mpl.rcParams['legend.frameon'] = 'False'
 mpl.rcParams['legend.framealpha'] = 1
@@ -455,7 +454,9 @@ mpl.rcParams['legend.framealpha'] = 1
 #mpl.rcParams['legend.edgecolor'] = 'black'
 def vvec2graph(writeName, vLabel, vvecX, vvecY):
     plt.clf()
-    fig = plt.figure(figsize=(8, 2.5)) # 3*5, 1*5 # アスペクト比の設定
+    #fig = plt.figure(figsize=(8, 2.5)) # 3*5, 1*5 # アスペクト比の設定
+    fig = plt.figure(figsize=(8*1.033333333, 2.5*1.033333333)) # 3*5, 1*5 # アスペクト比の設定
+    # 62 sec / 60 sec = 1.033333333
     ax1 = fig.add_subplot(111)
     vColor=['black', 'blue', 'red']
     vLineStyle = ['solid', 'dashed', 'dashdot'] # solid, dashed, dashdot, dotted
@@ -481,7 +482,6 @@ def vvec2graph(writeName, vLabel, vvecX, vvecY):
 
     plt.legend(loc='best')
     plt.savefig(writeName, bbox_inches="tight") # , dpi=100
-    return 0
 
 #--------------------------------------------------------------------------------------------------------
 

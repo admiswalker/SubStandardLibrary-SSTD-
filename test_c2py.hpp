@@ -1421,7 +1421,7 @@ void TEST__c2py__sample_codes(){
 		std::vector<double> vecY = sstd::sinWave(freq_generate, freq_sample, len);
 		std::vector<double> vecX(len); for(uint i=0; i<vecX.size(); i++){ vecX[i]=(double)i*(1/freq_sample); }
 		
-		sstd::c2py<int> vec2graph(tmpDir, fileName, "vec2graph", "int, const char*, vec<double>, vec<double>");
+		sstd::c2py<void> vec2graph(tmpDir, fileName, "vec2graph", "void, const char*, vec<double>, vec<double>");
 		vec2graph("./sin.png", vecX, vecY);
 	}
 	//---
@@ -1439,7 +1439,7 @@ void TEST__c2py__sample_codes(){
 		std::vector<std::vector<double>> vvecX={sinX, cosX,    cosX};
 		std::vector<std::vector<double>> vvecY={sinY, cosY, -1*cosY};
 		
-		sstd::c2py<int> vvec2graph(tmpDir, fileName, "vvec2graph", "int, const char*, const vec<str>*, const vvec<double>*, const vvec<double>*");
+		sstd::c2py<void> vvec2graph(tmpDir, fileName, "vvec2graph", "void, const char*, const vec<str>*, const vvec<double>*, const vvec<double>*");
 		vvec2graph("./sin_cos.png", &vLabel, &vvecX, &vvecY);
 	}
 	//---

@@ -36,8 +36,9 @@ void TEST_parseCSV();
 void TEST_encode_decode();
 void TEST_hashFnc();
 void TEST_pause();
-#include "./test_c2py.hpp"
+//#include "./test_c2py.hpp"
 //void TEST_getpid();        // テストを書くように．
+#include "./test_status.hpp"
 
 // stdVector_expansion of operators
 void TEST_stdVector_expansion();
@@ -85,8 +86,8 @@ int main(int argc, char** argv){
 	
 //	TEST_stdVector_expansion();
 	
-	TEST_mat_colMajor(); // TODO: write tests (zeros, Tr) // sstd::print 関数のテストを書くように
-	TEST_mat_rowMajor(); // TODO: write tests (zeros, Tr) // sstd::print 関数のテストを書くように
+//	TEST_mat_colMajor(); // TODO: write tests (zeros, Tr) // sstd::print 関数のテストを書くように
+//	TEST_mat_rowMajor(); // TODO: write tests (zeros, Tr) // sstd::print 関数のテストを書くように
 //	TEST_bmat();
 	
 	printf("\n");
