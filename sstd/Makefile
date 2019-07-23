@@ -42,7 +42,7 @@
 DIR  = ./*.
 DIR += ./src/*.
 DIR += ./src/linearAlgebra/*.
-DIR += ./src/stdVector_expansion/*.
+DIR += ./src/vector/*.
 DIR += ./src/matrixContainer_binary/*.
 DIR += ./src/matrixContainer_colMajor/*.
 DIR += ./src/matrixContainer_rowMajor/*.

@@ -75,7 +75,7 @@ std::vector<std::string> getLine(bool& result, const uchar* str, uint& r, struct
 	return line;
 }
 
-std::vector<std::vector<std::string>> sstd::parseCSV(const char* pReadFile){
+std::vector<std::vector<std::string>> sstd::csvPath2vvec_r(const char* pReadFile){
 
 	// r: read place
 	uint r=0;
@@ -101,3 +101,11 @@ std::vector<std::vector<std::string>> sstd::parseCSV(const char* pReadFile){
 	
 	return ret;
 }
+/*
+std::vector<std::vector<std::string>> sstd::csvPath2vvec_r(const char* pReadFile){
+	std::vector<std::vector<std::string>> vvec_r = sstd::csvPath2vvec_r(pReadFile);
+	std::vector<std::vector<std::string>> vvec_c = sstd::vvec_r2c(vvec_r);
+	return vvec_c;
+}
+//*/
+

@@ -32,16 +32,17 @@ void TEST_path();
 void TEST_getFilePathInDir();
 void TEST_strEdit();        // テストを書くように．
 void TEST_tinyInterpreter();
-void TEST_parseCSV();
+#include "./test_csv.hpp"
 void TEST_encode_decode();
 void TEST_hashFnc();
 void TEST_pause();
 //#include "./test_c2py.hpp"
 //void TEST_getpid();        // テストを書くように．
-#include "./test_status.hpp"
+//#include "./test_status.hpp"
 
 // stdVector_expansion of operators
 void TEST_stdVector_expansion();
+#include "./test_vvec.hpp"
 
 // sstd/src/MatrixStore_mat
 void TEST_mat_colMajor();
@@ -79,7 +80,6 @@ int main(int argc, char** argv){
 //	TEST_getFilePathInDir();
 //	TEST_strEdit();        // テストを書くように．
 //	TEST_tinyInterpreter();
-//	TEST_parseCSV();
 //	TEST_encode_decode();
 //	TEST_hashFnc();
 //	TEST_pause();
@@ -636,19 +636,6 @@ void TEST_tinyInterpreter(){
 		for(uint n=0; n<splitCList.size(); n++){ printf("[%5s] ", splitCList[n].c_str()); } printf("\n");
 	}
 	printf("\n");
-}
-void TEST_parseCSV(){
-	printf("■ parseCSV\n");
-	std::vector<std::vector<std::string>> csv = sstd::parseCSV(R"(./parseCSV.csv)");
-	sstd::printn(csv.size());
-	printf("----\n");
-	for(uint p=0; p<csv.size(); p++){
-		for(uint q=0; q<csv[p].size(); q++){
-			printf("%s,", csv[p][q].c_str());
-		}
-		printf("\n");
-	}
-	printf("----\n");
 }
 void TEST_encode_decode(){
 	printf("■ encode_decode\n");
