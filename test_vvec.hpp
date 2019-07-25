@@ -4,19 +4,19 @@
 
 void TEST__vvec__Tr_1x0(){
 	std::vector<std::vector<int>> vvec = {{}}; // 1x0
-	std::vector<std::vector<int>> vvecTr = sstd::Tr<int>(vvec);
+	std::vector<std::vector<int>> vvecTr = sstd::Tr(vvec);
 	std::vector<std::vector<int>> vvecAns; // define that the return value is 0x0.
 	ASSERT_TRUE(vvecTr == vvecAns);
 }
 void TEST__vvec__Tr_2x0(){
 	std::vector<std::vector<int>> vvec = {{}, {}}; // 2x0
-	std::vector<std::vector<int>> vvecTr = sstd::Tr<int>(vvec);
+	std::vector<std::vector<int>> vvecTr = sstd::Tr(vvec);
 	std::vector<std::vector<int>> vvecAns; // define that the return value is 0x0.
 	ASSERT_TRUE(vvecTr == vvecAns);
 }
 void TEST__vvec__Tr_3x0(){
 	std::vector<std::vector<int>> vvec = {{}, {}, {}}; // 1x0
-	std::vector<std::vector<int>> vvecTr = sstd::Tr<int>(vvec);
+	std::vector<std::vector<int>> vvecTr = sstd::Tr(vvec);
 	std::vector<std::vector<int>> vvecAns; // define that the return value is 0x0.
 	ASSERT_TRUE(vvecTr == vvecAns);
 }
@@ -27,7 +27,7 @@ void TEST__vvec__Tr_1x3(){
 	std::vector<std::vector<int>> vvec = {
 		{ 1, 2, 3 }
 	};
-	std::vector<std::vector<int>> vvecTr = sstd::Tr<int>(vvec);
+	std::vector<std::vector<int>> vvecTr = sstd::Tr(vvec);
 	std::vector<std::vector<int>> vvecAns = {
 		{ 1 },
 		{ 2 },
@@ -41,7 +41,7 @@ void TEST__vvec__Tr_3x1(){
 		{ 2 },
 		{ 3 }
 	};
-	std::vector<std::vector<int>> vvecTr = sstd::Tr<int>(vvec);
+	std::vector<std::vector<int>> vvecTr = sstd::Tr(vvec);
 	std::vector<std::vector<int>> vvecAns = {
 		{ 1, 2, 3 }
 	};
@@ -52,7 +52,7 @@ void TEST__vvec__Tr_3x1(){
 
 void TEST__vvec__Tr_0x0(){
 	std::vector<std::vector<int>> vvec;
-	std::vector<std::vector<int>> vvecTr = sstd::Tr<int>(vvec);
+	std::vector<std::vector<int>> vvecTr = sstd::Tr(vvec);
 	std::vector<std::vector<int>> vvecAns;
 	ASSERT_TRUE(vvecTr == vvecAns);
 }
@@ -60,7 +60,7 @@ void TEST__vvec__Tr_1x1(){
 	std::vector<std::vector<int>> vvec = {
 		{ 1}
 	};
-	std::vector<std::vector<int>> vvecTr = sstd::Tr<int>(vvec);
+	std::vector<std::vector<int>> vvecTr = sstd::Tr(vvec);
 	
 	std::vector<std::vector<int>> vvecAns = {
 		{ 1}
@@ -73,7 +73,7 @@ void TEST__vvec__Tr_3x3(){
 		{ 4,  5,  6}, 
 		{ 7,  8,  9}
 	};
-	std::vector<std::vector<int>> vvecTr = sstd::Tr<int>(vvec);
+	std::vector<std::vector<int>> vvecTr = sstd::Tr(vvec);
 	
 	std::vector<std::vector<int>> vvecAns = {
 		{ 1,  4,  7}, 
@@ -97,7 +97,7 @@ void TEST__vvec__Tr_theOthers01(){
 		{26, 27, 28}, 
 		{29}
 	};
-	std::vector<std::vector<int>> vvecTr = sstd::Tr<int>(vvec);
+	std::vector<std::vector<int>> vvecTr = sstd::Tr(vvec);
 	
 	std::vector<std::vector<int>> vvecAns = {
 		{ 1,  5,  7, 15, 18, 20, 24, 26, 29},
@@ -118,7 +118,7 @@ void TEST__vvec__Tr_theOthers02(){
 		{ 2,  3}, 
 		{ 4,  5,  6}
 	};
-	std::vector<std::vector<int>> vvecTr = sstd::Tr<int>(vvec);
+	std::vector<std::vector<int>> vvecTr = sstd::Tr(vvec);
 	
 	std::vector<std::vector<int>> vvecAns = {
 		{ 1,  2,  4},
@@ -134,7 +134,7 @@ void TEST__vvec__Tr_theOthers03(){
 		{ 4,  5}, 
 		{ 6}
 	};
-	std::vector<std::vector<int>> vvecTr = sstd::Tr<int>(vvec);
+	std::vector<std::vector<int>> vvecTr = sstd::Tr(vvec);
 	
 	std::vector<std::vector<int>> vvecAns = {
 		{ 1,  4,  6},
@@ -150,7 +150,7 @@ void TEST__vvec__Tr_theOthers04(){
 		{}, 
 		{ 4,  5,  6}
 	};
-	std::vector<std::vector<int>> vvecTr = sstd::Tr<int>(vvec);
+	std::vector<std::vector<int>> vvecTr = sstd::Tr(vvec);
 	
 	std::vector<std::vector<int>> vvecAns = {
 		{ 1,  0,  4},
@@ -166,11 +166,30 @@ void TEST__vvec__Tr_theOthers05(){
 		{ 4,  5}, 
 		{ 6}
 	};
-	std::vector<std::vector<int>> vvecTr = sstd::Tr<int>(vvec);
+	std::vector<std::vector<int>> vvecTr = sstd::Tr(vvec);
 	
 	std::vector<std::vector<int>> vvecAns = {
 		{ 0,  4,  6},
 		{ 0,  5}, 
+	};
+	
+	ASSERT_TRUE(vvecTr == vvecAns);
+}
+
+//---
+
+void TEST__vvec__Tr_with_std_move(){
+	std::vector<std::vector<std::string>> vvec = {
+		{std::string(" 1"), std::string(" 2"), std::string(" 3")}, 
+		{std::string(" 4"), std::string(" 5")}, 
+		{std::string(" 6")}
+	};
+	std::vector<std::vector<std::string>> vvecTr = sstd::Tr(std::move(vvec));
+	
+	std::vector<std::vector<std::string>> vvecAns = {
+		{std::string(" 1"), std::string(" 4"), std::string(" 6")},
+		{std::string(" 2"), std::string(" 5")}, 
+		{std::string(" 3")}
 	};
 	
 	ASSERT_TRUE(vvecTr == vvecAns);
@@ -194,6 +213,8 @@ TEST(vvec, Tr_theOthers02){ TEST__vvec__Tr_theOthers02(); }
 TEST(vvec, Tr_theOthers03){ TEST__vvec__Tr_theOthers03(); }
 TEST(vvec, Tr_theOthers04){ TEST__vvec__Tr_theOthers04(); }
 TEST(vvec, Tr_theOthers05){ TEST__vvec__Tr_theOthers05(); }
+
+TEST(vvec, Tr_with_std_move){ TEST__vvec__Tr_with_std_move(); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
