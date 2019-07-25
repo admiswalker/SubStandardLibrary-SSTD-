@@ -21,22 +21,24 @@ template <typename T> Tr(      std::vector<std::vector<T>>&& rhs){              
 
 template <typename T>
 std::vector<std::vector<T>> sstd::Tr(const std::vector<std::vector<T>>& rhs){
+	// return while zero.
+	if(rhs.size()==0){ return std::vector<std::vector<T>>(); }
+	
 	// Calculating a lhs size.
 	uint colsMax = 0; // column size max
 	std::vector<uint> vecRows, vecCols;
 	uint i=rhs.size()-1;
+	if(rhs[i].size()>colsMax){ colsMax=rhs[i].size(); }
 	vecRows.push_back( rhs[i].size() );
-	vecCols.push_back( rhs.size()    );
+	vecCols.push_back(      i+1      );
 	i--;
-	printf("imhere: 00\n");
-	for(;i!=UINT_MAX; i--){
-		if(rhs[i].size()<vecRows[vecRows.size()-1]){ continue; } // memo: これ，vecSize == 1 となる例がのちにバグりそう．
+	for(; i!=UINT_MAX; i--){
+		if(rhs[i].size()<vecRows[vecRows.size()-1]){ continue; }
 		
 		if(rhs[i].size()>colsMax){ colsMax=rhs[i].size(); }
 		vecRows.push_back( rhs[i].size() );
-		vecCols.push_back(       i+1     );
+		vecCols.push_back(      i+1      );
 	}
-	printf("imhere: 01\n");
 	
 	// Allocating the lhs.
 	std::vector<std::vector<T>> lhs(colsMax);
@@ -44,19 +46,15 @@ std::vector<std::vector<T>> sstd::Tr(const std::vector<std::vector<T>>& rhs){
 		for(; i<vecRows[r]; i++){
 			uint cols = vecCols[r];
 			lhs[i].resize( cols );
-			printf("%d\n", cols);
 		}
 	}
-	printf("imhere: 02\n");
 	
 	// copy or move value.
 	for(uint r=0; r<rhs.size(); r++){
 		for(uint c=0; c<rhs[r].size(); c++){
-			printf("%d, %d\n", r, c);
 			lhs[c][r] = rhs[r][c];
 		}
 	}
-	printf("imhere: 03\n");
 	
 	return lhs;
 }
