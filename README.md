@@ -48,7 +48,7 @@ library name    | URL | used version | license | intended use
 --------------------- | ---- | -------- | -------------------------------- | ----
 md5 | [github.com/kalven/md5](https://github.com/kalven/md5) | committed on 1 Jan 2014 | Public domain | MD5 calculation
 WjCryptLib | [github.com/WaterJuice/WjCryptLib](https://github.com/WaterJuice/WjCryptLib) | committed on 16 Mar 2018 | Public domain | SHA-1 calculation
-SHA-2 | [github.com/kalven/sha-2](github.com/kalven/sha-2) | committed on 27 Aug 2012 | Public domain | SHA-2 calculation
+SHA-2 | [github.com/kalven/sha-2](https://github.com/kalven/sha-2) | committed on 27 Aug 2012 | Public domain | SHA-2 calculation
 
 
 
