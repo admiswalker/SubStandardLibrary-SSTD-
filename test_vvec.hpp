@@ -2,6 +2,27 @@
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+void TEST__vvec__Tr_1x0(){
+	std::vector<std::vector<int>> vvec = {{}}; // 1x0
+	std::vector<std::vector<int>> vvecTr = sstd::Tr<int>(vvec);
+	std::vector<std::vector<int>> vvecAns; // define that the return value is 0x0.
+	ASSERT_TRUE(vvecTr == vvecAns);
+}
+void TEST__vvec__Tr_2x0(){
+	std::vector<std::vector<int>> vvec = {{}, {}}; // 2x0
+	std::vector<std::vector<int>> vvecTr = sstd::Tr<int>(vvec);
+	std::vector<std::vector<int>> vvecAns; // define that the return value is 0x0.
+	ASSERT_TRUE(vvecTr == vvecAns);
+}
+void TEST__vvec__Tr_3x0(){
+	std::vector<std::vector<int>> vvec = {{}, {}, {}}; // 1x0
+	std::vector<std::vector<int>> vvecTr = sstd::Tr<int>(vvec);
+	std::vector<std::vector<int>> vvecAns; // define that the return value is 0x0.
+	ASSERT_TRUE(vvecTr == vvecAns);
+}
+
+//---
+
 void TEST__vvec__Tr_1x3(){
 	std::vector<std::vector<int>> vvec = {
 		{ 1, 2, 3 }
@@ -123,8 +144,43 @@ void TEST__vvec__Tr_theOthers03(){
 	
 	ASSERT_TRUE(vvecTr == vvecAns);
 }
+void TEST__vvec__Tr_theOthers04(){
+	std::vector<std::vector<int>> vvec = {
+		{ 1}, 
+		{}, 
+		{ 4,  5,  6}
+	};
+	std::vector<std::vector<int>> vvecTr = sstd::Tr<int>(vvec);
+	
+	std::vector<std::vector<int>> vvecAns = {
+		{ 1,  0,  4},
+		{ 0,  0,  5}, 
+		{ 0,  0,  6}
+	};
+	
+	ASSERT_TRUE(vvecTr == vvecAns);
+}
+void TEST__vvec__Tr_theOthers05(){
+	std::vector<std::vector<int>> vvec = {
+		{}, 
+		{ 4,  5}, 
+		{ 6}
+	};
+	std::vector<std::vector<int>> vvecTr = sstd::Tr<int>(vvec);
+	
+	std::vector<std::vector<int>> vvecAns = {
+		{ 0,  4,  6},
+		{ 0,  5}, 
+	};
+	
+	ASSERT_TRUE(vvecTr == vvecAns);
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+
+TEST(vvec, Tr_1x0){ TEST__vvec__Tr_1x0(); }
+TEST(vvec, Tr_2x0){ TEST__vvec__Tr_2x0(); }
+TEST(vvec, Tr_3x0){ TEST__vvec__Tr_3x0(); }
 
 TEST(vvec, Tr_1x3){ TEST__vvec__Tr_1x3(); }
 TEST(vvec, Tr_3x1){ TEST__vvec__Tr_3x1(); }
@@ -136,6 +192,8 @@ TEST(vvec, Tr_2x2){ TEST__vvec__Tr_3x3(); }
 TEST(vvec, Tr_theOthers01){ TEST__vvec__Tr_theOthers01(); }
 TEST(vvec, Tr_theOthers02){ TEST__vvec__Tr_theOthers02(); }
 TEST(vvec, Tr_theOthers03){ TEST__vvec__Tr_theOthers03(); }
+TEST(vvec, Tr_theOthers04){ TEST__vvec__Tr_theOthers04(); }
+TEST(vvec, Tr_theOthers05){ TEST__vvec__Tr_theOthers05(); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
