@@ -197,24 +197,24 @@ void TEST__vvec__Tr_with_std_move(){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-TEST(vvec, Tr_1x0){ TEST__vvec__Tr_1x0(); }
-TEST(vvec, Tr_2x0){ TEST__vvec__Tr_2x0(); }
-TEST(vvec, Tr_3x0){ TEST__vvec__Tr_3x0(); }
+TEST(vector_vvec, Tr_1x0){ TEST__vvec__Tr_1x0(); }
+TEST(vector_vvec, Tr_2x0){ TEST__vvec__Tr_2x0(); }
+TEST(vector_vvec, Tr_3x0){ TEST__vvec__Tr_3x0(); }
 
-TEST(vvec, Tr_1x3){ TEST__vvec__Tr_1x3(); }
-TEST(vvec, Tr_3x1){ TEST__vvec__Tr_3x1(); }
+TEST(vector_vvec, Tr_1x3){ TEST__vvec__Tr_1x3(); }
+TEST(vector_vvec, Tr_3x1){ TEST__vvec__Tr_3x1(); }
 
-TEST(vvec, Tr_0x0){ TEST__vvec__Tr_0x0(); }
-TEST(vvec, Tr_1x1){ TEST__vvec__Tr_1x1(); }
-TEST(vvec, Tr_2x2){ TEST__vvec__Tr_3x3(); }
+TEST(vector_vvec, Tr_0x0){ TEST__vvec__Tr_0x0(); }
+TEST(vector_vvec, Tr_1x1){ TEST__vvec__Tr_1x1(); }
+TEST(vector_vvec, Tr_2x2){ TEST__vvec__Tr_3x3(); }
 
-TEST(vvec, Tr_theOthers01){ TEST__vvec__Tr_theOthers01(); }
-TEST(vvec, Tr_theOthers02){ TEST__vvec__Tr_theOthers02(); }
-TEST(vvec, Tr_theOthers03){ TEST__vvec__Tr_theOthers03(); }
-TEST(vvec, Tr_theOthers04){ TEST__vvec__Tr_theOthers04(); }
-TEST(vvec, Tr_theOthers05){ TEST__vvec__Tr_theOthers05(); }
+TEST(vector_vvec, Tr_theOthers01){ TEST__vvec__Tr_theOthers01(); }
+TEST(vector_vvec, Tr_theOthers02){ TEST__vvec__Tr_theOthers02(); }
+TEST(vector_vvec, Tr_theOthers03){ TEST__vvec__Tr_theOthers03(); }
+TEST(vector_vvec, Tr_theOthers04){ TEST__vvec__Tr_theOthers04(); }
+TEST(vector_vvec, Tr_theOthers05){ TEST__vvec__Tr_theOthers05(); }
 
-TEST(vvec, Tr_with_std_move){ TEST__vvec__Tr_with_std_move(); }
+TEST(vector_vvec, Tr_with_std_move){ TEST__vvec__Tr_with_std_move(); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 

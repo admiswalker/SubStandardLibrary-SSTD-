@@ -3,7 +3,6 @@
 #include <string>
 
 namespace sstd{
-//	std::vector<std::vector<std::string>> csvPath2vvec_c(const char* pReadFile); // _c: col-major
-	std::vector<std::vector<std::string>> csvPath2vvec_r(const char* pReadFile); // _r: row-major
+	std::vector<std::vector<std::string>> csvPath2vvec(const char* pReadFile); // vvec is always row-major.
 }
 
