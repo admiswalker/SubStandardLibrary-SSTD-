@@ -13,18 +13,18 @@
 	what i really implimented.
 
 	std::vector<T> vec_sliced = vec[0];
-	std::vector<T> vec_sliced = vec && sstd::range(1, sstd::end());
-	std::vector<T> vec_sliced = vec && sstd::range(sstd::begin(), sstd::end());
-	std::vector<T> vec_sliced = vec && sstd::range_mv(sstd::begin(), sstd::end());
+	std::vector<T> vec_sliced = vec && sstd::slice(1, sstd::end());
+	std::vector<T> vec_sliced = vec && sstd::slice(sstd::begin(), sstd::end());
+	std::vector<T> vec_sliced = vec && sstd::slice_mv(sstd::begin(), sstd::end());
 */
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-void TEST__range__call(){
+void TEST__slice__call(){
 	printf("imh\n");
 	
 	std::vector<int> vec={1,2,3};
-	std::vector<int> vec_sliced = vec && sstd::range(0, vec.size());
+	std::vector<int> vec_sliced = vec && sstd::slice(0, vec.size());
 	ASSERT_TRUE(vec == vec_sliced);
 }	
 //	sstd::printn(vec);
@@ -39,7 +39,7 @@ void TEST__range__call(){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-TEST(vector_range, slice__call){ TEST__range__call(); }
+TEST(vector_slice, slice__call){ TEST__slice__call(); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
