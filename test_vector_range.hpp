@@ -1,8 +1,29 @@
 #pragma once
 
+/*
+	what i really want.
+	
+	std::vector<T> vec_sliced = vec[0];
+	std::vector<T> vec_sliced = vec[sstd::slice(1, sstd::end())];
+	std::vector<T> vec_sliced = vec[sstd::slice(sstd::begin(), sstd::end())];
+	std::vector<T> vec_sliced = vec[sstd::slice_mv(sstd::begin(), sstd::end())];
+*/
+
+
+
+//----------------
+/*
+	what i really implimented.
+
+	std::vector<T> vec_sliced = vec[0];
+	std::vector<T> vec_sliced = vec && sstd::range(1, sstd::end());
+	std::vector<T> vec_sliced = vec && sstd::range(sstd::begin(), sstd::end());
+	std::vector<T> vec_sliced = vec && sstd::range_mv(sstd::begin(), sstd::end());
+*/
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-void TEST__slice__call(){
+void TEST__range__call(){
 	namespace std=sstd_stdVector_extensions;
 	
 	printf("imh\n");
@@ -20,10 +41,9 @@ void TEST__slice__call(){
 //	ASSERT_TRUE(vvecTr == vvecAns);
 }
 
-
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-TEST(vector_slice, Tr_1x0){ TEST__slice__call(); }
+TEST(vector_range, slice__call){ TEST__range__call(); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 

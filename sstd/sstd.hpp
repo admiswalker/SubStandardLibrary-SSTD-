@@ -509,7 +509,7 @@ namespace sstd{
 
 #include "./src/linearAlgebra/matCal.hpp"
 #include "./src/matrixContainer_binary/bmat.hpp"
-#include "./src/vector/slice.hpp"
+#include "./src/vector/range.hpp"
 #include "./src/vector/stdVector_expansion.hpp"
 #include "./src/vector/vvec.hpp"
 #include "./src/matrixContainer_colMajor/mat_c.hpp" // Because of this header use "pdbg.hpp", we need to define after namespace sstd{}.

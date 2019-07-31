@@ -42,7 +42,7 @@ void TEST_pause();
 
 // stdVector_expansion of operators
 void TEST_stdVector_expansion();
-#include "./test_vector_slice.hpp"
+#include "./test_vector_range.hpp"
 //#include "./test_vector_vvec.hpp"
 
 // sstd/src/MatrixStore_mat
