@@ -9,9 +9,6 @@
 	std::vector<T> vec_sliced = vec[sstd::slice_mv(sstd::begin(), sstd::end())];
 */
 
-
-
-//----------------
 /*
 	what i really implimented.
 
@@ -24,22 +21,21 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 void TEST__range__call(){
-	namespace std=sstd_stdVector_extensions;
-	
 	printf("imh\n");
-	std::vector<int> vec={1,2,3};
-//	sstd::printn(vec);
 	
+	std::vector<int> vec={1,2,3};
+	std::vector<int> vec_sliced = vec && sstd::range(0, vec.size());
+	ASSERT_TRUE(vec == vec_sliced);
+}	
+//	sstd::printn(vec);
+
 //	std::vector<int> vec_sliced = vec[sstd::slice(1,2)];
-	std::vector<int> vec_sliced = vec[sstd::slice_range()];
+//	std::vector<int> vec_sliced = vec[sstd::slice_range()];
 //	std::vector<int> vec_sliced = vec + sstd::slice_range();
 //	vec[sstd::slice((uint)1,(uint)2)];
 //	sstd::printn(vec_sliced);
-	
-	
-	
+
 //	ASSERT_TRUE(vvecTr == vvecAns);
-}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
