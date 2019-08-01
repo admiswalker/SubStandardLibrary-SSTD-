@@ -5,22 +5,25 @@
 //   This sstd::slice() is implemented to have a same behavior with python slice.
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-/*
-	what i really want.
-	
-	std::vector<T> vec_sliced = vec[0];
-	std::vector<T> vec_sliced = vec[sstd::slice(1, sstd::end())];
-	std::vector<T> vec_sliced = vec[sstd::slice(sstd::begin(), sstd::end())];
-	std::vector<T> vec_sliced = vec[sstd::slice_mv(sstd::begin(), sstd::end())];
-*/
-/*
-	what i really implimented.
 
-	std::vector<T> vec_sliced = vec[0];
-	std::vector<T> vec_sliced = vec && sstd::slice(1, sstd::end());
-	std::vector<T> vec_sliced = vec && sstd::slice(sstd::begin(), sstd::end());
-	std::vector<T> vec_sliced = vec && sstd::slice_mv(sstd::begin(), sstd::end());
-*/
+/*
+ *	what i really want.
+ *	
+ *	std::vector<T> vec_sliced = vec[0];
+ *	std::vector<T> vec_sliced = vec[sstd::slice(1, sstd::end())];
+ *	std::vector<T> vec_sliced = vec[sstd::slice(sstd::begin(), sstd::end())];
+ *	std::vector<T> vec_sliced = vec[sstd::slice_mv(sstd::begin(), sstd::end())];
+ */
+
+/*
+ *	what i really implimented.
+ *
+ *	std::vector<T> vec_sliced = vec[0];
+ *	std::vector<T> vec_sliced = vec && sstd::slice(1, sstd::end());
+ *	std::vector<T> vec_sliced = vec && sstd::slice(sstd::begin(), sstd::end());
+ *	std::vector<T> vec_sliced = vec && sstd::slice_mv(sstd::begin(), sstd::end());
+ */
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 TEST(vector_slice, ii00){

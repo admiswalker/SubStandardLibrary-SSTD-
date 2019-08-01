@@ -1,5 +1,5 @@
 #pragma once
-//#include "../itr.hpp" // definition of sstd::begin() and sstd::end()
+#include "../itr.hpp" // definition of sstd::begin() and sstd::end()
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -8,6 +8,12 @@ namespace sstd_vecSc{
 	struct slice_iu;
 	struct slice_ui;
 	struct slice_uu;
+	
+	struct slice_bi;
+	struct slice_bu;
+	struct slice_ie;
+	struct slice_ue;
+	struct slice_be;
 }
 #define DEF_slice_xx(structName, lhsType, rhsType)						\
 private:													\
@@ -34,15 +40,16 @@ namespace sstd{
 	sstd_vecSc::slice_uu slice(const        uint lhs, const      uint rhs){ return sstd_vecSc::slice_uu(lhs, rhs); }
 	
 	/*
-	sstd_vecSc::slice_b  slice(const sstd::being lhs, const       int rhs);
-	sstd_vecSc::slice_b  slice(const sstd::being lhs, const      uint rhs);
-	sstd_vecSc::slice_e  slice(const         int lhs, const sstd::end rhs);
-	sstd_vecSc::slice_e  slice(const        uint lhs, const sstd::end rhs);
+	sstd_vecSc::slice_bi slice(const sstd::being lhs, const       int rhs);
+	sstd_vecSc::slice_bu slice(const sstd::being lhs, const      uint rhs);
+	sstd_vecSc::slice_ie slice(const         int lhs, const sstd::end rhs);
+	sstd_vecSc::slice_ue slice(const        uint lhs, const sstd::end rhs);
 	sstd_vecSc::slice_be slice(const sstd::being lhs, const sstd::end rhs);
 	//*/
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+
 /*
 class sstd::slice{
 private:
@@ -57,8 +64,7 @@ public:
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-// integer2location
-#define int2loc(i)								\
+#define int2loc(i) /* integer2location */		\
 	if(i<0){ i+=(int)vec.size(); }
 #define DEF_slice_xx_base(lhsLen, rhsLen)								\
 	std::vector<T> ret((uint)rhsLen-(uint)lhsLen);						\
@@ -82,57 +88,6 @@ template <typename T> inline std::vector<T> operator&&(std::vector<T>& lhs, cons
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-	/*
-	sstd::slice_slice slice(const         int rhs);
-	sstd::slice_slice slice(const        uint rhs);
-	
-	sstd::slice_slice slice(const         int lhs, const       int rhs);
-	sstd::slice_slice slice(const         int lhs, const      uint rhs);
-	sstd::slice_slice slice(const        uint lhs, const       int rhs);
-	sstd::slice_slice slice(const        uint lhs, const      uint rhs);
-	//*/
-	/*
-	sstd::slice_slice slice(const sstd::being lhs, const       int rhs);
-	sstd::slice_slice slice(const sstd::being lhs, const      uint rhs);
-	sstd::slice_slice slice(const         int lhs, const sstd::end rhs);
-	sstd::slice_slice slice(const        uint lhs, const sstd::end rhs);
-	sstd::slice_slice slice(const sstd::being lhs, const sstd::end rhs);
-	//*/
-	/*
-	sstd::slice_slice_mv slice_mv(const         int rhs);
-	sstd::slice_slice_mv slice_mv(const        uint rhs);
-	
-	sstd::slice_slice_mv slice_mv(const         int lhs, const       int rhs);
-	sstd::slice_slice_mv slice_mv(const         int lhs, const      uint rhs);
-	sstd::slice_slice_mv slice_mv(const        uint lhs, const       int rhs);
-	sstd::slice_slice_mv slice_mv(const        uint lhs, const      uint rhs);
-	
-	sstd::slice_slice_mv slice_mv(const sstd::being lhs, const       int rhs);
-	sstd::slice_slice_mv slice_mv(const sstd::being lhs, const      uint rhs);
-	sstd::slice_slice_mv slice_mv(const         int lhs, const sstd::end rhs);
-	sstd::slice_slice_mv slice_mv(const        uint lhs, const sstd::end rhs);
-	sstd::slice_slice_mv slice_mv(const sstd::being lhs, const sstd::end rhs);
-	//*/
-
-/*
-template <typename T>
-inline std::vector<T> operator [](std::vector<T>& rhs, sstd::slice_slice lhs){
-//inline std::vector<T> operator +(std::vector<T>& rhs, sstd::slice_slice lhs){
-//std::vector<T> operator[](std::vector<T> rhs, sstd::slice_slice lhs){
-//inline std::vector<T> sstd::operator[](const sstd::slice_slice& rhs){
-//inline std::vector<T> operator[](const sstd::slice_slice& rhs){
-//	for(uint p=0; p<rhs.size(); p++){ rhs[p]--; }
-	return std::vector<T>();
-}//*/
-
-/*
-template <typename T>
-inline std::vector<T> operator[](const sstd::slice_slice& rhs){
-//	for(uint p=0; p<rhs.size(); p++){ rhs[p]--; }
-//	return rhs;
-}//*/
-
-// まずは，演算子が呼び出せるところまで実装して，様子を伺う．
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 

@@ -44,6 +44,7 @@
 #include "./src/strmatch.hpp"
 #include "./src/path.hpp"
 #include "./src/getFilePathInDir.hpp"
+#include "./src/itr.hpp"
 #include "./src/strEdit.hpp"
 #include "./src/tinyInterpreter.hpp"
 #include "./src/csv.hpp"
