@@ -11,9 +11,9 @@ namespace sstd_vecSc{
 }
 #define DEF_slice_xx(structName, lhsType, rhsType)						\
 private:													\
+public:														\
 	lhsType lhs;											\
 	rhsType rhs;											\
-public:														\
 	structName(int64 lhs_in, int64 rhs_in){ lhs=lhs_in; rhs=rhs_in; }	\
 	~structName(){}
 struct sstd_vecSc::slice_ii{ DEF_slice_xx(slice_ii,  int,  int); };
@@ -57,15 +57,16 @@ public:
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-#define int2len(i)								\
-	if(i<0){ i+=typeof(i)vec.size(); }
+// integer2location
+#define int2loc(i)								\
+	if(i<0){ i+=(int)vec.size(); }
 #define DEF_slice_xx_base(lhsLen, rhsLen)								\
 	std::vector<T> ret((uint)rhsLen-(uint)lhsLen);						\
 	for(uint r=0, i=(uint)lhsLen; i<(uint)rhsLen; r++,i++){	ret[r] = vec[i]; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, const sstd_vecSc::slice_ii s){ int2len(s.lhs); int2len(s.rhs); DEF_slice_xx_base(s.lhs, s.rhs); return ret; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, const sstd_vecSc::slice_iu s){ int2len(s.lhs);                 DEF_slice_xx_base(s.lhs, s.rhs); return ret; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, const sstd_vecSc::slice_ui s){                 int2len(s.rhs); DEF_slice_xx_base(s.lhs, s.rhs); return ret; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, const sstd_vecSc::slice_uu s){                                 DEF_slice_xx_base(s.lhs, s.rhs); return ret; }
+template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_ii s){ int2loc(s.lhs); int2loc(s.rhs); DEF_slice_xx_base(s.lhs, s.rhs); return ret; }
+template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_iu s){ int2loc(s.lhs);                 DEF_slice_xx_base(s.lhs, s.rhs); return ret; }
+template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_ui s){                 int2loc(s.rhs); DEF_slice_xx_base(s.lhs, s.rhs); return ret; }
+template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_uu s){                                 DEF_slice_xx_base(s.lhs, s.rhs); return ret; }
 #undef DEF_slice_xx_base
 #undef int2len
 
