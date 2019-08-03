@@ -11,6 +11,19 @@
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+#define DEF_slice_empty(structName)						\
+private:												\
+public:													\
+	structName(){}										\
+	~structName(){}
+
+#define DEF_slice_x(structName, type)						\
+private:													\
+public:														\
+	type val;												\
+	structName(type val_in){ val=val_in; }					\
+	~structName(){}
+
 #define DEF_slice_xx(structName, lhsType, rhsType)			\
 private:													\
 public:														\
@@ -19,20 +32,13 @@ public:														\
 	structName(lhsType lhs_in, rhsType rhs_in){ lhs=lhs_in; rhs=rhs_in; }	\
 	~structName(){}
 
-#define DEF_slice_be(structName, type)						\
-private:													\
-public:														\
-	type val;												\
-	structName(type val_in){ val=val_in; }					\
-	~structName(){}
-
-#define DEF_slice_BE(structName)						\
-private:												\
-public:													\
-	structName(){}										\
-	~structName(){}
-
 namespace sstd_vecSc{
+	struct slice_i { DEF_slice_x (slice_i,    int); };
+	struct slice_u { DEF_slice_x (slice_u,   uint); };
+	struct slice_s { DEF_slice_x (slice_s, size_t); };
+	struct slice_b { DEF_slice_empty(slice_b);      };
+	struct slice_e { DEF_slice_empty(slice_e);      };
+	
 	struct slice_ii{ DEF_slice_xx(slice_ii,    int,    int); };
 	struct slice_iu{ DEF_slice_xx(slice_iu,    int,   uint); };
 	struct slice_is{ DEF_slice_xx(slice_is,    int, size_t); };
@@ -43,15 +49,21 @@ namespace sstd_vecSc{
 	struct slice_su{ DEF_slice_xx(slice_su, size_t,   uint); };
 	struct slice_ss{ DEF_slice_xx(slice_ss, size_t, size_t); };
 	
-	struct slice_bi{ DEF_slice_be(slice_bi,    int); };
-	struct slice_bu{ DEF_slice_be(slice_bu,   uint); };
-	struct slice_bs{ DEF_slice_be(slice_bs, size_t); };
-	struct slice_ie{ DEF_slice_be(slice_ie,    int); };
-	struct slice_ue{ DEF_slice_be(slice_ue,   uint); };
-	struct slice_se{ DEF_slice_be(slice_se, size_t); };
-	struct slice_be{ DEF_slice_BE(slice_be); };
+	struct slice_bi{ DEF_slice_x (slice_bi,    int); };
+	struct slice_bu{ DEF_slice_x (slice_bu,   uint); };
+	struct slice_bs{ DEF_slice_x (slice_bs, size_t); };
+	struct slice_ie{ DEF_slice_x (slice_ie,    int); };
+	struct slice_ue{ DEF_slice_x (slice_ue,   uint); };
+	struct slice_se{ DEF_slice_x (slice_se, size_t); };
+	struct slice_be{ DEF_slice_empty(slice_be);      };
 	
 	//---
+	
+	struct slice_mv_i { DEF_slice_x (slice_mv_i,    int); };
+	struct slice_mv_u { DEF_slice_x (slice_mv_u,   uint); };
+	struct slice_mv_s { DEF_slice_x (slice_mv_s, size_t); };
+	struct slice_mv_b { DEF_slice_empty(slice_mv_b);      };
+	struct slice_mv_e { DEF_slice_empty(slice_mv_e);      };
 	
 	struct slice_mv_ii{ DEF_slice_xx(slice_mv_ii,    int,    int); };
 	struct slice_mv_iu{ DEF_slice_xx(slice_mv_iu,    int,   uint); };
@@ -63,25 +75,27 @@ namespace sstd_vecSc{
 	struct slice_mv_su{ DEF_slice_xx(slice_mv_su, size_t,   uint); };
 	struct slice_mv_ss{ DEF_slice_xx(slice_mv_ss, size_t, size_t); };
 	
-	struct slice_mv_bi{ DEF_slice_be(slice_mv_bi,    int); };
-	struct slice_mv_bu{ DEF_slice_be(slice_mv_bu,   uint); };
-	struct slice_mv_bs{ DEF_slice_be(slice_mv_bs, size_t); };
-	struct slice_mv_ie{ DEF_slice_be(slice_mv_ie,    int); };
-	struct slice_mv_ue{ DEF_slice_be(slice_mv_ue,   uint); };
-	struct slice_mv_se{ DEF_slice_be(slice_mv_se, size_t); };
-	struct slice_mv_be{ DEF_slice_BE(slice_mv_be); };
+	struct slice_mv_bi{ DEF_slice_x (slice_mv_bi,    int); };
+	struct slice_mv_bu{ DEF_slice_x (slice_mv_bu,   uint); };
+	struct slice_mv_bs{ DEF_slice_x (slice_mv_bs, size_t); };
+	struct slice_mv_ie{ DEF_slice_x (slice_mv_ie,    int); };
+	struct slice_mv_ue{ DEF_slice_x (slice_mv_ue,   uint); };
+	struct slice_mv_se{ DEF_slice_x (slice_mv_se, size_t); };
+	struct slice_mv_be{ DEF_slice_empty(slice_mv_be);      };
 }
 
-#undef DEF_slice_BE
-#undef DEF_slice_be
+#undef DEF_slice_empty
+#undef DEF_slice_x
 #undef DEF_slice_xx
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 namespace sstd{
-//	sstd_vecSc::slice slice(const         int rhs);
-//	sstd_vecSc::slice slice(const        uint rhs);
-//	sstd_vecSc::slice slice(const      size_t rhs);
+	sstd_vecSc::slice_i slice_i(const         int val){ return sstd_vecSc::slice_i(val); }
+	sstd_vecSc::slice_u slice_u(const        uint val){ return sstd_vecSc::slice_u(val); }
+	sstd_vecSc::slice_s slice_s(const      size_t val){ return sstd_vecSc::slice_s(val); }
+	sstd_vecSc::slice_b slice_b(const sstd::begin val){ return sstd_vecSc::slice_b();    }
+	sstd_vecSc::slice_e slice_e(const sstd::end   val){ return sstd_vecSc::slice_e();    }
 	
 	sstd_vecSc::slice_ii slice(const         int lhs, const       int rhs){ return sstd_vecSc::slice_ii(lhs, rhs); }
 	sstd_vecSc::slice_iu slice(const         int lhs, const      uint rhs){ return sstd_vecSc::slice_iu(lhs, rhs); }
@@ -102,6 +116,12 @@ namespace sstd{
 	sstd_vecSc::slice_be slice(const sstd::begin lhs, const sstd::end rhs){ return sstd_vecSc::slice_be();    }
 	
 	//---
+	
+	sstd_vecSc::slice_mv_i slice_mv(const         int val){ return sstd_vecSc::slice_mv_i(val); }
+	sstd_vecSc::slice_mv_u slice_mv(const        uint val){ return sstd_vecSc::slice_mv_u(val); }
+	sstd_vecSc::slice_mv_s slice_mv(const      size_t val){ return sstd_vecSc::slice_mv_s(val); }
+	sstd_vecSc::slice_mv_b slice_mv(const sstd::begin val){ return sstd_vecSc::slice_mv_b();    }
+	sstd_vecSc::slice_mv_e slice_mv(const sstd::end   val){ return sstd_vecSc::slice_mv_e();    }
 	
 	sstd_vecSc::slice_mv_ii slice_mv(const         int lhs, const       int rhs){ return sstd_vecSc::slice_mv_ii(lhs, rhs); }
 	sstd_vecSc::slice_mv_iu slice_mv(const         int lhs, const      uint rhs){ return sstd_vecSc::slice_mv_iu(lhs, rhs); }
@@ -126,9 +146,17 @@ namespace sstd{
 
 #define int2loc(i) /* integer2location */		\
 	if(i<0){ i+=(int)vec.size(); }
-#define DEF_slice_xx_base(CAST_VAL, lhsLen, rhsLen)						\
-	std::vector<T> ret((uint)rhsLen-(uint)lhsLen);						\
-	for(uint r=0, i=(uint)lhsLen; i<(uint)rhsLen; r++,i++){	ret[r] = (CAST_VAL)(vec[i]); }
+#define DEF_slice_x_base(CAST_VAL, valLoc)		\
+	std::vector<T> ret = (CAST_VAL)(vec[valLoc]);
+#define DEF_slice_xx_base(CAST_VAL, lhsLoc, rhsLoc)						\
+	std::vector<T> ret((uint)rhsLoc-(uint)lhsLoc);						\
+	for(uint r=0, i=(uint)lhsLoc; i<(uint)rhsLoc; r++,i++){	ret[r] = (CAST_VAL)(vec[i]); }
+
+template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_i s){ int2loc(s.val); DEF_slice_x_base(T,      s.val); return ret; }
+template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_u s){                 DEF_slice_x_base(T,      s.val); return ret; }
+template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_s s){                 DEF_slice_x_base(T,      s.val); return ret; }
+template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_b s){                 DEF_slice_x_base(T,    (uint)0); return ret; }
+template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_e s){                 DEF_slice_x_base(T, vec.size()); return ret; }
 
 template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_ii s){ int2loc(s.lhs); int2loc(s.rhs); DEF_slice_xx_base(T, s.lhs, s.rhs); return ret; }
 template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_iu s){ int2loc(s.lhs);                 DEF_slice_xx_base(T, s.lhs, s.rhs); return ret; }
@@ -149,6 +177,12 @@ template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec
 template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_be s){                                 DEF_slice_xx_base(T, (uint)0, vec.size()); return ret; }
 
 //---
+
+template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_i s){ int2loc(s.val); DEF_slice_x_base(std::move,      s.val); return ret; }
+template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_u s){                 DEF_slice_x_base(std::move,      s.val); return ret; }
+template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_s s){                 DEF_slice_x_base(std::move,      s.val); return ret; }
+template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_b s){                 DEF_slice_x_base(std::move,    (uint)0); return ret; }
+template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_e s){                 DEF_slice_x_base(std::move, vec.size()); return ret; }
 
 template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_ii s){ int2loc(s.lhs); int2loc(s.rhs); DEF_slice_xx_base(std::move, s.lhs, s.rhs); return ret; }
 template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_iu s){ int2loc(s.lhs);                 DEF_slice_xx_base(std::move, s.lhs, s.rhs); return ret; }
@@ -172,12 +206,3 @@ template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec
 #undef int2len
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-
-/*
-template <typename T> inline std::vector<T> operator&&(std::vector<T>& lhs, const sstd_vecSc::slice_mv    rhs){ return Func<T>(lhs, rhs); }
-template <typename T> inline std::vector<T> operator&&(std::vector<T>& lhs, const sstd_vecSc::slice_mv_b  rhs){ return Func<T>(lhs, rhs); }
-template <typename T> inline std::vector<T> operator&&(std::vector<T>& lhs, const sstd_vecSc::slice_mv_e  rhs){ return Func<T>(lhs, rhs); }
-template <typename T> inline std::vector<T> operator&&(std::vector<T>& lhs, const sstd_vecSc::slice_mv_be rhs){ return Func<T>(lhs, rhs); }
-//*/
-//-----------------------------------------------------------------------------------------------------------------------------------------------
-

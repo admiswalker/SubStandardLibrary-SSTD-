@@ -25,6 +25,7 @@
  */
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// slice xx
 
 TEST(vector_slice, ii00){
 	std::vector<int> vec    ={1,2,3,4,5};
@@ -118,6 +119,7 @@ TEST(vector_slice, ss00){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// slice be
 
 TEST(vector_slice, bi00){
 	std::vector<int> vec    ={1,2,3,4,5};
@@ -161,11 +163,106 @@ TEST(vector_slice, be00){
 	ASSERT_TRUE(vec == vec_sliced);
 }
 
-//------
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// slice mv xx
 
-
-
+TEST(vector_slice_mv, ii00){
+	std::vector<int> vec    ={1,2,3,4,5};
+	std::vector<int> vec_ans={1,2,3,4  };
+	std::vector<int> vec_sliced = vec && sstd::slice_mv((int)0, (int)-1);
+	ASSERT_TRUE(vec_ans == vec_sliced);
+}
+TEST(vector_slice_mv, iu00){
+	std::vector<int> vec    ={1,2,3,4,5};
+	std::vector<int> vec_ans={1,2,3,4  };
+	std::vector<int> vec_sliced = vec && sstd::slice_mv((int)0, (uint)4);
+	ASSERT_TRUE(vec_ans == vec_sliced);
+}
+TEST(vector_slice_mv, is00){
+	std::vector<int> vec    ={1,2,3,4,5};
+	std::vector<int> vec_ans={  2,3,4,5};
+	std::vector<int> vec_sliced = vec && sstd::slice_mv((int)-4, vec.size());
+	ASSERT_TRUE(vec_ans == vec_sliced);
+}
+//---
+TEST(vector_slice_mv, ui00){
+	std::vector<int> vec    ={1,2,3,4,5};
+	std::vector<int> vec_ans={1,2,3,4  };
+	std::vector<int> vec_sliced = vec && sstd::slice_mv((uint)0, (int)-1);
+	ASSERT_TRUE(vec_ans == vec_sliced);
+}
+TEST(vector_slice_mv, uu00){
+	std::vector<int> vec={1,2,3,4,5};
+	std::vector<int> vec_sliced = vec && sstd::slice_mv((uint)0, (uint)vec.size());
+	ASSERT_TRUE(vec == vec_sliced);
+}
+TEST(vector_slice_mv, us00){
+	std::vector<int> vec={1,2,3,4,5};
+	std::vector<int> vec_sliced = vec && sstd::slice_mv((uint)0, vec.size());
+	ASSERT_TRUE(vec == vec_sliced);
+}
+//---
+TEST(vector_slice_mv, si00){
+	std::vector<int> vec    ={1,2,3,4,5};
+	std::vector<int> vec_ans={1,2,3,4  };
+	std::vector<int> vec_sliced = vec && sstd::slice_mv((size_t)0, (int)-1);
+	ASSERT_TRUE(vec_ans == vec_sliced);
+}
+TEST(vector_slice_mv, su00){
+	std::vector<int> vec    ={1,2,3,4,5};
+	std::vector<int> vec_sliced = vec && sstd::slice_mv((size_t)0, (uint)vec.size());
+	ASSERT_TRUE(vec == vec_sliced);
+}
+TEST(vector_slice_mv, ss00){
+	std::vector<int> vec    ={1,2,3,4,5};
+	std::vector<int> vec_sliced = vec && sstd::slice_mv((size_t)0, vec.size());
+	ASSERT_TRUE(vec == vec_sliced);
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// slice mv be
 
+TEST(vector_slice_mv, bi00){
+	std::vector<int> vec    ={1,2,3,4,5};
+	std::vector<int> vec_ans={1,2,3,4  };
+	std::vector<int> vec_sliced = vec && sstd::slice_mv(sstd::begin(), (int)-1);
+	ASSERT_TRUE(vec_ans == vec_sliced);
+}
+TEST(vector_slice_mv, bu00){
+	std::vector<int> vec    ={1,2,3,4,5};
+	std::vector<int> vec_sliced = vec && sstd::slice_mv(sstd::begin(), (uint)vec.size());
+	ASSERT_TRUE(vec == vec_sliced);
+}
+TEST(vector_slice_mv, bs00){
+	std::vector<int> vec    ={1,2,3,4,5};
+	std::vector<int> vec_sliced = vec && sstd::slice_mv(sstd::begin(), vec.size());
+	ASSERT_TRUE(vec == vec_sliced);
+}
+//---
+TEST(vector_slice_mv, ie00){
+	std::vector<int> vec    ={1,2,3,4,5};
+	std::vector<int> vec_ans={    3,4,5};
+	std::vector<int> vec_sliced = vec && sstd::slice_mv(-3, sstd::end());
+	ASSERT_TRUE(vec_ans == vec_sliced);
+}
+TEST(vector_slice_mv, ue00){
+	std::vector<int> vec    ={1,2,3,4,5};
+	std::vector<int> vec_ans={    3,4,5};
+	std::vector<int> vec_sliced = vec && sstd::slice_mv(2, sstd::end());
+	ASSERT_TRUE(vec_ans == vec_sliced);
+}
+TEST(vector_slice_mv, se00){
+	std::vector<int> vec    ={1,2,3,4,5};
+	std::vector<int> vec_ans={    3,4,5};
+	std::vector<int> vec_sliced = vec && sstd::slice_mv((size_t)2, sstd::end());
+	ASSERT_TRUE(vec_ans == vec_sliced);
+}
+//---
+TEST(vector_slice_mv, be00){
+	std::vector<int> vec={1,2,3,4,5};
+	std::vector<int> vec_sliced = vec && sstd::slice_mv(sstd::begin(), sstd::end());
+	ASSERT_TRUE(vec == vec_sliced);
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
