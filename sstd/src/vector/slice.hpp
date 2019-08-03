@@ -91,11 +91,11 @@ namespace sstd_vecSc{
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 namespace sstd{
-	sstd_vecSc::slice_i slice_i(const         int val){ return sstd_vecSc::slice_i(val); }
-	sstd_vecSc::slice_u slice_u(const        uint val){ return sstd_vecSc::slice_u(val); }
-	sstd_vecSc::slice_s slice_s(const      size_t val){ return sstd_vecSc::slice_s(val); }
-	sstd_vecSc::slice_b slice_b(const sstd::begin val){ return sstd_vecSc::slice_b();    }
-	sstd_vecSc::slice_e slice_e(const sstd::end   val){ return sstd_vecSc::slice_e();    }
+	sstd_vecSc::slice_i  slice(const         int val){ return sstd_vecSc::slice_i(val); }
+	sstd_vecSc::slice_u  slice(const        uint val){ return sstd_vecSc::slice_u(val); }
+	sstd_vecSc::slice_s  slice(const      size_t val){ return sstd_vecSc::slice_s(val); }
+	sstd_vecSc::slice_b  slice(const sstd::begin val){ return sstd_vecSc::slice_b();    }
+	sstd_vecSc::slice_e  slice(const sstd::end   val){ return sstd_vecSc::slice_e();    }
 	
 	sstd_vecSc::slice_ii slice(const         int lhs, const       int rhs){ return sstd_vecSc::slice_ii(lhs, rhs); }
 	sstd_vecSc::slice_iu slice(const         int lhs, const      uint rhs){ return sstd_vecSc::slice_iu(lhs, rhs); }
@@ -117,11 +117,11 @@ namespace sstd{
 	
 	//---
 	
-	sstd_vecSc::slice_mv_i slice_mv(const         int val){ return sstd_vecSc::slice_mv_i(val); }
-	sstd_vecSc::slice_mv_u slice_mv(const        uint val){ return sstd_vecSc::slice_mv_u(val); }
-	sstd_vecSc::slice_mv_s slice_mv(const      size_t val){ return sstd_vecSc::slice_mv_s(val); }
-	sstd_vecSc::slice_mv_b slice_mv(const sstd::begin val){ return sstd_vecSc::slice_mv_b();    }
-	sstd_vecSc::slice_mv_e slice_mv(const sstd::end   val){ return sstd_vecSc::slice_mv_e();    }
+	sstd_vecSc::slice_mv_i  slice_mv(const         int val){ return sstd_vecSc::slice_mv_i(val); }
+	sstd_vecSc::slice_mv_u  slice_mv(const        uint val){ return sstd_vecSc::slice_mv_u(val); }
+	sstd_vecSc::slice_mv_s  slice_mv(const      size_t val){ return sstd_vecSc::slice_mv_s(val); }
+	sstd_vecSc::slice_mv_b  slice_mv(const sstd::begin val){ return sstd_vecSc::slice_mv_b();    }
+	sstd_vecSc::slice_mv_e  slice_mv(const sstd::end   val){ return sstd_vecSc::slice_mv_e();    }
 	
 	sstd_vecSc::slice_mv_ii slice_mv(const         int lhs, const       int rhs){ return sstd_vecSc::slice_mv_ii(lhs, rhs); }
 	sstd_vecSc::slice_mv_iu slice_mv(const         int lhs, const      uint rhs){ return sstd_vecSc::slice_mv_iu(lhs, rhs); }
@@ -147,16 +147,16 @@ namespace sstd{
 #define int2loc(i) /* integer2location */		\
 	if(i<0){ i+=(int)vec.size(); }
 #define DEF_slice_x_base(CAST_VAL, valLoc)		\
-	std::vector<T> ret = (CAST_VAL)(vec[valLoc]);
+	std::vector<T> ret = std::vector<T>{(CAST_VAL)(vec[valLoc])};
 #define DEF_slice_xx_base(CAST_VAL, lhsLoc, rhsLoc)						\
 	std::vector<T> ret((uint)rhsLoc-(uint)lhsLoc);						\
 	for(uint r=0, i=(uint)lhsLoc; i<(uint)rhsLoc; r++,i++){	ret[r] = (CAST_VAL)(vec[i]); }
 
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_i s){ int2loc(s.val); DEF_slice_x_base(T,      s.val); return ret; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_u s){                 DEF_slice_x_base(T,      s.val); return ret; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_s s){                 DEF_slice_x_base(T,      s.val); return ret; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_b s){                 DEF_slice_x_base(T,    (uint)0); return ret; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_e s){                 DEF_slice_x_base(T, vec.size()); return ret; }
+template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_i  s){ int2loc(s.val); DEF_slice_x_base(T,      s.val); return ret; }
+template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_u  s){                 DEF_slice_x_base(T,      s.val); return ret; }
+template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_s  s){                 DEF_slice_x_base(T,      s.val); return ret; }
+template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_b  s){                 DEF_slice_x_base(T,    (uint)0); return ret; }
+template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_e  s){                 DEF_slice_x_base(T, vec.size()-1); return ret; }
 
 template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_ii s){ int2loc(s.lhs); int2loc(s.rhs); DEF_slice_xx_base(T, s.lhs, s.rhs); return ret; }
 template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_iu s){ int2loc(s.lhs);                 DEF_slice_xx_base(T, s.lhs, s.rhs); return ret; }
@@ -178,31 +178,32 @@ template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec
 
 //---
 
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_i s){ int2loc(s.val); DEF_slice_x_base(std::move,      s.val); return ret; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_u s){                 DEF_slice_x_base(std::move,      s.val); return ret; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_s s){                 DEF_slice_x_base(std::move,      s.val); return ret; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_b s){                 DEF_slice_x_base(std::move,    (uint)0); return ret; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_e s){                 DEF_slice_x_base(std::move, vec.size()); return ret; }
+template <typename T> inline std::vector<T> operator&&(      std::vector<T>& vec, sstd_vecSc::slice_mv_i  s){ int2loc(s.val); DEF_slice_x_base(std::move,      s.val); return ret; }
+template <typename T> inline std::vector<T> operator&&(      std::vector<T>& vec, sstd_vecSc::slice_mv_u  s){                 DEF_slice_x_base(std::move,      s.val); return ret; }
+template <typename T> inline std::vector<T> operator&&(      std::vector<T>& vec, sstd_vecSc::slice_mv_s  s){                 DEF_slice_x_base(std::move,      s.val); return ret; }
+template <typename T> inline std::vector<T> operator&&(      std::vector<T>& vec, sstd_vecSc::slice_mv_b  s){                 DEF_slice_x_base(std::move,    (uint)0); return ret; }
+template <typename T> inline std::vector<T> operator&&(      std::vector<T>& vec, sstd_vecSc::slice_mv_e  s){                 DEF_slice_x_base(std::move, vec.size()-1); return ret; }
 
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_ii s){ int2loc(s.lhs); int2loc(s.rhs); DEF_slice_xx_base(std::move, s.lhs, s.rhs); return ret; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_iu s){ int2loc(s.lhs);                 DEF_slice_xx_base(std::move, s.lhs, s.rhs); return ret; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_is s){ int2loc(s.lhs);                 DEF_slice_xx_base(std::move, s.lhs, s.rhs); return ret; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_ui s){                 int2loc(s.rhs); DEF_slice_xx_base(std::move, s.lhs, s.rhs); return ret; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_uu s){                                 DEF_slice_xx_base(std::move, s.lhs, s.rhs); return ret; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_us s){                                 DEF_slice_xx_base(std::move, s.lhs, s.rhs); return ret; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_si s){                 int2loc(s.rhs); DEF_slice_xx_base(std::move, s.lhs, s.rhs); return ret; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_su s){                                 DEF_slice_xx_base(std::move, s.lhs, s.rhs); return ret; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_ss s){                                 DEF_slice_xx_base(std::move, s.lhs, s.rhs); return ret; }
+template <typename T> inline std::vector<T> operator&&(      std::vector<T>& vec, sstd_vecSc::slice_mv_ii s){ int2loc(s.lhs); int2loc(s.rhs); DEF_slice_xx_base(std::move, s.lhs, s.rhs); return ret; }
+template <typename T> inline std::vector<T> operator&&(      std::vector<T>& vec, sstd_vecSc::slice_mv_iu s){ int2loc(s.lhs);                 DEF_slice_xx_base(std::move, s.lhs, s.rhs); return ret; }
+template <typename T> inline std::vector<T> operator&&(      std::vector<T>& vec, sstd_vecSc::slice_mv_is s){ int2loc(s.lhs);                 DEF_slice_xx_base(std::move, s.lhs, s.rhs); return ret; }
+template <typename T> inline std::vector<T> operator&&(      std::vector<T>& vec, sstd_vecSc::slice_mv_ui s){                 int2loc(s.rhs); DEF_slice_xx_base(std::move, s.lhs, s.rhs); return ret; }
+template <typename T> inline std::vector<T> operator&&(      std::vector<T>& vec, sstd_vecSc::slice_mv_uu s){                                 DEF_slice_xx_base(std::move, s.lhs, s.rhs); return ret; }
+template <typename T> inline std::vector<T> operator&&(      std::vector<T>& vec, sstd_vecSc::slice_mv_us s){                                 DEF_slice_xx_base(std::move, s.lhs, s.rhs); return ret; }
+template <typename T> inline std::vector<T> operator&&(      std::vector<T>& vec, sstd_vecSc::slice_mv_si s){                 int2loc(s.rhs); DEF_slice_xx_base(std::move, s.lhs, s.rhs); return ret; }
+template <typename T> inline std::vector<T> operator&&(      std::vector<T>& vec, sstd_vecSc::slice_mv_su s){                                 DEF_slice_xx_base(std::move, s.lhs, s.rhs); return ret; }
+template <typename T> inline std::vector<T> operator&&(      std::vector<T>& vec, sstd_vecSc::slice_mv_ss s){                                 DEF_slice_xx_base(std::move, s.lhs, s.rhs); return ret; }
 
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_bi s){                 int2loc(s.val); DEF_slice_xx_base(std::move, (uint)0,      s.val); return ret; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_bu s){                                 DEF_slice_xx_base(std::move, (uint)0,      s.val); return ret; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_bs s){                                 DEF_slice_xx_base(std::move, (uint)0,      s.val); return ret; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_ie s){ int2loc(s.val);                 DEF_slice_xx_base(std::move,   s.val, vec.size()); return ret; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_ue s){                                 DEF_slice_xx_base(std::move,   s.val, vec.size()); return ret; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_se s){                                 DEF_slice_xx_base(std::move,   s.val, vec.size()); return ret; }
-template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_mv_be s){                                 DEF_slice_xx_base(std::move, (uint)0, vec.size()); return ret; }
+template <typename T> inline std::vector<T> operator&&(      std::vector<T>& vec, sstd_vecSc::slice_mv_bi s){                 int2loc(s.val); DEF_slice_xx_base(std::move, (uint)0,      s.val); return ret; }
+template <typename T> inline std::vector<T> operator&&(      std::vector<T>& vec, sstd_vecSc::slice_mv_bu s){                                 DEF_slice_xx_base(std::move, (uint)0,      s.val); return ret; }
+template <typename T> inline std::vector<T> operator&&(      std::vector<T>& vec, sstd_vecSc::slice_mv_bs s){                                 DEF_slice_xx_base(std::move, (uint)0,      s.val); return ret; }
+template <typename T> inline std::vector<T> operator&&(      std::vector<T>& vec, sstd_vecSc::slice_mv_ie s){ int2loc(s.val);                 DEF_slice_xx_base(std::move,   s.val, vec.size()); return ret; }
+template <typename T> inline std::vector<T> operator&&(      std::vector<T>& vec, sstd_vecSc::slice_mv_ue s){                                 DEF_slice_xx_base(std::move,   s.val, vec.size()); return ret; }
+template <typename T> inline std::vector<T> operator&&(      std::vector<T>& vec, sstd_vecSc::slice_mv_se s){                                 DEF_slice_xx_base(std::move,   s.val, vec.size()); return ret; }
+template <typename T> inline std::vector<T> operator&&(      std::vector<T>& vec, sstd_vecSc::slice_mv_be s){                                 DEF_slice_xx_base(std::move, (uint)0, vec.size()); return ret; }
 
 #undef DEF_slice_xx_base
+#undef DEF_slice_x_base
 #undef int2len
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
