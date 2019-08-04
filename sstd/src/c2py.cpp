@@ -1,5 +1,6 @@
 ﻿#include "c2py.hpp"
-#include "str2num.hpp"
+#include "./typeConversion.hpp"
+
 
 /*
  * NumPy の内部型を定義できれば事足りる．

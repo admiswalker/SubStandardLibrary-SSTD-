@@ -39,7 +39,7 @@
 #include "./src/file_c.hpp"
 #include "./src/mkdir.hpp"
 #include "./src/rm.hpp"
-#include "./src/str2num.hpp"
+#include "./src/typeConversion.hpp"
 #include "./src/ssprintf.hpp"
 #include "./src/strmatch.hpp"
 #include "./src/path.hpp"
@@ -368,10 +368,15 @@ namespace sstd{
 	extern bool getAllFile(std::vector<std::string>& ret, const char* pPath);              // get all file path in the directory
 	extern bool getAllDir (std::vector<std::string>& ret, const char* pPath);              // get all directory path in the directory
 	
-	// #include "./src/str2num.hpp" // using std::stod and std::stoi, but probably it might be slow in parse.
-	extern double str2double(const std::string& rhs);
-	extern int str2int(const std::string& rhs); // 小数点以下，切り捨て
-
+	// #include "./src/typeConversion.hpp" // using std::stod and std::stoi, but probably it might be slow in parse.
+	extern int    str2int   (const std::string& rhs); // 小数点以下，切り捨て
+	extern                         double   str2double(const                         std::string  & rhs);
+	extern             std::vector<double>  str2double(const             std::vector<std::string> & rhs);
+	extern std::vector<std::vector<double>> str2double(const std::vector<std::vector<std::string>>& rhs);
+	extern                         std::string   double2str(const                         double  & rhs);
+	extern             std::vector<std::string>  double2str(const             std::vector<double> & rhs);
+	extern std::vector<std::vector<std::string>> double2str(const std::vector<std::vector<double>>& rhs);
+	
 	// #include "./src/ssprintf.hpp"
 	extern std::string ssprintf(const char* format, ...);
 

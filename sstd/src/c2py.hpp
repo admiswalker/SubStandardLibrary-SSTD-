@@ -21,7 +21,6 @@
 #include "./time.hpp"
 #include "./strEdit.hpp"
 #include "./path.hpp"
-#include "./str2num.hpp"
 #include "./pid.hpp"
 #include "./matrixContainer_colMajor/mat_c.hpp"
 #include "./matrixContainer_rowMajor/mat_r.hpp"

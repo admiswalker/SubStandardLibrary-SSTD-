@@ -13,36 +13,36 @@
 // 順次 google test へ移行すること．
 
 // sstd/src
-//#include "test_measureTime.hpp"
+//#include "./test_c2py.hpp"
+//#include "./test_csv.hpp"
 void TEST_time();
 void TEST_typeDef();
 void TEST_pdbg();
 // void pdbg(){ printf("======p\n"); } // #define DEBUG を定義しない場合でも，マクロでこの名前は使えなくなるので，名前空間を汚しており，本当はよくない．
 //#include "./test_print_printn_printn_all.hpp"
 void TEST_math();
+//#include "test_measureTime.hpp"
 void TEST_signal();
 void TEST_file();
 void TEST_file_c();
 void TEST_mkdir();
 void TEST_rm();
-void TEST_str2num();
 void TEST_ssprintf();
 void TEST_strmatch();
 void TEST_path();
 void TEST_getFilePathInDir();
 void TEST_strEdit();        // テストを書くように．
 void TEST_tinyInterpreter();
-#include "./test_csv.hpp"
+#include "./test_typeConversion.hpp"
 void TEST_encode_decode();
 void TEST_hashFnc();
 void TEST_pause();
-//#include "./test_c2py.hpp"
 //void TEST_getpid();        // テストを書くように．
 //#include "./test_status.hpp"
 
 // stdVector_expansion of operators
 void TEST_stdVector_expansion();
-#include "./test_vector_slice.hpp"
+//#include "./test_vector_slice.hpp"
 //#include "./test_vector_vvec.hpp"
 
 // sstd/src/MatrixStore_mat
