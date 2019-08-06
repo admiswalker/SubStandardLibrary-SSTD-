@@ -32,7 +32,7 @@ TEST(csv, csv2vvec){
 	}
 	printf("----\n");
 }
-TEST(csv, vvec2csvPath){
+TEST(csv, vvec2csv){
 	sstd::mkdir("./tmp");
 	std::vector<std::vector<std::string>> csv = sstd::csv2vvec(R"(./parseCSV.csv)");
 	
@@ -42,5 +42,19 @@ TEST(csv, vvec2csvPath){
 	
 	ASSERT_TRUE(csv == csv_re);
 	sstd::rm("./tmp");
+}
+TEST(csv, csv2vvec_vvec2csv_std_string){
+	std::string tmpDir = R"(./tmp)";
+	sstd::mkdir(tmpDir);
+	
+	std::string exCSV = R"(./parseCSV.csv)";
+	std::vector<std::vector<std::string>> csv = sstd::csv2vvec(exCSV);
+	
+	std::string path = tmpDir + R"(/test_vvec2csvPath.csv)";
+	bool result = sstd::vvec2csv(path, csv); ASSERT_TRUE( result );
+	std::vector<std::vector<std::string>> csv_re = sstd::csv2vvec(path);
+	
+	ASSERT_TRUE(csv == csv_re);
+	sstd::rm(tmpDir);
 }
 

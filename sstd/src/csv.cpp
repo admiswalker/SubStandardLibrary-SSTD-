@@ -102,6 +102,9 @@ std::vector<std::vector<std::string>> sstd::csv2vvec(const char* pReadFile){
 	
 	return ret;
 }
+std::vector<std::vector<std::string>> sstd::csv2vvec(const std::string& readFile){
+	return sstd::csv2vvec(readFile.c_str());
+}
 
 //-----
 
@@ -121,4 +124,8 @@ bool sstd::vvec2csv(const char* pSavePath, const std::vector<std::vector<std::st
 	
 	return true;
 }
+bool sstd::vvec2csv(const std::string& savePath, const std::vector<std::vector<std::string>>& vecCSV){
+	return sstd::vvec2csv(savePath.c_str(), vecCSV);
+}
+
 
