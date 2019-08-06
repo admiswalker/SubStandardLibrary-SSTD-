@@ -3,7 +3,7 @@
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------f
 // need to add
-//  - push_front(): <<, <<=
+//  - push_front(): >>, >>=
 //  - enable std::move() on push_front() and push_back()
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------f
@@ -129,7 +129,7 @@ inline std::vector<T> sstd_stdVecEx::push_back(const std::vector<T>& lhs, const 
 	std::vector<T> ret(lhs.size()+rhs.size());
 	uint i=0;
 	for(uint p=0; p<lhs.size(); p++){ ret[i]=lhs[p]; i++; }
-	for(uint p=0; p<rhs.size(); p++){ ret[i]=lhs[p]; i++; }
+	for(uint p=0; p<rhs.size(); p++){ ret[i]=rhs[p]; i++; }
 	return ret;
 }
 template <typename T, typename rhsType>
