@@ -14,7 +14,7 @@
 
 // sstd/src
 //#include "./test_c2py.hpp"
-//#include "./test_csv.hpp"
+#include "./test_csv.hpp"
 void TEST_time();
 void TEST_typeDef();
 void TEST_pdbg();
@@ -33,7 +33,7 @@ void TEST_path();
 void TEST_getFilePathInDir();
 void TEST_strEdit();        // テストを書くように．
 void TEST_tinyInterpreter();
-#include "./test_typeConversion.hpp"
+//#include "./test_typeConversion.hpp"
 void TEST_encode_decode();
 void TEST_hashFnc();
 void TEST_pause();

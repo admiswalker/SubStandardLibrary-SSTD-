@@ -2,6 +2,7 @@
 #include "./tinyInterpreter.hpp"
 #include "./strEdit.hpp"
 #include "./path.hpp"
+#include "./file.hpp"
 
 
 // erasing empty element(s) in the tail of vector
@@ -85,11 +86,11 @@ std::vector<std::vector<std::string>> sstd::csvPath2vvec(const char* pReadFile){
 	std::string str = sstd::readAll_withoutBOM(pReadFile);
 	
 	std::vector<std::vector<std::string>> ret;
-
+	
 	struct debugInformation dbgInf;
 	dbgInf.FileName = sstd::getFileName(pReadFile);
 	dbgInf.LineNum  = 1;
-
+	
 	bool result;
 	for(; str[r]!=0; ){
 		std::vector<std::string> line = getLine(result, (uchar*)&str[0], r, dbgInf);
@@ -100,5 +101,24 @@ std::vector<std::vector<std::string>> sstd::csvPath2vvec(const char* pReadFile){
 	eraseEmptyTail(ret);
 	
 	return ret;
+}
+
+//-----
+
+bool sstd::vvec2csvPath(const char* pSavePath, const std::vector<std::vector<std::string>>& vecCSV){
+	
+	std::string str;
+	for(uint r=0; r<vecCSV.size(); r++){
+		for(uint c=0; c<vecCSV[r].size(); c++){
+			str += '\"' + vecCSV[r][c] + "\",";
+		}
+		str += '\n';
+	}
+	
+	sstd::file fp;
+	if(!fp.fopen(pSavePath, "wb")){ return false; }
+	if(fp.fwrite(str.c_str(), sizeof(char), str.size())!=(size_t)str.size()){ return false; }
+	
+	return true;
 }
 
