@@ -14,7 +14,7 @@
 
 // sstd/src
 //#include "./test_c2py.hpp"
-#include "./test_csv.hpp"
+//#include "./test_csv.hpp"
 void TEST_time();
 void TEST_typeDef();
 void TEST_pdbg();
@@ -40,8 +40,7 @@ void TEST_pause();
 //void TEST_getpid();        // テストを書くように．
 //#include "./test_status.hpp"
 
-// stdVector_expansion of operators
-void TEST_stdVector_expansion();
+#include "./test_vector_stdVector_expansion.hpp" // stdVector_expansion of operators
 //#include "./test_vector_slice.hpp"
 //#include "./test_vector_vvec.hpp"
 
@@ -84,8 +83,6 @@ int main(int argc, char** argv){
 //	TEST_encode_decode();
 //	TEST_hashFnc();
 //	TEST_pause();
-	
-//	TEST_stdVector_expansion();
 	
 //	TEST_mat_colMajor(); // TODO: write tests (zeros, Tr) // sstd::print 関数のテストを書くように
 //	TEST_mat_rowMajor(); // TODO: write tests (zeros, Tr) // sstd::print 関数のテストを書くように
@@ -749,92 +746,6 @@ void TEST_pause(){
 //	printf("■ #define UsePauseIfWin32\n");
 	sstd::pauseIfWin32(); // win32 の場合のみ停止
 //	printf("\n");
-}
-
-//-----------------------------------------------------------------------
-
-void TEST_stdVector_expansion(){
-	printf("== sstd_stdVector_expansion ==\n\n");
-	
-	// 算術演算子以外にも，<< 演算や，| 演算子によって，結合を定義するとよい．
-	
-	std::vector<double> lhs={1, 2, 3}, rhs={1, 2, 3};
-//	std::vector<int> lhsInt={1, 2, 3}, rhsInt={1, 2, 3};
-	std::vector<uint32> lhsInt={1, 2, 3}, rhsInt={1, 2, 3};
-
-	printf("■ plus\n");
-	sstd::printn_all(lhs+rhs);
-	
-	sstd::printn_all(lhs+(int8)10);
-	sstd::printn_all(lhs+(uint32)10);
-	sstd::printn_all(lhs+(double)10);
-	sstd::printn_all(lhsInt+(double)10);
-	
-	sstd::printn_all((int8)10+lhs);
-	// XXX 次はこれを実装する XXX
-	sstd::printn_all(lhs+=rhs);
-	sstd::printn_all(lhs+=(double)10);
-	// ++
-	printf("\n");
-	
-	printf("■ minus\n");
-	sstd::printn_all(lhs-=(double)10);
-	sstd::printn_all(lhs-=rhs);
-	sstd::printn_all(lhs-rhs);
-	sstd::printn_all(lhs-(int8)10);
-	sstd::printn_all((int8)10-lhs);
-	// XXX 次はこれを実装する XXX
-	// --
-	printf("\n");
-	
-	printf("■ multiplication\n");
-	sstd::printn_all(lhs*rhs);
-	sstd::printn_all(lhs*(int8)10);
-	sstd::printn_all((int8)10*lhs);
-	sstd::printn_all(lhs*=rhs);
-	sstd::printn_all(lhs*=(double)10);
-	printf("\n");
-	
-	printf("■ division\n");
-	sstd::printn_all(lhs/=(double)10);
-	sstd::printn_all(lhs/=rhs);
-	sstd::printn_all(lhs/rhs);
-	sstd::printn_all(lhs/(int8)10);
-	sstd::printn_all((int8)10/lhs);
-	printf("\n");
-	
-	printf("■ modulo\n");
-	sstd::printn_all(lhsInt%rhsInt);
-	sstd::printn_all(lhsInt%(int8)10);
-	sstd::printn_all((int8)10%lhsInt);
-	sstd::printn_all(lhsInt%=(int8)10);
-	sstd::printn_all(lhsInt%=rhsInt);
-	printf("\n");
-
-	printf("■ power\n");
-	sstd::printn_all(lhs^rhs);
-	sstd::printn_all(lhsInt^rhsInt);
-	sstd::printn_all(lhsInt^(uint32)2);
-	sstd::printn_all((uint32)2^lhsInt);
-	sstd::printn_all(lhs^=2);
-	sstd::printn_all(lhs^=rhs);
-	printf("\n");
-	
-	printf("■ inclement and decrement\n");
-	sstd::printn_all(lhsInt++);
-	sstd::printn_all(++lhsInt);
-	sstd::printn_all(lhsInt--);
-	sstd::printn_all(--lhsInt);
-	printf("\n");
-	
-	printf("■ operator >>\n");
-	sstd::printn_all(lhs<<rhs);
-	sstd::printn_all(lhs<<(double)3.14);
-	sstd::printn_all((double)3.14<<lhs);
-	std::vector<double> buf={123};
-	buf <<= lhs;
-	buf <<= (double)1.23;
-	sstd::printn_all(buf);
 }
 
 //-----------------------------------------------------------------------
