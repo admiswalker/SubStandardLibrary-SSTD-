@@ -71,7 +71,8 @@ namespace sstd_stdVecEx{
 	}																	\
 	template <typename T, typename rhsType>								\
 	inline std::vector<T>& Func(std::vector<T>& lhs, const rhsType& rhs){ \
-		for(uint p=0; p<lhs.size(); p++){ lhs[p] Ope rhs; }				\
+		const rhsType rhs_buf = rhs; /* buffering is needed for self overwriting vector like "vec+=vec[3];". */ \
+		for(uint p=0; p<lhs.size(); p++){ lhs[p] Ope rhs_buf; }			\
 		return lhs;														\
 	}
 #define SSTD_DEF_stdVecEx_f(Func, Func2)								\

@@ -2,6 +2,46 @@
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+TEST(vector_stdVector_expansion, plus){
+	std::vector<double> lhs={1, 2, 3}, rhs={1, 2, 3};
+	std::vector<uint32> lhsInt={1, 2, 3}, rhsInt={1, 2, 3};
+	
+	{
+		std::vector<double> ans={2, 4, 6};
+		ASSERT_TRUE( (lhs+rhs) == ans );
+	}
+	{
+		std::vector<double> ans={11, 12, 13};
+		ASSERT_TRUE( (lhs+(  int8)10) == ans );
+		ASSERT_TRUE( (lhs+(uint32)10) == ans );
+		ASSERT_TRUE( (lhs+(double)10) == ans );
+		ASSERT_TRUE( ((  int8)10+lhs) == ans );
+	}
+	{
+		std::vector<uint32> ans={11, 12, 13};
+		ASSERT_TRUE( (lhsInt+(double)10) == ans );
+	}
+	
+	{
+		std::vector<double> lhs_buf=lhs;
+		std::vector<double> ans={2, 4, 6};
+		lhs_buf+=rhs;
+		ASSERT_TRUE( lhs_buf == ans );
+	}
+	{
+		std::vector<double> lhs_buf=lhs;
+		std::vector<double> ans={11, 12, 13};
+		lhs_buf += (double)10;
+		ASSERT_TRUE( lhs_buf == ans );
+	}
+	{
+		// self overwriting vector.
+		std::vector<double> lhs_buf=lhs;
+		std::vector<double> ans={2, 3, 4};
+		lhs_buf += lhs_buf[0];
+		ASSERT_TRUE( lhs_buf == ans );
+	}
+}
 TEST(vector_stdVector_expansion, all){
 	printf("== sstd_stdVector_expansion ==\n\n");
 	
@@ -11,21 +51,6 @@ TEST(vector_stdVector_expansion, all){
 //	std::vector<int> lhsInt={1, 2, 3}, rhsInt={1, 2, 3};
 	std::vector<uint32> lhsInt={1, 2, 3}, rhsInt={1, 2, 3};
 
-	printf("■ plus\n");
-	sstd::printn_all(lhs+rhs);
-	
-	sstd::printn_all(lhs+(int8)10);
-	sstd::printn_all(lhs+(uint32)10);
-	sstd::printn_all(lhs+(double)10);
-	sstd::printn_all(lhsInt+(double)10);
-	
-	sstd::printn_all((int8)10+lhs);
-	// XXX 次はこれを実装する XXX
-	sstd::printn_all(lhs+=rhs);
-	sstd::printn_all(lhs+=(double)10);
-	// ++
-	printf("\n");
-	
 	printf("■ minus\n");
 	sstd::printn_all(lhs-=(double)10);
 	sstd::printn_all(lhs-=rhs);
