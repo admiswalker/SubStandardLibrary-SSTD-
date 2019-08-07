@@ -120,6 +120,43 @@ TEST(vector_stdVector_expansion, division){
 		ASSERT_TRUE( ((int8)10/lhs) == ans );
 	}
 }
+TEST(vector_stdVector_expansion, modulo){
+	std::vector<uint32> lhsInt={1, 2, 3}, rhsInt={1, 2, 3};
+	
+	{
+		std::vector<uint32> ans={0, 0, 0};
+		ASSERT_TRUE( (lhsInt%rhsInt) == ans );
+	}
+	{
+		std::vector<uint32> ans={1, 2, 3};
+		ASSERT_TRUE( (lhsInt%(int8)10) == ans );
+	}
+	{
+		std::vector<uint32> ans={0, 0, 1};
+		ASSERT_TRUE( ((int8)10%lhsInt) == ans );
+	}
+	{
+		std::vector<uint32> ans={1, 2, 3};
+		std::vector<uint32> lhsInt_buf=lhsInt;
+		ASSERT_TRUE( (lhsInt_buf%=(int8)10) == ans );
+	}
+	{
+		std::vector<uint32> ans={0, 0, 0};
+		std::vector<uint32> lhsInt_buf=lhsInt;
+		ASSERT_TRUE( (lhsInt%=rhsInt) == ans );
+	}
+}
+TEST(vector_stdVector_expansion, power){
+	std::vector<double> lhs={1, 2, 3}, rhs={1, 2, 3};
+	std::vector<uint32> lhsInt={1, 2, 3}, rhsInt={1, 2, 3};
+	
+	sstd::printn_all(lhs^rhs);
+	sstd::printn_all(lhsInt^rhsInt);
+	sstd::printn_all(lhsInt^(uint32)2);
+	sstd::printn_all((uint32)2^lhsInt);
+	sstd::printn_all(lhs^=2);
+	sstd::printn_all(lhs^=rhs);
+}
 TEST(vector_stdVector_expansion, all){
 	printf("== sstd_stdVector_expansion ==\n\n");
 	
@@ -128,23 +165,6 @@ TEST(vector_stdVector_expansion, all){
 	std::vector<double> lhs={1, 2, 3}, rhs={1, 2, 3};
 //	std::vector<int> lhsInt={1, 2, 3}, rhsInt={1, 2, 3};
 	std::vector<uint32> lhsInt={1, 2, 3}, rhsInt={1, 2, 3};
-	
-	printf("■ modulo\n");
-	sstd::printn_all(lhsInt%rhsInt);
-	sstd::printn_all(lhsInt%(int8)10);
-	sstd::printn_all((int8)10%lhsInt);
-	sstd::printn_all(lhsInt%=(int8)10);
-	sstd::printn_all(lhsInt%=rhsInt);
-	printf("\n");
-
-	printf("■ power\n");
-	sstd::printn_all(lhs^rhs);
-	sstd::printn_all(lhsInt^rhsInt);
-	sstd::printn_all(lhsInt^(uint32)2);
-	sstd::printn_all((uint32)2^lhsInt);
-	sstd::printn_all(lhs^=2);
-	sstd::printn_all(lhs^=rhs);
-	printf("\n");
 	
 	printf("■ inclement and decrement\n");
 	sstd::printn_all(lhsInt++);
