@@ -71,6 +71,55 @@ TEST(vector_stdVector_expansion, minus){
 		ASSERT_TRUE( ((int8)10-lhs) == ans );
 	}
 }
+TEST(vector_stdVector_expansion, multiplication){
+	std::vector<double> lhs={1, 2, 3}, rhs={1, 2, 3};
+	{
+		std::vector<double> ans={1, 4, 9};
+		ASSERT_TRUE( (lhs*rhs) == ans );
+	}
+	{
+		std::vector<double> ans={10, 20, 30};
+		ASSERT_TRUE( (lhs*(int8)10) == ans );
+		ASSERT_TRUE( ((int8)10*lhs) == ans );
+	}
+	{
+		std::vector<double> ans={1, 4, 9};
+		std::vector<double> lhs_buf=lhs;
+		lhs_buf*=rhs;
+		ASSERT_TRUE( lhs_buf == ans );
+	}
+	{
+		std::vector<double> ans={10, 20, 30};
+		std::vector<double> lhs_buf=lhs;
+		lhs_buf*=(double)10;
+		ASSERT_TRUE( lhs_buf == ans );
+	}
+}
+TEST(vector_stdVector_expansion, division){
+	std::vector<double> lhs={1, 2, 3}, rhs={1, 2, 3};
+	{
+		std::vector<double> lhs_buf=lhs;
+		std::vector<double> ans={0.1, 0.2, 0.3};
+		ASSERT_TRUE( (lhs_buf/=(double)10) == ans );
+	}
+	{
+		std::vector<double> lhs_buf=lhs;
+		std::vector<double> ans={1, 1, 1};
+		ASSERT_TRUE( (lhs_buf/=rhs) == ans );
+	}
+	{
+		std::vector<double> ans={1, 1, 1};
+		ASSERT_TRUE( (lhs/rhs) == ans );
+	}
+	{
+		std::vector<double> ans={0.1, 0.2, 0.3};
+		ASSERT_TRUE( (lhs/(int8)10) == ans );
+	}
+	{
+		std::vector<double> ans={10./1., 10./2., 10./3.};
+		ASSERT_TRUE( ((int8)10/lhs) == ans );
+	}
+}
 TEST(vector_stdVector_expansion, all){
 	printf("== sstd_stdVector_expansion ==\n\n");
 	
@@ -79,22 +128,6 @@ TEST(vector_stdVector_expansion, all){
 	std::vector<double> lhs={1, 2, 3}, rhs={1, 2, 3};
 //	std::vector<int> lhsInt={1, 2, 3}, rhsInt={1, 2, 3};
 	std::vector<uint32> lhsInt={1, 2, 3}, rhsInt={1, 2, 3};
-	
-	printf("■ multiplication\n");
-	sstd::printn_all(lhs*rhs);
-	sstd::printn_all(lhs*(int8)10);
-	sstd::printn_all((int8)10*lhs);
-	sstd::printn_all(lhs*=rhs);
-	sstd::printn_all(lhs*=(double)10);
-	printf("\n");
-	
-	printf("■ division\n");
-	sstd::printn_all(lhs/=(double)10);
-	sstd::printn_all(lhs/=rhs);
-	sstd::printn_all(lhs/rhs);
-	sstd::printn_all(lhs/(int8)10);
-	sstd::printn_all((int8)10/lhs);
-	printf("\n");
 	
 	printf("■ modulo\n");
 	sstd::printn_all(lhsInt%rhsInt);
