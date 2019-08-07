@@ -42,6 +42,35 @@ TEST(vector_stdVector_expansion, plus){
 		ASSERT_TRUE( lhs_buf == ans );
 	}
 }
+TEST(vector_stdVector_expansion, minus){
+	std::vector<double> lhs={1, 2, 3}, rhs={1, 2, 3};
+	std::vector<uint32> lhsInt={1, 2, 3}, rhsInt={1, 2, 3};
+	
+	{
+		std::vector<double> lhs_buf=lhs;
+		std::vector<double> ans={-9, -8, -7};
+		lhs_buf-=(double)10;
+		ASSERT_TRUE( lhs_buf == ans );
+	}
+	{
+		std::vector<double> lhs_buf=lhs;
+		std::vector<double> ans={0, 0, 0};
+		lhs_buf-=rhs;
+		ASSERT_TRUE( lhs_buf == ans );
+	}
+	{
+		std::vector<double> ans={0, 0, 0};
+		ASSERT_TRUE( lhs-rhs == ans );
+	}
+	{
+		std::vector<double> ans={-9, -8, -7};
+		ASSERT_TRUE( (lhs-(int8)10) == ans );
+	}
+	{
+		std::vector<double> ans={9, 8, 7};
+		ASSERT_TRUE( ((int8)10-lhs) == ans );
+	}
+}
 TEST(vector_stdVector_expansion, all){
 	printf("== sstd_stdVector_expansion ==\n\n");
 	
@@ -50,16 +79,6 @@ TEST(vector_stdVector_expansion, all){
 	std::vector<double> lhs={1, 2, 3}, rhs={1, 2, 3};
 //	std::vector<int> lhsInt={1, 2, 3}, rhsInt={1, 2, 3};
 	std::vector<uint32> lhsInt={1, 2, 3}, rhsInt={1, 2, 3};
-
-	printf("■ minus\n");
-	sstd::printn_all(lhs-=(double)10);
-	sstd::printn_all(lhs-=rhs);
-	sstd::printn_all(lhs-rhs);
-	sstd::printn_all(lhs-(int8)10);
-	sstd::printn_all((int8)10-lhs);
-	// XXX 次はこれを実装する XXX
-	// --
-	printf("\n");
 	
 	printf("■ multiplication\n");
 	sstd::printn_all(lhs*rhs);
