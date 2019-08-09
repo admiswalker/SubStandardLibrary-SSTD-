@@ -30,7 +30,7 @@ void TEST_rm();
 void TEST_ssprintf();
 void TEST_strmatch();
 void TEST_path();
-void TEST_getFilePathInDir();
+#include "./test_glob.hpp" // void TEST_getFilePathInDir();
 void TEST_strEdit();        // テストを書くように．
 void TEST_tinyInterpreter();
 //#include "./test_typeConversion.hpp"
@@ -40,7 +40,7 @@ void TEST_pause();
 //void TEST_getpid();        // テストを書くように．
 //#include "./test_status.hpp"
 
-#include "./test_vector_stdVector_expansion.hpp" // stdVector_expansion of operators
+//#include "./test_vector_stdVector_expansion.hpp" // stdVector_expansion of operators
 //#include "./test_vector_slice.hpp"
 //#include "./test_vector_vvec.hpp"
 
@@ -77,7 +77,6 @@ int main(int argc, char** argv){
 //	TEST_ssprintf();
 //	TEST_strmatch();
 //	TEST_path();
-//	TEST_getFilePathInDir();
 //	TEST_strEdit();        // テストを書くように．
 //	TEST_tinyInterpreter();
 //	TEST_encode_decode();
@@ -543,14 +542,6 @@ void TEST_path(){
 	sstd::printn(sstd::pathExist("./notExist"));
 	sstd::printn(sstd::pathExist("./sstd"));
 	printf("\n");
-}
-void TEST_getFilePathInDir(){
-	printf("■ getFilePathInDir\n");
-	
-	const char* DirAndFileName_withWildCard = R"(./sstd/src/*.hpp)";
-	printf("DirAndFileName_withWildCard: %s\n\n", DirAndFileName_withWildCard);
-	std::vector<std::string> PathList = sstd::getFilePathInDir(DirAndFileName_withWildCard);
-	for(uint i=0; i<PathList.size(); i++){ printf("%s\n", PathList[i].c_str()); } printf("\n");
 }
 void TEST_strEdit(){
 	printf("■ strEdit\n");

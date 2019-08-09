@@ -1,4 +1,4 @@
-﻿#include "getFilePathInDir.hpp"
+﻿#include "glob.hpp"
 
 #ifdef _WIN32   //windows環境の場合は「_WIN32」が定義されているので、こちら。
 
@@ -24,14 +24,14 @@
 #include "strmatch.hpp"
 #include "path.hpp"
 
-std::vector<std::string> sstd::getFilePathInDir(const char* DirAndFileName_withWildCard){
+std::vector<std::string> sstd::glob(const char* path){
 #ifdef _WIN32	//windows環境の場合は「_WIN32」が定義されているので、こちら。
 
 	HANDLE hFind;
 	WIN32_FIND_DATA fd;
 	std::vector<std::string> FileList;
 
-	hFind = FindFirstFileEx(DirAndFileName_withWildCard, FindExInfoStandard, &fd, FindExSearchNameMatch, NULL, 0);
+	hFind = FindFirstFileEx(path, FindExInfoStandard, &fd, FindExSearchNameMatch, NULL, 0);
 
 	if(hFind == INVALID_HANDLE_VALUE){
 		return FileList;	// No files or directories.
@@ -52,7 +52,7 @@ std::vector<std::string> sstd::getFilePathInDir(const char* DirAndFileName_withW
 		}else{
 
 			// file found
-			std::string buf = sstd::getPath(DirAndFileName_withWildCard) + std::string( fd.cFileName );
+			std::string buf = sstd::getPath(path) + std::string( fd.cFileName );
 			FileList.push_back(buf.c_str());
 //			FileList.push_back(fd.cFileName);
 //			printf("file: %s\n", FileList.back().c_str());
@@ -71,7 +71,7 @@ std::vector<std::string> sstd::getFilePathInDir(const char* DirAndFileName_withW
 	std::string PathName;
 	std::vector<std::string> FileList;
 
-	std::string DirPath = getPath(DirAndFileName_withWildCard);
+	std::string DirPath = getPath(path);
 
 	// ディレクトリを開く
 	pDir = opendir(DirPath.c_str());
@@ -101,7 +101,7 @@ std::vector<std::string> sstd::getFilePathInDir(const char* DirAndFileName_withW
 //	   			printf( "current or parent directory: %s\n", pEnt->d_name );
 			}
 		}else{
-			if(strmatch( pEnt->d_name, getFileName(DirAndFileName_withWildCard))){
+			if(strmatch( pEnt->d_name, getFileName(path))){
 				// マッチした場合に true を返します。
 				FileList.push_back( PathName );
 			}

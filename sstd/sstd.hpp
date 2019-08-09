@@ -43,7 +43,7 @@
 #include "./src/ssprintf.hpp"
 #include "./src/strmatch.hpp"
 #include "./src/path.hpp"
-#include "./src/getFilePathInDir.hpp"
+#include "./src/glob.hpp"
 #include "./src/itr.hpp"
 #include "./src/strEdit.hpp"
 #include "./src/tinyInterpreter.hpp"
@@ -419,8 +419,8 @@ namespace sstd{
 //	命名規則に関しては，"http://docs.python.jp/2/library/os.path.html" 等を参考にしてもよさそう．
 	
 
-	// #include "./src/getFilePathInDir.hpp"
-	extern std::vector<std::string> getFilePathInDir(const char* DirAndFileName_withWildCard);
+	// #include "./src/glob.hpp"
+	extern std::vector<std::string> glob(const char* path);
 	
 	// #include "./src/strEdit.hpp"
 	extern std::vector<uint8> readAll_bin         (const char*        pReadFile); // read all of the file as a binary
