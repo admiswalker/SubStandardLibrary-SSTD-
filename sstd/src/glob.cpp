@@ -115,3 +115,6 @@ std::vector<std::string> sstd::glob(const char* path){
 	return FileList;
 #endif
 }
+std::vector<std::string> sstd::glob(const std::string& path){
+	return sstd::glob(path.c_str());
+}
