@@ -63,6 +63,9 @@ LIBS_DIRS    = ./googletest-master
 BACKUP_FILES = $(filter-out ./$(TARGET) $(TMP_DIRS) $(BACKUP_DIR) $(LIBS_DIRS), $(ALL_FILES))
 TIME_STAMP   = `date +%Y_%m%d_%H%M`
 
+HEADS_t      = $(wildcard ./*.h  )
+HEADS_t     += $(wildcard ./*.hpp)
+
 
 # when you need to check the change of files in lib, you need to change file name to a not-existing name like "FORCE_XXX".
 LIB_SSTD       = FORCE_SSTD
@@ -112,7 +115,7 @@ clean:
 
 
 .PHONY: steps
-steps: $(SRCS)
+steps: $(SRCS) $(HEADS_t)
 	@(cd ./sstd; make steps)
 	@echo ""
 	@echo "$^" | xargs wc -l
