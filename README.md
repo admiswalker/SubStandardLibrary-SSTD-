@@ -10,15 +10,15 @@ Usages of functions: `main.cpp`
 ### Linux 
 1. Copy all of under `./sstd/*`. 
 2. Compile sstd.
-```
-$ cd ./sstd
-$ make
-```
+   ```
+   $ cd ./sstd
+   $ make
+   ```
 3. Add flags in your makefile.
-```
-CFLAGS += -I./sstd/include -L./sstd/lib -lsstd
-CFLAGS += -std=gnu++0x
-```
+   ```
+   CFLAGS += -I./sstd/include -L./sstd/lib -lsstd
+   CFLAGS += -std=gnu++0x
+   ```
 4. Include a header (`#include <sstd/sstd.hpp>`) in your code.
 
 ### Windows 
