@@ -243,6 +243,32 @@ TEST(vector_stdVector_expansion, leftShift_as_merge){
 		ASSERT_TRUE( buf == ans );
 	}
 }
+TEST(vector_stdVector_expansion, RightShift_as_merge){
+	std::vector<double> lhs={1, 2, 3}, rhs={4, 5, 6};
+	std::vector<uint32> lhsInt={1, 2, 3}, rhsInt={1, 2, 3};
+	
+	{
+		std::vector<double> ans={4, 5, 6, 1, 2, 3};
+		ASSERT_TRUE( (lhs>>rhs) == ans );
+	}
+	{
+		std::vector<double> ans={3.14, 1, 2, 3};
+		ASSERT_TRUE( (lhs>>(double)3.14) == ans );
+	}
+	{
+		std::vector<double> ans={1, 2, 3, 3.14};
+		ASSERT_TRUE( ((double)3.14>>lhs) == ans );
+	}
+	{
+		std::vector<double> ans={1.23, 1, 2, 3, 123};
+		
+		std::vector<double> buf={123};
+		buf >>= lhs;
+		buf >>= (double)1.23;
+		
+		ASSERT_TRUE( buf == ans );
+	}
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 

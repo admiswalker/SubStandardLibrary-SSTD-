@@ -3,7 +3,6 @@
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------f
 // need to add
-//  - push_front(): >>, >>=
 //  - enable std::move() on push_front() and push_back()
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------f
@@ -32,10 +31,10 @@ namespace sstd_stdVecEx{
 	SSTD_DEF_stdVecEx_defInNamespace_eq(pow_eq); // ^=
 	
 	// operators for std::vector
-//	SSTD_DEF_stdVecEx_defInNamespace   (push_front   ); // >>
-//	SSTD_DEF_stdVecEx_defInNamespace_eq(push_front_eq); // >>=
-	SSTD_DEF_stdVecEx_defInNamespace   (push_back   ); // <<
-	SSTD_DEF_stdVecEx_defInNamespace_eq(push_back_eq); // <<=
+	SSTD_DEF_stdVecEx_defInNamespace   (push_front   ); // >>
+	SSTD_DEF_stdVecEx_defInNamespace_eq(push_front_eq); // >>=
+	SSTD_DEF_stdVecEx_defInNamespace   (push_back    ); // <<
+	SSTD_DEF_stdVecEx_defInNamespace_eq(push_back_eq ); // <<=
 }
 
 #undef SSTD_DEF_stdVecEx_defInNamespace    // Deletion of used definition, in order not to pollute the namespace
@@ -126,6 +125,48 @@ SSTD_DEF_stdVecEx_f_eq(sstd_stdVecEx::pow_eq, sstd::pow); // ^=
 
 // operators for std::vector
 template <typename T>
+inline std::vector<T> sstd_stdVecEx::push_front(const std::vector<T>& lhs, const std::vector<T>& rhs){ // same as a push_back
+	std::vector<T> ret(lhs.size()+rhs.size());
+	uint i=0;
+	for(uint p=0; p<rhs.size(); p++){ ret[i]=rhs[p]; i++; }
+	for(uint p=0; p<lhs.size(); p++){ ret[i]=lhs[p]; i++; }
+	return ret;
+}
+template <typename T, typename rhsType>
+inline std::vector<T> sstd_stdVecEx::push_front(const std::vector<T>& lhs, const rhsType& rhs){
+	std::vector<T> ret(lhs.size()+1);
+	ret[0]=rhs;
+	for(uint p=0; p<lhs.size(); p++){ ret[p+1]=lhs[p]; }
+	return ret;
+}
+template <typename T, typename lhsType>
+inline std::vector<T> sstd_stdVecEx::push_front(const lhsType& lhs, const std::vector<T>& rhs){
+	std::vector<T> ret(rhs.size()+1);
+	for(uint p=0; p<rhs.size(); p++){ ret[p]=rhs[p]; }
+	ret[rhs.size()]=lhs;
+	return ret;
+}
+
+template <typename T>
+inline std::vector<T>& sstd_stdVecEx::push_front_eq(std::vector<T>& lhs, const std::vector<T>& rhs){
+	std::vector<T> ret=rhs;
+	ret.insert(ret.end(), lhs.begin(), lhs.end());
+	lhs = std::move(ret);
+	return lhs;
+}
+template <typename T, typename rhsType>
+inline std::vector<T>& sstd_stdVecEx::push_front_eq(std::vector<T>& lhs, const rhsType& rhs){
+	std::vector<T> ret(1+lhs.size());
+	ret[0]=rhs;
+	for(uint p=0; p<lhs.size(); p++){ ret[p+1]=lhs[p]; }
+	lhs = std::move(ret);
+	return lhs;
+}
+
+//---
+// operators for std::vector
+
+template <typename T>
 inline std::vector<T> sstd_stdVecEx::push_back(const std::vector<T>& lhs, const std::vector<T>& rhs){
 	std::vector<T> ret(lhs.size()+rhs.size());
 	uint i=0;
@@ -184,8 +225,10 @@ SSTD_DEF_stdVecEx_Operator   (sstd_stdVecEx::pow   , ^ );
 SSTD_DEF_stdVecEx_Operator_eq(sstd_stdVecEx::pow_eq, ^=);
 
 // operators for std::vector
-SSTD_DEF_stdVecEx_Operator   (sstd_stdVecEx::push_back   , << );
-SSTD_DEF_stdVecEx_Operator_eq(sstd_stdVecEx::push_back_eq, <<=);
+SSTD_DEF_stdVecEx_Operator   (sstd_stdVecEx::push_front   , >> );
+SSTD_DEF_stdVecEx_Operator_eq(sstd_stdVecEx::push_front_eq, >>=);
+SSTD_DEF_stdVecEx_Operator   (sstd_stdVecEx::push_back    , << );
+SSTD_DEF_stdVecEx_Operator_eq(sstd_stdVecEx::push_back_eq , <<=);
 
 #undef SSTD_DEF_stdVecEx_Operator    // Deletion of used definition, in order not to pollute the namespace
 #undef SSTD_DEF_stdVecEx_Operator_eq // Deletion of used definition, in order not to pollute the namespace
