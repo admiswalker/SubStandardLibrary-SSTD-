@@ -192,10 +192,10 @@ SSTD_DEF_stdVecEx_Operator_eq(sstd_stdVecEx::push_back_eq, <<=);
 
 //---
 
-template <typename T> inline std::vector<T>& operator++(std::vector<T>& rhs)     { for(uint p=0; p<rhs.size(); p++){ rhs[p]++; } return rhs; } // ++rhs
-template <typename T> inline std::vector<T>& operator++(std::vector<T>& rhs, int){ for(uint p=0; p<rhs.size(); p++){ rhs[p]++; } return rhs; } //   rhs++
-template <typename T> inline std::vector<T>& operator--(std::vector<T>& rhs)     { for(uint p=0; p<rhs.size(); p++){ rhs[p]--; } return rhs; } // --rhs
-template <typename T> inline std::vector<T>& operator--(std::vector<T>& rhs, int){ for(uint p=0; p<rhs.size(); p++){ rhs[p]--; } return rhs; } //   rhs--
+template <typename T> inline std::vector<T>& operator++(std::vector<T>& rhs)     {                         for(uint p=0; p<rhs.size(); p++){ rhs[p]++; } return rhs; } // ++rhs
+template <typename T> inline std::vector<T>  operator++(std::vector<T>& rhs, int){ std::vector<T> ret=rhs; for(uint p=0; p<rhs.size(); p++){ rhs[p]++; } return ret; } //   rhs++
+template <typename T> inline std::vector<T>& operator--(std::vector<T>& rhs)     {                         for(uint p=0; p<rhs.size(); p++){ rhs[p]--; } return rhs; } // --rhs
+template <typename T> inline std::vector<T>  operator--(std::vector<T>& rhs, int){ std::vector<T> ret=rhs; for(uint p=0; p<rhs.size(); p++){ rhs[p]--; } return ret; } //   rhs--
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 

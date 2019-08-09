@@ -150,12 +150,57 @@ TEST(vector_stdVector_expansion, power){
 	std::vector<double> lhs={1, 2, 3}, rhs={1, 2, 3};
 	std::vector<uint32> lhsInt={1, 2, 3}, rhsInt={1, 2, 3};
 	
-	sstd::printn_all(lhs^rhs);
-	sstd::printn_all(lhsInt^rhsInt);
-	sstd::printn_all(lhsInt^(uint32)2);
-	sstd::printn_all((uint32)2^lhsInt);
-	sstd::printn_all(lhs^=2);
-	sstd::printn_all(lhs^=rhs);
+	{
+		std::vector<double> ans={1, 4, 27};
+		ASSERT_TRUE( (lhs^rhs) == ans );
+	}
+	{
+		std::vector<uint32> ans={1, 4, 27};
+		ASSERT_TRUE( (lhsInt^rhsInt) == ans );
+	}
+	{
+		std::vector<uint32> ans={1, 4, 9};
+		ASSERT_TRUE( (lhsInt^(uint32)2) == ans );
+	}
+	{
+		std::vector<uint32> ans={2, 4, 8};
+		ASSERT_TRUE( ((uint32)2^lhsInt) == ans );
+	}
+	{
+		std::vector<double> lhs_buf=lhs;
+		std::vector<double> ans={1, 4, 9};
+		ASSERT_TRUE( (lhs_buf^=2) == ans );
+	}
+	{
+		std::vector<double> lhs_buf=lhs;
+		std::vector<double> ans={1, 4, 27};
+		ASSERT_TRUE( (lhs_buf^=rhs) == ans );
+	}
+}
+TEST(vector_stdVector_expansion, inclement){
+	std::vector<uint32> lhsInt={1, 2, 3}, rhsInt={1, 2, 3};
+	{
+		std::vector<uint32> lhsInt_buf=lhsInt;
+		std::vector<uint32> ans_ret=lhsInt;
+		std::vector<uint32> ans={2, 3, 4};
+		
+		std::vector<uint32> ret=lhsInt_buf++;
+		ASSERT_TRUE( ret        == ans_ret );
+		ASSERT_TRUE( lhsInt_buf == ans     );
+	}
+	{
+		std::vector<uint32> lhsInt_buf=lhsInt;
+		std::vector<uint32> ans={2, 3, 4};
+		
+		std::vector<uint32> ret=++lhsInt_buf;
+		ASSERT_TRUE( ret        == ans );
+		ASSERT_TRUE( lhsInt_buf == ans );
+	}
+}
+TEST(vector_stdVector_expansion, decrement){
+	std::vector<uint32> lhsInt={1, 2, 3}, rhsInt={1, 2, 3};
+	sstd::printn_all(lhsInt--);
+	sstd::printn_all(--lhsInt);
 }
 TEST(vector_stdVector_expansion, all){
 	printf("== sstd_stdVector_expansion ==\n\n");
@@ -166,12 +211,6 @@ TEST(vector_stdVector_expansion, all){
 //	std::vector<int> lhsInt={1, 2, 3}, rhsInt={1, 2, 3};
 	std::vector<uint32> lhsInt={1, 2, 3}, rhsInt={1, 2, 3};
 	
-	printf("■ inclement and decrement\n");
-	sstd::printn_all(lhsInt++);
-	sstd::printn_all(++lhsInt);
-	sstd::printn_all(lhsInt--);
-	sstd::printn_all(--lhsInt);
-	printf("\n");
 	
 	printf("■ operator >>\n");
 	sstd::printn_all(lhs<<rhs);
