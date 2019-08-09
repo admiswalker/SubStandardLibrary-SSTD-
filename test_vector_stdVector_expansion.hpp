@@ -199,27 +199,49 @@ TEST(vector_stdVector_expansion, inclement){
 }
 TEST(vector_stdVector_expansion, decrement){
 	std::vector<uint32> lhsInt={1, 2, 3}, rhsInt={1, 2, 3};
-	sstd::printn_all(lhsInt--);
-	sstd::printn_all(--lhsInt);
+	{
+		std::vector<uint32> lhsInt_buf=lhsInt;
+		std::vector<uint32> ans_ret=lhsInt;
+		std::vector<uint32> ans={0, 1, 2};
+		
+		std::vector<uint32> ret=lhsInt_buf--;
+		ASSERT_TRUE( ret        == ans_ret );
+		ASSERT_TRUE( lhsInt_buf == ans     );
+	}
+	{
+		std::vector<uint32> lhsInt_buf=lhsInt;
+		std::vector<uint32> ans={0, 1, 2};
+		
+		std::vector<uint32> ret=--lhsInt_buf;
+		ASSERT_TRUE( ret        == ans );
+		ASSERT_TRUE( lhsInt_buf == ans );
+	}
 }
-TEST(vector_stdVector_expansion, all){
-	printf("== sstd_stdVector_expansion ==\n\n");
-	
-	// 算術演算子以外にも，<< 演算や，| 演算子によって，結合を定義するとよい．
-	
+TEST(vector_stdVector_expansion, leftShift_as_merge){
 	std::vector<double> lhs={1, 2, 3}, rhs={1, 2, 3};
-//	std::vector<int> lhsInt={1, 2, 3}, rhsInt={1, 2, 3};
 	std::vector<uint32> lhsInt={1, 2, 3}, rhsInt={1, 2, 3};
 	
-	
-	printf("■ operator >>\n");
-	sstd::printn_all(lhs<<rhs);
-	sstd::printn_all(lhs<<(double)3.14);
-	sstd::printn_all((double)3.14<<lhs);
-	std::vector<double> buf={123};
-	buf <<= lhs;
-	buf <<= (double)1.23;
-	sstd::printn_all(buf);
+	{
+		std::vector<double> ans={1, 2, 3, 1, 2, 3};
+		ASSERT_TRUE( (lhs<<rhs) == ans );
+	}
+	{
+		std::vector<double> ans={1, 2, 3, 3.14};
+		ASSERT_TRUE( (lhs<<(double)3.14) == ans );
+	}
+	{
+		std::vector<double> ans={3.14, 1, 2, 3};
+		ASSERT_TRUE( ((double)3.14<<lhs) == ans );
+	}
+	{
+		std::vector<double> ans={123, 1, 2, 3, 1.23};
+		
+		std::vector<double> buf={123};
+		buf <<= lhs;
+		buf <<= (double)1.23;
+		
+		ASSERT_TRUE( buf == ans );
+	}
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
