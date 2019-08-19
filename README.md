@@ -27,6 +27,28 @@ Usages of functions: `main.cpp`
 
 Note: Recently, sstd has not been tested on Windows (MSVC++), while codes locked on linux is not so many.
 
+## Tips to use always latest versions of sstd.
+### Linux
+Below lines of makefile enable to update sstd by a command of ```$ make update```.
+Adding a dependence of sstd to your makefile by using ```$(LIB_SSTD)```.
+```
+# when you need to check the change of files in lib, you need to change file name to a not-existing name like "FORCE_XXX".
+#LIB_SSTD       = FORCE_SSTD
+LIB_SSTD        = ./sstd/lib/libsstd.a
+
+$(LIB_SSTD):
+	@echo ""
+	@unzip -n SubStandardLibrary-SSTD--master.zip
+	@mv SubStandardLibrary-SSTD--master/sstd ./
+	@rm -rf SubStandardLibrary-SSTD--master/
+	@(cd ./sstd; make -j)
+
+.PHONY: updateLib
+updateLib:
+	wget https://github.com/admiswalker/SubStandardLibrary-SSTD-/archive/master.zip -O SubStandardLibrary-SSTD--master.zip
+	-rm -rf sstd # remove previous versions of sstd
+```
+
 ## Documents
 file | URL
 ---- | ---
