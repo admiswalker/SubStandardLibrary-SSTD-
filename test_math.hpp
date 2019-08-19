@@ -221,19 +221,29 @@ TEST(math, supress){
 	std::vector<double> in2={1,2,3};
 //	std::vector<double> ans={1,2,3};
 //	std::array<double,3> in3={10};
-	std::vector<double> in3={1, 2, 3};
+	std::vector<uint> in3={1, 2, 3};
 	std::vector<uint> out=sstd::supress(in1, in2, in3);
 	sstd::printn(out);
-	
+
 	// under construction
 	// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 	// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 	// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 	// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 }
-
-
-
+/*
+TEST(math, supress2){
+	std::vector<double> in1={1,2,3,0,4};
+	std::vector<double> in2={1,2,3};
+//	std::vector<double> ans={1,2,3};
+//	std::array<double,3> in3={10};
+	std::vector<double> in3={1, 2, 3};
+	
+	std::vector<uint> retSize;
+	supress_internal(retSize, in1);
+	sstd::printn(retSize);
+}
+//*/
 
 
 
