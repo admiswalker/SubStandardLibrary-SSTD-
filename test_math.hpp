@@ -205,3 +205,39 @@ TEST(math, theOthers){
 	TEST_math();
 }
 
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+TEST(math, nonzero){
+	std::vector<double>  in={1,2,3,0,4};
+	std::vector<double> ans={1,2,3};
+	std::vector<double> out=sstd::nonzero(in);
+	
+	ASSERT_TRUE(out==ans);
+}
+
+TEST(math, supress){
+	std::vector<double> in1={1,2,3,0,4};
+	std::vector<double> in2={1,2,3};
+//	std::vector<double> ans={1,2,3};
+//	std::array<double,3> in3={10};
+	std::vector<double> in3={1, 2, 3};
+	std::vector<uint> out=sstd::supress(in1, in2, in3);
+	sstd::printn(out);
+	
+	// under construction
+	// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+	// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+	// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+	// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+}
+
+
+
+
+
+
+
+
+
+

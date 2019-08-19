@@ -203,4 +203,78 @@ namespace sstd{
 	template <typename T> inline std::vector<T> sort_de(std::vector<T>&& rhs){ std::sort(rhs.begin(), rhs.end(), std::greater<T>()); return rhs; } // Descending: 降順: 9, 8, 7, ...
 	
 	//-----------------------------------------------------------------------------------------------------------------------------------------------
+	
+	template <typename T> std::vector<T> nonzero(const std::vector<T>& rhs);
+//	template <typename T> void padding (std::vector<T>& vecLhs, std::vector<T>& vecRhs); // <--> sstd::suppress();
+//	template <typename T> void suppress(std::vector<T>& vecLhs, std::vector<T>& vecRhs); // <--> sstd::padding(); or zfill
+	template <typename... Args> std::vector<uint> supress(Args&... args);
 }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+template <typename T>
+std::vector<T> sstd::nonzero(const std::vector<T>& rhs){
+	std::vector<T> lhs(rhs.size()); lhs.clear();
+	const T zero = (T)0;
+	
+	for(uint i=0; i<rhs.size(); i++){
+		if(rhs[i]==zero){ break; }
+		lhs.push_back( rhs[i] );
+	}
+	return lhs;
+}
+
+
+// under construction
+// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+/*
+template <typename T>
+void sstd::suppress(std::vector<T>& vecLhs, std::vector<T>& vecRhs){
+	uint sizeL = vecLhs.size();
+	uint sizeR = vecRhs.size();
+	if      (sizeL==sizeR){ return;
+	}else if(sizeL< sizeR){ for(uint i=0; i<(sizeR-sizeL); i++){ vecRhs.pop_back(); }
+	}else                 { for(uint i=0; i<(sizeL-sizeR); i++){ vecLhs.pop_back(); }
+	}
+}
+//*/
+//----------------
+/*
+template <typename... Args>
+std::vector<uint> sstd::supress(const Args&... args){
+	std::vector<uint> vecSize;
+	for(auto const& arg:{ args... }){
+		vecSize.push_back(arg.size());
+	}
+	return vecSize;
+}
+//*/
+template <class... Args>
+std::vector<uint> sstd::supress(Args&... args){ // Ex. "sstd::supress(std::vector<T>& rhs1, std::vector<T>& rhs2, ...)"
+	std::vector<uint> vecSize;
+	for(auto& arg:{ args... }){
+		vecSize.push_back(arg.size());
+	}
+	return vecSize;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

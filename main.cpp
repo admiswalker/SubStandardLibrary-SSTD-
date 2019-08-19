@@ -30,7 +30,7 @@ void TEST_rm();
 void TEST_ssprintf();
 void TEST_strmatch();
 void TEST_path();
-#include "./test_glob.hpp" // void TEST_getFilePathInDir();
+//#include "./test_glob.hpp" // void TEST_getFilePathInDir();
 void TEST_strEdit();        // テストを書くように．
 void TEST_tinyInterpreter();
 //#include "./test_typeConversion.hpp"
