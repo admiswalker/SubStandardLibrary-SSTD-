@@ -215,35 +215,18 @@ TEST(math, nonzero){
 	
 	ASSERT_TRUE(out==ans);
 }
-
 TEST(math, supress){
 	std::vector<double> in1={1,2,3,0,4};
 	std::vector<double> in2={1,2,3};
-//	std::vector<double> ans={1,2,3};
-//	std::array<double,3> in3={10};
-	std::vector<uint> in3={1, 2, 3};
-	std::vector<uint> out=sstd::supress(in1, in2, in3);
-	sstd::printn(out);
-
-	// under construction
-	// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-	// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-	// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-	// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-}
-/*
-TEST(math, supress2){
-	std::vector<double> in1={1,2,3,0,4};
-	std::vector<double> in2={1,2,3};
-//	std::vector<double> ans={1,2,3};
-//	std::array<double,3> in3={10};
-	std::vector<double> in3={1, 2, 3};
+	std::vector<uint>   in3={1,2,3};
+	std::vector<double> in4={1,2,3,4};
+	sstd::supress(in1, in2, in3, in4);
 	
-	std::vector<uint> retSize;
-	supress_internal(retSize, in1);
-	sstd::printn(retSize);
+	ASSERT_TRUE(in1.size()==3);
+	ASSERT_TRUE(in2.size()==3);
+	ASSERT_TRUE(in3.size()==3);
+	ASSERT_TRUE(in4.size()==3);
 }
-//*/
 
 
 

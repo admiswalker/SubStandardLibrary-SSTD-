@@ -207,7 +207,7 @@ namespace sstd{
 	template <typename T> std::vector<T> nonzero(const std::vector<T>& rhs);
 //	template <typename T> void padding (std::vector<T>& vecLhs, std::vector<T>& vecRhs); // <--> sstd::suppress();
 //	template <typename T> void suppress(std::vector<T>& vecLhs, std::vector<T>& vecRhs); // <--> sstd::padding(); or zfill
-	template <typename... Args> std::vector<uint> supress(Args&... args);
+	template <typename... Args> void supress(Args&... args);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -224,78 +224,34 @@ std::vector<T> sstd::nonzero(const std::vector<T>& rhs){
 	return lhs;
 }
 
-
-// under construction
-// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-// XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-/*
-template <typename T>
-void sstd::suppress(std::vector<T>& vecLhs, std::vector<T>& vecRhs){
-	uint sizeL = vecLhs.size();
-	uint sizeR = vecRhs.size();
-	if      (sizeL==sizeR){ return;
-	}else if(sizeL< sizeR){ for(uint i=0; i<(sizeR-sizeL); i++){ vecRhs.pop_back(); }
-	}else                 { for(uint i=0; i<(sizeL-sizeR); i++){ vecLhs.pop_back(); }
-	}
-}
-//*/
-//----------------
-/*
-template <typename... Args>
-std::vector<uint> sstd::supress(const Args&... args){
-	std::vector<uint> vecSize;
-	for(auto const& arg:{ args... }){
-		vecSize.push_back(arg.size());
-	}
-	return vecSize;
-}
-//*/
-
-/*
-template <class... Args>
-std::vector<uint> sstd::supress(Args&... args){ // Ex. "sstd::supress(std::vector<T>& rhs1, std::vector<T>& rhs2, ...)"
-	std::vector<uint> vecSize;
-	for(auto& arg:{ args... }){
-		vecSize.push_back(arg.size());
-	}
-	return vecSize;
-}
-//*/
-
+//---
 
 template <typename T>
-void supress_internal(std::vector<uint>& retSize, std::vector<T>& arg_head){
+void sstd_supress__args2vecSize(std::vector<uint>& retSize, std::vector<T>& arg_head){
 	retSize.push_back(arg_head.size());
 }
 template <typename T, class... Args>
-void supress_internal(std::vector<uint>& retSize, std::vector<T>& arg_head, Args&... arg_body){
+void sstd_supress__args2vecSize(std::vector<uint>& retSize, std::vector<T>& arg_head, Args&... arg_body){
 	retSize.push_back(arg_head.size());
-	supress_internal(retSize, arg_body...);
+	sstd_supress__args2vecSize(retSize, arg_body...);
+}
+
+template <typename T>
+void sstd_supress__resize(const uint size, std::vector<T>& arg_head){
+	arg_head.resize(size);
+}
+template <typename T, class... Args>
+void sstd_supress__resize(const uint size, std::vector<T>& arg_head, Args&... arg_body){
+	arg_head.resize(size);
+	sstd_supress__resize(size, arg_body...);
 }
 
 template <class... Args>
-std::vector<uint> sstd::supress(Args&... args){ // Ex. "sstd::supress(std::vector<T1>& rhs1, std::vector<T2>& rhs2, ...)"
+void sstd::supress(Args&... args){ // Ex. "sstd::supress(std::vector<T1>& rhs1, std::vector<T2>& rhs2, ...)"
 	std::vector<uint> vecSize;
-	supress_internal(vecSize, args...);
-	return vecSize;
+	sstd_supress__args2vecSize(vecSize, args...);
+	sstd_supress__resize(sstd::min(vecSize), args...);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
