@@ -30,7 +30,7 @@ Note: Recently, sstd has not been tested on Windows (MSVC++), while codes locked
 ## Tips to use always latest versions of sstd.
 ### Linux
 Below lines of makefile enable to update sstd by a command of ```$ make update```.
-Adding a dependence of sstd to your makefile by using ```$(LIB_SSTD)```.
+Adding ```$(LIB_SSTD)```　as a dependence lib to your makefile.
 ```
 # when you need to check the change of files in lib, you need to change file name to a not-existing name like "FORCE_XXX".
 #LIB_SSTD       = FORCE_SSTD
