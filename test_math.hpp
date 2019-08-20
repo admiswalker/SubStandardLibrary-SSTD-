@@ -220,7 +220,7 @@ TEST(math, supress){
 	std::vector<double> in2={1,2,3};
 	std::vector<uint>   in3={1,2,3};
 	std::vector<double> in4={1,2,3,4};
-	sstd::supress(in1, in2, in3, in4);
+	sstd::suppress(in1, in2, in3, in4);
 	
 	ASSERT_TRUE(in1.size()==3);
 	ASSERT_TRUE(in2.size()==3);
