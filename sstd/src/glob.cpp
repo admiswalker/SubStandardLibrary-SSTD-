@@ -30,13 +30,10 @@ std::vector<std::string> sstd::glob(const char* path){
 	HANDLE hFind;
 	WIN32_FIND_DATA fd;
 	std::vector<std::string> FileList;
-
+	
 	hFind = FindFirstFileEx(path, FindExInfoStandard, &fd, FindExSearchNameMatch, NULL, 0);
-
-	if(hFind == INVALID_HANDLE_VALUE){
-		return FileList;	// No files or directories.
-	}
-
+	if(hFind==INVALID_HANDLE_VALUE){ return FileList; } // No files or directories.
+	
 	do{
 		if(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY){ // WIN32_FIND_DATA構造体のdwFileAttributesとFILE_ATTRIBUTE_DIRECTORYのビットの論理積を取り、ファイルかディレクトリかを判断している
 
@@ -75,10 +72,7 @@ std::vector<std::string> sstd::glob(const char* path){
 
 	// ディレクトリを開く
 	pDir = opendir(DirPath.c_str());
-	if ( NULL == pDir ) {
-		printf( "Error: in %s directory\n", DirPath.c_str() );
-		return FileList;
-	}
+	if(pDir==NULL){ return FileList; } // No files or directories.
 
 	for(pEnt=readdir(pDir); pEnt!=0; pEnt=readdir(pDir)){
 
