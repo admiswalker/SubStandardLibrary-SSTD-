@@ -372,7 +372,7 @@ std::string sstd_c2py::format_typeSet2str(const std::vector<struct sstd_c2py::ty
 	//                                                            ＼   /
 	// Example of "const mat<T>*~" format: _____F T mat <T> T F T 2 R C 0_______________
 	//                                    /      /   |   |   ＼＼＼＼___.               ＼
-	//                             constTF, retTF, type, <T>, *, *, ~, NumOfArrElements, If "T" is a std::string, num of string length will be continue.
+	//                             constTF, retTF, type, <T>, *, *, ~, NumOfArrElements, If "T" is a std::string, num of string length will be continued.
 	//-----------------------------------------------------------------------
 	
 	std::string typeStr;
