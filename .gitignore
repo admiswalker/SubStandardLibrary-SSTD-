@@ -10,3 +10,10 @@ backup/
 tmpDir/
 tmp*/
 
+# test files
+sin.png
+sin_cos.png
+test_reCombined.png
+test__writeAll_bin_char.png
+test__writeAll_bin_str.png
+

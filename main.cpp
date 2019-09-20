@@ -10,18 +10,23 @@
 #include <gtest/gtest.h>
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-// 順次 google test へ移行すること．
 
-// sstd/src
-//#include "./test_c2py.hpp"
-//#include "./test_csv.hpp"
+//#include "./test/c2py.hpp"
+//#include "./test/csv.hpp"
+//#include "./test/glob.hpp"
+//#include "./test/math.hpp"
+//#include "./test/measureTime.hpp"
+//#include "./test/print_printn_printn_all.hpp" // void pdbg(){ printf("======p\n"); } // #define DEBUG を定義しない場合でも，マクロでこの名前は使えなくなるので，名前空間を汚しており，本当はよくない．
+//#include "./test/status.hpp"
+//#include "./test/typeConversion.hpp"
+//#include "./test/vector_slice.hpp"
+//#include "./test/vector_stdVector_expansion.hpp" // stdVector_expansion of operators
+//#include "./test/vector_vvec.hpp"
+
+// 順次 google test へ移行すること．
 void TEST_time();
 void TEST_typeDef();
 void TEST_pdbg();
-// void pdbg(){ printf("======p\n"); } // #define DEBUG を定義しない場合でも，マクロでこの名前は使えなくなるので，名前空間を汚しており，本当はよくない．
-//#include "./test_print_printn_printn_all.hpp"
-#include "test_math.hpp"
-//#include "test_measureTime.hpp"
 void TEST_signal();
 void TEST_file();
 void TEST_file_c();
@@ -30,19 +35,12 @@ void TEST_rm();
 void TEST_ssprintf();
 void TEST_strmatch();
 void TEST_path();
-//#include "./test_glob.hpp" // void TEST_getFilePathInDir();
 void TEST_strEdit();        // テストを書くように．
 void TEST_tinyInterpreter();
-//#include "./test_typeConversion.hpp"
 void TEST_encode_decode();
 void TEST_hashFnc();
 void TEST_pause();
 //void TEST_getpid();        // テストを書くように．
-//#include "./test_status.hpp"
-
-//#include "./test_vector_stdVector_expansion.hpp" // stdVector_expansion of operators
-//#include "./test_vector_slice.hpp"
-//#include "./test_vector_vvec.hpp"
 
 // sstd/src/MatrixStore_mat
 void TEST_mat_colMajor();
@@ -184,12 +182,12 @@ void TEST_file(){
 	}
 }
 void TEST_file_c(){
-	// $ sha512sum ./test.png
-	// 021c3d7da0cedd5aa780ca765f9071f210ed3e19db3c08ee74aa6531aaf6552c3daaa8d0f30abeb10a30793bffbb86d39e3b019b865d54c2793dbd3b62c243e6  ./test.png
+	// $ sha512sum ./test/test.png
+	// 021c3d7da0cedd5aa780ca765f9071f210ed3e19db3c08ee74aa6531aaf6552c3daaa8d0f30abeb10a30793bffbb86d39e3b019b865d54c2793dbd3b62c243e6  ./test/test.png
 
 	const char* pFilePath_c = "./test_file_c.png";
 	{
-		const char* pFilePath = "./test.png";
+		const char* pFilePath = "./test/test.png";
 		std::vector<uint8> data = sstd::readAll_bin(pFilePath);
 		
 		sstd::file_c fp_c;
@@ -346,18 +344,18 @@ void TEST_path(){
 void TEST_strEdit(){
 	printf("■ strEdit\n");
 	printf("  □ readAll_bin\n");
-	std::vector<uint8> raw = sstd::readAll_bin("./test.png");
+	std::vector<uint8> raw = sstd::readAll_bin("./test/test.png");
 	sstd::printn_all(raw.size());
 	printf("  □ writeAll_bin\n");
 	if(!sstd::writeAll_bin("./test__writeAll_bin_char.png",             raw)){ sstd::pdbg("ERROR: sstd::writeAll_bin()\n"); }
 	if(!sstd::writeAll_bin(std::string("./test__writeAll_bin_str.png"), raw)){ sstd::pdbg("ERROR: sstd::writeAll_bin()\n"); }
 	
 	printf("  □ readAll_withoutBOM & splitByLine\n");
-//	std::string str_tI = sstd::readAll_withoutBOM(R"(./tinyInterpreter.txt)");
-	std::string str_tI = sstd::readAll_withoutBOM(std::string(R"(./tinyInterpreter.txt)"));
+//	std::string str_tI = sstd::readAll_withoutBOM(R"(./test/tinyInterpreter.txt)");
+	std::string str_tI = sstd::readAll_withoutBOM(std::string(R"(./test/tinyInterpreter.txt)"));
 	std::vector<std::string> splitLList = sstd::splitByLine(str_tI);
 	printf("\n");
-	printf("  tinyInterpreter.txt\n");
+	printf("  ./test/tinyInterpreter.txt\n");
 	printf("+----+----------------------------------------------------------------------------+\n");
 	for(uint i=0; i<splitLList.size(); i++){
 		printf("| %2d | %-74s |\n", i, splitLList[i].c_str());
@@ -419,7 +417,7 @@ TEST(strEdit, strIn){
 void TEST_tinyInterpreter(){
 	printf("■ tinyInterpreter\n");
 	printf("  □ getCommandList & splitByComma\n");
-	std::vector<std::string> cmdList = sstd::getCommandList(R"(./tinyInterpreter.txt)");
+	std::vector<std::string> cmdList = sstd::getCommandList(R"(./test/tinyInterpreter.txt)");
 	for(uint i=0; i<cmdList.size(); i++){
 		std::vector<std::string> splitCList = sstd::splitByComma(cmdList[i]);
 		for(uint n=0; n<splitCList.size(); n++){ printf("[%5s] ", splitCList[n].c_str()); } printf("\n");
@@ -501,7 +499,7 @@ void TEST_encode_decode(){
 void print_vecUint8_hex(std::vector<uint8>& rhs){ for(uint i=0; i<rhs.size(); i++){ printf("%.2x", rhs[i]); } printf("\n"); }
 void TEST_hashFnc(){
 	
-	const char* pFilePath = "./test.png";
+	const char* pFilePath = "./test/test.png";
 	std::vector<uint8> data = sstd::readAll_bin(pFilePath);
 	
 	printf("fnc_MD5   ( %s ) = ", pFilePath); { std::vector<uint8> hash = sstd::md5   (data); print_vecUint8_hex(hash); }
@@ -513,23 +511,23 @@ void TEST_hashFnc(){
 }
 // --- hash calculation by command ---
 //
-// $ md5sum ./test.png
-// 80764a9c59629dca04ee00c125726a01  ./test.png
+// $ md5sum ./test/test.png
+// 80764a9c59629dca04ee00c125726a01  ./test/test.png
 //
-// $ sha1sum ./test.png
-// 3361cc4368ae3369f3f115df78d186a887ee8b46  ./test.png
+// $ sha1sum ./test/test.png
+// 3361cc4368ae3369f3f115df78d186a887ee8b46  ./test/test.png
 //
-// $ sha224sum ./test.png
-// b5d2e3bface35276977ededd5941b52c0547ba4aa63a9571a9a81ac7  ./test.png
+// $ sha224sum ./test/test.png
+// b5d2e3bface35276977ededd5941b52c0547ba4aa63a9571a9a81ac7  ./test/test.png
 //
-// $ sha256sum ./test.png
-// 58aeaf1a74a46e37bad7d2161d629537440df5e2fcb0ee97837209335cf1fee7  ./test.png
+// $ sha256sum ./test/test.png
+// 58aeaf1a74a46e37bad7d2161d629537440df5e2fcb0ee97837209335cf1fee7  ./test/test.png
 //
-// $ sha384sum ./test.png
-// bbc9239c8266ab4b86b7b9435d1ade6f7c47af11ffac78dbb5cdcbe15c3fdaf96e9e720e2c2fa14178d96304ec8185ef  ./test.png
+// $ sha384sum ./test/test.png
+// bbc9239c8266ab4b86b7b9435d1ade6f7c47af11ffac78dbb5cdcbe15c3fdaf96e9e720e2c2fa14178d96304ec8185ef  ./test/test.png
 //
-// $ sha512sum ./test.png
-// 021c3d7da0cedd5aa780ca765f9071f210ed3e19db3c08ee74aa6531aaf6552c3daaa8d0f30abeb10a30793bffbb86d39e3b019b865d54c2793dbd3b62c243e6  ./test.png
+// $ sha512sum ./test/test.png
+// 021c3d7da0cedd5aa780ca765f9071f210ed3e19db3c08ee74aa6531aaf6552c3daaa8d0f30abeb10a30793bffbb86d39e3b019b865d54c2793dbd3b62c243e6  ./test/test.png
 
 void TEST_pause(){
 //	printf("■ #define UsePause\n");
