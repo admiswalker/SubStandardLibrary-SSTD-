@@ -4,6 +4,7 @@
 #include "ssprintf.hpp"
 
 namespace sstd{
+	int str2int(const        char* rhs); // 小数点以下，切り捨て
 	int str2int(const std::string& rhs); // 小数点以下，切り捨て
 	
 	                        double   str2double(const                         std::string  & rhs);

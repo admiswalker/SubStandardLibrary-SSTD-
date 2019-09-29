@@ -2,7 +2,13 @@
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-TEST(typeConversion, str2int){
+TEST(typeConversion, str2int_char){
+	const char* s = "1234";
+	int ans = 1234;
+	int i = sstd::str2int(s);
+	ASSERT_TRUE(i == ans);
+}
+TEST(typeConversion, str2int_std_string){
 	std::string s = "1234";
 	int ans = 1234;
 	int i = sstd::str2int(s);

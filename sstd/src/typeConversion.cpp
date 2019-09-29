@@ -1,5 +1,7 @@
-﻿#include "typeConversion.hpp"
+﻿//#include <stdlib.h>
+#include "typeConversion.hpp"
 
+int sstd::str2int(const        char* rhs){ return std::atoi(rhs); } // 小数点以下，切り捨て
 int sstd::str2int(const std::string& rhs){ return std::stoi(rhs); } // 小数点以下，切り捨て
 
 double sstd::str2double(const std::string& rhs){ return std::stod(rhs); }
