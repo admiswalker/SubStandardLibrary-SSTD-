@@ -54,6 +54,7 @@
 #include "./src/pause.hpp"
 #include "./src/pid.hpp"
 #include "./src/status.hpp"
+#include "./src/stdlib.hpp"
 
 namespace sstd{
 
