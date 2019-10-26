@@ -2,7 +2,7 @@
 #include "./typeDef.h"
 
 namespace sstd{
-	int32 getpid();
+    int32 getpid();
 }
 
 

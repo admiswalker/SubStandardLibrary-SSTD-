@@ -4,15 +4,15 @@
 #include "pause.hpp"
 
 namespace sstd{
-	// need to inline in order to avoid mulple definition
-	inline void pdbg_dummy(){}
-	
-	inline void pdbg(...){}
-	inline void pdbg_if(...){}
-	inline void pdbg_if_exit(...){}
-	inline void pdbg_if_stop_exit(...){}
-	inline void dbg(...){}
-	inline void ndbg(...){}
+    // need to inline in order to avoid mulple definition
+    inline void pdbg_dummy(){}
+    
+    inline void pdbg(...){}
+    inline void pdbg_if(...){}
+    inline void pdbg_if_exit(...){}
+    inline void pdbg_if_stop_exit(...){}
+    inline void dbg(...){}
+    inline void ndbg(...){}
 }
 
 #define pdbg(...) pdbg_dummy();{printf("%s: %s(%d): ", __FILE__, __func__, __LINE__);printf(__VA_ARGS__);}

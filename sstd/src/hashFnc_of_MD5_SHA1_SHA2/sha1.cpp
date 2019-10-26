@@ -19,11 +19,11 @@
 // on either big or little endian, however if we do know it is a little endian architecture we can speed it up a bit.
 // Note, there are TWO places where USE_LITTLE_ENDIAN_SHORTCUT is used. They MUST be paired together.
 #if defined(__BYTE_ORDER__) && defined(__ORDER_LITTLE_ENDIAN__) && ( __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__ )
-    // gcc defines __BYTE_ORDER__ so if it says its little endian we can use that.
-    #define USE_LITTLE_ENDIAN_SHORTCUT
+// gcc defines __BYTE_ORDER__ so if it says its little endian we can use that.
+#define USE_LITTLE_ENDIAN_SHORTCUT
 #elif defined( _WIN32 )
-    // Windows is always little endian so we can use that.
-    #define USE_LITTLE_ENDIAN_SHORTCUT
+// Windows is always little endian so we can use that.
+#define USE_LITTLE_ENDIAN_SHORTCUT
 #endif
 
 typedef union
@@ -34,18 +34,18 @@ typedef union
 
 // Endian neutral macro for loading 32 bit value from 4 byte array (in big endian form).
 #define LOAD32H(x, y)                           \
-     { x = ((uint32)((y)[0] & 255)<<24) |     \
-           ((uint32)((y)[1] & 255)<<16) |     \
-           ((uint32)((y)[2] & 255)<<8)  |     \
-           ((uint32)((y)[3] & 255)); }
+    { x = ((uint32)((y)[0] & 255)<<24) |        \
+            ((uint32)((y)[1] & 255)<<16) |      \
+            ((uint32)((y)[2] & 255)<<8)  |      \
+            ((uint32)((y)[3] & 255)); }
 
 #define rol(value, bits) (((value) << (bits)) | ((value) >> (32 - (bits))))
 
 // blk0() and blk() perform the initial expand.
 #ifdef USE_LITTLE_ENDIAN_SHORTCUT
-    #define blk0(i) (block->l[i] = (rol(block->l[i],24)&0xFF00FF00) | (rol(block->l[i],8)&0x00FF00FF))
+#define blk0(i) (block->l[i] = (rol(block->l[i],24)&0xFF00FF00) | (rol(block->l[i],8)&0x00FF00FF))
 #else
-    #define blk0(i) block->l[i]
+#define blk0(i) block->l[i]
 #endif
 
 #define blk(i) (block->l[i&15] = rol(block->l[(i+13)&15] ^ block->l[(i+8)&15] ^ block->l[(i+2)&15] ^ block->l[i&15],1))
@@ -59,16 +59,16 @@ typedef union
 
 // Loads the 128 bits from ByteArray into WordArray, treating ByteArray as big endian data
 #ifdef USE_LITTLE_ENDIAN_SHORTCUT
-    #define Load128BitsAsWords( WordArray, ByteArray )  \
-        memcpy( WordArray, ByteArray, 64 )
+#define Load128BitsAsWords( WordArray, ByteArray )  \
+    memcpy( WordArray, ByteArray, 64 )
 #else
-    #define Load128BitsAsWords( WordArray, ByteArray )      \
-    {                                                       \
-        uint32 i;                                         \
-        for( i=0; i<16; i++ )                               \
-        {                                                   \
-            LOAD32H( (WordArray)[i], (ByteArray)+(i*4) );   \
-        }                                                   \
+#define Load128BitsAsWords( WordArray, ByteArray )              \
+    {                                                           \
+        uint32 i;                                               \
+        for( i=0; i<16; i++ )                                   \
+            {                                                   \
+                LOAD32H( (WordArray)[i], (ByteArray)+(i*4) );   \
+            }                                                   \
     }
 #endif
 
@@ -141,26 +141,26 @@ void sha_process(sha1_state& md, void  const* Buffer, uint32 BufferSize){
 
     j = (md.Count[0] >> 3) & 63;
     if( (md.Count[0] += BufferSize << 3) < (BufferSize << 3) )
-    {
-        md.Count[1]++;
-    }
+        {
+            md.Count[1]++;
+        }
 
     md.Count[1] += (BufferSize >> 29);
     if( (j + BufferSize) > 63 )
-    {
-        i = 64 - j;
-        memcpy( &md.Buffer[j], Buffer, i );
-        TransformFunction(md.State, md.Buffer);
-        for( ; i + 63 < BufferSize; i += 64 )
         {
-            TransformFunction(md.State, (uint8*)Buffer + i);
+            i = 64 - j;
+            memcpy( &md.Buffer[j], Buffer, i );
+            TransformFunction(md.State, md.Buffer);
+            for( ; i + 63 < BufferSize; i += 64 )
+                {
+                    TransformFunction(md.State, (uint8*)Buffer + i);
+                }
+            j = 0;
         }
-        j = 0;
-    }
     else
-    {
-        i = 0;
-    }
+        {
+            i = 0;
+        }
 
     memcpy( &md.Buffer[j], &((uint8*)Buffer)[i], BufferSize - i );
 }
@@ -172,21 +172,21 @@ void sha_done(sha1_state& md, unsigned char* Digest){
     uint8     finalcount[8];
 
     for( i=0; i<8; i++ )
-    {
-        finalcount[i] = (unsigned char)((md.Count[(i >= 4 ? 0 : 1)]
-         >> ((3-(i & 3)) * 8) ) & 255);  // Endian independent
-    }
+        {
+            finalcount[i] = (unsigned char)((md.Count[(i >= 4 ? 0 : 1)]
+                                             >> ((3-(i & 3)) * 8) ) & 255);  // Endian independent
+        }
     sha_process( md, (uint8*)"\x80", 1 );
     while( (md.Count[0] & 504) != 448 )
-    {
-        sha_process( md, (uint8*)"\0", 1 );
-    }
+        {
+            sha_process( md, (uint8*)"\0", 1 );
+        }
 
     sha_process( md, finalcount, 8 );  // Should cause a Sha1TransformFunction()
     for( i=0; i<SHA1_HASH_SIZE; i++ )
-    {
-        Digest[i] = (uint8)((md.State[i>>2] >> ((3-(i & 3)) * 8) ) & 255);
-    }
+        {
+            Digest[i] = (uint8)((md.State[i>>2] >> ((3-(i & 3)) * 8) ) & 255);
+        }
 }
 
 //  Combines sha_init, sha_process, and sha_done into one function. Calculates the SHA1 hash of the buffer.

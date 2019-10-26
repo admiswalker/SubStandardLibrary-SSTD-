@@ -19,16 +19,16 @@
 #include <stdio.h>
 
 struct sha1_state{
-    uint32        State[5];
-    uint32        Count[2];
-    uint8         Buffer[64];
+    uint32 State[5];
+    uint32 Count[2];
+    uint8  Buffer[64];
 };
 
 #define SHA1_HASH_SIZE ( 160 / 8 )
 
-void sha_init(sha1_state& md);
+void sha_init   (sha1_state& md);
 void sha_process(sha1_state& md, void const* Buffer, uint32 BufferSize);
-void sha_done(sha1_state& md, unsigned char* Digest);
+void sha_done   (sha1_state& md, unsigned char* Digest);
 
 void Sha1Calculate(void const* Buffer, uint32_t BufferSize, unsigned char* Digest);
 

@@ -9,6 +9,6 @@ struct sha384_state
     sha512_state md;
 };
 
-void sha_init(sha384_state& md);
+void sha_init   (sha384_state& md);
 void sha_process(sha384_state& md, const void* in, std::uint32_t inlen);
-void sha_done(sha384_state& md, void* out);
+void sha_done   (sha384_state& md, void* out);

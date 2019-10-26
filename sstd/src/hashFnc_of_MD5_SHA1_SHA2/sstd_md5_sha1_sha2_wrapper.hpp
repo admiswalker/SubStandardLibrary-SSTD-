@@ -12,21 +12,21 @@
 #define SHA512_DIGEST_LENGTH 64
 
 namespace sstd{
-	std::vector<uint8> md5   (const uchar* in, size_t in_len);
-	std::vector<uint8> md5   (const std::vector<uint8>& in);
-	
-	std::vector<uint8> sha1  (const uchar* in, size_t in_len);
-	std::vector<uint8> sha1  (const std::vector<uint8>& in);
-	
-	std::vector<uint8> sha224(const uchar* in, size_t in_len);
-	std::vector<uint8> sha256(const uchar* in, size_t in_len);
-	std::vector<uint8> sha384(const uchar* in, size_t in_len);
-	std::vector<uint8> sha512(const uchar* in, size_t in_len);
-	
-	std::vector<uint8> sha224(const std::vector<uint8>& in);
-	std::vector<uint8> sha256(const std::vector<uint8>& in);
-	std::vector<uint8> sha384(const std::vector<uint8>& in);
-	std::vector<uint8> sha512(const std::vector<uint8>& in);
+    std::vector<uint8> md5   (const uchar* in, size_t in_len);
+    std::vector<uint8> md5   (const std::vector<uint8>& in);
+    
+    std::vector<uint8> sha1  (const uchar* in, size_t in_len);
+    std::vector<uint8> sha1  (const std::vector<uint8>& in);
+    
+    std::vector<uint8> sha224(const uchar* in, size_t in_len);
+    std::vector<uint8> sha256(const uchar* in, size_t in_len);
+    std::vector<uint8> sha384(const uchar* in, size_t in_len);
+    std::vector<uint8> sha512(const uchar* in, size_t in_len);
+    
+    std::vector<uint8> sha224(const std::vector<uint8>& in);
+    std::vector<uint8> sha256(const std::vector<uint8>& in);
+    std::vector<uint8> sha384(const std::vector<uint8>& in);
+    std::vector<uint8> sha512(const std::vector<uint8>& in);
 }
 
 // sstd_MD5_sha1_sha2_wrapper is wrapped below libraries ([1], [2], [3]).
