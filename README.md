@@ -60,6 +60,8 @@ file | URL
 ./sstd/src/matrixContainer_rowMajor/mat_r.hpp | [admiswalker.blogspot.com/2019/04/a-single-header-file-template-container.html](https://admiswalker.blogspot.com/2019/04/a-single-header-file-template-container.html)
 The others | https://sstd-lib.blogspot.com/p/index.html
 
+The above documents will be moved to [admiswalker.github.io/sstdref/](https://admiswalker.github.io/sstdref/) ([Repository](https://github.com/admiswalker/sstdref)).
+
 ## License
 MIT licence or Public domain.
 (This software is dual license, so you can choose whichever you want.)
