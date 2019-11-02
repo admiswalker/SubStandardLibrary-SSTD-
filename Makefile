@@ -68,9 +68,11 @@ LIBS_DIRS    = ./googletest-master
 BACKUP_FILES = $(filter-out ./$(TARGET) $(TMP_DIRS) $(BACKUP_DIR) $(LIBS_DIRS), $(ALL_FILES))
 TIME_STAMP   = `date +%Y_%m%d_%H%M`
 
-HEADS_t      = $(wildcard ./*.h  )
-HEADS_t     += $(wildcard ./*.hpp)
-
+# test files
+HEADS_t      = $(wildcard ./*.py      )
+HEADS_t     += $(wildcard ./test/*.py )
+HEADS_t     += $(wildcard ./test/*.h  )
+HEADS_t     += $(wildcard ./test/*.hpp)
 
 # when you need to check the change of files in lib, you need to change file name to a not-existing name like "FORCE_XXX".
 LIB_SSTD       = FORCE_SSTD
