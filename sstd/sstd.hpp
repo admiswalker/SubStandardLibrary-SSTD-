@@ -183,14 +183,10 @@ namespace sstd{
     extern float  ave    (const std::vector<float>&  rhs, uint num); // 平均値: average in the first num elements.
     extern float  med    (      std::vector<float>   rhs);           // 中央値: median // copy rhs // If rhs.size () is even, average of the two median values is returned.
 //    extern float  mod    (const std::vector<float>&  rhs);           // 最頻値: mode <- これは、やりにくい。(ビンサイズをどのように扱うのか？)
-    extern float  max    (const std::vector<float>&  rhs);
-    extern float  max_abs(const std::vector<float>&  rhs);
-    extern float  min    (const std::vector<float>&  rhs);
-    extern float  min_abs(const std::vector<float>&  rhs);
-    extern float  var    (const std::vector<float>&  rhs); // 不偏分散/標本分散 (variance): u^2 = (1/(n-1))*Σ(x_i-μ)^2
-    extern float  var_p  (const std::vector<float>&  rhs); // 母分散 (variance population): σ^2 = (1/n)*Σ(x_i-μ)^2
-    extern float  stdev  (const std::vector<float>&  rhs); // 標本標準偏差 (sample standard deviation): u = SQRT( (1/(n-1))*Σ(x_i-μ)^2 )
-    extern float  stdev_p(const std::vector<float>&  rhs); // 標準偏差 (standard deviation): σ = SQRT( (1/n)*Σ(x_i-μ)^2 )
+    extern float  var    (const std::vector<float>&  rhs);           // 不偏分散/標本分散 (variance): u^2 = (1/(n-1))*Σ(x_i-μ)^2
+    extern float  var_p  (const std::vector<float>&  rhs);           // 母分散 (variance population): σ^2 = (1/n)*Σ(x_i-μ)^2
+    extern float  stdev  (const std::vector<float>&  rhs);           // 標本標準偏差 (sample standard deviation): u = SQRT( (1/(n-1))*Σ(x_i-μ)^2 )
+    extern float  stdev_p(const std::vector<float>&  rhs);           // 標準偏差 (standard deviation): σ = SQRT( (1/n)*Σ(x_i-μ)^2 )
     
     extern double sum    (const std::vector<double>& rhs);
     extern double sum    (const std::vector<double>& rhs, uint a, uint b); // 配列の a 番目から b 番目までの合計. sum of the a th to b th of array.
@@ -199,128 +195,25 @@ namespace sstd{
     extern double ave    (const std::vector<double>& rhs, uint num); // 平均値: average in the first num elements.
     extern double med    (      std::vector<double>  rhs);           // 中央値: median // copy rhs // If rhs.size () is even, average of the two median values is returned.
 //    extern double mod    (const std::vector<double>& rhs);           // 最頻値: mode <- これは、やりにくい。(ビンサイズをどのように扱うのか？)
-    extern double max    (const std::vector<double>& rhs);
-    extern double max_abs(const std::vector<double>& rhs);
-    extern double min    (const std::vector<double>& rhs);
-    extern double min_abs(const std::vector<double>& rhs);
-    extern double var    (const std::vector<double>& rhs); // 不偏分散/標本分散 (variance): u^2 = (1/(n-1))*Σ(x_i-μ)^2
-    extern double var_p  (const std::vector<double>& rhs); // 母分散 (variance population): σ^2 = (1/n)*Σ(x_i-μ)^2
-    extern double stdev  (const std::vector<double>& rhs); // 標本標準偏差 (sample standard deviation): u = SQRT( (1/(n-1))*Σ(x_i-μ)^2 )
-    extern double stdev_p(const std::vector<double>& rhs); // 標準偏差 (standard deviation): σ = SQRT( (1/n)*Σ(x_i-μ)^2 )
+    extern double var    (const std::vector<double>& rhs);           // 不偏分散/標本分散 (variance): u^2 = (1/(n-1))*Σ(x_i-μ)^2
+    extern double var_p  (const std::vector<double>& rhs);           // 母分散 (variance population): σ^2 = (1/n)*Σ(x_i-μ)^2
+    extern double stdev  (const std::vector<double>& rhs);           // 標本標準偏差 (sample standard deviation): u = SQRT( (1/(n-1))*Σ(x_i-μ)^2 )
+    extern double stdev_p(const std::vector<double>& rhs);           // 標準偏差 (standard deviation): σ = SQRT( (1/n)*Σ(x_i-μ)^2 )
 
-    //------------------------------------------------------------------------
+//    template<typename T> inline T min    (const std::vector<T>& rhs);
+//    template<typename T> inline T min_abs(const std::vector<T>& rhs);
+//    template<typename T> inline T max    (const std::vector<T>& rhs);
+//    template<typename T> inline T max_abs(const std::vector<T>& rhs);
     
-    extern   char max    (const std::vector< char >& rhs);
-    extern   int8 max    (const std::vector< int8 >& rhs);
-    extern  int16 max    (const std::vector< int16>& rhs);
-    extern  int32 max    (const std::vector< int32>& rhs);
-    extern  int64 max    (const std::vector< int64>& rhs);
-//    extern  uchar max    (const std::vector<uchar >& rhs); // same as a uint8
-    extern  uint8 max    (const std::vector<uint8 >& rhs);
-    extern uint16 max    (const std::vector<uint16>& rhs);
-    extern uint32 max    (const std::vector<uint32>& rhs);
-    extern uint64 max    (const std::vector<uint64>& rhs);
-    extern   char max_abs(const std::vector< char >& rhs);
-    extern   int8 max_abs(const std::vector< int8 >& rhs);
-    extern  int16 max_abs(const std::vector< int16>& rhs);
-    extern  int32 max_abs(const std::vector< int32>& rhs);
-    extern  int64 max_abs(const std::vector< int64>& rhs);
+//    template<typename T> inline T min    (const sstd::mat_c<T>& rhs);
+//    template<typename T> inline T min_abs(const sstd::mat_c<T>& rhs);
+//    template<typename T> inline T max    (const sstd::mat_c<T>& rhs);
+//    template<typename T> inline T max_abs(const sstd::mat_c<T>& rhs);
     
-    extern   char min    (const std::vector< char >& rhs);
-    extern   int8 min    (const std::vector< int8 >& rhs);
-    extern  int16 min    (const std::vector< int16>& rhs);
-    extern  int32 min    (const std::vector< int32>& rhs);
-    extern  int64 min    (const std::vector< int64>& rhs);
-//    extern  uchar min    (const std::vector<uchar >& rhs); // same as a uint8
-    extern  uint8 min    (const std::vector<uint8 >& rhs);
-    extern uint16 min    (const std::vector<uint16>& rhs);
-    extern uint32 min    (const std::vector<uint32>& rhs);
-    extern uint64 min    (const std::vector<uint64>& rhs);
-    extern   char min_abs(const std::vector< char >& rhs);
-    extern   int8 min_abs(const std::vector< int8 >& rhs);
-    extern  int16 min_abs(const std::vector< int16>& rhs);
-    extern  int32 min_abs(const std::vector< int32>& rhs);
-    extern  int64 min_abs(const std::vector< int64>& rhs);
-    
-    extern   char max    (const sstd::mat_c< char >& rhs);
-    extern   int8 max    (const sstd::mat_c< int8 >& rhs);
-    extern  int16 max    (const sstd::mat_c< int16>& rhs);
-    extern  int32 max    (const sstd::mat_c< int32>& rhs);
-    extern  int64 max    (const sstd::mat_c< int64>& rhs);
-//    extern  uchar max    (const sstd::mat_c<uchar >& rhs); // same as a uint8
-    extern  uint8 max    (const sstd::mat_c<uint8 >& rhs);
-    extern uint16 max    (const sstd::mat_c<uint16>& rhs);
-    extern uint32 max    (const sstd::mat_c<uint32>& rhs);
-    extern uint64 max    (const sstd::mat_c<uint64>& rhs);
-    extern  float max    (const sstd::mat_c< float>& rhs);
-    extern double max    (const sstd::mat_c<double>& rhs);
-    extern   char max_abs(const sstd::mat_c< char >& rhs);
-    extern   int8 max_abs(const sstd::mat_c< int8 >& rhs);
-    extern  int16 max_abs(const sstd::mat_c< int16>& rhs);
-    extern  int32 max_abs(const sstd::mat_c< int32>& rhs);
-    extern  int64 max_abs(const sstd::mat_c< int64>& rhs);
-    extern  float max_abs(const sstd::mat_c< float>& rhs);
-    extern double max_abs(const sstd::mat_c<double>& rhs);
-    
-    extern   char min    (const sstd::mat_c< char >& rhs);
-    extern   int8 min    (const sstd::mat_c< int8 >& rhs);
-    extern  int16 min    (const sstd::mat_c< int16>& rhs);
-    extern  int32 min    (const sstd::mat_c< int32>& rhs);
-    extern  int64 min    (const sstd::mat_c< int64>& rhs);
-//    extern  uchar min    (const sstd::mat_c<uchar >& rhs); // same as a uint8
-    extern  uint8 min    (const sstd::mat_c<uint8 >& rhs);
-    extern uint16 min    (const sstd::mat_c<uint16>& rhs);
-    extern uint32 min    (const sstd::mat_c<uint32>& rhs);
-    extern uint64 min    (const sstd::mat_c<uint64>& rhs);
-    extern  float min    (const sstd::mat_c< float>& rhs);
-    extern double min    (const sstd::mat_c<double>& rhs);
-    extern   char min_abs(const sstd::mat_c< char >& rhs);
-    extern   int8 min_abs(const sstd::mat_c< int8 >& rhs);
-    extern  int16 min_abs(const sstd::mat_c< int16>& rhs);
-    extern  int32 min_abs(const sstd::mat_c< int32>& rhs);
-    extern  int64 min_abs(const sstd::mat_c< int64>& rhs);
-    extern  float min_abs(const sstd::mat_c< float>& rhs);
-    extern double min_abs(const sstd::mat_c<double>& rhs);
-    
-    extern   char max    (const sstd::mat_r< char >& rhs);
-    extern   int8 max    (const sstd::mat_r< int8 >& rhs);
-    extern  int16 max    (const sstd::mat_r< int16>& rhs);
-    extern  int32 max    (const sstd::mat_r< int32>& rhs);
-    extern  int64 max    (const sstd::mat_r< int64>& rhs);
-//    extern  uchar max    (const sstd::mat_r<uchar >& rhs); // same as a uint8
-    extern  uint8 max    (const sstd::mat_r<uint8 >& rhs);
-    extern uint16 max    (const sstd::mat_r<uint16>& rhs);
-    extern uint32 max    (const sstd::mat_r<uint32>& rhs);
-    extern uint64 max    (const sstd::mat_r<uint64>& rhs);
-    extern  float max    (const sstd::mat_r< float>& rhs);
-    extern double max    (const sstd::mat_r<double>& rhs);
-    extern   char max_abs(const sstd::mat_r< char >& rhs);
-    extern   int8 max_abs(const sstd::mat_r< int8 >& rhs);
-    extern  int16 max_abs(const sstd::mat_r< int16>& rhs);
-    extern  int32 max_abs(const sstd::mat_r< int32>& rhs);
-    extern  int64 max_abs(const sstd::mat_r< int64>& rhs);
-    extern  float max_abs(const sstd::mat_r< float>& rhs);
-    extern double max_abs(const sstd::mat_r<double>& rhs);
-    
-    extern   char min    (const sstd::mat_r< char >& rhs);
-    extern   int8 min    (const sstd::mat_r< int8 >& rhs);
-    extern  int16 min    (const sstd::mat_r< int16>& rhs);
-    extern  int32 min    (const sstd::mat_r< int32>& rhs);
-    extern  int64 min    (const sstd::mat_r< int64>& rhs);
-//    extern  uchar min    (const sstd::mat_r<uchar >& rhs); // same as a uint8
-    extern  uint8 min    (const sstd::mat_r<uint8 >& rhs);
-    extern uint16 min    (const sstd::mat_r<uint16>& rhs);
-    extern uint32 min    (const sstd::mat_r<uint32>& rhs);
-    extern uint64 min    (const sstd::mat_r<uint64>& rhs);
-    extern  float min    (const sstd::mat_r< float>& rhs);
-    extern double min    (const sstd::mat_r<double>& rhs);
-    extern   char min_abs(const sstd::mat_r< char >& rhs);
-    extern   int8 min_abs(const sstd::mat_r< int8 >& rhs);
-    extern  int16 min_abs(const sstd::mat_r< int16>& rhs);
-    extern  int32 min_abs(const sstd::mat_r< int32>& rhs);
-    extern  int64 min_abs(const sstd::mat_r< int64>& rhs);
-    extern  float min_abs(const sstd::mat_r< float>& rhs);
-    extern double min_abs(const sstd::mat_r<double>& rhs);
+//    template<typename T> inline T min    (const sstd::mat_r<T>& rhs);
+//    template<typename T> inline T min_abs(const sstd::mat_r<T>& rhs);
+//    template<typename T> inline T max    (const sstd::mat_r<T>& rhs);
+//    template<typename T> inline T max_abs(const sstd::mat_r<T>& rhs);
     
     //------------------------------------------------------------------------
     

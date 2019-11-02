@@ -33,10 +33,6 @@ void TEST_math(){
     printf("ave: %f\n", sstd::ave(buf_f));
     printf("ave in the first 2 elements: %f\n", sstd::ave(buf_f, 2));
     printf("med: %f\n", sstd::med(buf_f));
-    printf("max: %f\n", sstd::max(buf_f));
-    printf("max_abs: %f\n", sstd::max_abs(buf_f));
-    printf("min: %f\n", sstd::min(buf_f));
-    printf("min_abs: %f\n", sstd::min_abs(buf_f));
     printf("var: %f\n", sstd::var(buf_f));
     printf("var_p: %f\n", sstd::var_p(buf_f));
     printf("stdev: %f\n", sstd::stdev(buf_f));
@@ -54,10 +50,6 @@ void TEST_math(){
     printf("ave: %f\n", sstd::ave(buf_d));
     printf("ave in the first 2 elements: %f\n", sstd::ave(buf_d, 2));
     printf("med: %f\n", sstd::med(buf_d));
-    printf("max: %f\n", sstd::max(buf_d));
-    printf("max_abs: %f\n", sstd::max_abs(buf_d));
-    printf("min: %f\n", sstd::min(buf_d));
-    printf("min_abs: %f\n", sstd::min_abs(buf_d));
     printf("var: %f\n", sstd::var(buf_d));
     printf("var_p: %f\n", sstd::var_p(buf_d));
     printf("stdev: %f\n", sstd::stdev(buf_d));
@@ -123,72 +115,6 @@ void TEST_math(){
 
     //-------------------------------------------------------------------------------------------------------------------------------------------
     
-    { std::vector< char > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("max: %i\n",  sstd::max(buf)); }
-    { std::vector< int8 > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("max: %i\n",  sstd::max(buf)); }
-    { std::vector< int16> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("max: %i\n",  sstd::max(buf)); }
-    { std::vector< int32> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("max: %i\n",  sstd::max(buf)); }
-    { std::vector< int64> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("max: %li\n", sstd::max(buf)); }
-//    { std::vector<uchar > buf={               0,1,2,3,4}; printf("max: %u\n",  sstd::max(buf)); }
-    { std::vector<uint8 > buf={               0,1,2,3,4}; printf("max: %u\n",  sstd::max(buf)); }
-    { std::vector<uint16> buf={               0,1,2,3,4}; printf("max: %u\n",  sstd::max(buf)); }
-    { std::vector<uint32> buf={               0,1,2,3,4}; printf("max: %u\n",  sstd::max(buf)); }
-    { std::vector<uint64> buf={               0,1,2,3,4}; printf("max: %lu\n", sstd::max(buf)); }
-    printf("\n");
-    
-    { std::vector< char > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("max_abs: %i\n",  sstd::max_abs(buf)); }
-    { std::vector< int8 > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("max_abs: %i\n",  sstd::max_abs(buf)); }
-    { std::vector< int16> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("max_abs: %i\n",  sstd::max_abs(buf)); }
-    { std::vector< int32> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("max_abs: %i\n",  sstd::max_abs(buf)); }
-    { std::vector< int64> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("max_abs: %li\n", sstd::max_abs(buf)); }
-    printf("\n");
-    
-    { std::vector< char > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("min: %i\n",  sstd::min(buf)); }
-    { std::vector< int8 > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("min: %i\n",  sstd::min(buf)); }
-    { std::vector< int16> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("min: %i\n",  sstd::min(buf)); }
-    { std::vector< int32> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("min: %i\n",  sstd::min(buf)); }
-    { std::vector< int64> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("min: %li\n", sstd::min(buf)); }
-//    { std::vector<uchar > buf={               0,1,2,3,4}; printf("min: %u\n",  sstd::min(buf)); }
-    { std::vector<uint8 > buf={               0,1,2,3,4}; printf("min: %u\n",  sstd::min(buf)); }
-    { std::vector<uint16> buf={               0,1,2,3,4}; printf("min: %u\n",  sstd::min(buf)); }
-    { std::vector<uint32> buf={               0,1,2,3,4}; printf("min: %u\n",  sstd::min(buf)); }
-    { std::vector<uint64> buf={               0,1,2,3,4}; printf("min: %lu\n", sstd::min(buf)); }
-    printf("\n");
-    
-    { std::vector< char > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("min_abs: %i\n",  sstd::min_abs(buf)); }
-    { std::vector< int8 > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("min_abs: %i\n",  sstd::min_abs(buf)); }
-    { std::vector< int16> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("min_abs: %i\n",  sstd::min_abs(buf)); }
-    { std::vector< int32> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("min_abs: %i\n",  sstd::min_abs(buf)); }
-    { std::vector< int64> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; printf("min_abs: %li\n", sstd::min_abs(buf)); }
-    printf("\n");
-    
-    { sstd::mat_c< char > buf={{-2, -1}, {0, 1}};           printf("max: %i\n",  sstd::max(buf)); }
-    { sstd::mat_c< int8 > buf={{-2, -1}, {0, 1}};           printf("max: %i\n",  sstd::max(buf)); }
-    { sstd::mat_c< int16> buf={{-2, -1}, {0, 1}};           printf("max: %i\n",  sstd::max(buf)); }
-    { sstd::mat_c< int32> buf={{-2, -1}, {0, 1}};           printf("max: %i\n",  sstd::max(buf)); }
-    { sstd::mat_c< int64> buf={{-2, -1}, {0, 1}};           printf("max: %li\n", sstd::max(buf)); }
-    { sstd::mat_c<uint8 > buf={{ 0,  1}, {2, 3}};           printf("max: %u\n",  sstd::max(buf)); }
-    { sstd::mat_c<uint16> buf={{ 0,  1}, {2, 3}};           printf("max: %u\n",  sstd::max(buf)); }
-    { sstd::mat_c<uint32> buf={{ 0,  1}, {2, 3}};           printf("max: %u\n",  sstd::max(buf)); }
-    { sstd::mat_c<uint64> buf={{ 0,  1}, {2, 3}};           printf("max: %lu\n", sstd::max(buf)); }
-    { sstd::mat_c< float> buf={{-2, -1}, {0, 1}};           printf("max: %f\n",  sstd::max(buf)); }
-    { sstd::mat_c<double> buf={{-2, -1}, {0, 1}};           printf("max: %lf\n", sstd::max(buf)); }
-    printf("\n");
-    
-    { sstd::mat_r< char > buf={{-2, -1}, {0, 1}};         printf("max: %i\n",  sstd::max(buf)); }
-    { sstd::mat_r< int8 > buf={{-2, -1}, {0, 1}};         printf("max: %i\n",  sstd::max(buf)); }
-    { sstd::mat_r< int16> buf={{-2, -1}, {0, 1}};         printf("max: %i\n",  sstd::max(buf)); }
-    { sstd::mat_r< int32> buf={{-2, -1}, {0, 1}};         printf("max: %i\n",  sstd::max(buf)); }
-    { sstd::mat_r< int64> buf={{-2, -1}, {0, 1}};         printf("max: %li\n", sstd::max(buf)); }
-    { sstd::mat_r<uint8 > buf={{ 0,  1}, {2, 3}};         printf("max: %u\n",  sstd::max(buf)); }
-    { sstd::mat_r<uint16> buf={{ 0,  1}, {2, 3}};         printf("max: %u\n",  sstd::max(buf)); }
-    { sstd::mat_r<uint32> buf={{ 0,  1}, {2, 3}};         printf("max: %u\n",  sstd::max(buf)); }
-    { sstd::mat_r<uint64> buf={{ 0,  1}, {2, 3}};         printf("max: %lu\n", sstd::max(buf)); }
-    { sstd::mat_r< float> buf={{-2, -1}, {0, 1}};         printf("max: %f\n",  sstd::max(buf)); }
-    { sstd::mat_r<double> buf={{-2, -1}, {0, 1}};         printf("max: %lf\n", sstd::max(buf)); }
-    printf("\n");
-    
-    //-------------------------------------------------------------------------------------------------------------------------------------------
-    
     { TEST_vec_sort_sort_de  ( int8 ); }
     { TEST_vec_sort_sort_de  ( int16); }
     { TEST_vec_sort_sort_de  ( int32); }
@@ -206,6 +132,75 @@ TEST(math, theOthers){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+
+TEST(math, min_vec){
+    { std::vector< char > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::min(buf)==-5); }
+    { std::vector< int8 > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::min(buf)==-5); }
+    { std::vector< int16> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::min(buf)==-5); }
+    { std::vector< int32> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::min(buf)==-5); }
+    { std::vector< int64> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::min(buf)==-5); }
+//    { std::vector<uchar > buf={               0,1,2,3,4}; ASSERT_TRUE(sstd::min(buf)==0); }
+    { std::vector<uint8 > buf={               0,1,2,3,4}; ASSERT_TRUE(sstd::min(buf)==0); }
+    { std::vector<uint16> buf={               0,1,2,3,4}; ASSERT_TRUE(sstd::min(buf)==0); }
+    { std::vector<uint32> buf={               0,1,2,3,4}; ASSERT_TRUE(sstd::min(buf)==0); }
+    { std::vector<uint64> buf={               0,1,2,3,4}; ASSERT_TRUE(sstd::min(buf)==0); }
+}
+TEST(math, min_vec_abs){
+    { std::vector< char > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::min_abs(buf)==0); }
+    { std::vector< int8 > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::min_abs(buf)==0); }
+    { std::vector< int16> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::min_abs(buf)==0); }
+    { std::vector< int32> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::min_abs(buf)==0); }
+    { std::vector< int64> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::min_abs(buf)==0); }
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+TEST(math, max_vec){
+    { std::vector< char > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::max(buf)==4); }
+    { std::vector< int8 > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::max(buf)==4); }
+    { std::vector< int16> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::max(buf)==4); }
+    { std::vector< int32> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::max(buf)==4); }
+    { std::vector< int64> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::max(buf)==4); }
+//    { std::vector<uchar > buf={               0,1,2,3,4}; ASSERT_TRUE(sstd::max(buf)==4); }
+    { std::vector<uint8 > buf={               0,1,2,3,4}; ASSERT_TRUE(sstd::max(buf)==4); }
+    { std::vector<uint16> buf={               0,1,2,3,4}; ASSERT_TRUE(sstd::max(buf)==4); }
+    { std::vector<uint32> buf={               0,1,2,3,4}; ASSERT_TRUE(sstd::max(buf)==4); }
+    { std::vector<uint64> buf={               0,1,2,3,4}; ASSERT_TRUE(sstd::max(buf)==4); }
+}
+TEST(math, max_vec_abs){
+    { std::vector< char > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::max_abs(buf)==-5); }
+    { std::vector< int8 > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::max_abs(buf)==-5); }
+    { std::vector< int16> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::max_abs(buf)==-5); }
+    { std::vector< int32> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::max_abs(buf)==-5); }
+    { std::vector< int64> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::max_abs(buf)==-5); }
+}
+TEST(math, max_mat_c){
+    { sstd::mat_c< char > buf={{-2, -1}, {0, 1}}; ASSERT_TRUE(sstd::max(buf)==1); }
+    { sstd::mat_c< int8 > buf={{-2, -1}, {0, 1}}; ASSERT_TRUE(sstd::max(buf)==1); }
+    { sstd::mat_c< int16> buf={{-2, -1}, {0, 1}}; ASSERT_TRUE(sstd::max(buf)==1); }
+    { sstd::mat_c< int32> buf={{-2, -1}, {0, 1}}; ASSERT_TRUE(sstd::max(buf)==1); }
+    { sstd::mat_c< int64> buf={{-2, -1}, {0, 1}}; ASSERT_TRUE(sstd::max(buf)==1); }
+    { sstd::mat_c<uint8 > buf={{ 0,  1}, {2, 3}}; ASSERT_TRUE(sstd::max(buf)==3); }
+    { sstd::mat_c<uint16> buf={{ 0,  1}, {2, 3}}; ASSERT_TRUE(sstd::max(buf)==3); }
+    { sstd::mat_c<uint32> buf={{ 0,  1}, {2, 3}}; ASSERT_TRUE(sstd::max(buf)==3); }
+    { sstd::mat_c<uint64> buf={{ 0,  1}, {2, 3}}; ASSERT_TRUE(sstd::max(buf)==3); }
+    { sstd::mat_c< float> buf={{-2, -1}, {0, 1}}; ASSERT_TRUE(sstd::max(buf)==1); }
+    { sstd::mat_c<double> buf={{-2, -1}, {0, 1}}; ASSERT_TRUE(sstd::max(buf)==1); }
+}
+TEST(math, max_mat_r){
+    { sstd::mat_r< char > buf={{-2, -1}, {0, 1}}; ASSERT_TRUE(sstd::max(buf)==1); }
+    { sstd::mat_r< int8 > buf={{-2, -1}, {0, 1}}; ASSERT_TRUE(sstd::max(buf)==1); }
+    { sstd::mat_r< int16> buf={{-2, -1}, {0, 1}}; ASSERT_TRUE(sstd::max(buf)==1); }
+    { sstd::mat_r< int32> buf={{-2, -1}, {0, 1}}; ASSERT_TRUE(sstd::max(buf)==1); }
+    { sstd::mat_r< int64> buf={{-2, -1}, {0, 1}}; ASSERT_TRUE(sstd::max(buf)==1); }
+    { sstd::mat_r<uint8 > buf={{ 0,  1}, {2, 3}}; ASSERT_TRUE(sstd::max(buf)==3); }
+    { sstd::mat_r<uint16> buf={{ 0,  1}, {2, 3}}; ASSERT_TRUE(sstd::max(buf)==3); }
+    { sstd::mat_r<uint32> buf={{ 0,  1}, {2, 3}}; ASSERT_TRUE(sstd::max(buf)==3); }
+    { sstd::mat_r<uint64> buf={{ 0,  1}, {2, 3}}; ASSERT_TRUE(sstd::max(buf)==3); }
+    { sstd::mat_r< float> buf={{-2, -1}, {0, 1}}; ASSERT_TRUE(sstd::max(buf)==1); }
+    { sstd::mat_r<double> buf={{-2, -1}, {0, 1}}; ASSERT_TRUE(sstd::max(buf)==1); }
+}
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 TEST(math, nonzero){
