@@ -74,6 +74,9 @@ namespace sstd{
     template<typename T> inline T min_abs(const sstd::mat_r<T>& rhs);
     template<typename T> inline T max    (const sstd::mat_r<T>& rhs);
     template<typename T> inline T max_abs(const sstd::mat_r<T>& rhs);
+
+    // TODO: argmax
+    // TODO: argmin
     
     //-----------------------------------------------------------------------------------------------------------------------------------------------
 
