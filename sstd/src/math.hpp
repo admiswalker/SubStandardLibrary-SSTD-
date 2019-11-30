@@ -84,7 +84,7 @@ namespace sstd{
     template<typename T> uint argmin_abs(const std::vector<T>& rhs);
     template<typename T> uint argmax    (const std::vector<T>& rhs);
     template<typename T> uint argmax_abs(const std::vector<T>& rhs);
-    /*
+    
     template<typename T> uint argmin    (const sstd::mat_c<T>& rhs);
     template<typename T> uint argmin_abs(const sstd::mat_c<T>& rhs);
     template<typename T> uint argmax    (const sstd::mat_c<T>& rhs);
@@ -92,8 +92,18 @@ namespace sstd{
     
     template<typename T> uint argmin    (const sstd::mat_r<T>& rhs);
     template<typename T> uint argmin_abs(const sstd::mat_r<T>& rhs);
-    template<typename T> uint  argmax    (const sstd::mat_r<T>& rhs);
+    template<typename T> uint argmax    (const sstd::mat_r<T>& rhs);
     template<typename T> uint argmax_abs(const sstd::mat_r<T>& rhs);
+    /*
+    template<typename T> std::tuple<uint,uint> argminXY    (const sstd::mat_c<T>& rhs);
+    template<typename T> std::tuple<uint,uint> argminXY_abs(const sstd::mat_c<T>& rhs);
+    template<typename T> std::tuple<uint,uint> argmaxXY    (const sstd::mat_c<T>& rhs);
+    template<typename T> std::tuple<uint,uint> argmaxXY_abs(const sstd::mat_c<T>& rhs);
+    
+    template<typename T> std::tuple<uint,uint> argminXY    (const sstd::mat_r<T>& rhs);
+    template<typename T> std::tuple<uint,uint> argminXY_abs(const sstd::mat_r<T>& rhs);
+    template<typename T> std::tuple<uint,uint> argmaxXY    (const sstd::mat_r<T>& rhs);
+    template<typename T> std::tuple<uint,uint> argmaxXY_abs(const sstd::mat_r<T>& rhs);
     //*/
     //-----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -186,6 +196,16 @@ template<typename T> uint sstd::argmin    (const std::vector<T>& rhs){ ARGMIN_ve
 template<typename T> uint sstd::argmin_abs(const std::vector<T>& rhs){ ARGMIN_ABS_vec_mat(lhs, rhs); }
 template<typename T> uint sstd::argmax    (const std::vector<T>& rhs){ ARGMAX_vec_mat    (lhs, rhs); }
 template<typename T> uint sstd::argmax_abs(const std::vector<T>& rhs){ ARGMAX_ABS_vec_mat(lhs, rhs); }
+
+template<typename T> uint sstd::argmin    (const sstd::mat_c<T>& rhs){ ARGMIN_vec_mat    (lhs, rhs); }
+template<typename T> uint sstd::argmin_abs(const sstd::mat_c<T>& rhs){ ARGMIN_ABS_vec_mat(lhs, rhs); }
+template<typename T> uint sstd::argmax    (const sstd::mat_c<T>& rhs){ ARGMAX_vec_mat    (lhs, rhs); }
+template<typename T> uint sstd::argmax_abs(const sstd::mat_c<T>& rhs){ ARGMAX_ABS_vec_mat(lhs, rhs); }
+
+template<typename T> uint sstd::argmin    (const sstd::mat_r<T>& rhs){ ARGMIN_vec_mat    (lhs, rhs); }
+template<typename T> uint sstd::argmin_abs(const sstd::mat_r<T>& rhs){ ARGMIN_ABS_vec_mat(lhs, rhs); }
+template<typename T> uint sstd::argmax    (const sstd::mat_r<T>& rhs){ ARGMAX_vec_mat    (lhs, rhs); }
+template<typename T> uint sstd::argmax_abs(const sstd::mat_r<T>& rhs){ ARGMAX_ABS_vec_mat(lhs, rhs); }
 
 #undef ARGMAX_ABS_vec_mat
 #undef ARGMAX_vec_mat
