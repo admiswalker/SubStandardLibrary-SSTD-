@@ -82,8 +82,8 @@ namespace sstd{
     
     template<typename T> uint argmin    (const std::vector<T>& rhs);
     template<typename T> uint argmin_abs(const std::vector<T>& rhs);
-//    template<typename T> uint argmax    (const std::vector<T>& rhs);
-//    template<typename T> uint argmax_abs(const std::vector<T>& rhs);
+    template<typename T> uint argmax    (const std::vector<T>& rhs);
+    template<typename T> uint argmax_abs(const std::vector<T>& rhs);
     /*
     template<typename T> uint argmin    (const sstd::mat_c<T>& rhs);
     template<typename T> uint argmin_abs(const sstd::mat_c<T>& rhs);
@@ -161,22 +161,34 @@ template<typename T> inline T sstd::max_abs(const sstd::mat_r<T>& rhs){ MAX_ABS_
 #define ARGMIN_vec_mat(lhs, rhs)                                        \
     if(rhs.size()==0){ return 0; }                                      \
     uint lhs=0;                                                         \
-    for(uint i=1; i<rhs.size(); i++){ if(rhs[i]<rhs[lhs]){ lhs=i; } }   \
+    for(uint i=1; i<rhs.size(); i++){ if( rhs[i]<rhs[lhs] ){ lhs=i; } } \
     return lhs;
 
 #define ARGMIN_ABS_vec_mat(lhs, rhs)                                    \
     if(rhs.size()==0){ return 0; }                                      \
     uint lhs=0;                                                         \
-    for(uint i=1; i<rhs.size(); i++){ if(std::abs(rhs[i])<std::abs(rhs[lhs])){ lhs=i; } } \
+    for(uint i=1; i<rhs.size(); i++){ if( std::abs(rhs[i])<std::abs(rhs[lhs]) ){ lhs=i; } } \
+    return lhs;
+
+#define ARGMAX_vec_mat(lhs, rhs)                                        \
+    if(rhs.size()==0){ return 0; }                                      \
+    uint lhs=0;                                                         \
+    for(uint i=1; i<rhs.size(); i++){ if( rhs[i]>rhs[lhs] ){ lhs=i; } } \
+    return lhs;
+
+#define ARGMAX_ABS_vec_mat(lhs, rhs)                                    \
+    if(rhs.size()==0){ return 0; }                                      \
+    uint lhs=0;                                                         \
+    for(uint i=1; i<rhs.size(); i++){ if( std::abs(rhs[i])>std::abs(rhs[lhs]) ){ lhs=i; } } \
     return lhs;
 
 template<typename T> uint sstd::argmin    (const std::vector<T>& rhs){ ARGMIN_vec_mat    (lhs, rhs); }
 template<typename T> uint sstd::argmin_abs(const std::vector<T>& rhs){ ARGMIN_ABS_vec_mat(lhs, rhs); }
-//template<typename T> uint sstd::argmax    (const std::vector<T>& rhs);
-//template<typename T> uint sstd::argmax_abs(const std::vector<T>& rhs);
+template<typename T> uint sstd::argmax    (const std::vector<T>& rhs){ ARGMAX_vec_mat    (lhs, rhs); }
+template<typename T> uint sstd::argmax_abs(const std::vector<T>& rhs){ ARGMAX_ABS_vec_mat(lhs, rhs); }
 
-//#undef ARGMAX_ABS_vec_mat
-//#undef ARGMAX_vec_mat
+#undef ARGMAX_ABS_vec_mat
+#undef ARGMAX_vec_mat
 #undef ARGMIN_ABS_vec_mat
 #undef ARGMIN_vec_mat
 
