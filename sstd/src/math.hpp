@@ -77,9 +77,6 @@ namespace sstd{
 
     //-----------------------------------------------------------------------------------------------------------------------------------------------
     
-    // TODO: argmin
-    // TODO: argmax
-    
     template<typename T> uint argmin    (const std::vector<T>& rhs);
     template<typename T> uint argmin_abs(const std::vector<T>& rhs);
     template<typename T> uint argmax    (const std::vector<T>& rhs);
@@ -95,6 +92,9 @@ namespace sstd{
     template<typename T> uint argmax    (const sstd::mat_r<T>& rhs);
     template<typename T> uint argmax_abs(const sstd::mat_r<T>& rhs);
     /*
+    // TODO: argmin
+    // TODO: argmax
+    
     template<typename T> std::tuple<uint,uint> argminXY    (const sstd::mat_c<T>& rhs);
     template<typename T> std::tuple<uint,uint> argminXY_abs(const sstd::mat_c<T>& rhs);
     template<typename T> std::tuple<uint,uint> argmaxXY    (const sstd::mat_c<T>& rhs);
@@ -106,7 +106,7 @@ namespace sstd{
     template<typename T> std::tuple<uint,uint> argmaxXY_abs(const sstd::mat_r<T>& rhs);
     //*/
     //-----------------------------------------------------------------------------------------------------------------------------------------------
-
+    
     template <typename T> inline std::vector<T> sort   (std::vector<T>   rhs){ std::sort(rhs.begin(), rhs.end()); return rhs; }                    // Ascending: 昇順: 0, 1, 2, ...
     template <typename T> inline std::vector<T> sort   (std::vector<T>&& rhs){ std::sort(rhs.begin(), rhs.end()); return rhs; }                    // Ascending: 昇順: 0, 1, 2, ...
     template <typename T> inline std::vector<T> sort_de(std::vector<T>   rhs){ std::sort(rhs.begin(), rhs.end(), std::greater<T>()); return rhs; } // Descending: 降順: 9, 8, 7, ...
