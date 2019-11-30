@@ -75,9 +75,26 @@ namespace sstd{
     template<typename T> inline T max    (const sstd::mat_r<T>& rhs);
     template<typename T> inline T max_abs(const sstd::mat_r<T>& rhs);
 
-    // TODO: argmax
-    // TODO: argmin
+    //-----------------------------------------------------------------------------------------------------------------------------------------------
     
+    // TODO: argmin
+    // TODO: argmax
+    
+    template<typename T> uint argmin    (const std::vector<T>& rhs);
+//    template<typename T> uint argmin_abs(const std::vector<T>& rhs);
+//    template<typename T> uint argmax    (const std::vector<T>& rhs);
+//    template<typename T> uint argmax_abs(const std::vector<T>& rhs);
+    /*
+    template<typename T> uint argmin    (const sstd::mat_c<T>& rhs);
+    template<typename T> uint argmin_abs(const sstd::mat_c<T>& rhs);
+    template<typename T> uint argmax    (const sstd::mat_c<T>& rhs);
+    template<typename T> uint argmax_abs(const sstd::mat_c<T>& rhs);
+    
+    template<typename T> uint argmin    (const sstd::mat_r<T>& rhs);
+    template<typename T> uint argmin_abs(const sstd::mat_r<T>& rhs);
+    template<typename T> uint  argmax    (const sstd::mat_r<T>& rhs);
+    template<typename T> uint argmax_abs(const sstd::mat_r<T>& rhs);
+    //*/
     //-----------------------------------------------------------------------------------------------------------------------------------------------
 
     template <typename T> inline std::vector<T> sort   (std::vector<T>   rhs){ std::sort(rhs.begin(), rhs.end()); return rhs; }                    // Ascending: 昇順: 0, 1, 2, ...
@@ -95,18 +112,6 @@ namespace sstd{
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-#define MAX_vec_mat(T, lhs, rhs)                                        \
-    if(rhs.size()==0){ return T(); }                                    \
-    T lhs=rhs[0];                                                       \
-    for(uint i=1; i<rhs.size(); i++){ if(rhs[i]>lhs){ lhs=rhs[i]; } }   \
-    return lhs;
-
-#define MAX_ABS_vec_mat(T, lhs, rhs)                                    \
-    if(rhs.size()==0){ return T(); }                                    \
-    T lhs=rhs[0], buf=std::abs(rhs[0]);                                 \
-    for(uint i=1; i<rhs.size(); i++){ if(std::abs(rhs[i])>buf){ lhs=rhs[i]; buf=std::abs(rhs[i]); } } \
-    return lhs;
-
 #define MIN_vec_mat(T, lhs, rhs)                                        \
     if(rhs.size()==0){ return T(); }                                    \
     T lhs=rhs[0];                                                       \
@@ -117,6 +122,18 @@ namespace sstd{
     if(rhs.size()==0){ return T(); }                                    \
     T lhs=rhs[0], buf=std::abs(rhs[0]);                                 \
     for(uint i=1; i<rhs.size(); i++){ if(std::abs(rhs[i])<buf){ lhs=rhs[i]; buf=std::abs(rhs[i]); } } \
+    return lhs;
+
+#define MAX_vec_mat(T, lhs, rhs)                                        \
+    if(rhs.size()==0){ return T(); }                                    \
+    T lhs=rhs[0];                                                       \
+    for(uint i=1; i<rhs.size(); i++){ if(rhs[i]>lhs){ lhs=rhs[i]; } }   \
+    return lhs;
+
+#define MAX_ABS_vec_mat(T, lhs, rhs)                                    \
+    if(rhs.size()==0){ return T(); }                                    \
+    T lhs=rhs[0], buf=std::abs(rhs[0]);                                 \
+    for(uint i=1; i<rhs.size(); i++){ if(std::abs(rhs[i])>buf){ lhs=rhs[i]; buf=std::abs(rhs[i]); } } \
     return lhs;
 
 template<typename T> inline T sstd::min    (const std::vector<T>& rhs){ MIN_vec_mat    (T, lhs, rhs); }
@@ -134,10 +151,28 @@ template<typename T> inline T sstd::min_abs(const sstd::mat_r<T>& rhs){ MIN_ABS_
 template<typename T> inline T sstd::max    (const sstd::mat_r<T>& rhs){ MAX_vec_mat    (T, lhs, rhs); }
 template<typename T> inline T sstd::max_abs(const sstd::mat_r<T>& rhs){ MAX_ABS_vec_mat(T, lhs, rhs); }
 
-#undef MAX_vec_mat
 #undef MAX_ABS_vec_mat
-#undef MIN_vec_mat
+#undef MAX_vec_mat
 #undef MIN_ABS_vec_mat
+#undef MIN_vec_mat
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+#define ARGMIN_vec_mat(T, lhs, rhs)                                     \
+    if(rhs.size()==0){ return T(); }                                    \
+    uint lhs=0;                                                         \
+    for(uint i=1; i<rhs.size(); i++){ if(rhs[i]<rhs[lhs]){ lhs=i; } }   \
+    return lhs;
+
+template<typename T> uint argmin    (const std::vector<T>& rhs){ ARGMIN_vec_mat    (T, lhs, rhs); }
+//template<typename T> uint argmin_abs(const std::vector<T>& rhs);
+//template<typename T> uint argmax    (const std::vector<T>& rhs);
+//template<typename T> uint argmax_abs(const std::vector<T>& rhs);
+
+//#undef ARGMAX_ABS_vec_mat
+//#undef ARGMAX_vec_mat
+//#undef ARGMIN_ABS_vec_mat
+#undef ARGMIN_vec_mat
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
