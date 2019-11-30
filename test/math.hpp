@@ -203,6 +203,28 @@ TEST(math, max_mat_r){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+TEST(math, argmin_vec){
+    { std::vector< char > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::argmin(buf)==0); }
+    { std::vector< int8 > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::argmin(buf)==0); }
+    { std::vector< int16> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::argmin(buf)==0); }
+    { std::vector< int32> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::argmin(buf)==0); }
+    { std::vector< int64> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::argmin(buf)==0); }
+//    { std::vector<uchar > buf={               0,1,2,3,4}; ASSERT_TRUE(sstd::min(buf)==0); }
+    { std::vector<uint8 > buf={               0,1,2,3,4}; ASSERT_TRUE(sstd::argmin(buf)==0); }
+    { std::vector<uint16> buf={               0,1,2,3,4}; ASSERT_TRUE(sstd::argmin(buf)==0); }
+    { std::vector<uint32> buf={               0,1,2,3,4}; ASSERT_TRUE(sstd::argmin(buf)==0); }
+    { std::vector<uint64> buf={               0,1,2,3,4}; ASSERT_TRUE(sstd::argmin(buf)==0); }
+}
+TEST(math, argmin_vec_abs){
+    { std::vector< char > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::argmin_abs(buf)==5); }
+    { std::vector< int8 > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::argmin_abs(buf)==5); }
+    { std::vector< int16> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::argmin_abs(buf)==5); }
+    { std::vector< int32> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::argmin_abs(buf)==5); }
+    { std::vector< int64> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::argmin_abs(buf)==5); }
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
 TEST(math, nonzero){
     std::vector<double>  in={1,2,3,0,4};
     std::vector<double> ans={1,2,3};
@@ -223,6 +245,7 @@ TEST(math, supress){
     ASSERT_TRUE(in4.size()==3);
 }
 
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
