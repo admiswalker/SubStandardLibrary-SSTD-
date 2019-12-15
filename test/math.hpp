@@ -1,17 +1,5 @@
 #pragma once
 
-#define TEST_vec_sort_sort_de(Type)                                    \
-    std::vector<Type> buf = {-5, -4, -3, -2, -1, 0, 1, 2, 3, 4};    \
-    std::vector<Type> sortDe = sstd::sort_de(buf);                    \
-    sstd::printn(sortDe);                                            \
-    sstd::printn(sstd::sort(sortDe));                                \
-    printf("\n");
-#define TEST_vec_sort_sort_de_u(Type)                                \
-    std::vector<Type> buf = {0, 1, 2, 3, 4};                        \
-    std::vector<Type> sortDe = sstd::sort_de(buf);                    \
-    sstd::printn(sortDe);                                            \
-    sstd::printn(sstd::sort(sortDe));                                \
-    printf("\n");
 void TEST_math(){
     printf("■ math\n");
         // 偶数への丸め (round to even)
@@ -25,7 +13,7 @@ void TEST_math(){
     double ro_d1 = sstd::round2odd(1.5); printf("round to odd: %lf ≒ %lf\n", 1.5, ro_d1);
     double ro_d2 = sstd::round2odd(2.5); printf("round to odd: %lf ≒ %lf\n", 2.5, ro_d2);
     printf("\n");
-
+    
     std::vector<float> buf_f = {-5, -4, -3, -2, -1, 0, 1, 2, 3, 4};
     sstd::printn(buf_f);
     printf("sum: %f\n", sstd::sum(buf_f));
@@ -37,10 +25,6 @@ void TEST_math(){
     printf("var_p: %f\n", sstd::var_p(buf_f));
     printf("stdev: %f\n", sstd::stdev(buf_f));
     printf("stdev_p: %f\n", sstd::stdev_p(buf_f));
-    printf("\n");
-    std::vector<float> sortDe_f = sstd::sort_de(buf_f);
-    sstd::printn(sortDe_f);
-    sstd::printn(sstd::sort(sortDe_f));
     printf("\n");
     
     std::vector<double> buf_d = {-5, -4, -3, -2, -1, 0, 1, 2, 3, 4};
@@ -55,11 +39,7 @@ void TEST_math(){
     printf("stdev: %f\n", sstd::stdev(buf_d));
     printf("stdev_p: %f\n", sstd::stdev_p(buf_d));
     printf("\n");
-    std::vector<double> sortDe_d = sstd::sort_de(buf_d);
-    sstd::printn(sortDe_d);
-    sstd::printn(sstd::sort(sortDe_d));
-    printf("\n");
-
+    
     /* test: Kahan summation algorithm 01 */
     std::vector<float> buf_f2 = {100000.0f, 0.0125f, 0.0125f, 0.0125f, 0.0125f, 0.0125f, 0.0125f, 0.0125f, 0.0125f}; // float の有効桁数 = 24/1og2(10) ≒ 7.224 ≒ 7
     printf("sum: %lf\n", sstd::sum(buf_f2));
@@ -112,19 +92,6 @@ void TEST_math(){
     uint32 u32 = sstd::pow((uint32)2, (uint32) 9); printf("%u\n",  u32);
     uint64 u64 = sstd::pow((uint64)2, (uint64)10); printf("%lu\n", u64);
     printf("\n");
-
-    //-------------------------------------------------------------------------------------------------------------------------------------------
-    
-    { TEST_vec_sort_sort_de  ( int8 ); }
-    { TEST_vec_sort_sort_de  ( int16); }
-    { TEST_vec_sort_sort_de  ( int32); }
-    { TEST_vec_sort_sort_de  ( int64); }
-    { TEST_vec_sort_sort_de_u(uint8 ); }
-    { TEST_vec_sort_sort_de_u(uint16); }
-    { TEST_vec_sort_sort_de_u(uint32); }
-    { TEST_vec_sort_sort_de_u(uint64); }
-    
-    //-------------------------------------------------------------------------------------------------------------------------------------------
 }
 
 TEST(math, theOthers){
@@ -272,6 +239,34 @@ TEST(math, argmax_mat_r){
     { sstd::mat_r<double> buf={{-2, -1}, {0, 1}}; ASSERT_TRUE(sstd::argmax(buf)==3); }
 }
 //*/
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+TEST(math, sort){
+    std::vector<float> buf = {5, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4};
+    std::vector<float> ans = {-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5};
+    
+    sstd::sort(buf); ASSERT_TRUE(buf==ans);
+}
+TEST(math, sorted){
+    std::vector<float> buf = {5, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4};
+    std::vector<float> ans_gr = {5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5};
+    
+    sstd::sort_gr(buf); ASSERT_TRUE(buf==ans_gr);
+}
+TEST(math, sort_gr){
+    std::vector<float> buf = {5, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4};
+    std::vector<float> ans = {-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5};
+    
+    std::vector<float> ret=sstd::sorted(buf); ASSERT_TRUE(ret==ans);
+}
+TEST(math, sorted_gr){
+    std::vector<float> buf = {5, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4};
+    std::vector<float> ans_gr = {5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5};
+    
+    std::vector<float> ret=sstd::sorted_gr(buf); ASSERT_TRUE(ret==ans_gr);
+}
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
