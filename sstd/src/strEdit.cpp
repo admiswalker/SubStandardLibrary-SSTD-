@@ -155,11 +155,10 @@ std::vector<std::string> sstd::split(const std::string& str, const char X){
 
 std::string sstd::lstrip(const uchar* str){
     std::string ret;
-
+    
     uint r=0;
     for(; str[r]!=0; r++){
-        if(str[r]==' '){
-        }     else     { break; }
+        if(str[r]!=' ' && str[r]!='\t'){ break; }
     }
     for(; str[r]!=0; r++){ ret+=str[r]; }
     

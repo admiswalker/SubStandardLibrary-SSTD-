@@ -19,8 +19,6 @@ namespace sstd{
     std::vector<std::string> split(const std::string& str, const char X);
     
     // remove space or tab.
-//    std::string              removeHeadSpace(const       uchar* str); // -> sprit_l(str) // removing head spaces
-//    std::string              removeHeadSpace(const std::string& str); // -> sprit_l(str) // removing head spaces
     std::string              lstrip(const       uchar* str); // removing head spaces
     std::string              lstrip(const std::string& str); // removing head spaces
     void                     removeTailSpace(std::string& str);       // -> rstripped(str) // removing tail spaces
