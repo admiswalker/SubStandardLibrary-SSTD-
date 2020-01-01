@@ -40,8 +40,8 @@ TEST(strEdit, theOthers){
 TEST(strEdit, lsprit){
     std::string str_in    = "   abcd   ";
     std::string str_ans_l =    "abcd   ";
-    ASSERT_TRUE(sstd::sprit_l((const uchar*)str_in.c_str()) == str_ans_l);
-    ASSERT_TRUE(sstd::sprit_l(              str_in        ) == str_ans_l);
+    ASSERT_TRUE(sstd::lstrip((const uchar*)str_in.c_str()) == str_ans_l);
+    ASSERT_TRUE(sstd::lstrip(              str_in        ) == str_ans_l);
     
     
     // テストを書くように．

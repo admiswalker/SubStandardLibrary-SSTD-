@@ -21,12 +21,12 @@ namespace sstd{
     // remove space or tab.
 //    std::string              removeHeadSpace(const       uchar* str); // -> sprit_l(str) // removing head spaces
 //    std::string              removeHeadSpace(const std::string& str); // -> sprit_l(str) // removing head spaces
-    std::string              sprit_l(const       uchar* str); // removing head spaces
-    std::string              sprit_l(const std::string& str); // removing head spaces
-    void                     removeTailSpace(std::string& str);       // -> sprited_r(str) // removing tail spaces
-    std::string              removeSpace_of_HeadAndTail(const uchar* str); // -> sprit_lr(str) // removing head and tail spaces
-    void                     removeSpace_of_HeadAndTail(std::string& str); // -> sprited_lr(str) // removing head and tail spaces
-    std::vector<std::string> removeSpace_of_HeadAndTail(const std::vector<std::string>& vec); // -> sprit_lr(str) // removing head and tail spaces
+    std::string              lstrip(const       uchar* str); // removing head spaces
+    std::string              lstrip(const std::string& str); // removing head spaces
+    void                     removeTailSpace(std::string& str);       // -> rstripped(str) // removing tail spaces
+    std::string              removeSpace_of_HeadAndTail(const uchar* str); // -> strip(str) // removing head and tail spaces
+    void                     removeSpace_of_HeadAndTail(std::string& str); // -> stripped(str) // removing head and tail spaces
+    std::vector<std::string> removeSpace_of_HeadAndTail(const std::vector<std::string>& vec); // -> strip(str) // removing head and tail spaces
     // todo: rm '\t'
     // todo: implementing memcopy version. Ref: https://postd.cc/how-quickly-can-you-remove-spaces-from-a-string/
     

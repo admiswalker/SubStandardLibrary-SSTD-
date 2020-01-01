@@ -153,7 +153,7 @@ std::vector<std::string> sstd::split(const std::string& str, const char X){
 
 //--------------------------------------------------------------------------------------------------------
 
-std::string sstd::sprit_l(const uchar* str){
+std::string sstd::lstrip(const uchar* str){
     std::string ret;
 
     uint r=0;
@@ -165,7 +165,7 @@ std::string sstd::sprit_l(const uchar* str){
     
     return ret;
 }
-std::string sstd::sprit_l(const std::string& str){ return sstd::sprit_l((const uchar*)str.c_str()); }
+std::string sstd::lstrip(const std::string& str){ return sstd::lstrip((const uchar*)str.c_str()); }
 
 void sstd::removeTailSpace(std::string& str){
     for(int r=str.size()-1; r>=0; r--){
@@ -174,12 +174,12 @@ void sstd::removeTailSpace(std::string& str){
     }
 }
 std::string sstd::removeSpace_of_HeadAndTail(const uchar* str){
-    std::string ret = sstd::sprit_l(str);
+    std::string ret = sstd::lstrip(str);
     sstd::removeTailSpace(ret);
     return ret;
 }
 void sstd::removeSpace_of_HeadAndTail(std::string& str){
-    str = sstd::sprit_l((const uchar*)str.c_str());
+    str = sstd::lstrip((const uchar*)str.c_str());
     sstd::removeTailSpace(str);
 }
 std::vector<std::string> sstd::removeSpace_of_HeadAndTail(const std::vector<std::string>& vec){
