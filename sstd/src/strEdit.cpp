@@ -189,20 +189,21 @@ void sstd::rstripped(std::string& str){
         }             else             { break; }
     }
 }
-std::string sstd::removeSpace_of_HeadAndTail(const uchar* str){
+
+std::string sstd::strip(const uchar* str){
     std::string ret = sstd::lstrip(str);
     sstd::rstripped(ret);
     return ret;
 }
-void sstd::removeSpace_of_HeadAndTail(std::string& str){
+void sstd::stripped(std::string& str){
     str = sstd::lstrip((const uchar*)str.c_str());
     sstd::rstripped(str);
 }
-std::vector<std::string> sstd::removeSpace_of_HeadAndTail(const std::vector<std::string>& vec){
+std::vector<std::string> sstd::strip(const std::vector<std::string>& vec){
     std::vector<std::string> ret(vec.size()); ret.clear();
     
     for(uint i=0; i<vec.size(); i++){
-        ret.push_back(sstd::removeSpace_of_HeadAndTail((const uchar*)vec[i].c_str()));
+        ret.push_back(sstd::strip((const uchar*)vec[i].c_str()));
     }
     
     return ret;

@@ -24,10 +24,9 @@ namespace sstd{
     std::string              rstrip   (const       uchar* str); // removing tail spaces
     std::string              rstrip   (const std::string& str); // removing tail spaces
     void                     rstripped(      std::string& str); // removing tail spaces
-    
-    std::string              removeSpace_of_HeadAndTail(const uchar* str); // -> strip(str) // removing head and tail spaces
-    void                     removeSpace_of_HeadAndTail(std::string& str); // -> stripped(str) // removing head and tail spaces
-    std::vector<std::string> removeSpace_of_HeadAndTail(const std::vector<std::string>& vec); // -> strip(str) // removing head and tail spaces
+    std::string               strip   (const       uchar* str); // removing head and tail tab and spaces
+    void                      stripped(      std::string& str); // removing head and tail tab and spaces
+    std::vector<std::string>  strip   (const std::vector<std::string>& vec); // -> strip(str) // removing head and tail spaces
     // todo: rm '\t'
     // todo: implementing memcopy version. Ref: https://postd.cc/how-quickly-can-you-remove-spaces-from-a-string/
     

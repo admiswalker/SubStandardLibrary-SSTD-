@@ -149,7 +149,7 @@ namespace sstd_c2py{
     fName=functionName;                                                 \
                                                                         \
     sstd::mkdir(tmpDir.c_str());                                        \
-    fSList = sstd::removeSpace_of_HeadAndTail(sstd::split(format, ',')); \
+    fSList = sstd::strip(sstd::split(format, ','));                     \
     fList  = sstd_c2py::format_str2typeSet(fSList)
 #define sstd_c2py_destructor()                                          \
     //sstd::printn(sstd::rm(tmpDir.c_str())); // Don't enable this line, because if some one share "tmpDir", some times you may delete files that running on the other "sstd::c2py" function.

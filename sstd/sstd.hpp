@@ -336,12 +336,14 @@ namespace sstd{
     extern std::vector<std::string> split         (const char*        str, const char X);
     extern std::vector<std::string> split         (const std::string& str, const char X);
     
-    extern std::string              lstrip(const       uchar* str);
-    extern std::string              lstrip(const std::string& str);
-    extern std::string              rstrip(const std::string& str);
-    extern std::string              removeSpace_of_HeadAndTail(const uchar* str);
-    extern void                     removeSpace_of_HeadAndTail(std::string& str);
-    extern std::vector<std::string> removeSpace_of_HeadAndTail(const std::vector<std::string>& vec);
+    extern std::string              lstrip   (const       uchar* str); // removing head tab and spaces
+    extern std::string              lstrip   (const std::string& str); // removing head tab and spaces
+    extern std::string              rstrip   (const       uchar* str); // removing tail tab and spaces
+    extern std::string              rstrip   (const std::string& str); // removing tail tab and spaces
+    extern void                     rstripped(      std::string& str); // removing tail tab and spaces
+    extern std::string               strip   (const       uchar* str); // removing head and tail tab and spaces
+    extern void                      strip   (      std::string& str); // removing head and tail tab and spaces
+    extern std::vector<std::string>  strip   (const std::vector<std::string>& vec); // removing head and tail tab and spaces
     
     extern bool strcmp(const char*        str1, const char*        str2);
     extern bool strcmp(const char*        str1, const std::string& str2);
