@@ -14,11 +14,12 @@
 //#include "./test/c2py.hpp"
 //#include "./test/csv.hpp"
 //#include "./test/glob.hpp"
-#include "./test/math.hpp"
+//#include "./test/math.hpp"
 //#include "./test/measureTime.hpp"
 //#include "./test/print_printn_printn_all.hpp" // void pdbg(){ printf("======p\n"); } // #define DEBUG を定義しない場合でも，マクロでこの名前は使えなくなるので，名前空間を汚しており，本当はよくない．
 //#include "./test/status.hpp"
 //#include "./test/stdlib.hpp"
+#include "./test/strEdit.hpp"
 //#include "./test/typeConversion.hpp"
 //#include "./test/vector_slice.hpp"
 //#include "./test/vector_stdVector_expansion.hpp" // stdVector_expansion of operators
@@ -36,7 +37,6 @@ void TEST_rm();
 void TEST_ssprintf();
 void TEST_strmatch();
 void TEST_path();
-void TEST_strEdit();        // テストを書くように．
 void TEST_tinyInterpreter();
 void TEST_encode_decode();
 void TEST_hashFnc();
@@ -76,7 +76,6 @@ int main(int argc, char** argv){
 //    TEST_ssprintf();
 //    TEST_strmatch();
 //    TEST_path();
-//    TEST_strEdit();        // テストを書くように．
 //    TEST_tinyInterpreter();
 //    TEST_encode_decode();
 //    TEST_hashFnc();
@@ -342,79 +341,6 @@ void TEST_path(){
     sstd::printn(sstd::pathExist("./sstd"));
     printf("\n");
 }
-void TEST_strEdit(){
-    printf("■ strEdit\n");
-    printf("  □ readAll_bin\n");
-    std::vector<uint8> raw = sstd::readAll_bin("./test/test.png");
-    sstd::printn_all(raw.size());
-    printf("  □ writeAll_bin\n");
-    if(!sstd::writeAll_bin("./test__writeAll_bin_char.png",             raw)){ sstd::pdbg("ERROR: sstd::writeAll_bin()\n"); }
-    if(!sstd::writeAll_bin(std::string("./test__writeAll_bin_str.png"), raw)){ sstd::pdbg("ERROR: sstd::writeAll_bin()\n"); }
-    
-    printf("  □ readAll_withoutBOM & splitByLine\n");
-//    std::string str_tI = sstd::readAll_withoutBOM(R"(./test/tinyInterpreter.txt)");
-    std::string str_tI = sstd::readAll_withoutBOM(std::string(R"(./test/tinyInterpreter.txt)"));
-    std::vector<std::string> splitLList = sstd::splitByLine(str_tI);
-    printf("\n");
-    printf("  ./test/tinyInterpreter.txt\n");
-    printf("+----+----------------------------------------------------------------------------+\n");
-    for(uint i=0; i<splitLList.size(); i++){
-        printf("| %2d | %-74s |\n", i, splitLList[i].c_str());
-    }
-    printf("+----+----------------------------------------------------------------------------+\n");
-    printf("\n");
-    
-    printf("  □ splitByX\n");
-    std::vector<std::string> vecRow;
-    vecRow = sstd::split("ABC DEF",       ' ');        sstd::printn(vecRow); // "ABC DEF" -> ["ABC", "DEF"]
-    vecRow = sstd::split(" ABC   D EF  ", ' ');        sstd::printn(vecRow); // " ABC   D EF  " -> ["ABC", "D", "EF"]
-    
-    vecRow = sstd::split("ABC,DEF",              ','); sstd::printn(vecRow); // "ABC,DEF" -> ["ABC", "DEF"]
-    vecRow = sstd::split(" ABC  , D,  EF ,GH  ", ','); sstd::printn(vecRow); // " ABC  , D,  EF ,GH  " -> ["ABC", "D", "EF",  "GH"]
-    
-    // テストを書くように．
-    /*
-    std::string sstd::removeHeadSpace(const uchar* str);
-    void sstd::removeTailSpace(std::string& str);
-    std::string              sstd::removeSpace_of_HeadAndTail(const uchar* str);
-    void                     sstd::removeSpace_of_HeadAndTail(std::string& str);
-    std::vector<std::string> sstd::removeSpace_of_HeadAndTail(const std::vector<std::string>& vec);
-    //*/
-}
-/*
-// 実装完了 (処理時間短縮のため，コメントアウト)
-TEST(strEdit, strIn){
-    {
-        std::string lhs = "";
-        std::string rhs = "";
-        bool ret=sstd::strIn(lhs, rhs); ASSERT_TRUE(ret);
-    }
-    {
-        std::string lhs = "ABCD";
-        std::string rhs = "ABCDEFG";
-        bool ret=sstd::strIn(lhs, rhs); ASSERT_TRUE(ret);
-    }
-    {
-        std::string lhs = "BCD";
-        std::string rhs = "ABCDEFG";
-        bool ret=sstd::strIn(lhs, rhs); ASSERT_TRUE(ret);
-    }
-    {
-        std::string lhs = "DEFG";
-        std::string rhs = "ABCDEFG";
-        bool ret=sstd::strIn(lhs, rhs); ASSERT_TRUE(ret);
-    }
-    {
-        std::string lhs = "ABCDEFG";
-        std::string rhs = "ABCDEFG";
-        bool ret=sstd::strIn(lhs, rhs); ASSERT_TRUE(ret);
-    }
-    {
-        std::string lhs = "AXCDEFG";
-        std::string rhs = "ABCDEFG";
-        bool ret=sstd::strIn(lhs, rhs); ASSERT_TRUE(!ret);
-    }
-}//*/
 void TEST_tinyInterpreter(){
     printf("■ tinyInterpreter\n");
     printf("  □ getCommandList & splitByComma\n");

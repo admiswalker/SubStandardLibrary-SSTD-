@@ -165,6 +165,7 @@ std::string sstd::removeHeadSpace(const uchar* str){
     
     return ret;
 }
+std::string sstd::removeHeadSpace(const std::string& str){ return sstd::removeHeadSpace((const uchar*)str.c_str()); }
 void sstd::removeTailSpace(std::string& str){
     for(int r=str.size()-1; r>=0; r--){
         if(str[r]==' '){ str.erase(r);

@@ -18,11 +18,15 @@ namespace sstd{
     std::vector<std::string> split(const char*        str, const char X);
     std::vector<std::string> split(const std::string& str, const char X);
     
-    std::string              removeHeadSpace(const uchar* str);
-    void                     removeTailSpace(std::string& str);
-    std::string              removeSpace_of_HeadAndTail(const uchar* str);
-    void                     removeSpace_of_HeadAndTail(std::string& str);
-    std::vector<std::string> removeSpace_of_HeadAndTail(const std::vector<std::string>& vec);
+    // remove space or tab.
+    std::string              removeHeadSpace(const       uchar* str); // -> sprit_l(str) // removing head spaces
+    std::string              removeHeadSpace(const std::string& str); // -> sprit_l(str) // removing head spaces
+    void                     removeTailSpace(std::string& str);       // -> sprited_r(str) // removing tail spaces
+    std::string              removeSpace_of_HeadAndTail(const uchar* str); // -> sprit_lr(str) // removing head and tail spaces
+    void                     removeSpace_of_HeadAndTail(std::string& str); // -> sprited_lr(str) // removing head and tail spaces
+    std::vector<std::string> removeSpace_of_HeadAndTail(const std::vector<std::string>& vec); // -> sprit_lr(str) // removing head and tail spaces
+    // todo: rm '\t'
+    // todo: implementing memcopy version. Ref: https://postd.cc/how-quickly-can-you-remove-spaces-from-a-string/
     
     bool strcmp(const char*        str1, const char*        str2);
     bool strcmp(const char*        str1, const std::string& str2);
