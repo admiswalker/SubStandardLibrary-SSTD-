@@ -220,7 +220,7 @@ bool Is_type_tempT(const std::string& str, std::string& retType, std::string& re
     if(flagL==true  && flagR==false){ sstd::pdbg("ERROR: Invalid token. '>' is not found while there is '<'.\n"); return false; }
     if(flagL==false && flagR==true ){ sstd::pdbg("ERROR: Invalid token. '<' is not found while there is '>', or order of '<' and '>' is incorrect.\n"); return false; }
     
-    sstd::removeTailSpace(retType); // head space in "retType" is aleady removed when splitting by ','.
+    sstd::rstripped(retType); // head space in "retType" is aleady removed when splitting by ','.
     sstd::removeSpace_of_HeadAndTail(retTempT);
     return (retTempT.size()!=0);
 }

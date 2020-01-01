@@ -42,6 +42,11 @@ TEST(strEdit, lstrip){
     std::string str_ans_l =     "abcd \t ";
     ASSERT_TRUE(sstd::lstrip((const uchar*)str_in.c_str()) == str_ans_l);
     ASSERT_TRUE(sstd::lstrip(              str_in        ) == str_ans_l);
+}
+TEST(strEdit, rstripped){
+    std::string str_in    = " \t abcd \t ";
+    std::string str_ans_l = " \t abcd";
+    sstd::rstripped(str_in); ASSERT_TRUE(str_in == str_ans_l);
     
     // テストを書くように．
     /*

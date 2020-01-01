@@ -132,7 +132,7 @@ std::vector<std::string> asAX(const char* str, const char X){
     while(str[i]!=0){ if(' '==str[i]){i++;}else{break;} } // skip space
     while(str[i]!=0){
         if(X==str[i]){
-            sstd::removeTailSpace(buf); splitList.push_back(buf); buf.clear();
+            sstd::rstripped(buf); splitList.push_back(buf); buf.clear();
             i++;
             while(str[i]!=0){ if(' '==str[i]){i++;}else{break;} } // skip space
         }else{
@@ -140,7 +140,7 @@ std::vector<std::string> asAX(const char* str, const char X){
             i++;
         }
     }
-    if(buf.size()!=0){ sstd::removeTailSpace(buf); splitList.push_back(buf); }
+    if(buf.size()!=0){ sstd::rstripped(buf); splitList.push_back(buf); }
     return splitList;
 }
 std::vector<std::string> sstd::split(const char* str, const char X){
@@ -158,7 +158,8 @@ std::string sstd::lstrip(const uchar* str){
     
     uint r=0;
     for(; str[r]!=0; r++){
-        if(str[r]!=' ' && str[r]!='\t'){ break; }
+        if(str[r]==' ' || str[r]=='\t'){
+        }             else             { break; }
     }
     for(; str[r]!=0; r++){ ret+=str[r]; }
     
@@ -166,20 +167,20 @@ std::string sstd::lstrip(const uchar* str){
 }
 std::string sstd::lstrip(const std::string& str){ return sstd::lstrip((const uchar*)str.c_str()); }
 
-void sstd::removeTailSpace(std::string& str){
+void sstd::rstripped(std::string& str){
     for(int r=str.size()-1; r>=0; r--){
-        if(str[r]==' '){ str.erase(r);
-        }     else     { break; }
+        if(str[r]==' ' || str[r]=='\t'){ str.erase(r);
+        }             else             { break; }
     }
 }
 std::string sstd::removeSpace_of_HeadAndTail(const uchar* str){
     std::string ret = sstd::lstrip(str);
-    sstd::removeTailSpace(ret);
+    sstd::rstripped(ret);
     return ret;
 }
 void sstd::removeSpace_of_HeadAndTail(std::string& str){
     str = sstd::lstrip((const uchar*)str.c_str());
-    sstd::removeTailSpace(str);
+    sstd::rstripped(str);
 }
 std::vector<std::string> sstd::removeSpace_of_HeadAndTail(const std::vector<std::string>& vec){
     std::vector<std::string> ret(vec.size()); ret.clear();

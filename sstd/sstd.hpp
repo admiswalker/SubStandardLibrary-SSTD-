@@ -336,8 +336,9 @@ namespace sstd{
     extern std::vector<std::string> split         (const char*        str, const char X);
     extern std::vector<std::string> split         (const std::string& str, const char X);
     
-    extern std::string              removeHeadSpace(const uchar* str);
-    extern void                     removeTailSpace(std::string& str);
+    extern std::string              lstrip(const       uchar* str);
+    extern std::string              lstrip(const std::string& str);
+    extern void                     rstrip(std::string& str);
     extern std::string              removeSpace_of_HeadAndTail(const uchar* str);
     extern void                     removeSpace_of_HeadAndTail(std::string& str);
     extern std::vector<std::string> removeSpace_of_HeadAndTail(const std::vector<std::string>& vec);
