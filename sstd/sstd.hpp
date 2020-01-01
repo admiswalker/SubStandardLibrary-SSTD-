@@ -338,7 +338,7 @@ namespace sstd{
     
     extern std::string              lstrip(const       uchar* str);
     extern std::string              lstrip(const std::string& str);
-    extern void                     rstrip(std::string& str);
+    extern std::string              rstrip(const std::string& str);
     extern std::string              removeSpace_of_HeadAndTail(const uchar* str);
     extern void                     removeSpace_of_HeadAndTail(std::string& str);
     extern std::vector<std::string> removeSpace_of_HeadAndTail(const std::vector<std::string>& vec);

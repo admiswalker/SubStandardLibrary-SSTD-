@@ -167,6 +167,22 @@ std::string sstd::lstrip(const uchar* str){
 }
 std::string sstd::lstrip(const std::string& str){ return sstd::lstrip((const uchar*)str.c_str()); }
 
+std::string sstd::rstrip(const uchar* str){
+    int r=strlen((const char*)str)-1;
+    for(; r>=0; r--){
+        if(str[r]==' ' || str[r]=='\t'){
+        }             else             { break; }
+    }
+    return std::string((const char*)str, r+1);
+}
+std::string sstd::rstrip(const std::string& str){
+    int r=str.size()-1;
+    for(; r>=0; r--){
+        if(str[r]==' ' || str[r]=='\t'){
+        }             else             { break; }
+    }
+    return std::string(str.c_str(), r+1);
+}
 void sstd::rstripped(std::string& str){
     for(int r=str.size()-1; r>=0; r--){
         if(str[r]==' ' || str[r]=='\t'){ str.erase(r);

@@ -43,20 +43,29 @@ TEST(strEdit, lstrip){
     ASSERT_TRUE(sstd::lstrip((const uchar*)str_in.c_str()) == str_ans_l);
     ASSERT_TRUE(sstd::lstrip(              str_in        ) == str_ans_l);
 }
+TEST(strEdit, rstrip_c){
+    std::string str_in    = " \t abcd \t ";
+    std::string str_ans_l = " \t abcd";
+    ASSERT_TRUE(sstd::rstrip(str_in.c_str()) == str_ans_l);
+}
+TEST(strEdit, rstrip_s){
+    std::string str_in    = " \t abcd \t ";
+    std::string str_ans_l = " \t abcd";
+    ASSERT_TRUE(sstd::rstrip(str_in) == str_ans_l);
+}
 TEST(strEdit, rstripped){
     std::string str_in    = " \t abcd \t ";
     std::string str_ans_l = " \t abcd";
     sstd::rstripped(str_in); ASSERT_TRUE(str_in == str_ans_l);
-    
-    // テストを書くように．
-    /*
-    std::string sstd::removeHeadSpace(const uchar* str);
-    void sstd::removeTailSpace(std::string& str);
-    std::string              sstd::removeSpace_of_HeadAndTail(const uchar* str);
-    void                     sstd::removeSpace_of_HeadAndTail(std::string& str);
-    std::vector<std::string> sstd::removeSpace_of_HeadAndTail(const std::vector<std::string>& vec);
-    //*/
 }
+// テストを書くように．
+/*
+  std::string sstd::removeHeadSpace(const uchar* str);
+  void sstd::removeTailSpace(std::string& str);
+  std::string              sstd::removeSpace_of_HeadAndTail(const uchar* str);
+  void                     sstd::removeSpace_of_HeadAndTail(std::string& str);
+  std::vector<std::string> sstd::removeSpace_of_HeadAndTail(const std::vector<std::string>& vec);
+//*/
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 /*
