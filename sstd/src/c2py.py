@@ -188,11 +188,11 @@ def builtIn_readFile(typeList, i, readPFunc, readFunc, readPath):
 #--------------------------------------------------------------------------------------------------------
 
 def cnv_numpy2builtin_vvec(Type, val):
-    return [[np.asscalar(val[p][q]) for q in range(val[p].shape[0])] for p in range(len(val))] # vector<vector>
+    return [[val[p][q].item() for q in range(val[p].shape[0])] for p in range(len(val))] # vector<vector>
 def cnv_numpy2builtin(Type, val):
-    if   val.ndim==0: return np.asscalar(val) # scalar
-    elif val.ndim==1: return [np.asscalar(val[i]) for i in range(val.shape[0])] # vector
-    elif val.ndim==2: return [[np.asscalar(val[p][q]) for q in range(val.shape[1])] for p in range(val.shape[0])] # matrix
+    if   val.ndim==0: return val.item() # scalar
+    elif val.ndim==1: return [val[i].item() for i in range(val.shape[0])] # vector
+    elif val.ndim==2: return [[val[p][q].item() for q in range(val.shape[1])] for p in range(val.shape[0])] # matrix
     else: print('ERROR: %s :: \"%s<%s>\" is an unsupported type.' % (location(), Type.name, Type.T))
 
 def cnv2builtin(Type, val):

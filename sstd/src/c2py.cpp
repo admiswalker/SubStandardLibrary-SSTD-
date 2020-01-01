@@ -238,7 +238,7 @@ bool split_leftStr(const char* pStr, struct sstd_c2py::typeSet& f, std::string& 
     }
 
     // remove "const " and additional space.
-    fS = sstd::removeHeadSpace((const uchar*)&fS[i]);
+    fS = sstd::sprit_l((const uchar*)&fS[i]);
     return true;
 }
 void split_ret    (struct sstd_c2py::typeSet& f, std::string& fS){ f.retTF   = split_leftStr(R"(ret )", f, fS);   }
