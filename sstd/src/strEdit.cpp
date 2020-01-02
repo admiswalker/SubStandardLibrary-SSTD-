@@ -132,7 +132,7 @@ std::vector<std::string> asAX(const char* str, const char X){
     while(str[i]!=0){ if(' '==str[i]){i++;}else{break;} } // skip space
     while(str[i]!=0){
         if(X==str[i]){
-            sstd::rstripped(buf); splitList.push_back(buf); buf.clear();
+            sstd::rstrip_ow(buf); splitList.push_back(buf); buf.clear();
             i++;
             while(str[i]!=0){ if(' '==str[i]){i++;}else{break;} } // skip space
         }else{
@@ -140,7 +140,7 @@ std::vector<std::string> asAX(const char* str, const char X){
             i++;
         }
     }
-    if(buf.size()!=0){ sstd::rstripped(buf); splitList.push_back(buf); }
+    if(buf.size()!=0){ sstd::rstrip_ow(buf); splitList.push_back(buf); }
     return splitList;
 }
 std::vector<std::string> sstd::split(const char* str, const char X){
@@ -153,7 +153,7 @@ std::vector<std::string> sstd::split(const std::string& str, const char X){
 
 //--------------------------------------------------------------------------------------------------------
 
-std::string sstd::lstrip(const uchar* str){
+std::string lstrip_base(const uchar* str){
     std::string ret;
     
     uint r=0;
@@ -165,45 +165,49 @@ std::string sstd::lstrip(const uchar* str){
     
     return ret;
 }
-std::string sstd::lstrip(const std::string& str){ return sstd::lstrip((const uchar*)str.c_str()); }
+std::string sstd::lstrip(const        char* str){ return lstrip_base((const uchar*)str        ); }
+std::string sstd::lstrip(const std::string& str){ return lstrip_base((const uchar*)str.c_str()); }
 
-std::string sstd::rstrip(const uchar* str){
-    int r=strlen((const char*)str)-1;
+void sstd::lstrip_ow(std::string& str){
+    std::string sre_ret = sstd::lstrip(str);
+    str = std::move(sre_ret);
+}
+
+std::string rstrip_base(const uchar* str, int len){
+    int r=len-1;
     for(; r>=0; r--){
         if(str[r]==' ' || str[r]=='\t'){
         }             else             { break; }
     }
     return std::string((const char*)str, r+1);
 }
-std::string sstd::rstrip(const std::string& str){
-    int r=str.size()-1;
-    for(; r>=0; r--){
-        if(str[r]==' ' || str[r]=='\t'){
-        }             else             { break; }
-    }
-    return std::string(str.c_str(), r+1);
-}
-void sstd::rstripped(std::string& str){
+std::string sstd::rstrip(const        char* str){ return rstrip_base((const uchar*)str,         strlen(str)); }
+std::string sstd::rstrip(const std::string& str){ return rstrip_base((const uchar*)str.c_str(), str.size() ); }
+
+void sstd::rstrip_ow(std::string& str){
     for(int r=str.size()-1; r>=0; r--){
         if(str[r]==' ' || str[r]=='\t'){ str.erase(r);
         }             else             { break; }
     }
 }
 
-std::string sstd::strip(const uchar* str){
-    std::string ret = sstd::lstrip(str);
-    sstd::rstripped(ret);
+std::string strip_base(const uchar* str){
+    std::string ret = lstrip_base(str);
+    sstd::rstrip_ow(ret);
     return ret;
 }
-void sstd::stripped(std::string& str){
-    str = sstd::lstrip((const uchar*)str.c_str());
-    sstd::rstripped(str);
+std::string sstd::strip(const        char* str){ return strip_base((const uchar*)str        ); }
+std::string sstd::strip(const std::string& str){ return strip_base((const uchar*)str.c_str()); }
+
+void sstd::strip_ow(std::string& str){
+    str = lstrip_base((const uchar*)str.c_str());
+    sstd::rstrip_ow(str);
 }
 std::vector<std::string> sstd::strip(const std::vector<std::string>& vec){
     std::vector<std::string> ret(vec.size()); ret.clear();
     
     for(uint i=0; i<vec.size(); i++){
-        ret.push_back(sstd::strip((const uchar*)vec[i].c_str()));
+        ret.push_back(strip_base((const uchar*)vec[i].c_str()));
     }
     
     return ret;

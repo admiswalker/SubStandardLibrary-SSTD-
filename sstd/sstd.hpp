@@ -338,11 +338,13 @@ namespace sstd{
     
     extern std::string              lstrip   (const       uchar* str); // removing head tab and spaces
     extern std::string              lstrip   (const std::string& str); // removing head tab and spaces
+    extern void                     lstrip_ow(      std::string& str); // removing head tab and spaces
     extern std::string              rstrip   (const       uchar* str); // removing tail tab and spaces
     extern std::string              rstrip   (const std::string& str); // removing tail tab and spaces
-    extern void                     rstripped(      std::string& str); // removing tail tab and spaces
+    extern void                     rstrip_ow(      std::string& str); // removing tail tab and spaces
     extern std::string               strip   (const       uchar* str); // removing head and tail tab and spaces
-    extern void                      strip   (      std::string& str); // removing head and tail tab and spaces
+    extern std::string               strip   (const std::string& str); // removing head and tail tab and spaces
+    extern void                      strip_ow(      std::string& str); // removing head and tail tab and spaces
     extern std::vector<std::string>  strip   (const std::vector<std::string>& vec); // removing head and tail tab and spaces
     
     extern bool strcmp(const char*        str1, const char*        str2);

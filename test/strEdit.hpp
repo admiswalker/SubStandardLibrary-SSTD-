@@ -35,37 +35,50 @@ TEST(strEdit, theOthers){
     vecRow = sstd::split("ABC,DEF",              ','); sstd::printn(vecRow); // "ABC,DEF" -> ["ABC", "DEF"]
     vecRow = sstd::split(" ABC  , D,  EF ,GH  ", ','); sstd::printn(vecRow); // " ABC  , D,  EF ,GH  " -> ["ABC", "D", "EF",  "GH"]
 }
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 TEST(strEdit, lstrip){
-    std::string str_in    = " \t abcd \t ";
-    std::string str_ans_l =     "abcd \t ";
-    ASSERT_TRUE(sstd::lstrip((const uchar*)str_in.c_str()) == str_ans_l);
-    ASSERT_TRUE(sstd::lstrip(              str_in        ) == str_ans_l);
+    std::string str_in  = " \t abcd \t ";
+    std::string str_ans =     "abcd \t ";
+    ASSERT_TRUE(sstd::lstrip(str_in.c_str()) == str_ans);
+    ASSERT_TRUE(sstd::lstrip(str_in        ) == str_ans);
 }
-TEST(strEdit, rstrip_c){
-    std::string str_in    = " \t abcd \t ";
-    std::string str_ans_l = " \t abcd";
-    ASSERT_TRUE(sstd::rstrip(str_in.c_str()) == str_ans_l);
+TEST(strEdit, lstrip_ow){
+    std::string str_in  = " \t abcd \t ";
+    std::string str_ans =     "abcd \t ";
+    sstd::lstrip_ow(str_in);
+    ASSERT_TRUE(str_in == str_ans);
 }
-TEST(strEdit, rstrip_s){
-    std::string str_in    = " \t abcd \t ";
-    std::string str_ans_l = " \t abcd";
-    ASSERT_TRUE(sstd::rstrip(str_in) == str_ans_l);
+TEST(strEdit, rstrip){
+    std::string str_in  = " \t abcd \t ";
+    std::string str_ans = " \t abcd";
+    ASSERT_TRUE(sstd::rstrip(str_in.c_str()) == str_ans);
+    ASSERT_TRUE(sstd::rstrip(str_in        ) == str_ans);
 }
-TEST(strEdit, rstripped){
-    std::string str_in    = " \t abcd \t ";
-    std::string str_ans_l = " \t abcd";
-    sstd::rstripped(str_in); ASSERT_TRUE(str_in == str_ans_l);
+TEST(strEdit, rstrip_ow){
+    std::string str_in  = " \t abcd \t ";
+    std::string str_ans = " \t abcd";
+    sstd::rstrip_ow(str_in);
+    ASSERT_TRUE(str_in == str_ans);
 }
-// テストを書くように．
-/*
-  std::string sstd::removeHeadSpace(const uchar* str);
-  void sstd::removeTailSpace(std::string& str);
-  std::string              sstd::removeSpace_of_HeadAndTail(const uchar* str);
-  void                     sstd::removeSpace_of_HeadAndTail(std::string& str);
-  std::vector<std::string> sstd::removeSpace_of_HeadAndTail(const std::vector<std::string>& vec);
-//*/
+TEST(strEdit, strip){
+    std::string str_in  = " \t abcd \t ";
+    std::string str_ans = "abcd";
+    ASSERT_TRUE(sstd::strip(str_in.c_str()) == str_ans);
+    ASSERT_TRUE(sstd::strip(str_in        ) == str_ans);
+}
+TEST(strEdit, strip_ow){
+    std::string str_in  = " \t abcd \t ";
+    std::string str_ans = "abcd";
+    sstd::strip_ow(str_in);
+    ASSERT_TRUE(str_in == str_ans);
+}
+TEST(strEdit, strip_vec){
+    std::vector<std::string> vecStr_in  = {" \t abcd01 \t ", " \t abcd02 \t ", " \t abcd03 \t "};
+    std::vector<std::string> vecStr_ans = {"abcd01", "abcd02", "abcd03"};
+    ASSERT_TRUE(sstd::strip(vecStr_in) == vecStr_ans);
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 /*

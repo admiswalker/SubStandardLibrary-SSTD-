@@ -220,8 +220,8 @@ bool Is_type_tempT(const std::string& str, std::string& retType, std::string& re
     if(flagL==true  && flagR==false){ sstd::pdbg("ERROR: Invalid token. '>' is not found while there is '<'.\n"); return false; }
     if(flagL==false && flagR==true ){ sstd::pdbg("ERROR: Invalid token. '<' is not found while there is '>', or order of '<' and '>' is incorrect.\n"); return false; }
     
-    sstd::rstripped(retType); // head space in "retType" is aleady removed when splitting by ','.
-    sstd::stripped(retTempT);
+    sstd::rstrip_ow(retType); // head space in "retType" is aleady removed when splitting by ','.
+    sstd::strip_ow(retTempT);
     return (retTempT.size()!=0);
 }
 
@@ -238,7 +238,7 @@ bool split_leftStr(const char* pStr, struct sstd_c2py::typeSet& f, std::string& 
     }
 
     // remove "const " and additional space.
-    fS = sstd::lstrip((const uchar*)&fS[i]);
+    fS = sstd::lstrip(&fS[i]);
     return true;
 }
 void split_ret    (struct sstd_c2py::typeSet& f, std::string& fS){ f.retTF   = split_leftStr(R"(ret )", f, fS);   }
