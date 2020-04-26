@@ -106,6 +106,14 @@ namespace sstd{
     template<typename T> std::tuple<uint,uint> argmaxXY_abs(const sstd::mat_r<T>& rhs);
     //*/
     //-----------------------------------------------------------------------------------------------------------------------------------------------
+    // binary search
+    
+    template<typename T> T       nearest_down(const std::vector<T>& v, const T& value);
+    template<typename T> T       nearest_up  (const std::vector<T>& v, const T& value);
+    template<typename T> uint argnearest_down(const std::vector<T>& v, const T& value);
+    template<typename T> uint argnearest_up  (const std::vector<T>& v, const T& value);
+    
+    //-----------------------------------------------------------------------------------------------------------------------------------------------
     
     template <typename T> inline void           sort_ow    (      std::vector<T>&  rhs   ){                            std::sort(rhs.begin(), rhs.end());             }                    // Ascending: 昇順: 0, 1, 2, ...
     template <typename T> inline std::vector<T> sort       (const std::vector<T>&  rhs_in){ std::vector<T> rhs=rhs_in; std::sort(rhs.begin(), rhs.end()); return rhs; }                    // Ascending: 昇順: 0, 1, 2, ...
@@ -213,6 +221,30 @@ template<typename T> uint sstd::argmax_abs(const sstd::mat_r<T>& rhs){ ARGMAX_AB
 #undef ARGMAX_vec_mat
 #undef ARGMIN_ABS_vec_mat
 #undef ARGMIN_vec_mat
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+template<typename T>
+T sstd::nearest_down(const std::vector<T>& v, const T& value){
+    uint idx = std::upper_bound(v.begin(), v.end(), value) - v.begin();
+    return v[ (idx!=0 ? idx-1:0) ];
+}
+template<typename T>
+T sstd::nearest_up  (const std::vector<T>& v, const T& value){
+    uint idx = std::lower_bound(v.begin(), v.end(), value) - v.begin();
+    return v[ (idx!=v.size() ? idx:v.size()-1) ];
+}
+
+template<typename T>
+uint sstd::argnearest_down(const std::vector<T>& v, const T& value){
+    uint idx = std::upper_bound(v.begin(), v.end(), value) - v.begin();
+    return (idx!=0 ? idx-1:0);
+}
+template<typename T>
+uint sstd::argnearest_up(const std::vector<T>& v, const T& value){
+    uint idx = std::lower_bound(v.begin(), v.end(), value) - v.begin();
+    return (idx!=v.size() ? idx:v.size()-1);
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 

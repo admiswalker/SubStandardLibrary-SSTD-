@@ -242,44 +242,94 @@ TEST(math, argmax_mat_r){
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+TEST(math, nearest_down){
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::nearest_down(buf, -100)==buf[0]); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::nearest_down(buf, -1  )==buf[0]); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::nearest_down(buf,    0)==buf[0]); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::nearest_down(buf,    1)==buf[1]); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::nearest_down(buf,    2)==buf[2]); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::nearest_down(buf,    3)==buf[3]); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::nearest_down(buf,    4)==buf[3]); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::nearest_down(buf,    5)==buf[4]); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::nearest_down(buf,    6)==buf[4]); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::nearest_down(buf,  100)==buf[4]); }
+    
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::nearest_up  (buf, -100)==buf[0]); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::nearest_up  (buf, -1  )==buf[0]); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::nearest_up  (buf,    0)==buf[0]); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::nearest_up  (buf,    1)==buf[1]); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::nearest_up  (buf,    2)==buf[2]); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::nearest_up  (buf,    3)==buf[3]); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::nearest_up  (buf,    4)==buf[4]); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::nearest_up  (buf,    5)==buf[4]); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::nearest_up  (buf,    6)==buf[4]); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::nearest_up  (buf,  100)==buf[4]); }
+}
+TEST(math, argnearest_down){
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::argnearest_down(buf, -100)==0); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::argnearest_down(buf, -1  )==0); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::argnearest_down(buf,    0)==0); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::argnearest_down(buf,    1)==1); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::argnearest_down(buf,    2)==2); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::argnearest_down(buf,    3)==3); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::argnearest_down(buf,    4)==3); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::argnearest_down(buf,    5)==4); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::argnearest_down(buf,    6)==4); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::argnearest_down(buf,  100)==4); }
+    
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::argnearest_up  (buf, -100)==0); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::argnearest_up  (buf, -1  )==0); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::argnearest_up  (buf,    0)==0); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::argnearest_up  (buf,    1)==1); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::argnearest_up  (buf,    2)==2); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::argnearest_up  (buf,    3)==3); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::argnearest_up  (buf,    4)==4); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::argnearest_up  (buf,    5)==4); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::argnearest_up  (buf,    6)==4); }
+    { std::vector<int> buf={{0, 1, 2, 3, 5}}; ASSERT_TRUE(sstd::argnearest_up  (buf,  100)==4); }
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+TEST(math, sort_ow){
+    std::vector<float> buf = {5, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4};
+    std::vector<float> ans = {-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5};
+    
+    sstd::sort_ow(buf); ASSERT_TRUE(buf==ans);
+}
 TEST(math, sort){
     std::vector<float> buf = {5, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4};
     std::vector<float> ans = {-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5};
     
-    sstd::sort(buf); ASSERT_TRUE(buf==ans);
+    std::vector<float> ret=sstd::sort(buf); ASSERT_TRUE(ret==ans);
 }
-TEST(math, sorted){
+TEST(math, sort_mv){
     std::vector<float> buf = {5, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4};
     std::vector<float> ans = {-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5};
     
-    std::vector<float> ret=sstd::sorted(buf); ASSERT_TRUE(ret==ans);
-}
-TEST(math, sorted_mv){
-    std::vector<float> buf = {5, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4};
-    std::vector<float> ans = {-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5};
-    
-    std::vector<float> ret=sstd::sorted(std::move(buf)); ASSERT_TRUE(ret==ans);
+    std::vector<float> ret=sstd::sort(std::move(buf)); ASSERT_TRUE(ret==ans);
 }
 
 //---
 
+TEST(math, sort_gr_ow){
+    std::vector<float> buf = {5, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4};
+    std::vector<float> ans_gr = {5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5};
+    
+    sstd::sort_gr_ow(buf); ASSERT_TRUE(buf==ans_gr);
+}
 TEST(math, sort_gr){
     std::vector<float> buf = {5, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4};
     std::vector<float> ans_gr = {5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5};
     
-    sstd::sort_gr(buf); ASSERT_TRUE(buf==ans_gr);
+    std::vector<float> ret=sstd::sort_gr(buf); ASSERT_TRUE(ret==ans_gr);
 }
-TEST(math, sorted_gr){
+TEST(math, sort_gr_mv){
     std::vector<float> buf = {5, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4};
     std::vector<float> ans_gr = {5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5};
     
-    std::vector<float> ret=sstd::sorted_gr(buf); ASSERT_TRUE(ret==ans_gr);
-}
-TEST(math, sorted_gr_mv){
-    std::vector<float> buf = {5, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4};
-    std::vector<float> ans_gr = {5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5};
-    
-    std::vector<float> ret=sstd::sorted_gr(std::move(buf)); ASSERT_TRUE(ret==ans_gr);
+    std::vector<float> ret=sstd::sort_gr(std::move(buf)); ASSERT_TRUE(ret==ans_gr);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
