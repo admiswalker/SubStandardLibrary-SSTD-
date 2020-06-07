@@ -292,44 +292,44 @@ TEST(math, argnearest_down){
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-TEST(math, sort_ow){
-    std::vector<float> buf = {5, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4};
-    std::vector<float> ans = {-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5};
-    
-    sstd::sort_ow(buf); ASSERT_TRUE(buf==ans);
-}
 TEST(math, sort){
     std::vector<float> buf = {5, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4};
     std::vector<float> ans = {-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5};
     
-    std::vector<float> ret=sstd::sort(buf); ASSERT_TRUE(ret==ans);
+    sstd::sort(buf); ASSERT_TRUE(buf==ans);
+}
+TEST(math, sorted){
+    std::vector<float> buf = {5, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4};
+    std::vector<float> ans = {-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5};
+    
+    std::vector<float> ret=sstd::sorted(buf); ASSERT_TRUE(ret==ans);
 }
 TEST(math, sort_mv){
     std::vector<float> buf = {5, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4};
     std::vector<float> ans = {-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5};
     
-    std::vector<float> ret=sstd::sort(std::move(buf)); ASSERT_TRUE(ret==ans);
+    std::vector<float> ret=sstd::sorted(std::move(buf)); ASSERT_TRUE(ret==ans);
 }
 
 //---
 
-TEST(math, sort_gr_ow){
-    std::vector<float> buf = {5, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4};
-    std::vector<float> ans_gr = {5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5};
-    
-    sstd::sort_gr_ow(buf); ASSERT_TRUE(buf==ans_gr);
-}
 TEST(math, sort_gr){
     std::vector<float> buf = {5, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4};
     std::vector<float> ans_gr = {5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5};
     
-    std::vector<float> ret=sstd::sort_gr(buf); ASSERT_TRUE(ret==ans_gr);
+    sstd::sort_gr(buf); ASSERT_TRUE(buf==ans_gr);
+}
+TEST(math, sorted_gr){
+    std::vector<float> buf = {5, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4};
+    std::vector<float> ans_gr = {5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5};
+    
+    std::vector<float> ret=sstd::sorted_gr(buf); ASSERT_TRUE(ret==ans_gr);
 }
 TEST(math, sort_gr_mv){
     std::vector<float> buf = {5, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4};
     std::vector<float> ans_gr = {5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5};
     
-    std::vector<float> ret=sstd::sort_gr(std::move(buf)); ASSERT_TRUE(ret==ans_gr);
+    std::vector<float> ret=sstd::sorted_gr(std::move(buf)); ASSERT_TRUE(ret==ans_gr);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
