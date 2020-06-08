@@ -11,6 +11,7 @@
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+// Remove comment out when you test it.
 //#include "./test/c2py.hpp"
 //#include "./test/csv.hpp"
 //#include "./test/glob.hpp"
@@ -25,7 +26,7 @@
 //#include "./test/vector_stdVector_expansion.hpp" // stdVector_expansion of operators
 //#include "./test/vector_vvec.hpp"
 
-// 順次 google test へ移行すること．
+// Move on to google c++ testing framework sequentially.
 void TEST_time();
 void TEST_typeDef();
 void TEST_pdbg();
@@ -41,7 +42,7 @@ void TEST_tinyInterpreter();
 void TEST_encode_decode();
 void TEST_hashFnc();
 void TEST_pause();
-//void TEST_getpid();        // テストを書くように．
+//void TEST_getpid(); // <- Needed to write test.
 
 // sstd/src/MatrixStore_mat
 void TEST_mat_colMajor();

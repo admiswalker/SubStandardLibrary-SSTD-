@@ -14,6 +14,30 @@ double sstd::round2odd(double n){ return std::ceil((n + 0.5) / 2) + std::floor((
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+// Pairwise summation algorithm
+
+template<typename T>
+inline T PairwiseSum(T* first, T* last){
+    const uint N = 128;
+    const uint size = last - first;
+    if(size < N){
+        T sum = (T)0;
+        for(; first!=last; ++first){ sum += *first; }
+        return sum;
+    }else{
+        T* half = first + size/2;
+        return PairwiseSum(first, half) + PairwiseSum(half, last);
+    }
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+float sstd::sum(const std::vector<float>& rhs){
+    return PairwiseSum((float*)&rhs[0], (float*)&rhs[rhs.size()]);
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
 // Kahan summation algorithm
 #define KAHAN_SUM_i(Type, lhs, rhs_i, begin_i, end_i)   \
     Type del=0;                                         \
@@ -35,11 +59,11 @@ double sstd::round2odd(double n){ return std::ceil((n + 0.5) / 2) + std::floor((
 //
 // Ref: http://iwiwi.hatenadiary.jp/entry/2016/11/23/144034
 
-// -> ここのアルゴリズムは，Pairwise summation に置き換えるべき．
+// -> Todo: ここのアルゴリズムは，Pairwise summation に置き換える．
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-float sstd::sum(const std::vector<float>& rhs){
+float sstd::sumK(const std::vector<float>& rhs){
     float lhs=0;
     KAHAN_SUM_i(float, lhs, rhs[i], 0, rhs.size());
     return lhs;

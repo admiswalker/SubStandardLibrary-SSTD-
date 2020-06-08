@@ -6,6 +6,7 @@
 
 #include <algorithm>  // std::sort()
 #include <functional> // std::greater<T>()
+#include <numeric>    // std::accumulate
 
 namespace sstd{
     // 偶数丸め (round to even, round to the nearest even; RN)
@@ -15,8 +16,11 @@ namespace sstd{
     // 奇数へ丸め (round to odd, round to the nearest odd; RO)
     float  round2odd(float n);
     double round2odd(double n);
-
-    float  sum    (const std::vector<float>& rhs);
+    
+    template<typename T> T sum(const std::vector<T>& rhs){ return std::accumulate(rhs.begin(), rhs.end(), (T)0); }
+    
+    // Using Pairwise summation algorithm.
+    float  sum      (const std::vector<float>& rhs);
     float  sum    (const std::vector<float>& rhs, uint a, uint b); // 配列の a 番目から b 番目までの合計. sum of the a th to b th of array.
     float  sum_abs(const std::vector<float>& rhs);
     float  ave    (const std::vector<float>& rhs);           // 平均値: average
@@ -39,7 +43,11 @@ namespace sstd{
     double var_p  (const std::vector<double>& rhs); // 母分散 (variance population): σ^2 = (1/n)*Σ(x_i-μ)^2
     double stdev  (const std::vector<double>& rhs); // 標本標準偏差 (sample standard deviation): u = SQRT( (1/(n-1))*Σ(x_i-μ)^2 )
     double stdev_p(const std::vector<double>& rhs); // 標準偏差 (standard deviation): σ = SQRT( (1/n)*Σ(x_i-μ)^2 )
-
+    
+    // K: Using Kahan summation algorithm
+    float  sumK    (const std::vector<float>& rhs);
+//    double sumK    (const std::vector<double>& rhs);
+    
     std::vector<uint64> prime(uint64 rhs);                                  // get a list of prime number under rhs.
     struct fact{
         uint64 prime;
