@@ -18,9 +18,9 @@ void TEST_math(){
     sstd::printn(buf_f);
 //    printf("sum: %f\n", sstd::sum(buf_f));
 //    printf("sum_abs: %f\n", sstd::sum_abs(buf_f));
-    printf("ave: %f\n", sstd::ave(buf_f));
-    printf("ave in the first 2 elements: %f\n", sstd::ave(buf_f, 2));
-    printf("med: %f\n", sstd::med(buf_f));
+//    printf("ave: %f\n", sstd::ave(buf_f));
+//    printf("ave in the first 2 elements: %f\n", sstd::ave(buf_f, 2));
+//    printf("med: %f\n", sstd::med(buf_f));
     printf("var: %f\n", sstd::var(buf_f));
     printf("var_p: %f\n", sstd::var_p(buf_f));
     printf("stdev: %f\n", sstd::stdev(buf_f));
@@ -31,9 +31,9 @@ void TEST_math(){
     sstd::printn(buf_d);
 //    printf("sum: %f\n", sstd::sum(buf_d));
 //    printf("sum_abs: %f\n", sstd::sum_abs(buf_d));
-    printf("ave: %f\n", sstd::ave(buf_d));
-    printf("ave in the first 2 elements: %f\n", sstd::ave(buf_d, 2));
-    printf("med: %f\n", sstd::med(buf_d));
+//    printf("ave: %f\n", sstd::ave(buf_d));
+//    printf("ave in the first 2 elements: %f\n", sstd::ave(buf_d, 2));
+//    printf("med: %f\n", sstd::med(buf_d));
     printf("var: %f\n", sstd::var(buf_d));
     printf("var_p: %f\n", sstd::var_p(buf_d));
     printf("stdev: %f\n", sstd::stdev(buf_d));
@@ -100,7 +100,7 @@ TEST(math, theOthers){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-TEST(math, sum){
+TEST(math, sum_sumK){
     { std::vector< char > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf), -5); }
     { std::vector< int8 > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf), -5); }
     { std::vector< int16> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf), -5); }
@@ -152,7 +152,27 @@ TEST(math, sum){
     { std::vector<float > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf.begin(), buf.end()), -5); } // for float
     { std::vector<double> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf.begin(), buf.end()), -5); } // for double
 }
-
+TEST(math, ave_aveK){
+    { std::vector<float > buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_EQ(sstd::ave(buf), -0.5); } // Pairwise summation algorithm
+    { std::vector<double> buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_EQ(sstd::ave(buf), -0.5); } // Pairwise summation algorithm
+    { std::vector<float > buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_EQ(sstd::aveK(buf), -0.5); } // Kahan summation algorithm
+    { std::vector<double> buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_EQ(sstd::aveK(buf), -0.5); } // Kahan summation algorithm
+    
+    // sum(vec, a, b)
+    { std::vector<float > buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_EQ(sstd::aveK(buf, 2), -4.5); } // Kahan summation algorithm
+    { std::vector<double> buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_EQ(sstd::aveK(buf, 2), -4.5); } // Kahan summation algorithm
+}
+TEST(math, med){
+    { std::vector<float> buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_EQ(sstd::med(buf), -0.5); } // even
+    { std::vector<float> buf={1, 4, -4, -3, -1, 3, 2, 0, -5, -2}; ASSERT_EQ(sstd::med(buf), -0.5); } // even
+    { std::vector<float> buf={-4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_EQ(sstd::med(buf), 0.0); } // odd
+    { std::vector<float> buf={1, 4, -4, -3, -1, 3, 2, 0, -2}; ASSERT_EQ(sstd::med(buf), 0.0); } // odd
+    
+    { std::vector<double> buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_EQ(sstd::med(buf), -0.5); } // even
+    { std::vector<double> buf={1, 4, -4, -3, -1, 3, 2, 0, -5, -2}; ASSERT_EQ(sstd::med(buf), -0.5); } // even
+    { std::vector<double> buf={-4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_EQ(sstd::med(buf), 0.0); } // odd
+    { std::vector<double> buf={1, 4, -4, -3, -1, 3, 2, 0, -2}; ASSERT_EQ(sstd::med(buf), 0.0); } // odd
+}
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 TEST(math, min_vec){

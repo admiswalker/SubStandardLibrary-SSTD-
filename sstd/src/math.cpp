@@ -29,7 +29,7 @@ double sstd::round2odd(double n){ return std::ceil((n + 0.5) / 2) + std::floor((
             for(; first!=last; ++first){ sum += pFirst; }               \
             return sum;                                                 \
         }else{                                                          \
-            Itr half = first + (size>>1);                               \
+            Itr half = first + (size>>1); /* "size>>1" is same as "size/2" */ \
             return PairwiseSum(first, half) + PairwiseSum(half, last);  \
         }                                                               \
     }
@@ -45,11 +45,41 @@ float sstd::sum    (const std::vector<float>::iterator first, const std::vector<
 float sstd::sum    (const std::vector<float>& rhs, uint a, uint b){ return PairwiseSum(rhs.begin()+a, rhs.begin()+b); }
 float sstd::sum    (const std::vector<float>& rhs){ return PairwiseSum    (rhs.begin(), rhs.end()); }
 float sstd::sum_abs(const std::vector<float>& rhs){ return PairwiseSum_abs(rhs.begin(), rhs.end()); }
+float sstd::ave    (const std::vector<float>& rhs){ return PairwiseSum(rhs.begin(), rhs.end())/rhs.size(); }
+float sstd::med(std::vector<float> rhs){ // copy rhs
+    if(rhs.empty()){ return (float)0; }
+    
+    uint n = rhs.size() >> 1; // same as "rhs.size() / 2"
+    std::nth_element(rhs.begin(), rhs.begin()+n, rhs.end());
+    if(rhs.size() & 1){
+        // odd
+        return rhs[n];
+    }else{
+        // even
+        auto itr = std::max_element(rhs.begin(), rhs.begin()+n);
+        return (*itr + rhs[n])/2.0;
+    }
+}
 
 double sstd::sum    (const std::vector<double>::iterator first, const std::vector<double>::iterator last){ return PairwiseSum(first, last); }
 double sstd::sum    (const std::vector<double>& rhs, uint a, uint b){ return PairwiseSum(rhs.begin()+a, rhs.begin()+b); }
 double sstd::sum    (const std::vector<double>& rhs){ return PairwiseSum    (rhs.begin(), rhs.end()); }
 double sstd::sum_abs(const std::vector<double>& rhs){ return PairwiseSum_abs(rhs.begin(), rhs.end()); }
+double sstd::ave    (const std::vector<double>& rhs){ return PairwiseSum(rhs.begin(), rhs.end())/rhs.size(); }
+double sstd::med(std::vector<double> rhs){ // copy rhs
+    if(rhs.empty()){ return (double)0; }
+    
+    uint n = rhs.size() >> 1; // same as "rhs.size() / 2"
+    std::nth_element(rhs.begin(), rhs.begin()+n, rhs.end());
+    if(rhs.size() & 1){
+        // odd
+        return rhs[n];
+    }else{
+        // even
+        auto itr = std::max_element(rhs.begin(), rhs.begin()+n);
+        return (*itr + rhs[n])/2.0;
+    }
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -94,26 +124,16 @@ float sstd::sumK_abs(const std::vector<float>& rhs){
     KAHAN_SUM_i(float, lhs, std::abs(rhs[i]), 0, rhs.size());
     return lhs;
 }
-float sstd::ave(const std::vector<float>& rhs){
+float sstd::aveK(const std::vector<float>& rhs){
     return sstd::sumK(rhs)/rhs.size();
 }
 // 平均値: average in the first num elements.
-float sstd::ave(const std::vector<float>& rhs, uint num){
-    return sstd::sum(rhs, 0, num)/num;
-}
-float sstd::med(std::vector<float> rhs){ // copy rhs
-    // TODO: rewrite this fn by 2 of std::nth_element.
-    
-    if(rhs.size()==0){ return (float)0.0; }
-    std::sort(rhs.begin(), rhs.end());
-    uint size_div2 = rhs.size() / 2;
-    uint size_mod  = rhs.size() - 2*size_div2; // same as "rhs.size()%2"
-    if(size_mod==0){ return (rhs[size_div2-1] + rhs[size_div2])/(float)2.0; // rhs.size() is even number
-    }     else     { return rhs[size_div2]; }                               // rhs.size() is odd number
+float sstd::aveK(const std::vector<float>& rhs, uint num){
+    return sstd::sumK(rhs, 0, num)/num;
 }
 // 不偏分散/標本分散 (variance): u^2 = (1/(n-1))*Σ(x_i-μ)^2
 float sstd::var(const std::vector<float>& rhs){
-    float a=sstd::ave(rhs);
+    float a=sstd::aveK(rhs);
     float lhs=0;
     KAHAN_SUM_i(float, lhs, (rhs[i]-a)*(rhs[i]-a), 0, rhs.size());
     lhs/=(float)(rhs.size()-1);
@@ -121,7 +141,7 @@ float sstd::var(const std::vector<float>& rhs){
 }
 // 母分散 (variance population): σ^2 = (1/n)*Σ(x_i-μ)^2
 float sstd::var_p(const std::vector<float>& rhs){
-    float a=sstd::ave(rhs);
+    float a=sstd::aveK(rhs);
     float lhs=0;
     KAHAN_SUM_i(float, lhs, (rhs[i]-a)*(rhs[i]-a), 0, rhs.size());
     lhs/=(float)rhs.size();
@@ -150,24 +170,16 @@ double sstd::sumK_abs(const std::vector<double>& rhs){
     KAHAN_SUM_i(double, lhs, std::abs(rhs[i]), 0, rhs.size());
     return lhs;
 }
-double sstd::ave(const std::vector<double>& rhs){
-    return sstd::sum(rhs)/rhs.size();
+double sstd::aveK(const std::vector<double>& rhs){
+    return sstd::sumK(rhs)/rhs.size();
 }
 // 平均値: average in the first num elements.
-double sstd::ave(const std::vector<double>& rhs, uint num){
-    return sstd::sum(rhs, 0, num)/num;
-}
-double sstd::med(std::vector<double> rhs){ // copy rhs
-    if(rhs.size()==0){ return (double)0.0; }
-    std::sort(rhs.begin(), rhs.end());
-    uint size_div2 = rhs.size() / 2;
-    uint size_mod  = rhs.size() - 2*size_div2; // same as "rhs.size()%2"
-    if(size_mod==0){ return (rhs[size_div2-1] + rhs[size_div2])/(double)2.0; // rhs.size() is even number
-    }     else     { return rhs[size_div2]; }                                // rhs.size() is odd number
+double sstd::aveK(const std::vector<double>& rhs, uint num){
+    return sstd::sumK(rhs, 0, num)/num;
 }
 // 不偏分散/標本分散 (variance): u^2 = (1/(n-1))*Σ(x_i-μ)^2
 double sstd::var(const std::vector<double>& rhs){
-    double a=sstd::ave(rhs);
+    double a=sstd::aveK(rhs);
     double lhs=0;
     KAHAN_SUM_i(double, lhs, (rhs[i]-a)*(rhs[i]-a), 0, rhs.size());
     lhs/=(double)(rhs.size()-1);
@@ -175,7 +187,7 @@ double sstd::var(const std::vector<double>& rhs){
 }
 // 母分散 (variance population): σ^2 = (1/n)*Σ(x_i-μ)^2
 double sstd::var_p(const std::vector<double>& rhs){
-    double a=sstd::ave(rhs);
+    double a=sstd::aveK(rhs);
     double lhs=0;
     KAHAN_SUM_i(double, lhs, (rhs[i]-a)*(rhs[i]-a), 0, rhs.size());
     lhs/=(double)rhs.size();
