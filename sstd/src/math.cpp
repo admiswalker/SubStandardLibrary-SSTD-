@@ -16,25 +16,34 @@ double sstd::round2odd(double n){ return std::ceil((n + 0.5) / 2) + std::floor((
 
 // Pairwise summation algorithm
 
-template<typename T>
-inline T PairwiseSum(T* first, T* last){
-    const uint N = 128;
-    const uint size = last - first;
-    if(size < N){
-        T sum = (T)0;
-        for(; first!=last; ++first){ sum += *first; }
-        return sum;
-    }else{
-        T* half = first + size/2;
-        return PairwiseSum(first, half) + PairwiseSum(half, last);
+#define SSTD_DEF_math_PairwiseSum(Func_PairwiseSum, pFirst)             \
+    template<typename T>                                                \
+    inline T Func_PairwiseSum(T* first, T* last){                       \
+        const uint N = 128;                                             \
+        const uint size = last - first;                                 \
+        if(size <= N){                                                  \
+            T sum = (T)0;                                               \
+            /* for(; first!=last; ++first){ sum += *first; } */         \
+            for(; first!=last; ++first){ sum += pFirst; }               \
+            return sum;                                                 \
+        }else{                                                          \
+            T* half = first + size/2;                                   \
+            return PairwiseSum(first, half) + PairwiseSum(half, last);  \
+        }                                                               \
     }
-}
+
+SSTD_DEF_math_PairwiseSum(PairwiseSum,              (*first) ); // template<typename T> inline T PairwiseSum    (T* first, T* last);
+SSTD_DEF_math_PairwiseSum(PairwiseSum_abs, std::abs((*first))); // template<typename T> inline T PairwiseSum_abs(T* first, T* last);
+
+#undef SSTD_DEF_math_PairwiseSum
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-float sstd::sum(const std::vector<float>& rhs){
-    return PairwiseSum((float*)&rhs[0], (float*)&rhs[rhs.size()]);
-}
+float sstd::sum    (const std::vector<float>& rhs){ return PairwiseSum    ((float*)&rhs[0], (float*)&rhs[rhs.size()]); }
+float sstd::sum_abs(const std::vector<float>& rhs){ return PairwiseSum_abs((float*)&rhs[0], (float*)&rhs[rhs.size()]); }
+
+double sstd::sum    (const std::vector<double>& rhs){ return PairwiseSum    ((double*)&rhs[0], (double*)&rhs[rhs.size()]); }
+double sstd::sum_abs(const std::vector<double>& rhs){ return PairwiseSum_abs((double*)&rhs[0], (double*)&rhs[rhs.size()]); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -74,7 +83,7 @@ float sstd::sum(const std::vector<float>& rhs, uint a, uint b){
     KAHAN_SUM_i(float, lhs, rhs[i], a, b);
     return lhs;
 }
-float sstd::sum_abs(const std::vector<float>& rhs){
+float sstd::sumK_abs(const std::vector<float>& rhs){
     float lhs=0;
     KAHAN_SUM_i(float, lhs, std::abs(rhs[i]), 0, rhs.size());
     return lhs;
@@ -87,6 +96,8 @@ float sstd::ave(const std::vector<float>& rhs, uint num){
     return sstd::sum(rhs, 0, num)/num;
 }
 float sstd::med(std::vector<float> rhs){ // copy rhs
+    // TODO: rewrite this fn by 2 of std::nth_element.
+    
     if(rhs.size()==0){ return (float)0.0; }
     std::sort(rhs.begin(), rhs.end());
     uint size_div2 = rhs.size() / 2;
@@ -117,7 +128,7 @@ float sstd::stdev_p(const std::vector<float>& rhs){ return sqrt(sstd::var_p(rhs)
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-double sstd::sum(const std::vector<double>& rhs){
+double sstd::sumK(const std::vector<double>& rhs){
     double lhs=0;
     KAHAN_SUM_i(double, lhs, rhs[i], 0, rhs.size());
     return lhs;
@@ -128,7 +139,7 @@ double sstd::sum(const std::vector<double>& rhs, uint a, uint b){
     KAHAN_SUM_i(double, lhs, rhs[i], a, b);
     return lhs;
 }
-double sstd::sum_abs(const std::vector<double>& rhs){
+double sstd::sumK_abs(const std::vector<double>& rhs){
     double lhs=0;
     KAHAN_SUM_i(double, lhs, std::abs(rhs[i]), 0, rhs.size());
     return lhs;

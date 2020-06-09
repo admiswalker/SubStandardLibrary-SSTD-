@@ -20,9 +20,16 @@ namespace sstd{
     template<typename T> T sum(const std::vector<T>& rhs){ return std::accumulate(rhs.begin(), rhs.end(), (T)0); }
     
     // Using Pairwise summation algorithm.
-    float  sum      (const std::vector<float>& rhs);
-    float  sum    (const std::vector<float>& rhs, uint a, uint b); // 配列の a 番目から b 番目までの合計. sum of the a th to b th of array.
+    float  sum    (const std::vector<float>& rhs);
     float  sum_abs(const std::vector<float>& rhs);
+    
+    double  sum    (const std::vector<double>& rhs);
+    double  sum_abs(const std::vector<double>& rhs);
+    
+    // K: Using Kahan summation algorithm
+    float  sumK    (const std::vector<float>& rhs);
+    float  sum    (const std::vector<float>& rhs, uint a, uint b); // 配列の a 番目から b 番目までの合計. sum of the a th to b th of array.
+    float  sumK_abs(const std::vector<float>& rhs);
     float  ave    (const std::vector<float>& rhs);           // 平均値: average
     float  ave    (const std::vector<float>& rhs, uint num); // 平均値: average in the first num elements.
     float  med    (      std::vector<float>  rhs);           // 中央値: median // copy rhs // If rhs.size () is even, average of the two median values is returned.
@@ -32,9 +39,9 @@ namespace sstd{
     float  stdev  (const std::vector<float>& rhs); // 標本標準偏差 (sample standard deviation): u = SQRT( (1/(n-1))*Σ(x_i-μ)^2 )
     float  stdev_p(const std::vector<float>& rhs); // 標準偏差 (standard deviation): σ = SQRT( (1/n)*Σ(x_i-μ)^2 )
     
-    double sum    (const std::vector<double>& rhs);
+    double sumK    (const std::vector<double>& rhs);
     double sum    (const std::vector<double>& rhs, uint a, uint b); // 配列の a 番目から b 番目までの合計. sum of the a th to b th of array.
-    double sum_abs(const std::vector<double>& rhs);
+    double sumK_abs(const std::vector<double>& rhs);
     double ave    (const std::vector<double>& rhs);           // 平均値: average
     double ave    (const std::vector<double>& rhs, uint num); // 平均値: average in the first num elements.
     double med    (      std::vector<double>  rhs);           // 中央値: median // copy rhs // If rhs.size () is even, average of the two median values is returned.
@@ -43,10 +50,6 @@ namespace sstd{
     double var_p  (const std::vector<double>& rhs); // 母分散 (variance population): σ^2 = (1/n)*Σ(x_i-μ)^2
     double stdev  (const std::vector<double>& rhs); // 標本標準偏差 (sample standard deviation): u = SQRT( (1/(n-1))*Σ(x_i-μ)^2 )
     double stdev_p(const std::vector<double>& rhs); // 標準偏差 (standard deviation): σ = SQRT( (1/n)*Σ(x_i-μ)^2 )
-    
-    // K: Using Kahan summation algorithm
-    float  sumK    (const std::vector<float>& rhs);
-//    double sumK    (const std::vector<double>& rhs);
     
     std::vector<uint64> prime(uint64 rhs);                                  // get a list of prime number under rhs.
     struct fact{

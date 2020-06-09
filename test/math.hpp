@@ -101,29 +101,29 @@ TEST(math, theOthers){
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 TEST(math, sum){
-    { std::vector< char > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::sum(buf)==-5); }
-    { std::vector< int8 > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::sum(buf)==-5); }
-    { std::vector< int16> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::sum(buf)==-5); }
-    { std::vector< int32> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::sum(buf)==-5); }
-    { std::vector< int64> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::sum(buf)==-5); }
-//    { std::vector<uchar > buf={               0,1,2,3,4}; ASSERT_TRUE(sstd::sum(buf)==10); }
-    { std::vector<uint8 > buf={               0,1,2,3,4}; ASSERT_TRUE(sstd::sum(buf)==10); }
-    { std::vector<uint16> buf={               0,1,2,3,4}; ASSERT_TRUE(sstd::sum(buf)==10); }
-    { std::vector<uint32> buf={               0,1,2,3,4}; ASSERT_TRUE(sstd::sum(buf)==10); }
-    { std::vector<uint64> buf={               0,1,2,3,4}; ASSERT_TRUE(sstd::sum(buf)==10); }
+    { std::vector< char > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf), -5); }
+    { std::vector< int8 > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf), -5); }
+    { std::vector< int16> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf), -5); }
+    { std::vector< int32> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf), -5); }
+    { std::vector< int64> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf), -5); }
+//    { std::vector<uchar > buf={               0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf), 10ul); }
+    { std::vector<uint8 > buf={               0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf), 10ul ); }
+    { std::vector<uint16> buf={               0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf), 10ul ); }
+    { std::vector<uint32> buf={               0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf), 10ul ); }
+    { std::vector<uint64> buf={               0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf), 10ull); }
     
-    { std::vector<float > buf;                            ASSERT_TRUE(sstd::sum(buf)== 0.0); } // Pairwise summation algorithm
-    { std::vector<float > buf={1};                        ASSERT_TRUE(sstd::sum(buf)== 1.0); } // Pairwise summation algorithm
-    { std::vector<float > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::sum(buf)==-5.0); } // Pairwise summation algorithm
-//    { std::vector<double> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::sum(buf)==-5.0); }
+    { std::vector<float > buf;                            ASSERT_EQ(sstd::sum(buf),  0.0); } // Pairwise summation algorithm
+    { std::vector<float > buf={1};                        ASSERT_EQ(sstd::sum(buf),  1.0); } // Pairwise summation algorithm
+    { std::vector<float > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf), -5.0); } // Pairwise summation algorithm
+    { std::vector<double> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf), -5.0); } // Pairwise summation algorithm
+    { std::vector<float > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum_abs(buf), 25.0); } // Pairwise summation algorithm
+    { std::vector<double> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum_abs(buf), 25.0); } // Pairwise summation algorithm
     
-    { std::vector<float > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::sumK(buf)==-5.0); }
-//    { std::vector<double> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::sumK(buf)==-5.0); }
+    { std::vector<float > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sumK(buf), -5.0); } // Kahan summation algorithm
+    { std::vector<double> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sumK(buf), -5.0); } // Kahan summation algorithm
+    { std::vector<float > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sumK_abs(buf), 25.0); } // Kahan summation algorithm
+    { std::vector<double> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sumK_abs(buf), 25.0); } // Kahan summation algorithm
     
-    { std::vector<float > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::sum_abs(buf)==25.0); }
-    { std::vector<double> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_TRUE(sstd::sum_abs(buf)==25.0); }
-    
-    /* test: Kahan summation algorithm 01 */
     {
         // float の有効桁数 = 24/1og2(10) ≒ 7.224 ≒ 7
         std::vector<float> buf_f; buf_f.push_back( 1000000.0f ); for(uint i=0; i<10000; ++i){ buf_f.push_back( 0.0001f ); }
@@ -131,12 +131,13 @@ TEST(math, sum){
         ASSERT_TRUE((int64)sstd::sumK(buf_f)                                    ==1000001ll); // Kahan summation algorithm
         ASSERT_TRUE((int64)std::accumulate(buf_f.begin(), buf_f.end(), (float)0)==1000000ll);
     }
-    
-    std::vector<double> buf_d = {100000000000000.0, 0.0125, 0.0125, 0.0125, 0.0125, 0.0125, 0.0125, 0.0125, 0.0125}; // double の有効桁数 = 24/1og2(10) ≒ 15.955 ≒ 15
-    printf("sum: %lf\n", sstd::sum(buf_d));
-    sstd::printn(std::accumulate(buf_d.begin(), buf_d.end(), (float)0));
-    printf("\n");
-    
+    {
+        // double の有効桁数 = 24/1og2(10) ≒ 15.955 ≒ 15
+        std::vector<double> buf_f; buf_f.push_back( 1000000000000000.0 ); for(uint i=0; i<10000; ++i){ buf_f.push_back( 0.0001 ); }
+        ASSERT_EQ((int64)sstd::sum (buf_f)                                     , 1000000000000001ll); // Pairwise summation algorithm
+        ASSERT_EQ((int64)sstd::sumK(buf_f)                                     , 1000000000000001ll); // Kahan summation algorithm
+        ASSERT_EQ((int64)std::accumulate(buf_f.begin(), buf_f.end(), (double)0), 1000000000000000ll);
+    }
     
     // TODO: wite test of "sum(vec, a, b)" function;
 }
