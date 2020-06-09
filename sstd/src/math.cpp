@@ -18,9 +18,9 @@ double sstd::round2odd(double n){ return std::ceil((n + 0.5) / 2) + std::floor((
 // Pairwise summation algorithm
 
 #define SSTD_DEF_math_PairwiseSum(Func_PairwiseSum, pFirst)             \
-    template <class Iterator>                                           \
-    inline typename std::iterator_traits<Iterator>::value_type Func_PairwiseSum(Iterator first, Iterator last){ \
-        using T = typename std::iterator_traits<Iterator>::value_type;  \
+    template <class Itr>                                                \
+    inline typename std::iterator_traits<Itr>::value_type Func_PairwiseSum(Itr first, Itr last){ \
+        using T = typename std::iterator_traits<Itr>::value_type;       \
         const uint N = 128;                                             \
         const uint size = last - first;                                 \
         if(size <= N){                                                  \
@@ -29,7 +29,7 @@ double sstd::round2odd(double n){ return std::ceil((n + 0.5) / 2) + std::floor((
             for(; first!=last; ++first){ sum += pFirst; }               \
             return sum;                                                 \
         }else{                                                          \
-            Iterator half = first + (size>>1);                          \
+            Itr half = first + (size>>1);                               \
             return PairwiseSum(first, half) + PairwiseSum(half, last);  \
         }                                                               \
     }
@@ -41,10 +41,13 @@ SSTD_DEF_math_PairwiseSum(PairwiseSum_abs, std::abs((*first))); // template<type
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-//float sstd::sum    (const std::vector<float>& rhs, uint a, uint b){ return PairwiseSum((float*)&rhs[0]+a, (float*)&rhs[0]+b); }
+float sstd::sum    (const std::vector<float>::iterator first, const std::vector<float>::iterator last){ return PairwiseSum(first, last); }
+float sstd::sum    (const std::vector<float>& rhs, uint a, uint b){ return PairwiseSum(rhs.begin()+a, rhs.begin()+b); }
 float sstd::sum    (const std::vector<float>& rhs){ return PairwiseSum    (rhs.begin(), rhs.end()); }
 float sstd::sum_abs(const std::vector<float>& rhs){ return PairwiseSum_abs(rhs.begin(), rhs.end()); }
 
+double sstd::sum    (const std::vector<double>::iterator first, const std::vector<double>::iterator last){ return PairwiseSum(first, last); }
+double sstd::sum    (const std::vector<double>& rhs, uint a, uint b){ return PairwiseSum(rhs.begin()+a, rhs.begin()+b); }
 double sstd::sum    (const std::vector<double>& rhs){ return PairwiseSum    (rhs.begin(), rhs.end()); }
 double sstd::sum_abs(const std::vector<double>& rhs){ return PairwiseSum_abs(rhs.begin(), rhs.end()); }
 
@@ -81,7 +84,7 @@ float sstd::sumK(const std::vector<float>& rhs){
     return lhs;
 }
 // 配列の a 番目から b 番目までの合計. sum of the a th to b th of array.
-float sstd::sum(const std::vector<float>& rhs, uint a, uint b){
+float sstd::sumK(const std::vector<float>& rhs, uint a, uint b){
     float lhs=0;
     KAHAN_SUM_i(float, lhs, rhs[i], a, b);
     return lhs;
@@ -92,7 +95,7 @@ float sstd::sumK_abs(const std::vector<float>& rhs){
     return lhs;
 }
 float sstd::ave(const std::vector<float>& rhs){
-    return sstd::sum(rhs)/rhs.size();
+    return sstd::sumK(rhs)/rhs.size();
 }
 // 平均値: average in the first num elements.
 float sstd::ave(const std::vector<float>& rhs, uint num){
@@ -137,7 +140,7 @@ double sstd::sumK(const std::vector<double>& rhs){
     return lhs;
 }
 // 配列の a 番目から b 番目までの合計. sum of the a th to b th of array.
-double sstd::sum(const std::vector<double>& rhs, uint a, uint b){
+double sstd::sumK(const std::vector<double>& rhs, uint a, uint b){
     double lhs=0;
     KAHAN_SUM_i(double, lhs, rhs[i], a, b);
     return lhs;

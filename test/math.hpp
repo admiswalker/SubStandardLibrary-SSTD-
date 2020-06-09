@@ -106,7 +106,7 @@ TEST(math, sum){
     { std::vector< int16> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf), -5); }
     { std::vector< int32> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf), -5); }
     { std::vector< int64> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf), -5); }
-//    { std::vector<uchar > buf={               0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf), 10ul); }
+//  { std::vector<uchar > buf={               0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf), 10ul); }
     { std::vector<uint8 > buf={               0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf), 10ul ); }
     { std::vector<uint16> buf={               0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf), 10ul ); }
     { std::vector<uint32> buf={               0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf), 10ul ); }
@@ -139,11 +139,18 @@ TEST(math, sum){
         ASSERT_EQ((int64)std::accumulate(buf_f.begin(), buf_f.end(), (double)0), 1000000000000000ll);
     }
     
-    // TODO: wite test of "sum(vec, a, b)" function;
-//    { std::vector< int> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ((std::vector<int>::iterator)sstd::sum(buf.begin(), (std::vector<int>::iterator)buf.end()), -5); }
-}
-
-TEST(math, sum_ab){
+    // sum(vec, a, b)
+    { std::vector< int32> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf, 0, buf.size()  ), -5); } // for T
+    { std::vector< int32> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf, 0, buf.size()-1), -9); } // for T
+    { std::vector<float > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf, 0, buf.size()  ), -5); } // for float
+    { std::vector<float > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf, 0, buf.size()-1), -9); } // for float
+    { std::vector<double> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf, 0, buf.size()  ), -5); } // for double
+    { std::vector<double> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf, 0, buf.size()-1), -9); } // for double
+    
+    // sum(itr.begin(), itr.end())
+    { std::vector< int32> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf.begin(), buf.end()), -5); } // for T
+    { std::vector<float > buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf.begin(), buf.end()), -5); } // for float
+    { std::vector<double> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ(sstd::sum(buf.begin(), buf.end()), -5); } // for double
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
