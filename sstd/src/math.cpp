@@ -1,8 +1,9 @@
 ﻿#include "typeDef.h"
 #include "math.hpp"
+#include <cmath>      // ceil(), floor()
+#include <iterator>
 #include <stdio.h>    // printf
 #include <stdlib.h>   // abs()
-#include <cmath>      // ceil(), floor()
 
 // 偶数丸め (round to even, round to the nearest even; RN)
 float  sstd::round2even(float n){ return std::ceil((n - 0.5) / 2) + std::floor((n + 0.5) / 2); }
@@ -17,8 +18,9 @@ double sstd::round2odd(double n){ return std::ceil((n + 0.5) / 2) + std::floor((
 // Pairwise summation algorithm
 
 #define SSTD_DEF_math_PairwiseSum(Func_PairwiseSum, pFirst)             \
-    template<typename T>                                                \
-    inline T Func_PairwiseSum(T* first, T* last){                       \
+    template <class Iterator>                                           \
+    inline typename std::iterator_traits<Iterator>::value_type Func_PairwiseSum(Iterator first, Iterator last){ \
+        using T = typename std::iterator_traits<Iterator>::value_type;  \
         const uint N = 128;                                             \
         const uint size = last - first;                                 \
         if(size <= N){                                                  \
@@ -27,7 +29,7 @@ double sstd::round2odd(double n){ return std::ceil((n + 0.5) / 2) + std::floor((
             for(; first!=last; ++first){ sum += pFirst; }               \
             return sum;                                                 \
         }else{                                                          \
-            T* half = first + size/2;                                   \
+            Iterator half = first + (size>>1);                          \
             return PairwiseSum(first, half) + PairwiseSum(half, last);  \
         }                                                               \
     }
@@ -39,11 +41,12 @@ SSTD_DEF_math_PairwiseSum(PairwiseSum_abs, std::abs((*first))); // template<type
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-float sstd::sum    (const std::vector<float>& rhs){ return PairwiseSum    ((float*)&rhs[0], (float*)&rhs[rhs.size()]); }
-float sstd::sum_abs(const std::vector<float>& rhs){ return PairwiseSum_abs((float*)&rhs[0], (float*)&rhs[rhs.size()]); }
+//float sstd::sum    (const std::vector<float>& rhs, uint a, uint b){ return PairwiseSum((float*)&rhs[0]+a, (float*)&rhs[0]+b); }
+float sstd::sum    (const std::vector<float>& rhs){ return PairwiseSum    (rhs.begin(), rhs.end()); }
+float sstd::sum_abs(const std::vector<float>& rhs){ return PairwiseSum_abs(rhs.begin(), rhs.end()); }
 
-double sstd::sum    (const std::vector<double>& rhs){ return PairwiseSum    ((double*)&rhs[0], (double*)&rhs[rhs.size()]); }
-double sstd::sum_abs(const std::vector<double>& rhs){ return PairwiseSum_abs((double*)&rhs[0], (double*)&rhs[rhs.size()]); }
+double sstd::sum    (const std::vector<double>& rhs){ return PairwiseSum    (rhs.begin(), rhs.end()); }
+double sstd::sum_abs(const std::vector<double>& rhs){ return PairwiseSum_abs(rhs.begin(), rhs.end()); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 

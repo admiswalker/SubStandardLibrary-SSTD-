@@ -26,6 +26,8 @@
 //#include "./test/vector_stdVector_expansion.hpp" // stdVector_expansion of operators
 //#include "./test/vector_vvec.hpp"
 
+
+/*
 // Move on to google c++ testing framework sequentially.
 void TEST_time();
 void TEST_typeDef();
@@ -48,7 +50,7 @@ void TEST_pause();
 void TEST_mat_colMajor();
 void TEST_mat_rowMajor();
 void TEST_bmat();
-
+//*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 int main(int argc, char** argv){
@@ -94,7 +96,7 @@ int main(int argc, char** argv){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-
+/*
 void TEST_time(){
     printf("■ time\n");
     time_t      c_time    = time(0); // get current time
@@ -158,6 +160,8 @@ void TEST_signal(){
     std::vector<double> sin_wave = sstd::sinWave(freq2generate, freq2sample, len);
     std::vector<double> cos_wave = sstd::cosWave(freq2generate, freq2sample, len);
 }
+//*/
+/*
 void TEST_file(){
     printf("■ fopen\n");
     
@@ -284,6 +288,9 @@ void TEST_strmatch(){
     printf("    isAlphabet_onlyLower('%c') -> %s\n", 'a', sstd::isAlphabet_onlyLower('a')?"true":"false");
     printf("\n");
 }
+//*/
+
+/*
 void TEST_path(){
     printf("■ path\n"); // <- 不足する関数を追加する必要がある．
     
@@ -342,6 +349,9 @@ void TEST_path(){
     sstd::printn(sstd::pathExist("./sstd"));
     printf("\n");
 }
+//*/
+
+/*
 void TEST_tinyInterpreter(){
     printf("■ tinyInterpreter\n");
     printf("  □ getCommandList & splitByComma\n");
@@ -352,6 +362,9 @@ void TEST_tinyInterpreter(){
     }
     printf("\n");
 }
+//*/
+
+/*
 void TEST_encode_decode(){
     printf("■ encode_decode\n");
     
@@ -423,7 +436,9 @@ void TEST_encode_decode(){
     sstd::print_unicodeEscape_decode_table();
     printf("\n");
 }
+//*/
 
+/*
 void print_vecUint8_hex(std::vector<uint8>& rhs){ for(uint i=0; i<rhs.size(); i++){ printf("%.2x", rhs[i]); } printf("\n"); }
 void TEST_hashFnc(){
     
@@ -437,6 +452,7 @@ void TEST_hashFnc(){
     printf("fnc_SHA384( %s ) = ", pFilePath); { std::vector<uint8> hash = sstd::sha384(data); print_vecUint8_hex(hash); }
     printf("fnc_SHA512( %s ) = ", pFilePath); { std::vector<uint8> hash = sstd::sha512(data); print_vecUint8_hex(hash); }
 }
+//*/
 // --- hash calculation by command ---
 //
 // $ md5sum ./test/test.png
@@ -457,6 +473,8 @@ void TEST_hashFnc(){
 // $ sha512sum ./test/test.png
 // 021c3d7da0cedd5aa780ca765f9071f210ed3e19db3c08ee74aa6531aaf6552c3daaa8d0f30abeb10a30793bffbb86d39e3b019b865d54c2793dbd3b62c243e6  ./test/test.png
 
+
+/*
 void TEST_pause(){
 //    printf("■ #define UsePause\n");
     sstd::pause();
@@ -464,9 +482,9 @@ void TEST_pause(){
     sstd::pauseIfWin32(); // win32 の場合のみ停止
 //    printf("\n");
 }
-
+//*/
 //-----------------------------------------------------------------------
-
+/*
 void TEST_mat_colMajor(){
     printf("== sstd_src_MatrixStore_mat ==\n\n"); // col-major
     
@@ -644,6 +662,7 @@ void TEST_mat_colMajor(){
         sstd::printn(lhsInt()%rhsInt  ); printf("\n");
     }
 }
+//*/
 /*
 // 実装完了 (処理時間短縮のため，コメントアウト)
 
@@ -673,7 +692,7 @@ TEST(c2py, mat_ope_eq_ne){
 }
 //*/
 //-----------------------------------------------------------------------
-
+/*
 void TEST_mat_rowMajor(){
     printf("== sstd_src_MatrixStore_mat_rowMajor ==\n\n");
     
@@ -837,6 +856,7 @@ void TEST_mat_rowMajor(){
         sstd::printn(lhsInt()%rhsInt  ); printf("\n");
     }
 }
+//*/
 /*
 // 実装完了 (処理時間短縮のため，コメントアウト)
 
@@ -867,9 +887,8 @@ TEST(c2py, mat_r_ope_eq_ne){
 //*/
 
 //-----------------------------------------------------------------------
-
+/*
 void TEST_bmat(){
-    //*
     // init test
     sstd::bmat bMat4x4(4, 4);
     sstd::eye(bMat4x4);   sstd::printn(bMat4x4);
@@ -877,7 +896,7 @@ void TEST_bmat(){
     sstd::zeros(bMat4x4); sstd::printn(bMat4x4);
     sstd::print(bMat4x4);     // for print debug
     sstd::print_all(bMat4x4); // for bmat debug // Internaly, the bit matrix is processed as a set of 8x8 matrices.
-    //*/
+    //
 
     sstd::bmat bonded8x8 = sstd::zeros(4, 4) << sstd::eye(4, 4) &&
                            sstd::ones (4, 4) << sstd::eye(4, 4);
@@ -898,7 +917,7 @@ void TEST_bmat(){
                              sstd::ones (16, 16) << sstd::eye(16, 16);
     sstd::printn(bonded16x16);
     
-    //*
+    //
     sstd::bmat bMat8x9 = sstd::eye(8, 9);
     sstd::printn(bMat8x9);
     sstd::print_all(bMat8x9); // for debug // Internaly, the bit matrix is processed as a set of 8x8 matrices.
@@ -969,8 +988,7 @@ void TEST_bmat(){
     I(2, 2) = I[0];
 
     sstd::printn(I);
-    //*/
-}
+}//*/
 
 
 /*

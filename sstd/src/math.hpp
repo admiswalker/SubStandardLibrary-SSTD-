@@ -18,8 +18,10 @@ namespace sstd{
     double round2odd(double n);
     
     template<typename T> T sum(const std::vector<T>& rhs){ return std::accumulate(rhs.begin(), rhs.end(), (T)0); }
+//    template<typename T> T sum(std::vector<int>::iterator first, std::vector<int>::iterator last){ return std::accumulate(first, last, (T)0); }
     
     // Using Pairwise summation algorithm.
+//    float  sum    (const std::vector<float>& rhs, uint a, uint b); // 配列の a 番目から b 番目までの合計. sum of the a th to b th of array.
     float  sum    (const std::vector<float>& rhs);
     float  sum_abs(const std::vector<float>& rhs);
     
@@ -27,8 +29,8 @@ namespace sstd{
     double  sum_abs(const std::vector<double>& rhs);
     
     // K: Using Kahan summation algorithm
-    float  sumK    (const std::vector<float>& rhs);
     float  sum    (const std::vector<float>& rhs, uint a, uint b); // 配列の a 番目から b 番目までの合計. sum of the a th to b th of array.
+    float  sumK    (const std::vector<float>& rhs);
     float  sumK_abs(const std::vector<float>& rhs);
     float  ave    (const std::vector<float>& rhs);           // 平均値: average
     float  ave    (const std::vector<float>& rhs, uint num); // 平均値: average in the first num elements.

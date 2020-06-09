@@ -127,9 +127,9 @@ TEST(math, sum){
     {
         // float の有効桁数 = 24/1og2(10) ≒ 7.224 ≒ 7
         std::vector<float> buf_f; buf_f.push_back( 1000000.0f ); for(uint i=0; i<10000; ++i){ buf_f.push_back( 0.0001f ); }
-        ASSERT_TRUE((int64)sstd::sum (buf_f)                                    ==1000001ll); // Pairwise summation algorithm
-        ASSERT_TRUE((int64)sstd::sumK(buf_f)                                    ==1000001ll); // Kahan summation algorithm
-        ASSERT_TRUE((int64)std::accumulate(buf_f.begin(), buf_f.end(), (float)0)==1000000ll);
+        ASSERT_EQ((int64)sstd::sum (buf_f)                                    , 1000001ll); // Pairwise summation algorithm
+        ASSERT_EQ((int64)sstd::sumK(buf_f)                                    , 1000001ll); // Kahan summation algorithm
+        ASSERT_EQ((int64)std::accumulate(buf_f.begin(), buf_f.end(), (float)0), 1000000ll);
     }
     {
         // double の有効桁数 = 24/1og2(10) ≒ 15.955 ≒ 15
@@ -140,6 +140,10 @@ TEST(math, sum){
     }
     
     // TODO: wite test of "sum(vec, a, b)" function;
+//    { std::vector< int> buf={-5,-4,-3,-2,-1,0,1,2,3,4}; ASSERT_EQ((std::vector<int>::iterator)sstd::sum(buf.begin(), (std::vector<int>::iterator)buf.end()), -5); }
+}
+
+TEST(math, sum_ab){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
