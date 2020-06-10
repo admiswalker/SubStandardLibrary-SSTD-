@@ -21,7 +21,7 @@ void TEST_math(){
 //    printf("ave: %f\n", sstd::ave(buf_f));
 //    printf("ave in the first 2 elements: %f\n", sstd::ave(buf_f, 2));
 //    printf("med: %f\n", sstd::med(buf_f));
-    printf("var: %f\n", sstd::var(buf_f));
+//    printf("var: %f\n", sstd::var(buf_f));
     printf("var_p: %f\n", sstd::var_p(buf_f));
     printf("stdev: %f\n", sstd::stdev(buf_f));
     printf("stdev_p: %f\n", sstd::stdev_p(buf_f));
@@ -34,7 +34,7 @@ void TEST_math(){
 //    printf("ave: %f\n", sstd::ave(buf_d));
 //    printf("ave in the first 2 elements: %f\n", sstd::ave(buf_d, 2));
 //    printf("med: %f\n", sstd::med(buf_d));
-    printf("var: %f\n", sstd::var(buf_d));
+//    printf("var: %f\n", sstd::var(buf_d));
     printf("var_p: %f\n", sstd::var_p(buf_d));
     printf("stdev: %f\n", sstd::stdev(buf_d));
     printf("stdev_p: %f\n", sstd::stdev_p(buf_d));
@@ -173,6 +173,14 @@ TEST(math, med){
     { std::vector<double> buf={-4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_EQ(sstd::med(buf), 0.0); } // odd
     { std::vector<double> buf={1, 4, -4, -3, -1, 3, 2, 0, -2}; ASSERT_EQ(sstd::med(buf), 0.0); } // odd
 }
+TEST(math, var){
+    { std::vector<float > buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_TRUE(std::abs(sstd::var(buf) - 9.166667) < 0.000001); } // Pairwise summation algorithm
+    { std::vector<double> buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_TRUE(std::abs(sstd::var(buf) - 9.166667) < 0.000001); } // Pairwise summation algorithm
+    
+    { std::vector<float > buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_TRUE(std::abs(sstd::varK(buf) - 9.166667) < 0.000001); } // Kahan summation algorithm
+    { std::vector<double> buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_TRUE(std::abs(sstd::varK(buf) - 9.166667) < 0.000001); } // Kahan summation algorithm
+}
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 TEST(math, min_vec){

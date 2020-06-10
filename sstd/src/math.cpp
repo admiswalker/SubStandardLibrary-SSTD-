@@ -17,27 +17,44 @@ double sstd::round2odd(double n){ return std::ceil((n + 0.5) / 2) + std::floor((
 
 // Pairwise summation algorithm
 
-#define SSTD_DEF_math_PairwiseSum(Func_PairwiseSum, pFirst)             \
+#define SSTD_DEF_math_PairwiseSum(FuncName, __OPERATION__)              \
     template <class Itr>                                                \
-    inline typename std::iterator_traits<Itr>::value_type Func_PairwiseSum(Itr first, Itr last){ \
+    inline typename std::iterator_traits<Itr>::value_type FuncName(Itr first, Itr last){ \
         using T = typename std::iterator_traits<Itr>::value_type;       \
         const uint N = 128;                                             \
         const uint size = last - first;                                 \
         if(size <= N){                                                  \
             T sum = (T)0;                                               \
             /* for(; first!=last; ++first){ sum += *first; } */         \
-            for(; first!=last; ++first){ sum += pFirst; }               \
+            for(; first!=last; ++first){ __OPERATION__ }                \
             return sum;                                                 \
         }else{                                                          \
             Itr half = first + (size>>1); /* "size>>1" is same as "size/2" */ \
             return PairwiseSum(first, half) + PairwiseSum(half, last);  \
         }                                                               \
     }
-
-SSTD_DEF_math_PairwiseSum(PairwiseSum,              (*first) ); // template<typename T> inline T PairwiseSum    (T* first, T* last);
-SSTD_DEF_math_PairwiseSum(PairwiseSum_abs, std::abs((*first))); // template<typename T> inline T PairwiseSum_abs(T* first, T* last);
-
+SSTD_DEF_math_PairwiseSum(PairwiseSum,     sum +=          (*first); ); // template<typename T> inline T PairwiseSum    (T* first, T* last);
+SSTD_DEF_math_PairwiseSum(PairwiseSum_abs, sum += std::abs((*first));); // template<typename T> inline T PairwiseSum_abs(T* first, T* last);
 #undef SSTD_DEF_math_PairwiseSum
+
+#define SSTD_DEF_math_PairwiseSum_ave(FuncName, __OPERATION__)          \
+    template <class Itr>                                                \
+    inline typename std::iterator_traits<Itr>::value_type FuncName(Itr first, Itr last, typename std::iterator_traits<Itr>::value_type ave){ \
+        using T = typename std::iterator_traits<Itr>::value_type;       \
+        const uint N = 128;                                             \
+        const uint size = last - first;                                 \
+        if(size <= N){                                                  \
+            T sum = (T)0;                                               \
+            /* for(; first!=last; ++first){ sum += *first; } */         \
+            for(; first!=last; ++first){ __OPERATION__ }                \
+            return sum;                                                 \
+        }else{                                                          \
+            Itr half = first + (size>>1); /* "size>>1" is same as "size/2" */ \
+            return PairwiseSum(first, half) + PairwiseSum(half, last);  \
+        }                                                               \
+    }
+SSTD_DEF_math_PairwiseSum_ave(PairwiseSum_var, T tmp=(*first)-ave; sum+=tmp*tmp; ); // template<typename T> inline T PairwiseSum    (T* first, T* last);
+#undef SSTD_DEF_math_PairwiseSum_ave
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -60,6 +77,11 @@ float sstd::med(std::vector<float> rhs){ // copy rhs
         return (*itr + rhs[n])/2.0;
     }
 }
+// 不偏分散/標本分散 (variance): u^2 = (1/(n-1))*Σ(x_i-μ)^2
+float sstd::var(const std::vector<float>& rhs){
+    float a=sstd::ave(rhs);
+    return PairwiseSum_var(rhs.begin(), rhs.end(), a)/(float)(rhs.size()-1);
+}
 
 double sstd::sum    (const std::vector<double>::iterator first, const std::vector<double>::iterator last){ return PairwiseSum(first, last); }
 double sstd::sum    (const std::vector<double>& rhs, uint a, uint b){ return PairwiseSum(rhs.begin()+a, rhs.begin()+b); }
@@ -79,6 +101,11 @@ double sstd::med(std::vector<double> rhs){ // copy rhs
         auto itr = std::max_element(rhs.begin(), rhs.begin()+n);
         return (*itr + rhs[n])/2.0;
     }
+}
+// 不偏分散/標本分散 (variance): u^2 = (1/(n-1))*Σ(x_i-μ)^2
+double sstd::var(const std::vector<double>& rhs){
+    double a=sstd::ave(rhs);
+    return PairwiseSum_var(rhs.begin(), rhs.end(), a)/(float)(rhs.size()-1);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -132,7 +159,7 @@ float sstd::aveK(const std::vector<float>& rhs, uint num){
     return sstd::sumK(rhs, 0, num)/num;
 }
 // 不偏分散/標本分散 (variance): u^2 = (1/(n-1))*Σ(x_i-μ)^2
-float sstd::var(const std::vector<float>& rhs){
+float sstd::varK(const std::vector<float>& rhs){
     float a=sstd::aveK(rhs);
     float lhs=0;
     KAHAN_SUM_i(float, lhs, (rhs[i]-a)*(rhs[i]-a), 0, rhs.size());
@@ -148,7 +175,7 @@ float sstd::var_p(const std::vector<float>& rhs){
     return lhs;
 }
 // 標本標準偏差 (sample standard deviation): u = SQRT( (1/(n-1))*Σ(x_i-μ)^2 )
-float sstd::stdev(const std::vector<float>& rhs){ return sqrt(sstd::var(rhs)); }
+float sstd::stdev(const std::vector<float>& rhs){ return sqrt(sstd::varK(rhs)); }
 // 標準偏差 (standard deviation): σ = SQRT( (1/n)*Σ(x_i-μ)^2 )
 float sstd::stdev_p(const std::vector<float>& rhs){ return sqrt(sstd::var_p(rhs)); }
 
@@ -178,7 +205,7 @@ double sstd::aveK(const std::vector<double>& rhs, uint num){
     return sstd::sumK(rhs, 0, num)/num;
 }
 // 不偏分散/標本分散 (variance): u^2 = (1/(n-1))*Σ(x_i-μ)^2
-double sstd::var(const std::vector<double>& rhs){
+double sstd::varK(const std::vector<double>& rhs){
     double a=sstd::aveK(rhs);
     double lhs=0;
     KAHAN_SUM_i(double, lhs, (rhs[i]-a)*(rhs[i]-a), 0, rhs.size());
@@ -194,9 +221,11 @@ double sstd::var_p(const std::vector<double>& rhs){
     return lhs;
 }
 // 標本標準偏差 (sample standard deviation): u = SQRT( (1/(n-1))*Σ(x_i-μ)^2 )
-double sstd::stdev(const std::vector<double>& rhs){ return sqrt(sstd::var(rhs)); }
+double sstd::stdev(const std::vector<double>& rhs){ return sqrt(sstd::varK(rhs)); }
 // 標準偏差 (standard deviation): σ = SQRT( (1/n)*Σ(x_i-μ)^2 )
 double sstd::stdev_p(const std::vector<double>& rhs){ return sqrt(sstd::var_p(rhs)); }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 // get a list of prime number under rhs.
 std::vector<uint64> sstd::prime(uint64 rhs){

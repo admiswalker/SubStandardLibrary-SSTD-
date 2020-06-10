@@ -31,6 +31,8 @@ namespace sstd{
     float  sum_abs(const std::vector<float>& rhs);
     float  ave    (const std::vector<float>& rhs);           // 平均値: average
     float  med    (      std::vector<float>  rhs);           // 中央値: median // copy rhs // If rhs.size () is even, average of the two median values is returned.
+//  float  mod    (const std::vector<float>& rhs);           // 最頻値: mode
+    float  var    (const std::vector<float>& rhs); // 不偏分散/標本分散 (variance): u^2 = (1/(n-1))*Σ(x_i-μ)^2
     
     double sum    (const std::vector<double>::iterator first, const std::vector<double>::iterator last);
     double sum    (const std::vector<double>& rhs, uint a, uint b); // 配列の a 番目から b 番目までの合計. sum of the a th to b th of array.
@@ -38,6 +40,8 @@ namespace sstd{
     double sum_abs(const std::vector<double>& rhs);
     double ave    (const std::vector<double>& rhs);           // 平均値: average
     double med    (      std::vector<double>  rhs);           // 中央値: median // copy rhs // If rhs.size () is even, average of the two median values is returned.
+//  double mod    (const std::vector<double>& rhs);           // 最頻値: mode
+    double var    (const std::vector<double>& rhs); // 不偏分散/標本分散 (variance): u^2 = (1/(n-1))*Σ(x_i-μ)^2
     
     // K: using Kahan summation algorithm
     float  sumK    (const std::vector<float>& rhs, uint a, uint b); // 配列の a 番目から b 番目までの合計. sum of the a th to b th of array.
@@ -45,8 +49,7 @@ namespace sstd{
     float  sumK_abs(const std::vector<float>& rhs);
     float  aveK    (const std::vector<float>& rhs);           // 平均値: average
     float  aveK    (const std::vector<float>& rhs, uint num); // 平均値: average in the first num elements.
-//  float  mod    (const std::vector<float>& rhs);           // 最頻値: mode
-    float  var    (const std::vector<float>& rhs); // 不偏分散/標本分散 (variance): u^2 = (1/(n-1))*Σ(x_i-μ)^2
+    float  varK    (const std::vector<float>& rhs); // 不偏分散/標本分散 (variance): u^2 = (1/(n-1))*Σ(x_i-μ)^2
     float  var_p  (const std::vector<float>& rhs); // 母分散 (variance population): σ^2 = (1/n)*Σ(x_i-μ)^2
     float  stdev  (const std::vector<float>& rhs); // 標本標準偏差 (sample standard deviation): u = SQRT( (1/(n-1))*Σ(x_i-μ)^2 )
     float  stdev_p(const std::vector<float>& rhs); // 標準偏差 (standard deviation): σ = SQRT( (1/n)*Σ(x_i-μ)^2 )
@@ -56,8 +59,7 @@ namespace sstd{
     double sumK_abs(const std::vector<double>& rhs);
     double aveK    (const std::vector<double>& rhs);           // 平均値: average
     double aveK    (const std::vector<double>& rhs, uint num); // 平均値: average in the first num elements.
-//  double mod    (const std::vector<double>& rhs);           // 最頻値: mode
-    double var    (const std::vector<double>& rhs); // 不偏分散/標本分散 (variance): u^2 = (1/(n-1))*Σ(x_i-μ)^2
+    double varK    (const std::vector<double>& rhs); // 不偏分散/標本分散 (variance): u^2 = (1/(n-1))*Σ(x_i-μ)^2
     double var_p  (const std::vector<double>& rhs); // 母分散 (variance population): σ^2 = (1/n)*Σ(x_i-μ)^2
     double stdev  (const std::vector<double>& rhs); // 標本標準偏差 (sample standard deviation): u = SQRT( (1/(n-1))*Σ(x_i-μ)^2 )
     double stdev_p(const std::vector<double>& rhs); // 標準偏差 (standard deviation): σ = SQRT( (1/n)*Σ(x_i-μ)^2 )
