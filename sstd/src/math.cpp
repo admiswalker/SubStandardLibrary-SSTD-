@@ -5,11 +5,11 @@
 #include <stdio.h>    // printf
 #include <stdlib.h>   // abs()
 
-// 偶数丸め (round to even, round to the nearest even; RN)
+// 偶数丸め (round to even: RN)
 float  sstd::round2even(float n){ return std::ceil((n - 0.5) / 2) + std::floor((n + 0.5) / 2); }
 double sstd::round2even(double n){ return std::ceil((n - 0.5) / 2) + std::floor((n + 0.5) / 2); }
 
-// 奇数へ丸め (round to odd, round to the nearest odd; RO)
+// 奇数へ丸め (round to odd: RO)
 float  sstd::round2odd(float n){ return std::ceil((n + 0.5) / 2) + std::floor((n - 0.5) / 2); }
 double sstd::round2odd(double n){ return std::ceil((n + 0.5) / 2) + std::floor((n - 0.5) / 2); }
 
@@ -56,7 +56,8 @@ SSTD_DEF_math_PairwiseSum(PairwiseSum_abs, sum += std::abs((*first));); // templ
 SSTD_DEF_math_PairwiseSum_ave(PairwiseSum_var, T tmp=(*first)-ave; sum+=tmp*tmp; ); // template<typename T> inline T PairwiseSum    (T* first, T* last);
 #undef SSTD_DEF_math_PairwiseSum_ave
 
-//-----------------------------------------------------------------------------------------------------------------------------------------------
+//---
+
 
 float sstd::sum    (const std::vector<float>::iterator first, const std::vector<float>::iterator last){ return PairwiseSum(first, last); }
 float sstd::sum    (const std::vector<float>& rhs, uint a, uint b){ return PairwiseSum(rhs.begin()+a, rhs.begin()+b); }
@@ -91,6 +92,9 @@ float sstd::var_p(const std::vector<float>& rhs){
 float sstd::stdev(const std::vector<float>& rhs){ return sqrt(sstd::var(rhs)); }
 // 標準偏差 (standard deviation): σ = SQRT( (1/n)*Σ(x_i-μ)^2 )
 float sstd::stdev_p(const std::vector<float>& rhs){ return sqrt(sstd::var_p(rhs)); }
+
+//---
+
 
 double sstd::sum    (const std::vector<double>::iterator first, const std::vector<double>::iterator last){ return PairwiseSum(first, last); }
 double sstd::sum    (const std::vector<double>& rhs, uint a, uint b){ return PairwiseSum(rhs.begin()+a, rhs.begin()+b); }
@@ -149,9 +153,8 @@ double sstd::stdev_p(const std::vector<double>& rhs){ return sqrt(sstd::var_p(rh
 //
 // Ref: http://iwiwi.hatenadiary.jp/entry/2016/11/23/144034
 
-// -> Todo: ここのアルゴリズムは，Pairwise summation に置き換える．
+//---
 
-//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 float sstd::sumK(const std::vector<float>& rhs){
     float lhs=0;
@@ -197,7 +200,8 @@ float sstd::stdevK(const std::vector<float>& rhs){ return sqrt(sstd::varK(rhs));
 // 標準偏差 (standard deviation): σ = SQRT( (1/n)*Σ(x_i-μ)^2 )
 float sstd::stdevK_p(const std::vector<float>& rhs){ return sqrt(sstd::varK_p(rhs)); }
 
-//-----------------------------------------------------------------------------------------------------------------------------------------------
+//---
+
 
 double sstd::sumK(const std::vector<double>& rhs){
     double lhs=0;
