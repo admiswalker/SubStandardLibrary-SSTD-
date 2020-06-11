@@ -105,6 +105,10 @@ namespace sstd{
     template<typename T> inline T max    (const sstd::mat_r<T>& rhs);
     template<typename T> inline T max_abs(const sstd::mat_r<T>& rhs);
 
+    // TODO:
+    // template<typename T> inline T min(const T& arg1, const T& arg2, ... );
+    // template<typename T> inline T max(const T& arg1, const T& arg2, ... );
+
     //-----------------------------------------------------------------------------------------------------------------------------------------------
     
     template<typename T> uint argmin    (const std::vector<T>& rhs);
