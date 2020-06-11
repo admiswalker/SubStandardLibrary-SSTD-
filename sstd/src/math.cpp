@@ -82,6 +82,15 @@ float sstd::var(const std::vector<float>& rhs){
     float a=sstd::ave(rhs);
     return PairwiseSum_var(rhs.begin(), rhs.end(), a)/(float)(rhs.size()-1);
 }
+// 母分散 (variance population): σ^2 = (1/n)*Σ(x_i-μ)^2
+float sstd::var_p(const std::vector<float>& rhs){
+    float a=sstd::ave(rhs);
+    return PairwiseSum_var(rhs.begin(), rhs.end(), a)/(float)rhs.size();
+}
+// 標本標準偏差 (sample standard deviation): u = SQRT( (1/(n-1))*Σ(x_i-μ)^2 )
+float sstd::stdev(const std::vector<float>& rhs){ return sqrt(sstd::var(rhs)); }
+// 標準偏差 (standard deviation): σ = SQRT( (1/n)*Σ(x_i-μ)^2 )
+float sstd::stdev_p(const std::vector<float>& rhs){ return sqrt(sstd::var_p(rhs)); }
 
 double sstd::sum    (const std::vector<double>::iterator first, const std::vector<double>::iterator last){ return PairwiseSum(first, last); }
 double sstd::sum    (const std::vector<double>& rhs, uint a, uint b){ return PairwiseSum(rhs.begin()+a, rhs.begin()+b); }
@@ -107,6 +116,15 @@ double sstd::var(const std::vector<double>& rhs){
     double a=sstd::ave(rhs);
     return PairwiseSum_var(rhs.begin(), rhs.end(), a)/(float)(rhs.size()-1);
 }
+// 母分散 (variance population): σ^2 = (1/n)*Σ(x_i-μ)^2
+double sstd::var_p(const std::vector<double>& rhs){
+    double a=sstd::ave(rhs);
+    return PairwiseSum_var(rhs.begin(), rhs.end(), a)/(double)rhs.size();
+}
+// 標本標準偏差 (sample standard deviation): u = SQRT( (1/(n-1))*Σ(x_i-μ)^2 )
+double sstd::stdev(const std::vector<double>& rhs){ return sqrt(sstd::var(rhs)); }
+// 標準偏差 (standard deviation): σ = SQRT( (1/n)*Σ(x_i-μ)^2 )
+double sstd::stdev_p(const std::vector<double>& rhs){ return sqrt(sstd::var_p(rhs)); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -167,7 +185,7 @@ float sstd::varK(const std::vector<float>& rhs){
     return lhs;
 }
 // 母分散 (variance population): σ^2 = (1/n)*Σ(x_i-μ)^2
-float sstd::var_p(const std::vector<float>& rhs){
+float sstd::varK_p(const std::vector<float>& rhs){
     float a=sstd::aveK(rhs);
     float lhs=0;
     KAHAN_SUM_i(float, lhs, (rhs[i]-a)*(rhs[i]-a), 0, rhs.size());
@@ -175,9 +193,9 @@ float sstd::var_p(const std::vector<float>& rhs){
     return lhs;
 }
 // 標本標準偏差 (sample standard deviation): u = SQRT( (1/(n-1))*Σ(x_i-μ)^2 )
-float sstd::stdev(const std::vector<float>& rhs){ return sqrt(sstd::varK(rhs)); }
+float sstd::stdevK(const std::vector<float>& rhs){ return sqrt(sstd::varK(rhs)); }
 // 標準偏差 (standard deviation): σ = SQRT( (1/n)*Σ(x_i-μ)^2 )
-float sstd::stdev_p(const std::vector<float>& rhs){ return sqrt(sstd::var_p(rhs)); }
+float sstd::stdevK_p(const std::vector<float>& rhs){ return sqrt(sstd::varK_p(rhs)); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -213,7 +231,7 @@ double sstd::varK(const std::vector<double>& rhs){
     return lhs;
 }
 // 母分散 (variance population): σ^2 = (1/n)*Σ(x_i-μ)^2
-double sstd::var_p(const std::vector<double>& rhs){
+double sstd::varK_p(const std::vector<double>& rhs){
     double a=sstd::aveK(rhs);
     double lhs=0;
     KAHAN_SUM_i(double, lhs, (rhs[i]-a)*(rhs[i]-a), 0, rhs.size());
@@ -221,9 +239,9 @@ double sstd::var_p(const std::vector<double>& rhs){
     return lhs;
 }
 // 標本標準偏差 (sample standard deviation): u = SQRT( (1/(n-1))*Σ(x_i-μ)^2 )
-double sstd::stdev(const std::vector<double>& rhs){ return sqrt(sstd::varK(rhs)); }
+double sstd::stdevK(const std::vector<double>& rhs){ return sqrt(sstd::varK(rhs)); }
 // 標準偏差 (standard deviation): σ = SQRT( (1/n)*Σ(x_i-μ)^2 )
-double sstd::stdev_p(const std::vector<double>& rhs){ return sqrt(sstd::var_p(rhs)); }
+double sstd::stdevK_p(const std::vector<double>& rhs){ return sqrt(sstd::varK_p(rhs)); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 

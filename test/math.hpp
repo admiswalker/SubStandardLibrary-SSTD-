@@ -14,32 +14,6 @@ void TEST_math(){
     double ro_d2 = sstd::round2odd(2.5); printf("round to odd: %lf ≒ %lf\n", 2.5, ro_d2);
     printf("\n");
     
-    std::vector<float> buf_f = {-5, -4, -3, -2, -1, 0, 1, 2, 3, 4};
-    sstd::printn(buf_f);
-//    printf("sum: %f\n", sstd::sum(buf_f));
-//    printf("sum_abs: %f\n", sstd::sum_abs(buf_f));
-//    printf("ave: %f\n", sstd::ave(buf_f));
-//    printf("ave in the first 2 elements: %f\n", sstd::ave(buf_f, 2));
-//    printf("med: %f\n", sstd::med(buf_f));
-//    printf("var: %f\n", sstd::var(buf_f));
-    printf("var_p: %f\n", sstd::var_p(buf_f));
-    printf("stdev: %f\n", sstd::stdev(buf_f));
-    printf("stdev_p: %f\n", sstd::stdev_p(buf_f));
-    printf("\n");
-    
-    std::vector<double> buf_d = {-5, -4, -3, -2, -1, 0, 1, 2, 3, 4};
-    sstd::printn(buf_d);
-//    printf("sum: %f\n", sstd::sum(buf_d));
-//    printf("sum_abs: %f\n", sstd::sum_abs(buf_d));
-//    printf("ave: %f\n", sstd::ave(buf_d));
-//    printf("ave in the first 2 elements: %f\n", sstd::ave(buf_d, 2));
-//    printf("med: %f\n", sstd::med(buf_d));
-//    printf("var: %f\n", sstd::var(buf_d));
-    printf("var_p: %f\n", sstd::var_p(buf_d));
-    printf("stdev: %f\n", sstd::stdev(buf_d));
-    printf("stdev_p: %f\n", sstd::stdev_p(buf_d));
-    printf("\n");
-    
     /* test: Kahan summation algorithm 01 */
 //    std::vector<float> buf_f2 = {100000.0f, 0.0125f, 0.0125f, 0.0125f, 0.0125f, 0.0125f, 0.0125f, 0.0125f, 0.0125f}; // float の有効桁数 = 24/1og2(10) ≒ 7.224 ≒ 7
 //    printf("sum: %lf\n", sstd::sum(buf_f2));
@@ -179,6 +153,27 @@ TEST(math, var){
     
     { std::vector<float > buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_TRUE(std::abs(sstd::varK(buf) - 9.166667) < 0.000001); } // Kahan summation algorithm
     { std::vector<double> buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_TRUE(std::abs(sstd::varK(buf) - 9.166667) < 0.000001); } // Kahan summation algorithm
+}
+TEST(math, var_p){
+    { std::vector<float > buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_TRUE(std::abs(sstd::var_p(buf) - 8.25) < 0.000001); } // Pairwise summation algorithm
+    { std::vector<double> buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_TRUE(std::abs(sstd::var_p(buf) - 8.25) < 0.000001); } // Pairwise summation algorithm
+    
+    { std::vector<float > buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_TRUE(std::abs(sstd::varK_p(buf) - 8.25) < 0.000001); } // Kahan summation algorithm
+    { std::vector<double> buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_TRUE(std::abs(sstd::varK_p(buf) - 8.25) < 0.000001); } // Kahan summation algorithm
+}
+TEST(math, stdev){
+    { std::vector<float > buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_TRUE(std::abs(sstd::stdev(buf) - 3.027650) < 0.000001); } // Pairwise summation algorithm
+    { std::vector<double> buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_TRUE(std::abs(sstd::stdev(buf) - 3.027650) < 0.000001); } // Pairwise summation algorithm
+    
+    { std::vector<float > buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_TRUE(std::abs(sstd::stdevK(buf) - 3.027650) < 0.000001); } // Kahan summation algorithm
+    { std::vector<double> buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_TRUE(std::abs(sstd::stdevK(buf) - 3.027650) < 0.000001); } // Kahan summation algorithm
+}
+TEST(math, stdev_p){
+    { std::vector<float > buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_TRUE(std::abs(sstd::stdev_p(buf) - 2.872281) < 0.000001); } // Pairwise summation algorithm
+    { std::vector<double> buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_TRUE(std::abs(sstd::stdev_p(buf) - 2.872281) < 0.000001); } // Pairwise summation algorithm
+    
+    { std::vector<float > buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_TRUE(std::abs(sstd::stdevK_p(buf) - 2.872281) < 0.000001); } // Kahan summation algorithm
+    { std::vector<double> buf={-5, -4, -3, -2, -1, 0, 1, 2, 3, 4}; ASSERT_TRUE(std::abs(sstd::stdevK_p(buf) - 2.872281) < 0.000001); } // Kahan summation algorithm
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
