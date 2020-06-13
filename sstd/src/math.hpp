@@ -105,7 +105,7 @@ namespace sstd{
     template<typename T> inline T max    (const sstd::mat_r<T>& rhs);
     template<typename T> inline T max_abs(const sstd::mat_r<T>& rhs);
     
-    // template<typename T> inline T min(const T& arg1, const T& arg2, ... );
+    // template<typename T> inline T min(T&& arg1, T&& arg2, ... );
     // : Inorder to avoid the namespace confliction with the other min functions, multiple arg min has 3 arguments.
     template<typename T> inline T min(T&& lhs, T&& rhs){ return (lhs<=rhs ? lhs:rhs); }
     template<typename T> inline T min(T&& head1, T&& head2, T&& tail){ return sstd::min(head1, sstd::min(head2, tail)); }
