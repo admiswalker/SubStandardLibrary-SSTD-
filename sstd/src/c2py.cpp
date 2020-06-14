@@ -208,11 +208,11 @@ bool Is_type_tempT(const std::string& str, std::string& retType, std::string& re
     
     bool flagL=false, flagR=false;
     uint i=0;
-    for(; str[i]!=0; i++){
-        if(str[i]=='<'){ flagL=true; i++; break;
+    for(; str[i]!=0; ++i){
+        if(str[i]=='<'){ flagL=true; ++i; break;
         }      else    { retType+=str[i]; }
     }
-    for(; str[i]!=0; i++){
+    for(; str[i]!=0; ++i){
         if(str[i]=='>'){ flagR=true; break;
         }      else    { retTempT+=str[i]; }
     }
@@ -233,7 +233,7 @@ bool split_leftStr(const char* pStr, struct sstd_c2py::typeSet& f, std::string& 
     if(fS.size()<len){ return false; }
 
     uint i=0;
-    for(; i<len; i++){
+    for(; i<len; ++i){
         if(pStr[i]!=fS[i]){ return false; }
     }
 
@@ -254,7 +254,7 @@ void split_verticalLine(struct sstd_c2py::typeSet& f, std::string& fS){
     std::vector<std::string> verLineLR = sstd::split(fS, '|'); // split by vertical line
     fS=std::move(verLineLR[0]); // copy L (Left value)
     if(verLineLR.size()==2){ // evaluation of R (Right value)
-        for(uint i=0; i<verLineLR[1].size(); i++){
+        for(uint i=0; i<verLineLR[1].size(); ++i){
             if      (verLineLR[1][i]=='*'){ f.pointer_sidePy    =true; // *: pointer type sybol on python side                      // on right than vertical line '|' as a symbol of split
             }else if(verLineLR[1][i]=='~'){ f.cnv2builtIn_sidePy=true; // ~: conversion command to built in function on python side // on right than vertical line '|' as a symbol of split
             }else if(verLineLR[1][i]==' '){ // pass
@@ -314,7 +314,7 @@ bool IsPrevious_pChar(const std::vector<std::string>& fSList, const std::vector<
 std::vector<struct sstd_c2py::typeSet> sstd_c2py::format_str2typeSet(const std::vector<std::string>& fSList){
     std::vector<struct sstd_c2py::typeSet> fList(fSList.size());
     std::string type, tempT;
-    for(uint i=0; i<fList.size(); i++){
+    for(uint i=0; i<fList.size(); ++i){
         std::string fS = fSList[i]; // format string list
         struct sstd_c2py::typeSet& f = fList[i]; // format list
         split_const       (f, fS); // "const type*|*~" -> "const", "type*|*~"
@@ -389,7 +389,7 @@ std::string sstd_c2py::format_typeSet2str(const std::vector<struct sstd_c2py::ty
         // 戻り値のサイズは確定していなので，渡すことはできない．このため，0 埋めする．
         typeStr += sstd::ssprintf(" %lu", fList[0].arrLen.size());
     }
-    for(uint i=1; i<fList.size(); i++){
+    for(uint i=1; i<fList.size(); ++i){
         typeStr += "\n";
         
         typeStr += fList[i].retTF              ? "T ":"F ";
@@ -402,12 +402,12 @@ std::string sstd_c2py::format_typeSet2str(const std::vector<struct sstd_c2py::ty
         
         // 型例外 (配列サイズを渡す) (sstd::ssprintf() は比較的重いので，呼び出し回数を抑える．)
         if      (fList[i].N_num==       num_str                           ){ typeStr += sstd::ssprintf(" %u %u",    fList[i].arrLen.size(), fList[i].arrLen[0]);
-        }else if(fList[i].N_num==  VEC_NUM_BASE && fList[i].T_num==num_str){ typeStr += sstd::ssprintf(" %u",       fList[i].arrLen.size()); for(uint v=0; v<fList[i].arrLen.size(); v++){ typeStr += sstd::ssprintf(" %lu", fList[i].arrLen[v]); }
+        }else if(fList[i].N_num==  VEC_NUM_BASE && fList[i].T_num==num_str){ typeStr += sstd::ssprintf(" %u",       fList[i].arrLen.size()); for(uint v=0; v<fList[i].arrLen.size(); ++v){ typeStr += sstd::ssprintf(" %lu", fList[i].arrLen[v]); }
         }else if(fList[i].N_num==  VEC_NUM_BASE                           ){ typeStr += sstd::ssprintf(" %u %u",    fList[i].arrLen.size(), fList[i].arrLen[0]);
-        }else if(fList[i].N_num== VVEC_NUM_BASE                           ){ typeStr += sstd::ssprintf(" %u",       fList[i].arrLen.size()); for(uint v=0; v<fList[i].arrLen.size(); v++){ typeStr += sstd::ssprintf(" %lu", fList[i].arrLen[v]); }
-        }else if(fList[i].N_num==MAT_C_NUM_BASE && fList[i].T_num==num_str){ typeStr += sstd::ssprintf(" %u",       fList[i].arrLen.size()); for(uint v=0; v<fList[i].arrLen.size(); v++){ typeStr += sstd::ssprintf(" %lu", fList[i].arrLen[v]); }
+        }else if(fList[i].N_num== VVEC_NUM_BASE                           ){ typeStr += sstd::ssprintf(" %u",       fList[i].arrLen.size()); for(uint v=0; v<fList[i].arrLen.size(); ++v){ typeStr += sstd::ssprintf(" %lu", fList[i].arrLen[v]); }
+        }else if(fList[i].N_num==MAT_C_NUM_BASE && fList[i].T_num==num_str){ typeStr += sstd::ssprintf(" %u",       fList[i].arrLen.size()); for(uint v=0; v<fList[i].arrLen.size(); ++v){ typeStr += sstd::ssprintf(" %lu", fList[i].arrLen[v]); }
         }else if(fList[i].N_num==MAT_C_NUM_BASE                           ){ typeStr += sstd::ssprintf(" %u %u %u", fList[i].arrLen.size(), fList[i].arrLen[0], fList[i].arrLen[1]);
-        }else if(fList[i].N_num==MAT_R_NUM_BASE && fList[i].T_num==num_str){ typeStr += sstd::ssprintf(" %u",       fList[i].arrLen.size()); for(uint v=0; v<fList[i].arrLen.size(); v++){ typeStr += sstd::ssprintf(" %lu", fList[i].arrLen[v]); }
+        }else if(fList[i].N_num==MAT_R_NUM_BASE && fList[i].T_num==num_str){ typeStr += sstd::ssprintf(" %u",       fList[i].arrLen.size()); for(uint v=0; v<fList[i].arrLen.size(); ++v){ typeStr += sstd::ssprintf(" %lu", fList[i].arrLen[v]); }
         }else if(fList[i].N_num==MAT_R_NUM_BASE                           ){ typeStr += sstd::ssprintf(" %u %u %u", fList[i].arrLen.size(), fList[i].arrLen[0], fList[i].arrLen[1]);
         }else if(fList[i].pointer                                         ){ typeStr += sstd::ssprintf(" %u %u",    fList[i].arrLen.size(), fList[i].arrLen[0]);
         }                              else                                { typeStr += sstd::ssprintf(" %u",       fList[i].arrLen.size()); }
@@ -461,7 +461,7 @@ bool sstd_c2py::c2py_ret(std::vector<  bool>& inOut, sstd::file& fp, std::string
     std::vector<uchar> vecBuf(len);
     inOut.resize(len);
     if(0!=fp.fread(&vecBuf[0],sizeof(bool),len)){
-        for(uint i=0; i<vecBuf.size(); i++){ inOut[i]=(bool)vecBuf[i]; }
+        for(uint i=0; i<vecBuf.size(); ++i){ inOut[i]=(bool)vecBuf[i]; }
         return true;
     }else{ return false; }
 }
@@ -482,12 +482,12 @@ bool sstd_c2py::c2py_ret(std::vector<std::string>& inOut, sstd::file& fp, std::s
     
     uint vecLen=sstd::str2int(elements[elOffSet]);
     inOut.resize(vecLen);
-    for(uint i=0; i<vecLen; i++){
+    for(uint i=0; i<vecLen; ++i){
         inOut[i].resize(sstd::str2int(elements[elOffSet+1+i]));
     }
     
     // write back
-    for(uint i=0; i<inOut.size(); i++){
+    for(uint i=0; i<inOut.size(); ++i){
         fp.fread(&inOut[i][0], sizeof(char), inOut[i].size());
     }
     return true;
@@ -503,12 +503,12 @@ inline bool c2py_ret_vvec(std::vector<std::vector<T>>& inOut, sstd::file& fp, st
     
     uint vecLen=sstd::str2int(elements[elOffSet]);
     inOut.resize(vecLen);
-    for(uint i=0; i<vecLen; i++){
+    for(uint i=0; i<vecLen; ++i){
         inOut[i].resize(sstd::str2int(elements[elOffSet+1+i]));
     }
     
     // write back
-    for(uint i=0; i<inOut.size(); i++){
+    for(uint i=0; i<inOut.size(); ++i){
         fp.fread(&inOut[i][0], sizeof(T), inOut[i].size());
     }
     return true;
@@ -549,12 +549,12 @@ bool sstd_c2py::c2py_ret(std::vector<std::vector<     double>>& inOut, sstd::fil
     uint cols   = sstd::str2int(elements[elOffSet+2]);                  \
     uint matLen = rows*cols;                                            \
     matType<type> buf(rows, cols);                                      \
-    for(uint i=0; i<matLen; i++){                                       \
+    for(uint i=0; i<matLen; ++i){                                       \
         buf[i].resize(sstd::str2int(elements[elOffSet+3+i]));           \
     }                                                                   \
                                                                         \
     /* write back */                                                    \
-    for(uint i=0; i<buf.size(); i++){                                   \
+    for(uint i=0; i<buf.size(); ++i){                                   \
         fp.fread(&buf[i][0], sizeof(char), buf[i].size());              \
     }                                                                   \
     sstd::move(inOut, buf);                                             \
@@ -598,7 +598,7 @@ bool sstd_c2py::c2py_ret(sstd::mat_r<std::string>& inOut, sstd::file& fp, std::s
             len=va_arg(ap,uint32);                                      \
             fList[i].arrLen.clear();                                    \
             fList[i].arrLen.push_back(len);                             \
-            i++; /* adding i in order to pass the sequency of num_len */ \
+            ++i; /* adding i in order to pass the sequency of num_len */ \
         }else{                                                          \
             fList[i].arrLen.clear();                                    \
             fList[i].arrLen.push_back(len);                             \
@@ -626,7 +626,7 @@ bool sstd_c2py::c2py_ret(sstd::mat_r<std::string>& inOut, sstd::file& fp, std::s
         pArgBuf = &argBuf;                                              \
     }                                                                   \
     std::vector<uchar> vecBuf((*pArgBuf).size());                       \
-    for(uint v=0; v<vecBuf.size(); v++){ vecBuf[v]=(uchar)(*pArgBuf)[v]; } /* copy */ \
+    for(uint v=0; v<vecBuf.size(); ++v){ vecBuf[v]=(uchar)(*pArgBuf)[v]; } /* copy */ \
     fp.fwrite(&vecBuf[0], sizeof(uchar), vecBuf.size());                \
     fList[i].arrLen.clear();                                            \
     fList[i].arrLen.push_back(vecBuf.size());
@@ -647,18 +647,18 @@ bool sstd_c2py::c2py_ret(sstd::mat_r<std::string>& inOut, sstd::file& fp, std::s
     uint64 len=(uint64)pArgBuf->size();                                 \
     fList[i].arrLen.clear();                                            \
     uint64 len_sum=0;                                                   \
-    for(uint v=0; v<len; v++){                                          \
+    for(uint v=0; v<len; ++v){                                          \
         fList[i].arrLen.push_back((*pArgBuf)[v].size());                \
         len_sum += (*pArgBuf)[v].size();                                \
     }                                                                   \
     std::string writeBuf(len_sum, '\0'); writeBuf.clear();              \
-    for(uint v=0; v<len; v++){ writeBuf+=(*pArgBuf)[v]; }               \
+    for(uint v=0; v<len; ++v){ writeBuf+=(*pArgBuf)[v]; }               \
                                                                         \
     fp.fwrite(&writeBuf[0],sizeof(char),writeBuf.size());
 
 template<typename T>
 void vvec2file(sstd::file& fp, std::vector<std::vector<T>>& vvec){
-    for(uint i=0; i<vvec.size(); i++){
+    for(uint i=0; i<vvec.size(); ++i){
         fp.fwrite(&(vvec[i])[0], sizeof(T), vvec[i].size());
     }
 }
@@ -679,7 +679,7 @@ void vvec_write2file(va_list& ap, sstd::file& fp, void*& pArgList_i, struct sstd
     }
     
     fmt.arrLen.clear();
-    for(uint i=0; i<pArgBuf->size(); i++){ fmt.arrLen.push_back((*pArgBuf)[i].size()); }
+    for(uint i=0; i<pArgBuf->size(); ++i){ fmt.arrLen.push_back((*pArgBuf)[i].size()); }
     
     vvec2file(fp, (*pArgBuf));
 }
@@ -707,12 +707,12 @@ void vvec_write2file(va_list& ap, sstd::file& fp, void*& pArgList_i, struct sstd
     fList[i].arrLen.push_back((*pArgBuf).rows());                       \
     fList[i].arrLen.push_back((*pArgBuf).cols());                       \
     uint64 len_sum=0;                                                   \
-    for(uint v=0; v<len; v++){                                          \
+    for(uint v=0; v<len; ++v){                                          \
         fList[i].arrLen.push_back((*pArgBuf)[v].size());                \
         len_sum += (*pArgBuf)[v].size();                                \
     }                                                                   \
     std::string writeBuf(len_sum, '\0'); writeBuf.clear();              \
-    for(uint v=0; v<len; v++){ writeBuf+=(*pArgBuf)[v]; }               \
+    for(uint v=0; v<len; ++v){ writeBuf+=(*pArgBuf)[v]; }               \
                                                                         \
     fp.fwrite(&writeBuf[0], sizeof(char), writeBuf.size());             \
 
@@ -739,7 +739,7 @@ bool isBuiltin(char N_num){ if(num_bool==N_num || num_char==N_num || num_uchar==
 std::vector<void*> sstd_c2py::getArg_and_write2file(va_list& ap, const char* writeDir_base, std::vector<std::string> fSList, std::vector<struct sstd_c2py::typeSet>& fList){
     
     std::vector<void*> pArgList(fList.size(), 0); // note noly pointer type
-    for(uint i=1; i<fList.size(); i++){ // begin 1 to avoid return value
+    for(uint i=1; i<fList.size(); ++i){ // begin 1 to avoid return value
         if(fList[i].retTF){
             if(!fList[i].pointer){ sstd::pdbg("ERROR: ret type must be a pointer type."); return std::vector<void*>(); }
             
@@ -747,7 +747,7 @@ std::vector<void*> sstd_c2py::getArg_and_write2file(va_list& ap, const char* wri
             
             uint32 len=1;
             fList[i].arrLen.clear();
-            if(i<fList.size()-1 && num_len==fList[i+1].N_num){ len=va_arg(ap,uint32); fList[i].arrLen.push_back(len); i++; // adding i in order to pass the sequency of len_num
+            if(i<fList.size()-1 && num_len==fList[i+1].N_num){ len=va_arg(ap,uint32); fList[i].arrLen.push_back(len); ++i; // adding i in order to pass the sequency of len_num
             }else if(              isBuiltin(fList[i].N_num)){                        fList[i].arrLen.push_back(len);
             }               else                             {                        fList[i].arrLen.push_back( 0 ); } // ret の場合，builtin 型以外は，サイズ 0 としておく．
             continue; // pass "ret" type
@@ -861,7 +861,7 @@ bool checkError_WB(uint fSize, uint arrSize){
 //------------------------------------------------------------------
 
 bool sstd_c2py::writeBack(std::vector<std::string>& lines, std::vector<void*>& pArgList, const char* writeDir_base, std::vector<std::string>& fSList, std::vector<struct sstd_c2py::typeSet>& fList){
-    for(uint i=1; i<pArgList.size(); i++){ // begin 1 to avoid return value
+    for(uint i=1; i<pArgList.size(); ++i){ // begin 1 to avoid return value
         if(pArgList[i]==0 || fList[i].constTF==true || fList[i].N_num==num_len){ continue; }
         
         sstd::file fp; std::string readDir=sstd::ssprintf("%s/arg%04d.bin", writeDir_base, i);

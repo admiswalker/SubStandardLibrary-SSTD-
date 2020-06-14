@@ -43,8 +43,8 @@ std::string sstd::base64_encode(const uchar* str, size_t strLen){
 
     const char b64_table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"; //Base64の64文字
     uint p2=0;
-    for(; p2<retLen;       p2++){ ret[p2] = b64_table[(uint)ret[p2]]; }
-    for(; p2<retLen_total; p2++){ ret[p2] = '=';                      } // '=' padding
+    for(; p2<retLen;       ++p2){ ret[p2] = b64_table[(uint)ret[p2]]; }
+    for(; p2<retLen_total; ++p2){ ret[p2] = '=';                      } // '=' padding
 
     return ret;
 }
@@ -101,7 +101,7 @@ std::string sstd::base64_decode(const uchar* str, size_t strLen){
     // Base64の定義である「'A'==0x00 ~ 'Z'==0x19, 'a'==0x1A ~ 'z'==0x33, '0'==0x34 ~ '9'==0x3D, '+'==0x3E, '/'==0x3F」に，
     // decode table を用いて変換する．
     std::string strBuf(strLen_without_padding, 0); // 終端文字分は，std::string 側で確保される
-    for(uint i=0; i<strLen_without_padding; i++){
+    for(uint i=0; i<strLen_without_padding; ++i){
         uint buf=(uint)str[i]; if(buf==0xFF){ std::string ret_error(0); return ret_error; /*ERROR*/ }
         strBuf[i]=decode_table[buf];
     }
@@ -127,7 +127,7 @@ std::string sstd::base64_decode(const uchar* str, size_t strLen){
                               ret[p++] = (strBuf[q+1]<<4) | (strBuf[q+2]>>2);
     }
 //    // 別の書き方
-//    for(uint k=0; p<retLen; p++, k++){ ret[p] = (strBuf[q+k]<<(1+k)*2) | (strBuf[q+k+1]>>(2-k)*2); }
+//    for(uint k=0; p<retLen; ++p, ++k){ ret[p] = (strBuf[q+k]<<(1+k)*2) | (strBuf[q+k+1]>>(2-k)*2); }
 
     return ret;
 }
@@ -139,12 +139,12 @@ void sstd::print_base64_decode_table(){
     const uchar b64_table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";    // Base64の64文字
 
     uchar decode_table[256];
-    for(int i=0; i<256; i++){ decode_table[i] = 0xFF; }
+    for(int i=0; i<256; ++i){ decode_table[i] = 0xFF; }
 
     // make decode table
-    for(int i=0; i<64; i++){ decode_table[b64_table[i]] = i; }
+    for(int i=0; i<64; ++i){ decode_table[b64_table[i]] = i; }
 
-    for(uint i=0; i<256; i++){
+    for(uint i=0; i<256; ++i){
         printf("0x%02X, ", decode_table[i]);
         if((i+1)%10==0){ printf("\n"); }
     }
@@ -176,7 +176,7 @@ std::string sstd::url_encode(const char* str, size_t strLen){
 
     std::string ret;
 
-    for(uint i=0; i<strLen; i++){
+    for(uint i=0; i<strLen; ++i){
 
         if(    str[i] == '-' ||
             str[i] == '.' ||
@@ -209,7 +209,7 @@ std::string sstd::url_encode_type2(const char* str, size_t strLen){
 
     std::string ret;
 
-    for(uint i=0; i<strLen; i++){
+    for(uint i=0; i<strLen; ++i){
 
         if(    str[i] == '-' ||
             str[i] == '.' ||
@@ -244,16 +244,16 @@ std::string sstd::url_encode_type2(const char* str, size_t strLen){
 
 void sstd::url_encode_compare_speed(){
 
-    std::string str_url(256, 0); for(uint i=0; i<str_url.size(); i++){ str_url[i]=i; }
+    std::string str_url(256, 0); for(uint i=0; i<str_url.size(); ++i){ str_url[i]=i; }
 
     printf("sstd::url_encode\n");
     time_m t1; sstd::measureTime_start(t1);
-    for(uint i=0; i<10000; i++){ sstd::url_encode(str_url.c_str(), str_url.size()); }
+    for(uint i=0; i<10000; ++i){ sstd::url_encode(str_url.c_str(), str_url.size()); }
     sstd::measureTime_stop_print(t1);
     
     printf("sstd::url_encode_type2\n");
     time_m t2; sstd::measureTime_start(t2);
-    for(uint i=0; i<10000; i++){ sstd::url_encode_type2(str_url.c_str(), str_url.size()); }
+    for(uint i=0; i<10000; ++i){ sstd::url_encode_type2(str_url.c_str(), str_url.size()); }
     sstd::measureTime_stop_print(t2);
     
     /*
@@ -306,7 +306,7 @@ std::string sstd::url_decode(const char* str, size_t strLen){
 
     std::string ret;
     
-    for(uint i=0; i<strLen; i++){
+    for(uint i=0; i<strLen; ++i){
         if(str[i]=='%'){
             if((i+2)>=strLen){ std::string ret_error(0); return ret_error; /*ERROR*/ }
 
@@ -332,18 +332,18 @@ std::string sstd::url_decode(std::string& str){ return sstd::url_decode(str.c_st
 void sstd::print_url_decode_table(){
 
     uchar decode_table[256];
-    for(int i=0; i<256; i++){ decode_table[i] = 0xFF; }
+    for(int i=0; i<256; ++i){ decode_table[i] = 0xFF; }
 
     const uchar HEX_table[] = "0123456789ABCDEF";
-    for(int i=0; i<16; i++){ decode_table[HEX_table[i]] = i; } // make decode table
+    for(int i=0; i<16; ++i){ decode_table[HEX_table[i]] = i; } // make decode table
     
     const uchar hex_table[] = "0123456789abcdef";
-    for(int i=0; i<16; i++){ decode_table[hex_table[i]] = i; } // make decode table
+    for(int i=0; i<16; ++i){ decode_table[hex_table[i]] = i; } // make decode table
 
     const uchar set0xFE_table[] = "GHIJKLMNOPQRSTUVWXYZghijklmnopqrstuvwxyz-._~";
-    for(int i=0; i<44; i++){ decode_table[set0xFE_table[i]] = 0xFE; } // make decode table
+    for(int i=0; i<44; ++i){ decode_table[set0xFE_table[i]] = 0xFE; } // make decode table
 
-    for(uint i=0; i<256; i++){
+    for(uint i=0; i<256; ++i){
 //        if(decode_table[i]==0xFF){ printf("    0,");
 //        }          else          { printf(" 0x%02X,", decode_table[i]); }
         printf(" 0x%02X,", decode_table[i]);
@@ -371,7 +371,7 @@ std::string sstd::unicodeEscape_encode(const std::u16string& str){
 
     std::string ret(6*str.size(), 0); ret.clear();
 
-    for(uint i=0; i<str.size(); i++){
+    for(uint i=0; i<str.size(); ++i){
         ret += R"(\u)";
         
         uchar hi = (uchar)((str[i]>>8) & 0x00FF);
@@ -419,32 +419,32 @@ std::u16string sstd::unicodeEscape_decode(const char* str, size_t strLen){
     int strLen_minus6 = strLen - 6; if(strLen_minus6<0){ std::u16string ret_error(0); return ret_error; }
     std::u16string ret(strLen_div6, 0);
 
-    for(uint i=0, i2=0; i<=(uint)strLen_minus6; i2++){
+    for(uint i=0, i2=0; i<=(uint)strLen_minus6; ++i2){
         i+=2; // '\\' と 'u' の二つ分ポインタを進める。
         
         uint16 buf;
         
         if(sstd::str2bin_table[(uchar)str[i]] == 0xFF){ std::u16string ret_error(0); return ret_error; }
         buf = sstd::str2bin_table[(uchar)str[i]];
-        i++;
+        ++i;
         
         buf = buf<<4;    // 一桁目を桁上げ    //「buf*=16;」と同じ意味。
         
         if(sstd::str2bin_table[(uchar)str[i]] == 0xFF){ std::u16string ret_error(0); return ret_error; }
         buf += sstd::str2bin_table[(uchar)str[i]];
-        i++;
+        ++i;
 
         buf = buf<<4;    // 一桁目を桁上げ    //「buf*=16;」と同じ意味。
         
         if(sstd::str2bin_table[(uchar)str[i]] == 0xFF){ std::u16string ret_error(0); return ret_error; }
         buf += sstd::str2bin_table[(uchar)str[i]];
-        i++;
+        ++i;
 
         buf = buf<<4;    // 一桁目を桁上げ    //「buf*=16;」と同じ意味。
         
         if(sstd::str2bin_table[(uchar)str[i]] == 0xFF){ std::u16string ret_error(0); return ret_error; }
         buf += sstd::str2bin_table[(uchar)str[i]];
-        i++;
+        ++i;
 
         ret[i2] = buf;
     }
@@ -459,7 +459,7 @@ std::u16string sstd::unicodeEscape_decode_type2(const char* str, size_t strLen){
     int strLen_minus6 = strLen - 6; if(strLen_minus6<0){ std::u16string ret_error(0); return ret_error; }
     std::u16string ret(strLen_div6, 0);
 
-    for(uint i=0, i2=0; i<=(uint)strLen_minus6; i2++){
+    for(uint i=0, i2=0; i<=(uint)strLen_minus6; ++i2){
         i+=2; // '\\' と 'u' の二つ分ポインタを進める
         
         uint16 buf;
@@ -468,7 +468,7 @@ std::u16string sstd::unicodeEscape_decode_type2(const char* str, size_t strLen){
         }else if('A'<=str[i] && str[i]<='F'){ buf = str[i] - 'A' + 10;
         }else if('a'<=str[i] && str[i]<='f'){ buf = str[i] - 'a' + 10;
         }               else                { std::u16string ret_error(0); return ret_error; }
-        i++;
+        ++i;
         
         buf = buf<<4;    // 一桁目を桁上げ    //「buf*=16;」と同じ意味。
         
@@ -476,7 +476,7 @@ std::u16string sstd::unicodeEscape_decode_type2(const char* str, size_t strLen){
         }else if('A'<=str[i] && str[i]<='F'){ buf += str[i] - 'A' + 10;
         }else if('a'<=str[i] && str[i]<='f'){ buf += str[i] - 'a' + 10;
         }               else                { std::u16string ret_error(0); return ret_error; }
-        i++;
+        ++i;
 
         buf = buf<<4;    // 一桁目を桁上げ    //「buf*=16;」と同じ意味。
         
@@ -484,7 +484,7 @@ std::u16string sstd::unicodeEscape_decode_type2(const char* str, size_t strLen){
         }else if('A'<=str[i] && str[i]<='F'){ buf += str[i] - 'A' + 10;
         }else if('a'<=str[i] && str[i]<='f'){ buf += str[i] - 'a' + 10;
         }               else                { std::u16string ret_error(0); return ret_error; }
-        i++;
+        ++i;
 
         buf = buf<<4;    // 一桁目を桁上げ    //「buf*=16;」と同じ意味。
         
@@ -492,7 +492,7 @@ std::u16string sstd::unicodeEscape_decode_type2(const char* str, size_t strLen){
         }else if('A'<=str[i] && str[i]<='F'){ buf += str[i] - 'A' + 10;
         }else if('a'<=str[i] && str[i]<='f'){ buf += str[i] - 'a' + 10;
         }               else                { std::u16string ret_error(0); return ret_error; }
-        i++;
+        ++i;
 
         ret[i2] = buf;
     }
@@ -504,17 +504,17 @@ std::u16string sstd::unicodeEscape_decode(const std::string& str){ return sstd::
 void sstd::unicodeEscape_compare_speed(){
 
     std::string str_encoded(0xFFFF, 0); str_encoded.clear();
-    for(uint32 i=0; i<0xFFFF; i++){ str_encoded+=sstd::ssprintf("\\u%04X", i); }
+    for(uint32 i=0; i<0xFFFF; ++i){ str_encoded+=sstd::ssprintf("\\u%04X", i); }
 
     printf("sstd::url_encode\n");
     time_m t1; sstd::measureTime_start(t1);
-    for(uint i=0; i<25; i++){ sstd::url_encode(str_encoded.c_str(), str_encoded.size()); }
+    for(uint i=0; i<25; ++i){ sstd::url_encode(str_encoded.c_str(), str_encoded.size()); }
     sstd::measureTime_stop_print(t1);
     printf("\n");
     
     printf("sstd::url_encode_type2\n");
     time_m t2; sstd::measureTime_start(t2);
-    for(uint i=0; i<25; i++){ sstd::url_encode_type2(str_encoded.c_str(), str_encoded.size()); }
+    for(uint i=0; i<25; ++i){ sstd::url_encode_type2(str_encoded.c_str(), str_encoded.size()); }
     sstd::measureTime_stop_print(t2);
     
     /*
@@ -533,15 +533,15 @@ void sstd::unicodeEscape_compare_speed(){
 void sstd::print_unicodeEscape_decode_table(){
 
     uchar decode_table[256];
-    for(int i=0; i<256; i++){ decode_table[i] = 0xFF; }
+    for(int i=0; i<256; ++i){ decode_table[i] = 0xFF; }
 
     const uchar HEX_table[] = "0123456789ABCDEF";
-    for(int i=0; i<16; i++){ decode_table[HEX_table[i]] = i; } // make decode table
+    for(int i=0; i<16; ++i){ decode_table[HEX_table[i]] = i; } // make decode table
     
     const uchar hex_table[] = "0123456789abcdef";
-    for(int i=0; i<16; i++){ decode_table[hex_table[i]] = i; } // make decode table
+    for(int i=0; i<16; ++i){ decode_table[hex_table[i]] = i; } // make decode table
 
-    for(uint i=0; i<256; i++){
+    for(uint i=0; i<256; ++i){
 //        if(decode_table[i]==0xFF){ printf("    0,");
 //        }          else          { printf(" 0x%02X,", decode_table[i]); }
         printf(" 0x%02X,", decode_table[i]);
@@ -557,14 +557,14 @@ std::u32string sstd::utf16_to_utf32(const std::u16string& str){
     std::u32string ret;
 
     uint i=0;
-    for(; i<str.size()-1; i++){
+    for(; i<str.size()-1; ++i){
         if(str[i]<=0xD7FF || 0xE000<=str[i]){ // same as "if((0x0000<=str[i] && str[i]<=0xD7FF)||(0xE000<=str[i] && str[i]<=0xFFFF)){"
             // When it is not a surrogate pair
             ret += str[i];
         }else if((0xD800<=str[i] && str[i]<=0xDBFF)&&(0xDC00<=str[i+1] && str[i+1]<=0xDFFF)){
             // In the case of a surrogate pair
             ret += 0x10000 + ((str[i]-0xD800)<<10) + (str[i+1]-0xDC00); // same as "ret += 0x10000 + (str[i]-0xD800)*0x400 + (str[i]-0xDC00);"
-            i++;
+            ++i;
         }else{
             return std::u32string(0); // Error
         }
@@ -584,7 +584,7 @@ std::u16string sstd::utf32_to_utf16(const std::u32string& str){
 
     std::u16string ret;
 
-    for(uint i=0; i<str.size(); i++){
+    for(uint i=0; i<str.size(); ++i){
         if(str[i]<=0xD7FF || (0xE000<=str[i] && str[i]<=0xFFFF)){ // if((0x0000<=str[i] && str[i]<=0xD7FF)||(0xE000<=str[i] && str[i]<=0xFFFF)){
             ret += str[i];
         }else if(0x10000<=str[i] && str[i]<=0x10FFFF){ // UTF-16 では，0x10FFFF が最大値で，少なくとも現在は，0x10FFFF より大きな値に 文字は割り当てられていない．
@@ -624,7 +624,7 @@ std::string sstd::utf32_to_utf8(const std::u32string& str){
     
     std::string ret;
 
-    for(uint i=0; i<str.size(); i++){
+    for(uint i=0; i<str.size(); ++i){
         if      (str[i]<=0x0000007F){ // if      (0x00000000<=str[i] && str[i]<=0x0000007F){
             // 1 Byte, 7 bits valid
             ret += str[i];
@@ -719,12 +719,12 @@ std::u32string sstd::utf8_to_utf32(const std::string& str){
     uint p = 0; // place
 
     uint i=0;
-    for(; i<str.size(); i++){
+    for(; i<str.size(); ++i){
         uint remainingNum = str.size() - i;
         if(0b00000000<=(uint8)str[i] && (uint8)str[i]<=0b01111111){
             // 1 Bytes
             ret += (uint8)str[i];
-            p++;
+            ++p;
             
         }else if(0b11000000<=(uint8)str[i] && (uint8)str[i]<=0b11011111){
             // 2 Bytes
@@ -739,7 +739,7 @@ std::u32string sstd::utf8_to_utf32(const std::string& str){
             i+=1;
 
             if(!(0x00000080<=ret[p] && ret[p]<=0x000007FF)){ return std::u32string(0); /* Error */ }
-            p++;
+            ++p;
             
         }else if(0b11100000<=(uint8)str[i] && (uint8)str[i]<=0b11101111){
             // 3 Bytes
@@ -756,7 +756,7 @@ std::u32string sstd::utf8_to_utf32(const std::string& str){
             i+=2;
             
             if(!(0x00000800<=ret[p] && ret[p]<=0x0000FFFF)){ return std::u32string(0); /* Error */ }
-            p++;
+            ++p;
 
         }else if(0b11110000<=(uint8)str[i] && (uint8)str[i]<=0b11110111){
             // 4 Bytes
@@ -775,7 +775,7 @@ std::u32string sstd::utf8_to_utf32(const std::string& str){
             i+=3;
             
             if(!(0x00010000<=ret[p] && ret[p]<=0x001FFFFF)){ return std::u32string(0); /* Error */ }
-            p++;
+            ++p;
 
         }else if(0b11111000<=(uint8)str[i] && (uint8)str[i]<=0b11111011){
             // 5 Bytes
@@ -796,7 +796,7 @@ std::u32string sstd::utf8_to_utf32(const std::string& str){
             i+=4;
 
             if(!(0x00200000<=ret[p] && ret[p]<=0x03FFFFFF)){ return std::u32string(0); /* Error */ }
-            p++;
+            ++p;
 
         }else if(0b11111100<=(uint8)str[i] && (uint8)str[i]<=0b11111101){
             // 6 Bytes
@@ -819,7 +819,7 @@ std::u32string sstd::utf8_to_utf32(const std::string& str){
             i+=5;
 
             if(!(0x04000000<=ret[p] && ret[p]<=0x7FFFFFFF)){ return std::u32string(0); /* Error */ }
-            p++;
+            ++p;
 
         }else{
             return std::u32string(0); // Error

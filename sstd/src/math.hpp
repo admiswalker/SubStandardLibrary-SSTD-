@@ -183,25 +183,25 @@ namespace sstd{
 #define MIN_vec_mat(T, lhs, rhs)                                        \
     if(rhs.size()==0){ return T(); }                                    \
     T lhs=rhs[0];                                                       \
-    for(uint i=1; i<rhs.size(); i++){ if(rhs[i]<lhs){ lhs=rhs[i]; } }   \
+    for(uint i=1; i<rhs.size(); ++i){ if(rhs[i]<lhs){ lhs=rhs[i]; } }   \
     return lhs;
 
 #define MIN_ABS_vec_mat(T, lhs, rhs)                                    \
     if(rhs.size()==0){ return T(); }                                    \
     T lhs=rhs[0], buf=std::abs(rhs[0]);                                 \
-    for(uint i=1; i<rhs.size(); i++){ if(std::abs(rhs[i])<buf){ lhs=rhs[i]; buf=std::abs(rhs[i]); } } \
+    for(uint i=1; i<rhs.size(); ++i){ if(std::abs(rhs[i])<buf){ lhs=rhs[i]; buf=std::abs(rhs[i]); } } \
     return lhs;
 
 #define MAX_vec_mat(T, lhs, rhs)                                        \
     if(rhs.size()==0){ return T(); }                                    \
     T lhs=rhs[0];                                                       \
-    for(uint i=1; i<rhs.size(); i++){ if(rhs[i]>lhs){ lhs=rhs[i]; } }   \
+    for(uint i=1; i<rhs.size(); ++i){ if(rhs[i]>lhs){ lhs=rhs[i]; } }   \
     return lhs;
 
 #define MAX_ABS_vec_mat(T, lhs, rhs)                                    \
     if(rhs.size()==0){ return T(); }                                    \
     T lhs=rhs[0], buf=std::abs(rhs[0]);                                 \
-    for(uint i=1; i<rhs.size(); i++){ if(std::abs(rhs[i])>buf){ lhs=rhs[i]; buf=std::abs(rhs[i]); } } \
+    for(uint i=1; i<rhs.size(); ++i){ if(std::abs(rhs[i])>buf){ lhs=rhs[i]; buf=std::abs(rhs[i]); } } \
     return lhs;
 
 template<typename T> inline T sstd::min    (const std::vector<T>& rhs){ MIN_vec_mat    (T, lhs, rhs); }
@@ -229,25 +229,25 @@ template<typename T> inline T sstd::max_abs(const sstd::mat_r<T>& rhs){ MAX_ABS_
 #define ARGMIN_vec_mat(lhs, rhs)                                        \
     if(rhs.size()==0){ return 0; }                                      \
     uint lhs=0;                                                         \
-    for(uint i=1; i<rhs.size(); i++){ if( rhs[i]<rhs[lhs] ){ lhs=i; } } \
+    for(uint i=1; i<rhs.size(); ++i){ if( rhs[i]<rhs[lhs] ){ lhs=i; } } \
     return lhs;
 
 #define ARGMIN_ABS_vec_mat(lhs, rhs)                                    \
     if(rhs.size()==0){ return 0; }                                      \
     uint lhs=0;                                                         \
-    for(uint i=1; i<rhs.size(); i++){ if( std::abs(rhs[i])<std::abs(rhs[lhs]) ){ lhs=i; } } \
+    for(uint i=1; i<rhs.size(); ++i){ if( std::abs(rhs[i])<std::abs(rhs[lhs]) ){ lhs=i; } } \
     return lhs;
 
 #define ARGMAX_vec_mat(lhs, rhs)                                        \
     if(rhs.size()==0){ return 0; }                                      \
     uint lhs=0;                                                         \
-    for(uint i=1; i<rhs.size(); i++){ if( rhs[i]>rhs[lhs] ){ lhs=i; } } \
+    for(uint i=1; i<rhs.size(); ++i){ if( rhs[i]>rhs[lhs] ){ lhs=i; } } \
     return lhs;
 
 #define ARGMAX_ABS_vec_mat(lhs, rhs)                                    \
     if(rhs.size()==0){ return 0; }                                      \
     uint lhs=0;                                                         \
-    for(uint i=1; i<rhs.size(); i++){ if( std::abs(rhs[i])>std::abs(rhs[lhs]) ){ lhs=i; } } \
+    for(uint i=1; i<rhs.size(); ++i){ if( std::abs(rhs[i])>std::abs(rhs[lhs]) ){ lhs=i; } } \
     return lhs;
 
 template<typename T> uint sstd::argmin    (const std::vector<T>& rhs){ ARGMIN_vec_mat    (lhs, rhs); }
@@ -301,7 +301,7 @@ std::vector<T> sstd::nonzero(const std::vector<T>& rhs){
     std::vector<T> lhs(rhs.size()); lhs.clear();
     const T zero = (T)0;
     
-    for(uint i=0; i<rhs.size(); i++){
+    for(uint i=0; i<rhs.size(); ++i){
         if(rhs[i]==zero){ break; }
         lhs.push_back( rhs[i] );
     }

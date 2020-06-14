@@ -11,11 +11,11 @@ bool sstd::file_c::fopen_rbp(const std::string& fileName){ return sstd::file_c::
 bool sstd::file_c::fopen_wbp(const std::string& fileName){ return sstd::file_c::fopen_wbp(fileName.c_str()); }
 
 // for debug
-//void print_pUint8(const uchar* pRhs, const uint len){ for(uint i=0; i<len; i++){ printf("%.2x", pRhs[i]); } printf("\n"); }
+//void print_pUint8(const uchar* pRhs, const uint len){ for(uint i=0; i<len; ++i){ printf("%.2x", pRhs[i]); } printf("\n"); }
 //void print_vUint8(std::vector<uint8>& rhs){ print_pUint8(&rhs[0], rhs.size()); }
 
 bool isEqual(uint8* hash1, uint8* hash2, uint len){
-    for(uint i=0; i<len; i++){ if(hash1[i]!=hash2[i]){return false;} }
+    for(uint i=0; i<len; ++i){ if(hash1[i]!=hash2[i]){return false;} }
     return true;
 }
 bool sstd::file_c::freadAll(std::vector<uint8>& rawOut){

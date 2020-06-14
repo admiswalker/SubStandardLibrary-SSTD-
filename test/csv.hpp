@@ -24,8 +24,8 @@ TEST(csv, csv2vvec){
     sstd::printn(csv.size());
     
     printf("----\n");
-    for(uint p=0; p<csv.size(); p++){
-        for(uint q=0; q<csv[p].size(); q++){
+    for(uint p=0; p<csv.size(); ++p){
+        for(uint q=0; q<csv[p].size(); ++q){
             printf("%s,", csv[p][q].c_str());
         }
         printf("\n");

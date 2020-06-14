@@ -83,9 +83,9 @@ public:
         _pMatT = new T[_size];
         
         const std::initializer_list<T>* pRhs=rhs.begin();
-        for(uint p=0; p<_rows; p++){
+        for(uint p=0; p<_rows; ++p){
             const T* ppRhs=pRhs[p].begin();
-            for(uint q=0; q<_cols; q++){
+            for(uint q=0; q<_cols; ++q){
                 if(q>=pRhs[p].size()){break;}
                 _pMatT[p*_cols+q]=ppRhs[q];
             }
@@ -144,8 +144,8 @@ public:
 
 template <typename T>
 inline void sstd::eye(sstd::mat_r<T>& rhs){
-    for(uint p=0; p<rhs.rows(); p++){
-        for(uint q=0; q<rhs.cols(); q++){
+    for(uint p=0; p<rhs.rows(); ++p){
+        for(uint q=0; q<rhs.cols(); ++q){
             if(p!=q){ rhs(p, q)=(T)0;
             }  else { rhs(p, q)=(T)1; }
         }
@@ -154,20 +154,20 @@ inline void sstd::eye(sstd::mat_r<T>& rhs){
 
 template <typename T>
 inline void sstd::ones(sstd::mat_r<T>& rhs){
-    for(uint i=0; i<rhs.size(); i++){ rhs[i]=(T)1; }
+    for(uint i=0; i<rhs.size(); ++i){ rhs[i]=(T)1; }
 }
 
 template <typename T>
 inline void sstd::zeros(sstd::mat_r<T>& mat){
-    for(uint i=0; i<mat.size(); i++){ mat[i]=(T)0; }
+    for(uint i=0; i<mat.size(); ++i){ mat[i]=(T)0; }
 }
 
 //--------------------------------------------------------------------------------------------------------
 
 template <typename T>
 inline void copy_withoutAllocate(sstd::mat_r<T>& lhs, const sstd::mat_r<T>& rhs){
-    for(uint p=0; p<rhs.rows(); p++){
-        for(uint q=0; q<rhs.cols(); q++){
+    for(uint p=0; p<rhs.rows(); ++p){
+        for(uint q=0; q<rhs.cols(); ++q){
             lhs(p, q) = rhs(p, q);
         }
     }
@@ -216,8 +216,8 @@ void swap(sstd::mat_r<T>& lhs, sstd::mat_r<T>& rhs){
 template <typename T>
 sstd::mat_r<T> sstd::Tr(const sstd::mat_r<T>& rhs){
     sstd::mat_r<T> lhs(rhs.cols(), rhs.rows());
-    for(uint p=0; p<rhs.rows(); p++){
-        for(uint q=0; q<rhs.cols(); q++){
+    for(uint p=0; p<rhs.rows(); ++p){
+        for(uint q=0; q<rhs.cols(); ++q){
             lhs(q, p) = rhs(p, q);
         }
     }
@@ -236,8 +236,8 @@ inline sstd::mat_r<T>* sstd::copyRect(sstd::mat_r<T>*& pMat, const uint& rowStar
 
     sstd::mat_r<T>* pMatBuf = new sstd::mat_r<T>(rowEnd-rowStart, colEnd-colStart);
 
-    for(uint p=0; p<(rowEnd-rowStart); p++){
-        for(uint q=0; q<(colEnd-colStart); q++){
+    for(uint p=0; p<(rowEnd-rowStart); ++p){
+        for(uint q=0; q<(colEnd-colStart); ++q){
             (*pMatBuf)(p, q) = (*pMat)(p+rowStart, q+colStart);
         }
     }

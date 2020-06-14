@@ -174,7 +174,7 @@ bool sstd::getAllPath(std::vector<struct sstd::pathAndType>& ret, const char* pP
     bool result=true;
     std::vector<std::string> dirList;
     dirList.push_back(pPath);
-    for(uint i=0; i<dirList.size(); i++){
+    for(uint i=0; i<dirList.size(); ++i){
         std::vector<std::string> buf = fileInASingleDir(result, ret, dirList[i].c_str());
         dirList.insert(dirList.end(), buf.begin(), buf.end());
     }
@@ -188,9 +188,9 @@ bool sstd::getAllPath(std::vector<std::string>& ret, const char* pPath){
     if(!sstd::getAllPath(allPath, pPath)){ sstd::pdbg("ERROR: getAllInDir() is failed\n"); return false; }
     
     // In order to avoid directory traversal
-    for(uint i=0; i<allPath.size(); i++){
+    for(uint i=0; i<allPath.size(); ++i){
         ret.push_back(std::string());
-        ret[rSize].swap(allPath[i].path); rSize++;
+        ret[rSize].swap(allPath[i].path); ++rSize;
     }
     return true;
 }
@@ -202,10 +202,10 @@ bool sstd::getAllFile(std::vector<std::string>& ret, const char* pPath){
     if(!sstd::getAllPath(allPath, pPath)){ sstd::pdbg("ERROR: getAllInDir() is failed\n"); return false; }
     
     // In order to avoid directory traversal
-    for(uint i=0; i<allPath.size(); i++){
+    for(uint i=0; i<allPath.size(); ++i){
         if(allPath[i].type!='f'){ continue; } // remove directory
         ret.push_back(std::string());
-        ret[rSize].swap(allPath[i].path); rSize++;
+        ret[rSize].swap(allPath[i].path); ++rSize;
     }
     return true;
 }
@@ -217,10 +217,10 @@ bool sstd::getAllDir(std::vector<std::string>& ret, const char* pPath){
     if(!sstd::getAllPath(allPath, pPath)){ sstd::pdbg("ERROR: getAllInDir() is failed\n"); return false; }
     
     // In order to avoid directory traversal
-    for(uint i=0; i<allPath.size(); i++){
+    for(uint i=0; i<allPath.size(); ++i){
         if(allPath[i].type!='d'){ continue; } // remove directory
         ret.push_back(std::string());
-        ret[rSize].swap(allPath[i].path); rSize++;
+        ret[rSize].swap(allPath[i].path); ++rSize;
     }
     return true;
 }

@@ -90,11 +90,11 @@ std::vector<std::string> sstd::splitByLine(const std::string& str){
     std::vector<std::string> ret;
     
     std::string buf;
-    for(uint r=0; str[r]!=0; r++){ // r: read place
+    for(uint r=0; str[r]!=0; ++r){ // r: read place
         buf.clear();
-        for(; str[r]!=0; r++){
+        for(; str[r]!=0; ++r){
             if(str[r]==0x0A){ break; }                            // Uinx
-            if(str[r]==0x0D && str[r+1]==0x0A){ r++; break; }    // Windows
+            if(str[r]==0x0D && str[r+1]==0x0A){ ++r; break; }    // Windows
             buf += str[r];
         }
         ret.push_back(std::move(buf));
@@ -110,15 +110,15 @@ std::vector<std::string> asASpcase(const char* str){
     
     std::string buf;
     uint i=0;
-    while(str[i]!=0){ if(' '==str[i]){i++;}else{break;} } // skip space
+    while(str[i]!=0){ if(' '==str[i]){++i;}else{break;} } // skip space
     while(str[i]!=0){
         if(' '==str[i]){
             splitList.push_back(buf); buf.clear();
-            i++;
-            while(str[i]!=0){ if(' '==str[i]){i++;}else{break;} } // skip space
+            ++i;
+            while(str[i]!=0){ if(' '==str[i]){++i;}else{break;} } // skip space
         }else{
             buf+=str[i];
-            i++;
+            ++i;
         }
     }
     if(buf.size()!=0){ splitList.push_back(buf); }
@@ -129,15 +129,15 @@ std::vector<std::string> asAX(const char* str, const char X){
     
     std::string buf;
     uint i=0;
-    while(str[i]!=0){ if(' '==str[i]){i++;}else{break;} } // skip space
+    while(str[i]!=0){ if(' '==str[i]){++i;}else{break;} } // skip space
     while(str[i]!=0){
         if(X==str[i]){
             sstd::rstrip_ow(buf); splitList.push_back(buf); buf.clear();
-            i++;
-            while(str[i]!=0){ if(' '==str[i]){i++;}else{break;} } // skip space
+            ++i;
+            while(str[i]!=0){ if(' '==str[i]){++i;}else{break;} } // skip space
         }else{
             buf+=str[i];
-            i++;
+            ++i;
         }
     }
     if(buf.size()!=0){ sstd::rstrip_ow(buf); splitList.push_back(buf); }
@@ -157,11 +157,11 @@ std::string lstrip_base(const uchar* str){
     std::string ret;
     
     uint r=0;
-    for(; str[r]!=0; r++){
+    for(; str[r]!=0; ++r){
         if(str[r]==' ' || str[r]=='\t'){
         }             else             { break; }
     }
-    for(; str[r]!=0; r++){ ret+=str[r]; }
+    for(; str[r]!=0; ++r){ ret+=str[r]; }
     
     return ret;
 }
@@ -206,7 +206,7 @@ void sstd::strip_ow(std::string& str){
 std::vector<std::string> sstd::strip(const std::vector<std::string>& vec){
     std::vector<std::string> ret(vec.size()); ret.clear();
     
-    for(uint i=0; i<vec.size(); i++){
+    for(uint i=0; i<vec.size(); ++i){
         ret.push_back(strip_base((const uchar*)vec[i].c_str()));
     }
     
@@ -232,7 +232,7 @@ bool sstd::strIn(const char*        lhs, const char*        rhs){
         if(lhs[l]==rhs[r]){ ret=true;
         }       else      { ret=false; l=0; }
         
-        l++; r++;
+        ++l; ++r;
     }
 }
 bool sstd::strIn(const char*        lhs, const std::string& rhs){ return sstd::strIn(lhs        , rhs.c_str()); }

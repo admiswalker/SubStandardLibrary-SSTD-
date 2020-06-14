@@ -42,16 +42,16 @@ namespace sstd{
                                                                     \
     /* Allocating the lhs. */                                       \
     std::vector<std::vector<T>> lhs(colsMax);                       \
-    for(uint i=0, r=0; r<vecRows.size(); r++){                      \
-        for(; i<vecRows[r]; i++){                                   \
+    for(uint i=0, r=0; r<vecRows.size(); ++r){                      \
+        for(; i<vecRows[r]; ++i){                                   \
             uint cols = vecCols[r];                                 \
             lhs[i].resize( cols );                                  \
         }                                                           \
     }                                                               \
                                                                     \
     /* copy or move value. */                                       \
-    for(uint r=0; r<rhs.size(); r++){                               \
-        for(uint c=0; c<rhs[r].size(); c++){                        \
+    for(uint r=0; r<rhs.size(); ++r){                               \
+        for(uint c=0; c<rhs[r].size(); ++c){                        \
             lhs[c][r] = (CAST_T)(rhs[r][c]);                        \
         }                                                           \
     }

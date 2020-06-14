@@ -99,19 +99,19 @@ namespace sstd{
     template <typename T>                                               \
     inline sstd::mat_r<T> Func(const sstd::mat_r<T>& lhs, const sstd::mat_r<T>& rhs){ \
         sstd::mat_r<T> ret(lhs.rows(), lhs.cols());                     \
-        for(uint p=0; p<ret.size(); p++){ ret[p]=lhs[p] Ope rhs[p]; }   \
+        for(uint p=0; p<ret.size(); ++p){ ret[p]=lhs[p] Ope rhs[p]; }   \
         return ret;                                                     \
     }                                                                   \
     template <typename T, typename rhsType>                             \
     inline sstd::mat_r<T> Func(const sstd::mat_r<T>& lhs, const rhsType& rhs){ \
         sstd::mat_r<T> ret(lhs.rows(), lhs.cols());                     \
-        for(uint p=0; p<ret.size(); p++){ ret[p]=lhs[p] Ope rhs; }      \
+        for(uint p=0; p<ret.size(); ++p){ ret[p]=lhs[p] Ope rhs; }      \
         return ret;                                                     \
     }                                                                   \
     template <typename T, typename rhsType>                             \
     inline sstd::mat_r<T> Func(const rhsType& lhs, const sstd::mat_r<T>& rhs){ \
         sstd::mat_r<T> ret(rhs.rows(), rhs.cols());                     \
-        for(uint p=0; p<ret.size(); p++){ ret[p]=lhs Ope rhs[p]; }      \
+        for(uint p=0; p<ret.size(); ++p){ ret[p]=lhs Ope rhs[p]; }      \
         return ret;                                                     \
     }
 
@@ -121,19 +121,19 @@ namespace sstd{
     template <typename T>                                               \
     inline sstd::mat_r<T> Func(const sstd::mat_r<T>& lhs, const sstd::mat_r<T>& rhs){ \
         sstd::mat_r<T> ret(lhs.rows(), lhs.cols());                     \
-        for(uint p=0; p<ret.size(); p++){ ret[p]=Func2(lhs[p], rhs[p]); } \
+        for(uint p=0; p<ret.size(); ++p){ ret[p]=Func2(lhs[p], rhs[p]); } \
         return ret;                                                     \
     }                                                                   \
     template <typename T, typename rhsType>                             \
     inline sstd::mat_r<T> Func(const sstd::mat_r<T>& lhs, const rhsType& rhs){ \
         sstd::mat_r<T> ret(lhs.rows(), lhs.cols());                     \
-        for(uint p=0; p<ret.size(); p++){ ret[p]=Func2(lhs[p], rhs); }  \
+        for(uint p=0; p<ret.size(); ++p){ ret[p]=Func2(lhs[p], rhs); }  \
         return ret;                                                     \
     }                                                                   \
     template <typename T, typename rhsType>                             \
     inline sstd::mat_r<T> Func(const rhsType& lhs, const sstd::mat_r<T>& rhs){ \
         sstd::mat_r<T> ret(rhs.rows(), rhs.cols());                     \
-        for(uint p=0; p<ret.size(); p++){ ret[p]=Func2(lhs, rhs[p]); }  \
+        for(uint p=0; p<ret.size(); ++p){ ret[p]=Func2(lhs, rhs[p]); }  \
         return ret;                                                     \
     }
 
@@ -143,19 +143,19 @@ namespace sstd{
     template <typename T>                                               \
     inline sstd::mat_r<T> Func(const sstd::mat_r_elements<T>& lhs, const sstd::mat_r_elements<T>& rhs){ \
         sstd::mat_r<T> ret(lhs.rows(), lhs.cols());                     \
-        for(uint p=0; p<ret.size(); p++){ ret[p]=lhs[p] Ope rhs[p]; }   \
+        for(uint p=0; p<ret.size(); ++p){ ret[p]=lhs[p] Ope rhs[p]; }   \
         return ret;                                                     \
     }                                                                   \
     template <typename T>                                               \
     inline sstd::mat_r<T> Func(const sstd::mat_r<T>& lhs, const sstd::mat_r_elements<T>& rhs){ \
         sstd::mat_r<T> ret(lhs.rows(), lhs.cols());                     \
-        for(uint p=0; p<ret.size(); p++){ ret[p]=lhs[p] Ope rhs[p]; }   \
+        for(uint p=0; p<ret.size(); ++p){ ret[p]=lhs[p] Ope rhs[p]; }   \
         return ret;                                                     \
     }                                                                   \
     template <typename T>                                               \
     inline sstd::mat_r<T> Func(const sstd::mat_r_elements<T>& lhs, const sstd::mat_r<T>& rhs){ \
         sstd::mat_r<T> ret(rhs.rows(), rhs.cols());                     \
-        for(uint p=0; p<ret.size(); p++){ ret[p]=lhs[p] Ope rhs[p]; }   \
+        for(uint p=0; p<ret.size(); ++p){ ret[p]=lhs[p] Ope rhs[p]; }   \
         return ret;                                                     \
     }
 
@@ -165,19 +165,19 @@ namespace sstd{
     template <typename T>                                               \
     inline sstd::mat_r<T> Func(const sstd::mat_r_elements<T>& lhs, const sstd::mat_r_elements<T>& rhs){ \
         sstd::mat_r<T> ret(lhs.rows(), lhs.cols());                     \
-        for(uint p=0; p<ret.size(); p++){ ret[p]=Func2(lhs[p], rhs[p]); } \
+        for(uint p=0; p<ret.size(); ++p){ ret[p]=Func2(lhs[p], rhs[p]); } \
         return ret;                                                     \
     }                                                                   \
     template <typename T>                                               \
     inline sstd::mat_r<T> Func(const sstd::mat_r<T>& lhs, const sstd::mat_r_elements<T>& rhs){ \
         sstd::mat_r<T> ret(lhs.rows(), lhs.cols());                     \
-        for(uint p=0; p<ret.size(); p++){ ret[p]=Func2(lhs[p], rhs[p]); } \
+        for(uint p=0; p<ret.size(); ++p){ ret[p]=Func2(lhs[p], rhs[p]); } \
         return ret;                                                     \
     }                                                                   \
     template <typename T>                                               \
     inline sstd::mat_r<T> Func(const sstd::mat_r_elements<T>& lhs, const sstd::mat_r<T>& rhs){ \
         sstd::mat_r<T> ret(rhs.rows(), rhs.cols());                     \
-        for(uint p=0; p<ret.size(); p++){ ret[p]=Func2(lhs[p], rhs[p]); } \
+        for(uint p=0; p<ret.size(); ++p){ ret[p]=Func2(lhs[p], rhs[p]); } \
         return ret;                                                     \
     }
 
@@ -195,19 +195,19 @@ SSTD_DEF_mat_elements_o(sstd::sub_e, -);
 template <typename T>
 inline sstd::mat_r<T> sstd::mul(const sstd::mat_r<T>& lhs, const sstd::mat_r<T>& rhs){
     sstd::mat_r<T> ret(lhs.rows(), rhs.cols());
-    for(uint p=0; p<ret.rows(); p++){
-        for(uint q=0; q<ret.cols(); q++){
+    for(uint p=0; p<ret.rows(); ++p){
+        for(uint q=0; q<ret.cols(); ++q){
             ret(p, q) = lhs(p, 0) * rhs(0, q);
-            for(uint i=1; i<lhs.cols(); i++){ ret(p, q) += lhs(p, i) * rhs(i, q); }
+            for(uint i=1; i<lhs.cols(); ++i){ ret(p, q) += lhs(p, i) * rhs(i, q); }
         }
     }
     return ret;
 //    // 上記のように最適化
 //    sstd::mat_r<T> ret(lhs.rows(), rhs.cols());
 //    zeros(ret);
-//    for(uint p=0; p<ret.rows(); p++){
-//        for(uint q=0; q<ret.cols(); q++){
-//            for(uint i=0; i<lhs.cols(); i++){ ret(p, q) += lhs(p, i) * rhs(i, q); }
+//    for(uint p=0; p<ret.rows(); ++p){
+//        for(uint q=0; q<ret.cols(); ++q){
+//            for(uint i=0; i<lhs.cols(); ++i){ ret(p, q) += lhs(p, i) * rhs(i, q); }
 //        }
 //    }
 //    return ret;
@@ -215,13 +215,13 @@ inline sstd::mat_r<T> sstd::mul(const sstd::mat_r<T>& lhs, const sstd::mat_r<T>&
 template <typename T, typename rhsType>
 inline sstd::mat_r<T> sstd::mul(const sstd::mat_r<T>& lhs, const rhsType& rhs){
     sstd::mat_r<T> ret(lhs.rows(), lhs.cols());
-    for(uint p=0; p<ret.size(); p++){ ret[p]=lhs[p]*rhs; }
+    for(uint p=0; p<ret.size(); ++p){ ret[p]=lhs[p]*rhs; }
     return ret;
 }
 template <typename T, typename lhsType>
 inline sstd::mat_r<T> sstd::mul(const lhsType& lhs, const sstd::mat_r<T>& rhs){
     sstd::mat_r<T> ret(rhs.rows(), rhs.cols());
-    for(uint p=0; p<ret.size(); p++){ ret[p]=lhs*rhs[p]; }
+    for(uint p=0; p<ret.size(); ++p){ ret[p]=lhs*rhs[p]; }
     return ret;
 }
 SSTD_DEF_mat_elements_o(sstd::mul_e, *);
@@ -230,7 +230,7 @@ SSTD_DEF_mat_elements_o(sstd::mul_e, *);
 template <typename T, typename rhsType>
 inline sstd::mat_r<T> sstd::div(const sstd::mat_r<T>& lhs, const rhsType& rhs){
     sstd::mat_r<T> ret(lhs.rows(), lhs.cols());
-    for(uint p=0; p<ret.size(); p++){ ret[p]=lhs[p]/rhs; }
+    for(uint p=0; p<ret.size(); ++p){ ret[p]=lhs[p]/rhs; }
     return ret;
 }
 SSTD_DEF_mat_elements_o(sstd::div_e, /);
@@ -305,19 +305,19 @@ SSTD_DEF_mat_elements_f(sstd::pow_e, sstd::pow);
     if(matL.rows()!=matR.rows()){ return false; }   \
     if(matL.cols()!=matR.cols()){ return false; }   \
                                                     \
-    for(uint i=0; i<matL.size(); i++){              \
+    for(uint i=0; i<matL.size(); ++i){              \
         if(matL[i]!=matR[i]){ return false; }       \
     }                                               \
     return true;
 
 #define SSTD_DEF_eq_ms(mat, scalar)             \
-    for(uint i=0; i<mat.size(); i++){           \
+    for(uint i=0; i<mat.size(); ++i){           \
         if(mat[i]!=scalar){ return false; }     \
     }                                           \
     return true;
 
 #define SSTD_DEF_eq_sm(scalar, mat)             \
-    for(uint i=0; i<mat.size(); i++){           \
+    for(uint i=0; i<mat.size(); ++i){           \
         if(mat[i]!=scalar){ return false; }     \
     }                                           \
     return true;

@@ -150,7 +150,7 @@ namespace sstd{
     std::vector<T> ret = std::vector<T>{(CAST_VAL)(vec[valLoc])};
 #define DEF_slice_xx_base(CAST_VAL, lhsLoc, rhsLoc)                     \
     std::vector<T> ret((uint)rhsLoc-(uint)lhsLoc);                      \
-    for(uint r=0, i=(uint)lhsLoc; i<(uint)rhsLoc; r++,i++){    ret[r] = (CAST_VAL)(vec[i]); }
+    for(uint r=0, i=(uint)lhsLoc; i<(uint)rhsLoc; ++r,++i){    ret[r] = (CAST_VAL)(vec[i]); }
 
 template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_i  s){ int2loc(s.val); DEF_slice_x_base(T,      s.val); return ret; }
 template <typename T> inline std::vector<T> operator&&(const std::vector<T>& vec, sstd_vecSc::slice_u  s){                 DEF_slice_x_base(T,      s.val); return ret; }

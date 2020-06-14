@@ -24,16 +24,16 @@ void eraseEmptyTail(std::vector<std::vector<std::string>>& inOut){
 
 bool isEmpty(std::string& token, struct debugInformation& dbgInf){
     if(token.size()!=0){
-        for(uint i=0; i<token.size(); i++){
+        for(uint i=0; i<token.size(); ++i){
             if(token[i]!=' '){ printf("ERROR: %s: Line(%u): There is a invalid value (%c) between ',' and '\"'.\n", dbgInf.FileName.c_str(), dbgInf.LineNum, token[i]); return false; }
         }
     }
     return true;
 }
 bool go2comma(const uchar*& str, uint& r, struct debugInformation& dbgInf){
-    for(; str[r]!=0; r++){
+    for(; str[r]!=0; ++r){
         if(str[r]==','){ break; }
-        if(str[r]==0x0D && str[r+1]==0x0A){ r++; break; }    // Line feed code (Windows)
+        if(str[r]==0x0D && str[r+1]==0x0A){ ++r; break; }    // Line feed code (Windows)
         if(str[r]==0x0A){ break; }                            // Line feed code (Unix)
         if(str[r]!=' '){ printf("ERROR: %s: Line(%u): There is a invalid value (%c) between '\"' and ','.\n", dbgInf.FileName.c_str(), dbgInf.LineNum, str[r]); return false; }
     }
@@ -42,12 +42,12 @@ bool go2comma(const uchar*& str, uint& r, struct debugInformation& dbgInf){
 bool go2doubleQuotation(std::string& token, const uchar*& str, uint& r, struct debugInformation& dbgInf){
 
     if(isEmpty(token, dbgInf)==false){ return false; }
-    r++;
-    for(; str[r]!=0; r++){
-        if(str[r]=='"' && str[r+1]=='"'){ r++; token += str[r]; continue; }    // "" is treated as a escape of ".
-        if(str[r]=='"'){ r++; if(go2comma(str, r, dbgInf)==false){ return false; } break; }
-        if(str[r]==0x0D && str[r+1]==0x0A){ r++; }    // Line feed code (Windows): ignore '0x0D'
-        if(str[r]==0x0A){ dbgInf.LineNum++; }        // Line feed code (Unix)
+    ++r;
+    for(; str[r]!=0; ++r){
+        if(str[r]=='"' && str[r+1]=='"'){ ++r; token += str[r]; continue; }    // "" is treated as a escape of ".
+        if(str[r]=='"'){ ++r; if(go2comma(str, r, dbgInf)==false){ return false; } break; }
+        if(str[r]==0x0D && str[r+1]==0x0A){ ++r; }    // Line feed code (Windows): ignore '0x0D'
+        if(str[r]==0x0A){ ++dbgInf.LineNum; }        // Line feed code (Unix)
         token += str[r];                            // Both of the line feed codes (CR+LF or LF) are added as a LF. 
     }
     if(str[r]==0){ printf("ERROR: %s: Line(%u): Command of '\"\"' is not closed. ('\"' is required).\n", dbgInf.FileName.c_str(), dbgInf.LineNum); return false; }
@@ -59,18 +59,18 @@ std::vector<std::string> getLine(bool& result, const uchar* str, uint& r, struct
     std::vector<std::string> line;
     std::string token;
     for(; str[r]!=0; ){
-        if(str[r]==' '){ if(token.size()==0){ r++; continue; } } // skip ' ' just after ','
+        if(str[r]==' '){ if(token.size()==0){ ++r; continue; } } // skip ' ' just after ','
         if(str[r]==','){
             line.push_back(std::move(token));
             token.clear();
-            r++;
+            ++r;
             continue;
         }
         if(str[r]=='"'){ if(go2doubleQuotation(token, str, r, dbgInf)==false){ result=false; return std::vector<std::string>(0); } continue; } // Command of '""'.
         if(str[r]==0x0D && str[r+1]==0x0A){ r+=2; break; }    // Line feed code (Windows)
-        if(str[r]==0x0A){ dbgInf.LineNum++; r++; break; }    // Line feed code (Unix)
+        if(str[r]==0x0A){ ++dbgInf.LineNum; ++r; break; }    // Line feed code (Unix)
         token += str[r];
-        r++;
+        ++r;
     }
     line.push_back(std::move(token));
     return line;
@@ -111,8 +111,8 @@ std::vector<std::vector<std::string>> sstd::csv2vvec(const std::string& readFile
 bool sstd::vvec2csv(const char* pSavePath, const std::vector<std::vector<std::string>>& vecCSV){
     
     std::string str;
-    for(uint r=0; r<vecCSV.size(); r++){
-        for(uint c=0; c<vecCSV[r].size(); c++){
+    for(uint r=0; r<vecCSV.size(); ++r){
+        for(uint c=0; c<vecCSV[r].size(); ++c){
             str += '\"' + vecCSV[r][c] + "\",";
         }
         str += '\n';

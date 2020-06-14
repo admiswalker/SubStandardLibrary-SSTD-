@@ -18,7 +18,7 @@ public:
 template <typename T>
 inline class CopyCol<T> CopyCol<T>::operator=(class CopyCol<T> CC)
 {
-    for(uint p=0; p<this->pMxs->rows(); p++){
+    for(uint p=0; p<this->pMxs->rows(); ++p){
         (*(this->pMxs))(p, this->CopyColNum)
          = (*(CC.pMxs))(p,    CC.CopyColNum);
     }

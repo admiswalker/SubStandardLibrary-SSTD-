@@ -10,7 +10,7 @@ std::string sstd::getPath(const char* pPath){
     std::string result;
     char* pStartPathAdd = sstd::getFileName(pPath);
 
-    for(const char* pPathBuf=pPath; pPathBuf<pStartPathAdd; pPathBuf++){
+    for(const char* pPathBuf=pPath; pPathBuf<pStartPathAdd; ++pPathBuf){
         result += *pPathBuf;
     }
     return result;
@@ -21,10 +21,10 @@ char* sstd::getFileName(const char* pPath){
 
     char* pStartPathAdd = (char*)&pPath[0];
 
-    for(int i=0; pPath[i]!='\0'; i++){
+    for(int i=0; pPath[i]!='\0'; ++i){
         if(pPath[i]=='/'||pPath[i]=='\\'){
             pStartPathAdd = (char*)&pPath[i];
-            pStartPathAdd++;
+            ++pStartPathAdd;
         }
     }
 
@@ -46,7 +46,7 @@ std::string sstd::getFileName_withoutExtension(const char* pPath){
     }
     if(End==0){ End=len; }
 
-    for(uint i=0; i<End; i++){
+    for(uint i=0; i<End; ++i){
         FileName += pStartPathAdd[i];
     }
 
@@ -85,11 +85,11 @@ std::vector<std::string> sstd::parsePath(const char* pPath){
     std::vector<std::string> ret; ret.push_back("");
 
     uint i=0;
-    if(pPath[0]=='/'||pPath[0]=='\\'){ i++; }
-    for(; i<len-1; i++){
+    if(pPath[0]=='/'||pPath[0]=='\\'){ ++i; }
+    for(; i<len-1; ++i){
         if(pPath[i]=='/'||pPath[i]=='\\'){
             if(pPath[i+1]=='/'||pPath[i+1]=='\\'){ std::vector<std::string>(); } // ERROR
-            pathNum++; ret.push_back("");
+            ++pathNum; ret.push_back("");
         }else{
             ret[pathNum] += (uchar)pPath[i];
         }
@@ -107,11 +107,11 @@ std::vector<std::string> sstd::parsePath_withBase(const char* pPath){
     std::vector<std::string> ret; ret.push_back("");
 
     uint i=0;
-    if(pPath[0]=='/'||pPath[0]=='\\'){ i++; }
-    for(; i<len-1; i++){
+    if(pPath[0]=='/'||pPath[0]=='\\'){ ++i; }
+    for(; i<len-1; ++i){
         if(pPath[i]=='/'||pPath[i]=='\\'){
             if(pPath[i+1]=='/'||pPath[i+1]=='\\'){ std::vector<std::string>(); } // ERROR
-            ret.push_back(ret[pathNum]); pathNum++; ret[pathNum] += '/';
+            ret.push_back(ret[pathNum]); ++pathNum; ret[pathNum] += '/';
         }else{
             ret[pathNum] += (uchar)pPath[i];
         }

@@ -135,7 +135,7 @@ double sstd::stdev_p(const std::vector<double>& rhs){ return sqrt(sstd::var_p(rh
 // Kahan summation algorithm
 #define KAHAN_SUM_i(Type, lhs, rhs_i, begin_i, end_i)   \
     Type del=0;                                         \
-    for(uint i=begin_i; i<end_i; i++){                  \
+    for(uint i=begin_i; i<end_i; ++i){                  \
         Type r1=rhs_i-del;                              \
         Type r2=lhs+r1;                                 \
         del=(r2-lhs)-r1;                                \
@@ -280,13 +280,13 @@ std::vector<struct sstd::fact> sstd::factor(uint64 rhs){
 //    std::vector<uint> primeList = sstd::prime((uint)(sqrt((double)rhs)+1)); // これは間違い factor(10) でコケる
     std::vector<uint64> primeList = sstd::prime(rhs/2+1);
     struct sstd::fact buf; buf.num = 0;
-    for(uint64 i=0; i<primeList.size(); i++){
+    for(uint64 i=0; i<primeList.size(); ++i){
         buf.prime = primeList[i];
         while(1){
             uint64 prime_div = rhs / primeList[i];
             uint64 prime_mod = rhs - primeList[i]*prime_div; // same as "rhs % primeList[i];"
             if(prime_mod!=0){ break; }
-            buf.num++;
+            ++buf.num;
             rhs = prime_div;
         }
         if(buf.num!=0){ lhs.push_back(buf); }
@@ -297,9 +297,9 @@ std::vector<struct sstd::fact> sstd::factor(uint64 rhs){
 }
 void print_NotConst(std::vector<struct sstd::fact>& factList){
     uint64 fact_num=1;
-    for(uint i=0; i<factList.size(); i++){ fact_num *= sstd::pow(factList[i].prime, factList[i].num); }
+    for(uint i=0; i<factList.size(); ++i){ fact_num *= sstd::pow(factList[i].prime, factList[i].num); }
     printf("%lu = %lu^%lu", fact_num, factList[0].prime, factList[0].num);
-    for(uint i=1; i<factList.size(); i++){ printf(" + %lu^%lu", factList[i].prime, factList[i].num); }
+    for(uint i=1; i<factList.size(); ++i){ printf(" + %lu^%lu", factList[i].prime, factList[i].num); }
     printf("\n");
 }
 void sstd::print(const std::vector<struct fact>& factList){
@@ -315,21 +315,21 @@ std::vector<uint64> sstd::divisor(const std::vector<struct sstd::fact>& factorLi
     if(factorList.size()==0){ return std::vector<uint64>(0); } // ERROR check
 
     std::vector<std::vector<uint64>> expList(factorList.size());
-    for(uint64 p=0; p<expList.size(); p++){
+    for(uint64 p=0; p<expList.size(); ++p){
         expList[p].push_back(1);
-        for(uint64 q=1; q<factorList[p].num+1; q++){
+        for(uint64 q=1; q<factorList[p].num+1; ++q){
             expList[p].push_back(expList[p][q-1] * factorList[p].prime);
         }
     }
 
-    uint64 size = expList[0].size(); for(uint64 i=1; i<expList.size(); i++){ size *= expList[i].size(); }
+    uint64 size = expList[0].size(); for(uint64 i=1; i<expList.size(); ++i){ size *= expList[i].size(); }
     std::vector<uint64> divList(size); divList.clear();
     std::vector<uint64> divList_buf(size); divList_buf.clear();
 
-    for(uint64 i=0; i<expList[0].size(); i++){ divList.push_back( expList[0][i] ); }
-    for(uint64 i=1; i<expList.size(); i++){
-        for(uint64 p=0; p<divList.size(); p++){
-            for(uint64 q=0; q<expList[i].size(); q++){
+    for(uint64 i=0; i<expList[0].size(); ++i){ divList.push_back( expList[0][i] ); }
+    for(uint64 i=1; i<expList.size(); ++i){
+        for(uint64 p=0; p<divList.size(); ++p){
+            for(uint64 q=0; q<expList[i].size(); ++q){
                 divList_buf.push_back(divList[p] * expList[i][q]);
             }
         }
@@ -349,7 +349,7 @@ std::vector<uint64> sstd::divisor(uint64 rhs){
 #define sstd_pow_unsigned(type, base, exp)      \
 if(exp==0){ return 1; }                         \
 type ret=base;                                  \
-for(type i=1; i<exp; i++){ ret *= base; }       \
+for(type i=1; i<exp; ++i){ ret *= base; }       \
 return ret
 //下記のように最適化
 // 高速化と言っても O(sqrt(n)/2) 程度なので，特に必要がなければ，double ::pow(double, double) で計算するのがよい (たぶん)．

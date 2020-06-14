@@ -11,7 +11,7 @@ void TEST_math(){
     uint64 fact_num = 2*2*3*3*5*5;
     std::vector<struct sstd::fact> factList = sstd::factor(fact_num);
     printf("%lu = %lu^%lu", fact_num, factList[0].prime, factList[0].num);
-    for(uint i=1; i<factList.size(); i++){ printf(" + %lu^%lu", factList[i].prime, factList[i].num); }
+    for(uint i=1; i<factList.size(); ++i){ printf(" + %lu^%lu", factList[i].prime, factList[i].num); }
     sstd::print(factList);
     sstd::printn(factList);
     sstd::printn_all(factList);

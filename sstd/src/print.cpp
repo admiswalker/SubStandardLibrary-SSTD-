@@ -19,13 +19,13 @@ namespace sstd_print{ // This namespace is for internal processing
 //    std::string val2str(const       float  rhs){ return sstd::ssprintf("%.4f",  rhs); }
     std::string val2str(const       float  rhs){
         std::string ret = sstd::ssprintf("%g", rhs);
-        for(uint64 i=0; i<ret.size(); i++){ if(ret[i]=='.'){return ret;} }
+        for(uint64 i=0; i<ret.size(); ++i){ if(ret[i]=='.'){return ret;} }
         return ret+'.';
     }
 //    std::string val2str(const      double  rhs){ return sstd::ssprintf("%.4lf", rhs); }
     std::string val2str(const      double  rhs){
         std::string ret = sstd::ssprintf("%g", rhs);
-        for(uint64 i=0; i<ret.size(); i++){ if(ret[i]=='.'){return ret;} }
+        for(uint64 i=0; i<ret.size(); ++i){ if(ret[i]=='.'){return ret;} }
         return ret+'.';
     }
     std::string val2str(const std::string& rhs){ return '\"'+rhs+'\"'; }
@@ -51,7 +51,7 @@ template <typename T> void sstd_print::print(const             T & rhs){ printf(
 template <typename T> void sstd_print::print(const std::vector<T>& rhs){
     printf("[");
     if(rhs.size()>=1){
-        for(uint i=0; i<rhs.size()-1; i++){ printf("%s ", sstd_print::val2str(rhs[i]).c_str()); }
+        for(uint i=0; i<rhs.size()-1; ++i){ printf("%s ", sstd_print::val2str(rhs[i]).c_str()); }
         printf("%s", sstd_print::val2str(rhs[rhs.size()-1]).c_str());
     }
     printf("]\n");
@@ -63,7 +63,7 @@ template <typename T> void sstd_print::for_printn(const             T & rhs){ pr
 template <typename T> void sstd_print::for_printn(const std::vector<T>& rhs){
     printf(" = [");
     if(rhs.size()>=1){
-        for(uint i=0; i<rhs.size()-1; i++){ printf("%s ", sstd_print::val2str(rhs[i]).c_str()); }
+        for(uint i=0; i<rhs.size()-1; ++i){ printf("%s ", sstd_print::val2str(rhs[i]).c_str()); }
         printf("%s", sstd_print::val2str(rhs[rhs.size()-1]).c_str());
     }
     printf("]\n");
@@ -73,7 +73,7 @@ template <typename T>
 void sstd_vvprint_internal(const std::vector<T>& rhs){
     if(rhs.size()<=0){ return; }
     
-    for(uint i=0; i<rhs.size()-1; i++){ printf("%s ", sstd_print::val2str(rhs[i]).c_str()); }
+    for(uint i=0; i<rhs.size()-1; ++i){ printf("%s ", sstd_print::val2str(rhs[i]).c_str()); }
     printf("%s", sstd_print::val2str(rhs[rhs.size()-1]).c_str());
 }
 template <typename T>
@@ -81,7 +81,7 @@ void sstd_print::print(const std::vector<std::vector<T>>& rhs){
     if(rhs.size()==0){ printf("[[]]\n"); return; }
     
     printf("[");
-    for(uint64 i=0; i<rhs.size()-1; i++){
+    for(uint64 i=0; i<rhs.size()-1; ++i){
         printf("[");
         sstd_vvprint_internal(rhs[i]);
         printf("] ");
@@ -98,7 +98,7 @@ void sstd_print::for_printn(const std::vector<std::vector<T>>& rhs){
     if(rhs.size()==0){ printf(" = [[]]\n"); return; }
     
     printf(" = [");
-    for(uint64 i=0; i<rhs.size()-1; i++){
+    for(uint64 i=0; i<rhs.size()-1; ++i){
         printf("[");
         sstd_vvprint_internal(rhs[i]);
         printf("] ");

@@ -21,7 +21,7 @@ TEST(strEdit, theOthers){
     printf("\n");
     printf("  ./test/tinyInterpreter.txt\n");
     printf("+----+---------------------------------------------------------------------+\n");
-    for(uint i=0; i<splitLList.size(); i++){
+    for(uint i=0; i<splitLList.size(); ++i){
         printf("| %2d | %-67s |\n", i, splitLList[i].c_str());
     }
     printf("+----+---------------------------------------------------------------------+\n");

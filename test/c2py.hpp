@@ -25,7 +25,7 @@ void TEST__c2py__bench_withoutInit(){
     time_m timem; sstd::measureTime_start(timem);
     
     sstd::c2py<void> py_empty("./tmpDir", "test/c2py_t", "py_empty", "void");
-    for(uint i=0; i<numOfCall; i++){ py_empty(); }
+    for(uint i=0; i<numOfCall; ++i){ py_empty(); }
     
     double sec = sstd::measureTime_stop_s(timem);
     printf("%.2lf [call/sec]\n", (double)numOfCall/sec);
@@ -34,7 +34,7 @@ void TEST__c2py__bench_withInit(){
     uint numOfCall = 5;
     time_m timem; sstd::measureTime_start(timem);
     
-    for(uint i=0; i<numOfCall; i++){
+    for(uint i=0; i<numOfCall; ++i){
         sstd::c2py<void> py_empty("./tmpDir", "test/c2py_t", "py_empty", "void");
         py_empty();
     }
@@ -77,7 +77,7 @@ std::string num2typeNameInPython(const double& rhs){ return std::string("float64
 template<typename T>
 std::string vec2ansStr(const std::vector<T>& vec){
     std::string ans;
-    for(uint i=0; i<vec.size(); i++){
+    for(uint i=0; i<vec.size(); ++i){
         ans += val2str(vec[i]);
         ans += '\n';
     }
@@ -87,8 +87,8 @@ template<typename T>
 std::string vvec2ansStr(const std::vector<std::vector<T>>& vvec){
     std::string ans;
     
-    for(uint v=0; v<vvec.size(); v++){
-        for(uint i=0; i<vvec[v].size(); i++){
+    for(uint v=0; v<vvec.size(); ++v){
+        for(uint i=0; i<vvec[v].size(); ++i){
             ans += val2str(vvec[v][i]);
             ans += '\n';
         }
@@ -99,8 +99,8 @@ std::string vvec2ansStr(const std::vector<std::vector<T>>& vvec){
 template<typename matRC>
 std::string mat2ansStr(const matRC& mat){
     std::string ans;
-    for(uint row=0; row<mat.rows(); row++){
-        for(uint col=0; col<mat.cols(); col++){
+    for(uint row=0; row<mat.rows(); ++row){
+        for(uint col=0; col<mat.cols(); ++col){
             ans += val2str( mat(row, col) );
             ans += '\n';
         }
@@ -142,8 +142,8 @@ void TEST__c2py__builIn_bool(){
     const bool c_arrIn_inv[] = {false,  true, false,  true,  true, false}; const bool* arrIn_inv = &c_arrIn_inv[0];
     
     std::string ans_arr;
-    for(uint i=0; i<arrSize; i++){ ans_arr += val2str(arrIn    [i])+"\n"; }
-    for(uint i=0; i<arrSize; i++){ ans_arr += val2str(arrIn_inv[i])+"\n"; }
+    for(uint i=0; i<arrSize; ++i){ ans_arr += val2str(arrIn    [i])+"\n"; }
+    for(uint i=0; i<arrSize; ++i){ ans_arr += val2str(arrIn_inv[i])+"\n"; }
     {
         // const bool*
         sstd::c2py<void> pyFn(tmpDir, fileName, "py_pBool", "void, const bool*, len"); // Not writing back
@@ -160,7 +160,7 @@ void TEST__c2py__builIn_bool(){
         pyFn(arrIn_buf, arrSize);
         ASSERT_STREQ(ans_arr.c_str(), testing::internal::GetCapturedStdout().c_str());
         
-        for(uint i=0; i<arrSize; i++){ ASSERT_TRUE(arrIn_buf[i]==(!arrIn[i])); }
+        for(uint i=0; i<arrSize; ++i){ ASSERT_TRUE(arrIn_buf[i]==(!arrIn[i])); }
     }
     //---
     {
@@ -172,7 +172,7 @@ void TEST__c2py__builIn_bool(){
         pyFn(arrIn_buf, arrSize);
         ASSERT_STREQ(ans_arr.c_str(), testing::internal::GetCapturedStdout().c_str());
         
-        for(uint i=0; i<arrSize; i++){ ASSERT_TRUE(arrIn_buf[i]==(!arrIn[i])); }
+        for(uint i=0; i<arrSize; ++i){ ASSERT_TRUE(arrIn_buf[i]==(!arrIn[i])); }
     }
     {
         // bool*|*~
@@ -183,7 +183,7 @@ void TEST__c2py__builIn_bool(){
         pyFn(arrIn_buf, arrSize);
         ASSERT_STREQ(ans_arr.c_str(), testing::internal::GetCapturedStdout().c_str());
         
-        for(uint i=0; i<arrSize; i++){ ASSERT_TRUE(arrIn_buf[i]==(!arrIn[i])); }
+        for(uint i=0; i<arrSize; ++i){ ASSERT_TRUE(arrIn_buf[i]==(!arrIn[i])); }
     }
     //---
     {
@@ -348,7 +348,7 @@ void TEST_c2py_floatX(const char* tmpDir,
     // make input and answer
     T in = (T)1.2345;
     const std::vector<T> vecIn={1.23, 4.56, 7.0, 0, 1, 2};
-    std::vector<T> vecIn_WB = vecIn; for(uint i=0; i<vecIn_WB.size(); i++){ vecIn_WB[i]*=100; } // for write back
+    std::vector<T> vecIn_WB = vecIn; for(uint i=0; i<vecIn_WB.size(); ++i){ vecIn_WB[i]*=100; } // for write back
     
     const std::vector<std::string> vecFmt = {fmt_0, fmt_1, fmt_2, fmt_3, fmt_4};
     
@@ -455,7 +455,7 @@ void TEST__c2py__vec_bool(){
     const char* fileName = "test/c2py_t";
     
     const std::vector<bool> vecIn={ true, false,  true, false, false,  true};
-    std::vector<bool> vecIn_inv(vecIn.size()); for(uint i=0; i<vecIn.size(); i++){ vecIn_inv[i]=(!vecIn[i]); }
+    std::vector<bool> vecIn_inv(vecIn.size()); for(uint i=0; i<vecIn.size(); ++i){ vecIn_inv[i]=(!vecIn[i]); }
     
     std::string ans     = vec2ansStr(vecIn    );
     std::string ans_inv = vec2ansStr(vecIn_inv);
@@ -479,7 +479,7 @@ void TEST__c2py__vec_bool(){
         testing::internal::CaptureStdout();
         pyFn(&vecIn_buf);
         ASSERT_STREQ(ans_plus.c_str(), testing::internal::GetCapturedStdout().c_str());
-        for(uint i=0; i<vecIn_buf.size(); i++){ ASSERT_TRUE(vecIn_buf[i]==vecIn[i]); } // check not writing back
+        for(uint i=0; i<vecIn_buf.size(); ++i){ ASSERT_TRUE(vecIn_buf[i]==vecIn[i]); } // check not writing back
     }
     {
         // vec<bool>*
@@ -1419,7 +1419,7 @@ void TEST__c2py__sample_codes(){
         double freq_sample = 10;    // 10 Hz sampling
         uint len=60*10 + 1;         // 60 sec
         std::vector<double> vecY = sstd::sinWave(freq_generate, freq_sample, len);
-        std::vector<double> vecX(len); for(uint i=0; i<vecX.size(); i++){ vecX[i]=(double)i*(1/freq_sample); }
+        std::vector<double> vecX(len); for(uint i=0; i<vecX.size(); ++i){ vecX[i]=(double)i*(1/freq_sample); }
         
         sstd::c2py<void> vec2graph(tmpDir, fileName, "vec2graph", "void, const char*, vec<double>, vec<double>");
         vec2graph("./sin.png", vecX, vecY);
@@ -1430,10 +1430,10 @@ void TEST__c2py__sample_codes(){
         double freq_sample = 10;    // 10 Hz sampling
         uint len=60*10 + 1;         // 60 sec
         std::vector<double> sinY = sstd::sinWave(freq_generate, freq_sample, len);
-        std::vector<double> sinX(len); for(uint i=0; i<sinX.size(); i++){ sinX[i]=(double)i*(1/freq_sample); }
+        std::vector<double> sinX(len); for(uint i=0; i<sinX.size(); ++i){ sinX[i]=(double)i*(1/freq_sample); }
         
         std::vector<double> cosY = sstd::cosWave(freq_generate, freq_sample, len);
-        std::vector<double> cosX(len); for(uint i=0; i<cosX.size(); i++){ cosX[i]=(double)i*(1/freq_sample); }
+        std::vector<double> cosX(len); for(uint i=0; i<cosX.size(); ++i){ cosX[i]=(double)i*(1/freq_sample); }
         
         std::vector<std::string> vLabel={"sin", "cos", "-cos"};
         std::vector<std::vector<double>> vvecX={sinX, cosX,    cosX};
@@ -1448,8 +1448,8 @@ void TEST__c2py__sample_codes(){
         sstd::mat_r<uint8> imgR, imgG, imgB;
         imgPath2mat_rRGB(&imgR, &imgG, &imgB, "./test/test.png");
         
-        for(uint p=0; p<imgG.rows(); p++){
-            for(uint q=0; q<imgG.cols(); q++){
+        for(uint p=0; p<imgG.rows(); ++p){
+            for(uint q=0; q<imgG.cols(); ++q){
                 imgG(p, q) = sstd::round2even(0.5*((double)imgG(p, q)));
             }
         }

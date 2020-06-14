@@ -47,61 +47,61 @@ namespace sstd_stdVecEx{
     template <typename T>                                               \
     inline std::vector<T> Func(const std::vector<T>& lhs, const std::vector<T>& rhs){ \
         std::vector<T> ret(lhs.size());                                 \
-        for(uint p=0; p<ret.size(); p++){ ret[p]=lhs[p] Ope rhs[p]; }   \
+        for(uint p=0; p<ret.size(); ++p){ ret[p]=lhs[p] Ope rhs[p]; }   \
         return ret;                                                     \
     }                                                                   \
     template <typename T, typename rhsType>                             \
     inline std::vector<T> Func(const std::vector<T>& lhs, const rhsType& rhs){ \
         std::vector<T> ret(lhs.size());                                 \
-        for(uint p=0; p<ret.size(); p++){ ret[p]=lhs[p] Ope rhs; }      \
+        for(uint p=0; p<ret.size(); ++p){ ret[p]=lhs[p] Ope rhs; }      \
         return ret;                                                     \
     }                                                                   \
     template <typename T, typename rhsType>                             \
     inline std::vector<T> Func(const rhsType& lhs, const std::vector<T>& rhs){ \
         std::vector<T> ret(rhs.size());                                 \
-        for(uint p=0; p<ret.size(); p++){ ret[p]=lhs Ope rhs[p]; }      \
+        for(uint p=0; p<ret.size(); ++p){ ret[p]=lhs Ope rhs[p]; }      \
         return ret;                                                     \
     }
 #define SSTD_DEF_stdVecEx_o_eq(Func, Ope)                               \
     template <typename T>                                               \
     inline std::vector<T>& Func(std::vector<T>& lhs, const std::vector<T>& rhs){ \
-        for(uint p=0; p<lhs.size(); p++){ lhs[p] Ope rhs[p]; }          \
+        for(uint p=0; p<lhs.size(); ++p){ lhs[p] Ope rhs[p]; }          \
         return lhs;                                                     \
     }                                                                   \
     template <typename T, typename rhsType>                             \
     inline std::vector<T>& Func(std::vector<T>& lhs, const rhsType& rhs){ \
         const rhsType rhs_buf = rhs; /* buffering is needed for self overwriting vector like "vec+=vec[3];". */ \
-        for(uint p=0; p<lhs.size(); p++){ lhs[p] Ope rhs_buf; }         \
+        for(uint p=0; p<lhs.size(); ++p){ lhs[p] Ope rhs_buf; }         \
         return lhs;                                                     \
     }
 #define SSTD_DEF_stdVecEx_f(Func, Func2)                                \
     template <typename T>                                               \
     inline std::vector<T> Func(const std::vector<T>& lhs, const std::vector<T>& rhs){ \
         std::vector<T> ret(lhs.size());                                 \
-        for(uint p=0; p<ret.size(); p++){ ret[p]=Func2(lhs[p], rhs[p]); } \
+        for(uint p=0; p<ret.size(); ++p){ ret[p]=Func2(lhs[p], rhs[p]); } \
         return ret;                                                     \
     }                                                                   \
     template <typename T, typename rhsType>                             \
     inline std::vector<T> Func(const std::vector<T>& lhs, const rhsType& rhs){ \
         std::vector<T> ret(lhs.size());                                 \
-        for(uint p=0; p<ret.size(); p++){ ret[p]=Func2(lhs[p], rhs); }  \
+        for(uint p=0; p<ret.size(); ++p){ ret[p]=Func2(lhs[p], rhs); }  \
         return ret;                                                     \
     }                                                                   \
     template <typename T, typename rhsType>                             \
     inline std::vector<T> Func(const rhsType& lhs, const std::vector<T>& rhs){ \
         std::vector<T> ret(rhs.size());                                 \
-        for(uint p=0; p<ret.size(); p++){ ret[p]=Func2(lhs, rhs[p]); }  \
+        for(uint p=0; p<ret.size(); ++p){ ret[p]=Func2(lhs, rhs[p]); }  \
         return ret;                                                     \
     }
 #define SSTD_DEF_stdVecEx_f_eq(Func, Func2)                             \
     template <typename T>                                               \
     inline std::vector<T>& Func(std::vector<T>& lhs, const std::vector<T>& rhs){ \
-        for(uint p=0; p<lhs.size(); p++){ lhs[p]=Func2(lhs[p], rhs[p]); } \
+        for(uint p=0; p<lhs.size(); ++p){ lhs[p]=Func2(lhs[p], rhs[p]); } \
         return lhs;                                                     \
     }                                                                   \
     template <typename T, typename rhsType>                             \
     inline std::vector<T>& Func(std::vector<T>& lhs, const rhsType& rhs){ \
-        for(uint p=0; p<lhs.size(); p++){ lhs[p]=Func2(lhs[p], rhs); }  \
+        for(uint p=0; p<lhs.size(); ++p){ lhs[p]=Func2(lhs[p], rhs); }  \
         return lhs;                                                     \
     }
 SSTD_DEF_stdVecEx_o   (sstd_stdVecEx::add   , + );
@@ -128,21 +128,21 @@ template <typename T>
 inline std::vector<T> sstd_stdVecEx::push_front(const std::vector<T>& lhs, const std::vector<T>& rhs){ // same as a push_back
     std::vector<T> ret(lhs.size()+rhs.size());
     uint i=0;
-    for(uint p=0; p<rhs.size(); p++){ ret[i]=rhs[p]; i++; }
-    for(uint p=0; p<lhs.size(); p++){ ret[i]=lhs[p]; i++; }
+    for(uint p=0; p<rhs.size(); ++p){ ret[i]=rhs[p]; ++i; }
+    for(uint p=0; p<lhs.size(); ++p){ ret[i]=lhs[p]; ++i; }
     return ret;
 }
 template <typename T, typename rhsType>
 inline std::vector<T> sstd_stdVecEx::push_front(const std::vector<T>& lhs, const rhsType& rhs){
     std::vector<T> ret(lhs.size()+1);
     ret[0]=rhs;
-    for(uint p=0; p<lhs.size(); p++){ ret[p+1]=lhs[p]; }
+    for(uint p=0; p<lhs.size(); ++p){ ret[p+1]=lhs[p]; }
     return ret;
 }
 template <typename T, typename lhsType>
 inline std::vector<T> sstd_stdVecEx::push_front(const lhsType& lhs, const std::vector<T>& rhs){
     std::vector<T> ret(rhs.size()+1);
-    for(uint p=0; p<rhs.size(); p++){ ret[p]=rhs[p]; }
+    for(uint p=0; p<rhs.size(); ++p){ ret[p]=rhs[p]; }
     ret[rhs.size()]=lhs;
     return ret;
 }
@@ -158,7 +158,7 @@ template <typename T, typename rhsType>
 inline std::vector<T>& sstd_stdVecEx::push_front_eq(std::vector<T>& lhs, const rhsType& rhs){
     std::vector<T> ret(1+lhs.size());
     ret[0]=rhs;
-    for(uint p=0; p<lhs.size(); p++){ ret[p+1]=lhs[p]; }
+    for(uint p=0; p<lhs.size(); ++p){ ret[p+1]=lhs[p]; }
     lhs = std::move(ret);
     return lhs;
 }
@@ -170,14 +170,14 @@ template <typename T>
 inline std::vector<T> sstd_stdVecEx::push_back(const std::vector<T>& lhs, const std::vector<T>& rhs){
     std::vector<T> ret(lhs.size()+rhs.size());
     uint i=0;
-    for(uint p=0; p<lhs.size(); p++){ ret[i]=lhs[p]; i++; }
-    for(uint p=0; p<rhs.size(); p++){ ret[i]=rhs[p]; i++; }
+    for(uint p=0; p<lhs.size(); ++p){ ret[i]=lhs[p]; ++i; }
+    for(uint p=0; p<rhs.size(); ++p){ ret[i]=rhs[p]; ++i; }
     return ret;
 }
 template <typename T, typename rhsType>
 inline std::vector<T> sstd_stdVecEx::push_back(const std::vector<T>& lhs, const rhsType& rhs){
     std::vector<T> ret(lhs.size()+1);
-    for(uint p=0; p<lhs.size(); p++){ ret[p]=lhs[p]; }
+    for(uint p=0; p<lhs.size(); ++p){ ret[p]=lhs[p]; }
     ret[lhs.size()]=rhs;
     return ret;
 }
@@ -185,7 +185,7 @@ template <typename T, typename lhsType>
 inline std::vector<T> sstd_stdVecEx::push_back(const lhsType& lhs, const std::vector<T>& rhs){
     std::vector<T> ret(rhs.size()+1);
     ret[0]=lhs;
-    for(uint p=0; p<rhs.size(); p++){ ret[p+1]=rhs[p]; }
+    for(uint p=0; p<rhs.size(); ++p){ ret[p+1]=rhs[p]; }
     return ret;
 }
 
@@ -235,10 +235,10 @@ SSTD_DEF_stdVecEx_Operator_eq(sstd_stdVecEx::push_back_eq , <<=);
 
 //---
 
-template <typename T> inline std::vector<T>& operator++(std::vector<T>& rhs)     {                         for(uint p=0; p<rhs.size(); p++){ rhs[p]++; } return rhs; } // ++rhs
-template <typename T> inline std::vector<T>  operator++(std::vector<T>& rhs, int){ std::vector<T> ret=rhs; for(uint p=0; p<rhs.size(); p++){ rhs[p]++; } return ret; } //   rhs++
-template <typename T> inline std::vector<T>& operator--(std::vector<T>& rhs)     {                         for(uint p=0; p<rhs.size(); p++){ rhs[p]--; } return rhs; } // --rhs
-template <typename T> inline std::vector<T>  operator--(std::vector<T>& rhs, int){ std::vector<T> ret=rhs; for(uint p=0; p<rhs.size(); p++){ rhs[p]--; } return ret; } //   rhs--
+template <typename T> inline std::vector<T>& operator++(std::vector<T>& rhs)     {                         for(uint p=0; p<rhs.size(); ++p){ ++rhs[p]; } return rhs; } // ++rhs
+template <typename T> inline std::vector<T>  operator++(std::vector<T>& rhs, int){ std::vector<T> ret=rhs; for(uint p=0; p<rhs.size(); ++p){ ++rhs[p]; } return ret; } //   rhs++
+template <typename T> inline std::vector<T>& operator--(std::vector<T>& rhs)     {                         for(uint p=0; p<rhs.size(); ++p){ --rhs[p]; } return rhs; } // --rhs
+template <typename T> inline std::vector<T>  operator--(std::vector<T>& rhs, int){ std::vector<T> ret=rhs; for(uint p=0; p<rhs.size(); ++p){ --rhs[p]; } return ret; } //   rhs--
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
