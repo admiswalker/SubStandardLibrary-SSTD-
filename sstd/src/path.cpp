@@ -41,8 +41,8 @@ std::string sstd::getFileName_withoutExtension(const char* pPath){
     size_t len = strlen(pStartPathAdd);
 
     uint End=len;
-    for(uint i=len; pStartPathAdd[i]!='.'&&i>0; i--){
-        End--;
+    for(uint i=len; pStartPathAdd[i]!='.'&&i>0; --i){
+        --End;
     }
     if(End==0){ End=len; }
 
@@ -59,7 +59,7 @@ char* sstd::getExtension(const char* pPath){
     char* pStartPathAdd=(char*)&pPath[0]; // avoid warning
     size_t len = strlen(pPath);
 
-    for(uint i=len; pPath[i]!='.'&&len>=0; i--){
+    for(uint i=len; pPath[i]!='.'&&len>=0; --i){
         if(pPath[i]=='/'||pPath[i]=='\\'){pStartPathAdd=0;break;}
         pStartPathAdd = (char*)&pPath[i];
     }

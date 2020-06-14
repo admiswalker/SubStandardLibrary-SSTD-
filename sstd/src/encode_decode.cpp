@@ -64,7 +64,7 @@ std::string sstd::base64_decode(const uchar* str, size_t strLen){
     size_t strLen_without_padding;    // string length without '=' padding.
 
     // counting length of 'str' without '='.
-    for(strLen_without_padding=strLen; 0<strLen_without_padding && str[strLen_without_padding-1]=='='; strLen_without_padding--){}
+    for(strLen_without_padding=strLen; 0<strLen_without_padding && str[strLen_without_padding-1]=='='; --strLen_without_padding){}
 
     const uchar decode_table[256] = {    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
                                         0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,

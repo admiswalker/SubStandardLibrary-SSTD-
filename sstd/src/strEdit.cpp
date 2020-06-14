@@ -175,7 +175,7 @@ void sstd::lstrip_ow(std::string& str){
 
 std::string rstrip_base(const uchar* str, int len){
     int r=len-1;
-    for(; r>=0; r--){
+    for(; r>=0; --r){
         if(str[r]==' ' || str[r]=='\t'){
         }             else             { break; }
     }
@@ -185,7 +185,7 @@ std::string sstd::rstrip(const        char* str){ return rstrip_base((const ucha
 std::string sstd::rstrip(const std::string& str){ return rstrip_base((const uchar*)str.c_str(), str.size() ); }
 
 void sstd::rstrip_ow(std::string& str){
-    for(int r=str.size()-1; r>=0; r--){
+    for(int r=str.size()-1; r>=0; --r){
         if(str[r]==' ' || str[r]=='\t'){ str.erase(r);
         }             else             { break; }
     }

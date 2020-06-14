@@ -244,7 +244,7 @@ bool split_leftStr(const char* pStr, struct sstd_c2py::typeSet& f, std::string& 
 void split_ret    (struct sstd_c2py::typeSet& f, std::string& fS){ f.retTF   = split_leftStr(R"(ret )", f, fS);   }
 void split_const  (struct sstd_c2py::typeSet& f, std::string& fS){ f.constTF = split_leftStr(R"(const )", f, fS); }
 void split_pointer(struct sstd_c2py::typeSet& f, std::string& fS){
-    for(int i=fS.size()-1; i>=0; i--){
+    for(int i=fS.size()-1; i>=0; --i){
         if      (fS[i]=='*'){ fS.erase(--fS.end()); f.pointer=true;
         }else if(fS[i]==' '){ fS.erase(--fS.end()); // 末尾を 1 文字削除
         }        else       { break; }

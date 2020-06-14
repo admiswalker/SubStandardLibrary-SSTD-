@@ -8,7 +8,7 @@
 // erasing empty element(s) in the tail of vector
 void eraseEmptyTail(std::vector<std::string>& inOut){
     uint cols = inOut.size();
-    for(uint p=cols-1; p!=0; p--){
+    for(uint p=cols-1; p!=0; --p){
         if(inOut[p].size()==0){ inOut.erase(inOut.begin()+p);
         }         else        { break; }
     }
@@ -16,7 +16,7 @@ void eraseEmptyTail(std::vector<std::string>& inOut){
 // erasing empty element(s) in the tail of vector
 void eraseEmptyTail(std::vector<std::vector<std::string>>& inOut){
     uint rows = inOut.size();
-    for(uint p=rows-1; p!=0; p--){
+    for(uint p=rows-1; p!=0; --p){
         if(inOut[p].size()==1 && inOut[p][0].size()==0){ inOut.erase(inOut.begin()+p);
         }                    else                      { break; }
     }

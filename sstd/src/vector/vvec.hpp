@@ -31,8 +31,8 @@ namespace sstd{
     if(rhs[i].size()>colsMax){ colsMax=rhs[i].size(); }             \
     vecRows.push_back( rhs[i].size() );                             \
     vecCols.push_back(      i+1      );                             \
-    i--;                                                            \
-    for(; i!=UINT_MAX; i--){                                        \
+    --i;                                                            \
+    for(; i!=UINT_MAX; --i){                                        \
         if(rhs[i].size()<vecRows[vecRows.size()-1]){ continue; }    \
                                                                     \
         if(rhs[i].size()>colsMax){ colsMax=rhs[i].size(); }         \

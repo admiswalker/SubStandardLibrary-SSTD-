@@ -232,7 +232,7 @@ bool sstd::rm(const char* pPath){
     if(!sstd::getAllPath(fileList, pPath)){ return false; } // there is no file or directory.
 
     bool retVal = true;
-    for(int i=fileList.size()-1; i>=0; i--){
+    for(int i=fileList.size()-1; i>=0; --i){
         if      ('f'==fileList[i].type){ if(!sstd::unlink(fileList[i].path)){ retVal=false; } //ファイルの消去
         }else if('d'==fileList[i].type){ if(!sstd::rmdir (fileList[i].path)){ retVal=false; } //ディレクトリの消去 // remove なら，ファイルかディレクトリか自動で判別して，呼び出す関数をスイッチしてくれるらしい
         }             else             { sstd::pdbg("ERROR: sstd::rm\n"); retVal=false;         }
