@@ -1,6 +1,7 @@
 #pragma once
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// std::vector expansion for numerical value type
 
 TEST(vector_stdVector_expansion, plus){
     std::vector<double> lhs={1, 2, 3}, rhs={1, 2, 3};
@@ -268,6 +269,19 @@ TEST(vector_stdVector_expansion, RightShift_as_merge){
         
         ASSERT_TRUE( buf == ans );
     }
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// std::vector expansion for character value type
+
+TEST(vector_stdVector_expansion, plus_string){
+    
+    std::vector<std::string> vec = {"000", "001", "002"};
+    std::vector<std::string> vec_test = "./tmp/" + vec;
+    
+    std::vector<std::string> vec_ans = {"./tmp/000", "./tmp/001", "./tmp/002"};
+    
+    ASSERT_EQ(vec_ans, vec_test);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

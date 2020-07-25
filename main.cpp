@@ -23,8 +23,8 @@
 //#include "./test/strEdit.hpp"
 //#include "./test/typeConversion.hpp"
 //#include "./test/vector_index.hpp"
-#include "./test/vector_slice.hpp"
-//#include "./test/vector_stdVector_expansion.hpp" // stdVector_expansion of operators
+//#include "./test/vector_slice.hpp"
+#include "./test/vector_stdVector_expansion.hpp" // stdVector_expansion of operators
 //#include "./test/vector_vvec.hpp"
 
 
