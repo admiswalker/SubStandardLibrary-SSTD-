@@ -31,7 +31,6 @@
 #include "./src/sleep.hpp" // use_sstd_gcc4_4_7
 #include "./src/time.hpp"
 #include "./src/typeDef.h"
-#include "./src/typeDef.hpp"
 //#include "./src/pdbg.hpp" // 後ろで include しないと，extern での定義を置換してしまう．
 //#include "./src/print.hpp" // 後ろで include しないと，extern での定義を置換してしまう．
 #include "./src/math.hpp"
@@ -421,6 +420,7 @@ namespace sstd{
 #include "./src/matrixContainer_binary/bmat.hpp"
 #include "./src/vector/slice.hpp"
 #include "./src/vector/stdVector_expansion.hpp"
+#include "./src/vector/typeDef.hpp"
 #include "./src/vector/vvec.hpp"
 #include "./src/matrixContainer_colMajor/mat_c.hpp" // Because of this header use "pdbg.hpp", we need to define after namespace sstd{}.
 #include "./src/matrixContainer_rowMajor/mat_r.hpp" // Because of this header use "pdbg.hpp", we need to define after namespace sstd{}.
