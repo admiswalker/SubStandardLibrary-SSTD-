@@ -355,4 +355,113 @@ TEST(vector_slice_mv, be00){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// slice index
 
+TEST(vector_slice, vi00){
+    std::vector<double> vec    ={1,2,3,4,5};
+    std::vector<double> vec_ans={1,2,3,4,5};
+    std::vector<int>    vec_idx={0,1,2,3,4};
+    std::vector<double> vec_sliced = vec && sstd::slice( vec_idx );
+    ASSERT_EQ(vec_ans, vec_sliced);
+}
+TEST(vector_slice, vi01){
+    std::vector<double> vec    ={1,2,3,4,5};
+    std::vector<double> vec_ans={1,3,5};
+    std::vector<int>    vec_idx={0,2,4};
+    std::vector<double> vec_sliced = vec && sstd::slice( vec_idx );
+    ASSERT_EQ(vec_ans, vec_sliced);
+}
+TEST(vector_slice, vi02){
+    std::vector<double> vec    ={1,2,3,4,5};
+    std::vector<double> vec_ans={2,5,4};
+    std::vector<int>    vec_idx={1,4,3};
+    std::vector<double> vec_sliced = vec && sstd::slice( vec_idx );
+    ASSERT_EQ(vec_ans, vec_sliced);
+}
+TEST(vector_slice, vi03){
+    std::vector<double> vec    ={1,2,3,4,5};
+    std::vector<double> vec_ans={5,4,1};
+    std::vector<int>    vec_idx={-1,-2,-5};
+    std::vector<double> vec_sliced = vec && sstd::slice( vec_idx );
+    ASSERT_EQ(vec_ans, vec_sliced);
+}
+//---
+TEST(vector_slice, vu00){
+    std::vector<double> vec    ={1,2,3,4,5};
+    std::vector<double> vec_ans={1,2,3,4,5};
+    std::vector<uint>   vec_idx={0,1,2,3,4};
+    std::vector<double> vec_sliced = vec && sstd::slice( vec_idx );
+    ASSERT_EQ(vec_ans, vec_sliced);
+}
+TEST(vector_slice, vu01){
+    std::vector<double> vec    ={1,2,3,4,5};
+    std::vector<double> vec_ans={1,3,5};
+    std::vector<uint>   vec_idx={0,2,4};
+    std::vector<double> vec_sliced = vec && sstd::slice( vec_idx );
+    ASSERT_EQ(vec_ans, vec_sliced);
+}
+TEST(vector_slice, vu02){
+    std::vector<double> vec    ={1,2,3,4,5};
+    std::vector<double> vec_ans={2,5,4};
+    std::vector<uint>   vec_idx={1,4,3};
+    std::vector<double> vec_sliced = vec && sstd::slice( vec_idx );
+    ASSERT_EQ(vec_ans, vec_sliced);
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// slice mv index
+
+
+TEST(vector_slice_mv, vi00){
+    std::vector<double> vec    ={1,2,3,4,5};
+    std::vector<double> vec_ans={1,2,3,4,5};
+    std::vector<int>    vec_idx={0,1,2,3,4};
+    std::vector<double> vec_sliced = vec && sstd::slice_mv( vec_idx );
+    ASSERT_EQ(vec_ans, vec_sliced);
+}
+TEST(vector_slice_mv, vi01){
+    std::vector<double> vec    ={1,2,3,4,5};
+    std::vector<double> vec_ans={1,3,5};
+    std::vector<int>    vec_idx={0,2,4};
+    std::vector<double> vec_sliced = vec && sstd::slice_mv( vec_idx );
+    ASSERT_EQ(vec_ans, vec_sliced);
+}
+TEST(vector_slice_mv, vi02){
+    std::vector<double> vec    ={1,2,3,4,5};
+    std::vector<double> vec_ans={2,5,4};
+    std::vector<int>    vec_idx={1,4,3};
+    std::vector<double> vec_sliced = vec && sstd::slice_mv( vec_idx );
+    ASSERT_EQ(vec_ans, vec_sliced);
+}
+TEST(vector_slice_mv, vi03){
+    std::vector<double> vec    ={1,2,3,4,5};
+    std::vector<double> vec_ans={5,4,1};
+    std::vector<int>    vec_idx={-1,-2,-5};
+    std::vector<double> vec_sliced = vec && sstd::slice_mv( vec_idx );
+    ASSERT_EQ(vec_ans, vec_sliced);
+}
+//---
+TEST(vector_slice_mv, vu00){
+    std::vector<double> vec    ={1,2,3,4,5};
+    std::vector<double> vec_ans={1,2,3,4,5};
+    std::vector<uint>   vec_idx={0,1,2,3,4};
+    std::vector<double> vec_sliced = vec && sstd::slice_mv( vec_idx );
+    ASSERT_EQ(vec_ans, vec_sliced);
+}
+TEST(vector_slice_mv, vu01){
+    std::vector<double> vec    ={1,2,3,4,5};
+    std::vector<double> vec_ans={1,3,5};
+    std::vector<uint>   vec_idx={0,2,4};
+    std::vector<double> vec_sliced = vec && sstd::slice_mv( vec_idx );
+    ASSERT_EQ(vec_ans, vec_sliced);
+}
+TEST(vector_slice_mv, vu02){
+    std::vector<double> vec    ={1,2,3,4,5};
+    std::vector<double> vec_ans={2,5,4};
+    std::vector<uint>   vec_idx={1,4,3};
+    std::vector<double> vec_sliced = vec && sstd::slice_mv( vec_idx );
+    ASSERT_EQ(vec_ans, vec_sliced);
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
