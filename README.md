@@ -50,17 +50,7 @@ updateLib:
 ```
 
 ## Documents
-file | URL
----- | ---
-./Makefile | [admiswalker.blogspot.com/2017/02/makefile.html](https://admiswalker.blogspot.com/2017/02/makefile.html)
-./sstd/src/c2py.cpp-.hpp | [admiswalker.blogspot.com/2018/02/c-python.html](https://admiswalker.blogspot.com/2018/02/c-python.html)
-./sstd/src/bmat/*.cpp-.hpp | [admiswalker.blogspot.com/2017/11/bit-xorshift.html](https://admiswalker.blogspot.com/2017/11/bit-xorshift.html), [admiswalker.blogspot.com/2017/11/bit-xorshift.html](https://admiswalker.blogspot.com/2017/11/bit-xorshift.html)
-./sstd/src/stdVector_expansion/stdVector_expansion.hpp | [admiswalker.blogspot.com/2018/08/stdvectorexpansion.html](https://admiswalker.blogspot.com/2018/08/stdvectorexpansion.html)
-./sstd/src/matrixContainer_colMajor/mat_c.hpp | [admiswalker.blogspot.com/2019/04/a-single-header-file-template-container.html](https://admiswalker.blogspot.com/2019/04/a-single-header-file-template-container.html)
-./sstd/src/matrixContainer_rowMajor/mat_r.hpp | [admiswalker.blogspot.com/2019/04/a-single-header-file-template-container.html](https://admiswalker.blogspot.com/2019/04/a-single-header-file-template-container.html)
-The others | https://sstd-lib.blogspot.com/p/index.html
-
-The above documents will be moved to [admiswalker.github.io/sstdref/](https://admiswalker.github.io/sstdref/) ([Repository](https://github.com/admiswalker/sstdref)).
+[admiswalker.github.io/sstdref/](https://admiswalker.github.io/sstdref/) ([Repository](https://github.com/admiswalker/sstdref)).
 
 ## License
 MIT licence or Public domain.
