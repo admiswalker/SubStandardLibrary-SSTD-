@@ -13,7 +13,7 @@ bool sstd::strmatch(
     }
 }
 
-//*
+/*
 bool getWC_entity(
         const char* str,      // target string to search
         const char* wildCard, // wild card ('*' and '?' are available.)
@@ -42,8 +42,7 @@ bool getWC_entity(
         return ((uchar)*wildCard == (uchar)*str) && getWC_entity(str+1, wildCard+1, retWC);
     }
 }
-//*/
-/*
+*/
 bool getWC_entity(
         const char* str,      // target string to search
         const char* wildCard, // wild card ('*' and '?' are available.)
@@ -74,7 +73,6 @@ bool getWC_entity(
         return ((uchar)*wildCard == (uchar)*str) && getWC_entity(str+1, wildCard+1, retWC);
     }
 }
-*/
 bool sstd::strmatch_getWC(
         const char* str,      // target string to search
         const char* wildCard, // wild card ('*' and '?' are available.)
@@ -84,7 +82,7 @@ bool sstd::strmatch_getWC(
     bool ret = getWC_entity(str, wildCard, retWC);
     if(!ret){ retWC.clear(); }
     
-    std::reverse(retWC.begin(), retWC.end());
+//    std::reverse(retWC.begin(), retWC.end());
     return ret;
 }
 
