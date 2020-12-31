@@ -12,6 +12,9 @@ bool sstd::strmatch(
     }          else          { return ((uchar)*wildCard == (uchar)*str) && strmatch(str+1, wildCard+1);
     }
 }
+bool sstd::strmatch(const        char* str, const std::string& wildCard){ return sstd::strmatch(str        , wildCard.c_str()); }
+bool sstd::strmatch(const std::string& str, const        char* wildCard){ return sstd::strmatch(str.c_str(), wildCard        ); }
+bool sstd::strmatch(const std::string& str, const std::string& wildCard){ return sstd::strmatch(str.c_str(), wildCard.c_str()); }
 
 /*
 bool getWC_entity(
@@ -91,6 +94,11 @@ bool sstd::strmatch_getWC(
     return ret;
 }
 //*/
+
+bool sstd::strmatch_getWC(const        char* str, const std::string& wildCard, std::string& retWC){ return sstd::strmatch_getWC(str        , wildCard.c_str(), retWC); }
+bool sstd::strmatch_getWC(const std::string& str, const        char* wildCard, std::string& retWC){ return sstd::strmatch_getWC(str.c_str(), wildCard        , retWC); }
+bool sstd::strmatch_getWC(const std::string& str, const std::string& wildCard, std::string& retWC){ return sstd::strmatch_getWC(str.c_str(), wildCard.c_str(), retWC); }
+
 
 bool sstd::isNum               (char rhs){ return ('0'<=rhs && rhs<='9'); }
 bool sstd::isAlphabet          (char rhs){ return ('a'<=rhs && rhs<='z') || ('A'<=rhs && rhs<='Z'); }

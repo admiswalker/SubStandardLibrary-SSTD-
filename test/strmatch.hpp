@@ -16,7 +16,18 @@ TEST(strmatch, strmatch){
     ASSERT_FALSE( sstd::strmatch(str, WildCard3) );
       // test (2)
     ASSERT_TRUE( sstd::strmatch("TOKYOTO...", "??KYOTO*") );
+      // test (3) type test
+    ASSERT_TRUE ( sstd::strmatch(std::string(str),             WildCard1 ) );
+    ASSERT_TRUE ( sstd::strmatch(            str , std::string(WildCard1)) );
+    ASSERT_TRUE ( sstd::strmatch(std::string(str), std::string(WildCard1)) );
     
+    // strmatch_getWC
+      // test (1)
+    std::string retWC;
+    ASSERT_TRUE ( sstd::strmatch_getWC(str, WildCard1, retWC) ); ASSERT_STREQ(retWC.c_str(), "defghijk"); ASSERT_TRUE( retWC.size()==8 ); retWC.clear();
+    ASSERT_TRUE ( sstd::strmatch_getWC(str, WildCard2, retWC) ); ASSERT_STREQ(retWC.c_str(), "b"       ); ASSERT_TRUE( retWC.size()==1 ); retWC.clear();
+    ASSERT_FALSE( sstd::strmatch_getWC(str, WildCard3, retWC) ); ASSERT_STREQ(retWC.c_str(), ""        ); ASSERT_TRUE( retWC.size()==0 );
+      // test (2)
     std::string ret;
     ASSERT_TRUE( sstd::strmatch_getWC("TOKYOTO...", "TO*...", ret) );
     ASSERT_STREQ(ret.c_str(), "KYOTO"); ASSERT_EQ(ret.size(), (uint)5);
@@ -32,12 +43,10 @@ TEST(strmatch, strmatch){
     
     ASSERT_TRUE( sstd::strmatch_getWC("TOKYOTO...", "T*?T?*...*", ret) );
     ASSERT_STREQ(ret.c_str(), "OKYOO"); ASSERT_EQ(ret.size(), (uint)5);
-    
-    // strmatch_getWC
-    std::string retWC;
-    ASSERT_TRUE ( sstd::strmatch_getWC(str, WildCard1, retWC) ); ASSERT_STREQ(retWC.c_str(), "defghijk"); ASSERT_TRUE( retWC.size()==8 ); retWC.clear();
-    ASSERT_TRUE ( sstd::strmatch_getWC(str, WildCard2, retWC) ); ASSERT_STREQ(retWC.c_str(), "b"       ); ASSERT_TRUE( retWC.size()==1 ); retWC.clear();
-    ASSERT_FALSE( sstd::strmatch_getWC(str, WildCard3, retWC) ); ASSERT_STREQ(retWC.c_str(), ""        ); ASSERT_TRUE( retWC.size()==0 );
+      // test (3) type test
+    ASSERT_TRUE( sstd::strmatch_getWC(std::string("TOKYOTO..."),             "??KYOTO*" , ret) ); ASSERT_STREQ(ret.c_str(), "TO..."); ASSERT_EQ(ret.size(), (uint)5);
+    ASSERT_TRUE( sstd::strmatch_getWC(            "TOKYOTO..." , std::string("??KYOTO*"), ret) ); ASSERT_STREQ(ret.c_str(), "TO..."); ASSERT_EQ(ret.size(), (uint)5);
+    ASSERT_TRUE( sstd::strmatch_getWC(std::string("TOKYOTO..."), std::string("??KYOTO*"), ret) ); ASSERT_STREQ(ret.c_str(), "TO..."); ASSERT_EQ(ret.size(), (uint)5);
     
     // isNum
     ASSERT_TRUE ( sstd::isNum('0') );
