@@ -19,11 +19,6 @@ bool getWC_entity(
         const char* wildCard, // wild card ('*' and '?' are available.)
         std::string& retWC    // returning a string that matches the wild card
 ){
-//    if      (*wildCard=='\0'){                                    return '\0' == *str;
-//    }else if(*wildCard=='*' ){ if('\0' != *str){ retWC += *str; } return getWC_entity(str, wildCard+1, retWC) || (('\0' != *str) && getWC_entity(str+1, wildCard, retWC));
-//    }else if(*wildCard=='?' ){ if('\0' != *str){ retWC += *str; } return ('\0' != *str) && getWC_entity(str+1, wildCard+1, retWC);
-//    }          else          {                                    return ((uchar)*wildCard == (uchar)*str) && getWC_entity(str+1, wildCard+1, retWC);
-//    }
     if(*wildCard=='\0'){
         return '\0' == *str;
         
@@ -42,25 +37,37 @@ bool getWC_entity(
         return ((uchar)*wildCard == (uchar)*str) && getWC_entity(str+1, wildCard+1, retWC);
     }
 }
-*/
+bool sstd::strmatch_getWC(
+        const char* str,      // target string to search
+        const char* wildCard, // wild card ('*' and '?' are available.)
+        std::string& retWC    // returning a string that matches the wild card
+){
+    retWC.clear();
+    bool ret = getWC_entity(str, wildCard, retWC);
+    if(!ret){ retWC.clear(); }
+    
+    std::reverse(retWC.begin(), retWC.end());
+    return ret;
+}
+
+// This code is optimized like below code. (removing std::reverse()).
+//*/
+//*
 bool getWC_entity(
         const char* str,      // target string to search
         const char* wildCard, // wild card ('*' and '?' are available.)
         std::string& retWC    // returning a string that matches the wild card
 ){
-//    if      (*wildCard=='\0'){                                    return '\0' == *str;
-//    }else if(*wildCard=='*' ){ if('\0' != *str){ retWC += *str; } return getWC_entity(str, wildCard+1, retWC) || (('\0' != *str) && getWC_entity(str+1, wildCard, retWC));
-//    }else if(*wildCard=='?' ){ if('\0' != *str){ retWC += *str; } return ('\0' != *str) && getWC_entity(str+1, wildCard+1, retWC);
-//    }          else          {                                    return ((uchar)*wildCard == (uchar)*str) && getWC_entity(str+1, wildCard+1, retWC);
-//    }
     if(*wildCard=='\0'){
         return '\0' == *str;
         
     }else if(*wildCard=='*'){
-        if('\0'!=*str){ retWC += *str; }
         bool retL = getWC_entity(str, wildCard+1, retWC);
+        
+        if('\0'!=*str){ retWC += *str; }
         bool retR = (('\0' != *str) && getWC_entity(str+1, wildCard, retWC));
         if(!retR && '\0'!=*str){ retWC.erase(--retWC.end()); }
+        
         return retL || retR;
         
     }else if(*wildCard=='?'){
@@ -81,11 +88,9 @@ bool sstd::strmatch_getWC(
     retWC.clear();
     bool ret = getWC_entity(str, wildCard, retWC);
     if(!ret){ retWC.clear(); }
-    
-//    std::reverse(retWC.begin(), retWC.end());
     return ret;
 }
-
+//*/
 
 bool sstd::isNum               (char rhs){ return ('0'<=rhs && rhs<='9'); }
 bool sstd::isAlphabet          (char rhs){ return ('a'<=rhs && rhs<='z') || ('A'<=rhs && rhs<='Z'); }
