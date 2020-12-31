@@ -1,17 +1,16 @@
-﻿#pragma once    //インクルードガード
+﻿#pragma once
 #include <string>
 
 namespace sstd{
     bool strmatch(
-        const char* str,     // 比較する文字列
-        const char* wildCard // ワイルドカード
+        const char* str,     // target string to search
+        const char* wildCard // wild card ('*' and '?' are available.)
     );
     bool strmatch_getWC(
-        const char* str,      // 比較する文字列
-        const char* wildCard, // ワイルドカード
-        std::string& retWC    // ワイルドカード部分に一致する文字列を返却
+        const char* str,      // target string to search
+        const char* wildCard, // wild card ('*' and '?' are available.)
+        std::string& retWC    // returning a string that matches the wild card
     );
-    
 
     bool isNum               (char rhs);
     bool isAlphabet          (char rhs);

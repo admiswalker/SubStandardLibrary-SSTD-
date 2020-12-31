@@ -16,11 +16,12 @@
 //#include "./test/csv.hpp"
 //#include "./test/glob.hpp"
 //#include "./test/math.hpp"
-#include "./test/measureTime.hpp"
+//#include "./test/measureTime.hpp"
 //#include "./test/print_printn_printn_all.hpp" // void pdbg(){ printf("======p\n"); } // #define DEBUG を定義しない場合でも，マクロでこの名前は使えなくなるので，名前空間を汚しており，本当はよくない．
 //#include "./test/status.hpp"
 //#include "./test/stdlib.hpp"
 //#include "./test/strEdit.hpp"
+#include "./test/strmatch.hpp"
 //#include "./test/typeConversion.hpp"
 //#include "./test/vector_index.hpp"
 //#include "./test/vector_slice.hpp"
@@ -39,7 +40,6 @@ void TEST_file_c();
 void TEST_mkdir();
 void TEST_rm();
 void TEST_ssprintf();
-void TEST_strmatch();
 void TEST_path();
 void TEST_tinyInterpreter();
 void TEST_encode_decode();
@@ -78,7 +78,6 @@ int main(int argc, char** argv){
 //    TEST_rm();
 //    TEST_str2num();
 //    TEST_ssprintf();
-//    TEST_strmatch();
 //    TEST_path();
 //    TEST_tinyInterpreter();
 //    TEST_encode_decode();
@@ -264,30 +263,6 @@ void TEST_str2num(){
 void TEST_ssprintf(){
     printf("■ ssprintf(const char* format, ...)\n");
     printf("%s", sstd::ssprintf("Num: %d, Str: %s\n\n", 1234, "abcd").c_str());
-}
-void TEST_strmatch(){
-    printf("■ strmatch\n");
-    const char* str = "abcdefghijk"; // str: 比較する文字列
-    const char* WildCard1 = "abc*";
-    const char* WildCard2 = "a?cdefghijk";
-    const char* WildCard3 = "a?";
-    printf("if(\"%s\" == \"%s\") -> %s\n", str, WildCard1, sstd::strmatch(str, WildCard1)?"true":"false");
-    printf("if(\"%s\" == \"%s\") -> %s\n", str, WildCard2, sstd::strmatch(str, WildCard2)?"true":"false");
-    printf("if(\"%s\" == \"%s\") -> %s\n", str, WildCard3, sstd::strmatch(str, WildCard3)?"true":"false");
-    printf("\n");
-    printf("■ strmatch_getWC\n");
-    bool tf; std::string retWC;
-    tf = sstd::strmatch_getWC(str, WildCard1, retWC); printf("if(\"%s\" == \"%s\") -> %s, retWC: %s\n", str, WildCard1, tf?"true":"false", retWC.c_str());
-    tf = sstd::strmatch_getWC(str, WildCard2, retWC); printf("if(\"%s\" == \"%s\") -> %s, retWC: %s\n", str, WildCard2, tf?"true":"false", retWC.c_str());
-    tf = sstd::strmatch_getWC(str, WildCard3, retWC); printf("if(\"%s\" == \"%s\") -> %s, retWC: %s\n", str, WildCard3, tf?"true":"false", retWC.c_str());
-    printf("\n");
-
-    printf("  □ isNum, isAlphabet\n");
-    printf("    isNum               ('%c') -> %s\n", '0', sstd::isNum               ('0')?"true":"false");
-    printf("    isAlphabet          ('%c') -> %s\n", 'a', sstd::isAlphabet          ('a')?"true":"false");
-    printf("    isAlphabet_onlyUpper('%c') -> %s\n", 'A', sstd::isAlphabet_onlyUpper('A')?"true":"false");
-    printf("    isAlphabet_onlyLower('%c') -> %s\n", 'a', sstd::isAlphabet_onlyLower('a')?"true":"false");
-    printf("\n");
 }
 //*/
 

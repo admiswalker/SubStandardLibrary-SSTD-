@@ -1,12 +1,10 @@
-﻿#include "strmatch.hpp"
+﻿#include <algorithm> // for std::reverse
+#include "strmatch.hpp"
 #include "./typeDef.h"
 
-//　ワイルドカード ('*', '?') の使用可能な文字列比較関数を作る。
-//　'*' は任意の文字列と一致し、'?' は空文字('\0')を除く任意の一文字と一致する。
-
 bool sstd::strmatch(
-        const char* str,     // 比較する文字列
-        const char* wildCard // ワイルドカード
+        const char* str,     // target string to search
+        const char* wildCard // wild card ('*' and '?' are available.)
 ){
     if      (*wildCard=='\0'){ return '\0' == *str;
     }else if(*wildCard=='*' ){ return strmatch(str, wildCard+1) || (('\0' != *str) && strmatch(str+1, wildCard));
@@ -15,28 +13,78 @@ bool sstd::strmatch(
     }
 }
 
-
+//*
 bool getWC_entity(
-        const char* str,      // 比較する文字列
-        const char* wildCard, // ワイルドカード
-        std::string& retWC    // ワイルドカード部分に一致する文字列を返却
+        const char* str,      // target string to search
+        const char* wildCard, // wild card ('*' and '?' are available.)
+        std::string& retWC    // returning a string that matches the wild card
 ){
-    if      (*wildCard=='\0'){ return '\0' == *str;
-    }else if(*wildCard=='*' ){ retWC += *str;
-                                return getWC_entity(str, wildCard+1, retWC) || (('\0' != *str) && getWC_entity(str+1, wildCard, retWC));
-    }else if(*wildCard=='?' ){ retWC += *str;
-                               return ('\0' != *str) && getWC_entity(str+1, wildCard+1, retWC);
-    }          else          { return ((uchar)*wildCard == (uchar)*str) && getWC_entity(str+1, wildCard+1, retWC);
+//    if      (*wildCard=='\0'){                                    return '\0' == *str;
+//    }else if(*wildCard=='*' ){ if('\0' != *str){ retWC += *str; } return getWC_entity(str, wildCard+1, retWC) || (('\0' != *str) && getWC_entity(str+1, wildCard, retWC));
+//    }else if(*wildCard=='?' ){ if('\0' != *str){ retWC += *str; } return ('\0' != *str) && getWC_entity(str+1, wildCard+1, retWC);
+//    }          else          {                                    return ((uchar)*wildCard == (uchar)*str) && getWC_entity(str+1, wildCard+1, retWC);
+//    }
+    if(*wildCard=='\0'){
+        return '\0' == *str;
+        
+    }else if(*wildCard=='*'){
+        bool retL = getWC_entity(str, wildCard+1, retWC);
+        bool retR = (('\0' != *str) && getWC_entity(str+1, wildCard, retWC));
+        if(retR && '\0'!=*str){ retWC += *str; }
+        return retL || retR;
+        
+    }else if(*wildCard=='?'){
+        bool ret = ('\0' != *str) && getWC_entity(str+1, wildCard+1, retWC);
+        if(ret && '\0'!=*str){ retWC += *str; }
+        return ret;
+        
+    }else{
+        return ((uchar)*wildCard == (uchar)*str) && getWC_entity(str+1, wildCard+1, retWC);
     }
 }
+//*/
+/*
+bool getWC_entity(
+        const char* str,      // target string to search
+        const char* wildCard, // wild card ('*' and '?' are available.)
+        std::string& retWC    // returning a string that matches the wild card
+){
+//    if      (*wildCard=='\0'){                                    return '\0' == *str;
+//    }else if(*wildCard=='*' ){ if('\0' != *str){ retWC += *str; } return getWC_entity(str, wildCard+1, retWC) || (('\0' != *str) && getWC_entity(str+1, wildCard, retWC));
+//    }else if(*wildCard=='?' ){ if('\0' != *str){ retWC += *str; } return ('\0' != *str) && getWC_entity(str+1, wildCard+1, retWC);
+//    }          else          {                                    return ((uchar)*wildCard == (uchar)*str) && getWC_entity(str+1, wildCard+1, retWC);
+//    }
+    if(*wildCard=='\0'){
+        return '\0' == *str;
+        
+    }else if(*wildCard=='*'){
+        if('\0'!=*str){ retWC += *str; }
+        bool retL = getWC_entity(str, wildCard+1, retWC);
+        bool retR = (('\0' != *str) && getWC_entity(str+1, wildCard, retWC));
+        if(!retR && '\0'!=*str){ retWC.erase(--retWC.end()); }
+        return retL || retR;
+        
+    }else if(*wildCard=='?'){
+        if('\0'!=*str){ retWC += *str; }
+        bool ret = ('\0' != *str) && getWC_entity(str+1, wildCard+1, retWC);
+        if(!ret && '\0'!=*str){ retWC.erase(--retWC.end()); }
+        return ret;
+        
+    }else{
+        return ((uchar)*wildCard == (uchar)*str) && getWC_entity(str+1, wildCard+1, retWC);
+    }
+}
+*/
 bool sstd::strmatch_getWC(
-        const char* str,      // 比較する文字列
-        const char* wildCard, // ワイルドカード
-        std::string& retWC    // ワイルドカード部分に一致する文字列を返却
+        const char* str,      // target string to search
+        const char* wildCard, // wild card ('*' and '?' are available.)
+        std::string& retWC    // returning a string that matches the wild card
 ){
     retWC.clear();
     bool ret = getWC_entity(str, wildCard, retWC);
     if(!ret){ retWC.clear(); }
+    
+    std::reverse(retWC.begin(), retWC.end());
     return ret;
 }
 
