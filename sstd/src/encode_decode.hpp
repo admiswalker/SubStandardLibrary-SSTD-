@@ -10,9 +10,9 @@ namespace sstd{
     std::string base64_encode(const uchar* str);
     std::string base64_encode(const std::string& str);
 
-    std::string base64_decode(const uchar* str, size_t strLen); // when it was error, return 0 size std::string.
-    std::string base64_decode(const uchar* str);                      // when it was error, return 0 size std::string.
-    std::string base64_decode(const std::string& str);                     // when it was error, return 0 size std::string.
+    std::string base64_decode(const uchar* str, size_t strLen); // when it was an error, 0 size std::string is returned.
+    std::string base64_decode(const uchar* str);                // when it was an error, 0 size std::string is returned.
+    std::string base64_decode(const std::string& str);          // when it was an error, 0 size std::string is returned.
     void print_base64_decode_table(); // for developers
 
     extern const char bin2str_table[256][3];
@@ -22,9 +22,9 @@ namespace sstd{
     std::string url_encode_type2(const char* str, size_t strLen); // for developers
     void url_encode_compare_speed(); // for developers
 
-    std::string url_decode(const char* str, size_t strLen); // when it was error, return 0 size std::string.
-    std::string url_decode(const char* str);                      // when it was error, return 0 size std::string.
-    std::string url_decode(std::string& str);                     // when it was error, return 0 size std::string.
+    std::string url_decode(const char* str, size_t strLen); // when it was an error, 0 size std::string is returned.
+    std::string url_decode(const char* str);                // when it was an error, 0 size std::string is returned.
+    std::string url_decode(std::string& str);               // when it was an error, 0 size std::string is returned.
     void print_url_decode_table(); // for developers
 
 //    std::u16string utf8_to_utf16(const std::string& str);
