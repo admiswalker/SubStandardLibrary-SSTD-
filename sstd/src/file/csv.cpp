@@ -1,8 +1,10 @@
 ﻿#include "./csv.hpp"
-#include "./tinyInterpreter.hpp"
-#include "./strEdit.hpp"
-#include "./path.hpp"
+
 #include "./file.hpp"
+#include "./read_write.hpp"
+#include "../tinyInterpreter.hpp"
+#include "../strEdit.hpp"
+#include "../path.hpp"
 
 
 // erasing empty element(s) in the tail of vector

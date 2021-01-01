@@ -14,7 +14,8 @@
 #endif
 
 #include "./typeDef.h"
-#include "./file.hpp"
+#include "./file/file.hpp"
+#include "./file/read_write.hpp"
 #include "./ssprintf.hpp"
 #include "./mkdir.hpp"
 #include "./rm.hpp"

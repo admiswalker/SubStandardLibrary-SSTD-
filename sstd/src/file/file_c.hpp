@@ -1,9 +1,11 @@
 #pragma once
 #include <string.h> // for strerror(errno)
-#include "./typeDef.h"
-#include "./pdbg.hpp"
+
 #include "./file.hpp"
-#include "./hashFnc_of_MD5_SHA1_SHA2/sstd_md5_sha1_sha2_wrapper.hpp"
+
+#include "../typeDef.h"
+#include "../pdbg.hpp"
+#include "../hashFnc_of_MD5_SHA1_SHA2/sstd_md5_sha1_sha2_wrapper.hpp"
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 

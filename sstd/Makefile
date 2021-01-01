@@ -41,12 +41,13 @@
 # ヘッダファイルのディレクトリも追加する必要があります．また，拡張子を記述してはいけません)
 DIR  = ./*.
 DIR += ./src/*.
+DIR += ./src/file/*.
+DIR += ./src/hashFnc_of_MD5_SHA1_SHA2/*.
 DIR += ./src/linearAlgebra/*.
-DIR += ./src/vector/*.
 DIR += ./src/matrixContainer_binary/*.
 DIR += ./src/matrixContainer_colMajor/*.
 DIR += ./src/matrixContainer_rowMajor/*.
-DIR += ./src/hashFnc_of_MD5_SHA1_SHA2/*.
+DIR += ./src/vector/*.
 
 # Name of generate file: 生成ファイル名
 TARGET = libsstd.a
