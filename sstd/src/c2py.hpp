@@ -237,7 +237,7 @@ inline void sstd_c2py::operator_brackets(T& ret, const char* writeDir_base, cons
     
     // write back non const pointer args.
         // read "argList.bin"
-    std::vector<std::string> lines = sstd::splitByLine(sstd::readAll_withoutBOM(sstd::ssprintf("%s/argList.bin", writeDir_base).c_str()));
+    std::vector<std::string> lines = sstd::splitByLine(sstd::read_withoutBOM(sstd::ssprintf("%s/argList.bin", writeDir_base).c_str()));
     if(!sstd_c2py::writeBack(lines, pArgList, writeDir_base, fSList, fList)){ return; } // ERROR
     
     // read return value

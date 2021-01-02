@@ -16,7 +16,7 @@ TEST(read_write, write_01){
     size_t w_size = sstd::write(f_path.c_str(), &s[0], sizeof(char), s.size()); // testing this line
     ASSERT_EQ(w_size, (uint)12);
     
-    std::vector<uint8> read = sstd::readAll_bin(f_path.c_str());
+    std::vector<uint8> read = sstd::read_bin(f_path.c_str());
     std::string s_read = std::string(read.begin(), read.end());
     ASSERT_STREQ(s.c_str(), s_read.c_str());
     
@@ -30,7 +30,7 @@ TEST(read_write, write_02){
     size_t w_size = sstd::write(f_path, &s[0], sizeof(char), s.size()); // testing this line
     ASSERT_EQ(w_size, (uint)12);
     
-    std::vector<uint8> read = sstd::readAll_bin(f_path.c_str());
+    std::vector<uint8> read = sstd::read_bin(f_path.c_str());
     std::string s_read = std::string(read.begin(), read.end());
     ASSERT_STREQ(s.c_str(), s_read.c_str());
     
@@ -44,7 +44,7 @@ TEST(read_write, write_03){
     size_t w_size = sstd::write(f_path.c_str(), s); // testing this line
     ASSERT_EQ(w_size, (uint)12);
     
-    std::vector<uint8> read = sstd::readAll_bin(f_path.c_str());
+    std::vector<uint8> read = sstd::read_bin(f_path.c_str());
     std::string s_read = std::string(read.begin(), read.end());
     ASSERT_STREQ(s.c_str(), s_read.c_str());
     
@@ -58,7 +58,7 @@ TEST(read_write, write_04){
     size_t w_size = sstd::write(f_path, s.c_str()); // testing this line
     ASSERT_EQ(w_size, (uint)12);
     
-    std::vector<uint8> read = sstd::readAll_bin(f_path.c_str());
+    std::vector<uint8> read = sstd::read_bin(f_path.c_str());
     std::string s_read = std::string(read.begin(), read.end());
     ASSERT_STREQ(s.c_str(), s_read.c_str());
     
@@ -72,7 +72,7 @@ TEST(read_write, write_05){
     size_t w_size = sstd::write(f_path, s); // testing this line
     ASSERT_EQ(w_size, (uint)12);
     
-    std::vector<uint8> read = sstd::readAll_bin(f_path.c_str());
+    std::vector<uint8> read = sstd::read_bin(f_path.c_str());
     std::string s_read = std::string(read.begin(), read.end());
     ASSERT_STREQ(s.c_str(), s_read.c_str());
     

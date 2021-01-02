@@ -83,9 +83,9 @@ std::vector<std::vector<std::string>> sstd::csv2vvec(const char* pReadFile){
     // r: read place
     uint r=0;
     
-//    std::string str = sstd::readAll(pReadFile);
+//    std::string str = sstd::read(pReadFile);
 //    ignoreBOM(str, r); // Ignore BOM (BOM: byte order mark)
-    std::string str = sstd::readAll_withoutBOM(pReadFile);
+    std::string str = sstd::read_withoutBOM(pReadFile);
     
     std::vector<std::vector<std::string>> ret;
     

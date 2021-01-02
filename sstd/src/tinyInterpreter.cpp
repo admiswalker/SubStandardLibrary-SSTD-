@@ -83,7 +83,7 @@ std::vector<std::string> removeComment(struct debugInformation& dbgInf, uchar* s
 
 
 std::vector<std::string> sstd::getCommandList(const char* pReadFile){
-    std::string str = sstd::readAll_withoutBOM(pReadFile);
+    std::string str = sstd::read_withoutBOM(pReadFile);
 
     struct debugInformation dbgInf;
     dbgInf.FileName = sstd::getFileName(pReadFile);

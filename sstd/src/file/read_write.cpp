@@ -7,59 +7,39 @@
 
 
 //--------------------------------------------------------------------------------------------------------
-// read all of the file as a binary
+// read all data in a file as a binary
 
-std::vector<uint8> sstd::readAll_bin(const char* pReadFile){
-    sstd::file fp; if(!fp.fopen(pReadFile, "rb")){ sstd::pdbg("ERROR: fopen was failed.\n"); return std::vector<uint8>(); }
+std::vector<uint8> sstd::read_bin(const char* path){
+    sstd::file fp; if(!fp.fopen(path, "rb")){ sstd::pdbg("ERROR: fopen was failed.\n"); return std::vector<uint8>(); }
     size_t size = fp.fsize(); // ファイルサイズを取得
     std::vector<uint8> raw(size, 0); //0で初期化
     if(fp.fread((uchar*)&raw[0], sizeof(char), size)!=size){ sstd::pdbg("ERROR: fread was failed.\n"); return std::vector<uint8>(); }
     return raw;
 }
-std::vector<uint8> sstd::readAll_bin(const std::string& readFile){ return sstd::readAll_bin(readFile.c_str()); }
+std::vector<uint8> sstd::read_bin(const std::string& path){ return sstd::read_bin(path.c_str()); }
 
 //--------------------------------------------------------------------------------------------------------
-// write all data to one file as a binary
+// write all data to a file as a binary
 
-bool sstd::writeAll_bin(const char* pWritePath, std::vector<uint8>& rhs){
+bool sstd::write_bin(const char* path, std::vector<uint8>& rhs){
     sstd::file fp;
-    if(!fp.fopen(pWritePath, "wb")){ sstd::pdbg("ERROR: sstd::file::fopen(%s) was failed.\n", pWritePath); return false; }
-    if(!fp.fwrite(&rhs[0], sizeof(char), rhs.size())){ sstd::pdbg("ERROR: sstd::file::fwrite(%s) was failed.\n", pWritePath); return false; }
+    if(!fp.fopen(path, "wb")){ sstd::pdbg("ERROR: sstd::file::fopen(%s) was failed.\n", path); return false; }
+    if(!fp.fwrite(&rhs[0], sizeof(char), rhs.size())){ sstd::pdbg("ERROR: sstd::file::fwrite(%s) was failed.\n", path); return false; }
     return true;
 }
-bool sstd::writeAll_bin(const std::string& writePath, std::vector<uint8>& rhs){ return sstd::writeAll_bin(writePath.c_str(), rhs); }
+bool sstd::write_bin(const std::string& path, std::vector<uint8>& rhs){ return sstd::write_bin(path.c_str(), rhs); }
 
 //--------------------------------------------------------------------------------------------------------
+// read
 
-size_t sstd::write(const char* path, const void* ptr, const size_t type_size, const size_t num){ // (1)
-    size_t w_size = 0;
-    sstd::file fp; if(! fp.fopen(path, "wb") ){ return w_size; }
-    w_size = fp.fwrite(ptr, type_size, num);
-    return w_size;
-}
-size_t sstd::write(const std::string& path, const void* ptr, const size_t type_size, const size_t num){ // (2)
-    return sstd::write(path.c_str(), ptr, type_size, num);
-}
-size_t sstd::write(const char* path, const std::string& s){ // (3)
-    return sstd::write(path, &s[0], sizeof(char), s.size());
-}
-size_t sstd::write(const std::string& path, const char* s){ // (4)
-    return sstd::write(path.c_str(), s, sizeof(char), strlen(s));
-}
-size_t sstd::write(const std::string& path, const std::string& s){ // (5)
-    return sstd::write(path.c_str(), &s[0], sizeof(char), s.size());
-}
-
-//--------------------------------------------------------------------------------------------------------
-
-std::string sstd::readAll(const char* pReadFile){
-    sstd::file fp; if(!fp.fopen(pReadFile, "rb")){ sstd::pdbg("ERROR: fopen was failed.\n"); return std::string(); }
+std::string sstd::read(const char* path){
+    sstd::file fp; if(!fp.fopen(path, "rb")){ sstd::pdbg("ERROR: fopen was failed.\n"); return std::string(); }
     size_t size = fp.fsize(); // ファイルサイズを取得
     std::string str(size+1, 0);    //0で初期化    //終端コード分を余分に確保
     if(fp.fread((uchar*)&str[0], sizeof(char), size)!=size){ sstd::pdbg("ERROR: fread was failed.\n"); return std::string(); }
     return str;
 }
-std::string sstd::readAll(const std::string& readFile){ return sstd::readAll(readFile.c_str()); }
+std::string sstd::read(const std::string& path){ return sstd::read(path.c_str()); }
 
 void ignoreBOM(uchar* str, uint& r){
 
@@ -85,10 +65,10 @@ void ignoreBOM(uchar* str, uint& r){
         // or the other encoding.
     }
 }
-std::string sstd::readAll_withoutBOM(const char* pReadFile){
+std::string sstd::read_withoutBOM(const char* path){
 
     sstd::file fp;
-    if(!fp.fopen(pReadFile, "rb")){ sstd::pdbg("ERROR: fopen was failed.\n"); }
+    if(!fp.fopen(path, "rb")){ sstd::pdbg("ERROR: fopen was failed.\n"); }
 
     // check BOM (Byte Order Mark)
     uint BOM_len=0;
@@ -105,6 +85,28 @@ std::string sstd::readAll_withoutBOM(const char* pReadFile){
 
     return str;
 }
-std::string sstd::readAll_withoutBOM(const std::string& readFile){ return sstd::readAll_withoutBOM(readFile.c_str()); }
+std::string sstd::read_withoutBOM(const std::string& path){ return sstd::read_withoutBOM(path.c_str()); }
+
+//--------------------------------------------------------------------------------------------------------
+// write
+
+size_t sstd::write(const char* path, const void* ptr, const size_t type_size, const size_t num){ // (1)
+    size_t w_size = 0;
+    sstd::file fp; if(! fp.fopen(path, "wb") ){ return w_size; }
+    w_size = fp.fwrite(ptr, type_size, num);
+    return w_size;
+}
+size_t sstd::write(const std::string& path, const void* ptr, const size_t type_size, const size_t num){ // (2)
+    return sstd::write(path.c_str(), ptr, type_size, num);
+}
+size_t sstd::write(const char* path, const std::string& s){ // (3)
+    return sstd::write(path, &s[0], sizeof(char), s.size());
+}
+size_t sstd::write(const std::string& path, const char* s){ // (4)
+    return sstd::write(path.c_str(), s, sizeof(char), strlen(s));
+}
+size_t sstd::write(const std::string& path, const std::string& s){ // (5)
+    return sstd::write(path.c_str(), &s[0], sizeof(char), s.size());
+}
 
 //--------------------------------------------------------------------------------------------------------
