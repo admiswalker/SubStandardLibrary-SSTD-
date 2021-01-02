@@ -24,10 +24,10 @@
 //#include "./test/strEdit.hpp"
 //#include "./test/strmatch.hpp"
 //#include "./test/typeConversion.hpp"
-//#include "./test/vector_index.hpp"
-//#include "./test/vector_slice.hpp"
-//#include "./test/vector_stdVector_expansion.hpp" // stdVector_expansion of operators
-//#include "./test/vector_vvec.hpp"
+//#include "./test/vector/index.hpp"
+//#include "./test/vector/slice.hpp"
+//#include "./test/vector/stdVector_expansion.hpp" // stdVector_expansion of operators
+//#include "./test/vector/vvec.hpp"
 
 
 /*
