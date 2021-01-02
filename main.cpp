@@ -14,7 +14,7 @@
 // Remove comment out when you test it.
 //#include "./test/c2py.hpp"
 //#include "./test/file/csv.hpp"
-#include "./test/file/read_write.hpp"
+//#include "./test/file/read_write.hpp"
 //#include "./test/glob.hpp"
 //#include "./test/math.hpp"
 //#include "./test/measureTime.hpp"
@@ -24,9 +24,8 @@
 //#include "./test/strEdit.hpp"
 //#include "./test/strmatch.hpp"
 //#include "./test/typeConversion.hpp"
-//#include "./test/vector/index.hpp"
 //#include "./test/vector/slice.hpp"
-//#include "./test/vector/stdVector_expansion.hpp" // stdVector_expansion of operators
+#include "./test/vector/stdVector_expansion.hpp" // stdVector_expansion of operators
 //#include "./test/vector/vvec.hpp"
 
 
