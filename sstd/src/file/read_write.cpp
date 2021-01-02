@@ -34,8 +34,8 @@ bool sstd::write_bin(const std::string& path, std::vector<uint8>& rhs){ return s
 
 std::string sstd::read(const char* path){
     sstd::file fp; if(!fp.fopen(path, "rb")){ sstd::pdbg("ERROR: fopen was failed.\n"); return std::string(); }
-    size_t size = fp.fsize(); // ファイルサイズを取得
-    std::string str(size+1, 0);    //0で初期化    //終端コード分を余分に確保
+    size_t size = fp.fsize();
+    std::string str(size, 0);
     if(fp.fread((uchar*)&str[0], sizeof(char), size)!=size){ sstd::pdbg("ERROR: fread was failed.\n"); return std::string(); }
     return str;
 }
