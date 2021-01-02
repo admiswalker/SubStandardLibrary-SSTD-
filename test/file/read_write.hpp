@@ -35,11 +35,6 @@ TEST(read_write, read_02){
 //--------------------------------------------------------------------------------------------------------
 // write
 
-//    size_t                   write(const        char* path, const void* ptr, size_t type_size, size_t num);
-//    size_t                   write(const std::string& path, const void* ptr, size_t type_size, size_t num);
-//    size_t                   write(const        char*  path, const std::string& s);
-//    size_t                   write(const std::string& path, const std::string& s);
-
 TEST(read_write, write_01){
     sstd::mkdir("./tmp");
     
