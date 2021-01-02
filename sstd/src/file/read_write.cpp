@@ -3,7 +3,7 @@
 
 #include "../strEdit.hpp"
 #include "../pdbg.hpp"
-#include <string>
+#include <string.h>
 
 
 //--------------------------------------------------------------------------------------------------------
@@ -28,6 +28,27 @@ bool sstd::writeAll_bin(const char* pWritePath, std::vector<uint8>& rhs){
     return true;
 }
 bool sstd::writeAll_bin(const std::string& writePath, std::vector<uint8>& rhs){ return sstd::writeAll_bin(writePath.c_str(), rhs); }
+
+//--------------------------------------------------------------------------------------------------------
+
+size_t sstd::write(const char* path, const void* ptr, const size_t type_size, const size_t num){ // (1)
+    size_t w_size = 0;
+    sstd::file fp; if(! fp.fopen(path, "wb") ){ return w_size; }
+    w_size = fp.fwrite(ptr, type_size, num);
+    return w_size;
+}
+size_t sstd::write(const std::string& path, const void* ptr, const size_t type_size, const size_t num){ // (2)
+    return sstd::write(path.c_str(), ptr, type_size, num);
+}
+size_t sstd::write(const char* path, const std::string& s){ // (3)
+    return sstd::write(path, &s[0], sizeof(char), s.size());
+}
+size_t sstd::write(const std::string& path, const char* s){ // (4)
+    return sstd::write(path.c_str(), s, sizeof(char), strlen(s));
+}
+size_t sstd::write(const std::string& path, const std::string& s){ // (5)
+    return sstd::write(path.c_str(), &s[0], sizeof(char), s.size());
+}
 
 //--------------------------------------------------------------------------------------------------------
 

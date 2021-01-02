@@ -12,6 +12,12 @@ namespace sstd{
     bool                     writeAll_bin(const char*        pWritePath, std::vector<uint8>& rhs);
     bool                     writeAll_bin(const std::string&  writePath, std::vector<uint8>& rhs);
     
+    size_t                   write(const        char* path, const void* ptr, const size_t type_size, const size_t num); // (1)
+    size_t                   write(const std::string& path, const void* ptr, const size_t type_size, const size_t num); // (2)
+    size_t                   write(const        char* path, const std::string& s);                                      // (3)
+    size_t                   write(const std::string& path, const        char* s);                                      // (4)
+    size_t                   write(const std::string& path, const std::string& s);                                      // (5)
+    
     std::string              readAll(const char*        pReadFile); // readAll_str()
     std::string              readAll(const std::string&  readFile); // readAll_str()
     std::string              readAll_withoutBOM(const char*        pReadFile);
