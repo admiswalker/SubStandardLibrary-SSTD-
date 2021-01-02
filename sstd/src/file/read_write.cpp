@@ -79,7 +79,7 @@ std::string sstd::read_withoutBOM(const char* path){
     size_t size = fp.fsize() - BOM_len;
     fp.fseek(BOM_len, SEEK_SET);    //ファイルポインタを先頭 + BOM_len に戻す。
 
-    std::string str(size+1, 0);        //0で初期化    //終端コード分を余分に確保
+    std::string str(size, 0);
 
     if(fp.fread(&str[0], sizeof(char), size)!=size){ sstd::pdbg("ERROR: fread was failed.\n"); }
 
