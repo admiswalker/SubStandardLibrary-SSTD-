@@ -286,3 +286,40 @@ TEST(vector_stdVector_expansion, plus_string){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+TEST(vector_stdVector_expansion, testing_imprimentation_vvv_scalar_str){
+    std::vector<std::vector<std::vector<std::string>>> vvv = { {{"000", "001"}, {"010", "011"}}, {{"100", "101"}, {"110", "111"}} };
+    std::vector<std::vector<std::vector<std::string>>> vvv_test = "./tmp/" + vvv + ".txt";
+
+    std::vector<std::vector<std::vector<std::string>>> vvv_ans = { {{"./tmp/000.txt","./tmp/001.txt"},{"./tmp/010.txt","./tmp/011.txt"}}, {{"./tmp/100.txt","./tmp/101.txt"},{"./tmp/110.txt","./tmp/111.txt"}} };
+    ASSERT_EQ(vvv_ans, vvv_test);
+}
+TEST(vector_stdVector_expansion, testing_imprimentation_vvv_vvv_str){
+    std::vector<std::vector<std::vector<std::string>>> vvv01 = { {{"000-", "001-"}, {"010-", "011-"}}, {{"100-", "101-"}, {"110-", "111-"}} };
+    std::vector<std::vector<std::vector<std::string>>> vvv02 = { {{"000b", "001b"}, {"010b", "011b"}}, {{"100b", "101b"}, {"110b", "111b"}} };
+    std::vector<std::vector<std::vector<std::string>>> vvv_test = vvv01 + vvv02;
+
+    std::vector<std::vector<std::vector<std::string>>> vvv_ans = { {{"000-000b","001-001b"},{"010-010b","011-011b"}}, {{"100-100b","101-101b"},{"110-110b","111-111b"}} };
+    ASSERT_EQ(vvv_ans, vvv_test);
+}
+
+TEST(vector_stdVector_expansion, testing_imprimentation_vvv_vvv_double){
+    std::vector<std::vector<std::vector<double>>> vvv = { {{1, 2},{3, 4}}, {{50,60},{70,80}} };
+    std::vector<std::vector<std::vector<double>>> vvv_test = vvv * 3.0;
+    
+    std::vector<std::vector<std::vector<double>>> vvv_ans = { {{3.,6.},{9.,12.}}, {{150.,180.},{210.,240.}} };
+    
+    ASSERT_EQ(vvv_ans, vvv_test);
+}
+
+TEST(vector_stdVector_expansion, testing_imprimentation_minus_base){
+    std::vector<std::vector<std::vector<double>>> vvv01 = { {{1, 2},{3, 4}}, {{50,60},{70,80}} };
+    std::vector<std::vector<std::vector<double>>> vvv02 = { {{1, 2},{3, 4}}, {{50,60},{70,80}} };
+    std::vector<std::vector<std::vector<double>>> vvv_test = vvv01 * vvv02;
+
+    std::vector<std::vector<std::vector<double>>> vvv_ans = { {{1.,4.},{9.,16.}}, {{2500.,3600.},{4900.,6400.}} };
+    
+    ASSERT_EQ(vvv_ans, vvv_test);
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
