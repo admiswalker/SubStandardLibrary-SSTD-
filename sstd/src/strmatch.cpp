@@ -1,8 +1,12 @@
 ﻿#include <algorithm> // for std::reverse
 #include <string.h> // for ::strcmp()
 
-#include "strmatch.hpp"
+#include "./strmatch.hpp"
 #include "./typeDef.h"
+
+
+//--------------------------------------------------------------------------------------------------------
+// strmatch()
 
 bool sstd::strmatch(
         const char* str,     // target string to search
@@ -17,6 +21,9 @@ bool sstd::strmatch(
 bool sstd::strmatch(const        char* str, const std::string& wildCard){ return sstd::strmatch(str        , wildCard.c_str()); }
 bool sstd::strmatch(const std::string& str, const        char* wildCard){ return sstd::strmatch(str.c_str(), wildCard        ); }
 bool sstd::strmatch(const std::string& str, const std::string& wildCard){ return sstd::strmatch(str.c_str(), wildCard.c_str()); }
+
+//--------------------------------------------------------------------------------------------------------
+// strmatch_getWC()
 
 /*
 bool getWC_entity(
@@ -54,10 +61,10 @@ bool sstd::strmatch_getWC(
     std::reverse(retWC.begin(), retWC.end());
     return ret;
 }
-
 // This code is optimized like below code. (removing std::reverse()).
+
 //*/
-//*
+
 bool getWC_entity(
         const char* str,      // target string to search
         const char* wildCard, // wild card ('*' and '?' are available.)
@@ -95,7 +102,6 @@ bool sstd::strmatch_getWC(
     if(!ret){ retWC.clear(); }
     return ret;
 }
-//*/
 
 bool sstd::strmatch_getWC(const        char* str, const std::string& wildCard, std::string& retWC){ return sstd::strmatch_getWC(str        , wildCard.c_str(), retWC); }
 bool sstd::strmatch_getWC(const std::string& str, const        char* wildCard, std::string& retWC){ return sstd::strmatch_getWC(str.c_str(), wildCard        , retWC); }
@@ -109,6 +115,7 @@ bool sstd::isAlphabet_onlyUpper(char rhs){ return ('A'<=rhs && rhs<='Z'); }
 bool sstd::isAlphabet_onlyLower(char rhs){ return ('a'<=rhs && rhs<='z'); }
 
 //--------------------------------------------------------------------------------------------------------
+// strcmp()
 
 bool sstd::strcmp(const char*        str1, const char*        str2){ return (::strcmp(str1,         str2        )==0); }
 bool sstd::strcmp(const char*        str1, const std::string& str2){ return (::strcmp(str1,         str2.c_str())==0); }
@@ -116,16 +123,28 @@ bool sstd::strcmp(const std::string& str1, const char*        str2){ return (::s
 bool sstd::strcmp(const std::string& str1, const std::string& str2){ return (::strcmp(str1.c_str(), str2.c_str())==0); }
 
 //--------------------------------------------------------------------------------------------------------
+// charIn()
 
-bool sstd::strIn(const char* lhs, const char* rhs){
+bool sstd::charIn(const char lhs, const char* rhs){ // Is lhs in rhs ?
+    for(uint i=0; rhs[i]!='\0'; ++i){
+        if(rhs[i]==lhs){ return true; }
+    }
+    return false;
+}
+bool sstd::charIn(const char lhs, const std::string& rhs){ return sstd::charIn(lhs, rhs.c_str()); }
+
+//--------------------------------------------------------------------------------------------------------
+// strIn()
+
+bool sstd::strIn(const char* lhs, const char* rhs){ // Is lhs in rhs ?
     bool ret=true;
     uint l=0, r=0;
     for(;;){
         if(lhs[l]=='\0'){ return ret;   }
         if(rhs[r]=='\0'){ return false; }
         
-        if(lhs[l]==rhs[r]){ ret=true; ++l;
-        }       else      { ret=false; l=0; }
+        if(lhs[l]==rhs[r]){ ++l; ret=true;
+        }       else      { l=0; ret=false; }
         
         ++r;
     }
@@ -135,4 +154,3 @@ bool sstd::strIn(const std::string& lhs, const char*        rhs){ return sstd::s
 bool sstd::strIn(const std::string& lhs, const std::string& rhs){ return sstd::strIn(lhs.c_str(), rhs.c_str()); }
 
 //--------------------------------------------------------------------------------------------------------
-

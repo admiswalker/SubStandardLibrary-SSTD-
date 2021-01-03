@@ -69,6 +69,37 @@ TEST(strmatch, strmatch){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// charIn()
+
+TEST(strmatch, charIn){
+    {
+        char lhs = ' ';
+        std::string rhs = "";
+        bool ret=sstd::charIn(lhs, rhs); ASSERT_FALSE(ret);
+    }
+    {
+        char lhs = 'A';
+        std::string rhs = "ABCDEFG";
+        bool ret=sstd::charIn(lhs, rhs); ASSERT_TRUE(ret);
+    }
+    {
+        char lhs = 'B';
+        std::string rhs = "ABCDEFG";
+        bool ret=sstd::charIn(lhs, rhs); ASSERT_TRUE(ret);
+    }
+    {
+        char lhs = 'G';
+        std::string rhs = "ABCDEFG";
+        bool ret=sstd::charIn(lhs, rhs); ASSERT_TRUE(ret);
+    }
+    {
+        char lhs = 'X';
+        std::string rhs = "ABCDEFG";
+        bool ret=sstd::charIn(lhs, rhs); ASSERT_FALSE(ret);
+    }
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 // strIn()
 
 TEST(strmatch, strIn){
@@ -100,12 +131,12 @@ TEST(strmatch, strIn){
     {
         std::string lhs = "AXCDEFG";
         std::string rhs = "ABCDEFG";
-        bool ret=sstd::strIn(lhs, rhs); ASSERT_TRUE(!ret);
+        bool ret=sstd::strIn(lhs, rhs); ASSERT_FALSE(ret);
     }
     {
         std::string lhs = "XABCDEFG";
         std::string rhs = "AABCDEFG";
-        bool ret=sstd::strIn(lhs, rhs); ASSERT_TRUE(!ret);
+        bool ret=sstd::strIn(lhs, rhs); ASSERT_FALSE(ret);
     }
 }
 
