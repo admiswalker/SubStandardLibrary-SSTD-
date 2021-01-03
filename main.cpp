@@ -18,14 +18,14 @@
 //#include "./test/glob.hpp"
 //#include "./test/math.hpp"
 //#include "./test/measureTime.hpp"
-//#include "./test/print_printn_printn_all.hpp" // void pdbg(){ printf("======p\n"); } // #define DEBUG を定義しない場合でも，マクロでこの名前は使えなくなるので，名前空間を汚しており，本当はよくない．
+#include "./test/print_printn_printn_all.hpp" // void pdbg(){ printf("======p\n"); } // #define DEBUG を定義しない場合でも，マクロでこの名前は使えなくなるので，名前空間を汚しており，本当はよくない．
 //#include "./test/status.hpp"
 //#include "./test/stdlib.hpp"
 //#include "./test/strEdit.hpp"
 //#include "./test/strmatch.hpp"
 //#include "./test/typeConversion.hpp"
 //#include "./test/vector/slice.hpp"
-#include "./test/vector/stdVector_expansion.hpp" // stdVector_expansion of operators
+//#include "./test/vector/stdVector_expansion.hpp" // stdVector_expansion of operators
 //#include "./test/vector/vvec.hpp"
 
 
