@@ -7,16 +7,16 @@
 
 TEST(strEdit, theOthers){
     printf("■ strEdit\n");
-    printf("  □ readAll_bin\n");
-    std::vector<uint8> raw = sstd::readAll_bin("./test/test.png");
+    printf("  □ readA_bin\n");
+    std::vector<uint8> raw = sstd::read_bin("./test/test.png");
     sstd::printn_all(raw.size());
-    printf("  □ writeAll_bin\n");
-    if(!sstd::writeAll_bin("./test__writeAll_bin_char.png",             raw)){ sstd::pdbg("ERROR: sstd::writeAll_bin()\n"); }
-    if(!sstd::writeAll_bin(std::string("./test__writeAll_bin_str.png"), raw)){ sstd::pdbg("ERROR: sstd::writeAll_bin()\n"); }
+    printf("  □ write_bin\n");
+    if(!sstd::write_bin("./test__write_bin_char.png",             raw)){ sstd::pdbg("ERROR: sstd::write_bin()\n"); }
+    if(!sstd::write_bin(std::string("./test__write_bin_str.png"), raw)){ sstd::pdbg("ERROR: sstd::write_bin()\n"); }
     
-    printf("  □ readAll_withoutBOM & splitByLine\n");
-//    std::string str_tI = sstd::readAll_withoutBOM(R"(./test/tinyInterpreter.txt)");
-    std::string str_tI = sstd::readAll_withoutBOM(std::string(R"(./test/tinyInterpreter.txt)"));
+    printf("  □ read_withoutBOM & splitByLine\n");
+//    std::string str_tI = sstd::read_withoutBOM(R"(./test/tinyInterpreter.txt)");
+    std::string str_tI = sstd::read_withoutBOM(std::string(R"(./test/tinyInterpreter.txt)"));
     std::vector<std::string> splitLList = sstd::splitByLine(str_tI);
     printf("\n");
     printf("  ./test/tinyInterpreter.txt\n");
