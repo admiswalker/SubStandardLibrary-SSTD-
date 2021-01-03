@@ -23,15 +23,5 @@ namespace sstd{
     std::vector<std::string>  strip   (const std::vector<std::string>& vec); // -> strip(str) // removing head and tail spaces
     // todo: rm '\t'
     // todo: implementing memcopy version. Ref: https://postd.cc/how-quickly-can-you-remove-spaces-from-a-string/
-    
-    bool strcmp(const char*        str1, const char*        str2);
-    bool strcmp(const char*        str1, const std::string& str2);
-    bool strcmp(const std::string& str1, const char*        str2);
-    bool strcmp(const std::string& str1, const std::string& str2);
-    
-    bool strIn(const char*        lhs, const char*        rhs); // is lhs in rhs ? (is rhs include lhs ?)
-    bool strIn(const char*        lhs, const std::string& rhs);
-    bool strIn(const std::string& lhs, const char*        rhs);
-    bool strIn(const std::string& lhs, const std::string& rhs);
 }
 

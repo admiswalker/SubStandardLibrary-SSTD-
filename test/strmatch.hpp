@@ -1,7 +1,7 @@
 #pragma once
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-// 
+// strmatch() and strmatch_getWC()
 
 TEST(strmatch, strmatch){
     const char* str = "abcdefghijk";
@@ -68,7 +68,40 @@ TEST(strmatch, strmatch){
     ASSERT_FALSE( sstd::isAlphabet_onlyLower('A') );
 }
 
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// strIn()
 
+TEST(strEdit, strIn){
+    {
+        std::string lhs = "";
+        std::string rhs = "";
+        bool ret=sstd::strIn(lhs, rhs); ASSERT_TRUE(ret);
+    }
+    {
+        std::string lhs = "ABCD";
+        std::string rhs = "ABCDEFG";
+        bool ret=sstd::strIn(lhs, rhs); ASSERT_TRUE(ret);
+    }
+    {
+        std::string lhs = "BCD";
+        std::string rhs = "ABCDEFG";
+        bool ret=sstd::strIn(lhs, rhs); ASSERT_TRUE(ret);
+    }
+    {
+        std::string lhs = "DEFG";
+        std::string rhs = "ABCDEFG";
+        bool ret=sstd::strIn(lhs, rhs); ASSERT_TRUE(ret);
+    }
+    {
+        std::string lhs = "ABCDEFG";
+        std::string rhs = "ABCDEFG";
+        bool ret=sstd::strIn(lhs, rhs); ASSERT_TRUE(ret);
+    }
+    {
+        std::string lhs = "AXCDEFG";
+        std::string rhs = "ABCDEFG";
+        bool ret=sstd::strIn(lhs, rhs); ASSERT_TRUE(!ret);
+    }
+}
 
-
-
+//-----------------------------------------------------------------------------------------------------------------------------------------------

@@ -1,4 +1,6 @@
 ﻿#include <algorithm> // for std::reverse
+#include <string.h> // for ::strcmp()
+
 #include "strmatch.hpp"
 #include "./typeDef.h"
 
@@ -99,9 +101,38 @@ bool sstd::strmatch_getWC(const        char* str, const std::string& wildCard, s
 bool sstd::strmatch_getWC(const std::string& str, const        char* wildCard, std::string& retWC){ return sstd::strmatch_getWC(str.c_str(), wildCard        , retWC); }
 bool sstd::strmatch_getWC(const std::string& str, const std::string& wildCard, std::string& retWC){ return sstd::strmatch_getWC(str.c_str(), wildCard.c_str(), retWC); }
 
+//--------------------------------------------------------------------------------------------------------
 
 bool sstd::isNum               (char rhs){ return ('0'<=rhs && rhs<='9'); }
 bool sstd::isAlphabet          (char rhs){ return ('a'<=rhs && rhs<='z') || ('A'<=rhs && rhs<='Z'); }
 bool sstd::isAlphabet_onlyUpper(char rhs){ return ('A'<=rhs && rhs<='Z'); }
 bool sstd::isAlphabet_onlyLower(char rhs){ return ('a'<=rhs && rhs<='z'); }
+
+//--------------------------------------------------------------------------------------------------------
+
+bool sstd::strcmp(const char*        str1, const char*        str2){ return (::strcmp(str1,         str2        )==0); }
+bool sstd::strcmp(const char*        str1, const std::string& str2){ return (::strcmp(str1,         str2.c_str())==0); }
+bool sstd::strcmp(const std::string& str1, const char*        str2){ return (::strcmp(str1.c_str(), str2        )==0); }
+bool sstd::strcmp(const std::string& str1, const std::string& str2){ return (::strcmp(str1.c_str(), str2.c_str())==0); }
+
+//--------------------------------------------------------------------------------------------------------
+
+bool sstd::strIn(const char*        lhs, const char*        rhs){
+    bool ret=true;
+    uint l=0, r=0;
+    for(;;){
+        if(lhs[l]=='\0'){ return ret;   }
+        if(rhs[r]=='\0'){ return false; }
+        
+        if(lhs[l]==rhs[r]){ ret=true;
+        }       else      { ret=false; l=0; }
+        
+        ++l; ++r;
+    }
+}
+bool sstd::strIn(const char*        lhs, const std::string& rhs){ return sstd::strIn(lhs        , rhs.c_str()); }
+bool sstd::strIn(const std::string& lhs, const char*        rhs){ return sstd::strIn(lhs.c_str(), rhs        ); }
+bool sstd::strIn(const std::string& lhs, const std::string& rhs){ return sstd::strIn(lhs.c_str(), rhs.c_str()); }
+
+//--------------------------------------------------------------------------------------------------------
 
