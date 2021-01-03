@@ -117,17 +117,17 @@ bool sstd::strcmp(const std::string& str1, const std::string& str2){ return (::s
 
 //--------------------------------------------------------------------------------------------------------
 
-bool sstd::strIn(const char*        lhs, const char*        rhs){
+bool sstd::strIn(const char* lhs, const char* rhs){
     bool ret=true;
     uint l=0, r=0;
     for(;;){
         if(lhs[l]=='\0'){ return ret;   }
         if(rhs[r]=='\0'){ return false; }
         
-        if(lhs[l]==rhs[r]){ ret=true;
+        if(lhs[l]==rhs[r]){ ret=true; ++l;
         }       else      { ret=false; l=0; }
         
-        ++l; ++r;
+        ++r;
     }
 }
 bool sstd::strIn(const char*        lhs, const std::string& rhs){ return sstd::strIn(lhs        , rhs.c_str()); }

@@ -71,7 +71,7 @@ TEST(strmatch, strmatch){
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // strIn()
 
-TEST(strEdit, strIn){
+TEST(strmatch, strIn){
     {
         std::string lhs = "";
         std::string rhs = "";
@@ -100,6 +100,11 @@ TEST(strEdit, strIn){
     {
         std::string lhs = "AXCDEFG";
         std::string rhs = "ABCDEFG";
+        bool ret=sstd::strIn(lhs, rhs); ASSERT_TRUE(!ret);
+    }
+    {
+        std::string lhs = "XABCDEFG";
+        std::string rhs = "AABCDEFG";
         bool ret=sstd::strIn(lhs, rhs); ASSERT_TRUE(!ret);
     }
 }
