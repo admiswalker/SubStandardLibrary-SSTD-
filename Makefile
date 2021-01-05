@@ -116,6 +116,8 @@ clean:
 	@(find . -name "__pycache__" -type d | xargs rm -rf)
 	$(if $(patch_txt_exists) ,$(rm *.stackdump))
 	-rm -rf $(RMs)
+	-rm -rf test__write_bin_char.png
+	-rm -rf test__write_bin_str.png
 
 
 .PHONY: steps
