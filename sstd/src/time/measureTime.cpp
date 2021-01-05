@@ -1,5 +1,5 @@
 ﻿#include "measureTime.hpp"
-#include "ssprintf.hpp"
+#include "../string/ssprintf.hpp"
 
 
 void sstd::measureTime_start(time_m& startTime){

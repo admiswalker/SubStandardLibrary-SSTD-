@@ -1,8 +1,8 @@
-﻿#include "./tinyInterpreter.hpp"
-#include "./file/read_write.hpp"
-#include "./pdbg.hpp"
-#include "./path.hpp"
-#include "./strEdit.hpp"
+﻿#include "tinyInterpreter.hpp"
+#include "file/read_write.hpp"
+#include "file/path.hpp"
+#include "pdbg.hpp"
+#include "string/strEdit.hpp"
 
 /*
  * bug

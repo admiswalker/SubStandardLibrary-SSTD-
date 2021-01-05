@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <string>
 #include <vector>
-#include "ssprintf.hpp"
+#include "string/ssprintf.hpp"
 
 namespace sstd{
     int str2int(const        char* rhs); // 小数点以下，切り捨て

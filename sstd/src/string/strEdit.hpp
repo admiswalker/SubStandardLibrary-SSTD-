@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "typeDef.h"
+#include "../typeDef.h"
 #include <string>
 #include <vector>
 

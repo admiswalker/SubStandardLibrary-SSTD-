@@ -1,6 +1,6 @@
 ﻿#include "mkdir.hpp"
 #include "path.hpp"
-#include "typeDef.h"
+#include "../typeDef.h"
 
 #ifdef _WIN32
     #include <direct.h>    //_mkdir();用

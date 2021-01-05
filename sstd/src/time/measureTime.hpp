@@ -10,7 +10,7 @@
 #include <ctime>
 #include <string>
 
-#include "typeDef.h"
+#include "../typeDef.h"
 
 
 typedef std::chrono::system_clock::time_point time_m;

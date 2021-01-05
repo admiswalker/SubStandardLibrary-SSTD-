@@ -2,7 +2,7 @@
 #include <string.h> // for ::strcmp()
 
 #include "./strmatch.hpp"
-#include "./typeDef.h"
+#include "../typeDef.h"
 
 
 //--------------------------------------------------------------------------------------------------------

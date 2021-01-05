@@ -1,7 +1,7 @@
 #include "./read_write.hpp"
 #include "./file.hpp"
 
-#include "../strEdit.hpp"
+#include "../string/strEdit.hpp"
 #include "../pdbg.hpp"
 #include <string.h>
 

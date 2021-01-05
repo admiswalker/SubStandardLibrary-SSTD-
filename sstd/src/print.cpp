@@ -1,6 +1,6 @@
 ﻿#include "./print.hpp"
-#include "./ssprintf.hpp"
-#include "./strmatch.hpp"
+#include "./string/ssprintf.hpp"
+#include "./string/strmatch.hpp"
 
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

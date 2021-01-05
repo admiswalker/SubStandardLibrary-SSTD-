@@ -27,48 +27,53 @@
 
 // 数値計算系の関数 (スプライン補完等)
 
-#include "./src/measureTime.hpp"
-#include "./src/sleep.hpp" // use_sstd_gcc4_4_7
-#include "./src/time.hpp"
-#include "./src/typeDef.h"
-//#include "./src/pdbg.hpp" // 後ろで include しないと，extern での定義を置換してしまう．
-//#include "./src/print.hpp" // 後ろで include しないと，extern での定義を置換してしまう．
-#include "./src/math.hpp"
-#include "./src/signal.hpp"
-#include "./src/file/file.hpp"
-#include "./src/file/file_c.hpp"
-#include "./src/file/read_write.hpp"
-#include "./src/mkdir.hpp"
-#include "./src/rm.hpp"
-#include "./src/typeConversion.hpp"
-#include "./src/ssprintf.hpp"
-#include "./src/strmatch.hpp"
-#include "./src/path.hpp"
-#include "./src/glob.hpp"
-#include "./src/itr.hpp"
-#include "./src/strEdit.hpp"
-#include "./src/tinyInterpreter.hpp"
-#include "./src/file/csv.hpp"
-#include "./src/encode_decode.hpp"
-#include "./src/hashFnc_of_MD5_SHA1_SHA2/sstd_md5_sha1_sha2_wrapper.hpp"
-#include "./src/pause.hpp"
-#include "./src/pid.hpp"
-#include "./src/status.hpp"
-#include "./src/stdlib.hpp"
+#include "src/file/csv.hpp"
+#include "src/file/file.hpp"
+#include "src/file/file_c.hpp"
+#include "src/file/glob.hpp"
+#include "src/file/read_write.hpp"
+#include "src/file/mkdir.hpp"
+#include "src/file/path.hpp"
+#include "src/file/read_write.hpp"
+#include "src/file/rm.hpp"
 
-#include "./src/linearAlgebra/matCal.hpp"
-#include "./src/matrixContainer_binary/bmat.hpp"
-#include "./src/vector/slice.hpp"
-#include "./src/vector/stdVector_expansion.hpp"
-#include "./src/vector/typeDef.hpp"
-#include "./src/vector/vvec.hpp"
-#include "./src/matrixContainer_colMajor/mat_c.hpp" // Because of this header use "pdbg.hpp", we need to define after namespace sstd{}.
-#include "./src/matrixContainer_rowMajor/mat_r.hpp" // Because of this header use "pdbg.hpp", we need to define after namespace sstd{}.
+#include "src/hashFnc_of_MD5_SHA1_SHA2/sstd_md5_sha1_sha2_wrapper.hpp"
 
-#include "./src/pdbg.hpp"                           // In order to avoid conflict of "pdbg.hpp", we need to define after namespace sstd{}.
-#include "./src/print.hpp"                          // In order to avoid conflict of "print.hpp", we need to define after namespace sstd{}.
+#include "src/string/ssprintf.hpp"
+#include "src/string/strEdit.hpp"
+#include "src/string/strmatch.hpp"
 
-#include "./compileOption.hpp"
+#include "src/time/measureTime.hpp"
+#include "src/time/time.hpp"
+#include "src/time/sleep.hpp" // use_sstd_gcc4_4_7
+
+#include "src/typeDef.h"
+//#include "src/pdbg.hpp" // 後ろで include しないと，extern での定義を置換してしまう．
+//#include "src/print.hpp" // 後ろで include しないと，extern での定義を置換してしまう．
+#include "src/math.hpp"
+#include "src/signal.hpp"
+#include "src/typeConversion.hpp"
+#include "src/itr.hpp"
+#include "src/tinyInterpreter.hpp"
+#include "src/encode_decode.hpp"
+#include "src/pause.hpp"
+#include "src/pid.hpp"
+#include "src/status.hpp"
+#include "src/stdlib.hpp"
+
+#include "src/linearAlgebra/matCal.hpp"
+#include "src/matrixContainer_binary/bmat.hpp"
+#include "src/vector/slice.hpp"
+#include "src/vector/stdVector_expansion.hpp"
+#include "src/vector/typeDef.hpp"
+#include "src/vector/vvec.hpp"
+#include "src/matrixContainer_colMajor/mat_c.hpp" // Because of this header use "pdbg.hpp", we need to define after namespace sstd{}.
+#include "src/matrixContainer_rowMajor/mat_r.hpp" // Because of this header use "pdbg.hpp", we need to define after namespace sstd{}.
+
+#include "src/pdbg.hpp"                           // In order to avoid conflict of "pdbg.hpp", we need to define after namespace sstd{}.
+#include "src/print.hpp"                          // In order to avoid conflict of "print.hpp", we need to define after namespace sstd{}.
+
+#include "compileOption.hpp"
 #ifndef use_sstd_pdbg
     #undef pdbg
     #undef pdbg_if
@@ -87,4 +92,4 @@
 #endif
 
 // 上記で関数を示さない応用ライブラリは下記に列挙する
-#include "./src/c2py.hpp"
+#include "src/c2py.hpp"

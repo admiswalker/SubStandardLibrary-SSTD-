@@ -13,21 +13,21 @@
     #define omp_get_max_threads() 1
 #endif
 
-#include "./typeDef.h"
-#include "./file/file.hpp"
-#include "./file/read_write.hpp"
-#include "./ssprintf.hpp"
-#include "./mkdir.hpp"
-#include "./rm.hpp"
-#include "./time.hpp"
-#include "./strEdit.hpp"
-#include "./strmatch.hpp"
-#include "./path.hpp"
-#include "./pid.hpp"
-#include "./matrixContainer_colMajor/mat_c.hpp"
-#include "./matrixContainer_rowMajor/mat_r.hpp"
+#include "typeDef.h"
+#include "file/file.hpp"
+#include "file/read_write.hpp"
+#include "string/ssprintf.hpp"
+#include "file/mkdir.hpp"
+#include "file/rm.hpp"
+#include "time/time.hpp"
+#include "string/strEdit.hpp"
+#include "string/strmatch.hpp"
+#include "file/path.hpp"
+#include "pid.hpp"
+#include "matrixContainer_colMajor/mat_c.hpp"
+#include "matrixContainer_rowMajor/mat_r.hpp"
 
-#include "./print.hpp" // for debug (リリース時に削除するように)
+#include "print.hpp" // for debug (リリース時に削除するように)
 
 //--------------------------------------------------------------------------------------------------------
 
