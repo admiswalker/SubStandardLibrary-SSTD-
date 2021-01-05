@@ -9,13 +9,13 @@ TEST(print, for_printn_bool){
         bool tf = true;
         testing::internal::CaptureStdout();
         sstd::for_printn(tf);
-        ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), " = T\n");
+        ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), " = true\n");
     }
     {
         bool tf = false;
         testing::internal::CaptureStdout();
         sstd::for_printn(tf);
-        ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), " = F\n");
+        ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), " = false\n");
     }
 }
 TEST(print, for_printn_char){

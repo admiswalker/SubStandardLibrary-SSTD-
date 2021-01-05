@@ -5,32 +5,30 @@
 
 
 namespace sstd{
-    // woLF: without line feed code ('\n')
-    void print_woLF(const  bool  rhs);
-    void print_woLF(const  char  rhs);
-    void print_woLF(const  int8  rhs);
-    void print_woLF(const  int16 rhs);
-    void print_woLF(const  int32 rhs);
-    void print_woLF(const  int64 rhs);
-    void print_woLF(const uint8  rhs);
-    void print_woLF(const uint16 rhs);
-    void print_woLF(const uint32 rhs);
-    void print_woLF(const uint64 rhs);
-    void print_woLF(const float  rhs);
-    void print_woLF(const double  rhs); // Note: Prioritize readability and do not display all effective digits of double-precision type.
-    void print_woLF(const        char* rhs);
-    void print_woLF(const std::string& rhs);
+    void print_for_vT(const  bool  rhs);
+    void print_for_vT(const  char  rhs);
+    void print_for_vT(const  int8  rhs);
+    void print_for_vT(const  int16 rhs);
+    void print_for_vT(const  int32 rhs);
+    void print_for_vT(const  int64 rhs);
+    void print_for_vT(const uint8  rhs);
+    void print_for_vT(const uint16 rhs);
+    void print_for_vT(const uint32 rhs);
+    void print_for_vT(const uint64 rhs);
+    void print_for_vT(const float  rhs);
+    void print_for_vT(const double rhs);
+    void print_for_vT(const        char* rhs);
+    void print_for_vT(const std::string& rhs);
     template <typename T>
-    void print_woLF(const std::vector<T>& rhs){
+    void print_for_vT(const std::vector<T>& rhs){
         printf("[");
         if(rhs.size()>=1){
-            for(uint i=0; i<rhs.size()-1; ++i){ sstd::print_woLF(rhs[i]); printf(" "); }
-            sstd::print_woLF( rhs[rhs.size()-1] );
+            for(uint i=0; i<rhs.size()-1; ++i){ sstd::print_for_vT(rhs[i]); printf(" "); }
+            sstd::print_for_vT( rhs[rhs.size()-1] );
         }
         printf("]");
     }
     
-    // with line feed code ('\n')
     void print(const  bool  rhs);
     void print(const  char  rhs);
     void print(const  int8  rhs);
@@ -46,7 +44,7 @@ namespace sstd{
     void print(const        char* rhs);
     void print(const std::string& rhs);
     template <typename T>
-    void print(const std::vector<T>& rhs){ sstd::print_woLF(rhs); printf("\n"); }
+    void print(const std::vector<T>& rhs){ sstd::print_for_vT(rhs); printf("\n"); }
     
     void for_printn( bool  rhs);
     void for_printn( char  rhs);
@@ -65,7 +63,7 @@ namespace sstd{
     template <typename T>
     void for_printn(const std::vector<T>& rhs){
         printf(" = ");
-        sstd::print_woLF(rhs); // using "without line feed" version for recursive call for deep std::vector<std::vector<... std::vector<T>... >>.
+        sstd::print_for_vT(rhs); // using "without line feed" version for recursive call for deep std::vector<std::vector<... std::vector<T>... >>.
         printf("\n");
     }
 
