@@ -42,6 +42,7 @@
 #include "src/string/ssprintf.hpp"
 #include "src/string/strEdit.hpp"
 #include "src/string/strmatch.hpp"
+#include "src/string/utf8.hpp"
 
 #include "src/time/measureTime.hpp"
 #include "src/time/time.hpp"
