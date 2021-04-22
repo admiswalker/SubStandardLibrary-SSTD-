@@ -63,10 +63,10 @@ TEST(time, tmLocal2timeGm){
     
     struct tm c_tm_l   = sstd::timeGm2tmLocal(c_time);
     time_t    c_time_g = sstd::tmLocal2timeGm(c_tm_l);
-    std::string t_l = sstd::ssprintf("local: %s", sstd::tm2str(c_tm_l).c_str());
+//  std::string t_l = sstd::ssprintf("local: %s", sstd::tm2str(c_tm_l).c_str());
     std::string t_g = sstd::ssprintf("GMT: %s", sstd::time2str(c_time_g).c_str());
     
-    ASSERT_STREQ("local: 2021-04-23 01:18:02", t_l.c_str());
+//  ASSERT_STREQ("local: 2021-04-23 01:18:02", t_l.c_str()); // Because of the local time depends on the area defined in the system, this line is difficult to test.
     ASSERT_STREQ("GMT: 2021-04-22 16:18:02",   t_g.c_str());
 }
 TEST(time, yday2time){
