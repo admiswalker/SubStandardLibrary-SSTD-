@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <time.h>
 #include <string>
+#include <sys/time.h>
 #include "../typeDef.h"
 #ifdef _WIN32
     #include <winsock2.h> // for "struct timeval" // マクロが再定義されました。主な原因は、<WinSock2.h>より先に<windows.h>がインクルードされたことです。Windowsの制約として、windows.hよりも先にwinsock2.hをインクルードすることが必要です。http://www.02.246.ne.jp/~torutk/cxx/socket/win32_socket.html
