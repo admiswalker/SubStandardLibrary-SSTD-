@@ -100,7 +100,8 @@ $(TARGET): $(OBJS)
 COPY_heads: $(HEADppS) $(HEADS) $(PYS)
 	@echo "COPY_heads"
 	@mkdir -p ./include/sstd
-	@echo $^ | xargs cp -u --parents -p -t ./include/sstd
+	@cp LICENSE ./include/sstd/
+	@echo $^ | xargs -n 1 | xargs -I {} cp {} ./include/sstd --parents -P
 
 
 # 各ファイルの分割コンパイル
