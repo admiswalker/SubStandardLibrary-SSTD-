@@ -29,23 +29,16 @@ struct tm sstd::timeGm2tmLocal(time_t unixtime){
     #endif
     return ret;
 }
-#ifdef _WIN32
-int get_utc_offset(){
-    time_t Jan2_1990 = 24*60*60;
-    struct tm tmLocal = sstd::timeGm2tmLocal(Jan2_1990);
-    int local_hh = tmLocal.tm_hour;
-    if(tmLocal.tm_yday<(2-1)){ // GMT is now Jan 2, 1990 00:00, and Is local time under or over this?
-        local_hh -= 24;
-    }
-    return local_hh;
-}
-#endif
 time_t sstd::tmLocal2timeGm(struct tm& rhs){
-    #ifdef _WIN32
-        return sstd::tm2time(rhs) - get_utc_offset()*60*60;
-    #else
-        return timelocal(&rhs);
-    #endif
+    return mktime(&rhs);
+    
+    // FROM: "$ man timelocal"
+    //
+    //  CONFORMING TO
+    //    These functions are nonstandard GNU extensions that are also present on the BSDs.  Avoid their use.
+    //
+    //  NOTES
+    //    The timelocal() function is equivalent to the POSIX standard function mktime(3).  There is no reason to ever use it.
 }
 
 std::string sstd::time2str(time_t unixtime){

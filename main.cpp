@@ -17,7 +17,7 @@
 //#include "test/file/read_write.hpp"
 //#include "test/string/strEdit.hpp"
 //#include "test/string/strmatch.hpp"
-#include "test/string/utf8.hpp"
+//#include "test/string/utf8.hpp"
 //#include "test/glob.hpp"
 //#include "test/math.hpp"
 //#include "test/measureTime.hpp"
@@ -25,6 +25,7 @@
 //#include "test/status.hpp"
 //#include "test/stdlib.hpp"
 //#include "test/typeConversion.hpp"
+#include "test/time/time.hpp"
 //#include "test/vector/slice.hpp"
 //#include "test/vector/stdVector_expansion.hpp" // stdVector_expansion of operators
 //#include "test/vector/vvec.hpp"
@@ -32,7 +33,6 @@
 
 /*
 // sequentially moving on to google c++ testing framework.
-void TEST_time();
 void TEST_typeDef();
 void TEST_pdbg();
 void TEST_signal();
@@ -68,7 +68,6 @@ int main(int argc, char** argv){
     
     auto ret = RUN_ALL_TESTS();
 
-//    TEST_time();
 //    TEST_typeDef();
 //    TEST_pdbg();
 //    TEST_math();
@@ -98,38 +97,6 @@ int main(int argc, char** argv){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 /*
-void TEST_time(){
-    printf("■ time\n");
-    time_t      c_time    = time(0); // get current time
-    struct tm   c_tm      = sstd::time2tm(c_time);
-    time_t      c_time_2  = sstd::tm2time(c_tm);
-    double      unixday   = sstd::time2unixday(c_time);
-    double      unixday_2 = sstd::tm2unixday(c_tm);
-    printf("GMT: %s\n", sstd::tm2str(c_tm).c_str());
-    printf("GMT: %s\n", sstd::time2str(c_time_2).c_str());
-    printf("unixday: %lf\n", unixday);
-    printf("unixday: %lf\n", unixday_2);
-    printf("\n");
-
-    struct tm   c_tm_l   = sstd::timeGm2tmLocal(c_time);
-    time_t      c_time_3 = sstd::tmLocal2timeGm(c_tm_l);
-    printf("local: %s\n",  sstd::tm2str(c_tm_l).c_str());
-    printf("GMT: %s\n",    sstd::time2str(c_time_3).c_str());
-    printf("\n");
-    
-    time_t c_time_yday  = sstd::yday2time(c_tm.tm_year+1900, c_tm.tm_yday+1);
-    printf("GMT: %s\n",   sstd::time2str(c_time_yday).c_str());
-    struct tm c_tm_yday = sstd::yday2tm(c_tm.tm_year+1900, c_tm.tm_yday+1);
-    printf("GMT: %s\n",   sstd::tm2str(c_tm_yday).c_str());
-    printf("\n");
-
-    struct timeval time_sec_micro = sstd::getTimeval();
-    printf("timeval: %lf\n",(time_sec_micro.tv_sec)+(time_sec_micro.tv_usec*1.0E-6));
-
-    sstd::print(c_tm_yday);
-    sstd::printn(c_tm_yday);
-    sstd::printn_all(c_tm_yday);
-}
 void TEST_typeDef(){
     printf("■ typeDef\n");
     uchar   uc =  1; printf("uchar:  %u\n",     uc);

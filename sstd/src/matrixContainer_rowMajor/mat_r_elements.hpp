@@ -1,4 +1,5 @@
 #pragma once
+#include "../typeDef.h"
 
 namespace sstd{
     template <typename T> class mat_r;

@@ -1,4 +1,5 @@
 ﻿//#include <stdlib.h>
+#include "typeDef.h"
 #include "typeConversion.hpp"
 
 int sstd::str2int(const        char* rhs){ return std::atoi(rhs); } // 小数点以下，切り捨て
