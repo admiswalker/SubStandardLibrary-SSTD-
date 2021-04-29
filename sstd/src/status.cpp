@@ -17,7 +17,7 @@ template<typename retVal>
 uint64 sstd_statusBase(const char* fmtBase, const char* type){
     retVal ret=retVal();
     
-    FILE *fp;
+    FILE* fp;
     char cmd[128];
     sprintf(cmd, "grep %s /proc/%d/status", type, getpid());
     if( (fp=popen(cmd,"r"))==NULL ){ return ret; } // failure

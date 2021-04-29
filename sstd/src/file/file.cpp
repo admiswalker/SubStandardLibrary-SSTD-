@@ -1,5 +1,17 @@
 ﻿#include "file.hpp"
 
+//--------------------------------------------------------------------------------------------------------
+
+sstd::file::file(){
+    fp=NULL;
+    type=0; // 0: fopen(), 1: popen().
+}
+sstd::file::~file(){
+    close();
+}
+
+//---
+
 #ifdef _WIN32
     inline bool sstd_file_fopen_win32(FILE** fp, const char*& fileName, const char*& mode){
         return (fopen_s(fp, fileName, mode)==NULL);
@@ -12,14 +24,40 @@
 #endif
 bool sstd::file::fopen(const char* fileName, const char* mode){
     #ifdef _WIN32
-        return sstd_file_fopen_win32(&fp, fileName, mode);
+        return sstd_file_fopen_win32(&this->fp, fileName, mode);
     #else
         return sstd_file_fopen_linux(&this->fp, fileName, mode);
     #endif
 }
-bool sstd::file::fopen(const std::string& fileName, const char* mode){ return sstd::file::fopen(fileName.c_str(), mode); }
+bool sstd::file::fopen(const std::string& fileName, const char* mode){
+    type = 0;
+    return sstd::file::fopen(fileName.c_str(), mode);
+}
 
-bool sstd::file::fclose(){ if(fp!=0){ return ::fclose(fp)==0; }else{ return false; } }
+//---
+
+bool sstd::file::popen(const char* fileName, const char* mode){
+    type = 1;
+    this->fp = ::popen(fileName, mode);
+    return this->fp!=NULL;
+}
+bool sstd::file::popen(const std::string& fileName, const char* mode){ return sstd::file::popen(fileName.c_str(), mode); }
+
+//---
+
+bool sstd::file::close(){
+    if(fp==NULL){ return false; }
+    
+    switch(type){
+    case 0: ::fclose(fp); return fp!=NULL;
+    case 1: ::pclose(fp); return fp!=NULL;
+    default: return false;
+    }
+}
+
+//---
+
+char* sstd::file::fgets(char* s, int size){ return ::fgets(s, size, this->fp); }
 size_t sstd::file::fread(void* ptr, const size_t& size, const size_t& nmemb){ return ::fread(ptr, size, nmemb, this->fp); }
 size_t sstd::file::fwrite(const void* ptr, const size_t& size, const size_t& nmemb){ return ::fwrite(ptr, size, nmemb, this->fp); }
 int sstd::file::fseek(const long& offset, const int& whence){ return ::fseek(this->fp, offset, whence); }
@@ -33,3 +71,4 @@ size_t sstd::file::fsize(){
     return size;
 }
 
+//--------------------------------------------------------------------------------------------------------

@@ -14,6 +14,7 @@
 // Remove comment out when you test it.
 //#include "test/c2py.hpp"
 //#include "test/file/csv.hpp"
+#include "test/file/file.hpp"
 //#include "test/file/read_write.hpp"
 //#include "test/string/strEdit.hpp"
 //#include "test/string/strmatch.hpp"
@@ -22,10 +23,10 @@
 //#include "test/math.hpp"
 //#include "test/measureTime.hpp"
 //#include "test/print_printn_printn_all.hpp" // void pdbg(){ printf("======p\n"); } // #define DEBUG を定義しない場合でも，マクロでこの名前は使えなくなるので，名前空間を汚しており，本当はよくない．
-//#include "test/status.hpp"
+#include "test/status.hpp"
 //#include "test/stdlib.hpp"
 //#include "test/typeConversion.hpp"
-#include "test/time/time.hpp"
+//#include "test/time/time.hpp"
 //#include "test/vector/slice.hpp"
 //#include "test/vector/stdVector_expansion.hpp" // stdVector_expansion of operators
 //#include "test/vector/vvec.hpp"
