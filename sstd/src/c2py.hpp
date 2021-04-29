@@ -40,8 +40,8 @@ namespace sstd_c2py{
     public:
         typeSet(){ constTF=false; case_num=0; N_num=0; T_num=0; pointer=false; pointer_sidePy=false; cnv2builtIn_sidePy=false; }
         ~typeSet(){}
-         bool retTF;                    // true: 戻り値として扱う．(true の場合は，値を書き戻すために，必ず，pointer も true でなければならない．) false: 引数として扱う．
-         bool constTF;                  // true: ポインタの先の書き戻しを行う．false: ポインタの先の書き戻しを行わない．
+         bool retTF;                   // true: 戻り値として扱う．(true の場合は，値を書き戻すために，必ず，pointer も true でなければならない．) false: 引数として扱う．
+         bool constTF;                 // true: ポインタの先の書き戻しを行う．false: ポインタの先の書き戻しを行わない．
                                        // const-> true, not const -> false.
         uchar case_num;                // case number is an id number identified by N_num and T_num.
         std::string name; uchar N_num; // void, int, vec<T>... and so on. // number of value
@@ -65,7 +65,7 @@ namespace sstd_c2py{
     
     bool c2py_ret(                   bool & inOut, sstd::file& fp, std::string& line);
     bool c2py_ret(                   char & inOut, sstd::file& fp, std::string& line);
-//    bool c2py_ret(                  uchar & inOut, sstd::file& fp, std::string& line); // same as uint8
+//  bool c2py_ret(                  uchar & inOut, sstd::file& fp, std::string& line); // same as uint8
     bool c2py_ret(                   int8 & inOut, sstd::file& fp, std::string& line);
     bool c2py_ret(                  int16 & inOut, sstd::file& fp, std::string& line);
     bool c2py_ret(                  int32 & inOut, sstd::file& fp, std::string& line);
@@ -80,7 +80,7 @@ namespace sstd_c2py{
     
     bool c2py_ret(std::vector<       bool>& inOut, sstd::file& fp, std::string& line);
     bool c2py_ret(std::vector<       char>& inOut, sstd::file& fp, std::string& line);
-//    bool c2py_ret(std::vector<      uchar>& inOut, sstd::file& fp, std::string& line); // same as uint8
+//  bool c2py_ret(std::vector<      uchar>& inOut, sstd::file& fp, std::string& line); // same as uint8
     bool c2py_ret(std::vector<       int8>& inOut, sstd::file& fp, std::string& line);
     bool c2py_ret(std::vector<      int16>& inOut, sstd::file& fp, std::string& line);
     bool c2py_ret(std::vector<      int32>& inOut, sstd::file& fp, std::string& line);
@@ -106,11 +106,11 @@ namespace sstd_c2py{
 //    bool c2py_ret(std::vector<std::vector<     uint64>>& inOut, sstd::file& fp, std::string& line);
 //    bool c2py_ret(std::vector<std::vector<      float>>& inOut, sstd::file& fp, std::string& line);
     bool c2py_ret(std::vector<std::vector<     double>>& inOut, sstd::file& fp, std::string& line);
-//    bool c2py_ret(std::vector<std::vector<std::string>>& inOut, sstd::file& fp, std::string& line);
+//  bool c2py_ret(std::vector<std::vector<std::string>>& inOut, sstd::file& fp, std::string& line);
     
     bool c2py_ret(sstd::mat_c<       bool>& inOut, sstd::file& fp, std::string& line);
     bool c2py_ret(sstd::mat_c<       char>& inOut, sstd::file& fp, std::string& line);
-//    bool c2py_ret(sstd::mat_c<      uchar>& inOut, sstd::file& fp, std::string& line); // same as uint8
+//  bool c2py_ret(sstd::mat_c<      uchar>& inOut, sstd::file& fp, std::string& line); // same as uint8
     bool c2py_ret(sstd::mat_c<       int8>& inOut, sstd::file& fp, std::string& line);
     bool c2py_ret(sstd::mat_c<      int16>& inOut, sstd::file& fp, std::string& line);
     bool c2py_ret(sstd::mat_c<      int32>& inOut, sstd::file& fp, std::string& line);
@@ -125,7 +125,7 @@ namespace sstd_c2py{
     
     bool c2py_ret(sstd::mat_r<       bool>& inOut, sstd::file& fp, std::string& line);
     bool c2py_ret(sstd::mat_r<       char>& inOut, sstd::file& fp, std::string& line);
-//    bool c2py_ret(sstd::mat_r<      uchar>& inOut, sstd::file& fp, std::string& line); // same as uint8
+//  bool c2py_ret(sstd::mat_r<      uchar>& inOut, sstd::file& fp, std::string& line); // same as uint8
     bool c2py_ret(sstd::mat_r<       int8>& inOut, sstd::file& fp, std::string& line);
     bool c2py_ret(sstd::mat_r<      int16>& inOut, sstd::file& fp, std::string& line);
     bool c2py_ret(sstd::mat_r<      int32>& inOut, sstd::file& fp, std::string& line);
