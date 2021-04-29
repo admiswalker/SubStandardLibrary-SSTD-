@@ -59,7 +59,7 @@
 
     +------------------------------------------------------------------------------------------------------------------+
     | struct typeSet{                                                                                                  |
-    |    bool constTF;                 // true: ポインタの先の書き戻しを行う．false: ポインタの先の書き戻しを行わない．     |
+    |    bool constTF;                 // true: ポインタの先の書き戻しを行う．false: ポインタの先の書き戻しを行わない．    |
     |                                  // const-> true, not const -> false.                                            |
     |    std::string name; char N_num; // void, int, vec<T>... and so on. // number of value                           |
     |    std::string    T; char T_num; // template<typename "T"> or ""    // number of value                           |
