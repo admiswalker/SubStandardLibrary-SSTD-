@@ -8,9 +8,10 @@
 namespace sstd{ class file; }
 class sstd::file{
 private:
-public:
     FILE* fp;
-    int type;
+    int type; // 0: fopen(), 1: popen().
+    
+public:
     file();
     ~file();
     
