@@ -1,4 +1,5 @@
 ﻿#include "file.hpp"
+#include <stdarg.h>
 
 //--------------------------------------------------------------------------------------------------------
 
@@ -59,10 +60,13 @@ bool sstd::file::close(){
 
 char* sstd::file::fgets(char* s, int size){ return ::fgets(s, size, this->fp); }
 size_t sstd::file::fread(void* ptr, const size_t& size, const size_t& nmemb){ return ::fread(ptr, size, nmemb, this->fp); }
-size_t sstd::file::fwrite(const void* ptr, const size_t& size, const size_t& nmemb){ return ::fwrite(ptr, size, nmemb, this->fp); }
+int sstd::file::fscanf(const char* format, ...){
+    va_list ap; va_start(ap, format);
+    int ret = ::fscanf(this->fp, format, ap);
+    va_end(ap);
+    return ret;
+}
 int sstd::file::fseek(const long& offset, const int& whence){ return ::fseek(this->fp, offset, whence); }
-long sstd::file::ftell(){ return ::ftell(this->fp); }
-
 size_t sstd::file::fsize(){
     size_t size_buf = ::ftell(fp);   // ファイルポインタの位置を記録しておく
     ::fseek(fp, 0, SEEK_END);        // ファイルポインタをファイルの最後に移動させる
@@ -70,5 +74,7 @@ size_t sstd::file::fsize(){
     ::fseek(fp, size_buf, SEEK_SET); // ファイルポインタを元の位置に戻す
     return size;
 }
+long sstd::file::ftell(){ return ::ftell(this->fp); }
+size_t sstd::file::fwrite(const void* ptr, const size_t& size, const size_t& nmemb){ return ::fwrite(ptr, size, nmemb, this->fp); }
 
 //--------------------------------------------------------------------------------------------------------

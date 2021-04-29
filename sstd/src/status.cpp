@@ -1,4 +1,5 @@
-﻿#include "./status.hpp"
+﻿#include "status.hpp"
+#include "file/file.hpp"
 #ifdef _WIN32
 #else
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -17,17 +18,17 @@ template<typename retVal>
 uint64 sstd_statusBase(const char* fmtBase, const char* type){
     retVal ret=retVal();
     
-    FILE* fp;
     char cmd[128];
     sprintf(cmd, "grep %s /proc/%d/status", type, getpid());
-    if( (fp=popen(cmd,"r"))==NULL ){ return ret; } // failure
+    
+    sstd::file fp;
+    if(!fp.popen(cmd,"r")){ return ret; } // failure
     
     char fmt[128];
     sprintf(fmt, fmtBase, type);
-    int reads = fscanf(fp, fmt, &ret);
+    int reads = fp.fscanf((const char*)fmt, &ret);
     if(reads==0){ return ret; } // failure
     
-    if(pclose(fp)==-1){ return ret; } // failure
     return ret;
 }
 // std::string sstd::status_Name      (){ return sstd_statusBase(""      ); } // Name:    exe

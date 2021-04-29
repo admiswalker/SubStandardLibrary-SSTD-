@@ -20,9 +20,10 @@ public:
     bool popen(const std::string& fileName, const char* mode);
     bool close();
     
-    char*  fgets(char* s, int size);
-    size_t fread(void* ptr, const size_t& size, const size_t& nmemb);
-    int    fseek(const long& offset, const int& whence);
+    char*  fgets (char* s, int size);
+    size_t fread (void* ptr, const size_t& size, const size_t& nmemb);
+    int    fscanf(const char* format, ...);
+    int    fseek (const long& offset, const int& whence);
     size_t fsize();
     long   ftell();
     size_t fwrite(const void* ptr, const size_t& size, const size_t& nmemb);
