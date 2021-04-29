@@ -22,7 +22,8 @@ public:
     
     char*  fgets (char* s, int size);
     size_t fread (void* ptr, const size_t& size, const size_t& nmemb);
-    int    fscanf(const char* format, ...);
+    template <typename ... Args>
+    int    fscanf(const char* format, Args const& ... args){ return ::fscanf(this->fp, format, args ...); }
     int    fseek (const long& offset, const int& whence);
     size_t fsize();
     long   ftell();

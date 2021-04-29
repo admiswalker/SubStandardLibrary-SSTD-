@@ -42,8 +42,18 @@ TEST(file, popen_str){
 //}
 //TEST(file, fread){
 //}
-//TEST(file, fscan){
-//}
+TEST(file, fscanf){
+    std::string cmd = "echo \"123\"";
+    
+    sstd::file fp;
+    ASSERT_TRUE( fp.popen(cmd.c_str(),"r") );
+    
+    int ret=0;
+    int reads = fp.fscanf("%ull", &ret);
+
+    ASSERT_EQ(ret, 123);
+    ASSERT_EQ(reads, 1);
+}
 //TEST(file, fseek){
 //}
 //TEST(file, fsize){

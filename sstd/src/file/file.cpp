@@ -60,12 +60,6 @@ bool sstd::file::close(){
 
 char* sstd::file::fgets(char* s, int size){ return ::fgets(s, size, this->fp); }
 size_t sstd::file::fread(void* ptr, const size_t& size, const size_t& nmemb){ return ::fread(ptr, size, nmemb, this->fp); }
-int sstd::file::fscanf(const char* format, ...){
-    va_list ap; va_start(ap, format);
-    int ret = ::fscanf(this->fp, format, ap);
-    va_end(ap);
-    return ret;
-}
 int sstd::file::fseek(const long& offset, const int& whence){ return ::fseek(this->fp, offset, whence); }
 size_t sstd::file::fsize(){
     size_t size_buf = ::ftell(fp);   // ファイルポインタの位置を記録しておく
