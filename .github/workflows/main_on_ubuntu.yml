@@ -14,9 +14,7 @@ jobs:
       uses: actions/checkout@v2
     - name: Install Python
       run: |
-        rm -rf /usr/bin/pip
         ln -s /usr/bin/pip /usr/bin/pip3
-        rm -rf /usr/bin/python
         ln -s /usr/bin/python /usr/bin/python3
         pip install numpy
         pip install matplotlib
