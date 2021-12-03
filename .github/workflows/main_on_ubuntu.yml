@@ -18,7 +18,7 @@ jobs:
     - name: Build SSTD
       run: |
         make FORCE_SSTD
-    - name: Build tests and the others
+    - name: Build the others
       run: |
         make
     - name: Run tests
