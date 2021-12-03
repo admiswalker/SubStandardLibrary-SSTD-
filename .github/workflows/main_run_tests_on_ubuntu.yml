@@ -1,4 +1,4 @@
-name: run_tests
+name: CI for tests on Ubuntu
 
 on:
   push:
@@ -12,15 +12,15 @@ jobs:
     steps:
     - name: checkout repository
       uses: actions/checkout@v2
-    - name: build googletest
+    - name: Build googletest
       run: |
         make ./googletest-master/build/lib/libgtest.a
-    - name: build SSTD
+    - name: Build SSTD
       run: |
         make FORCE_SSTD
-    - name: build
+    - name: Build tests and the others
       run: |
         make
-    - name: run tests
+    - name: Run tests
       run: |
         ./exe
