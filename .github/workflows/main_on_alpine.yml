@@ -1,0 +1,35 @@
+name: CI for tests on Ubuntu
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    container:
+      image: crystallang/crystal:latest-alpine
+    steps:
+    - name: check os version
+      run: |
+      cat /proc/version
+    - name: checkout repository
+      uses: actions/checkout@v2
+    - name: Install Python
+      run: |
+        pip install numpy
+        pip install matplotlib
+    - name: Build googletest
+      run: |
+        make ./googletest-master/build/lib/libgtest.a
+    - name: Build SSTD
+      run: |
+        make FORCE_SSTD
+    - name: Build the others
+      run: |
+        make
+    - name: Run tests
+      run: |
+        ./exe
