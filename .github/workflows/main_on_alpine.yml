@@ -14,7 +14,7 @@ jobs:
     steps:
     - name: check os version
       run: |
-      cat /proc/version
+        cat /proc/version
     - name: checkout repository
       uses: actions/checkout@v2
     - name: Install Python
