@@ -34,7 +34,7 @@ void TEST_time(){
     sstd::printn_all(c_tm_yday);
 }
 
-TEST(math, theOthers){
+TEST(time, theOthers){
     TEST_time();
 }
 
