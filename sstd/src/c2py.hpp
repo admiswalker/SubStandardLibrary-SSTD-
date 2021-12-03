@@ -235,7 +235,7 @@ inline void sstd_c2py::operator_brackets(T& ret, const char* writeDir_base, cons
     }else if(sstd::fileExist("/usr/include/sstd/src/c2py.py"  )){ path_to_c2py_py = "/usr/include/sstd/src/c2py.py";
     }else if(sstd::fileExist("./c2py.py"                      )){ path_to_c2py_py = "./c2py.py";
     }                        else                               { sstd::pdbg("ERROR: \"c2py.py\" is not found."); return; }
-    if(system(sstd::ssprintf("python -u %s %s %s %s", path_to_c2py_py.c_str(), writeDir_base, iFile, fName).c_str())!=0){ sstd::pdbg("ERROR: system() was failed.\n")return; }
+    if(system(sstd::ssprintf("python -u %s %s %s %s", path_to_c2py_py.c_str(), writeDir_base, iFile, fName).c_str())!=0){ sstd::pdbg("ERROR: system() was failed.\n"); return; }
     
     // write back non const pointer args.
         // read "argList.bin"

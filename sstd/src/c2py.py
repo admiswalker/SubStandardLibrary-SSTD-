@@ -72,7 +72,7 @@ def IsNumpy  (rhs): return type(rhs).__module__==np.__name__
 
 #--------------------------------------------------------------------------------------------------------
 
-def read_bool   (readPath): return read_int32 (readPath).astype(np.bool   )
+def read_bool   (readPath): return read_int32 (readPath).astype(np.bool_  )
 def read_int8   (readPath): return read_int32 (readPath).astype(np.int8   )
 def read_int16  (readPath): return read_int32 (readPath).astype(np.int16  )
 def read_int32  (readPath):         fp=fopen(readPath, 'rb'); ret= np.fromfile(fp, np.dtype(  'int32'), 1        ); fp.close(); return ret
@@ -209,7 +209,7 @@ def cnv2builtin(Type, val):
 
 def numpyArray2numpyT(T, arr, TF):
     TF[0]=True
-    if   T==  'bool' and arr.dtype!=np.bool:    return arr.astype(np.bool   )
+    if   T==  'bool' and arr.dtype!=np.bool_:   return arr.astype(np.bool_  )
     elif T==  'char' and arr.dtype!=np.int8:    return arr.astype(np.int8   )
     elif T== 'uchar' and arr.dtype!=np.uint8:   return arr.astype(np.uint8  )
     elif T==  'int8' and arr.dtype!=np.int8:    return arr.astype(np.int8   )
