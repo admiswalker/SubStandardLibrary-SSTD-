@@ -1,4 +1,4 @@
-name: CI for tests on Ubuntu
+name: CI for tests on Alpine
 
 on:
   push:
@@ -12,13 +12,11 @@ jobs:
     container:
       image: crystallang/crystal:latest-alpine
     steps:
-    - name: check os version
-      run: |
-        cat /proc/version
     - name: checkout repository
       uses: actions/checkout@v2
-    - name: Install Python
+    - name: Install build tools
       run: |
+        apk add make gcc g++ python3
         pip install numpy
         pip install matplotlib
     - name: Build googletest
