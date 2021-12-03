@@ -1,0 +1,26 @@
+name: run_tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+    - name: checkout repository
+      uses: actions/checkout@v2
+    - name: build googletest
+      run: |
+        make ./googletest-master/build/lib/libgtest.a
+    - name: build SSTD
+      run: |
+        make FORCE_SSTD
+    - name: build
+      run: |
+        make
+    - name: run tests
+      run: |
+        ./exe
