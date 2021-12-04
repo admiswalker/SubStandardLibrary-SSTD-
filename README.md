@@ -1,6 +1,6 @@
 # SubStandardLibrary (SSTD)
 
-Convenient functions for GCC(g++) and MSVC++.
+Convenient functions for GCC(g++) <s>and MSVC++</s>.
 
 List of functions: `sstd/sstd.hpp` 
 
@@ -21,11 +21,13 @@ Usages of functions: `main.cpp`
    ```
 4. Include a header (`#include <sstd/sstd.hpp>`) in your code.
 
+<s>
 ### Windows 
 1. Copy all of under `./sstd/*`. 
 2. Include a header (`#include "./sstd/sstd.hpp"`) in your code.
+</s>
 
-Note: Recently, sstd has not been tested on Windows (MSVC++), while codes locked on linux is not so many.
+Note: Recently, sstd has not been tested on Windows (MSVC++).
 
 ## Tips to use always latest versions of sstd.
 ### Linux
