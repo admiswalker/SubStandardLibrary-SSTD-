@@ -1,4 +1,4 @@
-name: CI for tests on Alpine (Build Only)
+name: Tests on Alpine (Build Only)
 
 on:
   push:
