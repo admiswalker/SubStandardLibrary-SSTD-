@@ -12,24 +12,29 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 //*
 // Remove comment out when you test it.
-#include "test/c2py.hpp"
 #include "test/file/csv.hpp"
 #include "test/file/file.hpp"
 #include "test/file/read_write.hpp"
+
 #include "test/string/strEdit.hpp"
 #include "test/string/strmatch.hpp"
 #include "test/string/utf8.hpp"
+
+#include "test/time/time.hpp"
+
+#include "test/vector/slice.hpp"
+#include "test/vector/stdVector_expansion.hpp" // stdVector_expansion of operators
+#include "test/vector/vvec.hpp"
+
+#include "test/c2py.hpp"
 #include "test/glob.hpp"
 #include "test/math.hpp"
 #include "test/measureTime.hpp"
 #include "test/print_printn_printn_all.hpp" // void pdbg(){ printf("======p\n"); } // #define DEBUG を定義しない場合でも，マクロでこの名前は使えなくなるので，名前空間を汚しており，本当はよくない．
 #include "test/status.hpp"
 #include "test/stdlib.hpp"
+#include "test/tinyInterpreter.hpp"
 #include "test/typeConversion.hpp"
-#include "test/time/time.hpp"
-#include "test/vector/slice.hpp"
-#include "test/vector/stdVector_expansion.hpp" // stdVector_expansion of operators
-#include "test/vector/vvec.hpp"
 //*/
 
 /*
@@ -43,7 +48,6 @@ void TEST_mkdir();
 void TEST_rm();
 void TEST_ssprintf();
 void TEST_path();
-void TEST_tinyInterpreter();
 void TEST_encode_decode();
 void TEST_hashFnc();
 void TEST_pause();
@@ -80,7 +84,6 @@ int main(int argc, char** argv){
 //    TEST_str2num();
 //    TEST_ssprintf();
 //    TEST_path();
-//    TEST_tinyInterpreter();
 //    TEST_encode_decode();
 //    TEST_hashFnc();
 //    TEST_pause();
@@ -292,19 +295,6 @@ void TEST_path(){
     sstd::printn(sstd::pathExist("./main.cpp"));
     sstd::printn(sstd::pathExist("./notExist"));
     sstd::printn(sstd::pathExist("./sstd"));
-    printf("\n");
-}
-//*/
-
-/*
-void TEST_tinyInterpreter(){
-    printf("■ tinyInterpreter\n");
-    printf("  □ getCommandList & splitByComma\n");
-    std::vector<std::string> cmdList = sstd::getCommandList(R"(./test/tinyInterpreter.txt)");
-    for(uint i=0; i<cmdList.size(); i++){
-        std::vector<std::string> splitCList = sstd::splitByComma(cmdList[i]);
-        for(uint n=0; n<splitCList.size(); n++){ printf("[%5s] ", splitCList[n].c_str()); } printf("\n");
-    }
     printf("\n");
 }
 //*/
