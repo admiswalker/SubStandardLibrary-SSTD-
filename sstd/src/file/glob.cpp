@@ -40,13 +40,13 @@ std::vector<std::string> _glob_worker(const std::string& search_path, const char
     
     for(pEnt=readdir(pDir); pEnt!=0; pEnt=readdir(pDir)){
         // get file status
-	std::string path = search_path + pEnt->d_name;
+        std::string path = search_path + pEnt->d_name;
         if( stat( path.c_str(), &Stat ) ){
-	    sstd::pdbg("ERROR: glob_worker(): Failed to get stat %s\n", path.c_str());
+            sstd::pdbg("ERROR: glob_worker(): Failed to get stat %s\n", path.c_str());
             break;
         }
-	if(!sstd::strmatch(path, wild_card)){ continue; }
-	
+        if(!sstd::strmatch(path, wild_card)){ continue; }
+        
         if (S_ISDIR(Stat.st_mode)){
             // when a directory
             if((strcmp( pEnt->d_name, "." )!=0) && (strcmp( pEnt->d_name, ".." )!=0)){
