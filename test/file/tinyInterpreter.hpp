@@ -3,7 +3,7 @@
 
 TEST(tinyInterpreter, getCommandList){
     // reading "tinyInterpreter.txt" to vv_ret
-    std::vector<std::string> v_line = sstd::getCommandList(R"(./test/tinyInterpreter.txt)");
+    std::vector<std::string> v_line = sstd::getCommandList(R"(./test/file/tinyInterpreter.txt)");
     sstd::vvec<std::string> vv_ret(v_line.size());
     
     for(uint i=0; i<v_line.size(); i++){

@@ -15,6 +15,7 @@
 #include "test/file/csv.hpp"
 #include "test/file/file.hpp"
 #include "test/file/read_write.hpp"
+#include "test/file/tinyInterpreter.hpp"
 
 #include "test/string/strEdit.hpp"
 #include "test/string/strmatch.hpp"
@@ -33,7 +34,6 @@
 #include "test/print_printn_printn_all.hpp" // void pdbg(){ printf("======p\n"); } // #define DEBUG を定義しない場合でも，マクロでこの名前は使えなくなるので，名前空間を汚しており，本当はよくない．
 #include "test/status.hpp"
 #include "test/stdlib.hpp"
-#include "test/tinyInterpreter.hpp"
 #include "test/typeConversion.hpp"
 //*/
 

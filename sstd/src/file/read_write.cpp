@@ -1,5 +1,5 @@
-#include "./read_write.hpp"
-#include "./file.hpp"
+#include "read_write.hpp"
+#include "file.hpp"
 
 #include "../string/strEdit.hpp"
 #include "../pdbg.hpp"

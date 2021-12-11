@@ -1,7 +1,7 @@
 #pragma once
 #include <string.h> // for strerror(errno)
 
-#include "./file.hpp"
+#include "file.hpp"
 
 #include "../typeDef.h"
 #include "../pdbg.hpp"

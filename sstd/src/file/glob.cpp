@@ -22,7 +22,7 @@
 #include <stdio.h>
 
 #include "../string/strmatch.hpp"
-#include "./path.hpp"
+#include "path.hpp"
 
 std::vector<std::string> sstd::glob(const char* path){
 #ifdef _WIN32    //windows環境の場合は「_WIN32」が定義されているので、こちら。

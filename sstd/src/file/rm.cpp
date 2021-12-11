@@ -1,7 +1,8 @@
 ﻿#include "rm.hpp"
-#include "../typeDef.h"
+
 #include "path.hpp"
 #include "../pdbg.hpp"
+#include "../typeDef.h"
 
 #include <vector>
 #ifdef _WIN32

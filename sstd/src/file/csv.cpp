@@ -1,9 +1,9 @@
-﻿#include "./csv.hpp"
+﻿#include "csv.hpp"
 
-#include "./file.hpp"
-#include "./path.hpp"
-#include "./read_write.hpp"
-#include "../tinyInterpreter.hpp"
+#include "file.hpp"
+#include "path.hpp"
+#include "read_write.hpp"
+#include "tinyInterpreter.hpp"
 #include "../string/strEdit.hpp"
 
 

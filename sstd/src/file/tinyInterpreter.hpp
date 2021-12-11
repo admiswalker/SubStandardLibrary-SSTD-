@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <string>
-#include "./typeDef.h"
+#include "../typeDef.h"
 
 
 struct debugInformation{

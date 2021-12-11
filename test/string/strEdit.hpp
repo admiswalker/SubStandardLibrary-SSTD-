@@ -13,7 +13,7 @@ TEST(strEdit, theOthers){
     
     printf("  □ read_withoutBOM & splitByLine\n");
 //    std::string str_tI = sstd::read_withoutBOM(R"(./test/tinyInterpreter.txt)");
-    std::string str_tI = sstd::read_withoutBOM(std::string(R"(./test/tinyInterpreter.txt)"));
+    std::string str_tI = sstd::read_withoutBOM(std::string(R"(./test/file/tinyInterpreter.txt)"));
     std::vector<std::string> splitLList = sstd::splitByLine(str_tI);
     printf("\n");
     printf("  ./test/tinyInterpreter.txt\n");

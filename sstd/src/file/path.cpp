@@ -1,7 +1,7 @@
 ﻿#include "path.hpp"
 #include "../typeDef.h"
 
-#include "./file.hpp"   // for fileExist
+#include "file.hpp"   // for fileExist
 #include <string.h>
 #include <sys/stat.h> // for  dirExist
 

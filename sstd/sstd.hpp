@@ -36,6 +36,7 @@
 #include "src/file/path.hpp"
 #include "src/file/read_write.hpp"
 #include "src/file/rm.hpp"
+#include "src/file/tinyInterpreter.hpp"
 
 #include "src/hashFnc_of_MD5_SHA1_SHA2/sstd_md5_sha1_sha2_wrapper.hpp"
 
@@ -55,7 +56,6 @@
 #include "src/signal.hpp"
 #include "src/typeConversion.hpp"
 #include "src/itr.hpp"
-#include "src/tinyInterpreter.hpp"
 #include "src/encode_decode.hpp"
 #include "src/pause.hpp"
 #include "src/pid.hpp"
