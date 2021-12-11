@@ -4,9 +4,9 @@
 TEST(tinyInterpreter, getCommandList){
     // reading "tinyInterpreter.txt" to vv_ret
     std::vector<std::string> v_line = sstd::getCommandList(R"(./test/file/tinyInterpreter.txt)");
-    sstd::vvec<std::string> vv_ret(v_line.size());
     
-    for(uint i=0; i<v_line.size(); i++){
+    sstd::vvec<std::string> vv_ret(v_line.size());
+    for(uint i=0; i<v_line.size(); ++i){
         std::vector<std::string> v_cmd = sstd::splitByComma(v_line[i]);
 	for(uint n=0; n<v_cmd.size(); ++n){
 	    vv_ret[i] <<= v_cmd[n];
