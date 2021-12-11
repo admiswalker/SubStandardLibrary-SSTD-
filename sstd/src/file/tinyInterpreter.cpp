@@ -92,6 +92,7 @@ std::vector<std::string> sstd::getCommandList(const char* pReadFile){
 
     return removeComment(dbgInf, (uchar*)str.c_str());    // uchar にキャストしないと，負の値が入力された場合に，比較演算が正常に機能しない．(例えば，0xFF は，0xFFFFFFFF のように，4 Byte 値として扱われるため，if(str[0]==0xFF)... としても必ず false となる．)
 }
+std::vector<std::string> sstd::getCommandList(const std::string& readFile){ return sstd::getCommandList(readFile.c_str()); }
 
 
 std::vector<std::string> sstd::splitByComma(const std::string& str){
