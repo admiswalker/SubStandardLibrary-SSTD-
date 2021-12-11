@@ -24,7 +24,7 @@
 #include "../string/strmatch.hpp"
 #include "path.hpp"
 
-std::vector<std::string> sstd::glob(const char* path){
+std::vector<std::string> sstd::glob_f(const char* path){
 #ifdef _WIN32    //windows環境の場合は「_WIN32」が定義されているので、こちら。
 
     HANDLE hFind;
@@ -109,6 +109,6 @@ std::vector<std::string> sstd::glob(const char* path){
     return FileList;
 #endif
 }
-std::vector<std::string> sstd::glob(const std::string& path){
-    return sstd::glob(path.c_str());
+std::vector<std::string> sstd::glob_f(const std::string& path){
+    return sstd::glob_f(path.c_str());
 }
