@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 //*
 // Remove comment out when you test it.
-/*#include "test/file/csv.hpp"
+#include "test/file/csv.hpp"
 #include "test/file/file.hpp"
 #include "test/file/glob.hpp"
 #include "test/file/read_write.hpp"
@@ -22,8 +22,8 @@
 #include "test/string/strmatch.hpp"
 #include "test/string/utf8.hpp"
 
-#include "test/time/time.hpp"*/
-#include "test/time/measureTime.hpp"/*
+#include "test/time/time.hpp"
+#include "test/time/measureTime.hpp"
 
 #include "test/vector/slice.hpp"
 #include "test/vector/stdVector_expansion.hpp" // stdVector_expansion of operators
