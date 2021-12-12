@@ -15,7 +15,9 @@ namespace sstd{
     inline void ndbg(...){}
 }
 
-#define pdbg(...) pdbg_dummy();{printf("%s: %s(%d): ", __FILE__, __func__, __LINE__);printf(__VA_ARGS__);}
+#define pdbg(...) pdbg_dummy();{printf("%s: %s(%d): \u001b[31m", __FILE__, __func__, __LINE__);printf(__VA_ARGS__);printf("\u001b[0m");}
+//  \u001b[31m  :  set output red
+//  \u001b[0m   :  reset color
 #define pdbg_if(Boolean, ...) pdbg_dummy();if((Boolean)==true){sstd::pdbg(__VA_ARGS__);}
 #define pdbg_if_exit(Boolean, ...) pdbg_dummy();if((Boolean)==true){sstd::pdbg(__VA_ARGS__);exit(-1);}
 #define pdbg_if_stop_exit(Boolean, ...) pdbg_dummy();if((Boolean)==true){sstd::pdbg(__VA_ARGS__);sstd::pauseIfWin32();exit(-1);}

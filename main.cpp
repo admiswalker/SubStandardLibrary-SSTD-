@@ -12,7 +12,7 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 //*
 // Remove comment out when you test it.
-#include "test/file/csv.hpp"
+/*#include "test/file/csv.hpp"
 #include "test/file/file.hpp"
 #include "test/file/glob.hpp"
 #include "test/file/read_write.hpp"
@@ -30,7 +30,8 @@
 
 #include "test/c2py.hpp"
 #include "test/math.hpp"
-#include "test/measureTime.hpp"
+#include "test/measureTime.hpp"*/
+#include "test/pdbg.hpp"/*
 #include "test/print_printn_printn_all.hpp" // void pdbg(){ printf("======p\n"); } // #define DEBUG を定義しない場合でも，マクロでこの名前は使えなくなるので，名前空間を汚しており，本当はよくない．
 #include "test/status.hpp"
 #include "test/stdlib.hpp"
@@ -40,7 +41,6 @@
 /*
 // sequentially moving on to google c++ testing framework.
 void TEST_typeDef();
-void TEST_pdbg();
 void TEST_signal();
 void TEST_file();
 void TEST_file_c();
@@ -74,7 +74,6 @@ int main(int argc, char** argv){
     auto ret = RUN_ALL_TESTS();
 
 //    TEST_typeDef();
-//    TEST_pdbg();
 //    TEST_math();
 //    TEST_signal();
 //    TEST_file();
@@ -109,20 +108,6 @@ void TEST_typeDef(){
     uint16 u16 = 16; printf("uint16: %u\n",    u16);
     uint32 u32 = 32; printf("uint32: %u\n",    u32);
     uint64 u64 = 64; printf("uint64: %lu\n\n", u64);
-}
-void TEST_pdbg(){
-    printf("■ #define DEBUG\n");
-    printf("  □ pdbg (printf debugger)\n");
-    sstd::pdbg("abc\n");
-    printf("true: "); sstd::pdbg_if(true, "print txt"); printf("\n");
-    printf("false: "); sstd::pdbg_if(false, "not print txt"); printf("\n");
-//    printf("true: "); sstd::pdbg_if_exit(true, "exit");
-    printf("false: "); sstd::pdbg_if_exit(false, "not exit"); printf("\n");
-//    printf("true: "); sstd::pdbg_if_stop_exit(true, "exit"); printf("\n");
-//    printf("false: "); sstd::pdbg_if_stop_exit(false, "not exit"); printf("\n");
-    sstd::dbg(printf("run debug code."););
-    sstd::ndbg(printf("run ndebug code."););
-    printf("\n");
 }
 void TEST_signal(){
     printf("■ generate signal\n");
