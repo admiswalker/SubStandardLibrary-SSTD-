@@ -1,5 +1,5 @@
 ﻿#include <algorithm> // for std::reverse
-#include <string.h> // for ::strcmp()
+#include <string.h>
 
 #include "./strmatch.hpp"
 #include "../typeDef.h"
@@ -109,10 +109,26 @@ bool sstd::strmatch_getWC(const std::string& str, const std::string& wildCard, s
 
 //--------------------------------------------------------------------------------------------------------
 
-bool sstd::isNum               (char rhs){ return ('0'<=rhs && rhs<='9'); }
-bool sstd::isAlphabet          (char rhs){ return ('a'<=rhs && rhs<='z') || ('A'<=rhs && rhs<='Z'); }
-bool sstd::isAlphabet_onlyUpper(char rhs){ return ('A'<=rhs && rhs<='Z'); }
-bool sstd::isAlphabet_onlyLower(char rhs){ return ('a'<=rhs && rhs<='z'); }
+#define return_isX(X)                                   \
+    for(uint i=0; rhs[i]!='\0'; ++i){                   \
+        if(! X ){ return false; }                       \
+    }                                                   \
+    return true;
+
+bool sstd::isNum               (const        char  rhs){ return      ('0'<=rhs   &&rhs   <='9');   }
+bool sstd::isNum               (const        char* rhs){ return_isX( ('0'<=rhs[i]&&rhs[i]<='9') ); }
+bool sstd::isNum               (const std::string& rhs){ return_isX( ('0'<=rhs[i]&&rhs[i]<='9') ); }
+bool sstd::isAlphabet          (const        char  rhs){ return       ('a'<=rhs   &&rhs   <='z') || ('A'<=rhs   &&rhs   <='Z');    }
+bool sstd::isAlphabet          (const        char* rhs){ return_isX( (('a'<=rhs[i]&&rhs[i]<='z') || ('A'<=rhs[i]&&rhs[i]<='Z')) ); }
+bool sstd::isAlphabet          (const std::string& rhs){ return_isX( (('a'<=rhs[i]&&rhs[i]<='z') || ('A'<=rhs[i]&&rhs[i]<='Z')) ); }
+bool sstd::isAlphabet_onlyUpper(const        char  rhs){ return      ('A'<=rhs    && rhs   <='Z');   }
+bool sstd::isAlphabet_onlyUpper(const        char* rhs){ return_isX( ('A'<=rhs[i] && rhs[i]<='Z') ); }
+bool sstd::isAlphabet_onlyUpper(const std::string& rhs){ return_isX( ('A'<=rhs[i] && rhs[i]<='Z') ); }
+bool sstd::isAlphabet_onlyLower(const        char  rhs){ return      ('a'<=rhs    && rhs   <='z');   }
+bool sstd::isAlphabet_onlyLower(const        char* rhs){ return_isX( ('a'<=rhs[i] && rhs[i]<='z') ); }
+bool sstd::isAlphabet_onlyLower(const std::string& rhs){ return_isX( ('a'<=rhs[i] && rhs[i]<='z') ); }
+
+#undef return_isX
 
 //--------------------------------------------------------------------------------------------------------
 // strcmp()
