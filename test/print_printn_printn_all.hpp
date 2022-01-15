@@ -1,5 +1,26 @@
 #pragma once
 
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// print
+
+TEST(print, print_table){
+    std::unordered_map<std::string, std::vector<uint>> table;
+    table["abc"] = {123, 456};
+    table["def"] = {456, 789};
+
+    {
+        testing::internal::CaptureStdout();
+        sstd::print( table );
+
+        std::string buf = testing::internal::GetCapturedStdout().c_str();
+        bool tf1 = sstd::strcmp(buf, "[ [key: \"def\", value: [456 789]], [key: \"abc\", value: [123 456]] ]\n");
+        if(tf1){
+            ASSERT_STREQ(buf.c_str(), "[ [key: \"def\", value: [456 789]], [key: \"abc\", value: [123 456]] ]\n");
+        }else{
+            ASSERT_STREQ(buf.c_str(), "[ [key: \"abc\", value: [123 456]], [key: \"def\", value: [456 789]] ]\n");
+        }
+    }
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // for_printn
@@ -258,6 +279,28 @@ TEST(print, for_printn_vector_re_depth4){
     testing::internal::CaptureStdout();
     sstd::for_printn(vvvv);
     ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), " = [[[[1 2 3] [4 5 6]] [[7 8 9] [10 11 12]]] [[[13 14 15] [16 17 18]] [[19 20 21] [22 23 24]]]]\n");
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// for std::unordered_map<T_lhs, T_rhs>
+
+TEST(print, for_printn_table){
+    std::unordered_map<std::string, std::vector<uint>> table;
+    table["abc"] = {123, 456};
+    table["def"] = {456, 789};
+
+    {
+        testing::internal::CaptureStdout();
+        sstd::for_printn( table );
+
+        std::string buf = testing::internal::GetCapturedStdout().c_str();
+        bool tf1 = sstd::strcmp(buf, " = [ [key: \"def\", value: [456 789]], [key: \"abc\", value: [123 456]] ]\n");
+        if(tf1){
+            ASSERT_STREQ(buf.c_str(), " = [ [key: \"def\", value: [456 789]], [key: \"abc\", value: [123 456]] ]\n");
+        }else{
+            ASSERT_STREQ(buf.c_str(), " = [ [key: \"abc\", value: [123 456]], [key: \"def\", value: [456 789]] ]\n");
+        }
+    }
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

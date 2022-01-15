@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <string>
 #include <vector>
+#include <unordered_map>
 #include "./typeDef.h"
 
 
@@ -45,6 +46,19 @@ namespace sstd{
     void print(const std::string& rhs);
     template <typename T>
     void print(const std::vector<T>& rhs){ sstd::print_for_vT(rhs); printf("\n"); }
+    template <typename T_lhs, typename T_rhs>
+    void print_table_base(const std::unordered_map<T_lhs, T_rhs>& rhs){
+        printf("[");
+        for(auto itr=rhs.begin(); itr!=rhs.end(); ++itr){
+            if(itr!=rhs.begin()){ printf(","); }
+            printf(" [key: "); sstd::print_for_vT(itr->first);
+            printf(", value: "); sstd::print_for_vT(itr->second);
+            printf("]");
+        }
+        printf(" ]");
+    }
+    template <typename T_lhs, typename T_rhs>
+    void print(const std::unordered_map<T_lhs, T_rhs>& rhs){ sstd::print_table_base(rhs); printf("\n"); }
     
     void for_printn( bool  rhs);
     void for_printn( char  rhs);
@@ -64,6 +78,12 @@ namespace sstd{
     void for_printn(const std::vector<T>& rhs){
         printf(" = ");
         sstd::print_for_vT(rhs); // using "without line feed" version for recursive call for deep std::vector<std::vector<... std::vector<T>... >>.
+        printf("\n");
+    }
+    template <typename T_lhs, typename T_rhs>
+    void for_printn(const std::unordered_map<T_lhs, T_rhs>& rhs){
+        printf(" = ");
+        sstd::print_table_base(rhs); // using "without line feed" version for recursive call for deep std::vector<std::vector<... std::vector<T>... >>.
         printf("\n");
     }
 
