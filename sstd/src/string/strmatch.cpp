@@ -115,18 +115,18 @@ bool sstd::strmatch_getWC(const std::string& str, const std::string& wildCard, s
     }                                                   \
     return true;
 
-bool sstd::isNum               (const        char  rhs){ return      ('0'<=rhs   &&rhs   <='9');   }
-bool sstd::isNum               (const        char* rhs){ return_isX( ('0'<=rhs[i]&&rhs[i]<='9') ); }
-bool sstd::isNum               (const std::string& rhs){ return_isX( ('0'<=rhs[i]&&rhs[i]<='9') ); }
-bool sstd::isAlphabet          (const        char  rhs){ return       ('a'<=rhs   &&rhs   <='z') || ('A'<=rhs   &&rhs   <='Z');    }
-bool sstd::isAlphabet          (const        char* rhs){ return_isX( (('a'<=rhs[i]&&rhs[i]<='z') || ('A'<=rhs[i]&&rhs[i]<='Z')) ); }
-bool sstd::isAlphabet          (const std::string& rhs){ return_isX( (('a'<=rhs[i]&&rhs[i]<='z') || ('A'<=rhs[i]&&rhs[i]<='Z')) ); }
-bool sstd::isAlphabet_onlyUpper(const        char  rhs){ return      ('A'<=rhs    && rhs   <='Z');   }
-bool sstd::isAlphabet_onlyUpper(const        char* rhs){ return_isX( ('A'<=rhs[i] && rhs[i]<='Z') ); }
-bool sstd::isAlphabet_onlyUpper(const std::string& rhs){ return_isX( ('A'<=rhs[i] && rhs[i]<='Z') ); }
-bool sstd::isAlphabet_onlyLower(const        char  rhs){ return      ('a'<=rhs    && rhs   <='z');   }
-bool sstd::isAlphabet_onlyLower(const        char* rhs){ return_isX( ('a'<=rhs[i] && rhs[i]<='z') ); }
-bool sstd::isAlphabet_onlyLower(const std::string& rhs){ return_isX( ('a'<=rhs[i] && rhs[i]<='z') ); }
+bool sstd::isNum            (const        char  rhs){ return      ('0'<=rhs   &&rhs   <='9');   }
+bool sstd::isNum            (const        char* rhs){ return_isX( ('0'<=rhs[i]&&rhs[i]<='9') ); }
+bool sstd::isNum            (const std::string& rhs){ return_isX( ('0'<=rhs[i]&&rhs[i]<='9') ); }
+bool sstd::isAlphabet       (const        char  rhs){ return       ('a'<=rhs   &&rhs   <='z') || ('A'<=rhs   &&rhs   <='Z');    }
+bool sstd::isAlphabet       (const        char* rhs){ return_isX( (('a'<=rhs[i]&&rhs[i]<='z') || ('A'<=rhs[i]&&rhs[i]<='Z')) ); }
+bool sstd::isAlphabet       (const std::string& rhs){ return_isX( (('a'<=rhs[i]&&rhs[i]<='z') || ('A'<=rhs[i]&&rhs[i]<='Z')) ); }
+bool sstd::isAlphabet_upper(const        char  rhs){ return      ('A'<=rhs    && rhs   <='Z');   }
+bool sstd::isAlphabet_upper(const        char* rhs){ return_isX( ('A'<=rhs[i] && rhs[i]<='Z') ); }
+bool sstd::isAlphabet_upper(const std::string& rhs){ return_isX( ('A'<=rhs[i] && rhs[i]<='Z') ); }
+bool sstd::isAlphabet_lower(const        char  rhs){ return      ('a'<=rhs    && rhs   <='z');   }
+bool sstd::isAlphabet_lower(const        char* rhs){ return_isX( ('a'<=rhs[i] && rhs[i]<='z') ); }
+bool sstd::isAlphabet_lower(const std::string& rhs){ return_isX( ('a'<=rhs[i] && rhs[i]<='z') ); }
 
 #undef return_isX
 

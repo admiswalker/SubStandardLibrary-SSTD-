@@ -121,41 +121,41 @@ TEST(strmatch, isAlphabet_str){
     ASSERT_FALSE( sstd::isAlphabet(std::string("A8908023")) );
     ASSERT_FALSE( sstd::isAlphabet(std::string("A8908023Z")) );
 }
-TEST(strmatch, isAlphabet_onlyUpper_char){
-    ASSERT_TRUE ( sstd::isAlphabet_onlyUpper('A') );
-    ASSERT_FALSE( sstd::isAlphabet_onlyUpper('a') );
+TEST(strmatch, isAlphabet_upper_char){
+    ASSERT_TRUE ( sstd::isAlphabet_upper('A') );
+    ASSERT_FALSE( sstd::isAlphabet_upper('a') );
 }
-TEST(strmatch, isAlphabet_onlyUpper_pChar){
-    ASSERT_TRUE ( sstd::isAlphabet_onlyUpper("A") );
-    ASSERT_FALSE( sstd::isAlphabet_onlyUpper("a") );
+TEST(strmatch, isAlphabet_upper_pChar){
+    ASSERT_TRUE ( sstd::isAlphabet_upper("A") );
+    ASSERT_FALSE( sstd::isAlphabet_upper("a") );
     
-    ASSERT_TRUE ( sstd::isAlphabet_onlyUpper("AZ") );
-    ASSERT_FALSE( sstd::isAlphabet_onlyUpper("az") );
+    ASSERT_TRUE ( sstd::isAlphabet_upper("AZ") );
+    ASSERT_FALSE( sstd::isAlphabet_upper("az") );
 }
-TEST(strmatch, isAlphabet_onlyUpper_str){
-    ASSERT_TRUE ( sstd::isAlphabet_onlyUpper(std::string("A")) );
-    ASSERT_FALSE( sstd::isAlphabet_onlyUpper(std::string("a")) );
+TEST(strmatch, isAlphabet_upper_str){
+    ASSERT_TRUE ( sstd::isAlphabet_upper(std::string("A")) );
+    ASSERT_FALSE( sstd::isAlphabet_upper(std::string("a")) );
     
-    ASSERT_TRUE ( sstd::isAlphabet_onlyUpper(std::string("AZ")) );
-    ASSERT_FALSE( sstd::isAlphabet_onlyUpper(std::string("az")) );
+    ASSERT_TRUE ( sstd::isAlphabet_upper(std::string("AZ")) );
+    ASSERT_FALSE( sstd::isAlphabet_upper(std::string("az")) );
 }
-TEST(strmatch, isAlphabet_onlyLower_char){
-    ASSERT_TRUE ( sstd::isAlphabet_onlyLower('a') );
-    ASSERT_FALSE( sstd::isAlphabet_onlyLower('A') );
+TEST(strmatch, isAlphabet_lower_char){
+    ASSERT_TRUE ( sstd::isAlphabet_lower('a') );
+    ASSERT_FALSE( sstd::isAlphabet_lower('A') );
 }
-TEST(strmatch, isAlphabet_onlyLower_pChar){
-    ASSERT_TRUE ( sstd::isAlphabet_onlyLower("a") );
-    ASSERT_FALSE( sstd::isAlphabet_onlyLower("A") );
+TEST(strmatch, isAlphabet_lower_pChar){
+    ASSERT_TRUE ( sstd::isAlphabet_lower("a") );
+    ASSERT_FALSE( sstd::isAlphabet_lower("A") );
     
-    ASSERT_TRUE ( sstd::isAlphabet_onlyLower("az") );
-    ASSERT_FALSE( sstd::isAlphabet_onlyLower("AZ") );
+    ASSERT_TRUE ( sstd::isAlphabet_lower("az") );
+    ASSERT_FALSE( sstd::isAlphabet_lower("AZ") );
 }
-TEST(strmatch, isAlphabet_onlyLower_str){
-    ASSERT_TRUE ( sstd::isAlphabet_onlyLower(std::string("a")) );
-    ASSERT_FALSE( sstd::isAlphabet_onlyLower(std::string("A")) );
+TEST(strmatch, isAlphabet_lower_str){
+    ASSERT_TRUE ( sstd::isAlphabet_lower(std::string("a")) );
+    ASSERT_FALSE( sstd::isAlphabet_lower(std::string("A")) );
     
-    ASSERT_TRUE ( sstd::isAlphabet_onlyLower(std::string("az")) );
-    ASSERT_FALSE( sstd::isAlphabet_onlyLower(std::string("AZ")) );
+    ASSERT_TRUE ( sstd::isAlphabet_lower(std::string("az")) );
+    ASSERT_FALSE( sstd::isAlphabet_lower(std::string("AZ")) );
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

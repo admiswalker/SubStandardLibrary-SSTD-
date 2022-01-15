@@ -19,18 +19,18 @@ namespace sstd{
     bool strmatch_getWC(const std::string& str, const        char* wildCard, std::string& retWC);
     bool strmatch_getWC(const std::string& str, const std::string& wildCard, std::string& retWC);
     
-    bool isNum                (const        char  rhs);
-    bool isNum                (const        char* rhs);
-    bool isNum                (const std::string& rhs);
-    bool isAlphabet          (const        char  rhs);
-    bool isAlphabet          (const        char* rhs);
-    bool isAlphabet          (const std::string& rhs);
-    bool isAlphabet_onlyUpper(const        char  rhs);
-    bool isAlphabet_onlyUpper(const        char* rhs);
-    bool isAlphabet_onlyUpper(const std::string& rhs);
-    bool isAlphabet_onlyLower(const        char  rhs);
-    bool isAlphabet_onlyLower(const        char* rhs);
-    bool isAlphabet_onlyLower(const std::string& rhs);
+    bool isNum             (const        char  rhs);
+    bool isNum             (const        char* rhs);
+    bool isNum             (const std::string& rhs);
+    bool isAlphabet       (const        char  rhs);
+    bool isAlphabet       (const        char* rhs);
+    bool isAlphabet       (const std::string& rhs);
+    bool isAlphabet_upper(const        char  rhs);
+    bool isAlphabet_upper(const        char* rhs);
+    bool isAlphabet_upper(const std::string& rhs);
+    bool isAlphabet_lower(const        char  rhs);
+    bool isAlphabet_lower(const        char* rhs);
+    bool isAlphabet_lower(const std::string& rhs);
 
     bool strcmp(const char*        str1, const char*        str2);
     bool strcmp(const char*        str1, const std::string& str2);
