@@ -108,7 +108,8 @@ std::vector<std::string> sstd::parsePath_withBase(const char* pPath){
     std::vector<std::string> ret; ret.push_back("");
 
     uint i=0;
-    if(pPath[0]=='/'||pPath[0]=='\\'){ ++i; }
+    if(pPath[0]=='/' ){ ret[pathNum] += (uchar)pPath[i]; ++i; }
+    if(pPath[0]=='\\'){ ++i; }
     for(; i<len-1; ++i){
         if(pPath[i]=='/'||pPath[i]=='\\'){
             if(pPath[i+1]=='/'||pPath[i+1]=='\\'){ std::vector<std::string>(); } // ERROR
