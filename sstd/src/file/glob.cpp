@@ -28,64 +28,64 @@
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-std::vector<std::string> _glob_worker(const std::string& search_path, const char* wild_card, const bool opt_d, const bool opt_f, const bool opt_r){
+std::vector<std::string> _glob_worker(const std::string& search_path_in, const char* wild_card, const bool opt_d, const bool opt_f, const bool opt_r){
     DIR *pDir;
     struct dirent *pEnt;
     struct stat Stat;
     std::vector<std::string> v_path;
     std::vector<std::string> v_path_stack; // Useing STACK in order NOT to exceed the limit of opendir() number.
+
+    v_path_stack.push_back(search_path_in);
     
-    pDir = opendir(search_path.c_str());
-    if(pDir==NULL){ return v_path; } // No files or directories.
-    
-    for(pEnt=readdir(pDir); pEnt!=0; pEnt=readdir(pDir)){
-        // get file status
-        std::string path = search_path + pEnt->d_name;
-        if( stat( path.c_str(), &Stat ) ){
-            sstd::pdbg("ERROR: glob_worker(): Failed to get stat %s\n", path.c_str());
-            break;
-        }
-        if(!sstd::strmatch(path, wild_card)){ continue; }
+    for(;v_path_stack.size()!=0;){
+        std::string search_path = v_path_stack.back(); v_path_stack.pop_back();
         
-        if (S_ISDIR(Stat.st_mode)){
-            // when a directory
-            if((strcmp( pEnt->d_name, "." )!=0) && (strcmp( pEnt->d_name, ".." )!=0)){
-                // subdirectory
-                // printf( "subdirectory: %s\n", pEnt->d_name );
-                if(opt_d){
-                    v_path.push_back( path );
-                }
-                if(opt_r){
-                    v_path_stack.push_back( path + '/' );
+        pDir = opendir(search_path.c_str());
+        if(pDir==NULL){ continue; } // No files or directories.
+        
+        for(pEnt=readdir(pDir); pEnt!=0; pEnt=readdir(pDir)){
+            // get file status
+            std::string path = search_path + pEnt->d_name;
+            if( stat( path.c_str(), &Stat ) ){
+                sstd::pdbg("ERROR: glob_worker(): Failed to get stat %s\n", path.c_str());
+                break;
+            }
+            if(!sstd::strmatch(path, wild_card)){ continue; }
+        
+            if (S_ISDIR(Stat.st_mode)){
+                // when a directory
+                if((strcmp( pEnt->d_name, "." )!=0) && (strcmp( pEnt->d_name, ".." )!=0)){
+                    // subdirectory
+                    // printf( "subdirectory: %s\n", pEnt->d_name );
+                    if(opt_d){
+                        v_path.push_back( path );
+                    }
+                    if(opt_r){
+                        v_path_stack.push_back( path + '/' );
+                    }
+                }else{
+                    //  . current directory
+                    // .. parent directory
+                    // printf( "current or parent directory: %s\n", pEnt->d_name );
+                
+                    // --- nothing to do ---
                 }
             }else{
-                //  . current directory
-                // .. parent directory
-                // printf( "current or parent directory: %s\n", pEnt->d_name );
-                
-                // --- nothing to do ---
-            }
-        }else{
-            // when a file
-            if(opt_f){
-                v_path.push_back( path );
+                // when a file
+                if(opt_f){
+                    v_path.push_back( path );
+                }
             }
         }
+        closedir(pDir);
+        if(!opt_r){ break; }
     }
-    closedir(pDir);
-
-    if(opt_r){
-        for(uint i=0; i<v_path_stack.size(); ++i){
-            std::vector<std::string> v = _glob_worker(v_path_stack[i], wild_card, opt_d, opt_f, opt_r);
-            v_path.insert(v_path.end(), v.begin(), v.end());
-        }
-    }
-
+    
     return v_path;
 }
-std::vector<std::string> _glob_base(const char* path, const bool opt_d, const bool opt_f, const bool opt_r){
-    std::string search_path = sstd::getPath(path);
-    std::vector<std::string> v_path = _glob_worker(search_path.c_str(), path, opt_d, opt_f, opt_r);
+std::vector<std::string> _glob_base(const char* path_wc, const bool opt_d, const bool opt_f, const bool opt_r){
+    std::string search_path = sstd::getPath(path_wc);
+    std::vector<std::string> v_path = _glob_worker(search_path.c_str(), path_wc, opt_d, opt_f, opt_r);
     std::sort(v_path.begin(), v_path.end());
     return v_path;
 }
