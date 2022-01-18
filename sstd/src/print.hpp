@@ -2,7 +2,8 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
-#include "./typeDef.h"
+#include "typeDef.h"
+#include "file/glob.hpp"
 
 
 namespace sstd{
@@ -20,6 +21,7 @@ namespace sstd{
     void print_for_vT(const double rhs);
     void print_for_vT(const        char* rhs);
     void print_for_vT(const std::string& rhs);
+    void print_for_vT(const struct pathAndType& rhs);
     template <typename T>
     void print_for_vT(const std::vector<T>& rhs){
         printf("[");
@@ -44,6 +46,7 @@ namespace sstd{
     void print(const double rhs);
     void print(const        char* rhs);
     void print(const std::string& rhs);
+    void print(const struct pathAndType& rhs);
     template <typename T>
     void print(const std::vector<T>& rhs){ sstd::print_for_vT(rhs); printf("\n"); }
     template <typename T_lhs, typename T_rhs>
@@ -58,7 +61,7 @@ namespace sstd{
         printf(" ]");
     }
     template <typename T_lhs, typename T_rhs>
-    void print(const std::unordered_map<T_lhs, T_rhs>& rhs){ sstd::print_table_base(rhs); printf("\n"); }
+    void print(const std::unordered_map<T_lhs, T_rhs>& rhs){ sstd::print_table_base<T_lhs, T_rhs>(rhs); printf("\n"); }
     
     void for_printn( bool  rhs);
     void for_printn( char  rhs);
@@ -74,6 +77,7 @@ namespace sstd{
     void for_printn(double rhs);
     void for_printn(const        char* rhs);
     void for_printn(const std::string& rhs);
+    void for_printn(const struct pathAndType& rhs);
     template <typename T>
     void for_printn(const std::vector<T>& rhs){
         printf(" = ");
@@ -83,7 +87,7 @@ namespace sstd{
     template <typename T_lhs, typename T_rhs>
     void for_printn(const std::unordered_map<T_lhs, T_rhs>& rhs){
         printf(" = ");
-        sstd::print_table_base(rhs); // using "without line feed" version for recursive call for deep std::vector<std::vector<... std::vector<T>... >>.
+        sstd::print_table_base<T_lhs, T_rhs>(rhs); // using "without line feed" version for recursive call for deep std::vector<std::vector<... std::vector<T>... >>.
         printf("\n");
     }
 

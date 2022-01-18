@@ -251,6 +251,25 @@ TEST(print, for_printn_str){
     ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), " = \"abc ABCd\"\n");
 }
 
+//----------------------------------------------------------------------
+
+TEST(print, for_printn_pathAndType_case01){
+    struct sstd::pathAndType pt;
+    pt.path = "/dir1/dir2";
+    pt.type = 'd';
+    testing::internal::CaptureStdout();
+    sstd::for_printn(pt);
+    ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), " = \"path: /dir1/dir2, type: directory\"\n");
+}
+TEST(print, for_printn_pathAndType_case02){
+    struct sstd::pathAndType pt;
+    pt.path = "/dir1/example.txt";
+    pt.type = 'f';
+    testing::internal::CaptureStdout();
+    sstd::for_printn(pt);
+    ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), " = \"path: /dir1/example.txt, type: file\"\n");
+}
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // for std::vector<T>
 

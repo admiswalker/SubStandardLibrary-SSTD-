@@ -27,6 +27,7 @@ void sstd::print(const double  rhs){
 }
 void sstd::print(const        char* rhs){ printf("\"%s\"\n", rhs); }
 void sstd::print(const std::string& rhs){ printf("\"%s\"\n", rhs.c_str()); }
+void sstd::print(const struct pathAndType& rhs){ printf("\"path: %s, type: %s\"\n", rhs.path.c_str(), (rhs.type=='f' ? "file" : "directory")); }
 
 
 void sstd::print_for_vT(const  bool  rhs){ printf("%s", (rhs ? "true" : "false")); }
@@ -51,6 +52,7 @@ void sstd::print_for_vT(const double  rhs){
 }
 void sstd::print_for_vT(const        char* rhs){ printf("\"%s\"", rhs); }
 void sstd::print_for_vT(const std::string& rhs){ printf("\"%s\"", rhs.c_str()); }
+void sstd::print_for_vT(const struct pathAndType& rhs){ printf("\"path: %s, type: %s\"", rhs.path.c_str(), (rhs.type=='f' ? "file" : "directory")); }
 
 
 void sstd::for_printn( bool  rhs){ printf(" = "); sstd::print(rhs); }
@@ -67,5 +69,6 @@ void sstd::for_printn( float rhs){ printf(" = "); sstd::print(rhs); }
 void sstd::for_printn(double rhs){ printf(" = "); sstd::print(rhs); }
 void sstd::for_printn(const        char* rhs){ printf(" = "); sstd::print(rhs); }
 void sstd::for_printn(const std::string& rhs){ printf(" = "); sstd::print(rhs); }
+void sstd::for_printn(const struct pathAndType& rhs){ printf(" = "); sstd::print(rhs); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
