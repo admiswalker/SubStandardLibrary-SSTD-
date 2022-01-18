@@ -43,7 +43,7 @@ bool sstd::rmdir(const std::string& path){ return sstd::rmdir(path.c_str()); }
 
 // -> ヘッダへ移動．
 //
-//struct pathAndType{
+//struct pathAndType_tmp{
 //    std::string path;
 //    char type;        // 'f': file, 'd': directory
 //};
@@ -53,7 +53,7 @@ bool sstd::rmdir(const std::string& path){ return sstd::rmdir(path.c_str()); }
 #ifdef _WIN32
 
 // getFilePathInDir.cpp を参考に実装する
-std::vector<std::string> fileInASingleDir(std::vector<struct pathAndType>& ret, const char* pPath){
+std::vector<std::string> fileInASingleDir(std::vector<struct pathAndType_tmp>& ret, const char* pPath){
     std::string path_WC = pPath + std::string(R"(/*)"); // path with wild card
 
     WIN32_FIND_DATA fd;
@@ -71,7 +71,7 @@ std::vector<std::string> fileInASingleDir(std::vector<struct pathAndType>& ret, 
 
                 std::string pathBuf = pPath+std::string(R"(/)")+fd.cFileName;
 
-                struct pathAndType retBuf;
+                struct pathAndType_tmp retBuf;
                 retBuf.path = pathBuf;
                 retBuf.type = 'd';
                 ret.push_back(retBuf);
@@ -86,7 +86,7 @@ std::vector<std::string> fileInASingleDir(std::vector<struct pathAndType>& ret, 
             // file found
 //            printf("file: %s\n", fd.cFileName);
 
-            struct pathAndType retBuf;
+            struct pathAndType_tmp retBuf;
             retBuf.path = pPath+std::string(R"(/)")+fd.cFileName;
             retBuf.type = 'f';
             ret.push_back(retBuf);
@@ -100,7 +100,7 @@ std::vector<std::string> fileInASingleDir(std::vector<struct pathAndType>& ret, 
 
 //----------------------------------------------------
 
-std::vector<std::string> fileInASingleDir(bool& result, std::vector<struct sstd::pathAndType>& ret, const char* pPath){
+std::vector<std::string> fileInASingleDir(bool& result, std::vector<struct sstd::pathAndType_tmp>& ret, const char* pPath){
 
     // ディレクトリを開く
     DIR *pDir = opendir(pPath);
@@ -126,7 +126,7 @@ std::vector<std::string> fileInASingleDir(bool& result, std::vector<struct sstd:
 
                 std::string pathBuf = pPath+std::string(R"(/)")+pEnt->d_name;
 
-                struct sstd::pathAndType retBuf;
+                struct sstd::pathAndType_tmp retBuf;
                 retBuf.path = pathBuf;
                 retBuf.type = 'd';
                 ret.push_back(retBuf);
@@ -143,7 +143,7 @@ std::vector<std::string> fileInASingleDir(bool& result, std::vector<struct sstd:
             // file found
 //            printf("file: %s\n", pEnt->d_name);
 
-            struct sstd::pathAndType retBuf;
+            struct sstd::pathAndType_tmp retBuf;
             retBuf.path = pPath+std::string(R"(/)")+pEnt->d_name; 
             retBuf.type = 'f';
             ret.push_back(retBuf);
@@ -159,10 +159,10 @@ std::vector<std::string> fileInASingleDir(bool& result, std::vector<struct sstd:
 
 //--------------------------------------------------------------------------------------------------------
 
-bool sstd::getAllPath(std::vector<struct sstd::pathAndType>& ret, const char* pPath){
+bool sstd::getAllPath(std::vector<struct sstd::pathAndType_tmp>& ret, const char* pPath){
     if(!sstd::pathExist(pPath)){ return false; } // there is no file or directory.
     
-    struct pathAndType retBuf;
+    struct pathAndType_tmp retBuf;
     retBuf.path = pPath;
     if(!sstd::isDir(pPath)){
         retBuf.type='f';
@@ -185,7 +185,7 @@ bool sstd::getAllPath(std::vector<std::string>& ret, const char* pPath){
     ret.clear();
     uint rSize=0;
     
-    std::vector<struct sstd::pathAndType> allPath;
+    std::vector<struct sstd::pathAndType_tmp> allPath;
     if(!sstd::getAllPath(allPath, pPath)){ sstd::pdbg("ERROR: getAllInDir() is failed\n"); return false; }
     
     // In order to avoid directory traversal
@@ -199,7 +199,7 @@ bool sstd::getAllFile(std::vector<std::string>& ret, const char* pPath){
     ret.clear();
     uint rSize=0;
     
-    std::vector<struct sstd::pathAndType> allPath;
+    std::vector<struct sstd::pathAndType_tmp> allPath;
     if(!sstd::getAllPath(allPath, pPath)){ sstd::pdbg("ERROR: getAllInDir() is failed\n"); return false; }
     
     // In order to avoid directory traversal
@@ -214,7 +214,7 @@ bool sstd::getAllDir(std::vector<std::string>& ret, const char* pPath){
     ret.clear();
     uint rSize=0;
     
-    std::vector<struct sstd::pathAndType> allPath;
+    std::vector<struct sstd::pathAndType_tmp> allPath;
     if(!sstd::getAllPath(allPath, pPath)){ sstd::pdbg("ERROR: getAllInDir() is failed\n"); return false; }
     
     // In order to avoid directory traversal
@@ -229,7 +229,7 @@ bool sstd::getAllDir(std::vector<std::string>& ret, const char* pPath){
 //--------------------------------------------------------------------------------------------------------
 
 bool sstd::rm(const char* pPath){
-    std::vector<struct sstd::pathAndType> fileList;
+    std::vector<struct sstd::pathAndType_tmp> fileList;
     if(!sstd::getAllPath(fileList, pPath)){ return false; } // there is no file or directory.
 
     bool retVal = true;
