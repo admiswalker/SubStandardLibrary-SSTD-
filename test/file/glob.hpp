@@ -218,8 +218,8 @@ TEST(glob_pt, glob_pt_opt_f_txt){
 
     // compare v_path with v_ans
     std::vector<std::string> v_ans_path={"./test/file/glob_test/a.txt",
-				    "./test/file/glob_test/b.txt",
-				    "./test/file/glob_test/c.txt"};
+                                         "./test/file/glob_test/b.txt",
+                                         "./test/file/glob_test/c.txt"};
     std::vector<char> v_ans_type={'f',
                                   'f',
                                   'f'};
