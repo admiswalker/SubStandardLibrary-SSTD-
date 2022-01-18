@@ -25,7 +25,7 @@ namespace sstd{
     std::vector<std::string> glob(const        char* path);
     std::vector<std::string> glob(const std::string& path);
 
-    std::vector<struct pathAndType> glob_pt(const        char* path, const char* opt); // pt: with path type
+    std::vector<struct pathAndType> glob_pt(const        char* path, const char* opt); // _pt: with path type
     std::vector<struct pathAndType> glob_pt(const std::string& path, const char* opt);
     std::vector<struct pathAndType> glob_pt(const        char* path);
     std::vector<struct pathAndType> glob_pt(const std::string& path);
