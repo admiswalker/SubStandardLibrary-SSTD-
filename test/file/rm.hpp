@@ -7,10 +7,18 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // rm
 
-TEST(rm, rm){
+TEST(rm, rm_case01){
 //    sstd::rm(".");
 //    sstd::rm("/media/admis/KIOXIA/test_rm");
 //    sstd::rm("/media/admis/KIOXIA/test_rm");
 //    sstd::rm("/media/admis/KIOXIA/test_rm/a/al");
+}
+
+TEST(rm, rm_case02){
+    // when a file name and directory name is same
+    // -> Not allowed by a file system.
+
+//    sstd::system("touch a");
+//    sstd::system("mkdir a"); // ERROR
 }
 

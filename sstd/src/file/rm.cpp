@@ -38,26 +38,20 @@ bool sstd::rmdir(const std::string& path){ return sstd::rmdir(path.c_str()); }
 bool sstd::rm(const char* pPath){
     bool ret = true;
     
-    std::vector<struct sstd::pathAndType> v_pt = sstd::glob_pt(pPath+std::string("/*"), "dfr");
-    for(uint i=0; i<v_pt.size(); ++i){
-        printf("path: %s\n", v_pt[i].path.c_str());
-        printf("type: %c\n\n", v_pt[i].type);
-    }
-    
-    // remove under pPath
-    for(int i=v_pt.size()-1; i>=0; --i){
-        switch(v_pt[i].type){
-        case 'f': { if(!sstd::unlink(v_pt[i].path.c_str())){ret=false;} break; }
-        case 'd': { if(!sstd::rmdir (v_pt[i].path.c_str())){ret=false;} break; }
-        default: { sstd::pdbg("ERROR: sstd::rm(): sstd::glob_pt() returned unexpected file type.\n"); ret=false; break; }
-        }
-    }
-    
-    // remove myself (pPath)
     if(sstd::isFile(pPath)){
         if(!sstd::unlink(pPath)){ret=false;}
+        
     }else{
-        if(!sstd::rmdir(pPath)){ret=false;}
+        std::vector<struct sstd::pathAndType> v_pt = sstd::glob_pt(pPath+std::string("/*"), "dfr");
+        for(int i=v_pt.size()-1; i>=0; --i){
+            switch(v_pt[i].type){
+            case 'f': { if(!sstd::unlink(v_pt[i].path.c_str())){ret=false;} break; }
+            case 'd': { if(!sstd::rmdir (v_pt[i].path.c_str())){ret=false;} break; }
+            default: { sstd::pdbg("ERROR: sstd::rm(): sstd::glob_pt() returned unexpected file type.\n"); ret=false; break; }
+            }
+        }
+        
+        if(!sstd::rmdir(pPath)){ret=false;} // remove myself (a directory of `pPath`)
     }
     
     return ret;
