@@ -27,6 +27,7 @@
 
 // 数値計算系の関数 (スプライン補完等)
 
+#include "src/file/cp.hpp"
 #include "src/file/csv.hpp"
 #include "src/file/file.hpp"
 #include "src/file/file_c.hpp"

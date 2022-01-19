@@ -12,6 +12,7 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 //*
 // Remove comment out when you test it.
+#include "test/file/cp.hpp"/*
 #include "test/file/csv.hpp"
 #include "test/file/file.hpp"
 #include "test/file/glob.hpp"
