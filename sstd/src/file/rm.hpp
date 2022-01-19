@@ -1,13 +1,8 @@
 ﻿#pragma once
 #include <string>
-#include <vector>
+
 
 namespace sstd{
-    struct pathAndType_tmp{
-        std::string path;
-        char type;        // 'f': file, 'd': directory
-    };
-    
     bool unlink(const char*        pPath); // delete file
     bool unlink(const std::string&  path); // delete file
 
