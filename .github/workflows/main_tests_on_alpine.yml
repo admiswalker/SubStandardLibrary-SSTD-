@@ -2,9 +2,9 @@ name: Tests on Alpine (Build Only)
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master, dev, develop ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main, master, dev, develop ]
 
 jobs:
   build:
