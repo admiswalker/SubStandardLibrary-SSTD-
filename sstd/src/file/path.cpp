@@ -16,6 +16,22 @@ std::string sstd::getPath(const char* pPath){
     }
     return result;
 }
+std::string sstd::getPath_owWC(const char* pPath){
+
+    size_t len = strlen(pPath);
+    if(len==0){ return std::string(""); }
+    
+    char* pSlash_last = (char*)&pPath[0];
+    
+    for(int i=0; pPath[i]!='\0'; ++i){
+        if(pPath[i]=='/'||pPath[i]=='\\'){
+            pSlash_last = (char*)&pPath[i];
+        }
+        if(pPath[i]=='*'||pPath[i]=='?'){ break; }
+    }
+
+    return std::string((char*)pPath, pSlash_last);
+}
 
 
 std::string sstd::getDirName(const char* pPath){
@@ -39,7 +55,7 @@ std::string sstd::getDirName(const char* pPath){
     
     return std::string(pSlash_last+1);
 }
-uint sstd::getDirName_idx(const char* pPath){
+uint sstd::getDirName_begin_idx(const char* pPath){
 
     size_t len = strlen(pPath);
     if(len==0){ return 0; }
@@ -60,7 +76,35 @@ uint sstd::getDirName_idx(const char* pPath){
     
     return slash_last + 1;
 }
+uint sstd::getDirName_end_idx(const char* pPath){
 
+    size_t len = strlen(pPath);
+    if(len==0){ return 0; }
+    
+    uint slash_last = 0;
+    for(int i=0; pPath[i]!='\0'; ++i){
+        if(pPath[i]=='/'||pPath[i]=='\\'){
+            slash_last = i;
+        }
+    }
+    
+    return slash_last + 1;
+}
+uint sstd::getDirName_end_idx_owWC(const char* pPath){
+
+    size_t len = strlen(pPath);
+    if(len==0){ return 0; }
+    
+    uint slash_last = 0;
+    for(int i=0; pPath[i]!='\0'; ++i){
+        if(pPath[i]=='/'||pPath[i]=='\\'){
+            slash_last = i;
+        }
+        if(pPath[i]=='*'||pPath[i]=='?'){ break; }
+    }
+    
+    return slash_last + 1;
+}
 
 char* sstd::getFileName(const char* pPath){
 

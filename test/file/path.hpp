@@ -5,6 +5,18 @@ TEST(path, getPath){
     const char* pPath="./abc/def/text.abc.txt";
     ASSERT_STREQ(sstd::getPath(pPath).c_str(), "./abc/def/");
 }
+TEST(path, getPath_owWC_case01){
+    const char* pPath="./abc/def/text.abc.txt";
+    ASSERT_STREQ(sstd::getPath(pPath).c_str(), "./abc/def/");
+}
+TEST(path, getPath_owWC_case02){
+    const char* pPath="./abc/d*f/text.abc.txt";
+    ASSERT_STREQ(sstd::getPath_owWC(pPath).c_str(), "./abc");
+}
+TEST(path, getPath_owWC_case03){
+    const char* pPath="./abc/d?f/text.abc.txt";
+    ASSERT_STREQ(sstd::getPath_owWC(pPath).c_str(), "./abc");
+}
 
 
 TEST(path, getDirName_case01){
@@ -27,9 +39,9 @@ TEST(path, getDirName_case03){
 }
 
 
-TEST(path, getDirName_idx_case01){
+TEST(path, getDirName_begin_idx_case01){
     const char* pPath="./abc/def/text.abc.txt";
-    ASSERT_STREQ(&pPath[sstd::getDirName_idx(pPath)], "text.abc.txt");
+    ASSERT_STREQ(&pPath[sstd::getDirName_begin_idx(pPath)], "text.abc.txt");
 
     // This type of path refered as a direcotry.
     // If you want to parse this type of path, write
@@ -37,14 +49,67 @@ TEST(path, getDirName_idx_case01){
     //   | sstd::getDirName(tmp.c_str());
     // instead.
 }
-TEST(path, getDirName_idx_case02){
+TEST(path, getDirName_begin_idx_case02){
     const char* pPath="./abc/def";
-    ASSERT_STREQ(&pPath[sstd::getDirName_idx(pPath)], "def");
+    ASSERT_STREQ(&pPath[sstd::getDirName_begin_idx(pPath)], "def");
 }
-TEST(path, getDirName_idx_case03){
+TEST(path, getDirName_begin_idx_case03){
     const char* pPath="./abc/def/";
-    ASSERT_STREQ(&pPath[sstd::getDirName_idx(pPath)], "def/");
+    ASSERT_STREQ(&pPath[sstd::getDirName_begin_idx(pPath)], "def/");
 }
+
+
+TEST(path, getDirName_end_idx_case01){
+    const char* pPath="./abc/def/text.abc.txt";
+    ASSERT_STREQ(&pPath[sstd::getDirName_end_idx(pPath)], "text.abc.txt");
+
+    // This type of path refered as a direcotry.
+    // If you want to parse this type of path, write
+    //   | std::string tmp = sstd::getPath(pPath);
+    //   | sstd::getDirName(tmp.c_str());
+    // instead.
+}
+TEST(path, getDirName_end_idx_case02){
+    const char* pPath="./abc/def";
+    ASSERT_STREQ(&pPath[sstd::getDirName_end_idx(pPath)], "def");
+}
+TEST(path, getDirName_end_idx_case03){
+    const char* pPath="./abc/def/";
+    ASSERT_STREQ(&pPath[sstd::getDirName_end_idx(pPath)], "");
+}
+
+
+TEST(path, getDirName_end_idx_owWC_case01){
+    const char* pPath="./abc/def/text.abc.txt";
+    ASSERT_STREQ(&pPath[sstd::getDirName_end_idx(pPath)], "text.abc.txt");
+
+    // This type of path refered as a direcotry.
+    // If you want to parse this type of path, write
+    //   | std::string tmp = sstd::getPath(pPath);
+    //   | sstd::getDirName(tmp.c_str());
+    // instead.
+}
+TEST(path, getDirName_end_idx_owWC_case02){
+    const char* pPath="./abc/def";
+    ASSERT_STREQ(&pPath[sstd::getDirName_end_idx_owWC(pPath)], "def");
+}
+TEST(path, getDirName_end_idx_owWC_case03){
+    const char* pPath="./abc/def/";
+    ASSERT_STREQ(&pPath[sstd::getDirName_end_idx_owWC(pPath)], "");
+}
+TEST(path, getDirName_end_idx_owWC_case04){
+    const char* pPath="./abc/def/*";
+    ASSERT_STREQ(&pPath[sstd::getDirName_end_idx_owWC(pPath)], "*");
+}
+TEST(path, getDirName_end_idx_owWC_case05){
+    const char* pPath="./abc/def/?";
+    ASSERT_STREQ(&pPath[sstd::getDirName_end_idx_owWC(pPath)], "?");
+}
+TEST(path, getDirName_end_idx_owWC_case06){
+    const char* pPath="./abc/de*/?";
+    ASSERT_STREQ(&pPath[sstd::getDirName_end_idx_owWC(pPath)], "de*/?");
+}
+
 
 
 TEST(path, getFileName){
