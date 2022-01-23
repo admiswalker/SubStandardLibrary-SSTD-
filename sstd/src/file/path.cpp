@@ -23,9 +23,8 @@ std::string sstd::getDirName(const char* pPath){
     size_t len = strlen(pPath);
     if(len==0){ return std::string(""); }
     
-    char* pStartPathAdd = (char*)&pPath[0];
-    char* pSlash_last        = pStartPathAdd;
-    char* pSlash_second2last = pStartPathAdd;
+    char* pSlash_last        = (char*)&pPath[0];
+    char* pSlash_second2last = (char*)&pPath[0];
     
     for(int i=0; pPath[i]!='\0'; ++i){
         if(pPath[i]=='/'||pPath[i]=='\\'){
@@ -39,6 +38,27 @@ std::string sstd::getDirName(const char* pPath){
     }
     
     return std::string(pSlash_last+1);
+}
+uint sstd::getDirName_idx(const char* pPath){
+
+    size_t len = strlen(pPath);
+    if(len==0){ return 0; }
+    
+    uint slash_last        = 0;
+    uint slash_second2last = 0;
+    
+    for(int i=0; pPath[i]!='\0'; ++i){
+        if(pPath[i]=='/'||pPath[i]=='\\'){
+            slash_second2last = slash_last;
+            slash_last = i;
+        }
+    }
+    
+    if(slash_last==(len-1)){
+        return slash_second2last + 1;
+    }
+    
+    return slash_last + 1;
 }
 
 
