@@ -1,6 +1,6 @@
 #pragma once
 
-/*
+
 TEST(cp, copy_pChar_pChar_case01){
     sstd::mkdir("./tmpDir_cp");
     sstd::system("dd if=/dev/urandom of=./tmpDir_cp/test_rand.bin bs=1M count=10 > /dev/null 2>&1");
@@ -124,5 +124,29 @@ TEST(cp, cp_case02){
     }
     sstd::rm("./tmpDir_cp");
 }
-*/
-
+TEST(cp, cp_case03){
+    sstd::mkdir("./tmpDir_cp");
+    
+    sstd::cp("./sstd/*", "./tmpDir_cp");
+    {
+        // check path
+        std::vector<std::string> vPath = sstd::glob("./sstd/*", "dfr");
+        std::vector<std::string> vPath_ans = sstd::glob("./tmpDir_cp/*", "dfr");
+        ASSERT_EQ(vPath.size(), vPath_ans.size());
+        for(uint i=0; i<vPath.size(); ++i){
+            ASSERT_STREQ((char*)&vPath[i][7], (char*)&vPath_ans[i][12]);
+        }
+    }
+    {
+        // check file hash
+        std::vector<std::string> vPath = sstd::glob("./sstd/*", "fr");
+        std::vector<std::string> vPath_ans = sstd::glob("./tmpDir_cp/*", "fr");
+        ASSERT_EQ(vPath.size(), vPath_ans.size());
+        for(uint i=0; i<vPath.size(); ++i){
+            std::string hash_src = sstd::system_stdout(std::string("sha256sum ")+vPath    [i]+" | cut -d \" \" -f 1"); hash_src.pop_back();
+            std::string hash_dst = sstd::system_stdout(std::string("sha256sum ")+vPath_ans[i]+" | cut -d \" \" -f 1"); hash_dst.pop_back();
+            ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());
+        }
+    }
+    sstd::rm("./tmpDir_cp");
+}
