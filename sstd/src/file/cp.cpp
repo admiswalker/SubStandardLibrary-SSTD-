@@ -26,9 +26,6 @@ bool sstd::copy(const std::string&  path_src, const char*        pPath_dst){ ret
 bool sstd::copy(const char*        pPath_src, const std::string&  path_dst){ return sstd::copy(pPath_src        ,  path_dst.c_str()); }
 bool sstd::copy(const std::string&  path_src, const std::string&  path_dst){ return sstd::copy( path_src.c_str(),  path_dst.c_str()); }
 
-//bool include_wildCard(const char* pPath){
-//    return (! (sstd::isFile(pPath)||sstd::isDir(pPath)) );
-//}
 bool sstd::cp  (const char*        pPath_src, const char*        pPath_dst){
     bool TF_file = sstd::isFile(pPath_src);
     bool TF_dir  = sstd::isDir (pPath_src);
@@ -36,9 +33,8 @@ bool sstd::cp  (const char*        pPath_src, const char*        pPath_dst){
     if(TF_file){
         // when a pPath_src is a file
         
-        sstd::printn(pPath_dst);
-//        sstd::mkdir(pPath_dst);
-        return sstd::copy(pPath_src, std::string(pPath_dst)+"/"+sstd::getFileName(pPath_src));
+        sstd::mkdir(sstd::getPath(pPath_dst));
+        return sstd::copy(pPath_src, pPath_dst);
         
     }else if(TF_dir){
         // when a pPath_src is a directory
@@ -47,7 +43,6 @@ bool sstd::cp  (const char*        pPath_src, const char*        pPath_dst){
         std::vector<sstd::pathAndType> vPath = sstd::glob_pt(std::string(pPath_src)+"/*", "dfr");
 
         std::string dstPath_baseDir = std::string(pPath_dst)+'/'+sstd::getDirName(pPath_src);
-//        sstd::printn(dstPath_baseDir);
         sstd::mkdir(dstPath_baseDir);
         
         bool ret=true;
@@ -55,16 +50,12 @@ bool sstd::cp  (const char*        pPath_src, const char*        pPath_dst){
             if(vPath[i].type=='f'){
                 // when a vPath[i].path is file path
                 std::string path_dst = std::string(pPath_dst)+'/'+&(vPath[i].path[begin_idx]);
-//                sstd::printn(vPath[i].path.c_str());
-//                sstd::printn(path_dst.c_str());
                 sstd::copy(vPath[i].path.c_str(), path_dst.c_str());
             }else{
                 // when a vPath[i].path is directory path
                 std::string dir_dst = std::string(pPath_dst)+'/'+&(vPath[i].path[begin_idx]);
-//                sstd::printn(dir_dst.c_str());
                 sstd::mkdir(dir_dst.c_str());
             }
-//            printf("\n");
         }
         
         return true;
@@ -75,7 +66,6 @@ bool sstd::cp  (const char*        pPath_src, const char*        pPath_dst){
         return true;
     }
     
-//    sstd::printn(vPath);
     return true;
 }
 bool sstd::cp  (const std::string&  path_src, const char*        pPath_dst){ return sstd::cp  ( path_src.c_str(), pPath_dst        ); }
