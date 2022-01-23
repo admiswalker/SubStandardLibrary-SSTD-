@@ -16,6 +16,7 @@
 #include "test/file/csv.hpp"
 #include "test/file/file.hpp"
 #include "test/file/glob.hpp"
+#include "test/file/path.hpp"
 #include "test/file/read_write.hpp"
 #include "test/file/tinyInterpreter.hpp"
 
@@ -48,7 +49,6 @@ void TEST_file_c();
 void TEST_mkdir();
 void TEST_rm();
 void TEST_ssprintf();
-void TEST_path();
 void TEST_encode_decode();
 void TEST_hashFnc();
 void TEST_pause();
@@ -83,7 +83,6 @@ int main(int argc, char** argv){
 //    TEST_rm();
 //    TEST_str2num();
 //    TEST_ssprintf();
-//    TEST_path();
 //    TEST_encode_decode();
 //    TEST_hashFnc();
 //    TEST_pause();
@@ -221,67 +220,6 @@ void TEST_str2num(){
 void TEST_ssprintf(){
     printf("■ ssprintf(const char* format, ...)\n");
     printf("%s", sstd::ssprintf("Num: %d, Str: %s\n\n", 1234, "abcd").c_str());
-}
-//*/
-
-/*
-void TEST_path(){
-    printf("■ path\n"); // <- 不足する関数を追加する必要がある．
-    
-    const char* pPath="./abc/def/text.abc.txt\0";
-    
-    printf("Input pPath: %s\n", pPath);
-    printf("Output getPath: %s\n",                     sstd::getPath                     (pPath).c_str());
-    printf("Output getFileName: %s\n",                 sstd::getFileName                 (pPath)        );
-    printf("Output getFileNameWithoutExtension: %s\n", sstd::getFileName_withoutExtension(pPath).c_str());
-    printf("Output getFileExtension: %s\n",            sstd::getExtension                (pPath)        );
-    printf("\n");
-
-    sstd::printn(sstd::parsePath(R"(C:\a\b)"));
-    sstd::printn(sstd::parsePath(R"(/a/b)"));
-    sstd::printn(sstd::parsePath(R"(./a/b)"));
-    sstd::printn(sstd::parsePath(R"(../a/b)"));
-    sstd::printn(sstd::parsePath(R"(../a/b/)"));
-    sstd::printn(sstd::parsePath(R"(a/b/)"));
-    printf("\n");
-
-    sstd::printn(sstd::parsePath_withBase(R"(C:\a\b)"));
-    sstd::printn(sstd::parsePath_withBase(R"(/a/b)"));
-    sstd::printn(sstd::parsePath_withBase(R"(./a/b)"));
-    sstd::printn(sstd::parsePath_withBase(R"(../a/b)"));
-    sstd::printn(sstd::parsePath_withBase(R"(../a/b/)"));
-    sstd::printn(sstd::parsePath_withBase(R"(a/b/)"));
-    printf("\n");
-    
-    printf("  □ isFile\n");
-    sstd::printn(sstd::isFile("./main.cpp"));
-    sstd::printn(sstd::isFile("./notExist"));
-    sstd::printn(sstd::isFile("./sstd"));
-    printf("\n");
-    
-    printf("  □ isDir\n");
-    sstd::printn(sstd::isDir("./main.cpp"));
-    sstd::printn(sstd::isDir("./notExist"));
-    sstd::printn(sstd::isDir("./sstd"));
-    printf("\n");
-    
-    printf("  □ file exist\n");
-    sstd::printn(sstd::fileExist("./main.cpp"));
-    sstd::printn(sstd::fileExist("./notExist"));
-    sstd::printn(sstd::fileExist("./sstd"));
-    printf("\n");
-    
-    printf("  □ dir exist\n");
-    sstd::printn(sstd::dirExist("./main.cpp"));
-    sstd::printn(sstd::dirExist("./notExist"));
-    sstd::printn(sstd::dirExist("./sstd"));
-    printf("\n");
-    
-    printf("  □ path exist\n");
-    sstd::printn(sstd::pathExist("./main.cpp"));
-    sstd::printn(sstd::pathExist("./notExist"));
-    sstd::printn(sstd::pathExist("./sstd"));
-    printf("\n");
 }
 //*/
 
