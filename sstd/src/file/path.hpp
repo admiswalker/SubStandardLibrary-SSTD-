@@ -5,6 +5,7 @@
 
 namespace sstd{
     std::string  getPath                     (const char* pPath);
+    std::string  getDirName                  (const char* pPath);
            char* getFileName                 (const char* pPath);
     std::string  getFileName_withoutExtension(const char* pPath);
            char* getExtension                (const char* pPath);

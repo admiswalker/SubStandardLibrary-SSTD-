@@ -18,6 +18,30 @@ std::string sstd::getPath(const char* pPath){
 }
 
 
+std::string sstd::getDirName(const char* pPath){
+
+    size_t len = strlen(pPath);
+    if(len==0){ return std::string(""); }
+    
+    char* pStartPathAdd = (char*)&pPath[0];
+    char* pSlash_last        = pStartPathAdd;
+    char* pSlash_second2last = pStartPathAdd;
+    
+    for(int i=0; pPath[i]!='\0'; ++i){
+        if(pPath[i]=='/'||pPath[i]=='\\'){
+            pSlash_second2last = pSlash_last;
+            pSlash_last = (char*)&pPath[i];
+        }
+    }
+
+    if(pSlash_last==&pPath[len-1]){
+        return std::string(pSlash_second2last+1, pSlash_last);
+    }
+    
+    return std::string(pSlash_last+1);
+}
+
+
 char* sstd::getFileName(const char* pPath){
 
     char* pStartPathAdd = (char*)&pPath[0];
