@@ -48,6 +48,20 @@ TEST(strmatch, strmatch){
     ASSERT_TRUE( sstd::strmatch_getWC(            "TOKYOTO..." , std::string("??KYOTO*"), ret) ); ASSERT_STREQ(ret.c_str(), "TO..."); ASSERT_EQ(ret.size(), (uint)5);
     ASSERT_TRUE( sstd::strmatch_getWC(std::string("TOKYOTO..."), std::string("??KYOTO*"), ret) ); ASSERT_STREQ(ret.c_str(), "TO..."); ASSERT_EQ(ret.size(), (uint)5);
 }
+TEST(strmatch, pathmatch){
+    const char* str = "/abc/def/ghi/example.txt";
+    const char* WildCard1 = "/abc/def/ghi/*.txt";
+    const char* WildCard2 = "/abc/def/*/*.txt";
+    const char* WildCard3 = "/abc/*.txt";
+    const char* WildCard4 = R"(/abc/*/*/*.txt)";   // escape `*` or use `raw string literal`
+    const char* WildCard5 = R"(/abc/*/???/*.txt)"; // escape `*` or use `raw string literal`
+
+    ASSERT_TRUE ( sstd::pathmatch(str, WildCard1) );
+    ASSERT_TRUE ( sstd::pathmatch(str, WildCard2) );
+    ASSERT_FALSE( sstd::pathmatch(str, WildCard3) );
+    ASSERT_TRUE ( sstd::pathmatch(str, WildCard4) );
+    ASSERT_TRUE ( sstd::pathmatch(str, WildCard5) );
+}
 TEST(strmatch, isNum_char){
     ASSERT_TRUE ( sstd::isNum('0') );
     ASSERT_TRUE ( sstd::isNum('5') );

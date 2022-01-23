@@ -10,6 +10,14 @@ namespace sstd{
     bool strmatch(const std::string& str, const        char* wildCard);
     bool strmatch(const std::string& str, const std::string& wildCard);
     
+    bool pathmatch(
+        const char* str,     // target string to search
+        const char* wildCard // wild card ('*' and '?' are available.)
+    );
+    bool pathmatch(const        char* str, const std::string& wildCard);
+    bool pathmatch(const std::string& str, const        char* wildCard);
+    bool pathmatch(const std::string& str, const std::string& wildCard);
+    
     bool strmatch_getWC(
         const char* str,      // target string to search
         const char* wildCard, // wild card ('*' and '?' are available.)

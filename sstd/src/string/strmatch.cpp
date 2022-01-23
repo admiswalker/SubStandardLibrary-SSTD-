@@ -23,6 +23,22 @@ bool sstd::strmatch(const std::string& str, const        char* wildCard){ return
 bool sstd::strmatch(const std::string& str, const std::string& wildCard){ return sstd::strmatch(str.c_str(), wildCard.c_str()); }
 
 //--------------------------------------------------------------------------------------------------------
+
+bool sstd::pathmatch(
+               const char* str,     // target string to search
+               const char* wildCard // wild card ('*' and '?' are available.)
+){
+    if      (*wildCard=='\0'){ return '\0' == *str;
+    }else if(*wildCard=='*' ){ return pathmatch(str, wildCard+1) || (('\0' != *str) && ('/' != *str) && ('\\' != *str) && pathmatch(str+1, wildCard));
+    }else if(*wildCard=='?' ){ return ('\0' != *str) && ('/' != *str) && ('\\' != *str) && pathmatch(str+1, wildCard+1);
+    }          else          { return ((uchar)*wildCard == (uchar)*str) && pathmatch(str+1, wildCard+1);
+    }
+}
+bool sstd::pathmatch(const        char* str, const std::string& wildCard){ return sstd::pathmatch(str        , wildCard.c_str()); }
+bool sstd::pathmatch(const std::string& str, const        char* wildCard){ return sstd::pathmatch(str.c_str(), wildCard        ); }
+bool sstd::pathmatch(const std::string& str, const std::string& wildCard){ return sstd::pathmatch(str.c_str(), wildCard.c_str()); }
+
+//--------------------------------------------------------------------------------------------------------
 // strmatch_getWC()
 
 /*
