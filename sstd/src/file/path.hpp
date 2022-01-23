@@ -2,6 +2,8 @@
 
 #include <string>
 #include <vector>
+#include "../typeDef.h"
+
 
 namespace sstd{
     std::string  getPath                     (const char* pPath);
