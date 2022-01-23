@@ -26,33 +26,34 @@ bool sstd::copy(const std::string&  path_src, const char*        pPath_dst){ ret
 bool sstd::copy(const char*        pPath_src, const std::string&  path_dst){ return sstd::copy(pPath_src        ,  path_dst.c_str()); }
 bool sstd::copy(const std::string&  path_src, const std::string&  path_dst){ return sstd::copy( path_src.c_str(),  path_dst.c_str()); }
 
+
 bool sstd::cp  (const char*        pPath_src, const char*        pPath_dst){
     bool TF_file = sstd::isFile(pPath_src);
     bool TF_dir  = sstd::isDir (pPath_src);
-
+    bool TF_wc   = !(TF_file||TF_dir); // when path include wild card
+    
     if(TF_file){
-        // when a pPath_src is a file
+        // when pPath_src is a file
         
         sstd::mkdir(sstd::getPath(pPath_dst));
         return sstd::copy(pPath_src, pPath_dst);
         
     }else if(TF_dir){
-        // when a pPath_src is a directory
+        // when pPath_src is a directory
         
-        uint begin_idx = sstd::getDirName_idx(pPath_src);
-        std::vector<sstd::pathAndType> vPath = sstd::glob_pt(std::string(pPath_src)+"/*", "dfr");
-
         std::string dstPath_baseDir = std::string(pPath_dst)+'/'+sstd::getDirName(pPath_src);
         sstd::mkdir(dstPath_baseDir);
         
         bool ret=true;
+        std::vector<sstd::pathAndType> vPath = sstd::glob_pt(std::string(pPath_src)+"/*", "dfr");
+        uint begin_idx = sstd::getDirName_begin_idx(pPath_src);
         for(uint i=0; i!=vPath.size(); ++i){
             if(vPath[i].type=='f'){
-                // when a vPath[i].path is file path
+                // when vPath[i].path is a file path
                 std::string path_dst = std::string(pPath_dst)+'/'+&(vPath[i].path[begin_idx]);
                 sstd::copy(vPath[i].path.c_str(), path_dst.c_str());
             }else{
-                // when a vPath[i].path is directory path
+                // when vPath[i].path is a directory path
                 std::string dir_dst = std::string(pPath_dst)+'/'+&(vPath[i].path[begin_idx]);
                 sstd::mkdir(dir_dst.c_str());
             }
@@ -61,8 +62,30 @@ bool sstd::cp  (const char*        pPath_src, const char*        pPath_dst){
         return true;
         
     }else{
-        // when a pPath_src is a path with wild card
+        // when pPath_src is a path with wild card
         
+        sstd::mkdir(pPath_dst);
+        
+        bool ret=true;
+        std::vector<sstd::pathAndType> vPath = sstd::glob_pt(std::string(pPath_src), "dfr");
+        sstd::printn(vPath);
+        uint end_idx = sstd::getDirName_end_idx_owWC(pPath_src);
+        for(uint i=0; i!=vPath.size(); ++i){
+            if(vPath[i].type=='f'){
+                // when vPath[i].path is a file path
+                std::string path_dst = std::string(pPath_dst)+'/'+&(vPath[i].path[end_idx]);
+                sstd::copy(vPath[i].path.c_str(), path_dst.c_str());
+                
+                sstd::printn(vPath[i].path);
+                sstd::printn(path_dst);
+            }else{
+                // when vPath[i].path is a directory path
+                std::string dir_dst = std::string(pPath_dst)+'/'+&(vPath[i].path[end_idx]);
+                sstd::mkdir(dir_dst.c_str());
+
+                sstd::printn(dir_dst);
+            }
+        }
         return true;
     }
     
