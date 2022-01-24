@@ -124,6 +124,14 @@ bool sstd::strmatch_getWC(const std::string& str, const        char* wildCard, s
 bool sstd::strmatch_getWC(const std::string& str, const std::string& wildCard, std::string& retWC){ return sstd::strmatch_getWC(str.c_str(), wildCard.c_str(), retWC); }
 
 //--------------------------------------------------------------------------------------------------------
+// strcmp()
+
+bool sstd::strcmp(const char*        str1, const char*        str2){ return (::strcmp(str1,         str2        )==0); }
+bool sstd::strcmp(const char*        str1, const std::string& str2){ return (::strcmp(str1,         str2.c_str())==0); }
+bool sstd::strcmp(const std::string& str1, const char*        str2){ return (::strcmp(str1.c_str(), str2        )==0); }
+bool sstd::strcmp(const std::string& str1, const std::string& str2){ return (::strcmp(str1.c_str(), str2.c_str())==0); }
+
+//--------------------------------------------------------------------------------------------------------
 
 #define return_isX(X)                                   \
     for(uint i=0; rhs[i]!='\0'; ++i){                   \
@@ -145,14 +153,6 @@ bool sstd::isAlphabet_lower(const        char* rhs){ return_isX( ('a'<=rhs[i] &&
 bool sstd::isAlphabet_lower(const std::string& rhs){ return_isX( ('a'<=rhs[i] && rhs[i]<='z') ); }
 
 #undef return_isX
-
-//--------------------------------------------------------------------------------------------------------
-// strcmp()
-
-bool sstd::strcmp(const char*        str1, const char*        str2){ return (::strcmp(str1,         str2        )==0); }
-bool sstd::strcmp(const char*        str1, const std::string& str2){ return (::strcmp(str1,         str2.c_str())==0); }
-bool sstd::strcmp(const std::string& str1, const char*        str2){ return (::strcmp(str1.c_str(), str2        )==0); }
-bool sstd::strcmp(const std::string& str1, const std::string& str2){ return (::strcmp(str1.c_str(), str2.c_str())==0); }
 
 //--------------------------------------------------------------------------------------------------------
 // charIn()
