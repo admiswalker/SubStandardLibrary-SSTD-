@@ -2,18 +2,17 @@
 #include <string>
 
 namespace sstd{
-    bool strmatch(
-        const char* str,     // target string to search
-        const char* wildCard // wild card ('*' and '?' are available.)
-    );
+    bool strcmp(const        char* str1, const        char* str2);
+    bool strcmp(const        char* str1, const std::string& str2);
+    bool strcmp(const std::string& str1, const        char* str2);
+    bool strcmp(const std::string& str1, const std::string& str2);
+    
+    bool strmatch(const        char* str, const        char* wildCard);
     bool strmatch(const        char* str, const std::string& wildCard);
     bool strmatch(const std::string& str, const        char* wildCard);
     bool strmatch(const std::string& str, const std::string& wildCard);
     
-    bool pathmatch(
-        const char* str,     // target string to search
-        const char* wildCard // wild card ('*' and '?' are available.)
-    );
+    bool pathmatch(const        char* str, const        char* wildCard);
     bool pathmatch(const        char* str, const std::string& wildCard);
     bool pathmatch(const std::string& str, const        char* wildCard);
     bool pathmatch(const std::string& str, const std::string& wildCard);
@@ -27,11 +26,6 @@ namespace sstd{
     bool strmatch_getWC(const std::string& str, const        char* wildCard, std::string& retWC);
     bool strmatch_getWC(const std::string& str, const std::string& wildCard, std::string& retWC);
 
-    bool strcmp(const char*        str1, const char*        str2);
-    bool strcmp(const char*        str1, const std::string& str2);
-    bool strcmp(const std::string& str1, const char*        str2);
-    bool strcmp(const std::string& str1, const std::string& str2);
-    
     bool isNum             (const        char  rhs);
     bool isNum             (const        char* rhs);
     bool isNum             (const std::string& rhs);

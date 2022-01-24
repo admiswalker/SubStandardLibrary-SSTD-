@@ -30,7 +30,7 @@ bool sstd::copy(const std::string&  path_src, const std::string&  path_dst){ ret
 bool sstd::cp  (const char*        pPath_src, const char*        pPath_dst){
     bool TF_file = sstd::isFile(pPath_src);
     bool TF_dir  = sstd::isDir (pPath_src);
-    bool TF_wc   = !(TF_file||TF_dir); // when path include wild card
+//  bool TF_wc   = !(TF_file||TF_dir); // when path include wild card
     
     if(TF_file){
         // when pPath_src is a file
