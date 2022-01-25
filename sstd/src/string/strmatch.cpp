@@ -10,33 +10,33 @@
 
 bool sstd::strmatch(
         const char* str,     // target string to search
-        const char* wildCard // wild card ('*' and '?' are available.)
+        const char* wildcard // wild card ('*' and '?' are available.)
 ){
-    if      (*wildCard=='\0'){ return '\0' == *str;
-    }else if(*wildCard=='*' ){ return strmatch(str, wildCard+1) || (('\0' != *str) && strmatch(str+1, wildCard));
-    }else if(*wildCard=='?' ){ return ('\0' != *str) && strmatch(str+1, wildCard+1);
-    }          else          { return ((uchar)*wildCard == (uchar)*str) && strmatch(str+1, wildCard+1);
+    if      (*wildcard=='\0'){ return '\0' == *str;
+    }else if(*wildcard=='*' ){ return strmatch(str, wildcard+1) || (('\0' != *str) && strmatch(str+1, wildcard));
+    }else if(*wildcard=='?' ){ return ('\0' != *str) && strmatch(str+1, wildcard+1);
+    }          else          { return ((uchar)*wildcard == (uchar)*str) && strmatch(str+1, wildcard+1);
     }
 }
-bool sstd::strmatch(const        char* str, const std::string& wildCard){ return sstd::strmatch(str        , wildCard.c_str()); }
-bool sstd::strmatch(const std::string& str, const        char* wildCard){ return sstd::strmatch(str.c_str(), wildCard        ); }
-bool sstd::strmatch(const std::string& str, const std::string& wildCard){ return sstd::strmatch(str.c_str(), wildCard.c_str()); }
+bool sstd::strmatch(const        char* str, const std::string& wildcard){ return sstd::strmatch(str        , wildcard.c_str()); }
+bool sstd::strmatch(const std::string& str, const        char* wildcard){ return sstd::strmatch(str.c_str(), wildcard        ); }
+bool sstd::strmatch(const std::string& str, const std::string& wildcard){ return sstd::strmatch(str.c_str(), wildcard.c_str()); }
 
 //--------------------------------------------------------------------------------------------------------
 
 bool sstd::pathmatch(
                const char* str,     // target string to search
-               const char* wildCard // wild card ('*' and '?' are available.)
+               const char* wildcard // wild card ('*' and '?' are available.)
 ){
-    if      (*wildCard=='\0'){ return '\0' == *str;
-    }else if(*wildCard=='*' ){ return pathmatch(str, wildCard+1) || (('\0' != *str) && ('/' != *str) && ('\\' != *str) && pathmatch(str+1, wildCard));
-    }else if(*wildCard=='?' ){ return ('\0' != *str) && ('/' != *str) && ('\\' != *str) && pathmatch(str+1, wildCard+1);
-    }          else          { return ((uchar)*wildCard == (uchar)*str) && pathmatch(str+1, wildCard+1);
+    if      (*wildcard=='\0'){ return '\0' == *str;
+    }else if(*wildcard=='*' ){ return pathmatch(str, wildcard+1) || (('\0' != *str) && ('/' != *str) && ('\\' != *str) && pathmatch(str+1, wildcard));
+    }else if(*wildcard=='?' ){ return ('\0' != *str) && ('/' != *str) && ('\\' != *str) && pathmatch(str+1, wildcard+1);
+    }          else          { return ((uchar)*wildcard == (uchar)*str) && pathmatch(str+1, wildcard+1);
     }
 }
-bool sstd::pathmatch(const        char* str, const std::string& wildCard){ return sstd::pathmatch(str        , wildCard.c_str()); }
-bool sstd::pathmatch(const std::string& str, const        char* wildCard){ return sstd::pathmatch(str.c_str(), wildCard        ); }
-bool sstd::pathmatch(const std::string& str, const std::string& wildCard){ return sstd::pathmatch(str.c_str(), wildCard.c_str()); }
+bool sstd::pathmatch(const        char* str, const std::string& wildcard){ return sstd::pathmatch(str        , wildcard.c_str()); }
+bool sstd::pathmatch(const std::string& str, const        char* wildcard){ return sstd::pathmatch(str.c_str(), wildcard        ); }
+bool sstd::pathmatch(const std::string& str, const std::string& wildcard){ return sstd::pathmatch(str.c_str(), wildcard.c_str()); }
 
 //--------------------------------------------------------------------------------------------------------
 // strmatch_getWC()
@@ -44,34 +44,34 @@ bool sstd::pathmatch(const std::string& str, const std::string& wildCard){ retur
 /*
 bool getWC_entity(
         const char* str,      // target string to search
-        const char* wildCard, // wild card ('*' and '?' are available.)
+        const char* wildcard, // wild card ('*' and '?' are available.)
         std::string& retWC    // returning a string that matches the wild card
 ){
-    if(*wildCard=='\0'){
+    if(*wildcard=='\0'){
         return '\0' == *str;
         
-    }else if(*wildCard=='*'){
-        bool retL = getWC_entity(str, wildCard+1, retWC);
-        bool retR = (('\0' != *str) && getWC_entity(str+1, wildCard, retWC));
+    }else if(*wildcard=='*'){
+        bool retL = getWC_entity(str, wildcard+1, retWC);
+        bool retR = (('\0' != *str) && getWC_entity(str+1, wildcard, retWC));
         if(retR && '\0'!=*str){ retWC += *str; }
         return retL || retR;
         
-    }else if(*wildCard=='?'){
-        bool ret = ('\0' != *str) && getWC_entity(str+1, wildCard+1, retWC);
+    }else if(*wildcard=='?'){
+        bool ret = ('\0' != *str) && getWC_entity(str+1, wildcard+1, retWC);
         if(ret && '\0'!=*str){ retWC += *str; }
         return ret;
         
     }else{
-        return ((uchar)*wildCard == (uchar)*str) && getWC_entity(str+1, wildCard+1, retWC);
+        return ((uchar)*wildcard == (uchar)*str) && getWC_entity(str+1, wildcard+1, retWC);
     }
 }
 bool sstd::strmatch_getWC(
         const char* str,      // target string to search
-        const char* wildCard, // wild card ('*' and '?' are available.)
+        const char* wildcard, // wild card ('*' and '?' are available.)
         std::string& retWC    // returning a string that matches the wild card
 ){
     retWC.clear();
-    bool ret = getWC_entity(str, wildCard, retWC);
+    bool ret = getWC_entity(str, wildcard, retWC);
     if(!ret){ retWC.clear(); }
     
     std::reverse(retWC.begin(), retWC.end());
@@ -83,45 +83,45 @@ bool sstd::strmatch_getWC(
 
 bool getWC_entity(
         const char* str,      // target string to search
-        const char* wildCard, // wild card ('*' and '?' are available.)
+        const char* wildcard, // wild card ('*' and '?' are available.)
         std::string& retWC    // returning a string that matches the wild card
 ){
-    if(*wildCard=='\0'){
+    if(*wildcard=='\0'){
         return '\0' == *str;
         
-    }else if(*wildCard=='*'){
-        bool retL = getWC_entity(str, wildCard+1, retWC);
+    }else if(*wildcard=='*'){
+        bool retL = getWC_entity(str, wildcard+1, retWC);
         
         if('\0'!=*str){ retWC += *str; }
-        bool retR = (('\0' != *str) && getWC_entity(str+1, wildCard, retWC));
+        bool retR = (('\0' != *str) && getWC_entity(str+1, wildcard, retWC));
         if(!retR && '\0'!=*str){ retWC.erase(--retWC.end()); }
         
         return retL || retR;
         
-    }else if(*wildCard=='?'){
+    }else if(*wildcard=='?'){
         if('\0'!=*str){ retWC += *str; }
-        bool ret = ('\0' != *str) && getWC_entity(str+1, wildCard+1, retWC);
+        bool ret = ('\0' != *str) && getWC_entity(str+1, wildcard+1, retWC);
         if(!ret && '\0'!=*str){ retWC.erase(--retWC.end()); }
         return ret;
         
     }else{
-        return ((uchar)*wildCard == (uchar)*str) && getWC_entity(str+1, wildCard+1, retWC);
+        return ((uchar)*wildcard == (uchar)*str) && getWC_entity(str+1, wildcard+1, retWC);
     }
 }
 bool sstd::strmatch_getWC(
         const char* str,      // target string to search
-        const char* wildCard, // wild card ('*' and '?' are available.)
+        const char* wildcard, // wild card ('*' and '?' are available.)
         std::string& retWC    // returning a string that matches the wild card
 ){
     retWC.clear();
-    bool ret = getWC_entity(str, wildCard, retWC);
+    bool ret = getWC_entity(str, wildcard, retWC);
     if(!ret){ retWC.clear(); }
     return ret;
 }
 
-bool sstd::strmatch_getWC(const        char* str, const std::string& wildCard, std::string& retWC){ return sstd::strmatch_getWC(str        , wildCard.c_str(), retWC); }
-bool sstd::strmatch_getWC(const std::string& str, const        char* wildCard, std::string& retWC){ return sstd::strmatch_getWC(str.c_str(), wildCard        , retWC); }
-bool sstd::strmatch_getWC(const std::string& str, const std::string& wildCard, std::string& retWC){ return sstd::strmatch_getWC(str.c_str(), wildCard.c_str(), retWC); }
+bool sstd::strmatch_getWC(const        char* str, const std::string& wildcard, std::string& retWC){ return sstd::strmatch_getWC(str        , wildcard.c_str(), retWC); }
+bool sstd::strmatch_getWC(const std::string& str, const        char* wildcard, std::string& retWC){ return sstd::strmatch_getWC(str.c_str(), wildcard        , retWC); }
+bool sstd::strmatch_getWC(const std::string& str, const std::string& wildcard, std::string& retWC){ return sstd::strmatch_getWC(str.c_str(), wildcard.c_str(), retWC); }
 
 //--------------------------------------------------------------------------------------------------------
 // strcmp()

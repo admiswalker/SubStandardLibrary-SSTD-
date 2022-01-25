@@ -5,28 +5,28 @@
 
 TEST(strmatch, strmatch){
     const char* str = "abcdefghijk";
-    const char* WildCard1 = "abc*";
-    const char* WildCard2 = "a?cdefghijk";
-    const char* WildCard3 = "a?";
+    const char* wildcard1 = "abc*";
+    const char* wildcard2 = "a?cdefghijk";
+    const char* wildcard3 = "a?";
 
     // strmatch
       // test (1)
-    ASSERT_TRUE ( sstd::strmatch(str, WildCard1) );
-    ASSERT_TRUE ( sstd::strmatch(str, WildCard2) );
-    ASSERT_FALSE( sstd::strmatch(str, WildCard3) );
+    ASSERT_TRUE ( sstd::strmatch(str, wildcard1) );
+    ASSERT_TRUE ( sstd::strmatch(str, wildcard2) );
+    ASSERT_FALSE( sstd::strmatch(str, wildcard3) );
       // test (2)
     ASSERT_TRUE( sstd::strmatch("TOKYOTO...", "??KYOTO*") );
       // test (3) type test
-    ASSERT_TRUE ( sstd::strmatch(std::string(str),             WildCard1 ) );
-    ASSERT_TRUE ( sstd::strmatch(            str , std::string(WildCard1)) );
-    ASSERT_TRUE ( sstd::strmatch(std::string(str), std::string(WildCard1)) );
+    ASSERT_TRUE ( sstd::strmatch(std::string(str),             wildcard1 ) );
+    ASSERT_TRUE ( sstd::strmatch(            str , std::string(wildcard1)) );
+    ASSERT_TRUE ( sstd::strmatch(std::string(str), std::string(wildcard1)) );
     
     // strmatch_getWC
       // test (1)
     std::string retWC;
-    ASSERT_TRUE ( sstd::strmatch_getWC(str, WildCard1, retWC) ); ASSERT_STREQ(retWC.c_str(), "defghijk"); ASSERT_TRUE( retWC.size()==8 ); retWC.clear();
-    ASSERT_TRUE ( sstd::strmatch_getWC(str, WildCard2, retWC) ); ASSERT_STREQ(retWC.c_str(), "b"       ); ASSERT_TRUE( retWC.size()==1 ); retWC.clear();
-    ASSERT_FALSE( sstd::strmatch_getWC(str, WildCard3, retWC) ); ASSERT_STREQ(retWC.c_str(), ""        ); ASSERT_TRUE( retWC.size()==0 );
+    ASSERT_TRUE ( sstd::strmatch_getWC(str, wildcard1, retWC) ); ASSERT_STREQ(retWC.c_str(), "defghijk"); ASSERT_TRUE( retWC.size()==8 ); retWC.clear();
+    ASSERT_TRUE ( sstd::strmatch_getWC(str, wildcard2, retWC) ); ASSERT_STREQ(retWC.c_str(), "b"       ); ASSERT_TRUE( retWC.size()==1 ); retWC.clear();
+    ASSERT_FALSE( sstd::strmatch_getWC(str, wildcard3, retWC) ); ASSERT_STREQ(retWC.c_str(), ""        ); ASSERT_TRUE( retWC.size()==0 );
       // test (2)
     std::string ret;
     ASSERT_TRUE( sstd::strmatch_getWC("TOKYOTO...", "TO*...", ret) );
@@ -50,17 +50,17 @@ TEST(strmatch, strmatch){
 }
 TEST(strmatch, pathmatch){
     const char* str = "/abc/def/ghi/example.txt";
-    const char* WildCard1 = "/abc/def/ghi/*.txt";
-    const char* WildCard2 = "/abc/def/*/*.txt";
-    const char* WildCard3 = "/abc/*.txt";
-    const char* WildCard4 = R"(/abc/*/*/*.txt)";   // escape `*` or use `raw string literal`
-    const char* WildCard5 = R"(/abc/*/???/*.txt)"; // escape `*` or use `raw string literal`
+    const char* wildcard1 = "/abc/def/ghi/*.txt";
+    const char* wildcard2 = "/abc/def/*/*.txt";
+    const char* wildcard3 = "/abc/*.txt";
+    const char* wildcard4 = R"(/abc/*/*/*.txt)";   // escape `*` or use `raw string literal`
+    const char* wildcard5 = R"(/abc/*/???/*.txt)"; // escape `*` or use `raw string literal`
 
-    ASSERT_TRUE ( sstd::pathmatch(str, WildCard1) );
-    ASSERT_TRUE ( sstd::pathmatch(str, WildCard2) );
-    ASSERT_FALSE( sstd::pathmatch(str, WildCard3) );
-    ASSERT_TRUE ( sstd::pathmatch(str, WildCard4) );
-    ASSERT_TRUE ( sstd::pathmatch(str, WildCard5) );
+    ASSERT_TRUE ( sstd::pathmatch(str, wildcard1) );
+    ASSERT_TRUE ( sstd::pathmatch(str, wildcard2) );
+    ASSERT_FALSE( sstd::pathmatch(str, wildcard3) );
+    ASSERT_TRUE ( sstd::pathmatch(str, wildcard4) );
+    ASSERT_TRUE ( sstd::pathmatch(str, wildcard5) );
 }
 TEST(strmatch, isNum_char){
     ASSERT_TRUE ( sstd::isNum('0') );

@@ -7,24 +7,24 @@ namespace sstd{
     bool strcmp(const std::string& str1, const        char* str2);
     bool strcmp(const std::string& str1, const std::string& str2);
     
-    bool strmatch(const        char* str, const        char* wildCard);
-    bool strmatch(const        char* str, const std::string& wildCard);
-    bool strmatch(const std::string& str, const        char* wildCard);
-    bool strmatch(const std::string& str, const std::string& wildCard);
+    bool strmatch(const        char* str, const        char* wildcard);
+    bool strmatch(const        char* str, const std::string& wildcard);
+    bool strmatch(const std::string& str, const        char* wildcard);
+    bool strmatch(const std::string& str, const std::string& wildcard);
     
-    bool pathmatch(const        char* str, const        char* wildCard);
-    bool pathmatch(const        char* str, const std::string& wildCard);
-    bool pathmatch(const std::string& str, const        char* wildCard);
-    bool pathmatch(const std::string& str, const std::string& wildCard);
+    bool pathmatch(const        char* str, const        char* wildcard);
+    bool pathmatch(const        char* str, const std::string& wildcard);
+    bool pathmatch(const std::string& str, const        char* wildcard);
+    bool pathmatch(const std::string& str, const std::string& wildcard);
     
     bool strmatch_getWC(
         const char* str,      // target string to search
-        const char* wildCard, // wild card ('*' and '?' are available.)
+        const char* wildcard, // wild card ('*' and '?' are available.)
         std::string& retWC    // returning a string that matches the wild card
     );
-    bool strmatch_getWC(const        char* str, const std::string& wildCard, std::string& retWC);
-    bool strmatch_getWC(const std::string& str, const        char* wildCard, std::string& retWC);
-    bool strmatch_getWC(const std::string& str, const std::string& wildCard, std::string& retWC);
+    bool strmatch_getWC(const        char* str, const std::string& wildcard, std::string& retWC);
+    bool strmatch_getWC(const std::string& str, const        char* wildcard, std::string& retWC);
+    bool strmatch_getWC(const std::string& str, const std::string& wildcard, std::string& retWC);
 
     bool isNum             (const        char  rhs);
     bool isNum             (const        char* rhs);
