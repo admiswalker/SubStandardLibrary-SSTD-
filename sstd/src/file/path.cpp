@@ -22,7 +22,7 @@ std::string sstd::getPath(const char* pPath){
 
     return std::string((char*)pPath, pSlash_last);
 }
-std::string sstd::getPath_owWC(const char* pPath){
+std::string sstd::getPath_woWC(const char* pPath){
 
     size_t len = strlen(pPath);
     if(len==0){ return std::string(""); }
@@ -96,7 +96,7 @@ uint sstd::getDirName_end_idx(const char* pPath){
     
     return slash_last + 1;
 }
-uint sstd::getDirName_end_idx_owWC(const char* pPath){
+uint sstd::getDirName_end_idx_woWC(const char* pPath){
 
     size_t len = strlen(pPath);
     if(len==0){ return 0; }

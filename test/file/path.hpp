@@ -19,29 +19,29 @@ TEST(path, getPath_case04){
 }
 
 
-TEST(path, getPath_owWC_case01){
+TEST(path, getPath_woWC_case01){
     const char* pPath="";
-    ASSERT_STREQ(sstd::getPath_owWC(pPath).c_str(), "");
+    ASSERT_STREQ(sstd::getPath_woWC(pPath).c_str(), "");
 }
-TEST(path, getPath_owWC_case02){
+TEST(path, getPath_woWC_case02){
     const char* pPath="/";
-    ASSERT_STREQ(sstd::getPath_owWC(pPath).c_str(), "");
+    ASSERT_STREQ(sstd::getPath_woWC(pPath).c_str(), "");
 }
-TEST(path, getPath_owWC_case03){
+TEST(path, getPath_woWC_case03){
     const char* pPath="./";
-    ASSERT_STREQ(sstd::getPath_owWC(pPath).c_str(), ".");
+    ASSERT_STREQ(sstd::getPath_woWC(pPath).c_str(), ".");
 }
-TEST(path, getPath_owWC_case04){
+TEST(path, getPath_woWC_case04){
     const char* pPath="./abc/def/text.abc.txt";
-    ASSERT_STREQ(sstd::getPath_owWC(pPath).c_str(), "./abc/def");
+    ASSERT_STREQ(sstd::getPath_woWC(pPath).c_str(), "./abc/def");
 }
-TEST(path, getPath_owWC_case05){
+TEST(path, getPath_woWC_case05){
     const char* pPath="./abc/d*f/text.abc.txt";
-    ASSERT_STREQ(sstd::getPath_owWC(pPath).c_str(), "./abc");
+    ASSERT_STREQ(sstd::getPath_woWC(pPath).c_str(), "./abc");
 }
-TEST(path, getPath_owWC_case06){
+TEST(path, getPath_woWC_case06){
     const char* pPath="./abc/d?f/text.abc.txt";
-    ASSERT_STREQ(sstd::getPath_owWC(pPath).c_str(), "./abc");
+    ASSERT_STREQ(sstd::getPath_woWC(pPath).c_str(), "./abc");
 }
 
 
@@ -115,25 +115,25 @@ TEST(path, getDirName_end_idx_owWC_case01){
     //   | sstd::getDirName(tmp.c_str());
     // instead.
 }
-TEST(path, getDirName_end_idx_owWC_case02){
+TEST(path, getDirName_end_idx_woWC_case02){
     const char* pPath="./abc/def";
-    ASSERT_STREQ(&pPath[sstd::getDirName_end_idx_owWC(pPath)], "def");
+    ASSERT_STREQ(&pPath[sstd::getDirName_end_idx_woWC(pPath)], "def");
 }
-TEST(path, getDirName_end_idx_owWC_case03){
+TEST(path, getDirName_end_idx_woWC_case03){
     const char* pPath="./abc/def/";
-    ASSERT_STREQ(&pPath[sstd::getDirName_end_idx_owWC(pPath)], "");
+    ASSERT_STREQ(&pPath[sstd::getDirName_end_idx_woWC(pPath)], "");
 }
-TEST(path, getDirName_end_idx_owWC_case04){
+TEST(path, getDirName_end_idx_woWC_case04){
     const char* pPath="./abc/def/*";
-    ASSERT_STREQ(&pPath[sstd::getDirName_end_idx_owWC(pPath)], "*");
+    ASSERT_STREQ(&pPath[sstd::getDirName_end_idx_woWC(pPath)], "*");
 }
-TEST(path, getDirName_end_idx_owWC_case05){
+TEST(path, getDirName_end_idx_woWC_case05){
     const char* pPath="./abc/def/?";
-    ASSERT_STREQ(&pPath[sstd::getDirName_end_idx_owWC(pPath)], "?");
+    ASSERT_STREQ(&pPath[sstd::getDirName_end_idx_woWC(pPath)], "?");
 }
-TEST(path, getDirName_end_idx_owWC_case06){
+TEST(path, getDirName_end_idx_woWC_case06){
     const char* pPath="./abc/de*/?";
-    ASSERT_STREQ(&pPath[sstd::getDirName_end_idx_owWC(pPath)], "de*/?");
+    ASSERT_STREQ(&pPath[sstd::getDirName_end_idx_woWC(pPath)], "de*/?");
 }
 
 

@@ -7,12 +7,12 @@
 
 namespace sstd{
     std::string  getPath                     (const char* pPath);
-    std::string  getPath_owWC                (const char* pPath); // _owWC: without wild card
+    std::string  getPath_woWC                (const char* pPath); // _woWC: without wild card
     
     std::string  getDirName                  (const char* pPath);
     uint         getDirName_begin_idx        (const char* pPath);
     uint         getDirName_end_idx          (const char* pPath);
-    uint         getDirName_end_idx_owWC     (const char* pPath); // _owWC: without wild card
+    uint         getDirName_end_idx_woWC     (const char* pPath); // _woWC: without wild card
     
            char* getFileName                 (const char* pPath);
     std::string  getFileName_withoutExtension(const char* pPath);

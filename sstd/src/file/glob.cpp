@@ -78,7 +78,7 @@ std::vector<std::string> _glob_worker(const std::string& search_path_in, const c
     return v_path;
 }
 std::vector<std::string> _glob_base(const char* path_wc, const bool opt_d, const bool opt_f, const bool opt_p, const bool opt_r){
-    std::string search_path = sstd::getPath_owWC(path_wc);
+    std::string search_path = sstd::getPath_woWC(path_wc);
     std::vector<std::string> v_path = _glob_worker(search_path.c_str(), path_wc, opt_d, opt_f, opt_p, opt_r);
     std::sort(v_path.begin(), v_path.end());
     return v_path;
@@ -170,7 +170,7 @@ std::vector<struct sstd::pathAndType> _glob_worker_pt(const std::string& search_
     return v_path;
 }
 std::vector<struct sstd::pathAndType> _glob_base_pt(const char* path_wc, const bool opt_d, const bool opt_f, const bool opt_p, const bool opt_r){
-    std::string search_path = sstd::getPath_owWC(path_wc);
+    std::string search_path = sstd::getPath_woWC(path_wc);
     std::vector<struct sstd::pathAndType> v_path = _glob_worker_pt(search_path.c_str(), path_wc, opt_d, opt_f, opt_p, opt_r);
     std::sort(v_path.begin(), v_path.end());
     return v_path;

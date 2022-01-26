@@ -66,12 +66,12 @@ bool sstd::cp  (const char*        pPath_src, const char*        pPath_dst){
         sstd::mkdir(pPath_dst);
         
         std::vector<sstd::pathAndType> vPath = sstd::glob_pt(std::string(pPath_src), "dfr");
-        uint end_idx = sstd::getDirName_end_idx_owWC(pPath_src);
+        uint end_idx = sstd::getDirName_end_idx_woWC(pPath_src);
         for(uint i=0; i!=vPath.size(); ++i){
             if(vPath[i].type=='f'){
                 // when vPath[i].path is a file path
                 std::string path_dst = std::string(pPath_dst)+'/'+&(vPath[i].path[end_idx]);
-                sstd::mkdir(sstd::getPath_owWC(path_dst.c_str()).c_str());
+                sstd::mkdir(sstd::getPath_woWC(path_dst.c_str()).c_str());
                 sstd::copy(vPath[i].path.c_str(), path_dst.c_str());
             }else{
                 // when vPath[i].path is a directory path
