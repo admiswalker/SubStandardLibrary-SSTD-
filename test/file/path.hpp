@@ -1,19 +1,45 @@
 #pragma once
 
 
-TEST(path, getPath){
-    const char* pPath="./abc/def/text.abc.txt";
-    ASSERT_STREQ(sstd::getPath(pPath).c_str(), "./abc/def/");
+TEST(path, getPath_case01){
+    const char* pPath="";
+    ASSERT_STREQ(sstd::getPath(pPath).c_str(), "");
 }
-TEST(path, getPath_owWC_case01){
+TEST(path, getPath_case02){
+    const char* pPath="/";
+    ASSERT_STREQ(sstd::getPath(pPath).c_str(), "");
+}
+TEST(path, getPath_case03){
+    const char* pPath="./";
+    ASSERT_STREQ(sstd::getPath(pPath).c_str(), ".");
+}
+TEST(path, getPath_case04){
     const char* pPath="./abc/def/text.abc.txt";
-    ASSERT_STREQ(sstd::getPath(pPath).c_str(), "./abc/def/");
+    ASSERT_STREQ(sstd::getPath(pPath).c_str(), "./abc/def");
+}
+
+
+TEST(path, getPath_owWC_case01){
+    const char* pPath="";
+    ASSERT_STREQ(sstd::getPath_owWC(pPath).c_str(), "");
 }
 TEST(path, getPath_owWC_case02){
+    const char* pPath="/";
+    ASSERT_STREQ(sstd::getPath_owWC(pPath).c_str(), "");
+}
+TEST(path, getPath_owWC_case03){
+    const char* pPath="./";
+    ASSERT_STREQ(sstd::getPath_owWC(pPath).c_str(), ".");
+}
+TEST(path, getPath_owWC_case04){
+    const char* pPath="./abc/def/text.abc.txt";
+    ASSERT_STREQ(sstd::getPath_owWC(pPath).c_str(), "./abc/def");
+}
+TEST(path, getPath_owWC_case05){
     const char* pPath="./abc/d*f/text.abc.txt";
     ASSERT_STREQ(sstd::getPath_owWC(pPath).c_str(), "./abc");
 }
-TEST(path, getPath_owWC_case03){
+TEST(path, getPath_owWC_case06){
     const char* pPath="./abc/d?f/text.abc.txt";
     ASSERT_STREQ(sstd::getPath_owWC(pPath).c_str(), "./abc");
 }

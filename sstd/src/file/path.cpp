@@ -8,13 +8,19 @@
 
 std::string sstd::getPath(const char* pPath){
 
-    std::string result;
-    char* pStartPathAdd = sstd::getFileName(pPath);
-
-    for(const char* pPathBuf=pPath; pPathBuf<pStartPathAdd; ++pPathBuf){
-        result += *pPathBuf;
+    size_t len = strlen(pPath);
+    if(len==0){ return std::string(""); }
+    
+    char* pSlash_last = (char*)&pPath[0];
+    
+    for(int i=len; i>=0; --i){
+        if(pPath[i]=='/'||pPath[i]=='\\'){
+            pSlash_last = (char*)&pPath[i];
+            break;
+        }
     }
-    return result;
+
+    return std::string((char*)pPath, pSlash_last);
 }
 std::string sstd::getPath_owWC(const char* pPath){
 
