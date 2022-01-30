@@ -36,6 +36,19 @@ TEST(cp, copy_pChar_pChar_case02_changeFileSize){
     }
     sstd::rm("./tmpDir_cp");
 }
+TEST(cp, copy_check_file_permission){
+    sstd::mkdir("./tmpDir_cp");
+    sstd::system("touch ./tmpDir_cp/exmaple.txt");
+    sstd::system("chmod 644 ./tmpDir_cp/exmaple.txt");
+    
+    sstd::copy("./tmpDir_cp/exmaple.txt", "./tmpDir_cp/exmaple_copy.txt");
+    
+    std::string hash_src = sstd::system_stdout("ls -al ./tmpDir_cp/exmaple.txt | cut -d \" \" -f 1"); hash_src.pop_back();
+    std::string hash_dst = sstd::system_stdout("ls -al ./tmpDir_cp/exmaple_copy.txt | cut -d \" \" -f 1"); hash_dst.pop_back();
+    ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());
+    
+    sstd::rm("./tmpDir_cp");
+}
 
 // Not implimented
 //

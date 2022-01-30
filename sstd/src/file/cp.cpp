@@ -25,7 +25,7 @@ bool sstd::copy(const char*        pPath_src, const char*        pPath_dst){
     while((size=read(fd_src, pBuf, sizeof(pBuf))) > 0){
         if( write(fd_dst, pBuf, size) != size){ ret=false; goto sstd_copy_exit; }
     }
-    ftruncate(fd_dst, st.st_size);
+    if(ftruncate(fd_dst, st.st_size)!=0){ return false; }
 
  sstd_copy_exit:
     close(fd_dst);
