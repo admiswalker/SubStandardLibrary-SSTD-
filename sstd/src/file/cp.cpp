@@ -1,4 +1,10 @@
 #include "cp.hpp"
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h> // read(), write()
+
 #include <string.h>
 
 #include "mkdir.hpp"
@@ -8,18 +14,22 @@
 
 bool sstd::copy(const char*        pPath_src, const char*        pPath_dst){
     if(strcmp(pPath_src, pPath_dst)==0){ return false; }
-    FILE* fp_src = fopen(pPath_src, "rb"); if(!fp_src){                 return false; }
-    FILE* fp_dst = fopen(pPath_dst, "wb"); if(!fp_dst){ fclose(fp_src); return false; }
+    
+    int fd_src = open(pPath_src, O_RDONLY); if(fd_src<0){ return false; }
+    struct stat st; if(fstat(fd_src, &st)!=0){ close(fd_src); return false; }
+    int fd_dst = open(pPath_dst, O_CREAT|O_WRONLY, st.st_mode); if(fd_dst<0){ close(fd_src); return false; }
     
     bool ret = true;
-    char buf[4096]; // buf[1024];
+    char pBuf[4096]; // buf[1024];
     size_t size;
-    while((size=fread(buf, sizeof(char), sizeof(buf), fp_src)) > 0){
-        if( fwrite(buf, sizeof(char), size, fp_dst) != size){ ret=false; break; }
+    while((size=read(fd_src, pBuf, sizeof(pBuf))) > 0){
+        if( write(fd_dst, pBuf, size) != size){ ret=false; goto sstd_copy_exit; }
     }
+    ftruncate(fd_dst, st.st_size);
 
-    fclose(fp_dst);
-    fclose(fp_src);
+ sstd_copy_exit:
+    close(fd_dst);
+    close(fd_src);
     return ret;
 }
 bool sstd::copy(const std::string&  path_src, const char*        pPath_dst){ return sstd::copy( path_src.c_str(), pPath_dst        ); }
