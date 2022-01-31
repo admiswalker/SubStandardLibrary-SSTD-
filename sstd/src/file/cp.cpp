@@ -106,14 +106,15 @@ bool sstd::cp  (const char*        pPath_src, const char*        pPath_dst){
 //  bool TF_wc   = !(TF_file||TF_dir); // when path include wild card
     
     if(TF_file){
-        // when pPath_src is a file
+        // test case01: when pPath_src is a file
         
         sstd::mkdir(sstd::getPath(pPath_dst));
         return sstd::copy(pPath_src, pPath_dst);
         
     }else if(TF_dir){
-        // when pPath_src is a directory
-        
+        // test case02: when pPath_src is a directory
+
+        sstd::mkdir(pPath_dst);
         std::string dstPath_baseDir = std::string(pPath_dst)+'/'+sstd::getDirName(pPath_src);
         struct stat st; if(stat(pPath_src, &st)!=0){ return false; }
         ::mkdir(dstPath_baseDir.c_str(), st.st_mode);
@@ -135,7 +136,7 @@ bool sstd::cp  (const char*        pPath_src, const char*        pPath_dst){
         return true;
         
     }else{
-        // when pPath_src is a path with wild card
+        // test case03: when pPath_src is a path with wild card
         
         sstd::mkdir(pPath_dst);
         std::vector<sstd::pathAndType> vPath = sstd::glob_pt(sstd::getPath_woWC(pPath_src)+"/*", "dfr");

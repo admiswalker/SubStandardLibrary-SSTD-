@@ -147,6 +147,24 @@ TEST(cp, cp_case02){
     }
     sstd::rm("./tmpDir_cp");
 }
+TEST(cp, cp_case02_02){
+    sstd::mkdir("./tmpDir_cp");
+
+    sstd::mkdir("./tmpDir_cp/01/a/b/c");
+    sstd::system("touch ./tmpDir_cp/01/a/b/c/example.txt");
+    
+    sstd::cp("./tmpDir_cp/01", "./tmpDir_cp/02");
+    {
+        // check path
+        std::vector<std::string> vPath = sstd::glob("./tmpDir_cp/01/*", "dfr");
+        std::vector<std::string> vPath_ans = sstd::glob("./tmpDir_cp/02/01/*", "dfr");
+        ASSERT_EQ(vPath.size(), vPath_ans.size());
+        for(uint i=0; i<vPath.size(); ++i){
+            ASSERT_STREQ((char*)&vPath[i][15], (char*)&vPath_ans[i][18]);
+        }
+    }
+    sstd::rm("./tmpDir_cp");
+}
 TEST(cp, cp_case03){
     sstd::mkdir("./tmpDir_cp");
     
@@ -169,6 +187,24 @@ TEST(cp, cp_case03){
             std::string hash_src = sstd::system_stdout(std::string("sha256sum ")+vPath    [i]+" | cut -d \" \" -f 1"); hash_src.pop_back();
             std::string hash_dst = sstd::system_stdout(std::string("sha256sum ")+vPath_ans[i]+" | cut -d \" \" -f 1"); hash_dst.pop_back();
             ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());
+        }
+    }
+    sstd::rm("./tmpDir_cp");
+}
+TEST(cp, cp_case03_02){
+    sstd::mkdir("./tmpDir_cp");
+
+    sstd::mkdir("./tmpDir_cp/01/a/b/c");
+    sstd::system("touch ./tmpDir_cp/01/a/b/c/example.txt");
+    
+    sstd::cp("./tmpDir_cp/01/*", "./tmpDir_cp/02");
+    {
+        // check path
+        std::vector<std::string> vPath = sstd::glob("./tmpDir_cp/01/*", "dfr");
+        std::vector<std::string> vPath_ans = sstd::glob("./tmpDir_cp/02/*", "dfr");
+        ASSERT_EQ(vPath.size(), vPath_ans.size());
+        for(uint i=0; i<vPath.size(); ++i){
+            ASSERT_STREQ((char*)&vPath[i][15], (char*)&vPath_ans[i][15]);
         }
     }
     sstd::rm("./tmpDir_cp");
