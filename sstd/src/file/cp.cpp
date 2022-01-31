@@ -7,9 +7,10 @@
 
 #include <string.h>
 
+#include "glob.hpp"
 #include "mkdir.hpp"
 #include "path.hpp"
-#include "../print.hpp" // for dbg
+//#include "../print.hpp" // for dbg
 
 
 bool sstd::copy(const char*        pPath_src, const char*        pPath_dst){
@@ -21,13 +22,18 @@ bool sstd::copy(const char*        pPath_src, const char*        pPath_dst){
     
     bool ret = true;
     char pBuf[4096]; // buf[1024];
-    size_t size;
+    ssize_t size;
+    struct timespec ts_buf[2];
     while((size=read(fd_src, pBuf, sizeof(pBuf))) > 0){
-        if( write(fd_dst, pBuf, size) != size){ ret=false; goto sstd_copy_exit; }
+        if( write(fd_dst, pBuf, size) != size){ ret=false; goto exit; }
     }
-    if(ftruncate(fd_dst, st.st_size)!=0){ return false; }
+    if(ftruncate(fd_dst, st.st_size)!=0){ ret=false; goto exit; } // Align the output file size with the input file when overwriting the existing file larger than input file.
 
- sstd_copy_exit:
+    ts_buf[0]=st.st_atim;
+    ts_buf[1]=st.st_mtim;
+    if(futimens(fd_dst, ts_buf)!=0){ ret=false; goto exit; }
+    
+ exit:
     close(fd_dst);
     close(fd_src);
     return ret;
