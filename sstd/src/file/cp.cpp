@@ -148,9 +148,8 @@ bool sstd::cp  (const char*        pPath_src, const char*        pPath_dst){
         }
         
         for(uint i=0; i<vFile.size(); ++i){
-            if(sstd::strmatch(vFile[i].path, pPath_src)){
-                vFile_matchWC.push_back( std::move(vFile[i]) );
-            }
+            if(!sstd::strmatch(vFile[i].path, pPath_src)){ continue; }
+            vFile_matchWC.push_back( std::move(vFile[i]) );
         }
         
         std::vector<std::string> vDirOfFile;
