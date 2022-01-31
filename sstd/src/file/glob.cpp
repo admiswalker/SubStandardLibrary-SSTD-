@@ -139,8 +139,9 @@ std::vector<struct sstd::pathAndType> _glob_worker_pt(const std::string& search_
                     // printf( "subdirectory: %s\n", pEnt->d_name );
                     if(opt_d && TF_match){
                         struct sstd::pathAndType pt;
-                        pt.path = path;
                         pt.type = 'd';
+                        pt.st   = Stat;
+                        pt.path = path;
                         v_path.push_back( pt );
                     }
                     if(opt_r){
@@ -157,8 +158,9 @@ std::vector<struct sstd::pathAndType> _glob_worker_pt(const std::string& search_
                 // when a file
                 if(opt_f && TF_match){
                     struct sstd::pathAndType pt;
-                    pt.path = path;
                     pt.type = 'f';
+                    pt.st   = Stat;
+                    pt.path = path;
                     v_path.push_back( pt );
                 }
             }

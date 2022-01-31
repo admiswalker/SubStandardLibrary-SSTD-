@@ -1,12 +1,14 @@
 ﻿#pragma once
 
+#include <sys/stat.h>
 #include <vector>
 #include <string>
 
 namespace sstd{
     struct pathAndType{
-        std::string path;
         char type; // 'f': file, 'd': directory
+        struct stat st;
+        std::string path;
         
         bool operator < (const struct pathAndType& rhs){
             return (*this).path < rhs.path;

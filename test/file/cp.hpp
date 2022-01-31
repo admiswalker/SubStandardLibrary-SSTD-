@@ -69,15 +69,6 @@ TEST(cp, copy_check_file_timestamp){
     sstd::rm("./tmpDir_cp");
 }
 
-// Not implimented
-//
-//TEST(cp, copy_pChar_pChar_case03_permission){
-//    sstd::mkdir("./tmpDir_cp_2");
-//    sstd::system("touch ./tmpDir_cp/a.sh");
-//    sstd::system("chmod +x ./tmpDir_cp/a.sh");
-//    
-//    sstd::copy("./tmpDir_cp/a.sh", "./tmpDir_cp/a_copy.sh");
-//}
 
 TEST(cp, copy_str_pChar){
     sstd::mkdir("./tmpDir_cp");
