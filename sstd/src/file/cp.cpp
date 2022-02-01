@@ -1,10 +1,12 @@
 #include "cp.hpp"
 
+#include <sys/time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
 #include <unistd.h> // read(), write()
+#include <utime.h>
 #include <unordered_map>
 #include <algorithm> // sort()
 
@@ -35,7 +37,12 @@ bool _copy_base(const char* pPath_src, const char* pPath_dst, const bool opt_p){
     if(opt_p){
         ts_buf[0]=st.st_atim;
         ts_buf[1]=st.st_mtim;
-        if(futimens(fd_dst, ts_buf)!=0){ ret=false; goto exit; }
+//        if(futimens(fd_dst, (struct timespec*)ts_buf)!=0){ ret=false; goto exit; }
+//        if( futimens(fd_dst, (struct timespec*)&st.st_atim)!=0){ ret=false; goto exit; }
+//        if(utimensat(fd_dst, pPath_dst, ts_buf, AT_SYMLINK_NOFOLLOW)!=0){ ret=false; goto exit; }
+
+        // st_mtim: 2019.04.05: アクセス日時
+        // st_atim: 2018.08.19: 更新日時
     }
     
  exit:
