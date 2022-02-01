@@ -66,10 +66,10 @@ TEST(cp, copy_check_file_timestamp){
     date_dst = sstd::system_stdout("ls --full-time ./tmpDir_cp/exmaple_copy.txt | cut -d \" \" -f 7"); date_dst.pop_back(); // pop_back() is removing '\n'.
     ASSERT_STREQ(date_src.c_str(), date_dst.c_str());
     
-//    sstd::rm("./tmpDir_cp");
+    sstd::rm("./tmpDir_cp");
 }
 
-/*
+
 TEST(cp, copy_str_pChar){
     sstd::mkdir("./tmpDir_cp");
     sstd::system("dd if=/dev/urandom of=./tmpDir_cp/test_rand.bin bs=1024 count=1 > /dev/null 2>&1");
@@ -170,39 +170,19 @@ TEST(cp, cp_case02_opt_p_check_timestamp){
 
     sstd::cp("./sstd", "./tmpDir_cp", "p");
     {
-        // check path
-        std::vector<std::string> vPath_ans = sstd::glob("./sstd/*", "dfr");
-        std::vector<std::string> vPath     = sstd::glob("./tmpDir_cp/sstd/*", "dfr");
-        ASSERT_EQ(vPath_ans.size(), vPath.size());
-        for(uint i=0; i<vPath_ans.size(); ++i){
-            ASSERT_STREQ((char*)&vPath_ans[i][2], (char*)&vPath[i][12]);
-        }
-    }
-    {
-        // check file hash
-        std::vector<std::string> vPath_ans = sstd::glob("./sstd/*", "fr");
-        std::vector<std::string> vPath     = sstd::glob("./tmpDir_cp/sstd/*", "fr");
-        ASSERT_EQ(vPath_ans.size(), vPath.size());
-        for(uint i=0; i<vPath_ans.size(); ++i){
-            std::string hash_src = sstd::system_stdout(std::string("sha256sum ")+vPath_ans[i]+" | cut -d \" \" -f 1"); hash_src.pop_back();
-            std::string hash_dst = sstd::system_stdout(std::string("sha256sum ")+vPath    [i]+" | cut -d \" \" -f 1"); hash_dst.pop_back();
-            ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());
-        }
-    }
-    {
         // check timestamp
         std::vector<sstd::pathAndType> vPath_ans = sstd::glob_pt("./sstd/*", "dfr");
         std::vector<sstd::pathAndType> vPath     = sstd::glob_pt("./tmpDir_cp/sstd/*", "dfr");
         ASSERT_EQ(vPath_ans.size(), vPath.size());
         for(uint i=0; i<vPath_ans.size(); ++i){
-            ASSERT_TRUE(vPath[i].st.st_atim.tv_sec == vPath_ans[i].st.st_atim.tv_sec);
-//            ASSERT_TRUE(vPath[i].st.st_atim.tv_nsec == vPath_ans[i].st.st_atim.tv_nsec);
-//            ASSERT_TRUE(vPath[i].st.st_mtim.tv_sec == vPath_ans[i].st.st_mtim.tv_sec);
-//            ASSERT_TRUE(vPath[i].st.st_mtim.tv_nsec == vPath_ans[i].st.st_mtim.tv_nsec);
+            ASSERT_TRUE(vPath[i].st.st_atim.tv_sec  == vPath_ans[i].st.st_atim.tv_sec );
+            ASSERT_TRUE(vPath[i].st.st_atim.tv_nsec == vPath_ans[i].st.st_atim.tv_nsec);
+            ASSERT_TRUE(vPath[i].st.st_mtim.tv_sec  == vPath_ans[i].st.st_mtim.tv_sec );
+            ASSERT_TRUE(vPath[i].st.st_mtim.tv_nsec == vPath_ans[i].st.st_mtim.tv_nsec);
         }
     }
-//    sstd::rm("./tmpDir_cp");
-}
+    sstd::rm("./tmpDir_cp");
+}/*
 TEST(cp, cp_case03){
     sstd::mkdir("./tmpDir_cp");
     

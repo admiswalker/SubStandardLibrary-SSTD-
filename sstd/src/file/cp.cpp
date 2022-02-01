@@ -37,12 +37,7 @@ bool _copy_base(const char* pPath_src, const char* pPath_dst, const bool opt_p){
     if(opt_p){
         ts_buf[0]=st.st_atim;
         ts_buf[1]=st.st_mtim;
-//        if(futimens(fd_dst, (struct timespec*)ts_buf)!=0){ ret=false; goto exit; }
-//        if( futimens(fd_dst, (struct timespec*)&st.st_atim)!=0){ ret=false; goto exit; }
-//        if(utimensat(fd_dst, pPath_dst, ts_buf, AT_SYMLINK_NOFOLLOW)!=0){ ret=false; goto exit; }
-
-        // st_mtim: 2019.04.05: アクセス日時
-        // st_atim: 2018.08.19: 更新日時
+        if(futimens(fd_dst, ts_buf)!=0){ ret=false; goto exit; }
     }
     
  exit:
@@ -125,6 +120,19 @@ std::vector<sstd::pathAndType> getAND_ltype(const std::vector<sstd::pathAndType>
     
     return ret;
 }
+bool setTimestamp2file(const std::string& dirPath, const struct stat& st){
+    bool ret=true;
+    int fd = open(dirPath.c_str(), O_WRONLY); if(fd<0){ return false; }
+    
+    struct timespec ts_buf[2];
+    ts_buf[0]=st.st_atim;
+    ts_buf[1]=st.st_mtim;
+    if(futimens(fd, ts_buf)!=0){ ret=false; goto exit; }
+
+ exit:
+    close(fd);
+    return ret;
+}
 bool setTimestamp2dir(const std::string& dirPath, const struct stat& st){
     bool ret=true;
     int fd = open(dirPath.c_str(), O_DIRECTORY); if(fd<0){ return false; }
@@ -162,8 +170,8 @@ bool _cp_base(const char* pPath_src, const char* pPath_dst, const bool opt_p){
         for(uint i=0; i!=vPath.size(); ++i){
             if(vPath[i].type=='f'){
                 // when vPath[i].path is a file path
-                std::string path_dst = std::string(pPath_dst)+'/'+&(vPath[i].path[begin_idx]);
-                _copy_base(vPath[i].path.c_str(), path_dst.c_str(), opt_p);
+                std::string file_dst = std::string(pPath_dst)+'/'+&(vPath[i].path[begin_idx]);
+                _copy_base(vPath[i].path.c_str(), file_dst.c_str(), opt_p);
             }else{
                 // when vPath[i].path is a directory path
                 std::string dir_dst = std::string(pPath_dst)+'/'+&(vPath[i].path[begin_idx]);
@@ -174,7 +182,7 @@ bool _cp_base(const char* pPath_src, const char* pPath_dst, const bool opt_p){
         if(opt_p){
             for(uint i=0; i!=vPath.size(); ++i){
                 if(vPath[i].type=='f'){ continue; }
-                // when vPath[i].path is a directory path
+                
                 std::string dir_dst = std::string(pPath_dst)+'/'+&(vPath[i].path[begin_idx]);
                 if(!setTimestamp2dir(dir_dst, vPath[i].st)){ return false; }
             }
