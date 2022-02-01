@@ -55,7 +55,7 @@ TEST(cp, copy_check_file_timestamp){
     sstd::system("chmod 644 ./tmpDir_cp/exmaple.txt");
 
     sstd::sleep_s(2);
-    sstd::copy("./tmpDir_cp/exmaple.txt", "./tmpDir_cp/exmaple_copy.txt");
+    sstd::copy("./tmpDir_cp/exmaple.txt", "./tmpDir_cp/exmaple_copy.txt", "p");
 
     std::string date_src, date_dst;
     date_src = sstd::system_stdout("date \"+%Y/%m/%d %H:%M:%S\" -r ./tmpDir_cp/exmaple.txt"); date_src.pop_back(); // pop_back() is removing '\n'.
@@ -145,7 +145,7 @@ TEST(cp, cp_case02){
             ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());
         }
     }
-    sstd::rm("./tmpDir_cp");
+//    sstd::rm("./tmpDir_cp");
 }
 TEST(cp, cp_case02_02){
     sstd::mkdir("./tmpDir_cp");
