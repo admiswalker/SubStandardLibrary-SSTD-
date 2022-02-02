@@ -236,9 +236,12 @@ bool _cp_base(const char* pPath_src, const char* pPath_dst, const bool opt_p){
         //                ->  getPath(): get all directory paths
         //                ->  rm_duplicate(): remove duplicated path
         //                ->  parsePath_withBase(): generate all possible direcotry paths to make directory recursively.
+        //                                         (generating all possible and impossible candidates).
         //                ->  rm_duplicate(): remove duplicated path
-        //                ->  getAND(): get AND with `vDir`, because `vDir` has all possible directories candidate and its generation order.
-        //                              (The "generation order" means that directories need to be created in order from the bottom layer).
+        //                ->  sort(): sort path to make direcories in order from the bottom layer.
+        //                ->  getAND(): 1. get AND with `vDir` to remove impossible candidates,
+        //                                 because `vDir` has only possible candidates.
+        //                              2. get AND with `vDir` to convert data type
         //                ->  generate_directories()
         
         sstd::mkdir(pPath_dst);
