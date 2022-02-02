@@ -153,10 +153,13 @@ bool _cp_base(const char* pPath_src, const char* pPath_dst, const bool opt_p){
     
     if(TF_file){
         // test case01: when pPath_src is a file
-        
-        sstd::mkdir(sstd::getPath(pPath_dst));
-        return _copy_base(pPath_src, pPath_dst, opt_p);
-        
+
+        if(sstd::isDir(pPath_dst)){
+            std::string path_dst = std::string(pPath_dst)+'/'+sstd::getFileName(pPath_src);
+            return _copy_base(pPath_src, path_dst.c_str(), opt_p);
+        }else{
+            return _copy_base(pPath_src, pPath_dst, opt_p);
+        }
     }else if(TF_dir){
         // test case02: when pPath_src is a directory
 
@@ -194,11 +197,55 @@ bool _cp_base(const char* pPath_src, const char* pPath_dst, const bool opt_p){
     }else{
         // test case03: when pPath_src is a path with wild card
         
+        // Implementation policy
+        //
+        // 1. extract required directories including files in order not to copy empty directories, when copying like "*.txt".
+        //    example:
+        //      excute function:
+        //                            sstd::cp("./tmp1/*.txt", "./tmp2");
+        //
+        //      Directory structure:
+        //                            ./tmp1/a/01.txt
+        //                                   b/
+        //                                   c/02.txt
+        //                            ./tmp2/
+        //
+        //      description:
+        //        The directories a/, b/ and c/ are contained in `vDirToMake` before the `vDir_matchWC` was inserted.
+        //
+        // 2. considering about copying empty directories, when copying like "exampleDir/*".
+        //    example:
+        //      excute function:
+        //                            sstd::cp("./tmp1/*", "./tmp2");
+        //
+        //      Directory structure:
+        //                            ./tmp1/a/
+        //                                   b/
+        //                                   c/
+        //                            ./tmp2/
+        //
+        //      description:
+        //        The directories a/, b/ and c/ are contained in `vDir_matchWC`.
+
+        // Data flow
+        //
+        //   vPath
+        //     |---dirs   ->  strmatch()  ->  vDir_matchWC  ->  generate_directories()
+        //     |
+        //     |---files  ->  strmatch(): get all path that match wildcard
+        //                ->  getPath(): get all directory paths
+        //                ->  rm_duplicate(): remove duplicated path
+        //                ->  parsePath_withBase(): generate all possible direcotry paths to make directory recursively.
+        //                ->  rm_duplicate(): remove duplicated path
+        //                ->  getAND(): get AND with `vDir`, because `vDir` has all possible directories candidate and its generation order.
+        //                              (The "generation order" means that directories need to be created in order from the bottom layer).
+        //                ->  generate_directories()
+        
         sstd::mkdir(pPath_dst);
         std::vector<sstd::pathAndType> vPath = sstd::glob_pt(sstd::getPath_woWC(pPath_src)+"/*", "dfr");
 
         std::vector<sstd::pathAndType> vFile, vFile_matchWC;
-        std::vector<sstd::pathAndType> vDir;
+        std::vector<sstd::pathAndType> vDir, vDir_matchWC;
         for(uint i=0; i<vPath.size(); ++i){
             if(vPath[i].type=='f'){ vFile.push_back( std::move(vPath[i]) );
             }        else         { vDir.push_back( std::move(vPath[i]) ); }
@@ -207,6 +254,10 @@ bool _cp_base(const char* pPath_src, const char* pPath_dst, const bool opt_p){
         for(uint i=0; i<vFile.size(); ++i){
             if(!sstd::strmatch(vFile[i].path, pPath_src)){ continue; }
             vFile_matchWC.push_back( std::move(vFile[i]) );
+        }
+        for(uint i=0; i<vDir.size(); ++i){
+            if(!sstd::strmatch(vDir[i].path, pPath_src)){ continue; }
+            vDir_matchWC.push_back( vDir[i] );
         }
         
         std::vector<std::string> vDirOfFile;
@@ -223,8 +274,10 @@ bool _cp_base(const char* pPath_src, const char* pPath_dst, const bool opt_p){
         vDirOfFile_splitted = rmDuplicate<std::string>(vDirOfFile_splitted);
         
         std::sort(vDirOfFile_splitted.begin(), vDirOfFile_splitted.end());
-        std::vector<sstd::pathAndType> vDirToMake = getAND_ltype(vDir, vDirOfFile_splitted);
-
+        std::vector<sstd::pathAndType> vDirToMake = getAND_ltype(vDir, vDirOfFile_splitted); // get AND, because vDir has all possible directories candidate.
+        
+        vDirToMake.insert(vDirToMake.end(), vDir_matchWC.begin(), vDir_matchWC.end());
+        
         //---
         
         uint end_idx = sstd::getDirName_end_idx_woWC(pPath_src);
