@@ -163,7 +163,6 @@ bool _cp_base(const char* pPath_src, const char* pPath_dst, const bool opt_p){
     }else if(TF_dir){
         // test case02: when pPath_src is a directory
 
-        sstd::mkdir(pPath_dst);
         std::string dstPath_baseDir = std::string(pPath_dst)+'/'+sstd::getDirName(pPath_src);
         struct stat st; if(stat(pPath_src, &st)!=0){ return false; }
         ::mkdir(dstPath_baseDir.c_str(), st.st_mode);
@@ -230,7 +229,7 @@ bool _cp_base(const char* pPath_src, const char* pPath_dst, const bool opt_p){
         // Data flow
         //
         //   vPath
-        //     |---dirs   ->  strmatch()  ->  vDir_matchWC  ->  generate_directories()
+        //     |---dirs   ->  strmatch()  ->  `vDir_matchWC`  ->  generate_directories()
         //     |
         //     |---files  ->  strmatch(): get all path that match wildcard
         //                ->  getPath(): get all directory paths

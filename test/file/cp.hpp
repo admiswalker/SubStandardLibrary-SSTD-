@@ -191,24 +191,6 @@ TEST(cp, cp_case02){
     }
     sstd::rm("./tmpDir_cp");
 }
-TEST(cp, cp_case02_02){
-    sstd::mkdir("./tmpDir_cp");
-
-    sstd::mkdir("./tmpDir_cp/01/a/b/c");
-    sstd::system("touch ./tmpDir_cp/01/a/b/c/example.txt");
-    
-    sstd::cp("./tmpDir_cp/01", "./tmpDir_cp/02");
-    {
-        // check path
-        std::vector<std::string> vPath_ans = sstd::glob("./tmpDir_cp/01/*", "dfr");
-        std::vector<std::string> vPath     = sstd::glob("./tmpDir_cp/02/01/*", "dfr");
-        ASSERT_EQ(vPath_ans.size(), vPath.size());
-        for(uint i=0; i<vPath_ans.size(); ++i){
-            ASSERT_STREQ((char*)&vPath_ans[i][15], (char*)&vPath[i][18]);
-        }
-    }
-    sstd::rm("./tmpDir_cp");
-}
 TEST(cp, cp_case02_opt_p_check_timestamp){
     sstd::mkdir("./tmpDir_cp");
 
