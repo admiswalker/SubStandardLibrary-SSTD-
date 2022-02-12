@@ -18,25 +18,39 @@
 #include "../print.hpp" // for dbg
 
 
-bool _copy_base(const char* pPath_src, const char* pPath_dst, const bool opt_p){
-    if(::strcmp(pPath_src, pPath_dst)==0){ return false; }
-    
-    int fd_src = open(pPath_src, O_RDONLY); if(fd_src<0){ return false; }
-    struct stat st; if(fstat(fd_src, &st)!=0){ close(fd_src); return false; }
-    int fd_dst = open(pPath_dst, O_CREAT|O_WRONLY, st.st_mode); if(fd_dst<0){ close(fd_src); return false; }
+bool cmp_stat_equalToOrGreater(struct timespec& lhs, struct timespec& rhs){ // lhs >= rhs: true
+    if(lhs.tv_sec>=rhs.tv_sec){ return true; }
+    if(lhs.tv_sec==rhs.tv_sec && lhs.tv_nsec>=rhs.tv_nsec){ return true; }
+    return false;
+}
+bool _copy_base(const char* pPath_src, const char* pPath_dst, const bool opt_p, const bool opt_u){
+    int fd_src, fd_dst;
+    struct stat st_src, st_dst;
     
     bool ret = true;
     char pBuf[4096]; // buf[1024];
     ssize_t size;
     struct timespec ts_buf[2];
+    
+    if(::strcmp(pPath_src, pPath_dst)==0){ return false; }
+    
+    fd_src = open(pPath_src, O_RDONLY); if(fd_src<0){ return false; }
+    if(fstat(fd_src, &st_src)!=0){ close(fd_src); return false; }
+    fd_dst = open(pPath_dst, O_CREAT|O_WRONLY, st_src.st_mode); if(fd_dst<0){ close(fd_src); return false; }
+    
+    if(opt_u){
+        if(fstat(fd_dst, &st_dst)!=0){ ret=false; goto exit; }
+        if(cmp_stat_equalToOrGreater(st_dst.st_atim, st_src.st_atim)){ ret=true; goto exit; } // time stamp of dst file is equal to or greater than src file.
+    }
+    
     while((size=read(fd_src, pBuf, sizeof(pBuf))) > 0){
         if( write(fd_dst, pBuf, size) != size){ ret=false; goto exit; }
     }
-    if(ftruncate(fd_dst, st.st_size)!=0){ ret=false; goto exit; } // Align the output file size with the input file when overwriting the existing file larger than input file.
+    if(ftruncate(fd_dst, st_src.st_size)!=0){ ret=false; goto exit; } // Align the output file size with the input file when overwriting the existing file larger than input file.
 
     if(opt_p){
-        ts_buf[0]=st.st_atim;
-        ts_buf[1]=st.st_mtim;
+        ts_buf[0]=st_src.st_atim;
+        ts_buf[1]=st_src.st_mtim;
         if(futimens(fd_dst, ts_buf)!=0){ ret=false; goto exit; }
     }
     
@@ -48,21 +62,21 @@ bool _copy_base(const char* pPath_src, const char* pPath_dst, const bool opt_p){
 bool sstd::copy(const char*        pPath_src, const char*        pPath_dst, const char* opt){
 //  bool opt_n=false;
     bool opt_p=false;
-//  bool opt_u=false;
+    bool opt_u=false;
     for(uint i=0; opt[i]!='\0'; ++i){
         switch(opt[i]){
 //      case 'n': { opt_n=true; break; }
         case 'p': { opt_p=true; break; }
-//      case 'u': { opt_u=true; break; }
+        case 'u': { opt_u=true; break; }
         default: { sstd::pdbg("ERROR: glob(): Unexpected option.\n"); break; }
         }
     }
-    return _copy_base(pPath_src, pPath_dst, opt_p);
+    return _copy_base(pPath_src, pPath_dst, opt_p, opt_u);
 }
-bool sstd::copy(const char*        pPath_src, const char*        pPath_dst){ return _copy_base( pPath_src       , pPath_dst        , false); }
-bool sstd::copy(const std::string&  path_src, const char*        pPath_dst){ return _copy_base( path_src.c_str(), pPath_dst        , false); }
-bool sstd::copy(const char*        pPath_src, const std::string&  path_dst){ return _copy_base(pPath_src        ,  path_dst.c_str(), false); }
-bool sstd::copy(const std::string&  path_src, const std::string&  path_dst){ return _copy_base( path_src.c_str(),  path_dst.c_str(), false); }
+bool sstd::copy(const char*        pPath_src, const char*        pPath_dst){ return _copy_base( pPath_src       , pPath_dst        , false, false); }
+bool sstd::copy(const std::string&  path_src, const char*        pPath_dst){ return _copy_base( path_src.c_str(), pPath_dst        , false, false); }
+bool sstd::copy(const char*        pPath_src, const std::string&  path_dst){ return _copy_base(pPath_src        ,  path_dst.c_str(), false, false); }
+bool sstd::copy(const std::string&  path_src, const std::string&  path_dst){ return _copy_base( path_src.c_str(),  path_dst.c_str(), false, false); }
 
 
 template <typename T>
@@ -146,7 +160,7 @@ bool setTimestamp2dir(const std::string& dirPath, const struct stat& st){
     close(fd);
     return ret;
 }
-bool _cp_base(const char* pPath_src, const char* pPath_dst, const bool opt_p){
+bool _cp_base(const char* pPath_src, const char* pPath_dst, const bool opt_p, const bool opt_u){
     bool TF_file = sstd::isFile(pPath_src);
     bool TF_dir  = sstd::isDir (pPath_src);
 //  bool TF_wc   = !(TF_file||TF_dir); // when path include wild card
@@ -156,9 +170,9 @@ bool _cp_base(const char* pPath_src, const char* pPath_dst, const bool opt_p){
 
         if(sstd::isDir(pPath_dst)){
             std::string path_dst = std::string(pPath_dst)+'/'+sstd::getFileName(pPath_src);
-            return _copy_base(pPath_src, path_dst.c_str(), opt_p);
+            return _copy_base(pPath_src, path_dst.c_str(), opt_p, opt_u);
         }else{
-            return _copy_base(pPath_src, pPath_dst, opt_p);
+            return _copy_base(pPath_src, pPath_dst, opt_p, opt_u);
         }
     }else if(TF_dir){
         // test case02: when pPath_src is a directory
@@ -173,7 +187,7 @@ bool _cp_base(const char* pPath_src, const char* pPath_dst, const bool opt_p){
             if(vPath[i].type=='f'){
                 // when vPath[i].path is a file path
                 std::string file_dst = std::string(pPath_dst)+'/'+&(vPath[i].path[begin_idx]);
-                _copy_base(vPath[i].path.c_str(), file_dst.c_str(), opt_p);
+                _copy_base(vPath[i].path.c_str(), file_dst.c_str(), opt_p, opt_u);
             }else{
                 // when vPath[i].path is a directory path
                 std::string dir_dst = std::string(pPath_dst)+'/'+&(vPath[i].path[begin_idx]);
@@ -289,7 +303,7 @@ bool _cp_base(const char* pPath_src, const char* pPath_dst, const bool opt_p){
         }
         for(uint i=0; i<vFile_matchWC.size(); ++i){
             std::string path_dst = std::string(pPath_dst)+'/'+&(vFile_matchWC[i].path[end_idx]);
-            _copy_base(vFile_matchWC[i].path.c_str(), path_dst.c_str(), opt_p);
+            _copy_base(vFile_matchWC[i].path.c_str(), path_dst.c_str(), opt_p, opt_u);
         }
 
         if(opt_p){
@@ -307,18 +321,19 @@ bool _cp_base(const char* pPath_src, const char* pPath_dst, const bool opt_p){
 bool sstd::cp(const char* pPath_src, const char* pPath_dst, const char* opt){
 //  bool opt_n=false;
     bool opt_p=false;
-//  bool opt_u=false;
+    bool opt_u=false;
     for(uint i=0; opt[i]!='\0'; ++i){
         switch(opt[i]){
 //      case 'n': { opt_n=true; break; }
         case 'p': { opt_p=true; break; }
-//      case 'u': { opt_u=true; break; }
+        case 'u': { opt_u=true; break; }
         default: { sstd::pdbg("ERROR: glob(): Unexpected option.\n"); break; }
         }
     }
-    return _cp_base(pPath_src, pPath_dst, opt_p);
+    return _cp_base(pPath_src, pPath_dst, opt_p, opt_u);
 }
-bool sstd::cp  (const char*        pPath_src, const char*        pPath_dst){ return _cp_base(pPath_src        , pPath_dst        , false); }
-bool sstd::cp  (const std::string&  path_src, const char*        pPath_dst){ return _cp_base( path_src.c_str(), pPath_dst        , false); }
-bool sstd::cp  (const char*        pPath_src, const std::string&  path_dst){ return _cp_base(pPath_src        ,  path_dst.c_str(), false); }
-bool sstd::cp  (const std::string&  path_src, const std::string&  path_dst){ return _cp_base( path_src.c_str(),  path_dst.c_str(), false); }
+bool sstd::cp  (const char*        pPath_src, const char*        pPath_dst){ return _cp_base(pPath_src        , pPath_dst        , false, false); }
+bool sstd::cp  (const std::string&  path_src, const char*        pPath_dst){ return _cp_base( path_src.c_str(), pPath_dst        , false, false); }
+bool sstd::cp  (const char*        pPath_src, const std::string&  path_dst){ return _cp_base(pPath_src        ,  path_dst.c_str(), false, false); }
+bool sstd::cp  (const std::string&  path_src, const std::string&  path_dst){ return _cp_base( path_src.c_str(),  path_dst.c_str(), false, false); }
+
