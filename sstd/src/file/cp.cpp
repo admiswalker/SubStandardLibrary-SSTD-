@@ -172,7 +172,7 @@ bool _cp_base(const char* pPath_src, const char* pPath_dst, const bool opt_p, co
             std::string path_dst = std::string(pPath_dst)+'/'+sstd::getFileName(pPath_src);
             return _copy_base(pPath_src, path_dst.c_str(), opt_p, opt_u);
         }else{
-            return _copy_base(pPath_src, pPath_dst, opt_p, opt_u);
+            return _copy_base(pPath_src, pPath_dst,        opt_p, opt_u);
         }
     }else if(TF_dir){
         // test case02: when pPath_src is a directory

@@ -50,7 +50,7 @@ TEST(cp, copy_check_file_permission){
     
     sstd::rm("./tmpDir_cp");
 }
-TEST(cp, copy__option_p__check_file_timestamp){
+TEST(cp, copy__opt_p__check_file_timestamp){
     sstd::mkdir("./tmpDir_cp");
     sstd::system("touch ./tmpDir_cp/exmaple.txt");
 
@@ -68,7 +68,7 @@ TEST(cp, copy__option_p__check_file_timestamp){
     
     sstd::rm("./tmpDir_cp");
 }
-TEST(cp, copy__option_u__update_non_latest_file_case01){
+TEST(cp, copy__opt_u__update){
     // when a src is latest -> copy is update dst file
     sstd::mkdir("./tmpDir_cp");
     sstd::system("dd if=/dev/urandom of=./tmpDir_cp/test_rand_dst.bin bs=1024 count=1 > /dev/null 2>&1");
@@ -83,7 +83,7 @@ TEST(cp, copy__option_u__update_non_latest_file_case01){
     
     sstd::rm("./tmpDir_cp");
 }
-TEST(cp, copy__option_u__update_non_latest_file_case02){
+TEST(cp, copy__opt_u__Not_update){
     // when a src is not latest -> copy is not update dst file
     sstd::mkdir("./tmpDir_cp");
     sstd::system("dd if=/dev/urandom of=./tmpDir_cp/test_rand_src.bin bs=1024 count=1 > /dev/null 2>&1");
@@ -326,6 +326,101 @@ TEST(cp, cp_case03_opt_p_check_timestamp){
             ASSERT_TRUE(vPath[i].st.st_mtim.tv_nsec == vPath_ans[i].st.st_mtim.tv_nsec);
         }
     }
+    sstd::rm("./tmpDir_cp");
+}
+
+TEST(cp, cp_case01__opt_u__update){
+    // when a src is latest -> copy is update dst file
+    sstd::mkdir("./tmpDir_cp");
+    sstd::system("dd if=/dev/urandom of=./tmpDir_cp/test_rand_dst.bin bs=1024 count=1 > /dev/null 2>&1");
+    sstd::sleep_s(2);
+    sstd::system("dd if=/dev/urandom of=./tmpDir_cp/test_rand_src.bin bs=1024 count=1 > /dev/null 2>&1");
+
+    sstd::cp("./tmpDir_cp/test_rand_src.bin", "./tmpDir_cp/test_rand_dst.bin", "u");
+
+    std::string hash_src = sstd::system_stdout("sha256sum ./tmpDir_cp/test_rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_dst = sstd::system_stdout("sha256sum ./tmpDir_cp/test_rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+    ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());
+    
+    sstd::rm("./tmpDir_cp");
+}
+TEST(cp, cp_case01__opt_u__Not_update){
+    // when a src is not latest -> copy is not update dst file
+    sstd::mkdir("./tmpDir_cp");
+    sstd::system("dd if=/dev/urandom of=./tmpDir_cp/test_rand_src.bin bs=1024 count=1 > /dev/null 2>&1");
+    sstd::sleep_s(2);
+    sstd::system("dd if=/dev/urandom of=./tmpDir_cp/test_rand_dst.bin bs=1024 count=1 > /dev/null 2>&1");
+
+    sstd::cp("./tmpDir_cp/test_rand_src.bin", "./tmpDir_cp/test_rand_dst.bin", "u");
+
+    std::string hash_src = sstd::system_stdout("sha256sum ./tmpDir_cp/test_rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_dst = sstd::system_stdout("sha256sum ./tmpDir_cp/test_rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+    ASSERT_STRNE(hash_src.c_str(), hash_dst.c_str());
+    
+    sstd::rm("./tmpDir_cp");
+}
+TEST(cp, cp_case02__opt_u__update){
+    // when a src is latest -> copy is update dst file
+    sstd::mkdir("./tmpDir_cp/01");
+    sstd::mkdir("./tmpDir_cp/02/01");
+    sstd::system("dd if=/dev/urandom of=./tmpDir_cp/02/01/test_rand.bin bs=1024 count=1 > /dev/null 2>&1");
+    sstd::sleep_s(2);
+    sstd::system("dd if=/dev/urandom of=./tmpDir_cp/01/test_rand.bin bs=1024 count=1 > /dev/null 2>&1");
+
+    sstd::cp("./tmpDir_cp/01", "./tmpDir_cp/02", "u");
+
+    std::string hash_src = sstd::system_stdout("sha256sum ./tmpDir_cp/01/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_dst = sstd::system_stdout("sha256sum ./tmpDir_cp/02/01/test_rand.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+    ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());
+    
+    sstd::rm("./tmpDir_cp");
+}
+TEST(cp, cp_case02__opt_u__Not_update){
+    // when a src is not latest -> copy is not update dst file
+    sstd::mkdir("./tmpDir_cp/01");
+    sstd::mkdir("./tmpDir_cp/02/01");
+    sstd::system("dd if=/dev/urandom of=./tmpDir_cp/01/test_rand.bin bs=1024 count=1 > /dev/null 2>&1");
+    sstd::sleep_s(2);
+    sstd::system("dd if=/dev/urandom of=./tmpDir_cp/02/01/test_rand.bin bs=1024 count=1 > /dev/null 2>&1");
+
+    sstd::cp("./tmpDir_cp/01", "./tmpDir_cp/02", "u");
+
+    std::string hash_src = sstd::system_stdout("sha256sum ./tmpDir_cp/01/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_dst = sstd::system_stdout("sha256sum ./tmpDir_cp/02/01/test_rand.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+    ASSERT_STRNE(hash_src.c_str(), hash_dst.c_str());
+    
+    sstd::rm("./tmpDir_cp");
+}
+TEST(cp, cp_case03__opt_u__update){
+    // when a src is latest -> copy is update dst file
+    sstd::mkdir("./tmpDir_cp/01");
+    sstd::mkdir("./tmpDir_cp/02");
+    sstd::system("dd if=/dev/urandom of=./tmpDir_cp/02/test_rand.bin bs=1024 count=1 > /dev/null 2>&1");
+    sstd::sleep_s(2);
+    sstd::system("dd if=/dev/urandom of=./tmpDir_cp/01/test_rand.bin bs=1024 count=1 > /dev/null 2>&1");
+
+    sstd::cp("./tmpDir_cp/01/*", "./tmpDir_cp/02", "u");
+
+    std::string hash_src = sstd::system_stdout("sha256sum ./tmpDir_cp/01/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_dst = sstd::system_stdout("sha256sum ./tmpDir_cp/02/test_rand.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+    ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());
+    
+    sstd::rm("./tmpDir_cp");
+}
+TEST(cp, cp_case03__opt_u__Not_update){
+    // when a src is not latest -> copy is not update dst file
+    sstd::mkdir("./tmpDir_cp/01");
+    sstd::mkdir("./tmpDir_cp/02");
+    sstd::system("dd if=/dev/urandom of=./tmpDir_cp/01/test_rand.bin bs=1024 count=1 > /dev/null 2>&1");
+    sstd::sleep_s(2);
+    sstd::system("dd if=/dev/urandom of=./tmpDir_cp/02/test_rand.bin bs=1024 count=1 > /dev/null 2>&1");
+
+    sstd::cp("./tmpDir_cp/01/*", "./tmpDir_cp/02", "u");
+
+    std::string hash_src = sstd::system_stdout("sha256sum ./tmpDir_cp/01/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_dst = sstd::system_stdout("sha256sum ./tmpDir_cp/02/test_rand.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+    ASSERT_STRNE(hash_src.c_str(), hash_dst.c_str());
+    
     sstd::rm("./tmpDir_cp");
 }
 //*/
