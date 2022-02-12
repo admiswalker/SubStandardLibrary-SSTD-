@@ -24,6 +24,7 @@ bool cmp_stat_equalToOrGreater(struct timespec& lhs, struct timespec& rhs){ // l
     return false;
 }
 bool _copy_base(const char* pPath_src, const char* pPath_dst, const bool opt_n, const bool opt_p, const bool opt_u){
+    bool fExist;
     int fd_src, fd_dst;
     struct stat st_src, st_dst;
     
@@ -32,8 +33,9 @@ bool _copy_base(const char* pPath_src, const char* pPath_dst, const bool opt_n, 
     ssize_t size;
     struct timespec ts_buf[2];
     
-    if(opt_n){
-        if(sstd::fileExist(pPath_dst)){ return true; }
+    if(opt_n || opt_u){
+        fExist = sstd::fileExist(pPath_dst);
+        if(opt_n && fExist){ return true; }
     }
     if(::strcmp(pPath_src, pPath_dst)==0){ return false; }
     
@@ -41,7 +43,7 @@ bool _copy_base(const char* pPath_src, const char* pPath_dst, const bool opt_n, 
     if(fstat(fd_src, &st_src)!=0){ close(fd_src); return false; }
     fd_dst = open(pPath_dst, O_CREAT|O_WRONLY, st_src.st_mode); if(fd_dst<0){ close(fd_src); return false; }
 
-    if(opt_u){
+    if(opt_u && fExist){
         if(fstat(fd_dst, &st_dst)!=0){ ret=false; goto exit; }
         if(cmp_stat_equalToOrGreater(st_dst.st_atim, st_src.st_atim)){ ret=true; goto exit; } // time stamp of dst file is equal to or greater than src file.
     }
@@ -62,20 +64,23 @@ bool _copy_base(const char* pPath_src, const char* pPath_dst, const bool opt_n, 
     close(fd_src);
     return ret;
 }
-bool sstd::copy(const char*        pPath_src, const char*        pPath_dst, const char* opt){
-    bool opt_n=false;
-    bool opt_p=false;
-    bool opt_u=false;
-    for(uint i=0; opt[i]!='\0'; ++i){
-        switch(opt[i]){
-        case 'n': { opt_n=true; break; }
-        case 'p': { opt_p=true; break; }
-        case 'u': { opt_u=true; break; }
-        default: { sstd::pdbg("ERROR: glob(): Unexpected option.\n"); break; }
-        }
+#define get_options()                                                         \
+    bool opt_n=false;                                                          \
+    bool opt_p=false;                                                          \
+    bool opt_u=false;                                                          \
+    for(uint i=0; opt[i]!='\0'; ++i){                                          \
+        switch(opt[i]){                                                        \
+        case 'n': { opt_n=true; break; }                                       \
+        case 'p': { opt_p=true; break; }                                       \
+        case 'u': { opt_u=true; break; }                                       \
+        default: { sstd::pdbg("ERROR: sstd::copy(): Unexpected option.\n"); break; } \
+        }                                                                      \
     }
-    return _copy_base(pPath_src, pPath_dst, opt_n, opt_p, opt_u);
-}
+bool sstd::copy(const char*        pPath_src, const char*        pPath_dst, const char* opt){ get_options(); return _copy_base(pPath_src        , pPath_dst        , opt_n, opt_p, opt_u); }
+bool sstd::copy(const std::string&  path_src, const char*        pPath_dst, const char* opt){ get_options(); return _copy_base( path_src.c_str(), pPath_dst        , opt_n, opt_p, opt_u); }
+bool sstd::copy(const char*        pPath_src, const std::string&  path_dst, const char* opt){ get_options(); return _copy_base(pPath_src        ,  path_dst.c_str(), opt_n, opt_p, opt_u); }
+bool sstd::copy(const std::string&  path_src, const std::string&  path_dst, const char* opt){ get_options(); return _copy_base( path_src.c_str(),  path_dst.c_str(), opt_n, opt_p, opt_u); }
+
 bool sstd::copy(const char*        pPath_src, const char*        pPath_dst){ return _copy_base( pPath_src       , pPath_dst        , false, false, false); }
 bool sstd::copy(const std::string&  path_src, const char*        pPath_dst){ return _copy_base( path_src.c_str(), pPath_dst        , false, false, false); }
 bool sstd::copy(const char*        pPath_src, const std::string&  path_dst){ return _copy_base(pPath_src        ,  path_dst.c_str(), false, false, false); }
@@ -321,22 +326,15 @@ bool _cp_base(const char* pPath_src, const char* pPath_dst, const bool opt_n, co
     
     return true;
 }
-bool sstd::cp(const char* pPath_src, const char* pPath_dst, const char* opt){
-    bool opt_n=false;
-    bool opt_p=false;
-    bool opt_u=false;
-    for(uint i=0; opt[i]!='\0'; ++i){
-        switch(opt[i]){
-        case 'n': { opt_n=true; break; }
-        case 'p': { opt_p=true; break; }
-        case 'u': { opt_u=true; break; }
-        default: { sstd::pdbg("ERROR: glob(): Unexpected option.\n"); break; }
-        }
-    }
-    return _cp_base(pPath_src, pPath_dst, opt_n, opt_p, opt_u);
-}
+bool sstd::cp  (const char*        pPath_src, const char*        pPath_dst, const char* opt){ get_options(); return _cp_base(pPath_src        , pPath_dst        , opt_n, opt_p, opt_u); }
+bool sstd::cp  (const std::string&  path_src, const char*        pPath_dst, const char* opt){ get_options(); return _cp_base( path_src.c_str(), pPath_dst        , opt_n, opt_p, opt_u); }
+bool sstd::cp  (const char*        pPath_src, const std::string&  path_dst, const char* opt){ get_options(); return _cp_base(pPath_src        ,  path_dst.c_str(), opt_n, opt_p, opt_u); }
+bool sstd::cp  (const std::string&  path_src, const std::string&  path_dst, const char* opt){ get_options(); return _cp_base( path_src.c_str(),  path_dst.c_str(), opt_n, opt_p, opt_u); }
+
 bool sstd::cp  (const char*        pPath_src, const char*        pPath_dst){ return _cp_base(pPath_src        , pPath_dst        , false, false, false); }
 bool sstd::cp  (const std::string&  path_src, const char*        pPath_dst){ return _cp_base( path_src.c_str(), pPath_dst        , false, false, false); }
 bool sstd::cp  (const char*        pPath_src, const std::string&  path_dst){ return _cp_base(pPath_src        ,  path_dst.c_str(), false, false, false); }
 bool sstd::cp  (const std::string&  path_src, const std::string&  path_dst){ return _cp_base( path_src.c_str(),  path_dst.c_str(), false, false, false); }
+
+#undef get_options
 
