@@ -1,7 +1,7 @@
 #pragma once
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-/*
+//*
 TEST(cp, copy_pChar_pChar_case01){
     sstd::mkdir("./tmpDir_cp");
     sstd::system("dd if=/dev/urandom of=./tmpDir_cp/test_rand.bin bs=1M count=10 > /dev/null 2>&1");
@@ -167,7 +167,7 @@ TEST(cp, copy__opt_n__Not_update){
 }
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-/*
+//*
 TEST(cp, cp_case01_checkhash){
     sstd::mkdir("./tmpDir_cp");
     sstd::system("dd if=/dev/urandom of=./tmpDir_cp/test_rand.bin bs=1M count=10 > /dev/null 2>&1");
@@ -454,7 +454,7 @@ TEST(cp, cp_case03__opt_u__Not_update){
     
     sstd::rm("./tmpDir_cp");
 }
-//*/
+
 TEST(cp, cp_case01__opt_n__update){
     // when a dst Not exit -> copy() function copies src file
     sstd::mkdir("./tmpDir_cp");
