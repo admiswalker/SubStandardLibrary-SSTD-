@@ -34,6 +34,7 @@
 #include "src/file/glob.hpp"
 #include "src/file/read_write.hpp"
 #include "src/file/mkdir.hpp"
+#include "src/file/mv.hpp"
 #include "src/file/path.hpp"
 #include "src/file/read_write.hpp"
 #include "src/file/rm.hpp"
