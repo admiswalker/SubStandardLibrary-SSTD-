@@ -2,12 +2,8 @@
 
 SubStandardLibrary (SSTD) is a convenient functions set for C++, works on GCC (g++).
 
-List of functions: `sstd/sstd.hpp` 
-
-Usages of functions: `main.cpp` 
 
 ## Installation
-### Linux
 1. Download this repository
 2. Copy all of under `./sstd/*`
 3. Compile sstd
@@ -24,7 +20,6 @@ Usages of functions: `main.cpp`
 
 
 ## Tips to use always latest versions of sstd.
-### Linux
 Below lines of makefile enable to update sstd by a ```$ make update``` command.
 Adding ```$(LIB_SSTD)```　as a depending lib to your makefile.
 ```
