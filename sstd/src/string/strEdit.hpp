@@ -21,6 +21,14 @@ namespace sstd{
     std::string               strip   (const std::string& str); // removing head and tail tab and spaces
     void                      strip_ow(      std::string& str); // removing head and tail tab and spaces. ow: overwrite
     std::vector<std::string>  strip   (const std::vector<std::string>& vec); // -> strip(str) // removing head and tail spaces
+    
+    std::string               stripAll   (const        char* str, const        char* stripList);
+    std::string               stripAll   (const std::string& str, const        char* stripList);
+    std::string               stripAll   (const        char* str, const std::string& stripList);
+    std::string               stripAll   (const std::string& str, const std::string& stripList);
+
+    void                      stripAll_ow(      std::string& str, const        char* stripList);
+    void                      stripAll_ow(      std::string& str, const std::string& stripList);
     // todo: rm '\t'
     // todo: implementing memcopy version. Ref: https://postd.cc/how-quickly-can-you-remove-spaces-from-a-string/
 }

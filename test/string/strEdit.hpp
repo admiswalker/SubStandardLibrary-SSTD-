@@ -78,3 +78,62 @@ TEST(strEdit, strip_vec){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+
+TEST(strEdit, stripAll_case01_01){
+    std::string str_in  = "0a0b0cx0d0xe0f0g0";
+    std::string str_ans = "abcdefg";
+    std::string ret = sstd::stripAll(str_in.c_str(), "x0");
+    ASSERT_TRUE(ret == str_ans);
+}
+TEST(strEdit, stripAll_case01_02){
+    std::string str_in  = "\r\nabc\r\n\r\ndefg\r\n";
+    std::string str_ans = "abcdefg";
+    std::string ret = sstd::stripAll(str_in.c_str(), "\r\n");
+    ASSERT_TRUE(ret == str_ans);
+}
+TEST(strEdit, stripAll_case02){
+    std::string str_in  = "0a0b0cx0d0xe0f0g00000000000000000000000000000xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0000000x0x0x0x0x0x000x0x0xxx0000x0x0xx00000x00x0x0x00000000000000000000000000000xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0000000x0x0x0x0x0x000x0x0xxx0000x0x0xx00000x00x0x0x00000000000000000000000000000xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0000000x0x0x0x0x0x000x0x0xxx0000x0x0xx00000x00x0x0x";
+    std::string str_ans = "abcdefg";
+    std::string ret = sstd::stripAll(str_in.c_str(), "x0");
+    ASSERT_TRUE(ret == str_ans);
+}
+
+#define strEdit_stripAll_check_io(LHS, RHS)                     \
+    std::string str_in  = "0a0b0cx0d0xe0f0g0";                  \
+    std::string str_ans = "abcdefg";                            \
+    std::string ret = sstd::stripAll(LHS, RHS);                 \
+    ASSERT_TRUE(ret == str_ans);
+TEST(strEdit, stripAll_cc){ strEdit_stripAll_check_io(str_in.c_str(),             "x0" ); }
+TEST(strEdit, stripAll_sc){ strEdit_stripAll_check_io(str_in,                     "x0" ); }
+TEST(strEdit, stripAll_cs){ strEdit_stripAll_check_io(str_in.c_str(), std::string("x0")); }
+TEST(strEdit, stripAll_ss){ strEdit_stripAll_check_io(str_in,         std::string("x0")); }
+#undef strEdit_stripAll_check_io
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+TEST(strEdit, stripAll_ow_case01_01){
+    std::string str_in  = "0a0b0cx0d0xe0f0g0";
+    std::string str_ans = "abcdefg";
+    sstd::stripAll_ow(str_in, "x0");
+    ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+TEST(strEdit, stripAll_ow_case01_02){
+    std::string str_in  = "";
+    std::string str_ans = "";
+    sstd::stripAll_ow(str_in, "x0");
+    ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+TEST(strEdit, stripAll_ow_case01_03){
+    std::string str_in  = "";
+    std::string str_ans = "";
+    sstd::stripAll_ow(str_in, "");
+    ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+TEST(strEdit, stripAll_ow_case02){
+    std::string str_in  = "0a0b0cx0d0xe0f0g00000000000000000000000000000xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0000000x0x0x0x0x0x000x0x0xxx0000x0x0xx00000x00x0x0x00000000000000000000000000000xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0000000x0x0x0x0x0x000x0x0xxx0000x0x0xx00000x00x0x0x00000000000000000000000000000xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0000000x0x0x0x0x0x000x0x0xxx0000x0x0xx00000x00x0x0x";
+    std::string str_ans = "abcdefg";
+    sstd::stripAll_ow(str_in, "x0");
+    ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
