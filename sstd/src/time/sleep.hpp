@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "../typeDef.h"
 
-#include "../compileOption.hpp"
+#include "../../compileOption.hpp"
 #ifndef use_sstd_gcc4_4_7
     #include<thread>
     namespace sstd{
