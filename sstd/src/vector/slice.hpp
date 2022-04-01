@@ -1,4 +1,6 @@
 #pragma once
+#include <vector>
+#include "../typeDef.h"
 #include "../itr.hpp" // definition of sstd::begin() and sstd::end()
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -95,59 +97,59 @@ namespace sstd_vecSc{
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 namespace sstd{
-    sstd_vecSc::slice_i  slice(const         int val){ return sstd_vecSc::slice_i(val); }
-    sstd_vecSc::slice_u  slice(const        uint val){ return sstd_vecSc::slice_u(val); }
-    sstd_vecSc::slice_s  slice(const      size_t val){ return sstd_vecSc::slice_s(val); }
-    sstd_vecSc::slice_b  slice(const sstd::begin val){ return sstd_vecSc::slice_b();    }
-    sstd_vecSc::slice_e  slice(const sstd::end   val){ return sstd_vecSc::slice_e();    }
-    sstd_vecSc::slice_vi slice(const std::vector< int>& val){ return sstd_vecSc::slice_vi(val); }
-    sstd_vecSc::slice_vu slice(const std::vector<uint>& val){ return sstd_vecSc::slice_vu(val); }
+    sstd_vecSc::slice_i  slice(const         int val);
+    sstd_vecSc::slice_u  slice(const        uint val);
+    sstd_vecSc::slice_s  slice(const      size_t val);
+    sstd_vecSc::slice_b  slice(const sstd::begin val);
+    sstd_vecSc::slice_e  slice(const sstd::end   val);
+    sstd_vecSc::slice_vi slice(const std::vector< int>& val);
+    sstd_vecSc::slice_vu slice(const std::vector<uint>& val);
     
-    sstd_vecSc::slice_ii slice(const         int lhs, const       int rhs){ return sstd_vecSc::slice_ii(lhs, rhs); }
-    sstd_vecSc::slice_iu slice(const         int lhs, const      uint rhs){ return sstd_vecSc::slice_iu(lhs, rhs); }
-    sstd_vecSc::slice_is slice(const         int lhs, const    size_t rhs){ return sstd_vecSc::slice_is(lhs, rhs); }
-    sstd_vecSc::slice_ui slice(const        uint lhs, const       int rhs){ return sstd_vecSc::slice_ui(lhs, rhs); }
-    sstd_vecSc::slice_uu slice(const        uint lhs, const      uint rhs){ return sstd_vecSc::slice_uu(lhs, rhs); }
-    sstd_vecSc::slice_us slice(const        uint lhs, const    size_t rhs){ return sstd_vecSc::slice_us(lhs, rhs); }
-    sstd_vecSc::slice_si slice(const      size_t lhs, const       int rhs){ return sstd_vecSc::slice_si(lhs, rhs); }
-    sstd_vecSc::slice_su slice(const      size_t lhs, const      uint rhs){ return sstd_vecSc::slice_su(lhs, rhs); }
-    sstd_vecSc::slice_ss slice(const      size_t lhs, const    size_t rhs){ return sstd_vecSc::slice_ss(lhs, rhs); }
+    sstd_vecSc::slice_ii slice(const         int lhs, const       int rhs);
+    sstd_vecSc::slice_iu slice(const         int lhs, const      uint rhs);
+    sstd_vecSc::slice_is slice(const         int lhs, const    size_t rhs);
+    sstd_vecSc::slice_ui slice(const        uint lhs, const       int rhs);
+    sstd_vecSc::slice_uu slice(const        uint lhs, const      uint rhs);
+    sstd_vecSc::slice_us slice(const        uint lhs, const    size_t rhs);
+    sstd_vecSc::slice_si slice(const      size_t lhs, const       int rhs);
+    sstd_vecSc::slice_su slice(const      size_t lhs, const      uint rhs);
+    sstd_vecSc::slice_ss slice(const      size_t lhs, const    size_t rhs);
     
-    sstd_vecSc::slice_bi slice(const sstd::begin lhs, const       int rhs){ return sstd_vecSc::slice_bi(rhs); }
-    sstd_vecSc::slice_bu slice(const sstd::begin lhs, const      uint rhs){ return sstd_vecSc::slice_bu(rhs); }
-    sstd_vecSc::slice_bs slice(const sstd::begin lhs, const    size_t rhs){ return sstd_vecSc::slice_bs(rhs); }
-    sstd_vecSc::slice_ie slice(const         int lhs, const sstd::end rhs){ return sstd_vecSc::slice_ie(lhs); }
-    sstd_vecSc::slice_ue slice(const        uint lhs, const sstd::end rhs){ return sstd_vecSc::slice_ue(lhs); }
-    sstd_vecSc::slice_se slice(const      size_t lhs, const sstd::end rhs){ return sstd_vecSc::slice_se(lhs); }
-    sstd_vecSc::slice_be slice(const sstd::begin lhs, const sstd::end rhs){ return sstd_vecSc::slice_be();    }
+    sstd_vecSc::slice_bi slice(const sstd::begin lhs, const       int rhs);
+    sstd_vecSc::slice_bu slice(const sstd::begin lhs, const      uint rhs);
+    sstd_vecSc::slice_bs slice(const sstd::begin lhs, const    size_t rhs);
+    sstd_vecSc::slice_ie slice(const         int lhs, const sstd::end rhs);
+    sstd_vecSc::slice_ue slice(const        uint lhs, const sstd::end rhs);
+    sstd_vecSc::slice_se slice(const      size_t lhs, const sstd::end rhs);
+    sstd_vecSc::slice_be slice(const sstd::begin lhs, const sstd::end rhs);
     
     //---
     
-    sstd_vecSc::slice_mv_i  slice_mv(const         int val){ return sstd_vecSc::slice_mv_i(val); }
-    sstd_vecSc::slice_mv_u  slice_mv(const        uint val){ return sstd_vecSc::slice_mv_u(val); }
-    sstd_vecSc::slice_mv_s  slice_mv(const      size_t val){ return sstd_vecSc::slice_mv_s(val); }
-    sstd_vecSc::slice_mv_b  slice_mv(const sstd::begin val){ return sstd_vecSc::slice_mv_b();    }
-    sstd_vecSc::slice_mv_e  slice_mv(const sstd::end   val){ return sstd_vecSc::slice_mv_e();    }
-    sstd_vecSc::slice_mv_vi slice_mv(const std::vector< int>& val){ return sstd_vecSc::slice_mv_vi(val); }
-    sstd_vecSc::slice_mv_vu slice_mv(const std::vector<uint>& val){ return sstd_vecSc::slice_mv_vu(val); }
+    sstd_vecSc::slice_mv_i  slice_mv(const         int val);
+    sstd_vecSc::slice_mv_u  slice_mv(const        uint val);
+    sstd_vecSc::slice_mv_s  slice_mv(const      size_t val);
+    sstd_vecSc::slice_mv_b  slice_mv(const sstd::begin val);
+    sstd_vecSc::slice_mv_e  slice_mv(const sstd::end   val);
+    sstd_vecSc::slice_mv_vi slice_mv(const std::vector< int>& val);
+    sstd_vecSc::slice_mv_vu slice_mv(const std::vector<uint>& val);
     
-    sstd_vecSc::slice_mv_ii slice_mv(const         int lhs, const       int rhs){ return sstd_vecSc::slice_mv_ii(lhs, rhs); }
-    sstd_vecSc::slice_mv_iu slice_mv(const         int lhs, const      uint rhs){ return sstd_vecSc::slice_mv_iu(lhs, rhs); }
-    sstd_vecSc::slice_mv_is slice_mv(const         int lhs, const    size_t rhs){ return sstd_vecSc::slice_mv_is(lhs, rhs); }
-    sstd_vecSc::slice_mv_ui slice_mv(const        uint lhs, const       int rhs){ return sstd_vecSc::slice_mv_ui(lhs, rhs); }
-    sstd_vecSc::slice_mv_uu slice_mv(const        uint lhs, const      uint rhs){ return sstd_vecSc::slice_mv_uu(lhs, rhs); }
-    sstd_vecSc::slice_mv_us slice_mv(const        uint lhs, const    size_t rhs){ return sstd_vecSc::slice_mv_us(lhs, rhs); }
-    sstd_vecSc::slice_mv_si slice_mv(const      size_t lhs, const       int rhs){ return sstd_vecSc::slice_mv_si(lhs, rhs); }
-    sstd_vecSc::slice_mv_su slice_mv(const      size_t lhs, const      uint rhs){ return sstd_vecSc::slice_mv_su(lhs, rhs); }
-    sstd_vecSc::slice_mv_ss slice_mv(const      size_t lhs, const    size_t rhs){ return sstd_vecSc::slice_mv_ss(lhs, rhs); }
+    sstd_vecSc::slice_mv_ii slice_mv(const         int lhs, const       int rhs);
+    sstd_vecSc::slice_mv_iu slice_mv(const         int lhs, const      uint rhs);
+    sstd_vecSc::slice_mv_is slice_mv(const         int lhs, const    size_t rhs);
+    sstd_vecSc::slice_mv_ui slice_mv(const        uint lhs, const       int rhs);
+    sstd_vecSc::slice_mv_uu slice_mv(const        uint lhs, const      uint rhs);
+    sstd_vecSc::slice_mv_us slice_mv(const        uint lhs, const    size_t rhs);
+    sstd_vecSc::slice_mv_si slice_mv(const      size_t lhs, const       int rhs);
+    sstd_vecSc::slice_mv_su slice_mv(const      size_t lhs, const      uint rhs);
+    sstd_vecSc::slice_mv_ss slice_mv(const      size_t lhs, const    size_t rhs);
     
-    sstd_vecSc::slice_mv_bi slice_mv(const sstd::begin lhs, const       int rhs){ return sstd_vecSc::slice_mv_bi(rhs); }
-    sstd_vecSc::slice_mv_bu slice_mv(const sstd::begin lhs, const      uint rhs){ return sstd_vecSc::slice_mv_bu(rhs); }
-    sstd_vecSc::slice_mv_bs slice_mv(const sstd::begin lhs, const    size_t rhs){ return sstd_vecSc::slice_mv_bs(rhs); }
-    sstd_vecSc::slice_mv_ie slice_mv(const         int lhs, const sstd::end rhs){ return sstd_vecSc::slice_mv_ie(lhs); }
-    sstd_vecSc::slice_mv_ue slice_mv(const        uint lhs, const sstd::end rhs){ return sstd_vecSc::slice_mv_ue(lhs); }
-    sstd_vecSc::slice_mv_se slice_mv(const      size_t lhs, const sstd::end rhs){ return sstd_vecSc::slice_mv_se(lhs); }
-    sstd_vecSc::slice_mv_be slice_mv(const sstd::begin lhs, const sstd::end rhs){ return sstd_vecSc::slice_mv_be();    }
+    sstd_vecSc::slice_mv_bi slice_mv(const sstd::begin lhs, const       int rhs);
+    sstd_vecSc::slice_mv_bu slice_mv(const sstd::begin lhs, const      uint rhs);
+    sstd_vecSc::slice_mv_bs slice_mv(const sstd::begin lhs, const    size_t rhs);
+    sstd_vecSc::slice_mv_ie slice_mv(const         int lhs, const sstd::end rhs);
+    sstd_vecSc::slice_mv_ue slice_mv(const        uint lhs, const sstd::end rhs);
+    sstd_vecSc::slice_mv_se slice_mv(const      size_t lhs, const sstd::end rhs);
+    sstd_vecSc::slice_mv_be slice_mv(const sstd::begin lhs, const sstd::end rhs);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
