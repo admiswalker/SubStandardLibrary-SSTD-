@@ -10,6 +10,9 @@
 #include <gtest/gtest.h>
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+
+#include "test/check_multiple_definition.hpp" // Trigger a compilation error if there are multiple definitions. In order not to occor "multiple definition error" when including <sstd/sstd.hpp> from multi file.
+
 //*
 // Remove comment out when you test it.
 #include "test/file/cp.hpp"

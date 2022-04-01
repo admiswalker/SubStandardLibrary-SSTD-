@@ -1,3 +1,4 @@
+/*
 #pragma once
 #include "../typeDef.h"
 
@@ -67,4 +68,4 @@ public:
     // itr.index()
     // u8[itr.index()]
 };
-
+//*/
