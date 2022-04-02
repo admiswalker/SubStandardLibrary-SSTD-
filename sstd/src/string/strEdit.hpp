@@ -22,6 +22,16 @@ namespace sstd{
     void                      strip_ow(      std::string& str); // removing head and tail tab and spaces. ow: overwrite
     std::vector<std::string>  strip   (const std::vector<std::string>& vec); // -> strip(str) // removing head and tail spaces
     
+    std::string              lstrip   (const        char* str, const char c);
+    std::string              lstrip   (const std::string& str, const char c);
+    void                     lstrip_ow(      std::string& str, const char c);
+    std::string              rstrip   (const        char* str, const char c);
+    std::string              rstrip   (const std::string& str, const char c);
+    void                     rstrip_ow(      std::string& str, const char c);
+    std::string               strip   (const        char* str, const char c);
+    std::string               strip   (const std::string& str, const char c);
+    void                      strip_ow(      std::string& str, const char c);
+    
     std::string               stripAll   (const        char* str, const        char  c        );
     std::string               stripAll   (const std::string& str, const        char  c        );
     void                      stripAll_ow(      std::string& str, const        char  c        );

@@ -79,6 +79,132 @@ TEST(strEdit, strip_vec){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+TEST(strEdit, lstrip_c_cc){
+    std::string str_in  = "  abcd  ";
+    std::string str_ans =   "abcd  ";
+    std::string ret = sstd::lstrip(str_in.c_str(), ' ');
+    ASSERT_STREQ(ret.c_str(), str_ans.c_str());
+}
+TEST(strEdit, lstrip_c_sc){
+    std::string str_in  = "  abcd  ";
+    std::string str_ans =   "abcd  ";
+    std::string ret = sstd::lstrip(str_in, ' ');
+    ASSERT_STREQ(ret.c_str(), str_ans.c_str());
+}
+TEST(strEdit, lstrip_c_sc_02){
+    std::string str_in  = "  ";
+    std::string str_ans = "";
+    std::string ret = sstd::lstrip(str_in, ' ');
+    ASSERT_STREQ(ret.c_str(), str_ans.c_str());
+}
+TEST(strEdit, lstrip_c_sc_03){
+    std::string str_in  = "";
+    std::string str_ans = "";
+    std::string ret = sstd::lstrip(str_in, ' ');
+    ASSERT_STREQ(ret.c_str(), str_ans.c_str());
+}
+
+TEST(strEdit, lstrip_ow_c){
+    std::string str_in  = "  abcd  ";
+    std::string str_ans =   "abcd  ";
+    sstd::lstrip_ow(str_in, ' ');
+    ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+TEST(strEdit, lstrip_ow_c_02){
+    std::string str_in  = "  ";
+    std::string str_ans = "";
+    sstd::lstrip_ow(str_in, ' ');
+    ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+
+//---
+
+TEST(strEdit, rstrip_c_cc){
+    std::string str_in  = "  abcd  ";
+    std::string str_ans = "  abcd";
+    std::string ret = sstd::rstrip(str_in.c_str(), ' ');
+    ASSERT_STREQ(ret.c_str(), str_ans.c_str());
+}
+TEST(strEdit, rstrip_c_sc){
+    std::string str_in  = "  abcd  ";
+    std::string str_ans = "  abcd";
+    std::string ret = sstd::rstrip(str_in, ' ');
+    ASSERT_STREQ(ret.c_str(), str_ans.c_str());
+}
+TEST(strEdit, rstrip_c_sc_02){
+    std::string str_in  = "  ";
+    std::string str_ans = "";
+    std::string ret = sstd::rstrip(str_in, ' ');
+    ASSERT_STREQ(ret.c_str(), str_ans.c_str());
+}
+TEST(strEdit, rstrip_c_sc_03){
+    std::string str_in  = "";
+    std::string str_ans = "";
+    std::string ret = sstd::rstrip(str_in, ' ');
+    ASSERT_STREQ(ret.c_str(), str_ans.c_str());
+}
+
+TEST(strEdit, rstrip_ow_c){
+    std::string str_in  = "  abcd  ";
+    std::string str_ans = "  abcd";
+    sstd::rstrip_ow(str_in, ' ');
+    ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+TEST(strEdit, rstrip_ow_c_02){
+    std::string str_in  = "  ";
+    std::string str_ans = "";
+    sstd::rstrip_ow(str_in, ' ');
+    ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+
+//---
+
+TEST(strEdit, strip_c_cc){
+    std::string str_in  = "  abcd  ";
+    std::string str_ans = "abcd";
+    std::string ret = sstd::strip(str_in.c_str(), ' ');
+    ASSERT_STREQ(ret.c_str(), str_ans.c_str());
+}
+TEST(strEdit, strip_c_cc_02){
+    std::string str_in  = "   ";
+    std::string str_ans = "";
+    std::string ret = sstd::strip(str_in.c_str(), ' ');
+    ASSERT_STREQ(ret.c_str(), str_ans.c_str());
+}
+TEST(strEdit, strip_c_cc_03){
+    std::string str_in  = "";
+    std::string str_ans = "";
+    std::string ret = sstd::strip(str_in.c_str(), ' ');
+    ASSERT_STREQ(ret.c_str(), str_ans.c_str());
+}
+TEST(strEdit, strip_c_sc){
+    std::string str_in  = "  abcd  ";
+    std::string str_ans = "abcd";
+    std::string ret = sstd::strip(str_in, ' ');
+    ASSERT_STREQ(ret.c_str(), str_ans.c_str());
+}
+
+TEST(strEdit, strip_ow_c_sc){
+    std::string str_in  = "  abcd  ";
+    std::string str_ans = "abcd";
+    sstd::strip_ow(str_in, ' ');
+    ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+TEST(strEdit, strip_ow_c_sc_02){
+    std::string str_in  = "    ";
+    std::string str_ans = "";
+    sstd::strip_ow(str_in, ' ');
+    ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+TEST(strEdit, strip_ow_c_sc_03){
+    std::string str_in  = "";
+    std::string str_ans = "";
+    sstd::strip_ow(str_in, ' ');
+    ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
 TEST(strEdit, stripAllc_cc_01){
     std::string str_in  = "0a0b0cx0d0xe0f0g0";
     std::string str_ans = "abcxdxefg";

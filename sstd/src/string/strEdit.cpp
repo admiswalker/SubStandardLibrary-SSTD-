@@ -136,6 +136,74 @@ std::vector<std::string> sstd::strip(const std::vector<std::string>& vec){
 
 //--------------------------------------------------------------------------------------------------------
 
+std::string lstrip_base(const char* str, const uint len, const char c){
+    uint i=0;
+    while(i<len && str[i]==c){ ++i; }
+    
+    return std::string(&str[i], len-i);
+}
+std::string sstd::lstrip   (const        char* str, const char c){ return lstrip_base(str,         strlen(str), c); }
+std::string sstd::lstrip   (const std::string& str, const char c){ return lstrip_base(str.c_str(),  str.size(), c); }
+void        sstd::lstrip_ow(      std::string& str, const char c){
+    uint i=0;
+    while(i<str.size() && str[i]==c){ ++i; }
+
+    uint r=0;
+    for(; i<str.size(); ++r, ++i){
+        str[r] = str[i];
+    }
+    str.resize(r);
+}
+
+//---
+
+std::string rstrip_base(const char* str, const uint len, const char c){
+    int i=len-1;
+    while(i>=0 && str[i]==c){ --i; }
+    
+    return std::string(&str[0], i+1);
+}
+std::string sstd::rstrip   (const        char* str, const char c){ return rstrip_base(str,         strlen(str), c); }
+std::string sstd::rstrip   (const std::string& str, const char c){ return rstrip_base(str.c_str(),  str.size(), c); }
+void        sstd::rstrip_ow(      std::string& str, const char c){
+    int i=str.size()-1;
+    while(i>=0 && str[i]==c){ --i; }
+    
+    str.resize(i+1);
+}
+
+//---
+
+std::string strip_base(const char* str, uint len, const char c){
+    uint b=0; // begin
+    while(b<len && str[b]==c){ ++b; }
+    if(b==len){ return std::string(); }
+    
+    int e=len-1; // end
+    while(e>=0 && str[e]==c){ --e; }
+    
+//    if(e<(int)b){ return std::string(); }
+    return std::string(&str[b], e-b+1);
+}
+std::string sstd::strip   (const        char* str, const char c){ return strip_base(str,         strlen(str), c); }
+std::string sstd::strip   (const std::string& str, const char c){ return strip_base(str.c_str(),  str.size(), c); }
+void        sstd::strip_ow(      std::string& str, const char c){
+    uint b=0; // begin
+    while(b<str.size() && str[b]==c){ ++b; }
+    if(b==str.size()){ str.resize(0); return; }
+    
+    int e=str.size()-1; // end
+    while(e>=0 && str[e]==c){ --e; }
+
+    uint r=0;
+    for(uint i=b; i<(uint)e+1; ++r, ++i){
+        str[r] = str[i];
+    }
+    str.resize(e-b+1);
+}
+
+//--------------------------------------------------------------------------------------------------------
+
 std::string stripAll_base(const char* str, const uint len, const char c){
     std::string ret('0', len); ret.clear();
     
