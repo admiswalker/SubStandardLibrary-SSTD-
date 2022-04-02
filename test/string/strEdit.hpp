@@ -79,6 +79,36 @@ TEST(strEdit, strip_vec){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+TEST(strEdit, stripAllc_cc_01){
+    std::string str_in  = "0a0b0cx0d0xe0f0g0";
+    std::string str_ans = "abcxdxefg";
+    std::string ret = sstd::stripAll(str_in.c_str(), '0');
+    ASSERT_STREQ(ret.c_str(), str_ans.c_str());
+}
+TEST(strEdit, stripAllc_cc_02){
+    std::string str_in  = "0a0b0cx0d0xe0f0g0";
+    std::string str_ans = "abcdefg";
+    std::string ret;
+    ret = sstd::stripAll(str_in.c_str(), '0');
+    ret = sstd::stripAll(   ret.c_str(), 'x');
+    ASSERT_STREQ(ret.c_str(), str_ans.c_str());
+}
+TEST(strEdit, stripAllc_sc){
+    std::string str_in  = "0a0b0cx0d0xe0f0g0";
+    std::string str_ans = "abcxdxefg";
+    std::string ret = sstd::stripAll(str_in, '0');
+    ASSERT_STREQ(ret.c_str(), str_ans.c_str());
+}
+
+TEST(strEdit, stripAllc_ow_sc){
+    std::string str_in  = "0a0b0cx0d0xe0f0g0";
+    std::string str_ans = "abcxdxefg";
+    sstd::stripAll_ow(str_in, '0');
+    ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
 TEST(strEdit, stripAll_case01_01){
     std::string str_in  = "0a0b0cx0d0xe0f0g0";
     std::string str_ans = "abcdefg";

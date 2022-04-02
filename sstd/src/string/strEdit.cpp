@@ -136,6 +136,33 @@ std::vector<std::string> sstd::strip(const std::vector<std::string>& vec){
 
 //--------------------------------------------------------------------------------------------------------
 
+std::string stripAll_base(const char* str, const uint len, const char c){
+    std::string ret('0', len); ret.clear();
+    
+    for(uint i=0; i<len; ++i){
+        if(str[i]==c){ continue; }
+        ret += str[i];
+    }
+    return ret;
+}
+std::string sstd::stripAll(const        char* str, const char c){ return stripAll_base(str,         strlen(str), c); }
+std::string sstd::stripAll(const std::string& str, const char c){ return stripAll_base(str.c_str(),  str.size(), c); }
+
+//--------------------------------------------------------------------------------------------------------
+
+void sstd::stripAll_ow(std::string& str, const char c){
+    uint r=0;
+    
+    for(uint i=0; i<str.size(); ++i){
+        if(str[i]==c){ continue; }
+        str[r] = str[i]; ++r;
+    }
+    
+    str.resize(r);
+}
+
+//--------------------------------------------------------------------------------------------------------
+
 std::string stripAll_base(const char* str, const uint len, const char* stripList, const uint sLen){
     std::string ret('0', len); ret.clear();
     
