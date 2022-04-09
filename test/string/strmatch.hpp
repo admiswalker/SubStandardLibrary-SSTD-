@@ -175,7 +175,7 @@ TEST(strmatch, isAlphabet_lower_str){
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // charIn()
 
-TEST(strmatch, charIn){
+TEST(strmatch, charIn_c){
     {
         char lhs = ' ';
         std::string rhs = "";
@@ -201,6 +201,68 @@ TEST(strmatch, charIn){
         std::string rhs = "ABCDEFG";
         bool ret=sstd::charIn(lhs, rhs); ASSERT_FALSE(ret);
     }
+}
+
+TEST(strmatch, charIn_s_cc){
+    std::string lhs = "AB";
+    std::string rhs = "ABCDEFG";
+    bool ret=sstd::charIn(lhs.c_str(), rhs.c_str()); ASSERT_TRUE(ret);
+}
+TEST(strmatch, charIn_s_cs){
+    std::string lhs = "AB";
+    std::string rhs = "ABCDEFG";
+    bool ret=sstd::charIn(lhs.c_str(), rhs); ASSERT_TRUE(ret);
+}
+TEST(strmatch, charIn_s_sc){
+    std::string lhs = "AB";
+    std::string rhs = "ABCDEFG";
+    bool ret=sstd::charIn(lhs, rhs.c_str()); ASSERT_TRUE(ret);
+}
+TEST(strmatch, charIn_s_ss){
+    std::string lhs = "AB";
+    std::string rhs = "ABCDEFG";
+    bool ret=sstd::charIn(lhs, rhs); ASSERT_TRUE(ret);
+}
+TEST(strmatch, charIn_s_true_01){
+    std::string lhs = "ABX";
+    std::string rhs = "ABCDEFG";
+    bool ret=sstd::charIn(lhs.c_str(), rhs.c_str()); ASSERT_TRUE(ret);
+}
+TEST(strmatch, charIn_s_false_01){
+    std::string lhs = "HIJ";
+    std::string rhs = "ABCDEFG";
+    bool ret=sstd::charIn(lhs.c_str(), rhs.c_str()); ASSERT_FALSE(ret);
+}
+
+TEST(strmatch, charIn_all_cc){
+    std::string lhs = "AB";
+    std::string rhs = "ABCDEFG";
+    bool ret=sstd::charIn_all(lhs.c_str(), rhs.c_str()); ASSERT_TRUE(ret);
+}
+TEST(strmatch, charIn_all_cs){
+    std::string lhs = "AB";
+    std::string rhs = "ABCDEFG";
+    bool ret=sstd::charIn_all(lhs.c_str(), rhs); ASSERT_TRUE(ret);
+}
+TEST(strmatch, charIn_all_sc){
+    std::string lhs = "AB";
+    std::string rhs = "ABCDEFG";
+    bool ret=sstd::charIn_all(lhs, rhs.c_str()); ASSERT_TRUE(ret);
+}
+TEST(strmatch, charIn_all_ss){
+    std::string lhs = "AB";
+    std::string rhs = "ABCDEFG";
+    bool ret=sstd::charIn_all(lhs, rhs); ASSERT_TRUE(ret);
+}
+TEST(strmatch, charIn_all_true_01){
+    std::string lhs = "AB";
+    std::string rhs = "ABCDEFG";
+    bool ret=sstd::charIn_all(lhs.c_str(), rhs.c_str()); ASSERT_TRUE(ret);
+}
+TEST(strmatch, charIn_all_false_01){
+    std::string lhs = "ABX";
+    std::string rhs = "ABCDEFG";
+    bool ret=sstd::charIn_all(lhs.c_str(), rhs.c_str()); ASSERT_FALSE(ret);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

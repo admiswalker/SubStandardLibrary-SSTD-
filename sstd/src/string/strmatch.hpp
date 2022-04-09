@@ -39,8 +39,18 @@ namespace sstd{
     bool isAlphabet_lower(const        char* rhs);
     bool isAlphabet_lower(const std::string& rhs);
 
-    bool charIn(const char lhs, const        char* rhs); // Is lhs in rhs ?
-    bool charIn(const char lhs, const std::string& rhs); // Is lhs in rhs ?
+    bool charIn(const        char  lhs, const        char* rhs); // Is lhs in rhs ?
+    bool charIn(const        char  lhs, const std::string& rhs); // Is lhs in rhs ?
+    
+    bool charIn(const        char* lhs, const        char* rhs); // Is lhs in rhs ?
+    bool charIn(const        char* lhs, const std::string& rhs); // Is lhs in rhs ?
+    bool charIn(const std::string& lhs, const        char* rhs); // Is lhs in rhs ?
+    bool charIn(const std::string& lhs, const std::string& rhs); // Is lhs in rhs ?
+    
+    bool charIn_all(const        char* lhs, const        char* rhs); // Is all lhs char(s) in rhs ?
+    bool charIn_all(const        char* lhs, const std::string& rhs); // Is all lhs char(s) in rhs ?
+    bool charIn_all(const std::string& lhs, const        char* rhs); // Is all lhs char(s) in rhs ?
+    bool charIn_all(const std::string& lhs, const std::string& rhs); // Is all lhs char(s) in rhs ?
     
     bool strIn(const char*        lhs, const char*        rhs); // is lhs in rhs ? (is rhs include lhs ?)
     bool strIn(const char*        lhs, const std::string& rhs);

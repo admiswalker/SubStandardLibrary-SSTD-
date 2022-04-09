@@ -1,5 +1,6 @@
 ﻿#include <algorithm> // for std::reverse
 #include <string.h>
+#include <vector>
 
 #include "./strmatch.hpp"
 #include "../typeDef.h"
@@ -164,6 +165,37 @@ bool sstd::charIn(const char lhs, const char* rhs){ // Is lhs in rhs ?
     return false;
 }
 bool sstd::charIn(const char lhs, const std::string& rhs){ return sstd::charIn(lhs, rhs.c_str()); }
+
+bool sstd::charIn(const char* lhs, const char* rhs){ // Is lhs in rhs ?
+    for(uint ri=0; rhs[ri]!='\0'; ++ri){
+        for(uint li=0; lhs[li]!='\0'; ++li){
+            if(rhs[ri]==lhs[li]){ return true; }
+        }
+    }
+    return false;
+}
+bool sstd::charIn(const        char* lhs, const std::string& rhs){ return sstd::charIn(lhs,         rhs.c_str()); }
+bool sstd::charIn(const std::string& lhs, const        char* rhs){ return sstd::charIn(lhs.c_str(), rhs        ); }
+bool sstd::charIn(const std::string& lhs, const std::string& rhs){ return sstd::charIn(lhs.c_str(), rhs.c_str()); }
+
+bool sstd::charIn_all(const        char* lhs, const        char* rhs){
+    int l_len=strlen(lhs);
+    std::vector<bool> vUsed(l_len, false);
+    
+    for(uint ri=0; rhs[ri]!='\0'; ++ri){
+        for(uint li=0; lhs[li]!='\0'; ++li){
+            if(rhs[ri]==lhs[li]){
+                if(!vUsed[li]){ --l_len; }
+                vUsed[li] = true;
+                if(l_len==0){ return true; }
+            }
+        }
+    }
+    return false;
+}
+bool sstd::charIn_all(const        char* lhs, const std::string& rhs){ return sstd::charIn_all(lhs,         rhs.c_str()); }
+bool sstd::charIn_all(const std::string& lhs, const        char* rhs){ return sstd::charIn_all(lhs.c_str(), rhs        ); }
+bool sstd::charIn_all(const std::string& lhs, const std::string& rhs){ return sstd::charIn_all(lhs.c_str(), rhs.c_str()); }
 
 //--------------------------------------------------------------------------------------------------------
 // strIn()
