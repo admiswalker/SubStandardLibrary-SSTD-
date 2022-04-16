@@ -476,6 +476,27 @@ TEST(math, multi_vector_sort_5args){
     ASSERT_TRUE(v5_anothorVec   == v5_ans);
 }
 
+TEST(math, multi_vector_sort_gr_5args){
+    std::vector<int>         v1_sorting_seed = {1, 3, 5, 2, 4};
+    std::vector<std::string> v2_anothorVec   = {"one", "three", "five", "two", "four"};
+    std::vector<std::string> v3_anothorVec   = {"1", "3", "5", "2", "4"};
+    std::vector<std::string> v4_anothorVec   = {"a", "c", "e", "b", "d"};
+    std::vector<std::string> v5_anothorVec   = {"A", "C", "E", "B", "D"};
+    std::vector<int>         v1_ans = {5, 4, 3, 2, 1};
+    std::vector<std::string> v2_ans = {"five", "four", "three", "two", "one"};
+    std::vector<std::string> v3_ans = {"5", "4", "3", "2", "1"};
+    std::vector<std::string> v4_ans = {"e", "d", "c", "b", "a"};
+    std::vector<std::string> v5_ans = {"E", "D", "C", "B", "A"};
+    
+    sstd::sort_gr(v1_sorting_seed, v2_anothorVec, v3_anothorVec, v4_anothorVec, v5_anothorVec);
+    
+    ASSERT_TRUE(v1_sorting_seed == v1_ans);
+    ASSERT_TRUE(v2_anothorVec   == v2_ans);
+    ASSERT_TRUE(v3_anothorVec   == v3_ans);
+    ASSERT_TRUE(v4_anothorVec   == v4_ans);
+    ASSERT_TRUE(v5_anothorVec   == v5_ans);
+}
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 

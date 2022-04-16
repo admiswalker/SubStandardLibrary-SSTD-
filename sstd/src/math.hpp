@@ -173,7 +173,6 @@ namespace sstd{
     //-----------------------------------------------------------------------------------------------------------------------------------------------
     // multi vector sort
     
-    //template<typename T> inline T sort(T&& lhs, T&& rhs){ return (lhs<=rhs ? lhs:rhs); }
     class sstd_mult_vec_sort{
     private:
     public:
@@ -181,8 +180,9 @@ namespace sstd{
         sstd_mult_vec_sort(uint size): idx(size) {}
         ~sstd_mult_vec_sort(){}
     };
+    
     template<typename T>
-    inline void sort_internal(const class sstd_mult_vec_sort& s, std::vector<T>& head){
+    inline void _sort(const class sstd_mult_vec_sort& s, std::vector<T>& head){
         std::vector<T> head_tmp(head.size());
         for(uint i=0; i<s.idx.size(); ++i){
             head_tmp[i] = head[s.idx[i]];
@@ -190,9 +190,9 @@ namespace sstd{
         std::swap(head_tmp, head);
     }
     template<typename Head, typename... Tail>
-    inline void sort_internal(const class sstd_mult_vec_sort& s, Head&& head, Tail&&... tail){
-        sstd::sort_internal(s, std::forward<Head>(head));
-        sstd::sort_internal(s, std::forward<Tail>(tail)...);
+    inline void _sort(const class sstd_mult_vec_sort& s, Head&& head, Tail&&... tail){
+        sstd::_sort(s, std::forward<Head>(head));
+        sstd::_sort(s, std::forward<Tail>(tail)...);
     }
     template<typename Head, typename... Tail>
     inline void sort(Head&& head, Tail&&... tail){ // Ascending: 昇順: 0, 1, 2, ...
@@ -200,8 +200,17 @@ namespace sstd{
         std::iota(s.idx.begin(), s.idx.end(), 0);
         std::sort(s.idx.begin(), s.idx.end(), [&](uint lhs, uint rhs) -> bool { return head[lhs] < head[rhs]; });
         
-        sstd::sort_internal(s, std::forward<Head>(head));
-        sstd::sort_internal(s, std::forward<Tail>(tail)...);
+        sstd::_sort(s, std::forward<Head>(head));
+        sstd::_sort(s, std::forward<Tail>(tail)...);
+    }
+    template<typename Head, typename... Tail>
+    inline void sort_gr(Head&& head, Tail&&... tail){ // Ascending: 昇順: 0, 1, 2, ...
+        class sstd_mult_vec_sort s(head.size());
+        std::iota(s.idx.begin(), s.idx.end(), 0);
+        std::sort(s.idx.begin(), s.idx.end(), [&](uint lhs, uint rhs) -> bool { return !(head[lhs] < head[rhs]); });
+        
+        sstd::_sort(s, std::forward<Head>(head));
+        sstd::_sort(s, std::forward<Tail>(tail)...);
     }
     
     //-----------------------------------------------------------------------------------------------------------------------------------------------
