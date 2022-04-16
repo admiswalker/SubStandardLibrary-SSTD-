@@ -171,6 +171,40 @@ namespace sstd{
     template <typename T> inline std::vector<T> sorted_gr(      std::vector<T>&& rhs   ){                            std::sort(rhs.begin(), rhs.end(), std::greater<T>()); return rhs; } // Descending: 降順: 9, 8, 7, ...
     
     //-----------------------------------------------------------------------------------------------------------------------------------------------
+    // multi vector sort
+    
+    //template<typename T> inline T sort(T&& lhs, T&& rhs){ return (lhs<=rhs ? lhs:rhs); }
+    class sstd_mult_vec_sort{
+    private:
+    public:
+        std::vector<uint> idx;
+        sstd_mult_vec_sort(uint size): idx(size) {}
+        ~sstd_mult_vec_sort(){}
+    };
+    template<typename T>
+    inline void sort_internal(const class sstd_mult_vec_sort& s, std::vector<T>& head){
+        std::vector<T> head_tmp(head.size());
+        for(uint i=0; i<s.idx.size(); ++i){
+            head_tmp[i] = head[s.idx[i]];
+        }
+        std::swap(head_tmp, head);
+    }
+    template<typename Head, typename... Tail>
+    inline void sort_internal(const class sstd_mult_vec_sort& s, Head&& head, Tail&&... tail){
+        sstd::sort_internal(s, std::forward<Head>(head));
+        sstd::sort_internal(s, std::forward<Tail>(tail)...);
+    }
+    template<typename Head, typename... Tail>
+    inline void sort(Head&& head, Tail&&... tail){ // Ascending: 昇順: 0, 1, 2, ...
+        class sstd_mult_vec_sort s(head.size());
+        std::iota(s.idx.begin(), s.idx.end(), 0);
+        std::sort(s.idx.begin(), s.idx.end(), [&](uint lhs, uint rhs) -> bool { return head[lhs] < head[rhs]; });
+        
+        sstd::sort_internal(s, std::forward<Head>(head));
+        sstd::sort_internal(s, std::forward<Tail>(tail)...);
+    }
+    
+    //-----------------------------------------------------------------------------------------------------------------------------------------------
     
     template <typename T> std::vector<T> nonzero(const std::vector<T>& rhs);
 //    template <typename T> void padding (std::vector<T>& vecLhs, std::vector<T>& vecRhs); // <--> sstd::suppress();

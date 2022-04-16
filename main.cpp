@@ -13,7 +13,7 @@
 
 #include "test/check_multiple_definition.hpp" // Trigger a compilation error if there are multiple definitions. In order not to occor "multiple definition error" when including <sstd/sstd.hpp> from multi file.
 
-//*
+/*
 // Remove comment out when you test it.
 #include "test/file/cp.hpp"
 #include "test/file/csv.hpp"
@@ -34,8 +34,8 @@
 #include "test/vector/stdVector_expansion.hpp" // stdVector_expansion of operators
 #include "test/vector/vvec.hpp"
 
-#include "test/c2py.hpp"
-#include "test/math.hpp"
+#include "test/c2py.hpp"*/
+#include "test/math.hpp"/*
 #include "test/pdbg.hpp"
 #include "test/print_printn_printn_all.hpp" // void pdbg(){ printf("======p\n"); } // #define DEBUG を定義しない場合でも，マクロでこの名前は使えなくなるので，名前空間を汚しており，本当はよくない．
 #include "test/status.hpp"
