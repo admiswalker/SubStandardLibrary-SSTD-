@@ -24,7 +24,7 @@ bool cmp_stat_equalToOrGreater(struct timespec& lhs, struct timespec& rhs){ // l
     return false;
 }
 bool _copy_base(const char* pPath_src, const char* pPath_dst, const bool opt_n, const bool opt_p, const bool opt_u){
-    bool fExist;
+    bool fExist = false; // init to suppress a gcc warning (no need to initialize this option).
     int fd_src, fd_dst;
     struct stat st_src, st_dst;
     
