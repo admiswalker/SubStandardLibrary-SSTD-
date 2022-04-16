@@ -107,7 +107,7 @@ namespace sstd{
     
     // template<typename T> inline T min(T&& arg1, T&& arg2, ... );
     // : Inorder to avoid the namespace confliction with the other min functions, multiple arg min has 3 arguments.
-    template<typename T> inline T min(T&& lhs, T&& rhs){ return (lhs<=rhs ? lhs:rhs); }
+    template<typename T> inline T min(T&& lhs, T&& rhs){ return (lhs<rhs ? lhs:rhs); }
     template<typename T> inline T min(T&& head1, T&& head2, T&& tail){ return sstd::min(head1, sstd::min(head2, tail)); }
     template<typename Head, typename... Tail>
     inline Head min(Head&& head1, Head&& head2, Tail&&... tail){
@@ -116,7 +116,7 @@ namespace sstd{
     
     // template<typename T> inline T max(T&& arg1, T&& arg2, ... );
     // : Inorder to avoid the namespace confliction with the other max functions, multiple arg max has 3 arguments.
-    template<typename T> inline T max(T&& lhs, T&& rhs){ return (lhs>=rhs ? lhs:rhs); }
+    template<typename T> inline T max(T&& lhs, T&& rhs){ return (lhs<rhs ? rhs:lhs); }
     template<typename T> inline T max(T&& head1, T&& head2, T&& tail){ return sstd::max(head1, sstd::max(head2, tail)); }
     template<typename Head, typename... Tail>
     inline Head max(Head&& head1, Head&& head2, Tail&&... tail){
@@ -239,13 +239,13 @@ namespace sstd{
 #define MAX_vec_mat(T, lhs, rhs)                                        \
     if(rhs.size()==0){ return T(); }                                    \
     T lhs=rhs[0];                                                       \
-    for(uint i=1; i<rhs.size(); ++i){ if(rhs[i]>lhs){ lhs=rhs[i]; } }   \
+    for(uint i=1; i<rhs.size(); ++i){ if(!(rhs[i]<lhs)){ lhs=rhs[i]; } } \
     return lhs;
 
 #define MAX_ABS_vec_mat(T, lhs, rhs)                                    \
     if(rhs.size()==0){ return T(); }                                    \
     T lhs=rhs[0], buf=std::abs(rhs[0]);                                 \
-    for(uint i=1; i<rhs.size(); ++i){ if(std::abs(rhs[i])>buf){ lhs=rhs[i]; buf=std::abs(rhs[i]); } } \
+    for(uint i=1; i<rhs.size(); ++i){ if(!(std::abs(rhs[i])<buf)){ lhs=rhs[i]; buf=std::abs(rhs[i]); } } \
     return lhs;
 
 template<typename T> inline T sstd::min    (const std::vector<T>& rhs){ MIN_vec_mat    (T, lhs, rhs); }
