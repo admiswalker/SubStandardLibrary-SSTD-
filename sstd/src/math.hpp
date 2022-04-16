@@ -285,13 +285,13 @@ template<typename T> inline T sstd::max_abs(const sstd::mat_r<T>& rhs){ MAX_ABS_
 #define ARGMAX_vec_mat(lhs, rhs)                                        \
     if(rhs.size()==0){ return 0; }                                      \
     uint lhs=0;                                                         \
-    for(uint i=1; i<rhs.size(); ++i){ if( rhs[i]>rhs[lhs] ){ lhs=i; } } \
+    for(uint i=1; i<rhs.size(); ++i){ if(!(rhs[i]<rhs[lhs])){ lhs=i; } } \
     return lhs;
 
 #define ARGMAX_ABS_vec_mat(lhs, rhs)                                    \
     if(rhs.size()==0){ return 0; }                                      \
     uint lhs=0;                                                         \
-    for(uint i=1; i<rhs.size(); ++i){ if( std::abs(rhs[i])>std::abs(rhs[lhs]) ){ lhs=i; } } \
+    for(uint i=1; i<rhs.size(); ++i){ if(!(std::abs(rhs[i])<std::abs(rhs[lhs]))){ lhs=i; } } \
     return lhs;
 
 template<typename T> uint sstd::argmin    (const std::vector<T>& rhs){ ARGMIN_vec_mat    (lhs, rhs); }
