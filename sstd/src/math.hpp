@@ -162,6 +162,7 @@ namespace sstd{
     template<typename T> uint argnearest_up  (const std::vector<T>& v, const T& value);
     
     //-----------------------------------------------------------------------------------------------------------------------------------------------
+    // sort
     
     template <typename T> inline void           sort     (      std::vector<T>&  rhs   ){                            std::sort(rhs.begin(), rhs.end());             }                    // Ascending: 昇順: 0, 1, 2, ...
     template <typename T> inline std::vector<T> sorted   (const std::vector<T>&  rhs_in){ std::vector<T> rhs=rhs_in; std::sort(rhs.begin(), rhs.end()); return rhs; }                    // Ascending: 昇順: 0, 1, 2, ...
@@ -171,7 +172,7 @@ namespace sstd{
     template <typename T> inline std::vector<T> sorted_gr(      std::vector<T>&& rhs   ){                            std::sort(rhs.begin(), rhs.end(), std::greater<T>()); return rhs; } // Descending: 降順: 9, 8, 7, ...
     
     //-----------------------------------------------------------------------------------------------------------------------------------------------
-    // multi vector sort
+    // sort for multiple vector
     
     class sstd_mult_vec_sort{
     private:
@@ -204,7 +205,7 @@ namespace sstd{
         sstd::_sort(s, std::forward<Tail>(tail)...);
     }
     template<typename Head, typename... Tail>
-    inline void sort_gr(Head&& head, Tail&&... tail){ // Ascending: 昇順: 0, 1, 2, ...
+    inline void sort_gr(Head&& head, Tail&&... tail){ // Descending: 降順: 9, 8, 7, ...
         class sstd_mult_vec_sort s(head.size());
         std::iota(s.idx.begin(), s.idx.end(), 0);
         std::sort(s.idx.begin(), s.idx.end(), [&](uint lhs, uint rhs) -> bool { return !(head[lhs] < head[rhs]); });
