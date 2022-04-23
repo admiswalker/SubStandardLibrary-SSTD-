@@ -73,7 +73,7 @@ bool _copy_base(const char* pPath_src, const char* pPath_dst, const bool opt_n, 
         case 'n': { opt_n=true; break; }                                       \
         case 'p': { opt_p=true; break; }                                       \
         case 'u': { opt_u=true; break; }                                       \
-        default: { sstd::pdbg("ERROR: sstd::copy(): Unexpected option.\n"); break; } \
+        default: { sstd::pdbg_err("sstd::copy(): Unexpected option.\n"); break; } \
         }                                                                      \
     }
 bool sstd::copy(const char*        pPath_src, const char*        pPath_dst, const char* opt){ get_options(); return _copy_base(pPath_src        , pPath_dst        , opt_n, opt_p, opt_u); }

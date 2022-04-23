@@ -216,9 +216,9 @@ bool Is_type_tempT(const std::string& str, std::string& retType, std::string& re
         if(str[i]=='>'){ flagR=true; break;
         }      else    { retTempT+=str[i]; }
     }
-    if(i!=str.size()-1 && flagL==true && flagR==true){ sstd::pdbg("ERROR: Invalid token. There is something after '>'.\n"); return false; }
-    if(flagL==true  && flagR==false){ sstd::pdbg("ERROR: Invalid token. '>' is not found while there is '<'.\n"); return false; }
-    if(flagL==false && flagR==true ){ sstd::pdbg("ERROR: Invalid token. '<' is not found while there is '>', or order of '<' and '>' is incorrect.\n"); return false; }
+    if(i!=str.size()-1 && flagL==true && flagR==true){ sstd::pdbg_err("Invalid token. There is something after '>'.\n"); return false; }
+    if(flagL==true  && flagR==false){ sstd::pdbg_err("Invalid token. '>' is not found while there is '<'.\n"); return false; }
+    if(flagL==false && flagR==true ){ sstd::pdbg_err("Invalid token. '<' is not found while there is '>', or order of '<' and '>' is incorrect.\n"); return false; }
     
     sstd::rstrip_ow(retType); // head space in "retType" is aleady removed when splitting by ','.
     sstd::strip_ow(retTempT);
@@ -258,9 +258,9 @@ void split_verticalLine(struct sstd_c2py::typeSet& f, std::string& fS){
             if      (verLineLR[1][i]=='*'){ f.pointer_sidePy    =true; // *: pointer type sybol on python side                      // on right than vertical line '|' as a symbol of split
             }else if(verLineLR[1][i]=='~'){ f.cnv2builtIn_sidePy=true; // ~: conversion command to built in function on python side // on right than vertical line '|' as a symbol of split
             }else if(verLineLR[1][i]==' '){ // pass
-            }             else            { sstd::pdbg("ERROR: \"%s\" has invalid token.\n", verLineLR[1].c_str()); }
+            }             else            { sstd::pdbg_err("\"%s\" has invalid token.\n", verLineLR[1].c_str()); }
         }
-    }else if(verLineLR.size()>=3){ sstd::pdbg("ERROR: \"%s\" has too many vartical line '|'.\n", fS.c_str());
+    }else if(verLineLR.size()>=3){ sstd::pdbg_err("\"%s\" has too many vartical line '|'.\n", fS.c_str());
     }else{}
 }
 bool setTandT_num(struct sstd_c2py::typeSet& out, std::string& in){
@@ -292,7 +292,7 @@ bool IsNext_Len(const std::vector<std::string>& fSList, const std::vector<struct
        !(fList[i].N_num== VVEC_NUM_BASE&&fList[i].pointer)&&
        !(fList[i].N_num==MAT_C_NUM_BASE&&fList[i].pointer)&&
        !(fList[i].N_num==MAT_R_NUM_BASE&&fList[i].pointer)){
-        sstd::pdbg("ERROR: \"%s\": Next of a pointer type (T*) must be len (len is a length of pointer and treated as a uint32), without \"char*\", \"str* (std::string*)\", \"vec<T>* (std::vector<T>*)\", \"mat_c<T>* (sstd::mat_c<T>*)\" and \"mat_r<T>* (sstd::mat_r<T>*)\".\n", fSList[i].c_str());
+        sstd::pdbg_err("\"%s\": Next of a pointer type (T*) must be len (len is a length of pointer and treated as a uint32), without \"char*\", \"str* (std::string*)\", \"vec<T>* (std::vector<T>*)\", \"mat_c<T>* (sstd::mat_c<T>*)\" and \"mat_r<T>* (sstd::mat_r<T>*)\".\n", fSList[i].c_str());
     }
     // uint32 as a len type is better than uint64.
     // Because in the case of "uint64 x; x = 123", "123" is a uint32 type while the user dosen't type "123ull" and 
@@ -302,12 +302,12 @@ bool IsNext_Len(const std::vector<std::string>& fSList, const std::vector<struct
 }
 bool IsPrevious_pointer(const std::vector<std::string>& fSList, const std::vector<struct sstd_c2py::typeSet>& fList, uint i){
     if(i>0 && fList[i-1].pointer){ return true; }
-    sstd::pdbg("ERROR: \"%s\": Previous of a len type must be a type of pointer.\n", fSList[i].c_str());
+    sstd::pdbg_err("\"%s\": Previous of a len type must be a type of pointer.\n", fSList[i].c_str());
     return false;
 }
 bool IsPrevious_pChar(const std::vector<std::string>& fSList, const std::vector<struct sstd_c2py::typeSet>& fList, uint i){
     if(i>0 && fList[i-1].N_num==num_char && fList[i-1].pointer==true){
-        sstd::pdbg("ERROR: \"%s\": Previous of a len type can't have \"char*\". Because \"char*\" check its length by \"strlen()\" and doesn't need to be send its length.\n", fSList[i].c_str());
+        sstd::pdbg_err("\"%s\": Previous of a len type can't have \"char*\". Because \"char*\" check its length by \"strlen()\" and doesn't need to be send its length.\n", fSList[i].c_str());
     }
     return false;
 }
@@ -321,10 +321,10 @@ std::vector<struct sstd_c2py::typeSet> sstd_c2py::format_str2typeSet(const std::
         split_ret         (f, fS); //   "ret type*|*~" ->   "ret", "type*|*~"
         split_verticalLine(f, fS); //                              "type*|*~" -> "type*", "*~"           // vartical line is just a splitting symbol
         split_pointer     (f, fS); //                                            "type*" -> "type",  "*" // setting "true" or "false" of pointer
-        if      (sstd::strcmp(fS,  "void")){ f.name=  "void"; f.N_num=num_void  ; f.case_num=f.N_num; if(f.pointer){ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
-        }else if(sstd::strcmp(fS,   "len")){ f.name=   "len"; f.N_num=num_len   ; f.case_num=f.N_num; if(!IsPrevious_pointer(fSList, fList, i)){ sstd::pdbg("ERROR: \"%s\": Previous of a len type must be a pointer type without \"char*\". Because \"char*\" check its length by \"strlen()\" and doesn't need to be send its length.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
+        if      (sstd::strcmp(fS,  "void")){ f.name=  "void"; f.N_num=num_void  ; f.case_num=f.N_num; if(f.pointer){ sstd::pdbg_err("\"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
+        }else if(sstd::strcmp(fS,   "len")){ f.name=   "len"; f.N_num=num_len   ; f.case_num=f.N_num; if(!IsPrevious_pointer(fSList, fList, i)){ sstd::pdbg_err("\"%s\": Previous of a len type must be a pointer type without \"char*\". Because \"char*\" check its length by \"strlen()\" and doesn't need to be send its length.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
         }else if(sstd::strcmp(fS,  "bool")){ f.name=  "bool"; f.N_num=num_bool  ; f.case_num=f.N_num;
-        }else if(sstd::strcmp(fS,  "char")){ f.name=  "char"; f.N_num=num_char  ; f.case_num=f.N_num; if(f.pointer&& IsNext_Len(fSList, fList, i)){ sstd::pdbg("ERROR: \"%s\": Previous of a len type can't have \"char*\". Because \"char*\" check its length by \"strlen()\" and doesn't need to be send its length.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
+        }else if(sstd::strcmp(fS,  "char")){ f.name=  "char"; f.N_num=num_char  ; f.case_num=f.N_num; if(f.pointer&& IsNext_Len(fSList, fList, i)){ sstd::pdbg_err("\"%s\": Previous of a len type can't have \"char*\". Because \"char*\" check its length by \"strlen()\" and doesn't need to be send its length.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
         }else if(sstd::strcmp(fS, "uchar")){ f.name= "uchar"; f.N_num=num_uchar ; f.case_num=f.N_num;
         }else if(sstd::strcmp(fS,   "int")){ f.name= "int32"; f.N_num=num_int32 ; f.case_num=f.N_num;
         }else if(sstd::strcmp(fS,  "int8")){ f.name=  "int8"; f.N_num=num_int8  ; f.case_num=f.N_num;
@@ -343,15 +343,15 @@ std::vector<struct sstd_c2py::typeSet> sstd_c2py::format_str2typeSet(const std::
             // Example: fS=="vec<double>"
             //  - type =="vec"
             //  - tempT=="double"
-            if      (sstd::strcmp(type,  "vec")){ f.name=  "vec"; f.N_num=  VEC_NUM_BASE; f.case_num=f.N_num; if(!setTandT_num(f, tempT)){ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
-            }else if(sstd::strcmp(type, "vvec")){ f.name= "vvec"; f.N_num= VVEC_NUM_BASE; f.case_num=f.N_num; if(!setTandT_num(f, tempT)){ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
-            }else if(sstd::strcmp(type,"mat_c")){ f.name="mat_c"; f.N_num=MAT_C_NUM_BASE; f.case_num=f.N_num; if(!setTandT_num(f, tempT)){ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
-            }else if(sstd::strcmp(type,"mat_r")){ f.name="mat_r"; f.N_num=MAT_R_NUM_BASE; f.case_num=f.N_num; if(!setTandT_num(f, tempT)){ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
-            }else{ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
+            if      (sstd::strcmp(type,  "vec")){ f.name=  "vec"; f.N_num=  VEC_NUM_BASE; f.case_num=f.N_num; if(!setTandT_num(f, tempT)){ sstd::pdbg_err("\"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
+            }else if(sstd::strcmp(type, "vvec")){ f.name= "vvec"; f.N_num= VVEC_NUM_BASE; f.case_num=f.N_num; if(!setTandT_num(f, tempT)){ sstd::pdbg_err("\"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
+            }else if(sstd::strcmp(type,"mat_c")){ f.name="mat_c"; f.N_num=MAT_C_NUM_BASE; f.case_num=f.N_num; if(!setTandT_num(f, tempT)){ sstd::pdbg_err("\"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
+            }else if(sstd::strcmp(type,"mat_r")){ f.name="mat_r"; f.N_num=MAT_R_NUM_BASE; f.case_num=f.N_num; if(!setTandT_num(f, tempT)){ sstd::pdbg_err("\"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
+            }else{ sstd::pdbg_err("\"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<struct sstd_c2py::typeSet>(0); }
             f.case_num += f.T_num;
         }else{
-            if(fSList[i].size()==0){ sstd::pdbg("ERROR: There is a empty token. (There might be invalid \",\".)\n");
-            }else{ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); }
+            if(fSList[i].size()==0){ sstd::pdbg_err("There is a empty token. (There might be invalid \",\".)\n");
+            }else{ sstd::pdbg_err("\"%s\" is an unsupported type.\n", fSList[i].c_str()); }
             return std::vector<struct sstd_c2py::typeSet>(0);
         }
     }
@@ -417,7 +417,7 @@ std::string sstd_c2py::format_typeSet2str(const std::vector<struct sstd_c2py::ty
 bool sstd_c2py::make_argList(const std::string& writeDir_base, std::string typeStr){
     sstd::file fp;
     std::string writeDir = sstd::ssprintf("%s/argList.bin", writeDir_base.c_str());
-    if(!fp.fopen(writeDir.c_str(), "wb")){ sstd::pdbg("ERROR: fopen was failed. (%s can't open.)\n", writeDir.c_str()); return false; }
+    if(!fp.fopen(writeDir.c_str(), "wb")){ sstd::pdbg_err("fopen was failed. (%s can't open.)\n", writeDir.c_str()); return false; }
     fp.fwrite(&typeStr[0], sizeof(char), typeStr.size());
     return true;
 }
@@ -741,7 +741,7 @@ std::vector<void*> sstd_c2py::getArg_and_write2file(va_list& ap, const char* wri
     std::vector<void*> pArgList(fList.size(), 0); // note noly pointer type
     for(uint i=1; i<fList.size(); ++i){ // begin 1 to avoid return value
         if(fList[i].retTF){
-            if(!fList[i].pointer){ sstd::pdbg("ERROR: ret type must be a pointer type."); return std::vector<void*>(); }
+            if(!fList[i].pointer){ sstd::pdbg_err("ret type must be a pointer type."); return std::vector<void*>(); }
             
             pArgList[i]=va_arg(ap, void*);
             
@@ -754,10 +754,10 @@ std::vector<void*> sstd_c2py::getArg_and_write2file(va_list& ap, const char* wri
         }
         
         sstd::file fp; std::string writeDir = sstd::ssprintf("%s/arg%04d.bin", writeDir_base, i);
-        if(!fp.fopen(writeDir.c_str(), "wb")){ sstd::pdbg("ERROR: fopen was failed. (%s can't open.)\n", writeDir.c_str()); return std::vector<void*>(); }
+        if(!fp.fopen(writeDir.c_str(), "wb")){ sstd::pdbg_err("fopen was failed. (%s can't open.)\n", writeDir.c_str()); return std::vector<void*>(); }
         
         switch(fList[i].case_num){
-        case        num_len   :{ if((int)i-1<0 || !fList[i-1].pointer){ sstd::pdbg("ERROR: \"%s\": Previous of len (len is a length of pointer and treated as a uint32) must be pointer type (T*), without \"char*\", \"str* (std::string*)\", \"vec<T>* (std::vector<T>*)\", \"mat_c<T>* (sstd::mat_c<T>*)\" and \"mat_r<T>* (sstd::mat_r<T>*)\".\n", fSList[i].c_str()); } }break;
+        case        num_len   :{ if((int)i-1<0 || !fList[i-1].pointer){ sstd::pdbg_err("\"%s\": Previous of len (len is a length of pointer and treated as a uint32) must be pointer type (T*), without \"char*\", \"str* (std::string*)\", \"vec<T>* (std::vector<T>*)\", \"mat_c<T>* (sstd::mat_c<T>*)\" and \"mat_r<T>* (sstd::mat_r<T>*)\".\n", fSList[i].c_str()); } }break;
             
         case        num_bool  :{ builtIn_write2file(  bool, uint32); }break; // bool is treated as a 4 bytes type by va_arg();
         case        num_char  :{ builtIn_write2file_pChar();         }break; // "char*" is treated exceptionaly because of the utilization of strlen() in order to count its length.
@@ -789,20 +789,20 @@ std::vector<void*> sstd_c2py::getArg_and_write2file(va_list& ap, const char* wri
         case    vec_num_double:{ vec_write2file(double); }break;
         case    vec_num_str   :{ vec_write2file_str();   }break;
             
-        case  vvec_num_bool   :{ /*vvec_write2file_bool(); */ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
-        case  vvec_num_char   :{ /*vvec_write2file(  char);*/ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
-        case  vvec_num_uchar  :{ /*vvec_write2file( uchar);*/ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
-        case  vvec_num_int8   :{ /*vvec_write2file(  int8);*/ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
-        case  vvec_num_int16  :{ /*vvec_write2file( int16);*/ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
-        case  vvec_num_int32  :{ /*vvec_write2file( int32);*/ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
-        case  vvec_num_int64  :{ /*vvec_write2file( int64);*/ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
-        case  vvec_num_uint8  :{ /*vvec_write2file( uint8);*/ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
-        case  vvec_num_uint16 :{ /*vvec_write2file(uint16);*/ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
-        case  vvec_num_uint32 :{ /*vvec_write2file(uint32);*/ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
-        case  vvec_num_uint64 :{ /*vvec_write2file(uint64);*/ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
-        case  vvec_num_float  :{ /*vvec_write2file( float);*/ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
+        case  vvec_num_bool   :{ /*vvec_write2file_bool(); */ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
+        case  vvec_num_char   :{ /*vvec_write2file(  char);*/ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
+        case  vvec_num_uchar  :{ /*vvec_write2file( uchar);*/ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
+        case  vvec_num_int8   :{ /*vvec_write2file(  int8);*/ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
+        case  vvec_num_int16  :{ /*vvec_write2file( int16);*/ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
+        case  vvec_num_int32  :{ /*vvec_write2file( int32);*/ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
+        case  vvec_num_int64  :{ /*vvec_write2file( int64);*/ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
+        case  vvec_num_uint8  :{ /*vvec_write2file( uint8);*/ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
+        case  vvec_num_uint16 :{ /*vvec_write2file(uint16);*/ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
+        case  vvec_num_uint32 :{ /*vvec_write2file(uint32);*/ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
+        case  vvec_num_uint64 :{ /*vvec_write2file(uint64);*/ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
+        case  vvec_num_float  :{ /*vvec_write2file( float);*/ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
         case  vvec_num_double :{ vvec_write2file<double>(ap, fp, pArgList[i], fList[i]); }break;
-        case  vvec_num_str    :{ /*vvec_write2file_str();  */ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
+        case  vvec_num_str    :{ /*vvec_write2file_str();  */ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
             
         case  mat_c_num_bool  :{ mat_write2file    (sstd::mat_c,   bool); }break;
         case  mat_c_num_char  :{ mat_write2file    (sstd::mat_c,   char); }break;
@@ -834,7 +834,7 @@ std::vector<void*> sstd_c2py::getArg_and_write2file(va_list& ap, const char* wri
         case  mat_r_num_double:{ mat_write2file    (sstd::mat_r, double); }break;
         case  mat_r_num_str   :{ mat_write2file_str(sstd::mat_r);         }break;
             
-        default:{ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
+        default:{ sstd::pdbg_err("\"%s\" is an unsupported type.\n", fSList[i].c_str()); return std::vector<void*>(); }break;
         }
     }
     return pArgList;
@@ -844,7 +844,7 @@ std::vector<void*> sstd_c2py::getArg_and_write2file(va_list& ap, const char* wri
 
 //   writeBack: WB
 bool checkError_WB(uint fSize, uint arrSize){
-    if(fSize>arrSize){ sstd::pdbg("ERROR: Write back size is larger than giving size. Only the length of pointer will be written back.\n"); return false;
+    if(fSize>arrSize){ sstd::pdbg_err("Write back size is larger than giving size. Only the length of pointer will be written back.\n"); return false;
     }      else      { return true; }
 }
 
@@ -865,7 +865,7 @@ bool sstd_c2py::writeBack(std::vector<std::string>& lines, std::vector<void*>& p
         if(pArgList[i]==0 || fList[i].constTF==true || fList[i].N_num==num_len){ continue; }
         
         sstd::file fp; std::string readDir=sstd::ssprintf("%s/arg%04d.bin", writeDir_base, i);
-        if(!fp.fopen(readDir.c_str(), "rb")){ sstd::pdbg("ERROR: fopen was failed. (%s can't open.)\n", readDir.c_str()); return false; }
+        if(!fp.fopen(readDir.c_str(), "rb")){ sstd::pdbg_err("fopen was failed. (%s can't open.)\n", readDir.c_str()); return false; }
         
         // For built in types: If the length of pointer is smaller than return value, below lines will write back only pointer length.
         switch(fList[i].case_num){
@@ -899,20 +899,20 @@ bool sstd_c2py::writeBack(std::vector<std::string>& lines, std::vector<void*>& p
         case    vec_num_double:{ if(!sstd_c2py::c2py_ret(*((std::vector<     double>*)pArgList[i]), fp, lines[i])){ return false; } }break;
         case    vec_num_str   :{ if(!sstd_c2py::c2py_ret(*((std::vector<std::string>*)pArgList[i]), fp, lines[i])){ return false; } }break;
             
-        case  vvec_num_bool   : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<       bool>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
-        case  vvec_num_char   : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<       char>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
-        case  vvec_num_uchar  : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<      uchar>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
-        case  vvec_num_int8   : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<       int8>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
-        case  vvec_num_int16  : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<      int16>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
-        case  vvec_num_int32  : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<      int32>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
-        case  vvec_num_int64  : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<      int64>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
-        case  vvec_num_uint8  : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<      uint8>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
-        case  vvec_num_uint16 : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<     uint16>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
-        case  vvec_num_uint32 : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<     uint32>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
-        case  vvec_num_uint64 : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<     uint64>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
-        case  vvec_num_float  : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<      float>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
+        case  vvec_num_bool   : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<       bool>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
+        case  vvec_num_char   : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<       char>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
+        case  vvec_num_uchar  : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<      uchar>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
+        case  vvec_num_int8   : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<       int8>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
+        case  vvec_num_int16  : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<      int16>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
+        case  vvec_num_int32  : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<      int32>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
+        case  vvec_num_int64  : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<      int64>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
+        case  vvec_num_uint8  : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<      uint8>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
+        case  vvec_num_uint16 : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<     uint16>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
+        case  vvec_num_uint32 : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<     uint32>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
+        case  vvec_num_uint64 : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<     uint64>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
+        case  vvec_num_float  : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<      float>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
         case  vvec_num_double : { if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<     double>>*)pArgList[i]), fp, lines[i])){ return false; } }break;
-        case  vvec_num_str    : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<std::string>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg("ERROR: \"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
+        case  vvec_num_str    : { /*if(!sstd_c2py::c2py_ret(*((std::vector<std::vector<std::string>>*)pArgList[i]), fp, lines[i])){ return false; }*/ sstd::pdbg_err("\"%s\" is not implimented yet for vvec<T>.\n", fSList[i].c_str()); return false; }break;
             
         case  mat_c_num_bool  : { if(!sstd_c2py::c2py_ret(*((sstd::mat_c<       bool>*)pArgList[i]), fp, lines[i])){ return false; } }break;
         case  mat_c_num_char  : { if(!sstd_c2py::c2py_ret(*((sstd::mat_c<       char>*)pArgList[i]), fp, lines[i])){ return false; } }break;
@@ -944,7 +944,7 @@ bool sstd_c2py::writeBack(std::vector<std::string>& lines, std::vector<void*>& p
         case  mat_r_num_double: { if(!sstd_c2py::c2py_ret(*((sstd::mat_r<     double>*)pArgList[i]), fp, lines[i])){ return false; } }break;
         case  mat_r_num_str   : { if(!sstd_c2py::c2py_ret(*((sstd::mat_r<std::string>*)pArgList[i]), fp, lines[i])){ return false; } }break;
             
-        default:{ sstd::pdbg("ERROR: \"%s\" is an unsupported type.\n", fSList[i].c_str()); return false; }break;
+        default:{ sstd::pdbg_err("\"%s\" is an unsupported type.\n", fSList[i].c_str()); return false; }break;
         }
     }
     return true;

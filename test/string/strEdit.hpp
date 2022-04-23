@@ -8,8 +8,8 @@ TEST(strEdit, theOthers){
     std::vector<uint8> raw = sstd::read_bin("./test/test.png");
     sstd::printn_all(raw.size());
     printf("  □ write_bin\n");
-    if(!sstd::write_bin("./test__write_bin_char.png",             raw)){ sstd::pdbg("ERROR: sstd::write_bin()\n"); }
-    if(!sstd::write_bin(std::string("./test__write_bin_str.png"), raw)){ sstd::pdbg("ERROR: sstd::write_bin()\n"); }
+    if(!sstd::write_bin("./test__write_bin_char.png",             raw)){ sstd::pdbg_err("sstd::write_bin()\n"); }
+    if(!sstd::write_bin(std::string("./test__write_bin_str.png"), raw)){ sstd::pdbg_err("sstd::write_bin()\n"); }
     
     printf("  □ read_withoutBOM & splitByLine\n");
 //    std::string str_tI = sstd::read_withoutBOM(R"(./test/tinyInterpreter.txt)");

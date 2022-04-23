@@ -10,10 +10,10 @@
 // read all data in a file as a binary
 
 std::vector<uint8> sstd::read_bin(const char* path){
-    sstd::file fp; if(!fp.fopen(path, "rb")){ sstd::pdbg("ERROR: fopen was failed.\n"); return std::vector<uint8>(); }
+    sstd::file fp; if(!fp.fopen(path, "rb")){ sstd::pdbg_err("fopen was failed.\n"); return std::vector<uint8>(); }
     size_t size = fp.fsize(); // ファイルサイズを取得
     std::vector<uint8> raw(size, 0); //0で初期化
-    if(fp.fread((uchar*)&raw[0], sizeof(char), size)!=size){ sstd::pdbg("ERROR: fread was failed.\n"); return std::vector<uint8>(); }
+    if(fp.fread((uchar*)&raw[0], sizeof(char), size)!=size){ sstd::pdbg_err("fread was failed.\n"); return std::vector<uint8>(); }
     return raw;
 }
 std::vector<uint8> sstd::read_bin(const std::string& path){ return sstd::read_bin(path.c_str()); }
@@ -23,8 +23,8 @@ std::vector<uint8> sstd::read_bin(const std::string& path){ return sstd::read_bi
 
 bool sstd::write_bin(const char* path, std::vector<uint8>& rhs){
     sstd::file fp;
-    if(!fp.fopen(path, "wb")){ sstd::pdbg("ERROR: sstd::file::fopen(%s) was failed.\n", path); return false; }
-    if(!fp.fwrite(&rhs[0], sizeof(char), rhs.size())){ sstd::pdbg("ERROR: sstd::file::fwrite(%s) was failed.\n", path); return false; }
+    if(!fp.fopen(path, "wb")){ sstd::pdbg_err("sstd::file::fopen(%s) was failed.\n", path); return false; }
+    if(!fp.fwrite(&rhs[0], sizeof(char), rhs.size())){ sstd::pdbg_err("sstd::file::fwrite(%s) was failed.\n", path); return false; }
     return true;
 }
 bool sstd::write_bin(const std::string& path, std::vector<uint8>& rhs){ return sstd::write_bin(path.c_str(), rhs); }
@@ -33,10 +33,10 @@ bool sstd::write_bin(const std::string& path, std::vector<uint8>& rhs){ return s
 // read
 
 std::string sstd::read(const char* path){
-    sstd::file fp; if(!fp.fopen(path, "rb")){ sstd::pdbg("ERROR: fopen was failed.\n"); return std::string(); }
+    sstd::file fp; if(!fp.fopen(path, "rb")){ sstd::pdbg_err("fopen was failed.\n"); return std::string(); }
     size_t size = fp.fsize();
     std::string str(size, 0);
-    if(fp.fread((uchar*)&str[0], sizeof(char), size)!=size){ sstd::pdbg("ERROR: fread was failed.\n"); return std::string(); }
+    if(fp.fread((uchar*)&str[0], sizeof(char), size)!=size){ sstd::pdbg_err("fread was failed.\n"); return std::string(); }
     return str;
 }
 std::string sstd::read(const std::string& path){ return sstd::read(path.c_str()); }
@@ -68,7 +68,7 @@ void ignoreBOM(uchar* str, uint& r){
 std::string sstd::read_withoutBOM(const char* path){
 
     sstd::file fp;
-    if(!fp.fopen(path, "rb")){ sstd::pdbg("ERROR: fopen was failed.\n"); }
+    if(!fp.fopen(path, "rb")){ sstd::pdbg_err("fopen was failed.\n"); }
 
     // check BOM (Byte Order Mark)
     uint BOM_len=0;
@@ -81,7 +81,7 @@ std::string sstd::read_withoutBOM(const char* path){
 
     std::string str(size, 0);
 
-    if(fp.fread(&str[0], sizeof(char), size)!=size){ sstd::pdbg("ERROR: fread was failed.\n"); }
+    if(fp.fread(&str[0], sizeof(char), size)!=size){ sstd::pdbg_err("fread was failed.\n"); }
 
     return str;
 }

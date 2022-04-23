@@ -265,7 +265,7 @@ template <typename T, typename rhsType>
 inline sstd::mat_c<T> pow_signedInt(sstd::mat_c<T> base, rhsType exponent){
     if(exponent==(rhsType)0){ sstd::eye(base); return base; }
     if(exponent>=(rhsType)0){ pow_int_calculation(base, exponent);
-    }          else         { sstd::pdbg("ERROR: not implemented.\n");     }
+    }          else         { sstd::pdbg_err("not implemented.\n");     }
     return base;
 }
 template <typename T> inline sstd::mat_c<T> sstd::pow(const sstd::mat_c<T>& lhs, const  char& rhs){ return pow_signedInt<T, int8 >(lhs, (int8)rhs); }
@@ -285,8 +285,8 @@ template <typename T> inline sstd::mat_c<T> sstd::pow(const sstd::mat_c<T>& lhs,
 template <typename T> inline sstd::mat_c<T> sstd::pow(const sstd::mat_c<T>& lhs, const uint32& rhs){ return pow_unsignedInt<T, uint32>(lhs, rhs); }
 template <typename T> inline sstd::mat_c<T> sstd::pow(const sstd::mat_c<T>& lhs, const uint64& rhs){ return pow_unsignedInt<T, uint64>(lhs, rhs); }
 
-template <typename T> inline sstd::mat_c<T> sstd::pow(const sstd::mat_c<T>& lhs, const  float& rhs){ sstd::pdbg("ERROR: not implemented.\n"); return lhs; }
-template <typename T> inline sstd::mat_c<T> sstd::pow(const sstd::mat_c<T>& lhs, const double& rhs){ sstd::pdbg("ERROR: not implemented.\n"); return lhs; }
+template <typename T> inline sstd::mat_c<T> sstd::pow(const sstd::mat_c<T>& lhs, const  float& rhs){ sstd::pdbg_err("not implemented.\n"); return lhs; }
+template <typename T> inline sstd::mat_c<T> sstd::pow(const sstd::mat_c<T>& lhs, const double& rhs){ sstd::pdbg_err("not implemented.\n"); return lhs; }
 
 SSTD_DEF_mat_elements_f(sstd::pow_e, sstd::pow);
 

@@ -17,7 +17,7 @@ bool sstd::unlink(const char* pPath){
     #ifdef _WIN32
         return DeleteFile(pPath);
     #else
-        if(::unlink(pPath)==0){ return true; }else{ sstd::pdbg("ERROR: sstd::unlink(): %s.\n", strerror(errno)); return false; };
+        if(::unlink(pPath)==0){ return true; }else{ sstd::pdbg_err("sstd::unlink(): %s.\n", strerror(errno)); return false; };
     #endif
 }
 bool sstd::unlink(const std::string& path){ return sstd::unlink(path.c_str()); }
@@ -47,7 +47,7 @@ bool sstd::rm(const char* pPath){
             switch(v_pt[i].type){
             case 'f': { if(!sstd::unlink(v_pt[i].path.c_str())){ret=false;} break; }
             case 'd': { if(!sstd::rmdir (v_pt[i].path.c_str())){ret=false;} break; }
-            default: { sstd::pdbg("ERROR: sstd::rm(): sstd::glob_pt() returned unexpected file type.\n"); ret=false; break; }
+            default: { sstd::pdbg_err("sstd::rm(): sstd::glob_pt() returned unexpected file type.\n"); ret=false; break; }
             }
         }
         

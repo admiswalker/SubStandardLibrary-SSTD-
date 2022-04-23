@@ -98,7 +98,7 @@ public:
         _cols = colSize;
         _size = _rows * _cols;
         _pMatT = new T[_size];
-        if(_pMatT==0){ sstd::pdbg("ERROR: This pointer is not allocated.\n"); }
+        if(_pMatT==0){ sstd::pdbg_err("This pointer is not allocated.\n"); }
     }
     inline ~mat_c(){ delete[] _pMatT; }
     

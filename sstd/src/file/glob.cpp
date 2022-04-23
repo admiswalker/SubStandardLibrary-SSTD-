@@ -38,7 +38,7 @@ std::vector<std::string> _glob_worker(const std::string& search_path_in, const c
             // get file status
             std::string path = search_path + pEnt->d_name;
             if( stat( path.c_str(), &Stat ) ){
-                sstd::pdbg("ERROR: glob_worker(): Failed to get stat %s\n", path.c_str());
+                sstd::pdbg_err("glob_worker(): Failed to get stat %s\n", path.c_str());
                 break;
             }
             
@@ -94,7 +94,7 @@ std::vector<std::string> sstd::glob(const char* path, const char* opt){
         case 'f': { opt_f=true; break; }
         case 'p': { opt_p=true; break; }
         case 'r': { opt_r=true; break; }
-        default: { sstd::pdbg("ERROR: glob(): Unexpected option.\n"); break; }
+        default: { sstd::pdbg_err("glob(): Unexpected option.\n"); break; }
         }
     }
     return _glob_base(path, opt_d, opt_f, opt_p, opt_r);
@@ -124,7 +124,7 @@ std::vector<struct sstd::pathAndType> _glob_worker_pt(const std::string& search_
             // get file status
             std::string path = search_path + pEnt->d_name;
             if( stat( path.c_str(), &Stat ) ){
-                sstd::pdbg("ERROR: glob_worker(): Failed to get stat %s\n", path.c_str());
+                sstd::pdbg_err("glob_worker(): Failed to get stat %s\n", path.c_str());
                 break;
             }
             
@@ -188,7 +188,7 @@ std::vector<struct sstd::pathAndType> sstd::glob_pt(const char* path, const char
         case 'f': { opt_f=true; break; }
         case 'p': { opt_p=true; break; }
         case 'r': { opt_r=true; break; }
-        default: { sstd::pdbg("ERROR: glob(): Unexpected option.\n"); break; }
+        default: { sstd::pdbg_err("glob(): Unexpected option.\n"); break; }
         }
     }
     return _glob_base_pt(path, opt_d, opt_f, opt_p, opt_r);
