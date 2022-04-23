@@ -218,7 +218,7 @@ void TEST__c2py__builIn_char(){
     }
     {
         // print run time error
-        const char* pErrMsg = "ERROR: \"const char*\": Previous of a len type can't have \"char*\". Because \"char*\" check its length by \"strlen()\" and doesn't need to be send its length.\n";
+        const char* pErrMsg = "\"const char*\": Previous of a len type can't have \"char*\". Because \"char*\" check its length by \"strlen()\" and doesn't need to be send its length.\n";
         // Hard coding a line number of ERROR MESSAGE occur ASSERT when c2py.cpp has been editted.
         // "src/c2py.cpp: format_str2typeSet(236): ERROR: \"const char*\": Previous of a len type can't have \"char*\". Because \"char*\" check its length by \"strlen()\" and doesn't need to be send its length.\n"
         
