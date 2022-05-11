@@ -65,10 +65,10 @@ void ignoreBOM(uchar* str, uint& r){
         // or the other encoding.
     }
 }
-std::string sstd::read_withoutBOM(const char* path){
+bool read_woBOM_base(std::string& ret_str, const char* path){
 
     sstd::file fp;
-    if(!fp.fopen(path, "rb")){ sstd::pdbg_err("fopen was failed.\n"); }
+    if(!fp.fopen(path, "rb")){ sstd::pdbg_err("fopen was failed.\n  File path: %s\n", path); return false; }
 
     // check BOM (Byte Order Mark)
     uint BOM_len=0;
@@ -79,13 +79,16 @@ std::string sstd::read_withoutBOM(const char* path){
     size_t size = fp.fsize() - BOM_len;
     fp.fseek(BOM_len, SEEK_SET);    //ファイルポインタを先頭 + BOM_len に戻す。
 
-    std::string str(size, 0);
+    ret_str.resize(size, 0);
+    
+    if(fp.fread(&ret_str[0], sizeof(char), size)!=size){ sstd::pdbg_err("fread was failed.\n  File path: %s\n", path); return false; }
 
-    if(fp.fread(&str[0], sizeof(char), size)!=size){ sstd::pdbg_err("fread was failed.\n"); }
-
-    return str;
+    return true;
 }
-std::string sstd::read_withoutBOM(const std::string& path){ return sstd::read_withoutBOM(path.c_str()); }
+std::string sstd::read_withoutBOM(const        char* path){ std::string ret; read_woBOM_base(ret, path        ); return ret; }
+std::string sstd::read_withoutBOM(const std::string& path){ std::string ret; read_woBOM_base(ret, path.c_str()); return ret; }
+bool sstd::read_woBOM(std::string& ret_str, const char*        path){ return read_woBOM_base(ret_str, path        ); }
+bool sstd::read_woBOM(std::string& ret_str, const std::string& path){ return read_woBOM_base(ret_str, path.c_str()); }
 
 //--------------------------------------------------------------------------------------------------------
 // write

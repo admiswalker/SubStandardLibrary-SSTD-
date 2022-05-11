@@ -14,8 +14,8 @@ namespace sstd{
     
     std::string read(const char*        path);
     std::string read(const std::string& path);
-    std::string read_withoutBOM(const char*        path);
-    std::string read_withoutBOM(const std::string& path);
+    bool read_woBOM(std::string& ret_str, const char*        path); // wo: without
+    bool read_woBOM(std::string& ret_str, const std::string& path); // wo: without
     
     size_t write(const        char* path, const void* ptr, const size_t type_size, const size_t num); // (1)
     size_t write(const std::string& path, const void* ptr, const size_t type_size, const size_t num); // (2)
@@ -23,3 +23,13 @@ namespace sstd{
     size_t write(const std::string& path, const        char* s);                                      // (4)
     size_t write(const std::string& path, const std::string& s);                                      // (5)
 }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// Below functions are the not recommended to use. (Below functions will be delete on sstd ver 3.x.x).
+
+namespace sstd{
+    std::string read_withoutBOM(const char*        path);
+    std::string read_withoutBOM(const std::string& path);
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
