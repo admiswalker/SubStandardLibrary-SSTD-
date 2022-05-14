@@ -102,7 +102,7 @@ bool sstd::_txt2vCmdList(std::vector<uint>& ret_vLineNum, std::vector<std::vecto
     return ret;
 }
 bool _txt2vCmdList_base(std::vector<uint>& ret_vLineNum, std::vector<std::vector<std::string>>& ret_vCmdList, const char* pReadFile){
-    std::string std_str = sstd::read_withoutBOM(pReadFile);
+    std::string std_str; bool ret = sstd::read_woBOM(std_str, pReadFile); if(!ret){ return false; }
     const uchar* str = (const uchar*)std_str.c_str(); // uchar にキャストしないと，負の値が入力された場合に，比較演算が正常に機能しない．(例えば，0xFF は，0xFFFFFFFF のように，4 Byte 値として扱われるため，if(str[0]==0xFF)... としても必ず false となる．)
     return sstd::_txt2vCmdList(ret_vLineNum, ret_vCmdList, sstd::getFileName(pReadFile), str);
 }
