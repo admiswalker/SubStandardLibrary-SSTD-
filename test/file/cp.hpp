@@ -332,7 +332,7 @@ TEST(cp, cp_case03_copy_empty_dir){
         std::vector<std::string> vPath     = sstd::glob("./tmp/b/*", "dfr");
         ASSERT_EQ(vPath_ans.size(), vPath.size());
         for(uint i=0; i<vPath_ans.size(); ++i){
-            ASSERT_STREQ((char*)&vPath_ans[i][15], (char*)&vPath[i][15]);
+            ASSERT_STREQ((char*)&vPath_ans[i][7], (char*)&vPath[i][7]);
         }
     }
     sstd::rm("./tmp");
