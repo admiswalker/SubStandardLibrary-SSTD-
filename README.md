@@ -1,28 +1,33 @@
 # SubStandardLibrary (SSTD)
 
-SubStandardLibrary (SSTD) is a convenient functions set for C++, works on GCC (g++).
+SubStandardLibrary (SSTD) is a convenient functions-set for the C++ which the Author wished that the standard library has these convenient functions. This library works on the GCC (g++) on the Ubuntu OS.
 
+SubStandardLibrary (SSTD) は，著者が標準ライブラリにあって欲しかったと思う便利な関数群を収録した C++ 向けのライブラリです．Ubuntu OS 上の GCC (g++) で動作します．
 
 ## Installation
-1. Download this repository
-2. Copy all of under `./sstd/*`
-3. Compile sstd
+1. Installi build essentials
+   ```bash
+   apt install build-essential
    ```
+2. Download this repository
+3. Copy all of under `./sstd/*`
+4. Compile sstd
+   ```bash
    cd ./sstd
    make
    ```
-4. Add flags in your makefile
-   ```
+5. Add flags in your makefile
+   ```bash
    CFLAGS += -I./sstd/include -L./sstd/lib -lsstd
    CFLAGS += -std=gnu++0x
    ```
-5. Include a header (`#include <sstd/sstd.hpp>`) in your code
+6. Include a header (`#include <sstd/sstd.hpp>`) in your code  
 
 
-## Tips to use always latest versions of sstd.
+## Tips to use always latest versions of sstd
 Below lines of makefile enable to update sstd by a ```$ make update``` command.
-Adding ```$(LIB_SSTD)```　as a depending lib to your makefile.
-```
+Adding ```$(LIB_SSTD)``` as a depending lib to your makefile.
+```makefile
 # when you need to check the change of files in lib, you need to change file name to a not-existing name like "FORCE_XXX".
 #LIB_SSTD       = FORCE_SSTD
 LIB_SSTD        = ./sstd/lib/libsstd.a
@@ -42,16 +47,16 @@ updateLib:
 
 ## Development
 1. Clone this repository
-   ```
+   ```bash
    git clone git@github.com:admiswalker/SubStandardLibrary-SSTD-.git
    ```
 2. Edite under `sstd/src/` and `test/`
 3. Compile
-   ```
+   ```bash
    make
    ```
 4. Run tests
-   ```
+   ```bash
    ./exe
    ```
 
@@ -83,10 +88,11 @@ Below libraries are incorporated in sstd.
 | WjCryptLib   | [github.com/WaterJuice/WjCryptLib](https://github.com/WaterJuice/WjCryptLib) | committed on 16 Mar 2018 | Public domain | SHA-1 calculation |
 | SHA-2        | [github.com/kalven/sha-2](https://github.com/kalven/sha-2) | committed on 27 Aug 2012 | Public domain | SHA-2 calculation |
 
-## Documents
-[admiswalker.github.io/sstdref/](https://admiswalker.github.io/sstdref/) ([Repository](https://github.com/admiswalker/sstdref)).
+## Documents / ドキュメント
+- View the document (English & 日本語): [admiswalker.github.io/sstdref/](https://admiswalker.github.io/sstdref/)
+- Repository of the document: [github.com/admiswalker/sstdref](https://github.com/admiswalker/sstdref)
 
 ## License
-MIT licence or Public domain.
-(This software is dual license, so you can choose whichever you want.)
+MIT licence or Public domain. (This software is dual license, so you can choose whichever you want).  
+MIT licence またはパブリックドメイン. (このソフトウェアはデュアルライセンスのため，好きな方を選んでよい).
 
