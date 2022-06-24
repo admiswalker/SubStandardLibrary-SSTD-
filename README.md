@@ -1,6 +1,6 @@
 # SubStandardLibrary (SSTD)
 
-SubStandardLibrary (SSTD) is a convenient functions-set for the C++ which the Author wished that the standard library has these convenient functions. This library works on the GCC (g++) on the Ubuntu OS.
+SubStandardLibrary (SSTD) is a convenient functions-set for the C++ which the author wished that the standard library has these convenient functions. This library works on the GCC (g++) on the Ubuntu OS.
 
 SubStandardLibrary (SSTD) は，著者が標準ライブラリにあって欲しかったと思う便利な関数群を収録した C++ 向けのライブラリです．Ubuntu OS 上の GCC (g++) で動作します．
 
