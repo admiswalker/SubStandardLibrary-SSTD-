@@ -94,5 +94,3 @@ Below libraries are incorporated in sstd.
 
 ## License
 MIT licence or Public domain. (This software is dual license, so you can choose whichever you want).  
-MIT licence またはパブリックドメイン. (このソフトウェアはデュアルライセンスのため，好きな方を選んでよい).
-
