@@ -18,10 +18,13 @@
 #include "test/file/cp.hpp"
 #include "test/file/csv.hpp"
 #include "test/file/file.hpp"
+#include "test/file/file_operations.hpp"
 #include "test/file/glob.hpp"
 #include "test/file/path.hpp"
 #include "test/file/read_write.hpp"
 #include "test/file/tinyInterpreter.hpp"
+
+#include "test/hashFnc_of_MD5_SHA1_SHA2/sstd_md5_sha1_sha2_wrapper.hpp"
 
 #include "test/string/strEdit.hpp"
 #include "test/string/strmatch.hpp"
@@ -53,7 +56,6 @@ void TEST_mkdir();
 void TEST_rm();
 void TEST_ssprintf();
 void TEST_encode_decode();
-void TEST_hashFnc();
 void TEST_pause();
 //void TEST_getpid(); // <- Needed to write test.
 
@@ -87,7 +89,6 @@ int main(int argc, char** argv){
 //    TEST_str2num();
 //    TEST_ssprintf();
 //    TEST_encode_decode();
-//    TEST_hashFnc();
 //    TEST_pause();
     
 //    TEST_mat_colMajor(); // TODO: write tests (zeros, Tr) // sstd::print 関数のテストを書くように
@@ -299,42 +300,6 @@ void TEST_encode_decode(){
     printf("\n");
 }
 //*/
-
-/*
-void print_vecUint8_hex(std::vector<uint8>& rhs){ for(uint i=0; i<rhs.size(); i++){ printf("%.2x", rhs[i]); } printf("\n"); }
-void TEST_hashFnc(){
-    
-    const char* pFilePath = "./test/test.png";
-    std::vector<uint8> data = sstd::readAll_bin(pFilePath);
-    
-    printf("fnc_MD5   ( %s ) = ", pFilePath); { std::vector<uint8> hash = sstd::md5   (data); print_vecUint8_hex(hash); }
-    printf("fnc_SHA1  ( %s ) = ", pFilePath); { std::vector<uint8> hash = sstd::sha1  (data); print_vecUint8_hex(hash); }
-    printf("fnc_SHA224( %s ) = ", pFilePath); { std::vector<uint8> hash = sstd::sha224(data); print_vecUint8_hex(hash); }
-    printf("fnc_SHA256( %s ) = ", pFilePath); { std::vector<uint8> hash = sstd::sha256(data); print_vecUint8_hex(hash); }
-    printf("fnc_SHA384( %s ) = ", pFilePath); { std::vector<uint8> hash = sstd::sha384(data); print_vecUint8_hex(hash); }
-    printf("fnc_SHA512( %s ) = ", pFilePath); { std::vector<uint8> hash = sstd::sha512(data); print_vecUint8_hex(hash); }
-}
-//*/
-// --- hash calculation by command ---
-//
-// $ md5sum ./test/test.png
-// 80764a9c59629dca04ee00c125726a01  ./test/test.png
-//
-// $ sha1sum ./test/test.png
-// 3361cc4368ae3369f3f115df78d186a887ee8b46  ./test/test.png
-//
-// $ sha224sum ./test/test.png
-// b5d2e3bface35276977ededd5941b52c0547ba4aa63a9571a9a81ac7  ./test/test.png
-//
-// $ sha256sum ./test/test.png
-// 58aeaf1a74a46e37bad7d2161d629537440df5e2fcb0ee97837209335cf1fee7  ./test/test.png
-//
-// $ sha384sum ./test/test.png
-// bbc9239c8266ab4b86b7b9435d1ade6f7c47af11ffac78dbb5cdcbe15c3fdaf96e9e720e2c2fa14178d96304ec8185ef  ./test/test.png
-//
-// $ sha512sum ./test/test.png
-// 021c3d7da0cedd5aa780ca765f9071f210ed3e19db3c08ee74aa6531aaf6552c3daaa8d0f30abeb10a30793bffbb86d39e3b019b865d54c2793dbd3b62c243e6  ./test/test.png
-
 
 /*
 void TEST_pause(){
