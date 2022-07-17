@@ -9,7 +9,7 @@ std::string vecUint8_to_hexString(std::vector<uint8>& rhs){
     return ret;
 }
 
-TEST(hashFnc_of_MD5_SHA1_SHA2, hash_md5){
+TEST(hashFnc_of_MD5_SHA1_SHA2, md5){
     const char* pFilePath = "./test/test.png";
     std::vector<uint8> data = sstd::read_bin(pFilePath);
     
@@ -19,7 +19,7 @@ TEST(hashFnc_of_MD5_SHA1_SHA2, hash_md5){
     std::string hash_ans_s = sstd::system_stdout(sstd::ssprintf("md5sum %s | cut -d ' ' -f 1", pFilePath)); sstd::stripAll_ow(hash_ans_s, "\r\n");
     ASSERT_STREQ(s.c_str(), hash_ans_s.c_str());
 }
-TEST(hashFnc_of_MD5_SHA1_SHA2, hash_sha1){
+TEST(hashFnc_of_MD5_SHA1_SHA2, sha1){
     const char* pFilePath = "./test/test.png";
     std::vector<uint8> data = sstd::read_bin(pFilePath);
     
@@ -29,7 +29,7 @@ TEST(hashFnc_of_MD5_SHA1_SHA2, hash_sha1){
     std::string hash_ans_s = sstd::system_stdout(sstd::ssprintf("sha1sum %s | cut -d ' ' -f 1", pFilePath)); sstd::stripAll_ow(hash_ans_s, "\r\n");
     ASSERT_STREQ(s.c_str(), hash_ans_s.c_str());
 }
-TEST(hashFnc_of_MD5_SHA1_SHA2, hash_sha224){
+TEST(hashFnc_of_MD5_SHA1_SHA2, sha224){
     const char* pFilePath = "./test/test.png";
     std::vector<uint8> data = sstd::read_bin(pFilePath);
     
@@ -39,7 +39,7 @@ TEST(hashFnc_of_MD5_SHA1_SHA2, hash_sha224){
     std::string hash_ans_s = sstd::system_stdout(sstd::ssprintf("sha224sum %s | cut -d ' ' -f 1", pFilePath)); sstd::stripAll_ow(hash_ans_s, "\r\n");
     ASSERT_STREQ(s.c_str(), hash_ans_s.c_str());
 }
-TEST(hashFnc_of_MD5_SHA1_SHA2, hash_sha256){
+TEST(hashFnc_of_MD5_SHA1_SHA2, sha256){
     const char* pFilePath = "./test/test.png";
     std::vector<uint8> data = sstd::read_bin(pFilePath);
     
@@ -49,7 +49,7 @@ TEST(hashFnc_of_MD5_SHA1_SHA2, hash_sha256){
     std::string hash_ans_s = sstd::system_stdout(sstd::ssprintf("sha256sum %s | cut -d ' ' -f 1", pFilePath)); sstd::stripAll_ow(hash_ans_s, "\r\n");
     ASSERT_STREQ(s.c_str(), hash_ans_s.c_str());
 }
-TEST(hashFnc_of_MD5_SHA1_SHA2, hash_sha384){
+TEST(hashFnc_of_MD5_SHA1_SHA2, sha384){
     const char* pFilePath = "./test/test.png";
     std::vector<uint8> data = sstd::read_bin(pFilePath);
     
@@ -59,7 +59,7 @@ TEST(hashFnc_of_MD5_SHA1_SHA2, hash_sha384){
     std::string hash_ans_s = sstd::system_stdout(sstd::ssprintf("sha384sum %s | cut -d ' ' -f 1", pFilePath)); sstd::stripAll_ow(hash_ans_s, "\r\n");
     ASSERT_STREQ(s.c_str(), hash_ans_s.c_str());
 }
-TEST(hashFnc_of_MD5_SHA1_SHA2, hash_sha512){
+TEST(hashFnc_of_MD5_SHA1_SHA2, sha512){
     const char* pFilePath = "./test/test.png";
     std::vector<uint8> data = sstd::read_bin(pFilePath);
     

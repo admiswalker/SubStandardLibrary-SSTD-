@@ -41,6 +41,7 @@
 #include "src/file/rm.hpp"
 #include "src/file/tinyInterpreter.hpp"
 
+#include "src/hashFnc_of_MD5_SHA1_SHA2/hashSum.hpp"
 #include "src/hashFnc_of_MD5_SHA1_SHA2/sstd_md5_sha1_sha2_wrapper.hpp"
 
 #include "src/string/ssprintf.hpp"

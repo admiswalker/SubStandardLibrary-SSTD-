@@ -24,6 +24,7 @@
 #include "test/file/read_write.hpp"
 #include "test/file/tinyInterpreter.hpp"
 
+#include "test/hashFnc_of_MD5_SHA1_SHA2/hashSum.hpp"
 #include "test/hashFnc_of_MD5_SHA1_SHA2/sstd_md5_sha1_sha2_wrapper.hpp"
 
 #include "test/string/strEdit.hpp"
