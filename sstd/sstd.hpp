@@ -31,6 +31,7 @@
 #include "src/file/csv.hpp"
 #include "src/file/file.hpp"
 #include "src/file/file_c.hpp"
+#include "src/file/file_operations.hpp"
 #include "src/file/glob.hpp"
 #include "src/file/read_write.hpp"
 #include "src/file/mkdir.hpp"
