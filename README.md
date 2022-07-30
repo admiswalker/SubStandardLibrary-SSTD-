@@ -25,8 +25,8 @@ SubStandardLibrary (SSTD) は，著者が標準ライブラリにあって欲し
 
 
 ## Tips to use always latest versions of sstd
-Below lines of makefile enable to update sstd by a ```$ make update``` command.
-Adding ```$(LIB_SSTD)``` as a depending lib to your makefile.
+Below lines of makefile enable to update sstd by a `$ make updateLib` command.
+Adding `$(LIB_SSTD)` as a depending lib to your makefile.
 ```makefile
 # when you need to check the change of files in lib, you need to change file name to a not-existing name like "FORCE_XXX".
 #LIB_SSTD       = FORCE_SSTD
