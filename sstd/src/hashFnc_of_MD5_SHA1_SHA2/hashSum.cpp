@@ -44,20 +44,20 @@ std::string sstd::vecUint8_to_hexString(const std::vector<uint8>& hash){
 
 #define hashSum(hashFn)                                 \
     std::vector<uint8> data = sstd::read_bin(pPath);    \
+    if(data.size()==0){ return std::string(); }         \
     std::vector<uint8> hash = sstd::hashFn(data);       \
-    ret = sstd::vecUint8_to_hexString(hash);            \
-    return true;
-bool sstd::md5sum   (std::string& ret, const char*        pPath){ hashSum(md5);    }
-bool sstd::sha1sum  (std::string& ret, const char*        pPath){ hashSum(sha1);   }
-bool sstd::sha224sum(std::string& ret, const char*        pPath){ hashSum(sha224); }
-bool sstd::sha256sum(std::string& ret, const char*        pPath){ hashSum(sha256); }
-bool sstd::sha384sum(std::string& ret, const char*        pPath){ hashSum(sha384); }
-bool sstd::sha512sum(std::string& ret, const char*        pPath){ hashSum(sha512); }
+    return sstd::vecUint8_to_hexString(hash);
+std::string sstd::md5sum   (const char*        pPath){ hashSum(md5);    }
+std::string sstd::sha1sum  (const char*        pPath){ hashSum(sha1);   }
+std::string sstd::sha224sum(const char*        pPath){ hashSum(sha224); }
+std::string sstd::sha256sum(const char*        pPath){ hashSum(sha256); }
+std::string sstd::sha384sum(const char*        pPath){ hashSum(sha384); }
+std::string sstd::sha512sum(const char*        pPath){ hashSum(sha512); }
 #undef hashSum
 
-bool sstd::md5sum   (std::string& ret, const std::string&  path){ return sstd::md5sum   (ret, path.c_str()); }
-bool sstd::sha1sum  (std::string& ret, const std::string&  path){ return sstd::sha1sum  (ret, path.c_str()); }
-bool sstd::sha224sum(std::string& ret, const std::string&  path){ return sstd::sha224sum(ret, path.c_str()); }
-bool sstd::sha256sum(std::string& ret, const std::string&  path){ return sstd::sha256sum(ret, path.c_str()); }
-bool sstd::sha384sum(std::string& ret, const std::string&  path){ return sstd::sha384sum(ret, path.c_str()); }
-bool sstd::sha512sum(std::string& ret, const std::string&  path){ return sstd::sha512sum(ret, path.c_str()); }
+std::string sstd::md5sum   (const std::string&  path){ return sstd::md5sum   (path.c_str()); }
+std::string sstd::sha1sum  (const std::string&  path){ return sstd::sha1sum  (path.c_str()); }
+std::string sstd::sha224sum(const std::string&  path){ return sstd::sha224sum(path.c_str()); }
+std::string sstd::sha256sum(const std::string&  path){ return sstd::sha256sum(path.c_str()); }
+std::string sstd::sha384sum(const std::string&  path){ return sstd::sha384sum(path.c_str()); }
+std::string sstd::sha512sum(const std::string&  path){ return sstd::sha512sum(path.c_str()); }

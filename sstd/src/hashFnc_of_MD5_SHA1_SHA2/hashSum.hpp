@@ -8,17 +8,17 @@
 namespace sstd{
     std::string vecUint8_to_hexString(const std::vector<uint8>& hash);
     
-    bool md5sum   (std::string& ret, const char*        pPath);
-    bool sha1sum  (std::string& ret, const char*        pPath);
-    bool sha224sum(std::string& ret, const char*        pPath);
-    bool sha256sum(std::string& ret, const char*        pPath);
-    bool sha384sum(std::string& ret, const char*        pPath);
-    bool sha512sum(std::string& ret, const char*        pPath);
+    std::string md5sum   (const char*        pPath);
+    std::string sha1sum  (const char*        pPath);
+    std::string sha224sum(const char*        pPath);
+    std::string sha256sum(const char*        pPath);
+    std::string sha384sum(const char*        pPath);
+    std::string sha512sum(const char*        pPath);
     
-    bool md5sum   (std::string& ret, const std::string&  path);
-    bool sha1sum  (std::string& ret, const std::string&  path);
-    bool sha224sum(std::string& ret, const std::string&  path);
-    bool sha256sum(std::string& ret, const std::string&  path);
-    bool sha384sum(std::string& ret, const std::string&  path);
-    bool sha512sum(std::string& ret, const std::string&  path);
+    std::string md5sum   (const std::string&  path);
+    std::string sha1sum  (const std::string&  path);
+    std::string sha224sum(const std::string&  path);
+    std::string sha256sum(const std::string&  path);
+    std::string sha384sum(const std::string&  path);
+    std::string sha512sum(const std::string&  path);
 }
