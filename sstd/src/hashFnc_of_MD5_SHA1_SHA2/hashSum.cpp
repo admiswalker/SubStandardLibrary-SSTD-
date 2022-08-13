@@ -43,8 +43,9 @@ std::string sstd::vecUint8_to_hexString(const std::vector<uint8>& hash){
 
 
 #define hashSum(hashFn)                                 \
-    std::vector<uint8> data = sstd::read_bin(pPath);    \
-    if(data.size()==0){ return std::string(); }         \
+    bool tf; std::vector<uint8> data;                   \
+    tf = sstd::read_bin(data, pPath);                   \
+    if(!tf){ return std::string(); }                    \
     std::vector<uint8> hash = sstd::hashFn(data);       \
     return sstd::vecUint8_to_hexString(hash);
 std::string sstd::md5sum   (const char*        pPath){ hashSum(md5);    }

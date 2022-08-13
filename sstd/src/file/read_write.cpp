@@ -9,6 +9,16 @@
 //--------------------------------------------------------------------------------------------------------
 // read all data in a file as a binary
 
+bool sstd::read_bin(std::vector<uint8>& ret, const char*        path){
+    sstd::file fp; if(!fp.fopen(path, "rb")){ sstd::pdbg_err("fopen was failed.\n"); return false; }
+    size_t size = fp.fsize(); // ファイルサイズを取得
+    std::vector<uint8> raw(size, 0); //0で初期化
+    ret.resize(size);
+    if(fp.fread((uchar*)&ret[0], sizeof(char), size)!=size){ sstd::pdbg_err("fread was failed.\n"); return false; }
+    return true;
+}
+bool sstd::read_bin(std::vector<uint8>& ret, const std::string& path){ return sstd::read_bin(ret, path.c_str()); }
+
 std::vector<uint8> sstd::read_bin(const char* path){
     sstd::file fp; if(!fp.fopen(path, "rb")){ sstd::pdbg_err("fopen was failed.\n"); return std::vector<uint8>(); }
     size_t size = fp.fsize(); // ファイルサイズを取得

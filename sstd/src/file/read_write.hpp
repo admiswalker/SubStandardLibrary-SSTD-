@@ -6,6 +6,8 @@
 
 
 namespace sstd{
+    bool read_bin(std::vector<uint8>& ret, const char*        path); // read all of the file as a binary
+    bool read_bin(std::vector<uint8>& ret, const std::string& path); // read all of the file as a binary
     std::vector<uint8> read_bin(const char*        path); // read all of the file as a binary
     std::vector<uint8> read_bin(const std::string& path); // read all of the file as a binary
     
