@@ -1,4 +1,5 @@
 #pragma once
+#include <stddef.h>
 #include <vector>
 #include "../typeDef.h"
 #include "../itr.hpp" // definition of sstd::begin() and sstd::end()
