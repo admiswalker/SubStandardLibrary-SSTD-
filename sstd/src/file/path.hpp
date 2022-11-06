@@ -6,21 +6,24 @@
 
 
 namespace sstd{
-    std::string  getPath                     (const char* pPath);
-    std::string  getPath_woWC                (const char* pPath); // _woWC: without wild card
     
-    std::string  getDirName                  (const char* pPath);
-    uint         getDirName_begin_idx        (const char* pPath);
-    uint         getDirName_end_idx          (const char* pPath);
-    uint         getDirName_end_idx_woWC     (const char* pPath); // _woWC: without wild card
+    std::string  path2basePath              (const char* pPath);
+    std::string  path2basePath_woWC        (const char* pPath); // _woWC: without wild card
     
-           char* getFileName                 (const char* pPath);
-    std::string  getFileName_withoutExtension(const char* pPath);
+    std::string  path2dirName               (const char* pPath);
+    uint         path2dirName_begin_idx    (const char* pPath);
+    uint         path2dirName_end_idx      (const char* pPath);
+    uint         path2dirName_end_idx_woWC(const char* pPath); // _woWC: without wild card
     
-           char* getExtension                (const char* pPath);
-
-    std::vector<std::string> parsePath         (const char* pPath);
-    std::vector<std::string> parsePath_withBase(const char* pPath);
+           char* path2fileName             (const        char* pPath);
+    std::string  path2fileName             (const std::string&  path); // new
+    std::string  path2fileName             (const std::string&& path); // new
+    std::string  path2fileName_woExt      (const        char* pPath);
+           char* path2fileExt              (const        char* pPath);
+    std::string  path2fileExt              (const std::string&  path); // new
+    
+    std::vector<std::string> parsePath           (const char* pPath);
+    std::vector<std::string> parsePath_wBasePath(const char* pPath); // _wBasePath: with base path
     
     bool isFile(const char*        pPath);
     bool isFile(const std::string&  path);
@@ -35,35 +38,30 @@ namespace sstd{
     bool pathExist(const std::string&  path);
 }
 
-/*
-        How to use this?
-*/
-/*
-int main() {
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// Below functions are the not recommended to use. (Below functions will be delete on sstd ver 3.x.x).
 
-    printf("■ DirPathAndNameSolver\n");
-
-    const char* pPath="./abc/def/text.abc.txt\0";
-
-    printf("Output getPath: %s\n",                     sstd::getPath(pPath).c_str());
-    printf("Output getFileName: %s\n",                 sstd::getFileName(pPath));
-    printf("Output getFileNameWithoutExtension: %s\n", sstd::getFileNameWithoutExtension(pPath).c_str());
-    printf("Output getFileExtension: %s\n",            sstd::getExtension(pPath));
-    printf("\n");
- 
-    return 0;
+namespace sstd{
+    
+    std::string  getPath                     (const char* pPath); // new name: path2basePath()
+    std::string  getPath_woWC                (const char* pPath); // new name: path2basePath_woWC()
+    
+    std::string  getDirName                  (const char* pPath); // new name: path2dirName()
+    uint         getDirName_begin_idx        (const char* pPath); // new name: path2dirName_begin_idx()
+    uint         getDirName_end_idx          (const char* pPath); // new name: path2dirName_end_idx()
+    uint         getDirName_end_idx_woWC     (const char* pPath); // new name: path2dirName_end_idx_woWC()
+    
+           char* getFileName                 (const char* pPath); // new name: path2fileName()
+    std::string  getFileName_withoutExtension(const char* pPath); // new name: path2fileName_woExt()
+    
+           char* getExtension                (const char* pPath); // new name: path2fileExt()
+    
+    std::vector<std::string> parsePath_withBase(const char* pPath); // new name: parsePath_wBasePath()
 }
-*/
-/*
-Input pPath: ./abc/def/text.abc.txt
-Output GetPath: ./abc/def/
-Output GetFileName: text.abc.txt
-Output GetFileNameWithoutExtension: text.abc
-Output GetFileExtension: txt
-*/
 
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
-
+// memo:
 // http://dobon.net/vb/dotnet/file/pathclass.html
 //
 // ■: 実装済み
