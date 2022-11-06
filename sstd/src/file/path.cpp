@@ -131,7 +131,7 @@ std::string sstd::path2fileName_woExt(const char* pPath){
 
     std::string FileName;
 
-    char* pStartPathAdd = sstd::getFileName(pPath);
+    char* pStartPathAdd = sstd::path2fileName(pPath);
 
     size_t len = strlen(pStartPathAdd);
 

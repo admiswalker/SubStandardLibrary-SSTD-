@@ -177,7 +177,7 @@ bool _cp_base(const char* pPath_src, const char* pPath_dst, const bool opt_n, co
         // test case01: when pPath_src is a file
 
         if(sstd::isDir(pPath_dst)){
-            std::string path_dst = std::string(pPath_dst)+'/'+sstd::getFileName(pPath_src);
+            std::string path_dst = std::string(pPath_dst)+'/'+sstd::path2fileName(pPath_src);
             return _copy_base(pPath_src, path_dst.c_str(), opt_n, opt_p, opt_u);
         }else{
             return _copy_base(pPath_src, pPath_dst,        opt_n, opt_p, opt_u);
@@ -185,12 +185,12 @@ bool _cp_base(const char* pPath_src, const char* pPath_dst, const bool opt_n, co
     }else if(TF_dir){
         // test case02: when pPath_src is a directory
 
-        std::string dstPath_baseDir = std::string(pPath_dst)+'/'+sstd::getDirName(pPath_src);
+        std::string dstPath_baseDir = std::string(pPath_dst)+'/'+sstd::path2dirName(pPath_src);
         struct stat st; if(stat(pPath_src, &st)!=0){ return false; }
         ::mkdir(dstPath_baseDir.c_str(), st.st_mode);
         
         std::vector<sstd::pathAndType> vPath = sstd::glob_pt(std::string(pPath_src)+"/*", "dfr");
-        uint begin_idx = sstd::getDirName_begin_idx(pPath_src);
+        uint begin_idx = sstd::path2dirName_begin_idx(pPath_src);
         for(uint i=0; i!=vPath.size(); ++i){
             if(vPath[i].type=='f'){
                 // when vPath[i].path is a file path
@@ -266,7 +266,7 @@ bool _cp_base(const char* pPath_src, const char* pPath_dst, const bool opt_n, co
         //                ->  generate_directories()
         
         sstd::mkdir(pPath_dst);
-        std::vector<sstd::pathAndType> vPath = sstd::glob_pt(sstd::getPath_woWC(pPath_src)+"/*", "dfr");
+        std::vector<sstd::pathAndType> vPath = sstd::glob_pt(sstd::path2basePath_woWC(pPath_src)+"/*", "dfr");
 
         std::vector<sstd::pathAndType> vFile, vFile_matchWC;
         std::vector<sstd::pathAndType> vDir, vDir_matchWC;
@@ -286,13 +286,13 @@ bool _cp_base(const char* pPath_src, const char* pPath_dst, const bool opt_n, co
         
         std::vector<std::string> vDirOfFile;
         for(uint i=0; i<vFile_matchWC.size(); ++i){
-            vDirOfFile.push_back( sstd::getPath(vFile_matchWC[i].path.c_str()) );
+            vDirOfFile.push_back( sstd::path2basePath(vFile_matchWC[i].path.c_str()) );
         }
         vDirOfFile = rmDuplicate<std::string>(vDirOfFile);
         
         std::vector<std::string> vDirOfFile_splitted;
         for(uint i=0; i<vDirOfFile.size(); ++i){
-            std::vector<std::string> vP = sstd::parsePath_withBase(vDirOfFile[i].c_str());
+            std::vector<std::string> vP = sstd::parsePath_wBasePath(vDirOfFile[i].c_str());
             vDirOfFile_splitted.insert(vDirOfFile_splitted.end(), vP.begin(), vP.end());
         }
         vDirOfFile_splitted = rmDuplicate<std::string>(vDirOfFile_splitted);
@@ -304,7 +304,7 @@ bool _cp_base(const char* pPath_src, const char* pPath_dst, const bool opt_n, co
         
         //---
         
-        uint end_idx = sstd::getDirName_end_idx_woWC(pPath_src);
+        uint end_idx = sstd::path2dirName_end_idx_woWC(pPath_src);
         for(uint i=0; i<vDirToMake.size(); ++i){
             std::string dir_dst = std::string(pPath_dst)+'/'+&(vDirToMake[i].path[end_idx]);
             ::mkdir(dir_dst.c_str(), vDirToMake[i].st.st_mode);

@@ -11,7 +11,7 @@
 #endif
 
 void sstd::mkdir(const char* pPath){
-    std::vector<std::string> pathList = parsePath_withBase(pPath);
+    std::vector<std::string> pathList = sstd::parsePath_wBasePath(pPath);
     for(uint i=0; i<pathList.size(); ++i){ sstd_mkdir(pathList[i].c_str()); }
 }
 void sstd::mkdir(const std::string& path){ sstd::mkdir(path.c_str()); }

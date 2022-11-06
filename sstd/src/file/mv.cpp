@@ -28,12 +28,12 @@ bool sstd::mv  (const char*        pPath_src, const char*        pPath_dst){
         
     }else if(TFs_file && TFd_dir){
         // file to dir
-        std::string path_dst = std::string(pPath_dst) + '/' + sstd::getFileName(pPath_src);
+        std::string path_dst = std::string(pPath_dst) + '/' + sstd::path2fileName(pPath_src);
         ::rename(pPath_src, path_dst.c_str());
         
     }else if(TFs_dir && TFd_dir){
         // dir to dir
-        std::string path_dst = std::string(pPath_dst) + '/' + sstd::getFileName(pPath_src);
+        std::string path_dst = std::string(pPath_dst) + '/' + sstd::path2fileName(pPath_src);
         ::rename(pPath_src, path_dst.c_str());
         
     }else if(TFs_WC && TFd_dir){

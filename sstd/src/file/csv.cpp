@@ -90,7 +90,7 @@ std::vector<std::vector<std::string>> sstd::csv2vvec(const char* pReadFile){
     std::vector<std::vector<std::string>> ret;
     
     struct debugInformation dbgInf;
-    dbgInf.FileName = sstd::getFileName(pReadFile);
+    dbgInf.FileName = sstd::path2fileName(pReadFile);
     dbgInf.LineNum  = 1;
     
     bool result;
