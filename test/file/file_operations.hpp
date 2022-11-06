@@ -4,7 +4,7 @@
 //--------------------------------------------------------------------------------------------------------
 
 TEST(file_operations, file_size){
-    const char* path = "googletest-master.zip";
+    const char* path = "main.cpp";
 
     uint64 ret_size=0ull;
     bool ret = sstd::file_size(ret_size, path);
