@@ -21,6 +21,12 @@ TEST(path, path2basePath_case04){
 }
 
 
+TEST(path, path2basePath_ss_case01){
+    std::string path="";
+    ASSERT_STREQ(sstd::path2basePath(path).c_str(), "");
+}
+
+
 TEST(path, path2basePath_woWC_case01){
     const char* pPath="";
     ASSERT_STREQ(sstd::path2basePath_woWC(pPath).c_str(), "");
@@ -46,6 +52,11 @@ TEST(path, path2basePath_woWC_case06){
     ASSERT_STREQ(sstd::path2basePath_woWC(pPath).c_str(), "./abc");
 }
 
+TEST(path, path2basePath_woWC_ss_case01){
+    std::string path="";
+    ASSERT_STREQ(sstd::path2basePath_woWC(path).c_str(), "");
+}
+
 //---
 
 TEST(path, path2dirName_case01){
@@ -65,6 +76,11 @@ TEST(path, path2dirName_case02){
 TEST(path, path2dirName_case03){
     const char* pPath="./abc/def/";
     ASSERT_STREQ(sstd::path2dirName(pPath).c_str(), "def");
+}
+
+TEST(path, path2dirName_ss_case03){
+    std::string path="./abc/def/";
+    ASSERT_STREQ(sstd::path2dirName(path).c_str(), "def");
 }
 
 
@@ -87,6 +103,11 @@ TEST(path, path2dirName_begin_idx_case03){
     ASSERT_STREQ(&pPath[sstd::path2dirName_begin_idx(pPath)], "def/");
 }
 
+TEST(path, path2dirName_begin_idx_us_case03){
+    std::string path="./abc/def/";
+    ASSERT_STREQ(&path[sstd::path2dirName_begin_idx(path)], "def/");
+}
+
 
 TEST(path, path2dirName_end_idx_case01){
     const char* pPath="./abc/def/text.abc.txt";
@@ -105,6 +126,11 @@ TEST(path, path2dirName_end_idx_case02){
 TEST(path, path2dirName_end_idx_case03){
     const char* pPath="./abc/def/";
     ASSERT_STREQ(&pPath[sstd::path2dirName_end_idx(pPath)], "");
+}
+
+TEST(path, path2dirName_end_idx_us_case03){
+    std::string path="./abc/def/";
+    ASSERT_STREQ(&path[sstd::path2dirName_end_idx(path)], "");
 }
 
 
@@ -137,6 +163,11 @@ TEST(path, path2dirName_end_idx_woWC_case05){
 TEST(path, path2dirName_end_idx_woWC_case06){
     const char* pPath="./abc/de*/?";
     ASSERT_STREQ(&pPath[sstd::path2dirName_end_idx_woWC(pPath)], "de*/?");
+}
+
+TEST(path, path2dirName_end_idx_woWC_us_case06){
+    std::string path="./abc/de*/?";
+    ASSERT_STREQ(&path[sstd::path2dirName_end_idx_woWC(path)], "de*/?");
 }
 
 //---

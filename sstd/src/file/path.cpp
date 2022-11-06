@@ -22,6 +22,9 @@ std::string sstd::path2basePath(const char* pPath){
 
     return std::string((char*)pPath, pSlash_last);
 }
+std::string sstd::path2basePath(const std::string& path){
+    return sstd::path2basePath(path.c_str());
+}
 std::string sstd::path2basePath_woWC(const char* pPath){
 
     size_t len = strlen(pPath);
@@ -37,6 +40,9 @@ std::string sstd::path2basePath_woWC(const char* pPath){
     }
 
     return std::string((char*)pPath, pSlash_last);
+}
+std::string sstd::path2basePath_woWC(const std::string& path){
+    return sstd::path2basePath_woWC(path.c_str());
 }
 
 //---
@@ -62,6 +68,9 @@ std::string sstd::path2dirName(const char* pPath){
     
     return std::string(pSlash_last+1);
 }
+std::string sstd::path2dirName(const std::string& path){
+    return sstd::path2dirName(path.c_str());
+}
 uint sstd::path2dirName_begin_idx(const char* pPath){
 
     size_t len = strlen(pPath);
@@ -83,6 +92,9 @@ uint sstd::path2dirName_begin_idx(const char* pPath){
     
     return slash_last + 1;
 }
+uint sstd::path2dirName_begin_idx(const std::string& path){
+    return sstd::path2dirName_begin_idx(path.c_str());
+}
 uint sstd::path2dirName_end_idx(const char* pPath){
 
     size_t len = strlen(pPath);
@@ -96,6 +108,9 @@ uint sstd::path2dirName_end_idx(const char* pPath){
     }
     
     return slash_last + 1;
+}
+uint sstd::path2dirName_end_idx(const std::string& path){
+    return sstd::path2dirName_end_idx(path.c_str());
 }
 uint sstd::path2dirName_end_idx_woWC(const char* pPath){
 
@@ -111,6 +126,9 @@ uint sstd::path2dirName_end_idx_woWC(const char* pPath){
     }
     
     return slash_last + 1;
+}
+uint sstd::path2dirName_end_idx_woWC(const std::string& path){
+    return sstd::path2dirName_end_idx_woWC(path.c_str());
 }
 
 //---

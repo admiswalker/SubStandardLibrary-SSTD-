@@ -7,13 +7,19 @@
 
 namespace sstd{
     
-    std::string  path2basePath              (const char* pPath);
-    std::string  path2basePath_woWC        (const char* pPath); // _woWC: without wild card
+    std::string  path2basePath            (const        char* pPath);
+    std::string  path2basePath            (const std::string&  path);
+    std::string  path2basePath_woWC       (const        char* pPath); // _woWC: without wild card
+    std::string  path2basePath_woWC       (const std::string& pPath); // _woWC: without wild card
     
-    std::string  path2dirName               (const char* pPath);
-    uint         path2dirName_begin_idx    (const char* pPath);
-    uint         path2dirName_end_idx      (const char* pPath);
-    uint         path2dirName_end_idx_woWC(const char* pPath); // _woWC: without wild card
+    std::string  path2dirName              (const        char* pPath);
+    std::string  path2dirName              (const std::string&  path);
+    uint         path2dirName_begin_idx   (const        char* pPath);
+    uint         path2dirName_begin_idx   (const std::string&  path);
+    uint         path2dirName_end_idx     (const        char* pPath);
+    uint         path2dirName_end_idx     (const std::string&  path);
+    uint         path2dirName_end_idx_woWC(const        char* pPath); // _woWC: without wild card
+    uint         path2dirName_end_idx_woWC(const std::string&  path); // _woWC: without wild card
     
            char* path2fileName             (const        char* pPath);
     std::string  path2fileName             (const std::string&  path);
