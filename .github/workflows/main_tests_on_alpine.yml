@@ -1,4 +1,4 @@
-name: Tests on Alpine (Build Only)
+name: Tests on Alpine
 
 on:
   push:
@@ -17,9 +17,8 @@ jobs:
     - name: Install build tools
       run: |
         apk add make gcc g++ cmake
-        #apk add python3 py3-pip
-        #pip install numpy
-        #pip install matplotlib
+        apk add python3 py3-pip py3-numpy py3-matplotlib
+        ln -s /usr/bin/python3.10 /usr/bin/python
     - name: Build googletest
       run: |
         make ./googletest-master/build/lib/libgtest.a
@@ -29,6 +28,6 @@ jobs:
     - name: Build the others
       run: |
         make
-#    - name: Run tests
-#      run: |
-#        ./exe
+    - name: Run tests
+      run: |
+        ./exe

@@ -69,11 +69,11 @@ void TEST_bmat();
 
 int main(int argc, char** argv){
     printf("\n");
-    printf("+---------------------------------------------------+\n");
-    printf("|                                                   |\n");
-    printf("|     Welcome to Sub Standard Library (SSTD) !      |\n");
-    printf("|                                                   |\n");
-    printf("+---------------------------------------------------+\n");
+    printf("+----------------------------------------------------+\n");
+    printf("|                                                    |\n");
+    printf("|    Welcome to The Sub Standard Library (SSTD) !    |\n");
+    printf("|                                                    |\n");
+    printf("+----------------------------------------------------+\n");
     printf("\n");
     printf("■ measureTime_start---------------\n\n"); time_m timem; sstd::measureTime_start(timem);
     ::testing::InitGoogleTest(&argc, argv);
