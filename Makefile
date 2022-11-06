@@ -101,8 +101,11 @@ $(LIB_SSTD):
 
 $(LIB_GOOGLETEST):
 	@echo ""
-	@unzip -n googletest-master.zip
+	@tar -zxvf googletest-release-1.12.1.tar.gz
+	@mv googletest-release-1.12.1 googletest-master
 	@(cd ./googletest-master; mkdir -p build; cd build; cmake ..; make)
+#	@unzip -n googletest-master.zip
+#	@(cd ./googletest-master; mkdir -p build; cd build; cmake ..; make)
 
 
 $(TEST_MULTI_DEF):
