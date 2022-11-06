@@ -46,6 +46,7 @@ TEST(path, path2basePath_woWC_case06){
     ASSERT_STREQ(sstd::path2basePath_woWC(pPath).c_str(), "./abc");
 }
 
+//---
 
 TEST(path, path2dirName_case01){
     const char* pPath="./abc/def/text.abc.txt";
@@ -138,12 +139,16 @@ TEST(path, path2dirName_end_idx_woWC_case06){
     ASSERT_STREQ(&pPath[sstd::path2dirName_end_idx_woWC(pPath)], "de*/?");
 }
 
+//---
 
-TEST(path, path2fileName){
+TEST(path, path2fileName_cc){
     const char* pPath="./abc/def/text.abc.txt";
     ASSERT_STREQ(sstd::path2fileName(pPath), "text.abc.txt");
 }
-
+TEST(path, path2fileName_ss){
+    std::string path="./abc/def/text.abc.txt";
+    ASSERT_STREQ(sstd::path2fileName(path).c_str(), "text.abc.txt");
+}
 
 
 TEST(path, path2fileName_woExt){
@@ -152,9 +157,13 @@ TEST(path, path2fileName_woExt){
 }
 
 
-TEST(path, path2fileExt){
+TEST(path, path2fileExt_cc){
     const char* pPath="./abc/def/text.abc.txt";
     ASSERT_STREQ(sstd::path2fileExt(pPath), "txt");
+}
+TEST(path, path2fileExt_ss){
+    std::string path="./abc/def/text.abc.txt";
+    ASSERT_STREQ(sstd::path2fileExt(path).c_str(), "txt");
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

@@ -39,6 +39,7 @@ std::string sstd::path2basePath_woWC(const char* pPath){
     return std::string((char*)pPath, pSlash_last);
 }
 
+//---
 
 std::string sstd::path2dirName(const char* pPath){
 
@@ -112,6 +113,8 @@ uint sstd::path2dirName_end_idx_woWC(const char* pPath){
     return slash_last + 1;
 }
 
+//---
+
 char* sstd::path2fileName(const char* pPath){
 
     char* pStartPathAdd = (char*)&pPath[0];
@@ -125,8 +128,9 @@ char* sstd::path2fileName(const char* pPath){
 
     return pStartPathAdd;
 }
-
-
+std::string sstd::path2fileName(const std::string& path){
+    return std::string(sstd::path2fileName(path.c_str()));
+}
 std::string sstd::path2fileName_woExt(const char* pPath){
 
     std::string FileName;
@@ -147,8 +151,6 @@ std::string sstd::path2fileName_woExt(const char* pPath){
 
     return FileName;
 }
-
-
 char* sstd::path2fileExt(const char* pPath){
 
     char* pStartPathAdd=(char*)&pPath[0]; // avoid warning
@@ -159,6 +161,9 @@ char* sstd::path2fileExt(const char* pPath){
         pStartPathAdd = (char*)&pPath[i];
     }
     return pStartPathAdd;
+}
+std::string sstd::path2fileExt(const std::string& path){
+    return std::string(sstd::path2fileExt(path.c_str()));
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

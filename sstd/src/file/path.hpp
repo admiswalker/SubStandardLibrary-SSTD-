@@ -16,11 +16,10 @@ namespace sstd{
     uint         path2dirName_end_idx_woWC(const char* pPath); // _woWC: without wild card
     
            char* path2fileName             (const        char* pPath);
-    std::string  path2fileName             (const std::string&  path); // new
-    std::string  path2fileName             (const std::string&& path); // new
+    std::string  path2fileName             (const std::string&  path);
     std::string  path2fileName_woExt      (const        char* pPath);
            char* path2fileExt              (const        char* pPath);
-    std::string  path2fileExt              (const std::string&  path); // new
+    std::string  path2fileExt              (const std::string&  path);
     
     std::vector<std::string> parsePath           (const char* pPath);
     std::vector<std::string> parsePath_wBasePath(const char* pPath); // _wBasePath: with base path
