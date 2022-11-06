@@ -71,10 +71,18 @@ BACKUP_FILES = $(filter-out ./$(TARGET) $(TMP_DIRS) $(BACKUP_DIR) $(LIBS_DIRS), 
 TIME_STAMP   = `date +%Y_%m%d_%H%M`
 
 # test files
-HEADS_t      = $(wildcard ./*.py      )
-HEADS_t     += $(wildcard ./test/*.py )
-HEADS_t     += $(wildcard ./test/*.h  )
-HEADS_t     += $(wildcard ./test/*.hpp)
+DIR_t  = ./test/*.
+DIR_t += ./test/file/*.
+DIR_t += ./test/hashFnc_of_MD5_SHA1_SHA2/*.
+DIR_t += ./test/string/*.
+DIR_t += ./test/time/*.
+DIR_t += ./test/vector/*.
+HDIR_t    = $(patsubst %., %.h, $(DIR_t))
+HEADS_t   = $(wildcard $(HDIR_t))
+HPPDIR_t  = $(patsubst %., %.hpp, $(DIR_t))
+HEADppS_t = $(wildcard $(HPPDIR_t))
+PYDIR_t   = $(patsubst %., %.py, $(DIR_t))
+PYFILES_t = $(wildcard $(PYDIR_t))
 
 MULTI_DEF_TEST_FILE = check_multiple_definition
 TEST_MULTI_DEF = $(TEMP_DIR)/$(MULTI_DEF_TEST_FILE).o
@@ -135,7 +143,7 @@ clean:
 
 
 .PHONY: steps
-steps: $(SRCS) $(HEADS_t)
+steps: $(SRCS) $(HEADS_t) $(HEADppS_t) $(PYFILES_t)
 	@(cd ./sstd; make steps)
 	@echo ""
 	@echo "$^" | xargs wc -l
