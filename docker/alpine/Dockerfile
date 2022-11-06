@@ -1,6 +1,7 @@
 FROM crystallang/crystal:latest-alpine
 
 RUN apk update && apk add --no-cache \
+    coreutils \
     make \
     gcc \
     g++ \

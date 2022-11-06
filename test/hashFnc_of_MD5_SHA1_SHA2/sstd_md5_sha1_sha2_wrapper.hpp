@@ -16,7 +16,7 @@ std::string vecUint8_to_hexString(std::vector<uint8>& rhs){
     std::vector<uint8> hash = sstd::hashFn(data);                       \
     std::string s = vecUint8_to_hexString(hash);                        \
                                                                         \
-    std::string hash_ans_s = sstd::system_stdout(sstd::ssprintf("%s %s | cut -d ' ' -f 1", hashFn_str, pFilePath)); sstd::stripAll_ow(hash_ans_s, "\r\n"); \
+    std::string hash_ans_s = sstd::split(sstd::system_stdout(sstd::ssprintf("%s %s", hashFn_str, pFilePath)), ' ')[0]; \
     ASSERT_STREQ(s.c_str(), hash_ans_s.c_str());
 TEST(hashFnc_of_MD5_SHA1_SHA2, md5   ){ test_hashFn(md5,   "md5sum"   ); }
 TEST(hashFnc_of_MD5_SHA1_SHA2, sha1  ){ test_hashFn(sha1,  "sha1sum"  ); }

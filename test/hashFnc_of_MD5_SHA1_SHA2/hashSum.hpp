@@ -7,7 +7,7 @@
     std::string s = sstd::hashFn(pFilePath);                            \
     ASSERT_TRUE(s.size()!=0);                                           \
                                                                         \
-    std::string hash_ans_s = sstd::system_stdout(sstd::ssprintf("%s %s | cut -d ' ' -f 1", hashFn_str, pFilePath)); sstd::stripAll_ow(hash_ans_s, "\r\n"); \
+    std::string hash_ans_s = sstd::split(sstd::system_stdout(sstd::ssprintf("%s %s", hashFn_str, pFilePath)), ' ')[0]; \
     ASSERT_STREQ(s.c_str(), hash_ans_s.c_str());
 TEST(hashFnc_of_MD5_SHA1_SHA2__hashSum, md5sum_c   ){ test_hashSum_c(md5sum,    "md5sum");    }
 TEST(hashFnc_of_MD5_SHA1_SHA2__hashSum, sha1sum_c  ){ test_hashSum_c(sha1sum,   "sha1sum");   }
@@ -24,7 +24,7 @@ TEST(hashFnc_of_MD5_SHA1_SHA2__hashSum, sha512sum_c){ test_hashSum_c(sha512sum, 
     std::string s = sstd::hashFn(filePath);                             \
     ASSERT_TRUE(s.size()!=0);                                           \
                                                                         \
-    std::string hash_ans_s = sstd::system_stdout(sstd::ssprintf("%s %s | cut -d ' ' -f 1", hashFn_str, filePath.c_str())); sstd::stripAll_ow(hash_ans_s, "\r\n"); \
+    std::string hash_ans_s = sstd::split(sstd::system_stdout(sstd::ssprintf("%s %s", hashFn_str, filePath.c_str())), ' ')[0]; \
     ASSERT_STREQ(s.c_str(), hash_ans_s.c_str());
 TEST(hashFnc_of_MD5_SHA1_SHA2__hashSum, md5sum_s   ){ test_hashSum_s(md5sum,    "md5sum");    }
 TEST(hashFnc_of_MD5_SHA1_SHA2__hashSum, sha1sum_s  ){ test_hashSum_s(sha1sum,   "sha1sum");   }
@@ -42,7 +42,7 @@ TEST(hashFnc_of_MD5_SHA1_SHA2__hashSum, sha512sum_s){ test_hashSum_s(sha512sum, 
                                                                         \
     std::string s = sstd::hashFn(filePath);                             \
                                                                         \
-    std::string hash_ans_s = sstd::system_stdout(sstd::ssprintf("%s %s | cut -d ' ' -f 1", hashFn_str, filePath.c_str())); sstd::stripAll_ow(hash_ans_s, "\r\n"); \
+    std::string hash_ans_s = sstd::split(sstd::system_stdout(sstd::ssprintf("%s %s", hashFn_str, filePath.c_str())), ' ')[0]; \
     ASSERT_STREQ(s.c_str(), hash_ans_s.c_str());                        \
     sstd::rm("tmp");
 TEST(hashFnc_of_MD5_SHA1_SHA2__hashSum_emptyFile, md5sum_s   ){ test_hashSum_emptyFile(md5sum,    "md5sum");    }
