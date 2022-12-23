@@ -5,6 +5,7 @@
 #include <vector>
 
 namespace sstd{
+    std::vector<std::string> splitByLine(const        char* str);
     std::vector<std::string> splitByLine(const std::string& str);
     
     std::vector<std::string> split(const char*        str, const char X);

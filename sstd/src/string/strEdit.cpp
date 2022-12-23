@@ -6,7 +6,7 @@
 
 //--------------------------------------------------------------------------------------------------------
 
-std::vector<std::string> sstd::splitByLine(const std::string& str){
+std::vector<std::string> sstd::splitByLine(const char* str){
 
     std::vector<std::string> ret;
     
@@ -14,14 +14,17 @@ std::vector<std::string> sstd::splitByLine(const std::string& str){
     for(uint r=0; str[r]!=0; ++r){ // r: read place
         buf.clear();
         for(; str[r]!=0; ++r){
-            if(str[r]==0x0A){ break; }                            // Uinx
-            if(str[r]==0x0D && str[r+1]==0x0A){ ++r; break; }    // Windows
+            if(str[r]==0x0A){ break; }                        // Uinx
+            if(str[r]==0x0D && str[r+1]==0x0A){ ++r; break; } // Windows
             buf += str[r];
         }
         ret.push_back(std::move(buf));
     }
     
     return ret;
+}
+std::vector<std::string> sstd::splitByLine(const std::string& str){
+    return sstd::splitByLine(str.c_str());
 }
 
 //--------------------------------------------------------------------------------------------------------
