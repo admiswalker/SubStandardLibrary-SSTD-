@@ -14,19 +14,19 @@
     #define omp_get_max_threads() 1
 #endif
 
-#include "typeDef.h"
-#include "file/file.hpp"
-#include "file/read_write.hpp"
-#include "string/ssprintf.hpp"
-#include "file/mkdir.hpp"
-#include "file/rm.hpp"
-#include "time/time.hpp"
-#include "string/strEdit.hpp"
-#include "string/strmatch.hpp"
-#include "file/path.hpp"
-#include "sys/pid.hpp"
-#include "matrixContainer_colMajor/mat_c.hpp"
-#include "matrixContainer_rowMajor/mat_r.hpp"
+#include "../typeDef.h"
+#include "../file/file.hpp"
+#include "../file/read_write.hpp"
+#include "../file/rm.hpp"
+#include "../file/mkdir.hpp"
+#include "../file/path.hpp"
+#include "../matrixContainer_colMajor/mat_c.hpp"
+#include "../matrixContainer_rowMajor/mat_r.hpp"
+#include "../string/ssprintf.hpp"
+#include "../string/strEdit.hpp"
+#include "../string/strmatch.hpp"
+#include "../sys/pid.hpp"
+#include "../time/time.hpp"
 
 //#include "print/print.hpp" // for debug (リリース時に削除するように)
 
@@ -230,11 +230,11 @@ inline void sstd_c2py::operator_brackets(T& ret, const char* writeDir_base, cons
         // システムにインストールされている場合は，ヘッダと一緒にコピーされているはずなので，そこへ path を通す．
         // 幾つか可能性のある path を file exist して確認する．
     std::string path_to_c2py_py;
-    if      (sstd::fileExist("./sstd/src/c2py.py"             )){ path_to_c2py_py = "./sstd/src/c2py.py";
-    }else if(sstd::fileExist("./sstd/include/sstd/src/c2py.py")){ path_to_c2py_py = "./sstd/include/sstd/src/c2py.py";
-    }else if(sstd::fileExist("/usr/include/sstd/src/c2py.py"  )){ path_to_c2py_py = "/usr/include/sstd/src/c2py.py";
-    }else if(sstd::fileExist("./c2py.py"                      )){ path_to_c2py_py = "./c2py.py";
-    }                        else                               { sstd::pdbg_err("\"c2py.py\" is not found."); return; }
+    if      (sstd::fileExist("./sstd/src/python/c2py.py"             )){ path_to_c2py_py = "./sstd/src/python/c2py.py";
+    }else if(sstd::fileExist("./sstd/include/sstd/src/python/c2py.py")){ path_to_c2py_py = "./sstd/include/sstd/src/python/c2py.py";
+    }else if(sstd::fileExist("/usr/include/sstd/src/python/c2py.py"  )){ path_to_c2py_py = "/usr/include/sstd/src/python/c2py.py";
+    }else if(sstd::fileExist("./c2py.py"                             )){ path_to_c2py_py = "./c2py.py";
+    }                               else                               { sstd::pdbg_err("\"c2py.py\" is not found."); return; }
     if(system(sstd::ssprintf("python -u %s %s %s %s", path_to_c2py_py.c_str(), writeDir_base, iFile, fName).c_str())!=0){ sstd::pdbg_err("system() was failed.\n"); return; }
     
     // write back non const pointer args.

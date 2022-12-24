@@ -44,6 +44,7 @@
 #include "src/hashFnc_of_MD5_SHA1_SHA2/hashSum.hpp"
 #include "src/hashFnc_of_MD5_SHA1_SHA2/sstd_md5_sha1_sha2_wrapper.hpp"
 
+#include "src/string/encode_decode.hpp"
 #include "src/string/ssprintf.hpp"
 #include "src/string/strEdit.hpp"
 #include "src/string/strmatch.hpp"
@@ -65,7 +66,6 @@
 #include "src/signal.hpp"
 #include "src/typeConversion.hpp"
 #include "src/itr.hpp"
-#include "src/encode_decode.hpp"
 
 #include "src/linearAlgebra/matCal.hpp"
 #include "src/matrixContainer_binary/bmat.hpp"
@@ -98,4 +98,4 @@
 #endif
 
 // 上記で関数を示さない応用ライブラリは下記に列挙する
-#include "src/c2py.hpp"
+#include "src/python/c2py.hpp"

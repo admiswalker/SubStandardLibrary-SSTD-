@@ -1,5 +1,5 @@
 ﻿#include "c2py.hpp"
-#include "./typeConversion.hpp"
+#include "../typeConversion.hpp"
 
 
 /*
