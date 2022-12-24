@@ -75,8 +75,8 @@
 #include "src/matrixContainer_colMajor/mat_c.hpp" // Because of this header use "pdbg.hpp", we need to define after namespace sstd{}.
 #include "src/matrixContainer_rowMajor/mat_r.hpp" // Because of this header use "pdbg.hpp", we need to define after namespace sstd{}.
 
-#include "src/pdbg.hpp"                           // In order to avoid conflict of "pdbg.hpp", we need to define after namespace sstd{}.
-#include "src/print.hpp"                          // In order to avoid conflict of "print.hpp", we need to define after namespace sstd{}.
+#include "src/print/pdbg.hpp"                     // In order to avoid conflict of "pdbg.hpp", we need to define after namespace sstd{}.
+#include "src/print/print.hpp"                    // In order to avoid conflict of "print.hpp", we need to define after namespace sstd{}.
 
 #include "compileOption.hpp"
 #ifndef use_sstd_pdbg

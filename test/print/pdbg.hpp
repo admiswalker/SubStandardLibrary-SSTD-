@@ -9,21 +9,21 @@
 TEST(pdbg, pdbg){
     testing::internal::CaptureStdout();
     sstd::pdbg("example msg.");
-    ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), "\x1B[1m\x1B[31m./test/pdbg.hpp:11 TestBody(): \x1B[0mexample msg.");
+    ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), "\x1B[1m\x1B[31m./test/print/pdbg.hpp:11 TestBody(): \x1B[0mexample msg.");
     //  \u001b[31m  :  set output red
     //  \u001b[0m   :  reset color
 }
 TEST(pdbg, pdbg_err){
     testing::internal::CaptureStdout();
     sstd::pdbg_err("example err msg.");
-    ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), "\x1B[1m./test/pdbg.hpp:18 TestBody(): \x1B[31merror: \x1B[0mexample err msg.");
+    ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), "\x1B[1m./test/print/pdbg.hpp:18 TestBody(): \x1B[31merror: \x1B[0mexample err msg.");
     //  \u001b[31m  :  set output red
     //  \u001b[0m   :  reset color
 }
 TEST(pdbg, pdbg_if_true){
     testing::internal::CaptureStdout();
     sstd::pdbg_if(true, "example msg.");
-    ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), "\x1B[1m\x1B[31m./test/pdbg.hpp:25 TestBody(): \x1B[0mexample msg.");
+    ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), "\x1B[1m\x1B[31m./test/print/pdbg.hpp:25 TestBody(): \x1B[0mexample msg.");
 }
 TEST(pdbg, pdbg_if_false){
     testing::internal::CaptureStdout();

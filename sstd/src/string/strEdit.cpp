@@ -1,6 +1,6 @@
 ﻿#include "strEdit.hpp"
 #include "../file/file.hpp"
-#include "../pdbg.hpp"
+#include "../print/pdbg.hpp"
 #include <string.h>
 
 

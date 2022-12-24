@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include <stdio.h>
-#include "pause.hpp"
+#include "../pause.hpp"
 
 namespace sstd{
     // need to inline in order to avoid mulple definition

@@ -28,7 +28,7 @@
 #include "matrixContainer_colMajor/mat_c.hpp"
 #include "matrixContainer_rowMajor/mat_r.hpp"
 
-#include "print.hpp" // for debug (リリース時に削除するように)
+//#include "print/print.hpp" // for debug (リリース時に削除するように)
 
 //--------------------------------------------------------------------------------------------------------
 

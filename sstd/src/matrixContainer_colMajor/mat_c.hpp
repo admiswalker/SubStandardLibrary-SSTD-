@@ -7,7 +7,7 @@
 #include "./mat_c_operators.hpp"
 #include "./mat_c_elements.hpp" // for element operations (elements multiplication)
 #include "../math.hpp"
-#include "../pdbg.hpp"
+#include "../print/pdbg.hpp"
 #include "../typeDef.h"
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

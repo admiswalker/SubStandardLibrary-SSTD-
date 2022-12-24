@@ -4,7 +4,7 @@
 #include "file.hpp"
 
 #include "../typeDef.h"
-#include "../pdbg.hpp"
+#include "../print/pdbg.hpp"
 #include "../hashFnc_of_MD5_SHA1_SHA2/sstd_md5_sha1_sha2_wrapper.hpp"
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
