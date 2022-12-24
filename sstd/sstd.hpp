@@ -79,6 +79,8 @@
 #include "src/time/time.hpp"
 #include "src/time/sleep.hpp" // use_sstd_gcc4_4_7
 
+#include "src/unique_void_ptr.hpp"
+
 //---
 
 #include "src/container/matrixContainer_colMajor/mat_c.hpp" // Because of this header use "pdbg.hpp", we need to define after namespace sstd{}.
