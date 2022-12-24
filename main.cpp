@@ -13,7 +13,7 @@
 
 #include "test/check_multiple_definition.hpp" // Trigger a compilation error if there are multiple definitions. In order not to occor "multiple definition error" when including <sstd/sstd.hpp> from multi file.
 
-//*
+/*
 // Remove comment out when you test it.
 #include "test/file/cp.hpp"
 #include "test/file/csv.hpp"
@@ -26,7 +26,8 @@
 
 #include "test/hashFnc_of_MD5_SHA1_SHA2/hashSum.hpp"
 #include "test/hashFnc_of_MD5_SHA1_SHA2/sstd_md5_sha1_sha2_wrapper.hpp"
-
+*/
+#include "test/string/encode_decode.hpp"/*
 #include "test/string/strEdit.hpp"
 #include "test/string/strmatch.hpp"
 #include "test/string/utf8.hpp"
@@ -57,7 +58,6 @@ void TEST_file_c();
 void TEST_mkdir();
 void TEST_rm();
 void TEST_ssprintf();
-void TEST_encode_decode();
 void TEST_pause();
 //void TEST_getpid(); // <- Needed to write test.
 
@@ -90,7 +90,6 @@ int main(int argc, char** argv){
 //    TEST_rm();
 //    TEST_str2num();
 //    TEST_ssprintf();
-//    TEST_encode_decode();
 //    TEST_pause();
     
 //    TEST_mat_colMajor(); // TODO: write tests (zeros, Tr) // sstd::print 関数のテストを書くように
@@ -228,81 +227,6 @@ void TEST_ssprintf(){
     printf("%s", sstd::ssprintf("Num: %d, Str: %s\n\n", 1234, "abcd").c_str());
 }
 //*/
-
-/*
-void TEST_encode_decode(){
-    printf("■ encode_decode\n");
-    
-    //===
-
-    printf("  □ base64_encode\n");
-    std::string str_b64  = "#include \"./sstd/sstd.hpp\".+=ABCD";
-    printf("    %s ->[base64 encode]-> %s\n", str_b64.c_str(), sstd::base64_encode((uchar*)str_b64.c_str(), str_b64.size()).c_str());
-    printf("    %s ->[base64 encode]-> %s\n", str_b64.c_str(), sstd::base64_encode(str_b64).c_str());
-    printf("    %s ->[base64 encode]-> %s\n", str_b64.c_str(), sstd::base64_encode(str_b64).c_str());
-
-    printf("  □ base64_decode\n");
-    std::string str_b64e = sstd::base64_encode(str_b64);
-    printf("    %s ->[base64 decode]-> %s\n", str_b64e.c_str(), sstd::base64_decode((uchar*)str_b64e.c_str(), str_b64e.size()).c_str());
-    printf("    %s ->[base64 decode]-> %s\n", str_b64e.c_str(), sstd::base64_decode(str_b64e.c_str()).c_str());
-    printf("    %s ->[base64 decode]-> %s\n", str_b64e.c_str(), sstd::base64_decode(str_b64e).c_str());
-
-    printf("  □ make_base64_decode_table\n");
-    sstd::print_base64_decode_table(); // for developers
-    printf("\n");
-
-    //===
-
-    printf("  □ url_encode\n");
-    std::string str_url(256, 0); for(uint i=0; i<str_url.size(); i++){ str_url[i]=i; }
-    printf("    [url encode]-> %s\n", sstd::url_encode(str_url.c_str(), str_url.size()).c_str());
-    printf("    [url encode]-> %s\n", sstd::url_encode(str_url.c_str()).c_str()); // 先頭が 0 なので、終端だと判断されている。
-    printf("    [url encode]-> %s\n", sstd::url_encode(str_url).c_str());
-    printf("\n");
-
-    sstd::url_encode_compare_speed(); // for developers
-    printf("\n");
-    
-    printf("  □ url_decode\n");
-    std::string str_url_d = sstd::url_encode("#include \"./sstd/sstd.hpp\".+=ABCD");
-    printf("    %s ->[url encode]-> %s\n", "#include \"./sstd/sstd.hpp\".+=ABCD", str_url_d.c_str());
-    printf("    %s ->[url decode]-> %s\n", str_url_d.c_str(), sstd::url_decode(str_url_d.c_str(), str_url_d.size()).c_str());
-    printf("    %s ->[url decode]-> %s\n", str_url_d.c_str(), sstd::url_decode(str_url_d.c_str()).c_str());
-    printf("    %s ->[url decode]-> %s\n", str_url_d.c_str(), sstd::url_decode(str_url_d).c_str());
-    printf("\n");
-    
-    printf("  □ make_url_decode_table\n");
-    sstd::print_url_decode_table();
-    printf("\n");
-
-    //===
-
-    printf("■ utf8 <-> utf16\n");
-    printf("  □ unicode escape (utf16) -> utf16 (binary)\n");
-    std::string escaped_utf16 = R"(\u30e6\u30cb\u30b3\u30fc\u30c9)"; // "ユニコード"
-//    std::string escaped_utf16 = R"(abcd_\u30e6\u30cb\u30b3\u30fc\u30c9)"; // "abcd_ユニコード" // <- これがバグる。 issue
-    std::u16string utf16_bin = sstd::unicodeEscape_decode(escaped_utf16);
-    for(uint i=0; i<utf16_bin.size(); i++){ printf("%X\n", utf16_bin[i]); }
-    
-    printf("  □ utf16 (binary) -> utf8\n");
-    std::string utf8 = sstd::utf16_to_utf8(utf16_bin);
-    printf("%s\n", utf8.c_str());
-
-    std::u32string utf32_bin = sstd::utf8_to_utf32(utf8);
-    std::u16string utf16_bin2 = sstd::utf32_to_utf16(utf32_bin);
-
-    printf("  □ utf16 (binary) -> unicode escape (utf16)\n");
-    printf("%s\n", sstd::unicodeEscape_encode(utf16_bin2).c_str());
-
-    sstd::unicodeEscape_compare_speed(); // for developers
-    printf("\n");
-
-    printf("  □ make_unicodeEscape_decode_table\n");
-    sstd::print_unicodeEscape_decode_table();
-    printf("\n");
-}
-//*/
-
 /*
 void TEST_pause(){
 //    printf("■ #define UsePause\n");

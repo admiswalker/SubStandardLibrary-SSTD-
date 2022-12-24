@@ -1,7 +1,7 @@
 ﻿#include "encode_decode.hpp"
-#include "./string/ssprintf.hpp"
 
-#include "./time/measureTime.hpp"
+#include "ssprintf.hpp"
+#include "../time/measureTime.hpp"
 
 #include <iostream>
 #include <string>

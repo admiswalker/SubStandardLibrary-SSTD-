@@ -1,4 +1,4 @@
-
+#pragma once
 
 
 TEST(string_utf8, constructor01){
