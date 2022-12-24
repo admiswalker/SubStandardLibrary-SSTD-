@@ -13,7 +13,7 @@
 
 #include "test/check_multiple_definition.hpp" // Trigger a compilation error if there are multiple definitions. In order not to occor "multiple definition error" when including <sstd/sstd.hpp> from multi file.
 
-/*
+//*
 // Remove comment out when you test it.
 #include "test/file/cp.hpp"
 #include "test/file/csv.hpp"
@@ -26,8 +26,8 @@
 
 #include "test/hashFnc_of_MD5_SHA1_SHA2/hashSum.hpp"
 #include "test/hashFnc_of_MD5_SHA1_SHA2/sstd_md5_sha1_sha2_wrapper.hpp"
-*/
-#include "test/string/encode_decode.hpp"/*
+
+#include "test/string/encode_decode.hpp"
 #include "test/string/strEdit.hpp"
 #include "test/string/strmatch.hpp"
 #include "test/string/utf8.hpp"
