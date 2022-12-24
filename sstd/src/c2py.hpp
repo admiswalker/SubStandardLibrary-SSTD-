@@ -24,7 +24,7 @@
 #include "string/strEdit.hpp"
 #include "string/strmatch.hpp"
 #include "file/path.hpp"
-#include "pid.hpp"
+#include "sys/pid.hpp"
 #include "matrixContainer_colMajor/mat_c.hpp"
 #include "matrixContainer_rowMajor/mat_r.hpp"
 

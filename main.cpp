@@ -31,6 +31,9 @@
 #include "test/string/strmatch.hpp"
 #include "test/string/utf8.hpp"
 
+#include "test/sys/status.hpp"
+#include "test/sys/stdlib.hpp"
+
 #include "test/time/time.hpp"
 #include "test/time/measureTime.hpp"
 
@@ -42,8 +45,6 @@
 #include "test/math.hpp"
 #include "test/print/pdbg.hpp"
 #include "test/print/print_printn_printn_all.hpp" // void pdbg(){ printf("======p\n"); } // #define DEBUG を定義しない場合でも，マクロでこの名前は使えなくなるので，名前空間を汚しており，本当はよくない．
-#include "test/status.hpp"
-#include "test/stdlib.hpp"
 #include "test/typeConversion.hpp"
 //*/
 

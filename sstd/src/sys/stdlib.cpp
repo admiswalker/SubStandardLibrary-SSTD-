@@ -2,8 +2,8 @@
 #include <string>
 
 #include "stdlib.hpp"
-#include "print/pdbg.hpp"
-#include "file/file.hpp"
+#include "../print/pdbg.hpp"
+#include "../file/file.hpp"
 
 
 int sstd::system(const        char* cmd){ return ::system(cmd        ); }

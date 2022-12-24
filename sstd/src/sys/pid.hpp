@@ -1,5 +1,5 @@
 #pragma once
-#include "./typeDef.h"
+#include "../typeDef.h"
 
 namespace sstd{
     int32 getpid();

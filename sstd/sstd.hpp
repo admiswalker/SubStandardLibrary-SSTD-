@@ -49,6 +49,11 @@
 #include "src/string/strmatch.hpp"
 #include "src/string/utf8.hpp"
 
+#include "src/sys/pause.hpp"
+#include "src/sys/pid.hpp"
+#include "src/sys/status.hpp"
+#include "src/sys/stdlib.hpp"
+
 #include "src/time/measureTime.hpp"
 #include "src/time/time.hpp"
 #include "src/time/sleep.hpp" // use_sstd_gcc4_4_7
@@ -61,10 +66,6 @@
 #include "src/typeConversion.hpp"
 #include "src/itr.hpp"
 #include "src/encode_decode.hpp"
-#include "src/pause.hpp"
-#include "src/pid.hpp"
-#include "src/status.hpp"
-#include "src/stdlib.hpp"
 
 #include "src/linearAlgebra/matCal.hpp"
 #include "src/matrixContainer_binary/bmat.hpp"
