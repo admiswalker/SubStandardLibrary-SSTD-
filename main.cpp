@@ -27,6 +27,11 @@
 #include "test/hashFnc_of_MD5_SHA1_SHA2/hashSum.hpp"
 #include "test/hashFnc_of_MD5_SHA1_SHA2/sstd_md5_sha1_sha2_wrapper.hpp"
 
+#include "test/print/pdbg.hpp"
+#include "test/print/print_printn_printn_all.hpp" // void pdbg(){ printf("======p\n"); } // #define DEBUG を定義しない場合でも，マクロでこの名前は使えなくなるので，名前空間を汚しており，本当はよくない．
+
+#include "test/python/c2py.hpp"
+
 #include "test/string/encode_decode.hpp"
 #include "test/string/strEdit.hpp"
 #include "test/string/strmatch.hpp"
@@ -42,10 +47,7 @@
 #include "test/vector/stdVector_expansion.hpp" // stdVector_expansion of operators
 #include "test/vector/vvec.hpp"
 
-#include "test/c2py.hpp"
 #include "test/math.hpp"
-#include "test/print/pdbg.hpp"
-#include "test/print/print_printn_printn_all.hpp" // void pdbg(){ printf("======p\n"); } // #define DEBUG を定義しない場合でも，マクロでこの名前は使えなくなるので，名前空間を汚しており，本当はよくない．
 #include "test/typeConversion.hpp"
 //*/
 
