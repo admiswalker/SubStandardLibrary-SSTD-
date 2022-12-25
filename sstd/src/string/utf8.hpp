@@ -1,6 +1,6 @@
 #pragma once
 #include <stdio.h>
-#include "../typeDef.h"
+#include "../definitions/typeDef.h"
 
 
 namespace sstd{ class utf8; }

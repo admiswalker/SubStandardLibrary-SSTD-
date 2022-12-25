@@ -2,7 +2,7 @@
 
 #include <string>
 #include <vector>
-#include "../typeDef.h"
+#include "../definitions/typeDef.h"
 
 
 namespace sstd{

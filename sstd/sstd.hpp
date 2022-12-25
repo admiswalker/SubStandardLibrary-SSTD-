@@ -27,6 +27,17 @@
 
 // 数値計算系の関数 (スプライン補完等)
 
+#include "src/cast/typeConversion.hpp"
+
+#include "src/container/matrixContainer_binary/bmat.hpp"
+#include "src/container/vector/slice.hpp"
+#include "src/container/vector/stdVector_expansion.hpp"
+#include "src/container/vector/typeDef.hpp"
+#include "src/container/vector/vvec.hpp"
+
+#include "src/definitions/typeDef.h"
+#include "src/definitions/itr.hpp"
+
 #include "src/file/cp.hpp"
 #include "src/file/csv.hpp"
 #include "src/file/file.hpp"
@@ -41,8 +52,16 @@
 #include "src/file/rm.hpp"
 #include "src/file/tinyInterpreter.hpp"
 
-#include "src/hashFnc_of_MD5_SHA1_SHA2/hashSum.hpp"
-#include "src/hashFnc_of_MD5_SHA1_SHA2/sstd_md5_sha1_sha2_wrapper.hpp"
+#include "src/math/hashFnc_of_MD5_SHA1_SHA2/hashSum.hpp"
+#include "src/math/hashFnc_of_MD5_SHA1_SHA2/sstd_md5_sha1_sha2_wrapper.hpp"
+#include "src/math/linearAlgebra/matCal.hpp"
+#include "src/math/math.hpp"
+#include "src/math/signal.hpp"
+
+//#include "src/print/pdbg.hpp" // 後ろで include しないと，extern での定義を置換してしまう．
+//#include "src/print/print.hpp" // 後ろで include しないと，extern での定義を置換してしまう．
+
+#include "src/python/c2py.hpp"
 
 #include "src/string/encode_decode.hpp"
 #include "src/string/ssprintf.hpp"
@@ -59,22 +78,10 @@
 #include "src/time/time.hpp"
 #include "src/time/sleep.hpp" // use_sstd_gcc4_4_7
 
-#include "src/typeDef.h"
-//#include "src/pdbg.hpp" // 後ろで include しないと，extern での定義を置換してしまう．
-//#include "src/print.hpp" // 後ろで include しないと，extern での定義を置換してしまう．
-#include "src/math.hpp"
-#include "src/signal.hpp"
-#include "src/typeConversion.hpp"
-#include "src/itr.hpp"
+//---
 
-#include "src/linearAlgebra/matCal.hpp"
-#include "src/matrixContainer_binary/bmat.hpp"
-#include "src/vector/slice.hpp"
-#include "src/vector/stdVector_expansion.hpp"
-#include "src/vector/typeDef.hpp"
-#include "src/vector/vvec.hpp"
-#include "src/matrixContainer_colMajor/mat_c.hpp" // Because of this header use "pdbg.hpp", we need to define after namespace sstd{}.
-#include "src/matrixContainer_rowMajor/mat_r.hpp" // Because of this header use "pdbg.hpp", we need to define after namespace sstd{}.
+#include "src/container/matrixContainer_colMajor/mat_c.hpp" // Because of this header use "pdbg.hpp", we need to define after namespace sstd{}.
+#include "src/container/matrixContainer_rowMajor/mat_r.hpp" // Because of this header use "pdbg.hpp", we need to define after namespace sstd{}.
 
 #include "src/print/pdbg.hpp"                     // In order to avoid conflict of "pdbg.hpp", we need to define after namespace sstd{}.
 #include "src/print/print.hpp"                    // In order to avoid conflict of "print.hpp", we need to define after namespace sstd{}.
@@ -97,5 +104,3 @@
     #undef printn_all_c
 #endif
 
-// 上記で関数を示さない応用ライブラリは下記に列挙する
-#include "src/python/c2py.hpp"

@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
-#include "../typeDef.h"
+#include "../definitions/typeDef.h"
 #include "../file/glob.hpp"
 
 

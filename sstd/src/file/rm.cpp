@@ -3,7 +3,7 @@
 #include "glob.hpp"
 #include "path.hpp"
 #include "../print/pdbg.hpp"
-#include "../typeDef.h"
+#include "../definitions/typeDef.h"
 
 #include <vector>
 #include <dirent.h>

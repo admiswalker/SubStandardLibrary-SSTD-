@@ -15,7 +15,7 @@
 #include "path.hpp"
 #include "../print/pdbg.hpp"
 #include "../string/strmatch.hpp"
-#include "../typeDef.h"
+#include "../definitions/typeDef.h"
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 

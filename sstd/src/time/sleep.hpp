@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "../typeDef.h"
+#include "../definitions/typeDef.h"
 
 #include "../../compileOption.hpp"
 #ifndef use_sstd_gcc4_4_7

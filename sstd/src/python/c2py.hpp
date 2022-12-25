@@ -14,14 +14,14 @@
     #define omp_get_max_threads() 1
 #endif
 
-#include "../typeDef.h"
+#include "../container/matrixContainer_colMajor/mat_c.hpp"
+#include "../container/matrixContainer_rowMajor/mat_r.hpp"
+#include "../definitions/typeDef.h"
 #include "../file/file.hpp"
 #include "../file/read_write.hpp"
 #include "../file/rm.hpp"
 #include "../file/mkdir.hpp"
 #include "../file/path.hpp"
-#include "../matrixContainer_colMajor/mat_c.hpp"
-#include "../matrixContainer_rowMajor/mat_r.hpp"
 #include "../string/ssprintf.hpp"
 #include "../string/strEdit.hpp"
 #include "../string/strmatch.hpp"

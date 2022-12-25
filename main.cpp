@@ -15,6 +15,12 @@
 
 //*
 // Remove comment out when you test it.
+#include "test/cast/typeConversion.hpp"
+
+#include "test/container/vector/slice.hpp"
+#include "test/container/vector/stdVector_expansion.hpp" // stdVector_expansion of operators
+#include "test/container/vector/vvec.hpp"
+
 #include "test/file/cp.hpp"
 #include "test/file/csv.hpp"
 #include "test/file/file.hpp"
@@ -24,8 +30,9 @@
 #include "test/file/read_write.hpp"
 #include "test/file/tinyInterpreter.hpp"
 
-#include "test/hashFnc_of_MD5_SHA1_SHA2/hashSum.hpp"
-#include "test/hashFnc_of_MD5_SHA1_SHA2/sstd_md5_sha1_sha2_wrapper.hpp"
+#include "test/math/hashFnc_of_MD5_SHA1_SHA2/hashSum.hpp"
+#include "test/math/hashFnc_of_MD5_SHA1_SHA2/sstd_md5_sha1_sha2_wrapper.hpp"
+#include "test/math/math.hpp"
 
 #include "test/print/pdbg.hpp"
 #include "test/print/print_printn_printn_all.hpp" // void pdbg(){ printf("======p\n"); } // #define DEBUG を定義しない場合でも，マクロでこの名前は使えなくなるので，名前空間を汚しており，本当はよくない．
@@ -42,13 +49,6 @@
 
 #include "test/time/time.hpp"
 #include "test/time/measureTime.hpp"
-
-#include "test/vector/slice.hpp"
-#include "test/vector/stdVector_expansion.hpp" // stdVector_expansion of operators
-#include "test/vector/vvec.hpp"
-
-#include "test/math.hpp"
-#include "test/typeConversion.hpp"
 //*/
 
 /*

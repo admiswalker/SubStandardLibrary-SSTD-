@@ -2,7 +2,7 @@
 #ifdef _WIN32
 #else
 
-#include "../typeDef.h"
+#include "../definitions/typeDef.h"
 
 namespace sstd{
     int status_print();

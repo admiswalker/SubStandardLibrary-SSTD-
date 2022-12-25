@@ -1,5 +1,5 @@
 ﻿#include "path.hpp"
-#include "../typeDef.h"
+#include "../definitions/typeDef.h"
 
 #include "file.hpp"   // for fileExist
 #include <string.h>

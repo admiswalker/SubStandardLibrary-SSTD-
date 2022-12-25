@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "./strmatch.hpp"
-#include "../typeDef.h"
+#include "../definitions/typeDef.h"
 
 
 //--------------------------------------------------------------------------------------------------------

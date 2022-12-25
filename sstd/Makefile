@@ -41,18 +41,21 @@
 # ヘッダファイルのディレクトリも追加する必要があります．また，拡張子を記述してはいけません)
 DIR  = ./*.
 DIR += ./src/*.
+DIR += ./src/cast/*.
+DIR += ./src/container/matrixContainer_binary/*.
+DIR += ./src/container/matrixContainer_colMajor/*.
+DIR += ./src/container/matrixContainer_rowMajor/*.
+DIR += ./src/container/vector/*.
+DIR += ./src/definitions/*.
 DIR += ./src/file/*.
-DIR += ./src/hashFnc_of_MD5_SHA1_SHA2/*.
-DIR += ./src/linearAlgebra/*.
-DIR += ./src/matrixContainer_binary/*.
-DIR += ./src/matrixContainer_colMajor/*.
-DIR += ./src/matrixContainer_rowMajor/*.
+DIR += ./src/math/*.
+DIR += ./src/math/hashFnc_of_MD5_SHA1_SHA2/*.
+DIR += ./src/math/linearAlgebra/*.
 DIR += ./src/print/*.
 DIR += ./src/python/*.
 DIR += ./src/string/*.
 DIR += ./src/sys/*.
 DIR += ./src/time/*.
-DIR += ./src/vector/*.
 
 # Name of generate file: 生成ファイル名
 TARGET = libsstd.a

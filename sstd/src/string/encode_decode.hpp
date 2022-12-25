@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <string> // std::string
-#include "../typeDef.h"
+#include "../definitions/typeDef.h"
 
 
 namespace sstd{
