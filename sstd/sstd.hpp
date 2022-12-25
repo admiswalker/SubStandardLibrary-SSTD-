@@ -35,8 +35,9 @@
 #include "src/container/vector/typeDef.hpp"
 #include "src/container/vector/vvec.hpp"
 
-#include "src/definitions/typeDef.h"
 #include "src/definitions/itr.hpp"
+#include "src/definitions/typeDef.h"
+#include "src/definitions/typeNum.hpp"
 
 #include "src/file/cp.hpp"
 #include "src/file/csv.hpp"
