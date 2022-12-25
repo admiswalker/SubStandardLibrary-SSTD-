@@ -123,13 +123,14 @@
 
 sstd::unique_void_ptr::unique_void_ptr(): typeNum(254), pData(NULL) {}
 
-sstd::unique_void_ptr::unique_void_ptr(bool* ptr){
-    this->typeNum = num_bool;
-    this->pData   = ptr;
-}
+#define SSTD_DEF_unique_void_ptr(Type)                  \
+    sstd::unique_void_ptr::unique_void_ptr(Type* ptr){  \
+        this->typeNum = num_bool;                       \
+        this->pData   = ptr;                            \
+    }
 
-sstd::unique_void_ptr::unique_void_ptr(int* ptr){
-}
+SSTD_DEF_unique_void_ptr(bool);
+SSTD_DEF_unique_void_ptr(int);
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // destructor
