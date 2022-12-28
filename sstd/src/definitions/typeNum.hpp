@@ -136,22 +136,22 @@ namespace sstd{
     uchar type2num(     uint64 rhs);
     uchar type2num(      float rhs);
     uchar type2num(     double rhs);
-    uchar type2num(std::string rhs);
+    uchar type2num(const std::string& rhs);
 
-    uchar type2num(std::vector<       bool> rhs);
-    uchar type2num(std::vector<       char> rhs);
-  //uchar type2num(std::vector<      uchar> rhs); // same as uint8
-    uchar type2num(std::vector<       int8> rhs);
-    uchar type2num(std::vector<      int16> rhs);
-    uchar type2num(std::vector<      int32> rhs);
-    uchar type2num(std::vector<      int64> rhs);
-    uchar type2num(std::vector<      uint8> rhs);
-    uchar type2num(std::vector<     uint16> rhs);
-    uchar type2num(std::vector<     uint32> rhs);
-    uchar type2num(std::vector<     uint64> rhs);
-    uchar type2num(std::vector<      float> rhs);
-    uchar type2num(std::vector<     double> rhs);
-    uchar type2num(std::vector<std::string> rhs);
+    uchar type2num(const std::vector<       bool>& rhs);
+    uchar type2num(const std::vector<       char>& rhs);
+  //uchar type2num(const std::vector<      uchar>& rhs); // same as uint8
+    uchar type2num(const std::vector<       int8>& rhs);
+    uchar type2num(const std::vector<      int16>& rhs);
+    uchar type2num(const std::vector<      int32>& rhs);
+    uchar type2num(const std::vector<      int64>& rhs);
+    uchar type2num(const std::vector<      uint8>& rhs);
+    uchar type2num(const std::vector<     uint16>& rhs);
+    uchar type2num(const std::vector<     uint32>& rhs);
+    uchar type2num(const std::vector<     uint64>& rhs);
+    uchar type2num(const std::vector<      float>& rhs);
+    uchar type2num(const std::vector<     double>& rhs);
+    uchar type2num(const std::vector<std::string>& rhs);
 };
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

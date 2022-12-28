@@ -36,27 +36,6 @@
 
 # Please set each item: 各項目を設定してください
 
-# Set files to do "$ make". If you cont line num of header files, you also need to add header files.
-# ソースファイルの場所 ($make steps コマンドで，ヘッダファイルの行数もカウントする場合は，
-# ヘッダファイルのディレクトリも追加する必要があります．また，拡張子を記述してはいけません)
-DIR  = ./*.
-DIR += ./src/*.
-DIR += ./src/cast/*.
-DIR += ./src/container/matrixContainer_binary/*.
-DIR += ./src/container/matrixContainer_colMajor/*.
-DIR += ./src/container/matrixContainer_rowMajor/*.
-DIR += ./src/container/vector/*.
-DIR += ./src/definitions/*.
-DIR += ./src/file/*.
-DIR += ./src/math/*.
-DIR += ./src/math/hashFnc_of_MD5_SHA1_SHA2/*.
-DIR += ./src/math/linearAlgebra/*.
-DIR += ./src/print/*.
-DIR += ./src/python/*.
-DIR += ./src/string/*.
-DIR += ./src/sys/*.
-DIR += ./src/time/*.
-
 # Name of generate file: 生成ファイル名
 TARGET = libsstd.a
 
@@ -67,30 +46,28 @@ CFLAGS += -O3
 
 #============================================================
 
-SRCDIR   = $(patsubst %., %.cpp, $(DIR))
-SRCS     = $(wildcard $(SRCDIR))
+SRC_DIR := ./src
 
-HDIR     = $(patsubst %., %.h, $(DIR))
-HEADS    = $(wildcard $(HDIR))
+CPP_SRCS      := $(shell find $(SRC_DIR) -type f -name '*.cpp')
+HPP_SRCS      := $(shell find $(SRC_DIR) -type f -name '*.hpp')
+H_SRCS        := $(shell find $(SRC_DIR) -type f -name '*.h')
+BASE_HPP_SRCS := 'sstd.hpp' 'compileOption.hpp'
+PY_SRCS       := $(shell find $(SRC_DIR) -type f -name '*.py')
 
-# for "./sstd/src/c2py.py"
-PYDIR    = $(patsubst %., %.py, $(DIR))
-PYS      = $(wildcard $(PYDIR))
-
-HPPDIR   = $(patsubst %., %.hpp, $(DIR))
-HEADppS  = $(wildcard $(HPPDIR))
+SRCS = $(CPP_SRCS) $(HPP_SRCS) $(H_SRCS) $(BASE_HPP_SRCS) $(PY_SRCS)
 
 TEMP_DIR = tmpMake
-OBJS     = $(addprefix $(TEMP_DIR)/, $(patsubst %.cpp, %.o, $(SRCS)))
-#OBJS     = $(addprefix $(TEMP_DIR)/, $(SRCS:%.cpp=%.o))#別表記
+OBJS     = $(addprefix $(TEMP_DIR)/, $(patsubst %.cpp, %.o, $(CPP_SRCS)))
+#OBJS     = $(addprefix $(TEMP_DIR)/, $(CPP_SRCS:%.cpp=%.o))#別表記
 
-DEPS  = $(addprefix $(TEMP_DIR)/, $(patsubst %.cpp, %.d, $(SRCS)))
-#DEPS  = $(addprefix $(TEMP_DIR)/, $(SRCS:%.cpp=%.d))#別表記
+DEPS  = $(addprefix $(TEMP_DIR)/, $(patsubst %.cpp, %.d, $(CPP_SRCS)))
+#DEPS  = $(addprefix $(TEMP_DIR)/, $(CPP_SRCS:%.cpp=%.d))#別表記
 
 
 # $(TARGET) を生成する
 # .a ファイルとしてオブジェクトファイルを梱包する
 $(TARGET): $(OBJS)
+	@echo $(HPP_SRCS)
 	@echo -e "\n============================================================\n"
 	@echo -e "SRCS: \n$(SRCS)\n"
 	@echo -e "OBJS: \n$(OBJS)\n"
@@ -103,10 +80,11 @@ $(TARGET): $(OBJS)
 
 
 .PHONY: COPY_heads
-COPY_heads: $(HEADppS) $(HEADS) $(PYS)
+COPY_heads: $(HPP_SRCS) $(H_SRCS) $(PY_SRCS)
 	@echo "COPY_heads"
 	@mkdir -p ./include/sstd
 	@cp LICENSE ./include/sstd/
+	@cp $(BASE_HPP_SRCS) ./include/sstd/
 	@echo $^ | xargs -n 1 | xargs -I {} cp {} ./include/sstd --parents -P
 
 
@@ -137,7 +115,7 @@ all:
 
 
 .PHONY: steps
-steps: $(SRCS) $(HEADppS) $(HEADS)
+steps: $(SRCS)
 	@echo "$^" | xargs wc -l
 
 

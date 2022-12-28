@@ -59,6 +59,8 @@
 #include "src/math/math.hpp"
 #include "src/math/signal.hpp"
 
+#include "src/memory/unique_void_ptr.hpp"
+
 //#include "src/print/pdbg.hpp" // 後ろで include しないと，extern での定義を置換してしまう．
 //#include "src/print/print.hpp" // 後ろで include しないと，extern での定義を置換してしまう．
 
@@ -78,8 +80,6 @@
 #include "src/time/measureTime.hpp"
 #include "src/time/time.hpp"
 #include "src/time/sleep.hpp" // use_sstd_gcc4_4_7
-
-#include "src/unique_void_ptr.hpp"
 
 //---
 
