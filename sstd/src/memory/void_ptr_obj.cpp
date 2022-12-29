@@ -56,47 +56,15 @@ SSTD_DEF_void_ptr_obj(std::vector<std::string>);
 // destructor
 
 sstd::void_ptr_obj::~void_ptr_obj(){
-    if(this->pData==NULL){ return; }
-    
-    switch (this->typeNumber){
-        
-    case sstd::num_bool  : { delete (       bool*)pData; } break;
-    case sstd::num_char  : { delete (       char*)pData; } break;
-    case sstd::num_int8  : { delete (      int8 *)pData; } break;
-    case sstd::num_int16 : { delete (      int16*)pData; } break;
-    case sstd::num_int32 : { delete (      int32*)pData; } break;
-    case sstd::num_int64 : { delete (      int64*)pData; } break;
-    case sstd::num_uint8 : { delete (     uint8 *)pData; } break;
-    case sstd::num_uint16: { delete (     uint16*)pData; } break;
-    case sstd::num_uint32: { delete (     uint32*)pData; } break;
-    case sstd::num_uint64: { delete (     uint64*)pData; } break;
-    case sstd::num_float : { delete (      float*)pData; } break;
-    case sstd::num_double: { delete (     double*)pData; } break;
-    case sstd::num_str   : { delete (std::string*)pData; } break;
-        
-    case sstd::num_vec_bool  : { delete (std::vector<       bool>*)pData; } break;
-    case sstd::num_vec_char  : { delete (std::vector<       char>*)pData; } break;
-    case sstd::num_vec_int8  : { delete (std::vector<      int8 >*)pData; } break;
-    case sstd::num_vec_int16 : { delete (std::vector<      int16>*)pData; } break;
-    case sstd::num_vec_int32 : { delete (std::vector<      int32>*)pData; } break;
-    case sstd::num_vec_int64 : { delete (std::vector<      int64>*)pData; } break;
-    case sstd::num_vec_uint8 : { delete (std::vector<     uint8 >*)pData; } break;
-    case sstd::num_vec_uint16: { delete (std::vector<     uint16>*)pData; } break;
-    case sstd::num_vec_uint32: { delete (std::vector<     uint32>*)pData; } break;
-    case sstd::num_vec_uint64: { delete (std::vector<     uint64>*)pData; } break;
-    case sstd::num_vec_float : { delete (std::vector<      float>*)pData; } break;
-    case sstd::num_vec_double: { delete (std::vector<     double>*)pData; } break;
-    case sstd::num_vec_str   : { delete (std::vector<std::string>*)pData; } break;
-        
-    default: { sstd::pdbg("ERROR: free() memory is failed. typeNum '%d' is not defined.", this->typeNumber); } break;
-        
-    }
+    sstd::void_ptr_obj::free(*this);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // member functions
 
 void sstd::void_ptr_obj::copy(class void_ptr_obj& rhs, const class void_ptr_obj& lhs){
+    sstd::void_ptr_obj::free(rhs);
+    
     rhs.typeNumber = lhs.typeNumber;
     if(lhs.pData==NULL){ rhs.pData=NULL; return; }
     
@@ -132,6 +100,39 @@ void sstd::void_ptr_obj::copy(class void_ptr_obj& rhs, const class void_ptr_obj&
         
     default: { sstd::pdbg("ERROR: allocating memory is failed. typeNum '%d' is not defined.", rhs.typeNumber); } break;
         
+    }
+}
+void sstd::void_ptr_obj::free(class void_ptr_obj& rhs){
+    if(this->pData==NULL){ return; }
+    
+    switch (this->typeNumber){
+    case sstd::num_bool  : { delete (       bool*)pData; } break;
+    case sstd::num_char  : { delete (       char*)pData; } break;
+    case sstd::num_int8  : { delete (      int8 *)pData; } break;
+    case sstd::num_int16 : { delete (      int16*)pData; } break;
+    case sstd::num_int32 : { delete (      int32*)pData; } break;
+    case sstd::num_int64 : { delete (      int64*)pData; } break;
+    case sstd::num_uint8 : { delete (     uint8 *)pData; } break;
+    case sstd::num_uint16: { delete (     uint16*)pData; } break;
+    case sstd::num_uint32: { delete (     uint32*)pData; } break;
+    case sstd::num_uint64: { delete (     uint64*)pData; } break;
+    case sstd::num_float : { delete (      float*)pData; } break;
+    case sstd::num_double: { delete (     double*)pData; } break;
+    case sstd::num_str   : { delete (std::string*)pData; } break;
+    case sstd::num_vec_bool  : { delete (std::vector<       bool>*)pData; } break;
+    case sstd::num_vec_char  : { delete (std::vector<       char>*)pData; } break;
+    case sstd::num_vec_int8  : { delete (std::vector<      int8 >*)pData; } break;
+    case sstd::num_vec_int16 : { delete (std::vector<      int16>*)pData; } break;
+    case sstd::num_vec_int32 : { delete (std::vector<      int32>*)pData; } break;
+    case sstd::num_vec_int64 : { delete (std::vector<      int64>*)pData; } break;
+    case sstd::num_vec_uint8 : { delete (std::vector<     uint8 >*)pData; } break;
+    case sstd::num_vec_uint16: { delete (std::vector<     uint16>*)pData; } break;
+    case sstd::num_vec_uint32: { delete (std::vector<     uint32>*)pData; } break;
+    case sstd::num_vec_uint64: { delete (std::vector<     uint64>*)pData; } break;
+    case sstd::num_vec_float : { delete (std::vector<      float>*)pData; } break;
+    case sstd::num_vec_double: { delete (std::vector<     double>*)pData; } break;
+    case sstd::num_vec_str   : { delete (std::vector<std::string>*)pData; } break;
+    default: { sstd::pdbg("ERROR: free() memory is failed. typeNum '%d' is not defined.", this->typeNumber); } break;
     }
 }
 void sstd::void_ptr_obj::move(class void_ptr_obj& rhs, class void_ptr_obj&& lhs){
