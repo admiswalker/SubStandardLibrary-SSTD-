@@ -60,6 +60,7 @@
 #include "src/math/signal.hpp"
 
 #include "src/memory/unique_void_ptr.hpp"
+#include "src/memory/void_ptr_obj.hpp"
 
 //#include "src/print/pdbg.hpp" // 後ろで include しないと，extern での定義を置換してしまう．
 //#include "src/print/print.hpp" // 後ろで include しないと，extern での定義を置換してしまう．

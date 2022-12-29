@@ -37,6 +37,7 @@
 #include "test/math/math.hpp"
 
 #include "test/memory/unique_void_ptr.hpp"
+#include "test/memory/void_ptr_obj.hpp"
 
 #include "test/print/pdbg.hpp"
 #include "test/print/print_printn_printn_all.hpp" // void pdbg(){ printf("======p\n"); } // #define DEBUG を定義しない場合でも，マクロでこの名前は使えなくなるので，名前空間を汚しており，本当はよくない．

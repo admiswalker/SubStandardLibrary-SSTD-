@@ -14,10 +14,10 @@ sstd::unique_void_ptr::unique_void_ptr(class unique_void_ptr&& rhs){ // move con
 }
 
 
-#define SSTD_DEF_unique_void_ptr(Type)                        \
-    sstd::unique_void_ptr::unique_void_ptr(Type* ptr){        \
-        this->typeNumber    = sstd::type2num(Type());         \
-        this->pData = ptr;                                    \
+#define SSTD_DEF_unique_void_ptr(Type)                             \
+    sstd::unique_void_ptr::unique_void_ptr(Type* ptr){             \
+        this->typeNumber = sstd::type2num(Type());                 \
+        this->pData      = ptr;                                    \
     }
 
 SSTD_DEF_unique_void_ptr(       bool);
