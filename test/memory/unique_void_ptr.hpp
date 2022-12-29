@@ -1,8 +1,22 @@
 #pragma once
 
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// constructors
 
-TEST(unique_void_ptr, constructor_empty){
+TEST(unique_void_ptr, constructor_default_constructor){
     sstd::unique_void_ptr void_ptr = sstd::unique_void_ptr();
+}
+TEST(unique_void_ptr, constructor_copy_constructor){
+//    sstd::unique_void_ptr void_ptr_01;
+//    sstd::unique_void_ptr void_ptr_02 = sstd::unique_void_ptr(void_ptr_01); // Because of the copy constructor is deleted, this line can not compileable.
+}
+TEST(unique_void_ptr, constructor_move_constructor_01){
+    sstd::unique_void_ptr void_ptr_01;
+    sstd::unique_void_ptr void_ptr_02 = sstd::unique_void_ptr(std::move(void_ptr_01));
+}
+TEST(unique_void_ptr, constructor_move_constructor_02){
+    sstd::unique_void_ptr void_ptr_01;
+    sstd::unique_void_ptr void_ptr_02 = sstd::unique_void_ptr((sstd::unique_void_ptr&&)void_ptr_01);
 }
 
 //---
@@ -91,7 +105,8 @@ TEST(unique_void_ptr, constructor_vec_str){
     sstd::unique_void_ptr void_ptr = sstd::unique_void_ptr(new std::vector<std::string>({""}));
 }
 
-//---
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// member functions
 
 TEST(unique_void_ptr, typeNum){
     sstd::unique_void_ptr void_ptr = sstd::unique_void_ptr(new std::vector<std::string>({""}));
@@ -108,5 +123,5 @@ TEST(unique_void_ptr, ptr){
     ASSERT_TRUE((*ptr)==vec_ans);
 }
 
-//---
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 

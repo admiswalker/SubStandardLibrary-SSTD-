@@ -7,7 +7,12 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // constructors
 
-sstd::unique_void_ptr::unique_void_ptr(): typeNumber(254), pData(NULL) {}
+sstd::unique_void_ptr::unique_void_ptr(): typeNumber(sstd::num_null), pData(NULL) {}
+sstd::unique_void_ptr::unique_void_ptr(class unique_void_ptr&& rhs){ // move constructor
+    this->typeNumber = rhs.typeNumber; rhs.typeNumber=sstd::num_null;
+    this->pData      = rhs.pData;      rhs.pData=NULL;
+}
+
 
 #define SSTD_DEF_unique_void_ptr(Type)                        \
     sstd::unique_void_ptr::unique_void_ptr(Type* ptr){        \

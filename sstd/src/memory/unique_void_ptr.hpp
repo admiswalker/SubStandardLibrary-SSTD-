@@ -12,7 +12,9 @@ namespace sstd{
         uint typeNumber;
         void* pData;
     public:
-        unique_void_ptr();
+        unique_void_ptr(); // default constructor
+        unique_void_ptr(const class unique_void_ptr&  rhs) = delete; // copy constructor (Note: disabled)
+        unique_void_ptr(      class unique_void_ptr&& rhs); // move constructor
         
         unique_void_ptr(       bool* ptr);
         unique_void_ptr(       char* ptr);

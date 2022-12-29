@@ -9,6 +9,7 @@
 namespace sstd{
     const static uchar        num_void   = 200;
     const static uchar        num_len    = 201;
+    const static uchar        num_null   = 255;
 
     const static uchar        num_bool   =   0;
     const static uchar        num_char   =   1;
