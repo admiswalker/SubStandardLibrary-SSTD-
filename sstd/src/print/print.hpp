@@ -7,6 +7,7 @@
 
 
 namespace sstd{
+    void print_for_vT(const  void* rhs);
     void print_for_vT(const  bool  rhs);
     void print_for_vT(const  char  rhs);
     void print_for_vT(const  int8  rhs);
@@ -32,6 +33,7 @@ namespace sstd{
         printf("]");
     }
     
+    void print(const  void* rhs);
     void print(const  bool  rhs);
     void print(const  char  rhs);
     void print(const  int8  rhs);
@@ -63,6 +65,7 @@ namespace sstd{
     template <typename T_lhs, typename T_rhs>
     void print(const std::unordered_map<T_lhs, T_rhs>& rhs){ sstd::print_table_base<T_lhs, T_rhs>(rhs); printf("\n"); }
     
+    void for_printn( void* rhs);
     void for_printn( bool  rhs);
     void for_printn( char  rhs);
     void for_printn( int8  rhs);

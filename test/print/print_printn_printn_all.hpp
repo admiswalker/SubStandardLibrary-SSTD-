@@ -25,6 +25,40 @@ TEST(print, print_table){
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // for_printn
 
+TEST(print, for_printn_voidp){
+    {
+        int8 i = 123;
+        
+        testing::internal::CaptureStdout();
+        sstd::for_printn(&i);
+        std::string res = testing::internal::GetCapturedStdout();
+        
+        testing::internal::CaptureStdout();
+        printf(" = %p\n", &i);
+        std::string ans = testing::internal::GetCapturedStdout();
+        
+        ASSERT_STREQ(res.c_str(), ans.c_str());
+    }
+    {
+        const char* pc = "abcdef";
+        
+        testing::internal::CaptureStdout();
+        sstd::for_printn(pc);
+        ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), " = \"abcdef\"\n");
+    }
+    {
+        const char* pc = "abcdef";
+        testing::internal::CaptureStdout();
+        sstd::for_printn((void*)pc);
+        std::string res = testing::internal::GetCapturedStdout();
+        
+        testing::internal::CaptureStdout();
+        printf(" = %p\n", pc);
+        std::string ans = testing::internal::GetCapturedStdout();
+        
+        ASSERT_STREQ(res.c_str(), ans.c_str());
+    }
+}
 TEST(print, for_printn_bool){
     {
         bool tf = true;

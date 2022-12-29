@@ -5,6 +5,7 @@
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+void sstd::print(const  void* rhs){ printf("%p\n", rhs); }
 void sstd::print(const  bool  rhs){ printf("%s\n", (rhs ? "true" : "false")); }
 void sstd::print(const  char  rhs){ printf("'%c'\n", rhs); }
 void sstd::print(const  int8  rhs){ printf("%d\n", rhs); }
@@ -30,6 +31,7 @@ void sstd::print(const std::string& rhs){ printf("\"%s\"\n", rhs.c_str()); }
 void sstd::print(const struct pathAndType& rhs){ printf("\"path: %s, type: %s\"\n", rhs.path.c_str(), (rhs.type=='f' ? "file" : "directory")); }
 
 
+void sstd::print_for_vT(const  void* rhs){ printf("%p", rhs); }
 void sstd::print_for_vT(const  bool  rhs){ printf("%s", (rhs ? "true" : "false")); }
 void sstd::print_for_vT(const  char  rhs){ printf("'%c'", rhs); }
 void sstd::print_for_vT(const  int8  rhs){ printf("%d", rhs); }
@@ -55,6 +57,7 @@ void sstd::print_for_vT(const std::string& rhs){ printf("\"%s\"", rhs.c_str()); 
 void sstd::print_for_vT(const struct pathAndType& rhs){ printf("\"path: %s, type: %s\"", rhs.path.c_str(), (rhs.type=='f' ? "file" : "directory")); }
 
 
+void sstd::for_printn( void* rhs){ printf(" = "); sstd::print(rhs); }
 void sstd::for_printn( bool  rhs){ printf(" = "); sstd::print(rhs); }
 void sstd::for_printn( char  rhs){ printf(" = "); sstd::print(rhs); }
 void sstd::for_printn( int8  rhs){ printf(" = "); sstd::print(rhs); }
