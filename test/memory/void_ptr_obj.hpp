@@ -120,12 +120,27 @@ TEST(void_ptr_obj, constructor_vec_str){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// operators
+
+TEST(void_ptr_obj, constructor_copy_operator){
+    sstd::void_ptr_obj void_ptr_01 = sstd::void_ptr_obj(new std::string("abc")); // allocates the memory
+    sstd::void_ptr_obj void_ptr_02;
+    void_ptr_02 = void_ptr_01; // copy the object
+    
+    ASSERT_EQ(void_ptr_01.typeNum(), sstd::num_str);
+    ASSERT_EQ(void_ptr_02.typeNum(), sstd::num_str);
+
+    std::string* pStr01 = (std::string*)void_ptr_01.ptr();
+    std::string* pStr02 = (std::string*)void_ptr_02.ptr();
+    
+    ASSERT_STREQ(pStr01->c_str(), "abc");
+    ASSERT_STREQ(pStr02->c_str(), "abc");
+    ASSERT_NE(pStr01, pStr02); // has a different memory address
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 // member functions
 
-TEST(void_ptr_obj, typeNum){
-    sstd::void_ptr_obj void_ptr = sstd::void_ptr_obj(new std::vector<std::string>({""}));
-    ASSERT_EQ(void_ptr.typeNum(), sstd::num_vec_str);
-}
 TEST(void_ptr_obj, ptr){
     sstd::void_ptr_obj void_ptr = sstd::void_ptr_obj(new std::vector<std::string>({"abc"}));
 
@@ -135,6 +150,10 @@ TEST(void_ptr_obj, ptr){
     std::vector<std::string> vec_ans = {"abc", "def"};
     
     ASSERT_TRUE((*ptr)==vec_ans);
+}
+TEST(void_ptr_obj, typeNum){
+    sstd::void_ptr_obj void_ptr = sstd::void_ptr_obj(new std::vector<std::string>({""}));
+    ASSERT_EQ(void_ptr.typeNum(), sstd::num_vec_str);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

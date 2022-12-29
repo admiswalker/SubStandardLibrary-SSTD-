@@ -45,8 +45,12 @@ namespace sstd{
         void_ptr_obj(std::vector<std::string>* ptr);
         
         ~void_ptr_obj();
-
-        uint typeNum();
+        
+        void copy(class void_ptr_obj& rhs, const class void_ptr_obj& lhs);
+        void move(class void_ptr_obj& rhs, class void_ptr_obj&& lhs);
         void* ptr();
+        uint typeNum();
+        
+        class void_ptr_obj& operator=(const class void_ptr_obj& rhs);
     };
 }
