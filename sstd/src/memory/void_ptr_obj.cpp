@@ -62,6 +62,43 @@ sstd::void_ptr_obj::~void_ptr_obj(){
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // member functions
 
+#define SSTD_DEF_overwrite(Type)                              \
+    void sstd::void_ptr_obj::overwrite(Type* ptr){            \
+        sstd::void_ptr_obj::free(*this);                      \
+        this->typeNumber = sstd::type2num(Type());            \
+        this->pData      = ptr;                               \
+    }
+
+SSTD_DEF_overwrite(       bool);
+SSTD_DEF_overwrite(       char);
+//SSTD_DEF_overwrite(      uchar);
+SSTD_DEF_overwrite(      int8 );
+SSTD_DEF_overwrite(      int16);
+SSTD_DEF_overwrite(      int32);
+SSTD_DEF_overwrite(      int64);
+SSTD_DEF_overwrite(     uint8 );
+SSTD_DEF_overwrite(     uint16);
+SSTD_DEF_overwrite(     uint32);
+SSTD_DEF_overwrite(     uint64);
+SSTD_DEF_overwrite(      float);
+SSTD_DEF_overwrite(     double);
+SSTD_DEF_overwrite(std::string);
+
+SSTD_DEF_overwrite(std::vector<       bool>);
+SSTD_DEF_overwrite(std::vector<       char>);
+//SSTD_DEF_overwrite(std::vector<      uchar>);
+SSTD_DEF_overwrite(std::vector<      int8 >);
+SSTD_DEF_overwrite(std::vector<      int16>);
+SSTD_DEF_overwrite(std::vector<      int32>);
+SSTD_DEF_overwrite(std::vector<      int64>);
+SSTD_DEF_overwrite(std::vector<     uint8 >);
+SSTD_DEF_overwrite(std::vector<     uint16>);
+SSTD_DEF_overwrite(std::vector<     uint32>);
+SSTD_DEF_overwrite(std::vector<     uint64>);
+SSTD_DEF_overwrite(std::vector<      float>);
+SSTD_DEF_overwrite(std::vector<     double>);
+SSTD_DEF_overwrite(std::vector<std::string>);
+
 void sstd::void_ptr_obj::copy(class void_ptr_obj& rhs, const class void_ptr_obj& lhs){
     sstd::void_ptr_obj::free(rhs);
     
@@ -134,6 +171,8 @@ void sstd::void_ptr_obj::free(class void_ptr_obj& rhs){
     case sstd::num_vec_str   : { delete (std::vector<std::string>*)pData; } break;
     default: { sstd::pdbg("ERROR: free() memory is failed. typeNum '%d' is not defined.", this->typeNumber); } break;
     }
+
+    this->pData=NULL;
 }
 void sstd::void_ptr_obj::move(class void_ptr_obj& rhs, class void_ptr_obj&& lhs){
     rhs.typeNumber = lhs.typeNumber; lhs.typeNumber=sstd::num_null;

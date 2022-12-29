@@ -45,6 +45,34 @@ namespace sstd{
         void_ptr_obj(std::vector<std::string>* ptr);
         
         ~void_ptr_obj();
+
+        void overwrite(       bool* ptr);
+        void overwrite(       char* ptr);
+        void overwrite(      int8 * ptr);
+        void overwrite(      int16* ptr);
+        void overwrite(      int32* ptr);
+        void overwrite(      int64* ptr);
+        void overwrite(     uint8 * ptr);
+        void overwrite(     uint16* ptr);
+        void overwrite(     uint32* ptr);
+        void overwrite(     uint64* ptr);
+        void overwrite(      float* ptr);
+        void overwrite(     double* ptr);
+        void overwrite(std::string* ptr);
+        
+        void overwrite(std::vector<       bool>* ptr);
+        void overwrite(std::vector<       char>* ptr);
+        void overwrite(std::vector<      int8 >* ptr);
+        void overwrite(std::vector<      int16>* ptr);
+        void overwrite(std::vector<      int32>* ptr);
+        void overwrite(std::vector<      int64>* ptr);
+        void overwrite(std::vector<     uint8 >* ptr);
+        void overwrite(std::vector<     uint16>* ptr);
+        void overwrite(std::vector<     uint32>* ptr);
+        void overwrite(std::vector<     uint64>* ptr);
+        void overwrite(std::vector<      float>* ptr);
+        void overwrite(std::vector<     double>* ptr);
+        void overwrite(std::vector<std::string>* ptr);
         
         void copy(class void_ptr_obj& rhs, const class void_ptr_obj& lhs);
         void free(class void_ptr_obj& rhs);
