@@ -111,6 +111,11 @@ TEST(strEdit, lstrip_c_sc_03){
     std::string ret = sstd::lstrip(str_in, ' ');
     ASSERT_STREQ(ret.c_str(), str_ans.c_str());
 }
+TEST(strEdit, lstrip_vec_01){
+    std::vector<std::string> v = {" a ", " b ", "c", ""};
+    std::vector<std::string> v_ans = {"a ", "b ", "c", ""};
+    ASSERT_TRUE(sstd::lstrip(v)==v_ans);
+}
 
 TEST(strEdit, lstrip_ow_c){
     std::string str_in  = "  abcd  ";
@@ -123,6 +128,12 @@ TEST(strEdit, lstrip_ow_c_02){
     std::string str_ans = "";
     sstd::lstrip_ow(str_in, ' ');
     ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+TEST(strEdit, lstrip_ow_vec_01){
+    std::vector<std::string> v = {" a ", " b ", "c", ""};
+    std::vector<std::string> v_ans = {"a ", "b ", "c", ""};
+    sstd::lstrip_ow(v);
+    ASSERT_TRUE(v==v_ans);
 }
 
 //---
@@ -151,6 +162,11 @@ TEST(strEdit, rstrip_c_sc_03){
     std::string ret = sstd::rstrip(str_in, ' ');
     ASSERT_STREQ(ret.c_str(), str_ans.c_str());
 }
+TEST(strEdit, rstrip_vec_01){
+    std::vector<std::string> v = {" a ", " b ", "c", ""};
+    std::vector<std::string> v_ans = {" a", " b", "c", ""};
+    ASSERT_TRUE(sstd::rstrip(v)==v_ans);
+}
 
 TEST(strEdit, rstrip_ow_c){
     std::string str_in  = "  abcd  ";
@@ -163,6 +179,12 @@ TEST(strEdit, rstrip_ow_c_02){
     std::string str_ans = "";
     sstd::rstrip_ow(str_in, ' ');
     ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+TEST(strEdit, rstrip_ow_vec_01){
+    std::vector<std::string> v = {" a ", " b ", "c", ""};
+    std::vector<std::string> v_ans = {" a", " b", "c", ""};
+    sstd::rstrip_ow(v);
+    ASSERT_TRUE(v==v_ans);
 }
 
 //---

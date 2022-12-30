@@ -6,13 +6,13 @@
 
 //--------------------------------------------------------------------------------------------------------
 
-std::vector<std::string> sstd::rmEmptyLine(const std::vector<std::string>& v){
-    std::vector<std::string> ret_v;
-    for(uint i=0; i<v.size(); ++i){
-        if(v[i].size()==0){ continue; }
-        ret_v.push_back(std::move(v[i]));
+std::vector<std::string> sstd::rmEmptyLine(const std::vector<std::string>& vec){
+    std::vector<std::string> ret_vec;
+    for(uint i=0; i<vec.size(); ++i){
+        if(vec[i].size()==0){ continue; }
+        ret_vec.push_back(vec[i]);
     }
-    return ret_v;
+    return ret_vec;
 }
 
 //--------------------------------------------------------------------------------------------------------
@@ -100,13 +100,19 @@ std::string lstrip_base(const uchar* str){
     
     return ret;
 }
-std::string sstd::lstrip(const        char* str){ return lstrip_base((const uchar*)str        ); }
-std::string sstd::lstrip(const std::string& str){ return lstrip_base((const uchar*)str.c_str()); }
+std::string              sstd::lstrip(const                    char * str){ return lstrip_base((const uchar*)str        ); }
+std::string              sstd::lstrip(const             std::string & str){ return lstrip_base((const uchar*)str.c_str()); }
+std::vector<std::string> sstd::lstrip(const std::vector<std::string>& vec){
+    std::vector<std::string> ret_vec(vec.size());
+    for(uint i=0; i<vec.size(); ++i){ ret_vec[i]=lstrip_base((const uchar*)vec[i].c_str()); }
+    return ret_vec;
+}
 
 void sstd::lstrip_ow(std::string& str){
     std::string sre_ret = sstd::lstrip(str);
     str = std::move(sre_ret);
 }
+void sstd::lstrip_ow(std::vector<std::string>& vec){ for(uint i=0;i<vec.size();++i){sstd::lstrip_ow(vec[i]);} }
 
 std::string rstrip_base(const uchar* str, int len){
     int r=len-1;
@@ -116,8 +122,13 @@ std::string rstrip_base(const uchar* str, int len){
     }
     return std::string((const char*)str, r+1);
 }
-std::string sstd::rstrip(const        char* str){ return rstrip_base((const uchar*)str,         strlen(str)); }
-std::string sstd::rstrip(const std::string& str){ return rstrip_base((const uchar*)str.c_str(), str.size() ); }
+std::string              sstd::rstrip(const                    char * str){ return rstrip_base((const uchar*)str,         strlen(str)); }
+std::string              sstd::rstrip(const             std::string & str){ return rstrip_base((const uchar*)str.c_str(), str.size() ); }
+std::vector<std::string> sstd::rstrip(const std::vector<std::string>& vec){
+    std::vector<std::string> ret_vec(vec.size());
+    for(uint i=0; i<vec.size(); ++i){ ret_vec[i]=rstrip_base((const uchar*)vec[i].c_str(), vec[i].size()); }
+    return ret_vec;
+}
 
 void sstd::rstrip_ow(std::string& str){
     for(int r=str.size()-1; r>=0; --r){
@@ -125,6 +136,7 @@ void sstd::rstrip_ow(std::string& str){
         }             else             { break; }
     }
 }
+void sstd::rstrip_ow(std::vector<std::string>& vec){ for(uint i=0;i<vec.size();++i){sstd::rstrip_ow(vec[i]);} }
 
 std::string strip_base(const uchar* str){
     std::string ret = lstrip_base(str);

@@ -5,7 +5,7 @@
 #include <vector>
 
 namespace sstd{
-    std::vector<std::string> rmEmptyLine(const std::vector<std::string>& v);
+    std::vector<std::string> rmEmptyLine(const std::vector<std::string>& vec);
     
     std::vector<std::string> splitByLine(const        char* str);
     std::vector<std::string> splitByLine(const std::string& str);
@@ -14,15 +14,19 @@ namespace sstd{
     std::vector<std::string> split(const std::string& str, const char X);
     
     // remove space or tab.
-    std::string              lstrip   (const        char* str); // removing head spaces
-    std::string              lstrip   (const std::string& str); // removing head spaces
-    void                     lstrip_ow(      std::string& str); // removing head spaces. ow: overwrite
-    std::string              rstrip   (const        char* str); // removing tail spaces
-    std::string              rstrip   (const std::string& str); // removing tail spaces
-    void                     rstrip_ow(      std::string& str); // removing tail spaces. ow: overwrite
-    std::string               strip   (const        char* str); // removing head and tail tab and spaces
-    std::string               strip   (const std::string& str); // removing head and tail tab and spaces
-    void                      strip_ow(      std::string& str); // removing head and tail tab and spaces. ow: overwrite
+    std::string              lstrip   (const                    char * str); // removing head tab and spaces
+    std::string              lstrip   (const             std::string & str); // removing head tab and spaces
+    std::vector<std::string> lstrip   (const std::vector<std::string>& vec); // removing tail tab and spaces
+    void                     lstrip_ow(                  std::string & str); // removing head tab and spaces. ow: overwrite
+    void                     lstrip_ow(      std::vector<std::string>& vec); // removing tail tab and spaces. ow: overwrite
+    std::string              rstrip   (const                    char * str); // removing tail tab and spaces
+    std::string              rstrip   (const             std::string & str); // removing tail tab and spaces
+    std::vector<std::string> rstrip   (const std::vector<std::string>& vec); // removing tail tab and spaces
+    void                     rstrip_ow(                  std::string & str); // removing tail tab and spaces. ow: overwrite
+    void                     rstrip_ow(      std::vector<std::string>& vec); // removing tail tab and spaces. ow: overwrite
+    std::string               strip   (const                    char * str); // removing head and tail tab and spaces
+    std::string               strip   (const             std::string & str); // removing head and tail tab and spaces
+    void                      strip_ow(                  std::string & str); // removing head and tail tab and spaces. ow: overwrite
     std::vector<std::string>  strip   (const std::vector<std::string>& vec); // -> strip(str) // removing head and tail spaces
     
     std::string              lstrip   (const        char* str, const char c);
