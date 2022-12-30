@@ -9,7 +9,7 @@ namespace sstd{
     void                     rmEmptyLine_ow(      std::vector<std::string>& vec);
 
     //-----------------------------------------------------------------------------------------------------------------------------------------------
-    // rmEmptyLine(arg1, arg2, ...) of multiple vector arguments
+    // rmEmptyLine_ow(arg1, arg2, ...) of multiple vector arguments
     
     template<typename T>
     inline void _rmEmptyLine_ow(const std::vector<bool>& v, std::vector<T>& head){
