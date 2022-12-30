@@ -14,6 +14,14 @@ std::vector<std::string> sstd::rmEmptyLine(const std::vector<std::string>& vec){
     }
     return ret_vec;
 }
+void sstd::rmEmptyLine_ow(std::vector<std::string>& vec){
+    uint i_ret=0;
+    for(uint i=0; i<vec.size(); ++i){
+        if(vec[i].size()==0){ continue; }
+        std::swap(vec[i_ret], vec[i]); ++i_ret;
+    }
+    vec.resize(i_ret);
+}
 
 //--------------------------------------------------------------------------------------------------------
 

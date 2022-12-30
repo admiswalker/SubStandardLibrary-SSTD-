@@ -172,7 +172,7 @@ namespace sstd{
     template <typename T> inline std::vector<T> sorted_gr(      std::vector<T>&& rhs   ){                            std::sort(rhs.begin(), rhs.end(), std::greater<T>()); return rhs; } // Descending: 降順: 9, 8, 7, ...
     
     //-----------------------------------------------------------------------------------------------------------------------------------------------
-    // sort for multiple vector
+    // sort(arg1, arg2, ...) of multiple vector arguments
     
     class sstd_mult_vec_sort{
     private:
