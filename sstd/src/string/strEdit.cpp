@@ -6,6 +6,17 @@
 
 //--------------------------------------------------------------------------------------------------------
 
+std::vector<std::string> sstd::rmEmptyLine(const std::vector<std::string>& v){
+    std::vector<std::string> ret_v;
+    for(uint i=0; i<v.size(); ++i){
+        if(v[i].size()==0){ continue; }
+        ret_v.push_back(std::move(v[i]));
+    }
+    return ret_v;
+}
+
+//--------------------------------------------------------------------------------------------------------
+
 std::vector<std::string> sstd::splitByLine(const char* str){
 
     std::vector<std::string> ret;
