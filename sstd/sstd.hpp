@@ -33,6 +33,7 @@
 #include "src/container/vector/slice.hpp"
 #include "src/container/vector/stdVector_expansion.hpp"
 #include "src/container/vector/typeDef.hpp"
+#include "src/container/vector/vec_manipulation.hpp"
 #include "src/container/vector/vvec.hpp"
 
 #include "src/definitions/itr.hpp"

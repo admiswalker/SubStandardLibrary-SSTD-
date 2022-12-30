@@ -19,6 +19,7 @@
 
 #include "test/container/vector/slice.hpp"
 #include "test/container/vector/stdVector_expansion.hpp" // stdVector_expansion of operators
+#include "test/container/vector/vec_manipulation.hpp"
 #include "test/container/vector/vvec.hpp"
 
 #include "test/definitions/typeNum.hpp"

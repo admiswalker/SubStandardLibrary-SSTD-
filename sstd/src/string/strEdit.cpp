@@ -4,26 +4,7 @@
 #include <string.h>
 
 
-//--------------------------------------------------------------------------------------------------------
-
-std::vector<std::string> sstd::rmEmptyLine(const std::vector<std::string>& vec){
-    std::vector<std::string> ret_vec;
-    for(uint i=0; i<vec.size(); ++i){
-        if(vec[i].size()==0){ continue; }
-        ret_vec.push_back(vec[i]);
-    }
-    return ret_vec;
-}
-void sstd::rmEmptyLine_ow(std::vector<std::string>& vec){
-    uint i_ret=0;
-    for(uint i=0; i<vec.size(); ++i){
-        if(vec[i].size()==0){ continue; }
-        std::swap(vec[i_ret], vec[i]); ++i_ret;
-    }
-    vec.resize(i_ret);
-}
-
-//--------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 std::vector<std::string> sstd::splitByLine(const char* str){
 
@@ -46,7 +27,7 @@ std::vector<std::string> sstd::splitByLine(const std::string& str){
     return sstd::splitByLine(str.c_str());
 }
 
-//--------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 std::vector<std::string> asASpcase(const char* str){
     std::vector<std::string> splitList;
@@ -94,7 +75,7 @@ std::vector<std::string> sstd::split(const std::string& str, const char X){
     return std::move(sstd::split(str.c_str(), X));
 }
 
-//--------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 std::string lstrip_base(const uchar* str){
     std::string ret;
@@ -168,7 +149,7 @@ std::vector<std::string> sstd::strip(const std::vector<std::string>& vec){
     return ret;
 }
 
-//--------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 std::string lstrip_base(const char* str, const uint len, const char c){
     uint i=0;
@@ -236,7 +217,7 @@ void        sstd::strip_ow(      std::string& str, const char c){
     str.resize(e-b+1);
 }
 
-//--------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 std::string stripAll_base(const char* str, const uint len, const char c){
     std::string ret('0', len); ret.clear();
@@ -250,7 +231,7 @@ std::string stripAll_base(const char* str, const uint len, const char c){
 std::string sstd::stripAll(const        char* str, const char c){ return stripAll_base(str,         strlen(str), c); }
 std::string sstd::stripAll(const std::string& str, const char c){ return stripAll_base(str.c_str(),  str.size(), c); }
 
-//--------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 void sstd::stripAll_ow(std::string& str, const char c){
     uint r=0;
@@ -263,7 +244,7 @@ void sstd::stripAll_ow(std::string& str, const char c){
     str.resize(r);
 }
 
-//--------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 std::string stripAll_base(const char* str, const uint len, const char* stripList, const uint sLen){
     std::string ret('0', len); ret.clear();
@@ -325,4 +306,5 @@ void stripAll_ow_base(std::string& str, const char* stripList, const uint sLen){
 void        sstd::stripAll_ow(      std::string& str, const        char* stripList){ stripAll_ow_base(str, stripList,         strlen(stripList)); return; }
 void        sstd::stripAll_ow(      std::string& str, const std::string& stripList){ stripAll_ow_base(str, stripList.c_str(),  stripList.size()); return; }
 
-//--------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+

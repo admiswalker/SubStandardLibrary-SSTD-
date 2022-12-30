@@ -35,54 +35,6 @@ TEST(strEdit, theOthers){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-TEST(strEdit, rmEmptyLine){
-    std::vector<std::string> v = {"", "- 1", "- 2", "- 3", "  "};
-    std::vector<std::string> v_ans = {"- 1", "- 2", "- 3", "  "};
-    ASSERT_TRUE(sstd::rmEmptyLine(v) == v_ans);
-}
-TEST(strEdit, rmEmptyLine_ow_01){
-    std::vector<std::string> v = {"", "- 1", "- 2", "- 3", "  "};
-    std::vector<std::string> v_ans = {"- 1", "- 2", "- 3", "  "};
-
-    sstd::rmEmptyLine_ow(v);
-
-    ASSERT_TRUE(v == v_ans);
-}
-TEST(strEdit, rmEmptyLine_ow_02){
-    std::vector<std::string> v = {"- 1", "- 2", "- 3", "  "};
-    std::vector<std::string> v_ans = {"- 1", "- 2", "- 3", "  "};
-
-    sstd::rmEmptyLine_ow(v);
-    
-    ASSERT_TRUE(v == v_ans);
-}
-TEST(strEdit, rmEmptyLine_ow_multiple_vector_arguments_01){
-    std::vector<std::string> v_base  = { "", "1", "2", "3", "4",  "", "5"};
-    std::vector<std::string> v_1     = {"a", "b", "c", "d", "e", "f", "g"};
-    std::vector<std::string> v_ans_b = {     "1", "2", "3", "4",      "5"};
-    std::vector<std::string> v_ans_1 = {     "b", "c", "d", "e",      "g"};
-
-    sstd::rmEmptyLine_ow(v_base, v_1);
-    
-    ASSERT_TRUE(v_base == v_ans_b);
-    ASSERT_TRUE(v_1 == v_ans_1);
-}
-TEST(strEdit, rmEmptyLine_ow_multiple_vector_arguments_02){
-    std::vector<std::string> v_base  = { "", "1", "2", "3", "4",  "", "5"};
-    std::vector<std::string> v_1     = {"a", "b", "c", "d", "e", "f", "g"};
-    std::vector<std::string> v_2     = {"a", "b", "c", "d", "e", "f", "g"};
-    std::vector<std::string> v_ans_b = {     "1", "2", "3", "4",      "5"};
-    std::vector<std::string> v_ans_1 = {     "b", "c", "d", "e",      "g"};
-
-    sstd::rmEmptyLine_ow(v_base, v_1, v_2);
-    
-    ASSERT_TRUE(v_base == v_ans_b);
-    ASSERT_TRUE(v_1 == v_ans_1);
-    ASSERT_TRUE(v_2 == v_ans_1);
-}
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
-
 TEST(strEdit, lstrip){
     std::string str_in  = " \t abcd \t ";
     std::string str_ans =     "abcd \t ";
