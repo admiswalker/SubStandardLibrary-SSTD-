@@ -1,7 +1,8 @@
 #pragma once
-#include <string>
-#include <vector>
 #include <cstddef>
+#include <string>
+#include <unordered_map>
+#include <vector>
 #include "../definitions/typeDef.h"
 
 
@@ -15,6 +16,9 @@ namespace sstd{
         void_ptr_obj(); // default constructor
         void_ptr_obj(const class void_ptr_obj&  rhs); // copy constructor
         void_ptr_obj(      class void_ptr_obj&& rhs); // move constructor
+        
+        template <typename T>
+        void _void_ptr_obj(T* ptr);
         
         void_ptr_obj(       bool* ptr);
         void_ptr_obj(       char* ptr);
@@ -43,9 +47,14 @@ namespace sstd{
         void_ptr_obj(std::vector<      float>* ptr);
         void_ptr_obj(std::vector<     double>* ptr);
         void_ptr_obj(std::vector<std::string>* ptr);
+
+        void_ptr_obj(std::unordered_map<std::string, std::string>* ptr);
         
         ~void_ptr_obj();
 
+        template <typename T>
+        void _overwrite(T* ptr);
+        
         void overwrite(       bool* ptr);
         void overwrite(       char* ptr);
         void overwrite(      int8 * ptr);
@@ -73,6 +82,8 @@ namespace sstd{
         void overwrite(std::vector<      float>* ptr);
         void overwrite(std::vector<     double>* ptr);
         void overwrite(std::vector<std::string>* ptr);
+
+        void overwrite(std::unordered_map<std::string, std::string>* ptr);
         
         void copy(class void_ptr_obj& rhs, const class void_ptr_obj& lhs);
         void free(class void_ptr_obj& rhs);

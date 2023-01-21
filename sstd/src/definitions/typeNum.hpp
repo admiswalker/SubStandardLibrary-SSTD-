@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 #include "../definitions/typeDef.h"
 
@@ -122,6 +123,22 @@ namespace sstd{
     const static uchar num_vmat_r_double =  96;
     const static uchar num_vmat_r_str    =  97;
 
+    const static uchar NUM_HASH_BASE       =  98; // std::unordered_map<std::string,std::string> // num_hash_str_bool = NUM_HASH_BASE + num_bool
+    const static uchar num_hash_str_bool   =  98;
+    const static uchar num_hash_str_char   =  99;
+    const static uchar num_hash_str_uchar  = 100;
+    const static uchar num_hash_str_int8   = 101;
+    const static uchar num_hash_str_int16  = 102;
+    const static uchar num_hash_str_int32  = 103;
+    const static uchar num_hash_str_int64  = 104;
+    const static uchar num_hash_str_uint8  = 105;
+    const static uchar num_hash_str_uint16 = 106;
+    const static uchar num_hash_str_uint32 = 107;
+    const static uchar num_hash_str_uint64 = 108;
+    const static uchar num_hash_str_float  = 109;
+    const static uchar num_hash_str_double = 110;
+    const static uchar num_hash_str_str    = 111;
+
     //---
 
     uchar type2num(       bool rhs);
@@ -153,6 +170,8 @@ namespace sstd{
     uchar type2num(const std::vector<      float>& rhs);
     uchar type2num(const std::vector<     double>& rhs);
     uchar type2num(const std::vector<std::string>& rhs);
+
+    uchar type2num(const std::unordered_map<std::string, std::string>& rhs);
 };
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

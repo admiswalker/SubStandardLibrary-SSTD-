@@ -31,3 +31,5 @@ uchar sstd::type2num(const std::vector<      float>& rhs){ return sstd::num_vec_
 uchar sstd::type2num(const std::vector<     double>& rhs){ return sstd::num_vec_double; }
 uchar sstd::type2num(const std::vector<std::string>& rhs){ return sstd::num_vec_str;    }
 
+uchar sstd::type2num(const std::unordered_map<std::string, std::string>& rhs){ return sstd::num_hash_str_str;    }
+

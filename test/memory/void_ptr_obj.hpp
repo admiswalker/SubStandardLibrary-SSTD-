@@ -119,6 +119,12 @@ TEST(void_ptr_obj, constructor_vec_str){
     sstd::void_ptr_obj void_ptr = sstd::void_ptr_obj(new std::vector<std::string>({""}));
 }
 
+//---
+
+TEST(void_ptr_obj, constructor_hash_str_str){
+    sstd::void_ptr_obj void_ptr = sstd::void_ptr_obj(new std::unordered_map<std::string, std::string>({{"key1", "value1"}}));
+}
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // member functions
 
@@ -160,6 +166,8 @@ TEST(void_ptr_obj, overwrite_vec_uint64){ SSTD_TEST_void_ptr_obj_overwrite(std::
 TEST(void_ptr_obj, overwrite_vec_float ){ SSTD_TEST_void_ptr_obj_overwrite(std::vector<      float>, sstd::num_vec_float ) }
 TEST(void_ptr_obj, overwrite_vec_double){ SSTD_TEST_void_ptr_obj_overwrite(std::vector<     double>, sstd::num_vec_double) }
 TEST(void_ptr_obj, overwrite_vec_str   ){ SSTD_TEST_void_ptr_obj_overwrite(std::vector<std::string>, sstd::num_vec_str   ) }
+
+TEST(void_ptr_obj, overwrite_hash_str_str   ){ SSTD_TEST_void_ptr_obj_overwrite((std::unordered_map<std::string, std::string>), sstd::num_hash_str_str   ) }
 
 //---
 
