@@ -3,8 +3,31 @@
 
 //--------------------------------------------------------------------------------------------------------
 
-//TEST(file, fopen_char){
-//}
+/*
+TEST(file, fopen_char){
+    printf("■ fopen\n");
+    
+    {
+        sstd::file fp;
+        const char* fileName = "./test_fopen.txt";
+
+        if(!fp.fopen(fileName, "wb")){ // Enable to open file by the same code between MSVC++ and GCC.
+            // falied
+            printf("false\n\n");
+        }else{
+            // success
+            printf("test_fopen.txt was made.\n\n");
+            std::string buf="abc";
+            fp.fwrite(buf.c_str(), 1, buf.size());
+        }
+    }
+
+    {
+        sstd::file fp;
+        if(!fp.fopen(std::string("./test_fopen_std_string.txt"), "wb")){ // Enable to open file by the same code between MSVC++ and GCC.
+        }
+    }
+}*/
 //TEST(file, fopen_str){
 //}
 
