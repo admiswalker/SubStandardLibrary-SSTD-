@@ -27,10 +27,10 @@ int main(int argc, char** argv){
     sstd::rm("tmp/test");
     
     std::string base_path = "./tmp/make/test/src";
-    
+    std::vector<std::string> vExePath;
     
     // Testing binaries
-    std::vector<std::string> vExePath;
+    //*
     vExePath.push_back(base_path+"/cast/typeConversion.exe"                     );
     vExePath.push_back(base_path+"/container/matrixContainer_binary/bmat.exe"   );
     vExePath.push_back(base_path+"/container/matrixContainer_colMajor/mat_c.exe");
@@ -70,7 +70,7 @@ int main(int argc, char** argv){
     vExePath.push_back(base_path+"/sys/system.exe"                              );
     vExePath.push_back(base_path+"/time/measureTime.exe"                        );
     vExePath.push_back(base_path+"/time/time.exe"                               );
-    
+    //*/
     
     int ret = gtest_parallel::run_tests(vExePath);
 
@@ -82,4 +82,3 @@ int main(int argc, char** argv){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-

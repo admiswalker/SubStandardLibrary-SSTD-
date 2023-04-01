@@ -26,22 +26,19 @@ all: $(DEPS) $(TEST_EXES)
 
 
 $(TEST_TMP_PATH)/%.exe: %.cpp $(LIB_SSTD) $(LIB_GOOGLETEST)
-	@echo ""
-	mkdir -p $(dir $@);\
-	$(CXX) -o $@ $< $(CFLAGS)
+	@mkdir -p $(dir $@)
+	@`/usr/bin/time -f "Build time: %e sec ($<)" $(CXX) -o $@ $< $(CFLAGS);`
 
 
 # 「-include $(DEPS)」により，必要な部分のみ分割で再コンパイルを行うため，依存関係を記した *.d ファイルに生成する
 $(TEST_TMP_PATH)/%.d: %.cpp
-	@echo ""
-	@echo "---------------"
-	@echo ""
-	@echo $(DEPS_OLD)
-	@echo ""
-	mkdir -p $(dir $@)
-	$(CXX) $< -MM $(CFLAGS) > $@
-#	@echo $*	# for debug
-#	@echo $@	# for debug
+	@mkdir -p $(dir $@)
+	@`/usr/bin/time -f "Build time: %e sec ($(dir $<)$(notdir $@))" $(CXX) $< -MM $(CFLAGS) > $@;`
+
+
+.PHONY: steps
+steps:
+	@echo $(TEST_SRCS) $(TEST_HEADS) $(TEST_PY) ../test_c2py.py | xargs wc -l
 
 
 include $(TEST_DEPS)

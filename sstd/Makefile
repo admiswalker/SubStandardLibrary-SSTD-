@@ -67,16 +67,15 @@ DEPS  = $(addprefix $(TEMP_DIR)/, $(patsubst %.cpp, %.d, $(CPP_SRCS)))
 # $(TARGET) を生成する
 # .a ファイルとしてオブジェクトファイルを梱包する
 $(TARGET): $(OBJS)
-	@echo $(HPP_SRCS)
-	@echo -e "\n============================================================\n"
-	@echo -e "SRCS: \n$(SRCS)\n"
-	@echo -e "OBJS: \n$(OBJS)\n"
-	@echo -e "CFLAGS: \n$(CFLAGS)"
-	@echo -e "\n============================================================\n"
+	@echo "\n------------------------------------------------------------"
+	@echo   "Build begin: libsstd.a\n"
+	@echo   "CFLAGS: \n$(CFLAGS)\n"
 	@mkdir -p ./lib
-	ar rc ./lib/$(TARGET) $(OBJS)
+	@`/usr/bin/time -f "Build time: %e sec ($@)\n" ar rc ./lib/$(TARGET) $(OBJS);`
+#	ar rc ./lib/$(TARGET) $(OBJS)
 	@(make COPY_heads)
-	@echo ""
+	@echo   "                                        Build end: libsstd.a"
+	@echo   "------------------------------------------------------------\n"
 
 
 .PHONY: COPY_heads
@@ -90,18 +89,19 @@ COPY_heads: $(HPP_SRCS) $(H_SRCS) $(PY_SRCS)
 
 # 各ファイルの分割コンパイル
 $(TEMP_DIR)/%.o: %.cpp
-	@echo ""
-	mkdir -p $(dir $@);\
-	$(CXX) $< -c -o $@ $(CFLAGS)
+	@mkdir -p $(dir $@)
+	@`/usr/bin/time -f "Build time: %e sec ($<)" $(CXX) $< -c -o $@ $(CFLAGS);`
+#	$(CXX) $< -c -o $@ $(CFLAGS);
 
 
 # 「-include $(DEPS)」により，必要な部分のみ分割で再コンパイルを行うため，依存関係を記した *.d ファイルに生成する
 $(TEMP_DIR)/%.d: %.cpp
-	@echo ""
-	mkdir -p $(dir $@);\
-	$(CXX) $< -MM $(CFLAGS)\
-	| sed 's/$(notdir $*)\.o/$(subst /,\/,$(patsubst %.d,%.o,$@) $@)/' > $@;\
-	[ -s $@ ] || rm -f $@
+	@mkdir -p $(dir $@)
+	@`/usr/bin/time -f "Build time: %e sec ($@)" $(CXX) $< -MM $(CFLAGS) | sed 's/$(notdir $*)\.o/$(subst /,\/,$(patsubst %.d,%.o,$@) $@)/' > $@;[ -s $@ ] || rm -f $@;`
+#	mkdir -p $(dir $@);\
+#	$(CXX) $< -MM $(CFLAGS)\
+#	| sed 's/$(notdir $*)\.o/$(subst /,\/,$(patsubst %.d,%.o,$@) $@)/' > $@;\
+#	[ -s $@ ] || rm -f $@
 #	@echo $*	# for debug
 #	@echo $@	# for debug
 
@@ -115,8 +115,8 @@ all:
 
 
 .PHONY: steps
-steps: $(SRCS)
-	@echo "$^" | xargs wc -l
+steps:
+	@echo $(SRCS) | xargs wc -l
 
 
 .PHONY: clean
