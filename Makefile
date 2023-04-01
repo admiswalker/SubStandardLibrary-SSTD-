@@ -62,7 +62,7 @@ CFLAGS += -fopenmp
 
 #============================================================
 
-TEMP_DIR = tmpMake
+TEMP_DIR = tmp/make
 
 BACKUP_DIR   = ./backup
 ALL_FILES    = $(wildcard ./*)
@@ -127,7 +127,7 @@ $(TEST_MULTI_DEF):
 	$(CXX) ./test/multiple_definition/$(MULTI_DEF_TEST_FILE).cpp -c $(CFLAGS) -o $(TEST_MULTI_DEF)
 
 
-$(TEST_EXES): $(LIB_SSTD) $(LIB_GOOGLETEST)
+$(TEST_EXES):
 	@(cd ./test; make -j)
 
 

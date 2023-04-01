@@ -6,7 +6,7 @@
 #define SET_TMP_DIR_NAME()                                              \
     std::string tmpDir = std::string("./tmp/test/")+test_info_->test_case_name()+"_"+test_info_->name()
 
-/*
+//*
 TEST(cp, copy_pChar_pChar_case01){
     SET_TMP_DIR_NAME();
     sstd::mkdir(tmpDir);
@@ -178,7 +178,7 @@ TEST(cp, copy_str_str    ){ init(); sstd::copy(std::string(tmpDir+"/rand_src.bin
 #undef init
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-/*
+//*
 TEST(cp, cp_case01_checkhash){
     SET_TMP_DIR_NAME();
     sstd::mkdir(tmpDir);
@@ -224,27 +224,17 @@ TEST(cp, cp_case01_file2dir){
 }
 TEST(cp, cp_case01_opt_p_check_timestamp){
     SET_TMP_DIR_NAME();
-    sstd::mkdir(tmpDir);
     sstd::mkdir(tmpDir+"/src");
     sstd::mkdir(tmpDir+"/dst");
 
-    sstd::system("cp -rp ./sstd/LICENSE "+tmpDir+"/src"); // copy file inorder not to change the access time stamp when test on multithread
+    sstd::system("cp -rp ./sstd/LICENSE "+tmpDir+"/src"); // copy file inorder not to change the access time stamp when calling sstd::glob_pt()
     sstd::cp(tmpDir+"/src/LICENSE", tmpDir+"/dst/LICENSE", "p");
-    //sstd::cp(tmpDir+"/src/LICENSE", tmpDir+"/dst/LICENSE", "p");
-    //sstd::cp(tmpDir+"/src/LICENSE", tmpDir+"/dst/LICENSE", "p");
-    //sstd::cp("./sstd/LICENSE", tmpDir+"/LICENSE", "p");
     {
         // check timestamp
-        std::vector<sstd::pathAndType> vPath_ans = sstd::glob_pt(tmpDir+"/src/*", "dfr");
-        std::vector<sstd::pathAndType> vPath     = sstd::glob_pt(tmpDir+"/dst/*", "dfr");
-        //std::vector<sstd::pathAndType> vPath_ans = sstd::glob_pt("./sstd/LICENSE", "dfr");
-        //std::vector<sstd::pathAndType> vPath     = sstd::glob_pt(tmpDir+"/LICENSE", "dfr");
-        ASSERT_EQ(vPath_ans.size(), vPath.size());
-        sstd::printn(vPath_ans[0].path);
-        sstd::printn(vPath[0].path);
-        
-        ASSERT_EQ(vPath[0].st.st_atim.tv_sec, vPath_ans[0].st.st_atim.tv_sec );
-       
+        std::vector<sstd::pathAndType> vPath_ans = sstd::glob_pt(tmpDir+"/src/LICENSE", "dfr");
+        std::vector<sstd::pathAndType> vPath     = sstd::glob_pt(tmpDir+"/dst/LICENSE", "dfr");
+        ASSERT_EQ(vPath_ans.size(), (uint)1);
+        ASSERT_EQ(vPath.size(),     (uint)1);
         ASSERT_TRUE(vPath[0].st.st_atim.tv_sec  == vPath_ans[0].st.st_atim.tv_sec );
         ASSERT_TRUE(vPath[0].st.st_atim.tv_nsec == vPath_ans[0].st.st_atim.tv_nsec);
         ASSERT_TRUE(vPath[0].st.st_mtim.tv_sec  == vPath_ans[0].st.st_mtim.tv_sec );
@@ -281,13 +271,15 @@ TEST(cp, cp_case02){
 }
 TEST(cp, cp_case02_opt_p_check_timestamp){
     SET_TMP_DIR_NAME();
-    sstd::mkdir(tmpDir);
+    sstd::mkdir(tmpDir+"/src");
+    sstd::mkdir(tmpDir+"/dst");
 
-    sstd::cp("./sstd", tmpDir, "p");
+    sstd::system("cp -rp ./sstd "+tmpDir+"/src"); // copy file inorder not to change the access time stamp when calling sstd::glob_pt()
+    sstd::cp(tmpDir+"/src/sstd", tmpDir+"/dst", "p");
     {
         // check timestamp
-        std::vector<sstd::pathAndType> vPath_ans = sstd::glob_pt("./sstd/*", "dfr");
-        std::vector<sstd::pathAndType> vPath     = sstd::glob_pt(tmpDir+"/sstd/*", "dfr");
+        std::vector<sstd::pathAndType> vPath_ans = sstd::glob_pt(tmpDir+"/src/sstd/*", "dfr");
+        std::vector<sstd::pathAndType> vPath     = sstd::glob_pt(tmpDir+"/dst/sstd/*", "dfr");
         ASSERT_EQ(vPath_ans.size(), vPath.size());
         for(uint i=0; i<vPath_ans.size(); ++i){
             ASSERT_TRUE(vPath[i].st.st_atim.tv_sec  == vPath_ans[i].st.st_atim.tv_sec );
@@ -298,8 +290,8 @@ TEST(cp, cp_case02_opt_p_check_timestamp){
     }
     {
         // check timestamp
-        std::vector<sstd::pathAndType> vPath_ans = sstd::glob_pt("./sstd", "dfr");
-        std::vector<sstd::pathAndType> vPath     = sstd::glob_pt(tmpDir+"/sstd", "dfr");
+        std::vector<sstd::pathAndType> vPath_ans = sstd::glob_pt(tmpDir+"/src/sstd/*", "dfr");
+        std::vector<sstd::pathAndType> vPath     = sstd::glob_pt(tmpDir+"/dst/sstd/*", "dfr");
         ASSERT_EQ(vPath_ans.size(), vPath.size());
 //      ASSERT_TRUE(vPath[0].st.st_atim.tv_sec  == vPath_ans[0].st.st_atim.tv_sec );
 //      ASSERT_TRUE(vPath[0].st.st_atim.tv_nsec == vPath_ans[0].st.st_atim.tv_nsec);
@@ -373,7 +365,7 @@ TEST(cp, cp_case03_copy_empty_dir){
         }
     }
     sstd::rm(tmpDir);
-}//*/
+}
 TEST(cp, cp_case03_opt_p_check_timestamp){
     SET_TMP_DIR_NAME();
     sstd::mkdir(tmpDir+"/src");
@@ -396,7 +388,7 @@ TEST(cp, cp_case03_opt_p_check_timestamp){
     }
     sstd::rm(tmpDir);
 }
-/*
+
 TEST(cp, cp_case01__opt_u__update){
     // when a src is latest -> copy() function updates dst file
     SET_TMP_DIR_NAME();

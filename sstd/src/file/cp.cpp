@@ -210,9 +210,11 @@ bool _cp_base(const char* pPath_src, const char* pPath_dst, const bool opt_n, co
                 if(vPath[i].type=='f'){ continue; }
                 
                 std::string dir_dst = std::string(pPath_dst)+'/'+&(vPath[i].path[begin_idx]);
-                if(!setTimestamp2dir(dir_dst, vPath[i].st)){ return false; }
+                if(!setTimestamp2dir(      dir_dst, vPath[i].st)){ return false; }
+                if(!setTimestamp2dir(vPath[i].path, vPath[i].st)){ return false; }
             }
             if(!setTimestamp2dir(dstPath_baseDir, st)){ return false; }
+            if(!setTimestamp2dir(      pPath_src, st)){ return false; }
         }
         
         return true;

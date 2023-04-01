@@ -18,11 +18,14 @@ TEST_PY    := $(shell find $(TEST_SRC_PATH) -type f -name '*.py' )
 TEST_EXES  := $(addprefix $(TEST_TMP_PATH)/, $(patsubst %.cpp, %.exe, $(TEST_SRCS)))
 TEST_DEPS  := $(addprefix $(TEST_TMP_PATH)/, $(patsubst %.cpp, %.d, $(TEST_SRCS)))
 
+LIB_SSTD       := ../sstd/lib/libsstd.a
+LIB_GOOGLETEST := ../googletest-master/build/lib/libgtest.a
+
 
 all: $(DEPS) $(TEST_EXES)
 
 
-$(TEST_TMP_PATH)/%.exe: %.cpp
+$(TEST_TMP_PATH)/%.exe: %.cpp $(LIB_SSTD) $(LIB_GOOGLETEST)
 	@echo ""
 	mkdir -p $(dir $@);\
 	$(CXX) -o $@ $< $(CFLAGS)
