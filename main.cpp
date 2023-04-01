@@ -7,13 +7,13 @@
     #include <sstd/sstd.hpp>
 #endif
 
-#include <gtest/gtest.h>
+#include "gtest_parallel/gtest_parallel.hpp"
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-#include "test/check_multiple_definition.hpp" // Trigger a compilation error if there are multiple definitions. In order not to occor "multiple definition error" when including <sstd/sstd.hpp> from multi file.
+#include "test/multiple_definition/check_multiple_definition.hpp" // Trigger a compilation error if there are multiple definitions. In order not to occor "multiple definition error" when including <sstd/sstd.hpp> from multi file.
 
-//*
+/*
 // Remove comment out when you test it.
 #include "test/cast/typeConversion.hpp"
 
@@ -75,9 +75,25 @@ int main(int argc, char** argv){
     printf("+----------------------------------------------------+\n");
     printf("\n");
     printf("■ measureTime_start---------------\n\n"); time_m timem; sstd::measureTime_start(timem);
-    ::testing::InitGoogleTest(&argc, argv);
     
-    auto ret = RUN_ALL_TESTS();
+    std::string base_path = "./tmp/make/test/src";
+    
+    // Testing binaries
+    std::vector<std::string> vExePath;
+    vExePath.push_back(base_path+"/cast/typeConversion.exe"                     );
+    vExePath.push_back(base_path+"/container/matrixContainer_binary/bmat.exe"   );
+    vExePath.push_back(base_path+"/container/matrixContainer_colMajor/mat_c.exe");
+    vExePath.push_back(base_path+"/container/matrixContainer_colMajor/ope.exe"  );
+    vExePath.push_back(base_path+"/container/matrixContainer_rowMajor/mat_r.exe");
+    vExePath.push_back(base_path+"/container/vector/slice.exe"                  );
+    vExePath.push_back(base_path+"/container/vector/stdVector_expansion.exe"    );
+    vExePath.push_back(base_path+"/container/vector/vec_manipulation.exe"       );
+    vExePath.push_back(base_path+"/container/vector/vvec.exe"                   );
+    vExePath.push_back(base_path+"/definitions/typeDef.exe"                     );
+    vExePath.push_back(base_path+"/definitions/typeNum.exe"                     );
+    vExePath.push_back(base_path+"/file/cp.exe"                                 );
+
+    int ret = gtest_parallel::run_tests(vExePath);
 
     printf("\n");
     printf("■ measureTime_stop----------------\n");

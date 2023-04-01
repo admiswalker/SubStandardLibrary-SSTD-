@@ -58,6 +58,7 @@ CFLAGS += -L./googletest-master/build/lib -I./googletest-master/googletest/inclu
 CFLAGS += -std=c++11 # CFLAGS += -std=gnu++0x
 CFLAGS += -Wall
 CFLAGS += -O3
+CFLAGS += -fopenmp
 
 #============================================================
 
@@ -71,30 +72,35 @@ BACKUP_FILES = $(filter-out ./$(TARGET) $(TMP_DIRS) $(BACKUP_DIR) $(LIBS_DIRS), 
 TIME_STAMP   = `date +%Y_%m%d_%H%M`
 
 # test files
-DIR_t  = ./test/*.
-DIR_t += ./test/file/*.
-DIR_t += ./test/hashFnc_of_MD5_SHA1_SHA2/*.
-DIR_t += ./test/string/*.
-DIR_t += ./test/time/*.
-DIR_t += ./test/vector/*.
-HDIR_t    = $(patsubst %., %.h, $(DIR_t))
-HEADS_t   = $(wildcard $(HDIR_t))
-HPPDIR_t  = $(patsubst %., %.hpp, $(DIR_t))
-HEADppS_t = $(wildcard $(HPPDIR_t))
-PYDIR_t   = $(patsubst %., %.py, $(DIR_t))
-PYFILES_t = $(wildcard $(PYDIR_t))
+#DIR_t  = ./test/*.
+#DIR_t += ./test/file/*.
+#DIR_t += ./test/hashFnc_of_MD5_SHA1_SHA2/*.
+#DIR_t += ./test/string/*.
+#DIR_t += ./test/time/*.
+#DIR_t += ./test/vector/*.
+#HDIR_t    = $(patsubst %., %.h, $(DIR_t))
+#HEADS_t   = $(wildcard $(HDIR_t))
+#HPPDIR_t  = $(patsubst %., %.hpp, $(DIR_t))
+#HEADppS_t = $(wildcard $(HPPDIR_t))
+#PYDIR_t   = $(patsubst %., %.py, $(DIR_t))
+#PYFILES_t = $(wildcard $(PYDIR_t))
 
 MULTI_DEF_TEST_FILE = check_multiple_definition
-TEST_MULTI_DEF = $(TEMP_DIR)/$(MULTI_DEF_TEST_FILE).o
+TEST_MULTI_DEF = $(TEMP_DIR)/multiple_definition/$(MULTI_DEF_TEST_FILE).o
 
 # when you need to check the change of files in lib, you need to change file name to a not-existing name like "FORCE_XXX".
-LIB_SSTD       = FORCE_SSTD
-#LIB_GOOGLETEST = FORCE_GOOGLETEST
+LIB_SSTD       = FORCE_TO_MAKE_SSTD
+#LIB_GOOGLETEST = FORCE_TO_MAKE_GOOGLETEST
 #LIB_SSTD       = ./sstd/lib/libsstd.a
 LIB_GOOGLETEST = ./googletest-master/build/lib/libgtest.a
 
+LIB_GTEST_PARALLEL      = ./gtest_parallel/gtest_parallel.hpp
+LIB_GTEST_PARALLEL_MAIN = ./gtest_parallel/test_main.hpp
 
-$(TARGET): $(LIB_SSTD) $(LIB_GOOGLETEST) $(TEST_MULTI_DEF) $(SRCS)
+TEST_EXES = FORCE_TO_MAKE_TEST_EXE
+
+
+$(TARGET): $(LIB_SSTD) $(LIB_GOOGLETEST) $(TEST_MULTI_DEF) $(SRCS) $(TEST_EXES) $(LIB_GTEST_PARALLEL_MAIN)
 	@echo "\n============================================================\n"
 	@echo "SRCS: \n$(SRCS)\n"
 	@echo "CFLAGS: \n$(CFLAGS)"
@@ -117,8 +123,12 @@ $(LIB_GOOGLETEST):
 
 
 $(TEST_MULTI_DEF):
-	@mkdir -p $(TEMP_DIR)
-	$(CXX) ./test/$(MULTI_DEF_TEST_FILE).cpp -c $(CFLAGS) -o $(TEST_MULTI_DEF)
+	@mkdir -p $(TEMP_DIR)/multiple_definition
+	$(CXX) ./test/multiple_definition/$(MULTI_DEF_TEST_FILE).cpp -c $(CFLAGS) -o $(TEST_MULTI_DEF)
+
+
+$(TEST_EXES):
+	@(cd ./test; make -j)
 
 
 .PHONY: all
@@ -143,7 +153,7 @@ clean:
 
 
 .PHONY: steps
-steps: $(SRCS) $(HEADS_t) $(HEADppS_t) $(PYFILES_t)
+steps: $(SRCS) $(TEST_SRCS) $(TEST_HEADS) $(PYFILES_t) $(TEST_PY)
 	@(cd ./sstd; make steps)
 	@echo ""
 	@echo "$^" | xargs wc -l
