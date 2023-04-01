@@ -92,6 +92,12 @@ int main(int argc, char** argv){
     vExePath.push_back(base_path+"/definitions/typeDef.exe"                     );
     vExePath.push_back(base_path+"/definitions/typeNum.exe"                     );
     vExePath.push_back(base_path+"/file/cp.exe"                                 );
+    vExePath.push_back(base_path+"/file/csv.exe"                                );
+    vExePath.push_back(base_path+"/file/file.exe"                               );
+    vExePath.push_back(base_path+"/file/file_c.exe"                             );
+    vExePath.push_back(base_path+"/file/glob.exe"                               );
+    vExePath.push_back(base_path+"/file/mkdir.exe"                              );
+    vExePath.push_back(base_path+"/file/mv.exe"                                 );
 
     int ret = gtest_parallel::run_tests(vExePath);
 

@@ -1,4 +1,7 @@
-#pragma once
+#include <sstd/sstd.hpp>
+#include "../../gtest_parallel/test_main.hpp"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 // vvec2csv(header, vvec_str);
 /*
@@ -20,7 +23,7 @@ vvec2csv(savePath, vvec_str);
 // sstd::slice() を実装したら，csv 周りを実装する．
 
 TEST(csv, csv2vvec){
-    std::vector<std::vector<std::string>> csv = sstd::csv2vvec(R"(./test/file/parseCSV.csv)");
+    std::vector<std::vector<std::string>> csv = sstd::csv2vvec(R"(./test/src/file/parseCSV.csv)");
     sstd::printn(csv.size());
     
     printf("----\n");
@@ -33,21 +36,22 @@ TEST(csv, csv2vvec){
     printf("----\n");
 }
 TEST(csv, vvec2csv){
-    sstd::mkdir("./tmp");
-    std::vector<std::vector<std::string>> csv = sstd::csv2vvec(R"(./test/file/parseCSV.csv)");
-    
-    const char* path = R"(./tmp/test_vvec2csvPath.csv)";
-    bool result = sstd::vvec2csv(path, csv); ASSERT_TRUE( result );
-    std::vector<std::vector<std::string>> csv_re = sstd::csv2vvec(path);
+    SET_TMP_DIR_NAME();
+    sstd::mkdir(tmpDir);
+    std::vector<std::vector<std::string>> csv = sstd::csv2vvec(R"(./test/src/file/parseCSV.csv)");
+
+    std::string path = tmpDir+"/test_vvec2csvPath.csv";
+    bool result = sstd::vvec2csv(path.c_str(), csv); ASSERT_TRUE( result );
+    std::vector<std::vector<std::string>> csv_re = sstd::csv2vvec(path.c_str());
     
     ASSERT_TRUE(csv == csv_re);
-    sstd::rm("./tmp");
+    sstd::rm(tmpDir);
 }
 TEST(csv, csv2vvec_vvec2csv_std_string){
-    std::string tmpDir = R"(./tmp)";
+    SET_TMP_DIR_NAME();
     sstd::mkdir(tmpDir);
     
-    std::string exCSV = R"(./test/file/parseCSV.csv)";
+    std::string exCSV = R"(./test/src/file/parseCSV.csv)";
     std::vector<std::vector<std::string>> csv = sstd::csv2vvec(exCSV);
     
     std::string path = tmpDir + R"(/test_vvec2csvPath.csv)";
@@ -58,3 +62,6 @@ TEST(csv, csv2vvec_vvec2csv_std_string){
     sstd::rm(tmpDir);
 }
 
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+EXECUTE_TESTS();
