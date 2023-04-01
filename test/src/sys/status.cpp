@@ -1,4 +1,7 @@
-﻿#pragma once
+﻿#include <sstd/sstd.hpp>
+#include "../../gtest_parallel/test_main.hpp"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 TEST(status, memory){
     sstd::status_print();
@@ -58,3 +61,6 @@ TEST(status, memory){
     sstd::printn( sstd::status_nonvoluntary_ctxt_switches()); // nonvoluntary_ctxt_switches:    2
 }
 
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+EXECUTE_TESTS();

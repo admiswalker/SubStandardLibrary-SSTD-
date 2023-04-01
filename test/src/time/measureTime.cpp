@@ -1,4 +1,7 @@
-#pragma once
+#include <sstd/sstd.hpp>
+#include "../../gtest_parallel/test_main.hpp"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 void TEST__measureTime__mTime_start_stop(){
     {
@@ -95,3 +98,4 @@ TEST(measureTime, mTime_start_stop){ TEST__measureTime__mTime_start_stop(); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+EXECUTE_TESTS();

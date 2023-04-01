@@ -13,12 +13,14 @@ void TEST__c2py__empty_args(const char* tmpDir){
     testing::internal::CaptureStdout();
     py_emptyArg();
     ASSERT_STREQ("* * * Welcome to sstd::c2py<T> ! * * *\n", testing::internal::GetCapturedStdout().c_str());
+    sstd::rm(tmpDir);
 }
 void TEST__c2py__empty_args__same_dir(const char* tmpDir){
     sstd::c2py<void> py_emptyArg(tmpDir, "./test_c2py", "py_emptyArg", "void");
     testing::internal::CaptureStdout();
     py_emptyArg();
     ASSERT_STREQ("* * * Welcome to sstd::c2py<T> ! * * *\n", testing::internal::GetCapturedStdout().c_str());
+    sstd::rm(tmpDir);
 }
 //---
 void TEST__c2py__bench_withoutInit(const char* tmpDir){
@@ -30,6 +32,7 @@ void TEST__c2py__bench_withoutInit(const char* tmpDir){
     
     double sec = sstd::measureTime_stop_s(timem);
     printf("%.2lf [call/sec]\n", (double)numOfCall/sec);
+    sstd::rm(tmpDir);
 }
 void TEST__c2py__bench_withInit(const char* tmpDir){
     uint numOfCall = 5;
@@ -42,6 +45,7 @@ void TEST__c2py__bench_withInit(const char* tmpDir){
     
     double sec = sstd::measureTime_stop_s(timem);
     printf("%.2lf [call/sec]\n", (double)numOfCall/sec);
+    sstd::rm(tmpDir);
 }//*/
 
 //-----------------------------------------------------------------------
@@ -193,6 +197,7 @@ void TEST__c2py__builIn_bool(const char* tmpDir){
         sstd::c2py<void> pyFn(tmpDir, fileName, "py_pBool_pBuiltin_clear", "void, bool*|*~, len"); // Writing back
         pyFn(arrIn_buf, arrSize);
     }
+    sstd::rm(tmpDir);
 }//*/
 //-----------------------------------------------------------------------
 //*
@@ -261,6 +266,7 @@ void TEST__c2py__builIn_char(const char* tmpDir){
         pyFn(pChar);
         ASSERT_STREQ("writeX", pChar);
     }
+    sstd::rm(tmpDir);
 }
 //*/
 //-----------------------------------------------------------------------
@@ -373,6 +379,7 @@ void TEST__c2py__builtIn_num(const char* tmpDir){
     const std::vector<std::string> vecFnName_f = {"py_floatX", "py_pFloatX", "py_pFloatX", "py_pFloatX", "py_pFloatX_pCnvBuiltin"};
     TEST_c2py_floatX< float>(tmpDir, fileName, vecFnName_f, "float,  ret float*,  float",  "void, const float*,  len", "void,  float*, len", "void,  float*|~, len", "void,  float*|*~, len");
     TEST_c2py_floatX<double>(tmpDir, fileName, vecFnName_f, "double, ret double*, double", "void, const double*, len", "void, double*, len", "void, double*|~, len", "void, double*|*~, len");
+    sstd::rm(tmpDir);
 }
 //*/
 //-----------------------------------------------------------------------
@@ -440,6 +447,7 @@ void TEST__c2py__str(const char* tmpDir){
         ASSERT_STREQ(ans.c_str(), testing::internal::GetCapturedStdout().c_str());
         ASSERT_STREQ(wb.c_str(), str_buf.c_str());
     }
+    sstd::rm(tmpDir);
 }//*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 //*
@@ -532,7 +540,8 @@ void TEST__c2py__vec_bool(const char* tmpDir){
         pyFn(&vecIn_buf);
         ASSERT_TRUE(vecIn_buf.size()==0);
     }
-
+    
+    sstd::rm(tmpDir);
 }//*/
 //-----------------------------------------------------------------------
 //*
@@ -619,6 +628,8 @@ void TEST__c2py__vec_char(const char* tmpDir){
         ASSERT_STREQ(ans_plus.c_str(), testing::internal::GetCapturedStdout().c_str());
         ASSERT_TRUE(vecIn_buf==vecIn_WB);
     }
+    
+    sstd::rm(tmpDir);
 }
 //*/
 //-----------------------------------------------------------------------
@@ -715,6 +726,8 @@ void TEST_c2py_vecIntegerXX(const char* tmpDir,
         
         ASSERT_TRUE(vecIn_buf==vecIn_WB); // check that the input value was writted back.
     }
+    //---
+    sstd::rm(tmpDir);
 }
 //---
 template<typename T>
@@ -825,6 +838,8 @@ void TEST__c2py__vec_builtin(const char* tmpDir){
     
     TEST_c2py_vecFolatXX<float> (tmpDir, fileName, "vec< float>, ret vec< float>*, vec< float>", "void, const vec< float>*", "void, vec< float>*", "void, vec< float>*|~", "void, vec< float>*|*~", "void, vec< float>*|*");
     TEST_c2py_vecFolatXX<double>(tmpDir, fileName, "vec<double>, ret vec<double>*, vec<double>", "void, const vec<double>*", "void, vec<double>*", "void, vec<double>*|~", "void, vec<double>*|*~", "void, vec<double>*|*");
+
+    sstd::rm(tmpDir);
 }//*/
 //-----------------------------------------------------------------------
 //*
@@ -897,6 +912,8 @@ void TEST__c2py__vec_str(const char* tmpDir){
         
         ASSERT_TRUE(vecIn_buf==vecIn_WB);
     }
+    //---
+    sstd::rm(tmpDir);
 }//*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1261,6 +1278,8 @@ void TEST__c2py__mat_c(const char* tmpDir){
     
     TEST_c2py_matStr<sstd::mat_c<std::string>>(tmpDir, fileName, "mat_c<str>, ret mat_c<str>*, mat_c<str>*", "void, const mat_c<str>*", "void, mat_c<str>*",    "void, mat_c<str>*|~",    "void, mat_c<str>*|*~");
     // "mat<str>, mat<str>" は，C++ の可変長引数で受け渡そうとすると，segmentation fault で落ちる．少なくとも gcc 5.4.0 では対応していないので，ポインタで渡しておく．
+
+    sstd::rm(tmpDir);
 }
 void TEST__c2py__mat_r(const char* tmpDir){
     const char* fileName = "test/src/python/c2py_t";
@@ -1282,6 +1301,8 @@ void TEST__c2py__mat_r(const char* tmpDir){
     
     TEST_c2py_matStr<sstd::mat_r<std::string>>(tmpDir, fileName, "mat_r<str>, ret mat_r<str>*, mat_r<str>*", "void, const mat_r<str>*", "void, mat_r<str>*",    "void, mat_r<str>*|~",    "void, mat_r<str>*|*~");
     // "mat<str>, mat<str>" は，C++ の可変長引数で受け渡そうとすると，segmentation fault で落ちる．少なくとも gcc 5.4.0 では対応していないので，ポインタで渡しておく．
+
+    sstd::rm(tmpDir);
 }
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -1302,6 +1323,8 @@ void TEST__c2py__return_null(const char* tmpDir){
         sstd::mat_c<char> ret;
         ret = pyFn();
     }
+    //---
+    sstd::rm(tmpDir);
 }
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -1445,6 +1468,7 @@ void TEST__c2py__sample_codes(const char* tmpDir){
         mat_rRGB2img("./test_reCombined.png", &imgR, &imgG, &imgB);
     }
     //---
+    sstd::rm(tmpDir);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -1539,6 +1563,8 @@ void TEST__c2py__vvec_builtin(const char* tmpDir){
     
 //    TEST_c2py_vvecFolatXX<float> (tmpDir, fileName, "vvec< float>, ret vvec< float>*, vvec< float>", "void, const vvec< float>*", "void, vvec< float>*", "void, vvec< float>*|~", "void, vvec< float>*|*~", "void, vvec< float>*|*");
     TEST_c2py_vvecFolatXX<double>(tmpDir, fileName, "vvec<double>, ret vvec<double>*, vvec<double>", "void, const vvec<double>*", "void, vvec<double>*", "void, vvec<double>*|~", "void, vvec<double>*|*~", "void, vvec<double>*|*");
+    
+    sstd::rm(tmpDir);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
