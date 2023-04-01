@@ -71,20 +71,6 @@ LIBS_DIRS    = ./googletest-master
 BACKUP_FILES = $(filter-out ./$(TARGET) $(TMP_DIRS) $(BACKUP_DIR) $(LIBS_DIRS), $(ALL_FILES))
 TIME_STAMP   = `date +%Y_%m%d_%H%M`
 
-# test files
-#DIR_t  = ./test/*.
-#DIR_t += ./test/file/*.
-#DIR_t += ./test/hashFnc_of_MD5_SHA1_SHA2/*.
-#DIR_t += ./test/string/*.
-#DIR_t += ./test/time/*.
-#DIR_t += ./test/vector/*.
-#HDIR_t    = $(patsubst %., %.h, $(DIR_t))
-#HEADS_t   = $(wildcard $(HDIR_t))
-#HPPDIR_t  = $(patsubst %., %.hpp, $(DIR_t))
-#HEADppS_t = $(wildcard $(HPPDIR_t))
-#PYDIR_t   = $(patsubst %., %.py, $(DIR_t))
-#PYFILES_t = $(wildcard $(PYDIR_t))
-
 MULTI_DEF_TEST_FILE = check_multiple_definition
 TEST_MULTI_DEF = $(TEMP_DIR)/multiple_definition/$(MULTI_DEF_TEST_FILE).o
 
@@ -101,25 +87,34 @@ TEST_EXES = FORCE_TO_MAKE_TEST_EXE
 
 
 $(TARGET): $(LIB_SSTD) $(LIB_GOOGLETEST) $(TEST_MULTI_DEF) $(TEST_EXES) $(SRCS) $(LIB_GTEST_PARALLEL_MAIN)
-	@echo "\n============================================================\n"
-	@echo "SRCS: \n$(SRCS)\n"
-	@echo "CFLAGS: \n$(CFLAGS)"
-	@echo "\n============================================================\n"
-	$(CXX) -o $(TARGET) $(SRCS) $(CFLAGS) $(TEST_MULTI_DEF)
-	@echo ""
+	@echo "\n============================================================"
+	@echo   "Build begin: exe\n"
+	@echo   "SRCS: \n$(SRCS)\n"
+	@echo   "CFLAGS: \n$(CFLAGS)"
+#	$(CXX) -o $(TARGET) $(SRCS) $(CFLAGS) $(TEST_MULTI_DEF)
+	@`/usr/bin/time -f "Build time: %e sec ($@)" $(CXX) -o $(TARGET) $(SRCS) $(CFLAGS) $(TEST_MULTI_DEF);`
+	@echo "\n                                              Build end: exe"
+	@echo   "============================================================\n"
 
 
 $(LIB_SSTD):
+	@echo "\n============================================================"
+	@echo   "Build begin: SSTD\n"
 	@(cd ./sstd; make -j)
+	@echo "\n                                             Build end: SSTD"
+	@echo   "============================================================\n"
 
 
 $(LIB_GOOGLETEST):
-	@echo ""
+	@echo "\n============================================================"
+	@echo   "Build begin: GoogleTest\n"
 	@tar -zxvf googletest-release-1.12.1.tar.gz
 	@mv googletest-release-1.12.1 googletest-master
 	@(cd ./googletest-master; mkdir -p build; cd build; cmake ..; make)
 #	@unzip -n googletest-master.zip
 #	@(cd ./googletest-master; mkdir -p build; cd build; cmake ..; make)
+	@echo "\n                                       Build end: GoogleTest"
+	@echo   "============================================================\n"
 
 
 $(TEST_MULTI_DEF):
@@ -128,7 +123,11 @@ $(TEST_MULTI_DEF):
 
 
 $(TEST_EXES):
+	@echo "\n============================================================"
+	@echo   "Build begin: TEST_EXES\n"
 	@(cd ./test; make -j)
+	@echo "\n                                        Build end: TEST_EXES"
+	@echo   "============================================================\n"
 
 
 .PHONY: all
@@ -153,10 +152,11 @@ clean:
 
 
 .PHONY: steps
-steps: $(SRCS) $(TEST_SRCS) $(TEST_HEADS) $(PYFILES_t) $(TEST_PY)
+steps: $(SRCS) $(PYFILES_t) $(TEST_PY)
 	@(cd ./sstd; make steps)
+	@(cd ./test; make steps)
 	@echo ""
-	@echo "$^" | xargs wc -l
+	@echo ./test/multiple_definition/$(MULTI_DEF_TEST_FILE).cpp ./test/multiple_definition/$(MULTI_DEF_TEST_FILE).hpp | xargs wc -l
 
 
 .PHONY: zip
