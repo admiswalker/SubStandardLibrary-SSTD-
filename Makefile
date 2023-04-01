@@ -100,7 +100,7 @@ LIB_GTEST_PARALLEL_MAIN = ./gtest_parallel/test_main.hpp
 TEST_EXES = FORCE_TO_MAKE_TEST_EXE
 
 
-$(TARGET): $(LIB_SSTD) $(LIB_GOOGLETEST) $(TEST_MULTI_DEF) $(SRCS) $(TEST_EXES) $(LIB_GTEST_PARALLEL_MAIN)
+$(TARGET): $(LIB_SSTD) $(LIB_GOOGLETEST) $(TEST_MULTI_DEF) $(TEST_EXES) $(SRCS) $(LIB_GTEST_PARALLEL_MAIN)
 	@echo "\n============================================================\n"
 	@echo "SRCS: \n$(SRCS)\n"
 	@echo "CFLAGS: \n$(CFLAGS)"
@@ -127,7 +127,7 @@ $(TEST_MULTI_DEF):
 	$(CXX) ./test/multiple_definition/$(MULTI_DEF_TEST_FILE).cpp -c $(CFLAGS) -o $(TEST_MULTI_DEF)
 
 
-$(TEST_EXES):
+$(TEST_EXES): $(LIB_SSTD) $(LIB_GOOGLETEST)
 	@(cd ./test; make -j)
 
 
