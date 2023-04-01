@@ -1,4 +1,5 @@
-#pragma once
+#include <sstd/sstd.hpp>
+#include "../../gtest_parallel/test_main.hpp"
 
 /*
 #Include "./MatrixStore/Core/MatrixStore.hpp"
@@ -44,3 +45,5 @@ int main(){
     printm(MatB);
 }
 */
+
+EXECUTE_TESTS();

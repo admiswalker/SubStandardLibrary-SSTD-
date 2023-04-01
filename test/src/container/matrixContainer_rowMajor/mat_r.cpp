@@ -1,4 +1,5 @@
-#pragma once
+#include <sstd/sstd.hpp>
+#include "../../gtest_parallel/test_main.hpp"
 
 
 /*
@@ -195,3 +196,4 @@ TEST(c2py, mat_r_ope_eq_ne){
 }
 //*/
 
+EXECUTE_TESTS();

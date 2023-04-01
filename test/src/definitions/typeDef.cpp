@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿#include <sstd/sstd.hpp>
+#include "../../gtest_parallel/test_main.hpp"
 
 /*
 TEST(typeDef, case_xx){
@@ -12,4 +13,5 @@ TEST(typeDef, case_xx){
 }
 */
 
+EXECUTE_TESTS();
 

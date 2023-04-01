@@ -1,4 +1,5 @@
-#pragma once
+#include <sstd/sstd.hpp>
+#include "../../gtest_parallel/test_main.hpp"
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // std::vector expansion for numerical value type
@@ -323,3 +324,4 @@ TEST(vector_stdVector_expansion, testing_imprimentation_minus_base){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+EXECUTE_TESTS();

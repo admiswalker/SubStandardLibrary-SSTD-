@@ -1,4 +1,5 @@
-#pragma once
+#include <sstd/sstd.hpp>
+#include "../../gtest_parallel/test_main.hpp"
 
 /*
 void TEST_bmat(){
@@ -103,3 +104,4 @@ void TEST_bmat(){
     sstd::printn(I);
 }//*/
 
+EXECUTE_TESTS();

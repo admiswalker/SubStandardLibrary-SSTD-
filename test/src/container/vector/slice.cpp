@@ -1,4 +1,5 @@
-#pragma once
+#include <sstd/sstd.hpp>
+#include "../../gtest_parallel/test_main.hpp"
 
 // --- Notification ---
 // 
@@ -465,3 +466,5 @@ TEST(vector_slice_mv, vu02){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+
+EXECUTE_TESTS();
