@@ -1,5 +1,7 @@
-#pragma once
+#include <sstd/sstd.hpp>
+#include "../../gtest_parallel/test_main.hpp"
 
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 std::string vecUint8_to_hexString(std::vector<uint8>& rhs){
     std::string ret;
@@ -10,7 +12,7 @@ std::string vecUint8_to_hexString(std::vector<uint8>& rhs){
 }
 
 #define test_hashFn(hashFn, hashFn_str)                                 \
-    const char* pFilePath = "./test/test.png";                          \
+    const char* pFilePath = "./test/src/test.png";                      \
     std::vector<uint8> data = sstd::read_bin(pFilePath);                \
                                                                         \
     std::vector<uint8> hash = sstd::hashFn(data);                       \
@@ -25,3 +27,7 @@ TEST(hashFnc_of_MD5_SHA1_SHA2, sha256){ test_hashFn(sha256,"sha256sum"); }
 TEST(hashFnc_of_MD5_SHA1_SHA2, sha384){ test_hashFn(sha384,"sha384sum"); }
 TEST(hashFnc_of_MD5_SHA1_SHA2, sha512){ test_hashFn(sha512,"sha512sum"); }
 #undef test_hashFn
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+EXECUTE_TESTS();

@@ -1,8 +1,11 @@
-#pragma once
+#include <sstd/sstd.hpp>
+#include "../../gtest_parallel/test_main.hpp"
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 // arg: char
 #define test_hashSum_c(hashFn, hashFn_str)                              \
-    const char* pFilePath = "./test/test.png";                          \
+    const char* pFilePath = "./test/src/test.png";                      \
                                                                         \
     std::string s = sstd::hashFn(pFilePath);                            \
     ASSERT_TRUE(s.size()!=0);                                           \
@@ -19,7 +22,7 @@ TEST(hashFnc_of_MD5_SHA1_SHA2__hashSum, sha512sum_c){ test_hashSum_c(sha512sum, 
 
 // arg: string
 #define test_hashSum_s(hashFn, hashFn_str)                              \
-    const std::string filePath = "./test/test.png";                     \
+    const std::string filePath = "./test/src/test.png";                 \
                                                                         \
     std::string s = sstd::hashFn(filePath);                             \
     ASSERT_TRUE(s.size()!=0);                                           \
@@ -36,15 +39,16 @@ TEST(hashFnc_of_MD5_SHA1_SHA2__hashSum, sha512sum_s){ test_hashSum_s(sha512sum, 
 
 // empty file
 #define test_hashSum_emptyFile(hashFn, hashFn_str)                      \
-    sstd::mkdir("tmp");                                                 \
-    const std::string filePath = "tmp/emptyFile.txt";                   \
+    SET_TMP_DIR_NAME();                                                 \
+    sstd::mkdir(tmpDir);                                                \
+    const std::string filePath = tmpDir+"/emptyFile.txt";               \
     sstd::system(sstd::ssprintf("touch %s", filePath.c_str()));         \
                                                                         \
     std::string s = sstd::hashFn(filePath);                             \
                                                                         \
     std::string hash_ans_s = sstd::split(sstd::system_stdout(sstd::ssprintf("%s %s", hashFn_str, filePath.c_str())), ' ')[0]; \
     ASSERT_STREQ(s.c_str(), hash_ans_s.c_str());                        \
-    sstd::rm("tmp");
+    sstd::rm(tmpDir);
 TEST(hashFnc_of_MD5_SHA1_SHA2__hashSum_emptyFile, md5sum_s   ){ test_hashSum_emptyFile(md5sum,    "md5sum");    }
 TEST(hashFnc_of_MD5_SHA1_SHA2__hashSum_emptyFile, sha1sum_s  ){ test_hashSum_emptyFile(sha1sum,   "sha1sum");   }
 TEST(hashFnc_of_MD5_SHA1_SHA2__hashSum_emptyFile, sha224sum_s){ test_hashSum_emptyFile(sha224sum, "sha224sum"); }
@@ -55,7 +59,7 @@ TEST(hashFnc_of_MD5_SHA1_SHA2__hashSum_emptyFile, sha512sum_s){ test_hashSum_emp
 
 // not existing file
 #define test_hashSum_faileToReadFile(hashFn, hashFn_str)              \
-    const std::string filePath = "./test/notExistingFile.png";          \
+    const std::string filePath = "./test/src/notExistingFile.png";      \
                                                                         \
     testing::internal::CaptureStdout();                                 \
     std::string s = sstd::hashFn(filePath);                             \
@@ -70,3 +74,6 @@ TEST(hashFnc_of_MD5_SHA1_SHA2__hashSum_F, sha384sum_s){ test_hashSum_faileToRead
 TEST(hashFnc_of_MD5_SHA1_SHA2__hashSum_F, sha512sum_s){ test_hashSum_faileToReadFile(sha512sum, "sha512sum"); }
 #undef test_hashSum_faileToReadFile
 
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+EXECUTE_TESTS();

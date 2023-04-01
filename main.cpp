@@ -75,8 +75,10 @@ int main(int argc, char** argv){
     printf("+----------------------------------------------------+\n");
     printf("\n");
     printf("■ measureTime_start---------------\n\n"); time_m timem; sstd::measureTime_start(timem);
+    sstd::rm("tmp/test");
     
     std::string base_path = "./tmp/make/test/src";
+    
     
     // Testing binaries
     std::vector<std::string> vExePath;
@@ -98,6 +100,21 @@ int main(int argc, char** argv){
     vExePath.push_back(base_path+"/file/glob.exe"                               );
     vExePath.push_back(base_path+"/file/mkdir.exe"                              );
     vExePath.push_back(base_path+"/file/mv.exe"                                 );
+    vExePath.push_back(base_path+"/file/path.exe"                               );
+    vExePath.push_back(base_path+"/file/read_write.exe"                         );
+    vExePath.push_back(base_path+"/file/rm.exe"                                 );
+    vExePath.push_back(base_path+"/file/tinyInterpreter.exe"                    );
+    vExePath.push_back(base_path+"/math/math.exe"                               );
+    vExePath.push_back(base_path+"/math/signal.exe"                             );
+    vExePath.push_back(base_path+"/math/hashFnc_of_MD5_SHA1_SHA2/hashSum.exe"   );
+    vExePath.push_back(base_path+"/math/hashFnc_of_MD5_SHA1_SHA2/sstd_md5_sha1_sha2_wrapper.exe");
+    vExePath.push_back(base_path+"/memory/unique_void_ptr.exe"                  );
+    vExePath.push_back(base_path+"/memory/void_ptr_obj.exe"                     );
+    vExePath.push_back(base_path+"/print/pdbg.exe"                     );
+    vExePath.push_back(base_path+"/print/print_printn_printn_all.exe"                     );
+    vExePath.push_back(base_path+"/python/c2py.exe"                     );
+    
+        
 
     int ret = gtest_parallel::run_tests(vExePath);
 
