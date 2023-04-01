@@ -38,8 +38,9 @@ bool _copy_base(const char* pPath_src, const char* pPath_dst, const bool opt_n, 
         if(opt_n && fExist){ return true; }
     }
     if(::strcmp(pPath_src, pPath_dst)==0){ return false; }
-    
-    fd_src = open(pPath_src, O_RDONLY); if(fd_src<0){ return false; }
+
+    if(opt_p){ fd_src = open(pPath_src, O_RDWR); if(fd_src<0){ return false; }
+    }  else  { fd_src = open(pPath_src, O_RDONLY); if(fd_src<0){ return false; } }
     if(fstat(fd_src, &st_src)!=0){ close(fd_src); return false; }
     fd_dst = open(pPath_dst, O_CREAT|O_WRONLY, st_src.st_mode); if(fd_dst<0){ close(fd_src); return false; }
 
@@ -56,6 +57,7 @@ bool _copy_base(const char* pPath_src, const char* pPath_dst, const bool opt_n, 
     if(opt_p){
         ts_buf[0]=st_src.st_atim;
         ts_buf[1]=st_src.st_mtim;
+        if(futimens(fd_src, ts_buf)!=0){ ret=false; goto exit; }
         if(futimens(fd_dst, ts_buf)!=0){ ret=false; goto exit; }
     }
     
@@ -208,9 +210,11 @@ bool _cp_base(const char* pPath_src, const char* pPath_dst, const bool opt_n, co
                 if(vPath[i].type=='f'){ continue; }
                 
                 std::string dir_dst = std::string(pPath_dst)+'/'+&(vPath[i].path[begin_idx]);
-                if(!setTimestamp2dir(dir_dst, vPath[i].st)){ return false; }
+                if(!setTimestamp2dir(      dir_dst, vPath[i].st)){ return false; }
+                if(!setTimestamp2dir(vPath[i].path, vPath[i].st)){ return false; }
             }
             if(!setTimestamp2dir(dstPath_baseDir, st)){ return false; }
+            if(!setTimestamp2dir(      pPath_src, st)){ return false; }
         }
         
         return true;

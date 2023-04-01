@@ -21,7 +21,10 @@ jobs:
         make ./googletest-master/build/lib/libgtest.a
     - name: Build SSTD
       run: |
-        make FORCE_SSTD
+        make FORCE_TO_MAKE_SSTD
+    - name: Build SSTD TESTS
+      run: |
+        make FORCE_TO_MAKE_TEST_EXE
     - name: Build the others
       run: |
         make
