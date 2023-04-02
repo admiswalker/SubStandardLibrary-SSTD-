@@ -4,20 +4,22 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 TEST(strEdit, theOthers){
+    SET_TMP_DIR_NAME();
+    sstd::mkdir(tmpDir);
     printf("■ strEdit\n");
     printf("  □ readA_bin\n");
-    std::vector<uint8> raw = sstd::read_bin("./test/test.png");
+    std::vector<uint8> raw = sstd::read_bin("./test/src/test.png");
     sstd::printn_all(raw.size());
     printf("  □ write_bin\n");
-    if(!sstd::write_bin("./test__write_bin_char.png",             raw)){ sstd::pdbg_err("sstd::write_bin()\n"); }
-    if(!sstd::write_bin(std::string("./test__write_bin_str.png"), raw)){ sstd::pdbg_err("sstd::write_bin()\n"); }
+    if(!sstd::write_bin(tmpDir+"/test__write_bin_char.png",             raw)){ sstd::pdbg_err("sstd::write_bin()\n"); }
+    if(!sstd::write_bin(std::string(tmpDir+"/test__write_bin_str.png"), raw)){ sstd::pdbg_err("sstd::write_bin()\n"); }
     
     printf("  □ read_withoutBOM & splitByLine\n");
 //    std::string str_tI = sstd::read_withoutBOM(R"(./test/tinyInterpreter.txt)");
-    std::string str_tI = sstd::read_withoutBOM(std::string(R"(./test/file/tinyInterpreter.txt)"));
+    std::string str_tI = sstd::read_withoutBOM(std::string(R"(./test/src/file/tinyInterpreter.txt)"));
     std::vector<std::string> splitLList = sstd::splitByLine(str_tI);
     printf("\n");
-    printf("  ./test/tinyInterpreter.txt\n");
+    printf("  ./test/src/tinyInterpreter.txt\n");
     printf("+----+---------------------------------------------------------------------+\n");
     for(uint i=0; i<splitLList.size(); ++i){
         printf("| %2d | %-67s |\n", i, splitLList[i].c_str());
@@ -32,6 +34,7 @@ TEST(strEdit, theOthers){
     
     vecRow = sstd::split("ABC,DEF",              ','); sstd::printn(vecRow); // "ABC,DEF" -> ["ABC", "DEF"]
     vecRow = sstd::split(" ABC  , D,  EF ,GH  ", ','); sstd::printn(vecRow); // " ABC  , D,  EF ,GH  " -> ["ABC", "D", "EF",  "GH"]
+    sstd::rm(tmpDir);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
