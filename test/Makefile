@@ -21,13 +21,16 @@ TEST_DEPS  := $(addprefix $(TEST_TMP_PATH)/, $(patsubst %.cpp, %.d, $(TEST_SRCS)
 LIB_SSTD       := ../sstd/lib/libsstd.a
 LIB_GOOGLETEST := ../googletest-master/build/lib/libgtest.a
 
+TEST_LIST := ../tests_list_for_build_and_run.txt
+
 
 all: $(DEPS) $(TEST_EXES)
 
 
 $(TEST_TMP_PATH)/%.exe: %.cpp $(LIB_SSTD) $(LIB_GOOGLETEST)
 	@mkdir -p $(dir $@)
-	@`/usr/bin/time -f "Build time: %e sec ($<)" $(CXX) -o $@ $< $(CFLAGS);`
+	@/bin/bash ./build_exe.sh $@ $< $(CXX) "$(CFLAGS)" $(TEST_LIST)
+#	@`/usr/bin/time -f "Build time: %e sec ($<)" $(CXX) -o $@ $< $(CFLAGS);`
 
 
 # 「-include $(DEPS)」により，必要な部分のみ分割で再コンパイルを行うため，依存関係を記した *.d ファイルに生成する
