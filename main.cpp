@@ -30,7 +30,7 @@ int main(int argc, char** argv){
     std::vector<std::string> vExePath;
     
     // Testing binaries
-    //*
+    /*
     vExePath.push_back(base_path+"/cast/typeConversion.exe"                     );
     vExePath.push_back(base_path+"/container/matrixContainer_binary/bmat.exe"   );
     vExePath.push_back(base_path+"/container/matrixContainer_colMajor/mat_c.exe");
