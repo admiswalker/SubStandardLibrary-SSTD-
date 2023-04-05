@@ -26,10 +26,13 @@ int main(int argc, char** argv){
     printf("■ measureTime_start---------------\n\n"); time_m timem; sstd::measureTime_start(timem);
     sstd::rm("tmp/test");
     
-    std::string base_path = "./tmp/make/test/src";
-    std::vector<std::string> vExePath;
+    //std::string base_path = "./tmp/make/test/src";
     
     // Testing binaries
+    std::vector<std::string> vExePath = gtest_parallel::get_exeList("tmp/make/test/src", "*.exe");
+
+    
+    
     /*
     vExePath.push_back(base_path+"/cast/typeConversion.exe"                     );
     vExePath.push_back(base_path+"/container/matrixContainer_binary/bmat.exe"   );

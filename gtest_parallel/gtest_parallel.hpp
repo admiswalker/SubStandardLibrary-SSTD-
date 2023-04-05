@@ -195,18 +195,23 @@ namespace gtest_parallel{
         if(failedNum!=0){ printf("%s %d test%s failed.\n", (console_color::red  +"[  FAILED  ]"+console_color::reset).c_str(), failedNum, (failedNum>=2?"s":"")); }
         printf("\n");
     }
-    /*
-    std::vector<std::string> get_exeList(const char* pSearchPath){
+    
+    //---
+    
+    std::vector<std::string> get_exeList(const char* pSearchPath, const char* pSearchName){
         std::string retStr;
         std::string cmd;
-        cmd = "find";
-        int ret = system_stdout_stderr(std::string& ret, const std::string& cmd);
+        cmd = std::string("find ") + pSearchPath + " -name " + pSearchName;
+        int ret = system_stdout_stderr(retStr, cmd);
         if(ret!=0){ printf("ERROR: get_exeList() is failed\n"); }
+        
+        return splitByLine(retStr);
     }
-    std::vector<std::string> get_exeList(const std::string& searchPath){
-        return get_exeList(searchPath.c_str());
+    std::vector<std::string> get_exeList(const std::string& searchPath, const std::string& searchName){
+        return get_exeList(searchPath.c_str(), searchName.c_str());
     }
-    */
+    
+    //---
     
     int run_tests(const std::vector<std::string>& vExePath){
         std::string google_test_option = "--gtest_color=yes";

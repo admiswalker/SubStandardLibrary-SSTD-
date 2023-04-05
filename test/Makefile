@@ -10,7 +10,7 @@ TEST_SRC_DIR := test/src
 TEMP_DIR     := tmp/make
 
 TEST_SRC_PATH := $(BASE_PATH)/$(TEST_SRC_DIR)
-TEST_TMP_PATH := $(BASE_PATH)/$(TEMP_DIR)/dummy
+TEST_TMP_PATH := $(BASE_PATH)/$(TEMP_DIR)/test
 
 TEST_SRCS  := $(shell find $(TEST_SRC_PATH) -type f -name '*.cpp')
 TEST_HEADS := $(shell find $(TEST_SRC_PATH) -type f -name '*.hpp')
