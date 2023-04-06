@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 OWN_DIR=`dirname $0`
 CALL_DIR=`pwd -P`
@@ -15,8 +15,9 @@ BUILD_SRC=$(realpath --relative-to=${CALL_DIR} ${BUILD_SRC})
 
 TEST_LIST_STR=$(cat ${TEST_LIST} | cut -d "#" -f 1) # rm comments
 SEARCH_WORD=${BUILD_SRC}
+SEARCH_RESULT=$(echo ${TEST_LIST_STR} | grep ${SEARCH_WORD})
 
-if [[ "${TEST_LIST_STR}" == *"${SEARCH_WORD}"* ]]; then
+if [ ${#SEARCH_RESULT} -gt 1 ]; then
     #echo "contain search word"
     /usr/bin/time -f "Build time: %e sec (${BUILD_SRC})" ${CXX} -o ${BUILD_DST} ${BUILD_SRC} ${CFLAGS}
 else

@@ -29,7 +29,7 @@ all: $(DEPS) $(TEST_EXES)
 
 $(TEST_TMP_PATH)/%.exe: %.cpp $(LIB_SSTD) $(LIB_GOOGLETEST)
 	@mkdir -p $(dir $@)
-	@/bin/bash ./build_exe.sh $@ $< $(CXX) "$(CFLAGS)" $(TEST_LIST)
+	@sh ./build_exe.sh $@ $< $(CXX) "$(CFLAGS)" $(TEST_LIST)
 #	@`/usr/bin/time -f "Build time: %e sec ($<)" $(CXX) -o $@ $< $(CFLAGS);`
 
 
