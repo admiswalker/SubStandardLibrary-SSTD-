@@ -86,7 +86,17 @@ LIB_GTEST_PARALLEL_MAIN = ./gtest_parallel/test_main.hpp
 TEST_EXES = FORCE_TO_MAKE_TEST_EXE
 
 
-$(TARGET): $(LIB_SSTD) $(LIB_GOOGLETEST) $(TEST_MULTI_DEF) $(TEST_EXES) $(SRCS) $(LIB_GTEST_PARALLEL_MAIN)
+.PHONY: all
+all: $(LIB_SSTD) $(LIB_GOOGLETEST) $(TEST_MULTI_DEF) $(TEST_EXES) $(SRCS) $(LIB_GTEST_PARALLEL_MAIN) $(TARGET)
+
+
+.PHONY: all_mp
+all_mp:
+	@(make clean)
+	@(make -j)
+
+
+$(TARGET): $(SRCS)
 	@echo "\n============================================================"
 	@echo   "Build begin: exe\n"
 	@echo   "SRCS: \n$(SRCS)\n"
@@ -128,12 +138,6 @@ $(TEST_EXES):
 	@(cd ./test; make -j)
 	@echo "\n                                        Build end: TEST_EXES"
 	@echo   "============================================================\n"
-
-
-.PHONY: all
-all:
-	@(make clean)
-	@(make -j)
 
 
 patch            := *.stackdump

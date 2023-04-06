@@ -24,7 +24,7 @@ int main(int argc, char** argv){
     printf("+----------------------------------------------------+\n");
     printf("\n");
     printf("■ measureTime_start---------------\n\n"); time_m timem; sstd::measureTime_start(timem);
-    sstd::rm("tmp/test");
+    sstd::rm("tmp/test"); // rm the tmp directory for test
     
     // Testing binaries
     std::vector<std::string> vExePath = gtest_parallel::get_exeList("tmp/make/test/src", "*.exe");
