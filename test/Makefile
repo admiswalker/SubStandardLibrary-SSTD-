@@ -10,7 +10,7 @@ TEST_SRC_DIR := test/src
 TEMP_DIR     := tmp/make
 
 TEST_SRC_PATH := $(BASE_PATH)/$(TEST_SRC_DIR)
-TEST_TMP_PATH := $(BASE_PATH)/$(TEMP_DIR)/dummy
+TEST_TMP_PATH := $(BASE_PATH)/$(TEMP_DIR)/test
 
 TEST_SRCS  := $(shell find $(TEST_SRC_PATH) -type f -name '*.cpp')
 TEST_HEADS := $(shell find $(TEST_SRC_PATH) -type f -name '*.hpp')
@@ -21,13 +21,16 @@ TEST_DEPS  := $(addprefix $(TEST_TMP_PATH)/, $(patsubst %.cpp, %.d, $(TEST_SRCS)
 LIB_SSTD       := ../sstd/lib/libsstd.a
 LIB_GOOGLETEST := ../googletest-master/build/lib/libgtest.a
 
+TEST_LIST := ../tests_list_for_build_and_run.txt
+
 
 all: $(DEPS) $(TEST_EXES)
 
 
 $(TEST_TMP_PATH)/%.exe: %.cpp $(LIB_SSTD) $(LIB_GOOGLETEST)
 	@mkdir -p $(dir $@)
-	@`/usr/bin/time -f "Build time: %e sec ($<)" $(CXX) -o $@ $< $(CFLAGS);`
+	@sh ./build_exe.sh $@ $< $(CXX) "$(CFLAGS)" $(TEST_LIST)
+#	@`/usr/bin/time -f "Build time: %e sec ($<)" $(CXX) -o $@ $< $(CFLAGS);`
 
 
 # 「-include $(DEPS)」により，必要な部分のみ分割で再コンパイルを行うため，依存関係を記した *.d ファイルに生成する

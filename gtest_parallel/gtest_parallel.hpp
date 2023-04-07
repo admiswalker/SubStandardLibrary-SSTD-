@@ -3,6 +3,8 @@
 #include <vector>
 #include <numeric>
 #include <omp.h>
+#include <errno.h>
+#include <unistd.h> // usleep
 
 
 namespace gtest_parallel{
@@ -29,9 +31,20 @@ namespace gtest_parallel{
 
     int system_stdout_stderr(std::string& ret, const std::string& cmd){
         std::string cmd_out_err = cmd + std::string(R"( 2>&1)"); // 2>&1: redirecting stderr to stdout.
-        FILE* fp=popen(cmd_out_err.c_str(), "r");
-        if(fp==NULL){ printf("popen() was failed.\n"); return -1; }
-    
+        FILE* fp=NULL;
+        
+        int maxRetry = 10000;
+        for(int i=0; i<maxRetry; ++i){
+            fp=popen(cmd_out_err.c_str(), "r"); // in some env (ex: Alpine Linux run with docker on Ubuntu Host OS) failed popen().
+            if(fp!=NULL){ break; }
+            usleep(50023); // wait 50 ms (50023 is a prime number)
+        }
+        if(fp==NULL){
+            std::string err_str = console_color::red + "ERROR" + console_color::reset;
+            printf("%s: gtest_parallel::system_stdout_stderr(): popen() was failed (%s): cmd = %s.\n", err_str.c_str(), strerror(errno), cmd.c_str());
+            return -1;
+        }
+        
         char buf[1024];
         while(fgets(buf, 1024, fp) != NULL){ ret+=buf; }
     
@@ -118,8 +131,10 @@ namespace gtest_parallel{
         std::vector<struct execution_settings> exeList;
         std::vector<int> vErrNum(vExePath.size());
         std::vector<std::vector<struct execution_settings>> v_exeList(vExePath.size());
-    
+
+#if EXECUTE_TEST_IN_PARALLEL
 #pragma omp parallel for schedule(dynamic)
+#endif
         for(uint i=0; i<vExePath.size(); ++i){
             std::vector<std::pair<std::string,std::string>> ret_v;
             int ret = get_test_list(ret_v, vExePath[i]);
@@ -195,7 +210,24 @@ namespace gtest_parallel{
         if(failedNum!=0){ printf("%s %d test%s failed.\n", (console_color::red  +"[  FAILED  ]"+console_color::reset).c_str(), failedNum, (failedNum>=2?"s":"")); }
         printf("\n");
     }
-
+    
+    //---
+    
+    std::vector<std::string> get_exeList(const char* pSearchPath, const char* pSearchName){
+        std::string retStr;
+        std::string cmd;
+        cmd = std::string("find ") + pSearchPath + " -name " + pSearchName;
+        int ret = system_stdout_stderr(retStr, cmd);
+        if(ret!=0){ printf("ERROR: get_exeList() is failed\n"); }
+        
+        return splitByLine(retStr);
+    }
+    std::vector<std::string> get_exeList(const std::string& searchPath, const std::string& searchName){
+        return get_exeList(searchPath.c_str(), searchName.c_str());
+    }
+    
+    //---
+    
     int run_tests(const std::vector<std::string>& vExePath){
         std::string google_test_option = "--gtest_color=yes";
     
@@ -211,7 +243,9 @@ namespace gtest_parallel{
         printf("%s Running %d test%s.\n", (console_color::green+"[==========]"+console_color::reset).c_str(), testNum, (testNum>=2?"s":""));
         omp_lock_t omp_lock;
         omp_init_lock(&omp_lock); // init
+#if EXECUTE_TEST_IN_PARALLEL
 #pragma omp parallel for schedule(dynamic)
+#endif
         for(uint i=0; i<exeList.size(); ++i){
             execute_tests(vEnd[i], vFailed[i], vFailedTest[i], vRet[i], exeList[i], google_test_option);
             print_results(omp_lock, i_end_num, vEnd, vRet);
