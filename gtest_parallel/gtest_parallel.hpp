@@ -35,7 +35,7 @@ namespace gtest_parallel{
         
         int maxRetry = 10000;
         for(int i=0; i<maxRetry; ++i){
-            fp=popen(cmd_out_err.c_str(), "r");
+            fp=popen(cmd_out_err.c_str(), "r"); // in some env (ex: Alpine Linux run with docker on Ubuntu Host OS) failed popen().
             if(fp!=NULL){ break; }
             usleep(50023); // wait 50 ms (50023 is a prime number)
         }
