@@ -33,7 +33,7 @@ namespace gtest_parallel{
         std::string cmd_out_err = cmd + std::string(R"( 2>&1)"); // 2>&1: redirecting stderr to stdout.
         FILE* fp=NULL;
         
-        int maxRetry = 1000;
+        int maxRetry = 10000;
         for(int i=0; i<maxRetry; ++i){
             fp=popen(cmd_out_err.c_str(), "r");
             if(fp!=NULL){ break; }
