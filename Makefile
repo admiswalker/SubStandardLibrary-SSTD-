@@ -87,7 +87,7 @@ TEST_EXES = FORCE_TO_MAKE_TEST_EXE
 
 
 .PHONY: all
-all: $(LIB_SSTD) $(LIB_GOOGLETEST) $(TEST_MULTI_DEF) $(TEST_EXES) $(SRCS) $(LIB_GTEST_PARALLEL_MAIN) $(TARGET)
+all: $(LIB_SSTD) $(LIB_GOOGLETEST) $(TEST_MULTI_DEF) $(TEST_EXES) $(SRCS) $(TARGET)
 
 
 .PHONY: all_mp
@@ -96,7 +96,7 @@ all_mp:
 	@(make -j)
 
 
-$(TARGET): $(SRCS)
+$(TARGET): $(SRCS) $(LIB_GTEST_PARALLEL)
 	@echo "\n============================================================"
 	@echo   "Build begin: exe\n"
 	@echo   "SRCS: \n$(SRCS)\n"

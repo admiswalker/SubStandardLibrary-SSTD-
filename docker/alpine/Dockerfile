@@ -1,6 +1,6 @@
 FROM crystallang/crystal:latest-alpine
 
-RUN apk update && apk add --no-cache \
+RUN apk update --no-cache && apk add --no-cache \
     coreutils \
     make \
     gcc \

@@ -3,6 +3,7 @@
 #include <vector>
 #include <numeric>
 #include <omp.h>
+#include <errno.h>
 
 
 namespace gtest_parallel{
@@ -30,8 +31,12 @@ namespace gtest_parallel{
     int system_stdout_stderr(std::string& ret, const std::string& cmd){
         std::string cmd_out_err = cmd + std::string(R"( 2>&1)"); // 2>&1: redirecting stderr to stdout.
         FILE* fp=popen(cmd_out_err.c_str(), "r");
-        if(fp==NULL){ printf("popen() was failed.\n"); return -1; }
-    
+        if(fp==NULL){
+            std::string err_str = console_color::red + "ERROR" + console_color::reset;
+            printf("%s: gtest_parallel::system_stdout_stderr(): popen() was failed (%s): cmd = %s.\n", err_str.c_str(), strerror(errno), cmd.c_str());
+            return -1;
+        }
+        
         char buf[1024];
         while(fgets(buf, 1024, fp) != NULL){ ret+=buf; }
     
