@@ -9,7 +9,7 @@
 // 実装完了 (処理時間短縮のため，コメントアウト)
 
 void TEST__c2py__empty_args(const char* tmpDir){
-    sstd::c2py<void> py_emptyArg(tmpDir, "test/src/python/c2py_t", "py_emptyArg", "void");
+    sstd::c2py<void> py_emptyArg(tmpDir, "test/src_test/python/c2py_t", "py_emptyArg", "void");
     testing::internal::CaptureStdout();
     py_emptyArg();
     ASSERT_STREQ("* * * Welcome to sstd::c2py<T> ! * * *\n", testing::internal::GetCapturedStdout().c_str());
@@ -27,7 +27,7 @@ void TEST__c2py__bench_withoutInit(const char* tmpDir){
     uint numOfCall = 5;
     time_m timem; sstd::measureTime_start(timem);
     
-    sstd::c2py<void> py_empty(tmpDir, "test/src/python/c2py_t", "py_empty", "void");
+    sstd::c2py<void> py_empty(tmpDir, "test/src_test/python/c2py_t", "py_empty", "void");
     for(uint i=0; i<numOfCall; ++i){ py_empty(); }
     
     double sec = sstd::measureTime_stop_s(timem);
@@ -39,7 +39,7 @@ void TEST__c2py__bench_withInit(const char* tmpDir){
     time_m timem; sstd::measureTime_start(timem);
     
     for(uint i=0; i<numOfCall; ++i){
-        sstd::c2py<void> py_empty(tmpDir, "test/src/python/c2py_t", "py_empty", "void");
+        sstd::c2py<void> py_empty(tmpDir, "test/src_test/python/c2py_t", "py_empty", "void");
         py_empty();
     }
     
@@ -121,7 +121,7 @@ void vec_rm(std::vector<T>& rhs, const uint index){ rhs.erase(rhs.begin() + inde
 // 実装完了 (処理時間短縮のため，コメントアウト)
 
 void TEST__c2py__builIn_bool(const char* tmpDir){
-    const char* fileName = "test/src/python/c2py_t";
+    const char* fileName = "test/src_test/python/c2py_t";
     
     bool in     = true;
     bool in_inv = !in;
@@ -204,7 +204,7 @@ void TEST__c2py__builIn_bool(const char* tmpDir){
 // 実装完了 (処理時間短縮のため，コメントアウト)
 
 void TEST__c2py__builIn_char(const char* tmpDir){
-    const char* fileName = "test/src/python/c2py_t";
+    const char* fileName = "test/src_test/python/c2py_t";
     
     const char in = 'C';
     std::string ans = "C\n";
@@ -363,7 +363,7 @@ void TEST_c2py_floatX(const char* tmpDir,
 // 実装完了 (処理時間短縮のため，コメントアウト)
 
 void TEST__c2py__builtIn_num(const char* tmpDir){
-    const char* fileName = "test/src/python/c2py_t";
+    const char* fileName = "test/src_test/python/c2py_t";
     
     const std::vector<std::string> vecFnName = {"py_integer", "py_pInteger", "py_pInteger", "py_pInteger", "py_pInteger_pCnvBuiltin"};
     TEST_c2py_integer<uchar >(tmpDir, fileName, vecFnName, "uchar , ret uchar* , uchar ", "void, const uchar *, len", "void, uchar *, len", "void, uchar *|~, len", "void, uchar *|*~, len");
@@ -389,7 +389,7 @@ void TEST__c2py__builtIn_num(const char* tmpDir){
 // 実装完了 (処理時間短縮のため，コメントアウト)
 
 void TEST__c2py__str(const char* tmpDir){
-    const char* fileName = "test/src/python/c2py_t";
+    const char* fileName = "test/src_test/python/c2py_t";
     
     std::string str="01234abcdABCD";
     
@@ -454,7 +454,7 @@ void TEST__c2py__str(const char* tmpDir){
 // 実装完了 (処理時間短縮のため，コメントアウト)
 
 void TEST__c2py__vec_bool(const char* tmpDir){
-    const char* fileName = "test/src/python/c2py_t";
+    const char* fileName = "test/src_test/python/c2py_t";
     
     const std::vector<bool> vecIn={ true, false,  true, false, false,  true};
     std::vector<bool> vecIn_inv(vecIn.size()); for(uint i=0; i<vecIn.size(); ++i){ vecIn_inv[i]=(!vecIn[i]); }
@@ -548,7 +548,7 @@ void TEST__c2py__vec_bool(const char* tmpDir){
 // 実装完了 (処理時間短縮のため，コメントアウト)
 
 void TEST__c2py__vec_char(const char* tmpDir){
-    const char* fileName = "test/src/python/c2py_t";
+    const char* fileName = "test/src_test/python/c2py_t";
     
     std::vector<char> vecIn   ={'a', 'b', 'c', 'd'};
     std::vector<char> vecIn_WB={'9', 'b', 'c', 'd', '8'};
@@ -772,7 +772,7 @@ void TEST_c2py_vecFolatXX(const char* tmpDir,
     }
     {
         // void, vec<T>*
-        sstd::c2py<void> pyFn(tmpDir, "test/src/python/c2py_t", "py_pVecFloatX", fmt_2); // Writing back
+        sstd::c2py<void> pyFn(tmpDir, "test/src_test/python/c2py_t", "py_pVecFloatX", fmt_2); // Writing back
         std::vector<T> vecIn_buf = vecIn;
         
         testing::internal::CaptureStdout();
@@ -785,7 +785,7 @@ void TEST_c2py_vecFolatXX(const char* tmpDir,
     //---
     {
         // void, vec<T>*|~
-        sstd::c2py<void> pyFn(tmpDir, "test/src/python/c2py_t", "py_pVecFloatX_cnvBuiltin", fmt_3); // Writing back
+        sstd::c2py<void> pyFn(tmpDir, "test/src_test/python/c2py_t", "py_pVecFloatX_cnvBuiltin", fmt_3); // Writing back
         std::vector<T> vecIn_buf = vecIn;
         
         testing::internal::CaptureStdout();
@@ -796,7 +796,7 @@ void TEST_c2py_vecFolatXX(const char* tmpDir,
     }
     {
         // void, vec<T>*|*~
-        sstd::c2py<void> pyFn(tmpDir, "test/src/python/c2py_t", "py_pVecFloatX_pCnvBuiltin", fmt_4); // Writing back
+        sstd::c2py<void> pyFn(tmpDir, "test/src_test/python/c2py_t", "py_pVecFloatX_pCnvBuiltin", fmt_4); // Writing back
         std::vector<T> vecIn_buf = vecIn;
         
         testing::internal::CaptureStdout();
@@ -824,7 +824,7 @@ void TEST_c2py_vecFolatXX(const char* tmpDir,
 // 実装完了 (処理時間短縮のため，コメントアウト)
 
 void TEST__c2py__vec_builtin(const char* tmpDir){
-    const char* fileName = "test/src/python/c2py_t";
+    const char* fileName = "test/src_test/python/c2py_t";
     
     TEST_c2py_vecIntegerXX<uchar >(tmpDir, fileName, "vec <uchar>, ret vec <uchar>*, vec <uchar>", "void, const vec <uchar>*", "void, vec< uchar>*", "void, vec <uchar>*|~", "void, vec <uchar>*|*~", "void, vec <uchar>*|*");
     TEST_c2py_vecIntegerXX< int8 >(tmpDir, fileName, "vec< int8 >, ret vec< int8 >*, vec< int8 >", "void, const vec< int8 >*", "void, vec< int8 >*", "void, vec< int8 >*|~", "void, vec< int8 >*|*~", "void, vec< int8 >*|*");
@@ -846,7 +846,7 @@ void TEST__c2py__vec_builtin(const char* tmpDir){
 // 実装完了 (処理時間短縮のため，コメントアウト)
 
 void TEST__c2py__vec_str(const char* tmpDir){
-    const char* fileName = "test/src/python/c2py_t";
+    const char* fileName = "test/src_test/python/c2py_t";
     
     std::vector<std::string> vecIn   ={"ABCD", "EF", "GHIJKLMNO"};
     std::vector<std::string> vecIn_WB={"abcdefg", "EF", "GHIJKLMNO", "0123"};
@@ -1200,7 +1200,7 @@ void TEST_c2py_matStr(const char* tmpDir, const char* fileName,
         // "mat<str>, ret mat<str>*, mat<str>*"
         
         // mat<str> 引数は，不可．恐らく，gcc 5.4.0 の可変長引数の実装が，そもそもクラス型を想定していないので，バグを踏む．-> ポインタ渡しなら問題ない．
-        // sstd::c2py<sstd::mat<std::string>> py_matStr(tmpDir, "test/src/python/c2py_t", "py_matX", "mat<str>, mat<str>");
+        // sstd::c2py<sstd::mat<std::string>> py_matStr(tmpDir, "test/src_test/python/c2py_t", "py_matX", "mat<str>, mat<str>");
         // sstd::printn(py_matStr(matStr));
         sstd::c2py<matT> pyFn(tmpDir, fileName, "py_matStr", fmt_0);
         matT matIn_buf = matIn;
@@ -1259,7 +1259,7 @@ void TEST_c2py_matStr(const char* tmpDir, const char* fileName,
 // 実装完了 (処理時間短縮のため，コメントアウト)
 
 void TEST__c2py__mat_c(const char* tmpDir){
-    const char* fileName = "test/src/python/c2py_t";
+    const char* fileName = "test/src_test/python/c2py_t";
     
     TEST_c2py_matBool<sstd::mat_c<bool>>(tmpDir, fileName, "mat_c<bool>, ret mat_c<bool>*, mat_c<bool>", "void, const mat_c<bool>*", "void, mat_c<bool>*", "void, mat_c<bool>*|~", "void, mat_c<bool>*|*~");
     TEST_c2py_matChar<sstd::mat_c<char>>(tmpDir, fileName, "mat_c<char>, ret mat_c<char>*, mat_c<char>", "void, const mat_c<char>*", "void, mat_c<char>*", "void, mat_c<char>*|~", "void, mat_c<char>*|*~", "void, mat_c<char>*|*");
@@ -1282,7 +1282,7 @@ void TEST__c2py__mat_c(const char* tmpDir){
     sstd::rm(tmpDir);
 }
 void TEST__c2py__mat_r(const char* tmpDir){
-    const char* fileName = "test/src/python/c2py_t";
+    const char* fileName = "test/src_test/python/c2py_t";
     
     TEST_c2py_matBool<sstd::mat_r<bool>>(tmpDir, fileName, "mat_r<bool>, ret mat_r<bool>*, mat_r<bool>", "void, const mat_r<bool>*", "void, mat_r<bool>*", "void, mat_r<bool>*|~", "void, mat_r<bool>*|*~");
     TEST_c2py_matChar<sstd::mat_r<char>>(tmpDir, fileName, "mat_r<char>, ret mat_r<char>*, mat_r<char>", "void, const mat_r<char>*", "void, mat_r<char>*", "void, mat_r<char>*|~", "void, mat_r<char>*|*~", "void, mat_r<char>*|*");
@@ -1310,7 +1310,7 @@ void TEST__c2py__mat_r(const char* tmpDir){
 // 実装完了 (処理時間短縮のため，コメントアウト)
 
 void TEST__c2py__return_null(const char* tmpDir){
-    const char* fileName = "test/src/python/c2py_t";
+    const char* fileName = "test/src_test/python/c2py_t";
     {
         // "return []"
         sstd::c2py<std::vector<char>> pyFn(tmpDir, fileName, "py_vec_return_null", "vec<char>");
@@ -1330,7 +1330,7 @@ void TEST__c2py__return_null(const char* tmpDir){
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 void TEST__c2py__sample_codes(const char* tmpDir){
-    const char* fileName = "test/src/python/c2py_t";
+    const char* fileName = "test/src_test/python/c2py_t";
     {
         //         int                          plusAandB(int a, int b){ return a+b; } // <- you can write this as a python function.
         sstd::c2py<int32> plus_A_B(tmpDir, fileName, "plus_A_B", "int32, int32, int32");
@@ -1456,7 +1456,7 @@ void TEST__c2py__sample_codes(const char* tmpDir){
     {
         sstd::c2py<void> imgPath2mat_rRGB(tmpDir, fileName, "imgPath2mat_rRGB", "void, ret mat_r<uint8>*, ret mat_r<uint8>*, ret mat_r<uint8>*, const char*");
         sstd::mat_r<uint8> imgR, imgG, imgB;
-        imgPath2mat_rRGB(&imgR, &imgG, &imgB, "./test/src/test.png");
+        imgPath2mat_rRGB(&imgR, &imgG, &imgB, "./test/src_test/test.png");
         
         for(uint p=0; p<imgG.rows(); ++p){
             for(uint q=0; q<imgG.cols(); ++q){
@@ -1545,7 +1545,7 @@ void TEST_c2py_vvecFolatXX(const char* tmpDir,
 }
 //---
 void TEST__c2py__vvec_builtin(const char* tmpDir){
-    const char* fileName = "test/src/python/c2py_t";
+    const char* fileName = "test/src_test/python/c2py_t";
     
 // not implimented
 // not implimented

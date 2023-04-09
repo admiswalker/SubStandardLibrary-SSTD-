@@ -11,8 +11,8 @@ TEST(cp, copy_pChar_pChar_case01){
     
     sstd::copy(tmpDir+"/test_rand.bin", tmpDir+"/test_rand_copy.bin");
 
-    std::string hash_src = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
-    std::string hash_dst = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand_copy.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_src; sstd::system_stdout(hash_src, "sha256sum "+tmpDir+"/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_dst; sstd::system_stdout(hash_dst, "sha256sum "+tmpDir+"/test_rand_copy.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
 
     ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());
     sstd::rm(tmpDir);
@@ -24,8 +24,8 @@ TEST(cp, copy_pChar_pChar_case02_changeFileSize){
     
     sstd::copy(tmpDir+"/test_rand.bin", tmpDir+"/test_rand_copy.bin");
     {   
-        std::string hash_src = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
-        std::string hash_dst = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand_copy.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+        std::string hash_src; sstd::system_stdout(hash_src, "sha256sum "+tmpDir+"/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+        std::string hash_dst; sstd::system_stdout(hash_dst, "sha256sum "+tmpDir+"/test_rand_copy.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
         ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());
     }
     
@@ -34,8 +34,8 @@ TEST(cp, copy_pChar_pChar_case02_changeFileSize){
     sstd::system("dd if=/dev/urandom of="+tmpDir+"/test_rand.bin bs=1M count=9 > /dev/null 2>&1");
     sstd::copy(tmpDir+"/test_rand.bin", tmpDir+"/test_rand_copy.bin");
     {
-        std::string hash_src = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
-        std::string hash_dst = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand_copy.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+        std::string hash_src; sstd::system_stdout(hash_src, "sha256sum "+tmpDir+"/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+        std::string hash_dst; sstd::system_stdout(hash_dst, "sha256sum "+tmpDir+"/test_rand_copy.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
         
         ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());
     }
@@ -49,8 +49,8 @@ TEST(cp, copy_check_file_permission){
     
     sstd::copy(tmpDir+"/exmaple.txt", tmpDir+"/exmaple_copy.txt");
     
-    std::string permission_src = sstd::system_stdout("ls -al "+tmpDir+"/exmaple.txt | cut -d \" \" -f 1"); permission_src.pop_back(); // pop_back() is removing '\n'.
-    std::string permission_dst = sstd::system_stdout("ls -al "+tmpDir+"/exmaple_copy.txt | cut -d \" \" -f 1"); permission_dst.pop_back(); // pop_back() is removing '\n'.
+    std::string permission_src; sstd::system_stdout(permission_src, "ls -al "+tmpDir+"/exmaple.txt | cut -d \" \" -f 1"); permission_src.pop_back(); // pop_back() is removing '\n'.
+    std::string permission_dst; sstd::system_stdout(permission_dst, "ls -al "+tmpDir+"/exmaple_copy.txt | cut -d \" \" -f 1"); permission_dst.pop_back(); // pop_back() is removing '\n'.
     ASSERT_STREQ(permission_src.c_str(), permission_dst.c_str());
     
     sstd::rm(tmpDir);
@@ -65,12 +65,12 @@ TEST(cp, copy__opt_p__check_file_timestamp){
     sstd::copy(tmpDir+"/exmaple.txt", tmpDir+"/exmaple_copy.txt", "p");
 
     std::string date_src, date_dst;
-    date_src = sstd::system_stdout("date \"+%Y/%m/%d %H:%M:%S\" -r "+tmpDir+"/exmaple.txt"); date_src.pop_back(); // pop_back() is removing '\n'.
-    date_dst = sstd::system_stdout("date \"+%Y/%m/%d %H:%M:%S\" -r "+tmpDir+"/exmaple_copy.txt"); date_dst.pop_back(); // pop_back() is removing '\n'.
+    sstd::system_stdout(date_src, "date \"+%Y/%m/%d %H:%M:%S\" -r "+tmpDir+"/exmaple.txt"); date_src.pop_back(); // pop_back() is removing '\n'.
+    sstd::system_stdout(date_dst, "date \"+%Y/%m/%d %H:%M:%S\" -r "+tmpDir+"/exmaple_copy.txt"); date_dst.pop_back(); // pop_back() is removing '\n'.
     ASSERT_STREQ(date_src.c_str(), date_dst.c_str());
     
-    date_src = sstd::system_stdout("ls --full-time "+tmpDir+"/exmaple.txt | cut -d \" \" -f 7"); date_src.pop_back(); // pop_back() is removing '\n'.
-    date_dst = sstd::system_stdout("ls --full-time "+tmpDir+"/exmaple_copy.txt | cut -d \" \" -f 7"); date_dst.pop_back(); // pop_back() is removing '\n'.
+    sstd::system_stdout(date_src, "ls --full-time "+tmpDir+"/exmaple.txt | cut -d \" \" -f 7"); date_src.pop_back(); // pop_back() is removing '\n'.
+    sstd::system_stdout(date_dst, "ls --full-time "+tmpDir+"/exmaple_copy.txt | cut -d \" \" -f 7"); date_dst.pop_back(); // pop_back() is removing '\n'.
     ASSERT_STREQ(date_src.c_str(), date_dst.c_str());
     
     sstd::rm(tmpDir);
@@ -86,8 +86,8 @@ TEST(cp, copy__opt_u__update){
 
     sstd::copy(tmpDir+"/test_rand_src.bin", tmpDir+"/test_rand_dst.bin", "u");
 
-    std::string hash_src = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
-    std::string hash_dst = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_src; sstd::system_stdout(hash_src, "sha256sum "+tmpDir+"/test_rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_dst; sstd::system_stdout(hash_dst, "sha256sum "+tmpDir+"/test_rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
     ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());
     
     sstd::rm(tmpDir);
@@ -102,8 +102,8 @@ TEST(cp, copy__opt_u__Not_update){
 
     sstd::copy(tmpDir+"/test_rand_src.bin", tmpDir+"/test_rand_dst.bin", "u");
 
-    std::string hash_src = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
-    std::string hash_dst = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_src; sstd::system_stdout(hash_src, "sha256sum "+tmpDir+"/test_rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_dst; sstd::system_stdout(hash_dst, "sha256sum "+tmpDir+"/test_rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
     ASSERT_STRNE(hash_src.c_str(), hash_dst.c_str());
     
     sstd::rm(tmpDir);
@@ -116,8 +116,8 @@ TEST(cp, copy__opt_u__gen_new_file){
 
     sstd::copy(tmpDir+"/test_rand_src.bin", tmpDir+"/test_rand_dst.bin", "npu");
 
-    std::string hash_src = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
-    std::string hash_dst = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_src; sstd::system_stdout(hash_src, "sha256sum "+tmpDir+"/test_rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_dst; sstd::system_stdout(hash_dst, "sha256sum "+tmpDir+"/test_rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
     ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());
     
     sstd::rm(tmpDir);
@@ -131,8 +131,8 @@ TEST(cp, copy__opt_n__update){
 
     sstd::copy(tmpDir+"/test_rand_src.bin", tmpDir+"/test_rand_dst.bin", "n");
 
-    std::string hash_src = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
-    std::string hash_dst = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_src; sstd::system_stdout(hash_src, "sha256sum "+tmpDir+"/test_rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_dst; sstd::system_stdout(hash_dst, "sha256sum "+tmpDir+"/test_rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
     ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());
     
     sstd::rm(tmpDir);
@@ -146,8 +146,8 @@ TEST(cp, copy__opt_n__Not_update){
 
     sstd::copy(tmpDir+"/test_rand_src.bin", tmpDir+"/test_rand_dst.bin", "n");
 
-    std::string hash_src = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
-    std::string hash_dst = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_src; sstd::system_stdout(hash_src, "sha256sum "+tmpDir+"/test_rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_dst; sstd::system_stdout(hash_dst, "sha256sum "+tmpDir+"/test_rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
     ASSERT_STRNE(hash_src.c_str(), hash_dst.c_str());
     
     sstd::rm(tmpDir);
@@ -158,8 +158,8 @@ TEST(cp, copy__opt_n__Not_update){
     sstd::mkdir(tmpDir);                                                \
     sstd::system("dd if=/dev/urandom of="+tmpDir+"/rand_src.bin bs=1024 count=1 > /dev/null 2>&1");
 #define fin()                                                           \
-    std::string hash_src = sstd::system_stdout("sha256sum "+tmpDir+"/rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); \
-    std::string hash_dst = sstd::system_stdout("sha256sum "+tmpDir+"/rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); \
+    std::string hash_src; sstd::system_stdout(hash_src, "sha256sum "+tmpDir+"/rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); \
+    std::string hash_dst; sstd::system_stdout(hash_dst, "sha256sum "+tmpDir+"/rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); \
     ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());                   \
     sstd::rm(tmpDir);
 TEST(cp, copy_opt_pChar_pChar){ init(); sstd::copy(            tmpDir+"/rand_src.bin" ,             tmpDir+"/rand_dst.bin" , "npu"); fin(); }
@@ -183,8 +183,8 @@ TEST(cp, cp_case01_checkhash){
     
     sstd::cp(tmpDir+"/test_rand.bin", tmpDir+"/test_rand_copy.bin");
     {
-        std::string hash_src = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back();
-        std::string hash_dst = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand_copy.bin | cut -d \" \" -f 1"); hash_dst.pop_back();
+        std::string hash_src; sstd::system_stdout(hash_src, "sha256sum "+tmpDir+"/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back();
+        std::string hash_dst; sstd::system_stdout(hash_dst, "sha256sum "+tmpDir+"/test_rand_copy.bin | cut -d \" \" -f 1"); hash_dst.pop_back();
         ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());
     }
     
@@ -197,8 +197,8 @@ TEST(cp, cp_case01_file2file){
     
     sstd::cp(tmpDir+"/test_rand.bin", tmpDir+"/test_rand_copy.bin");
     {
-        std::string hash_src = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back();
-        std::string hash_dst = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand_copy.bin | cut -d \" \" -f 1"); hash_dst.pop_back();
+        std::string hash_src; sstd::system_stdout(hash_src, "sha256sum "+tmpDir+"/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back();
+        std::string hash_dst; sstd::system_stdout(hash_dst, "sha256sum "+tmpDir+"/test_rand_copy.bin | cut -d \" \" -f 1"); hash_dst.pop_back();
         ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());
     }
     
@@ -212,8 +212,8 @@ TEST(cp, cp_case01_file2dir){
     
     sstd::cp(tmpDir+"/a/test_rand.bin", tmpDir+"/b/");
     {
-        std::string hash_src = sstd::system_stdout("sha256sum "+tmpDir+"/a/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back();
-        std::string hash_dst = sstd::system_stdout("sha256sum "+tmpDir+"/b/test_rand.bin | cut -d \" \" -f 1"); hash_dst.pop_back();
+        std::string hash_src; sstd::system_stdout(hash_src, "sha256sum "+tmpDir+"/a/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back();
+        std::string hash_dst; sstd::system_stdout(hash_dst, "sha256sum "+tmpDir+"/b/test_rand.bin | cut -d \" \" -f 1"); hash_dst.pop_back();
         ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());
     }
     
@@ -259,8 +259,8 @@ TEST(cp, cp_case02){
         std::vector<std::string> vPath     = sstd::glob(tmpDir+"/sstd/*", "fr");
         ASSERT_EQ(vPath_ans.size(), vPath.size());
         for(uint i=0; i<vPath_ans.size(); ++i){
-            std::string hash_src = sstd::system_stdout(std::string("sha256sum ")+vPath_ans[i]+" | cut -d \" \" -f 1"); hash_src.pop_back();
-            std::string hash_dst = sstd::system_stdout(std::string("sha256sum ")+vPath    [i]+" | cut -d \" \" -f 1"); hash_dst.pop_back();
+            std::string hash_src; sstd::system_stdout(hash_src, std::string("sha256sum ")+vPath_ans[i]+" | cut -d \" \" -f 1"); hash_src.pop_back();
+            std::string hash_dst; sstd::system_stdout(hash_dst, std::string("sha256sum ")+vPath    [i]+" | cut -d \" \" -f 1"); hash_dst.pop_back();
             ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());
         }
     }
@@ -317,8 +317,8 @@ TEST(cp, cp_case03){
         std::vector<std::string> vPath     = sstd::glob(tmpDir+"/*", "fr");
         ASSERT_EQ(vPath_ans.size(), vPath.size());
         for(uint i=0; i<vPath_ans.size(); ++i){
-            std::string hash_src = sstd::system_stdout(std::string("sha256sum ")+vPath_ans[i]+" | cut -d \" \" -f 1"); hash_src.pop_back();
-            std::string hash_dst = sstd::system_stdout(std::string("sha256sum ")+vPath    [i]+" | cut -d \" \" -f 1"); hash_dst.pop_back();
+            std::string hash_src; sstd::system_stdout(hash_src, std::string("sha256sum ")+vPath_ans[i]+" | cut -d \" \" -f 1"); hash_src.pop_back();
+            std::string hash_dst; sstd::system_stdout(hash_dst, std::string("sha256sum ")+vPath    [i]+" | cut -d \" \" -f 1"); hash_dst.pop_back();
             ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());
         }
     }
@@ -396,8 +396,8 @@ TEST(cp, cp_case01__opt_u__update){
 
     sstd::cp(tmpDir+"/test_rand_src.bin", tmpDir+"/test_rand_dst.bin", "u");
 
-    std::string hash_src = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
-    std::string hash_dst = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_src; sstd::system_stdout(hash_src, "sha256sum "+tmpDir+"/test_rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_dst; sstd::system_stdout(hash_dst, "sha256sum "+tmpDir+"/test_rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
     ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());
     
     sstd::rm(tmpDir);
@@ -412,8 +412,8 @@ TEST(cp, cp_case01__opt_u__Not_update){
 
     sstd::cp(tmpDir+"/test_rand_src.bin", tmpDir+"/test_rand_dst.bin", "u");
 
-    std::string hash_src = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
-    std::string hash_dst = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_src; sstd::system_stdout(hash_src, "sha256sum "+tmpDir+"/test_rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_dst; sstd::system_stdout(hash_dst, "sha256sum "+tmpDir+"/test_rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
     ASSERT_STRNE(hash_src.c_str(), hash_dst.c_str());
     
     sstd::rm(tmpDir);
@@ -429,8 +429,8 @@ TEST(cp, cp_case02__opt_u__update){
 
     sstd::cp(tmpDir+"/01", tmpDir+"/02", "u");
 
-    std::string hash_src = sstd::system_stdout("sha256sum "+tmpDir+"/01/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
-    std::string hash_dst = sstd::system_stdout("sha256sum "+tmpDir+"/02/01/test_rand.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_src; sstd::system_stdout(hash_src, "sha256sum "+tmpDir+"/01/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_dst; sstd::system_stdout(hash_dst, "sha256sum "+tmpDir+"/02/01/test_rand.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
     ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());
     
     sstd::rm(tmpDir);
@@ -446,8 +446,8 @@ TEST(cp, cp_case02__opt_u__Not_update){
 
     sstd::cp(tmpDir+"/01", tmpDir+"/02", "u");
 
-    std::string hash_src = sstd::system_stdout("sha256sum "+tmpDir+"/01/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
-    std::string hash_dst = sstd::system_stdout("sha256sum "+tmpDir+"/02/01/test_rand.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_src; sstd::system_stdout(hash_src, "sha256sum "+tmpDir+"/01/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_dst; sstd::system_stdout(hash_dst, "sha256sum "+tmpDir+"/02/01/test_rand.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
     ASSERT_STRNE(hash_src.c_str(), hash_dst.c_str());
     
     sstd::rm(tmpDir);
@@ -463,8 +463,8 @@ TEST(cp, cp_case03__opt_u__update){
 
     sstd::cp(tmpDir+"/01/*", tmpDir+"/02", "u");
 
-    std::string hash_src = sstd::system_stdout("sha256sum "+tmpDir+"/01/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
-    std::string hash_dst = sstd::system_stdout("sha256sum "+tmpDir+"/02/test_rand.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_src; sstd::system_stdout(hash_src, "sha256sum "+tmpDir+"/01/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_dst; sstd::system_stdout(hash_dst, "sha256sum "+tmpDir+"/02/test_rand.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
     ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());
     
     sstd::rm(tmpDir);
@@ -480,8 +480,8 @@ TEST(cp, cp_case03__opt_u__Not_update){
 
     sstd::cp(tmpDir+"/01/*", tmpDir+"/02", "u");
 
-    std::string hash_src = sstd::system_stdout("sha256sum "+tmpDir+"/01/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
-    std::string hash_dst = sstd::system_stdout("sha256sum "+tmpDir+"/02/test_rand.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_src; sstd::system_stdout(hash_src, "sha256sum "+tmpDir+"/01/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_dst; sstd::system_stdout(hash_dst, "sha256sum "+tmpDir+"/02/test_rand.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
     ASSERT_STRNE(hash_src.c_str(), hash_dst.c_str());
     
     sstd::rm(tmpDir);
@@ -495,8 +495,8 @@ TEST(cp, cp_case01__opt_n__update){
 
     sstd::cp(tmpDir+"/test_rand_src.bin", tmpDir+"/test_rand_dst.bin", "n");
 
-    std::string hash_src = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
-    std::string hash_dst = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_src; sstd::system_stdout(hash_src, "sha256sum "+tmpDir+"/test_rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_dst; sstd::system_stdout(hash_dst, "sha256sum "+tmpDir+"/test_rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
     ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());
     
     sstd::rm(tmpDir);
@@ -510,8 +510,8 @@ TEST(cp, cp_case01__opt_n__Not_update){
 
     sstd::cp(tmpDir+"/test_rand_src.bin", tmpDir+"/test_rand_dst.bin", "n");
 
-    std::string hash_src = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
-    std::string hash_dst = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_src; sstd::system_stdout(hash_src, "sha256sum "+tmpDir+"/test_rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_dst; sstd::system_stdout(hash_dst, "sha256sum "+tmpDir+"/test_rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
     ASSERT_STRNE(hash_src.c_str(), hash_dst.c_str());
     
     sstd::rm(tmpDir);
@@ -525,8 +525,8 @@ TEST(cp, cp_case02__opt_n__update){
 
     sstd::cp(tmpDir+"/01/", tmpDir+"/02", "n");
 
-    std::string hash_src = sstd::system_stdout("sha256sum "+tmpDir+"/01/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
-    std::string hash_dst = sstd::system_stdout("sha256sum "+tmpDir+"/02/01/test_rand.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_src; sstd::system_stdout(hash_src, "sha256sum "+tmpDir+"/01/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_dst; sstd::system_stdout(hash_dst, "sha256sum "+tmpDir+"/02/01/test_rand.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
     ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());
     
     sstd::rm(tmpDir);
@@ -540,8 +540,8 @@ TEST(cp, cp_case02__opt_n__Not_update){
 
     sstd::cp(tmpDir+"/test_rand_src.bin", tmpDir+"/test_rand_dst.bin", "n");
 
-    std::string hash_src = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
-    std::string hash_dst = sstd::system_stdout("sha256sum "+tmpDir+"/test_rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_src; sstd::system_stdout(hash_src, "sha256sum "+tmpDir+"/test_rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_dst; sstd::system_stdout(hash_dst, "sha256sum "+tmpDir+"/test_rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
     ASSERT_STRNE(hash_src.c_str(), hash_dst.c_str());
     
     sstd::rm(tmpDir);
@@ -555,8 +555,8 @@ TEST(cp, cp_case03__opt_n__update){
 
     sstd::cp(tmpDir+"/01/*", tmpDir+"/02", "n");
 
-    std::string hash_src = sstd::system_stdout("sha256sum "+tmpDir+"/01/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
-    std::string hash_dst = sstd::system_stdout("sha256sum "+tmpDir+"/02/test_rand.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_src; sstd::system_stdout(hash_src, "sha256sum "+tmpDir+"/01/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_dst; sstd::system_stdout(hash_dst, "sha256sum "+tmpDir+"/02/test_rand.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
     ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());
     
     sstd::rm(tmpDir);
@@ -571,8 +571,8 @@ TEST(cp, cp_case03__opt_n__Not_update){
 
     sstd::cp(tmpDir+"/01/*", tmpDir+"/02", "n");
 
-    std::string hash_src = sstd::system_stdout("sha256sum "+tmpDir+"/01/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
-    std::string hash_dst = sstd::system_stdout("sha256sum "+tmpDir+"/02/test_rand.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_src; sstd::system_stdout(hash_src, "sha256sum "+tmpDir+"/01/test_rand.bin | cut -d \" \" -f 1"); hash_src.pop_back(); // pop_back() is removing '\n'.
+    std::string hash_dst; sstd::system_stdout(hash_dst, "sha256sum "+tmpDir+"/02/test_rand.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); // pop_back() is removing '\n'.
     ASSERT_STRNE(hash_src.c_str(), hash_dst.c_str());
     
     sstd::rm(tmpDir);
@@ -583,8 +583,8 @@ TEST(cp, cp_case03__opt_n__Not_update){
     sstd::mkdir(tmpDir);                                               \
     sstd::system("dd if=/dev/urandom of="+tmpDir+"/rand_src.bin bs=1024 count=1 > /dev/null 2>&1");
 #define fin()                                                           \
-    std::string hash_src = sstd::system_stdout("sha256sum "+tmpDir+"/rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); \
-    std::string hash_dst = sstd::system_stdout("sha256sum "+tmpDir+"/rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); \
+    std::string hash_src; sstd::system_stdout(hash_src, "sha256sum "+tmpDir+"/rand_src.bin | cut -d \" \" -f 1"); hash_src.pop_back(); \
+    std::string hash_dst; sstd::system_stdout(hash_dst, "sha256sum "+tmpDir+"/rand_dst.bin | cut -d \" \" -f 1"); hash_dst.pop_back(); \
     ASSERT_STREQ(hash_src.c_str(), hash_dst.c_str());                   \
     sstd::rm(tmpDir);
 TEST(cp, cp_opt_pChar_pChar){ init(); sstd::cp(            tmpDir+"/rand_src.bin" ,             tmpDir+"/rand_dst.bin" , "npu"); fin(); }

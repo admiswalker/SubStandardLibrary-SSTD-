@@ -46,13 +46,13 @@ bool sstd::file::popen(const std::string& fileName, const char* mode){ return ss
 
 //---
 
-bool sstd::file::close(){
-    if(fp==NULL){ return false; }
+int sstd::file::close(){
+    if(fp==NULL){ return -1; }
     
     switch(type){
-    case 0: ::fclose(fp); return fp!=NULL;
-    case 1: ::pclose(fp); return fp!=NULL;
-    default: return false;
+    case 0: { int ret=::fclose(fp); fp=NULL; return ret; } break;
+    case 1: { int ret=::pclose(fp); fp=NULL; return ret; } break;
+    default: return -1;
     }
 }
 

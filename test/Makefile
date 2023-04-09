@@ -6,7 +6,7 @@ CFLAGS += -Wall
 CFLAGS += -O3
 
 BASE_PATH    := ..
-TEST_SRC_DIR := test/src
+TEST_SRC_DIR := test/src_test
 TEMP_DIR     := tmp/make
 
 TEST_SRC_PATH := $(BASE_PATH)/$(TEST_SRC_DIR)

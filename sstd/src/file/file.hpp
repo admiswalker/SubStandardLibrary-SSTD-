@@ -19,7 +19,7 @@ public:
     bool fopen(const std::string& fileName, const char* mode);
     bool popen(const        char* fileName, const char* mode);
     bool popen(const std::string& fileName, const char* mode);
-    bool close();
+    int close();
     
     char*  fgets (char* s, int size);
     size_t fread (void* ptr, const size_t& size, const size_t& nmemb);

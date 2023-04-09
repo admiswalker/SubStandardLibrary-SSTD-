@@ -11,7 +11,8 @@ TEST(file_operations, file_size){
     ASSERT_TRUE(ret);
 
     //uint64 size_ans = std::stoull(sstd::system_stdout(sstd::ssprintf("ls -al %s | cut -d ' ' -f 5", path))); // failed on alpine linux (cut command -d ' ' is not work well)
-    uint64 size_ans = std::stoull(sstd::split(sstd::system_stdout(sstd::ssprintf("ls -al %s", path)), ' ')[4]);
+    std::string retStr; sstd::system_stdout(retStr, sstd::ssprintf("ls -al %s", path));
+    uint64 size_ans = std::stoull(sstd::split(retStr, ' ')[4]);
     ASSERT_EQ(ret_size, size_ans);
 }
 /*

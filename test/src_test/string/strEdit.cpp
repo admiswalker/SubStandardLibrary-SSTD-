@@ -8,7 +8,7 @@ TEST(strEdit, theOthers){
     sstd::mkdir(tmpDir);
     printf("■ strEdit\n");
     printf("  □ readA_bin\n");
-    std::vector<uint8> raw = sstd::read_bin("./test/src/test.png");
+    std::vector<uint8> raw = sstd::read_bin("./test/src_test/test.png");
     sstd::printn_all(raw.size());
     printf("  □ write_bin\n");
     if(!sstd::write_bin(tmpDir+"/test__write_bin_char.png",             raw)){ sstd::pdbg_err("sstd::write_bin()\n"); }
@@ -16,10 +16,10 @@ TEST(strEdit, theOthers){
     
     printf("  □ read_withoutBOM & splitByLine\n");
 //    std::string str_tI = sstd::read_withoutBOM(R"(./test/tinyInterpreter.txt)");
-    std::string str_tI = sstd::read_withoutBOM(std::string(R"(./test/src/file/tinyInterpreter.txt)"));
+    std::string str_tI = sstd::read_withoutBOM(std::string(R"(./test/src_test/file/tinyInterpreter.txt)"));
     std::vector<std::string> splitLList = sstd::splitByLine(str_tI);
     printf("\n");
-    printf("  ./test/src/tinyInterpreter.txt\n");
+    printf("  ./test/src_test/tinyInterpreter.txt\n");
     printf("+----+---------------------------------------------------------------------+\n");
     for(uint i=0; i<splitLList.size(); ++i){
         printf("| %2d | %-67s |\n", i, splitLList[i].c_str());
