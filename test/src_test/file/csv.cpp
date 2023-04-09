@@ -23,7 +23,7 @@ vvec2csv(savePath, vvec_str);
 // sstd::slice() を実装したら，csv 周りを実装する．
 
 TEST(csv, csv2vvec){
-    std::vector<std::vector<std::string>> csv = sstd::csv2vvec(R"(./test/src/file/parseCSV.csv)");
+    std::vector<std::vector<std::string>> csv = sstd::csv2vvec(R"(./test/src_test/file/parseCSV.csv)");
     sstd::printn(csv.size());
     
     printf("----\n");
@@ -38,7 +38,7 @@ TEST(csv, csv2vvec){
 TEST(csv, vvec2csv){
     SET_TMP_DIR_NAME();
     sstd::mkdir(tmpDir);
-    std::vector<std::vector<std::string>> csv = sstd::csv2vvec(R"(./test/src/file/parseCSV.csv)");
+    std::vector<std::vector<std::string>> csv = sstd::csv2vvec(R"(./test/src_test/file/parseCSV.csv)");
 
     std::string path = tmpDir+"/test_vvec2csvPath.csv";
     bool result = sstd::vvec2csv(path.c_str(), csv); ASSERT_TRUE( result );
@@ -51,7 +51,7 @@ TEST(csv, csv2vvec_vvec2csv_std_string){
     SET_TMP_DIR_NAME();
     sstd::mkdir(tmpDir);
     
-    std::string exCSV = R"(./test/src/file/parseCSV.csv)";
+    std::string exCSV = R"(./test/src_test/file/parseCSV.csv)";
     std::vector<std::vector<std::string>> csv = sstd::csv2vvec(exCSV);
     
     std::string path = tmpDir + R"(/test_vvec2csvPath.csv)";

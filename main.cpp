@@ -27,7 +27,7 @@ int main(int argc, char** argv){
     sstd::rm("tmp/test"); // rm the tmp directory for test
     
     // Testing binaries
-    std::vector<std::string> vExePath = gtest_parallel::get_exeList("tmp/make/test/src", "*.exe");
+    std::vector<std::string> vExePath = gtest_parallel::get_exeList("tmp/make/test/src_test", "*.exe");
     int ret = gtest_parallel::run_tests(vExePath);
     
     printf("\n");
