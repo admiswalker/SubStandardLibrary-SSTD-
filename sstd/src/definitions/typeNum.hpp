@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <vector>
 #include "../definitions/typeDef.h"
+#include "../memory/void_ptr.hpp"
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -139,6 +140,9 @@ namespace sstd{
     const static uchar num_hash_str_double = 110;
     const static uchar num_hash_str_str    = 111;
 
+    const static uchar num_void_ptr        = 112;
+    const static uchar num_vec_void_ptr    = 113;
+    
     //---
 
     uchar type2num(       bool rhs);
@@ -154,7 +158,8 @@ namespace sstd{
     uchar type2num(     uint64 rhs);
     uchar type2num(      float rhs);
     uchar type2num(     double rhs);
-    uchar type2num(const std::string& rhs);
+    uchar type2num(const std::string   & rhs);
+    uchar type2num(const sstd::void_ptr& rhs);
 
     uchar type2num(const std::vector<       bool>& rhs);
     uchar type2num(const std::vector<       char>& rhs);
@@ -169,7 +174,8 @@ namespace sstd{
     uchar type2num(const std::vector<     uint64>& rhs);
     uchar type2num(const std::vector<      float>& rhs);
     uchar type2num(const std::vector<     double>& rhs);
-    uchar type2num(const std::vector<std::string>& rhs);
+    uchar type2num(const std::vector<std::string   >& rhs);
+    uchar type2num(const std::vector<sstd::void_ptr>& rhs);
 
     uchar type2num(const std::unordered_map<std::string, std::string>& rhs);
 };
