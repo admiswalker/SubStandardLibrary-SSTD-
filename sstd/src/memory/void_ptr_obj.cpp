@@ -183,8 +183,8 @@ void sstd::void_ptr_obj::move(class void_ptr_obj& rhs, class void_ptr_obj&& lhs)
     rhs.typeNumber = lhs.typeNumber; lhs.typeNumber=sstd::num_null;
     rhs.pData      = lhs.pData;      lhs.pData=NULL;
 }
-void* sstd::void_ptr_obj::ptr(){ return this->pData; }
-uint sstd::void_ptr_obj::typeNum(){ return this->typeNumber; }
+void* sstd::void_ptr_obj::ptr() const { return this->pData; }
+uint sstd::void_ptr_obj::typeNum() const { return this->typeNumber; }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // operators

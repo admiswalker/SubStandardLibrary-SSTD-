@@ -88,8 +88,8 @@ namespace sstd{
         void copy(class void_ptr_obj& rhs, const class void_ptr_obj& lhs);
         void free(class void_ptr_obj& rhs);
         void move(class void_ptr_obj& rhs, class void_ptr_obj&& lhs);
-        void* ptr();
-        uint typeNum();
+        void* ptr() const;
+        uint typeNum() const;
         
         class void_ptr_obj& operator=(const class void_ptr_obj& rhs);
     };
