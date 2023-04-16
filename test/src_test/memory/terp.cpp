@@ -69,8 +69,13 @@ TEST(memory_terp, list_push_back_c){
 // size()
 TEST(memory_terp, hash_arg_null){
     sstd::terp::var a;
-//    a = sstd::terp::hash();
-//    ASSERT_EQ(a.size(), (uint)0);
+    a = sstd::terp::hash();
+    ASSERT_EQ(a.size(), (uint)0);
+    
+    a["k1"] = "v1"; // TEST THIS LINE
+    
+    ASSERT_EQ(a.size(), (uint)1);
+    ASSERT_STREQ(a["k1"].to<std::string>().c_str(), "v1");
 }
 //TEST(memory_terp, list_arg_10){
 //    sstd::terp::var a;

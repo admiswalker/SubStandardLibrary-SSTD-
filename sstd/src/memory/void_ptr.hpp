@@ -58,7 +58,7 @@ public:
     void_ptr(std::unordered_map<std::string,       std::string>* ptr);
     void_ptr(std::unordered_map<std::string,    sstd::void_ptr>* ptr);
 //    void_ptr(std::unordered_map<sstd::void_ptr, sstd::void_ptr>* ptr);
-        
+    
     ~void_ptr();
 
     template <typename T>

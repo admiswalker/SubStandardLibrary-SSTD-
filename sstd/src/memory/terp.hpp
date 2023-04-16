@@ -50,7 +50,8 @@ public:
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 namespace sstd::terp{
-    std::vector<sstd::void_ptr>* cast_vec_void_ptr(void* rhs){ return (std::vector<sstd::void_ptr>*)rhs; }
+    std::vector<sstd::void_ptr>*                    cast_vec_void_ptr     (void* rhs){ return (std::vector<sstd::void_ptr>*)rhs; }
+    std::unordered_map<std::string,sstd::void_ptr>* cast_hash_str_void_ptr(void* rhs){ return (std::unordered_map<std::string,sstd::void_ptr>*)rhs; }
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -76,31 +77,43 @@ public:
     //---
     
     var operator=(const char* rhs){
-//        printf("in ope=char*\n");
         (*_p).overwrite(new std::string(rhs));
         return *this;
     }
     var operator=(const sstd::terp::list& rhs){
-//        printf("in ope=list\n");
         (*_p).overwrite(new std::vector<sstd::void_ptr>(rhs.allocate_size()));
         return *this;
     }
     var operator=(const sstd::terp::hash& rhs){
-//        printf("in ope=list\n");
-//        (*_p).overwrite(new std::unordered_map<std::string, sstd::void_ptr>(rhs.allocate_size()));
+        (*_p).overwrite(new std::unordered_map<std::string, sstd::void_ptr>(rhs.allocate_size()));
         return *this;
     }
     
     var operator[](int idx){
-//        printf("in ope[], int\n");
         switch(_P.typeNum()){
         case sstd::num_vec_void_ptr: { sstd::void_ptr* p=(sstd::void_ptr*)&(*cast_vec_void_ptr(_P.ptr()))[idx]; return var( p ); } break;
         default: { sstd::pdbg("ERROR"); } break;
         }
         return var();
     }
-    var operator[](char* pKey){ return var(); }
+    var operator[](const char* pKey){
+        switch(_P.typeNum()){
+        case sstd::num_hash_str_void_ptr: { sstd::void_ptr* p=(sstd::void_ptr*)&(*cast_hash_str_void_ptr(_P.ptr()))[pKey]; return var( p ); } break;
+        default: { sstd::pdbg("ERROR"); } break;
+        }
+        return var();
+    }
     
+    //---
+    
+    uint bucket_count(){
+        switch(_P.typeNum()){
+        case sstd::num_hash_str_void_ptr: { return (*cast_hash_str_void_ptr(_P.ptr())).bucket_count(); } break;
+        default: { sstd::pdbg("ERROR"); } break;
+        }
+        return 0;
+    }
+
     //---
     
     sstd::void_ptr* ptr(){ return _p; }
@@ -127,9 +140,8 @@ public:
 
     uint size() const {
         switch(_P.typeNum()){
-        case sstd::num_vec_void_ptr: {
-            return (*cast_vec_void_ptr(_P.ptr())).size();
-        } break;
+        case sstd::num_vec_void_ptr     : { return (*cast_vec_void_ptr(_P.ptr())).size();      } break;
+        case sstd::num_hash_str_void_ptr: { return (*cast_hash_str_void_ptr(_P.ptr())).size(); } break;
         default: { sstd::pdbg("ERROR"); } break;
         }
         return 0;
@@ -148,5 +160,8 @@ public:
 
     //---
 };
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
