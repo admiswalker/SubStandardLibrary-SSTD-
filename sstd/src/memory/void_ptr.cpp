@@ -22,36 +22,36 @@ template <typename T> void sstd::void_ptr::_void_ptr(T* ptr){
     this->pData      = ptr;
 }
 
-sstd::void_ptr::void_ptr(       bool* ptr){ _void_ptr(ptr); }
-sstd::void_ptr::void_ptr(       char* ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(          bool* ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(          char* ptr){ _void_ptr(ptr); }
 //sstd::void_ptr::void_ptr(      uchar* ptr){ _void_ptr(ptr); } // same as uint8
-sstd::void_ptr::void_ptr(      int8 * ptr){ _void_ptr(ptr); }
-sstd::void_ptr::void_ptr(      int16* ptr){ _void_ptr(ptr); }
-sstd::void_ptr::void_ptr(      int32* ptr){ _void_ptr(ptr); }
-sstd::void_ptr::void_ptr(      int64* ptr){ _void_ptr(ptr); }
-sstd::void_ptr::void_ptr(     uint8 * ptr){ _void_ptr(ptr); }
-sstd::void_ptr::void_ptr(     uint16* ptr){ _void_ptr(ptr); }
-sstd::void_ptr::void_ptr(     uint32* ptr){ _void_ptr(ptr); }
-sstd::void_ptr::void_ptr(     uint64* ptr){ _void_ptr(ptr); }
-sstd::void_ptr::void_ptr(      float* ptr){ _void_ptr(ptr); }
-sstd::void_ptr::void_ptr(     double* ptr){ _void_ptr(ptr); }
-sstd::void_ptr::void_ptr(std::string* ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(         int8 * ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(         int16* ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(         int32* ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(         int64* ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(        uint8 * ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(        uint16* ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(        uint32* ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(        uint64* ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(         float* ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(        double* ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(   std::string* ptr){ _void_ptr(ptr); }
 sstd::void_ptr::void_ptr(sstd::void_ptr* ptr){ _void_ptr(ptr); }
 
-sstd::void_ptr::void_ptr(std::vector<       bool>* ptr){ _void_ptr(ptr); }
-sstd::void_ptr::void_ptr(std::vector<       char>* ptr){ _void_ptr(ptr); }
-//sstd::void_ptr::void_ptr(std::vector<      uchar>* ptr){ _void_ptr(ptr); } // same as uint8
-sstd::void_ptr::void_ptr(std::vector<      int8 >* ptr){ _void_ptr(ptr); }
-sstd::void_ptr::void_ptr(std::vector<      int16>* ptr){ _void_ptr(ptr); }
-sstd::void_ptr::void_ptr(std::vector<      int32>* ptr){ _void_ptr(ptr); }
-sstd::void_ptr::void_ptr(std::vector<      int64>* ptr){ _void_ptr(ptr); }
-sstd::void_ptr::void_ptr(std::vector<     uint8 >* ptr){ _void_ptr(ptr); }
-sstd::void_ptr::void_ptr(std::vector<     uint16>* ptr){ _void_ptr(ptr); }
-sstd::void_ptr::void_ptr(std::vector<     uint32>* ptr){ _void_ptr(ptr); }
-sstd::void_ptr::void_ptr(std::vector<     uint64>* ptr){ _void_ptr(ptr); }
-sstd::void_ptr::void_ptr(std::vector<      float>* ptr){ _void_ptr(ptr); }
-sstd::void_ptr::void_ptr(std::vector<     double>* ptr){ _void_ptr(ptr); }
-sstd::void_ptr::void_ptr(std::vector<std::string   >* ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(std::vector<          bool>* ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(std::vector<          char>* ptr){ _void_ptr(ptr); }
+//sstd::void_ptr::void_ptr(std::vector<         uchar>* ptr){ _void_ptr(ptr); } // same as uint8
+sstd::void_ptr::void_ptr(std::vector<         int8 >* ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(std::vector<         int16>* ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(std::vector<         int32>* ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(std::vector<         int64>* ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(std::vector<        uint8 >* ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(std::vector<        uint16>* ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(std::vector<        uint32>* ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(std::vector<        uint64>* ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(std::vector<         float>* ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(std::vector<        double>* ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(std::vector<   std::string>* ptr){ _void_ptr(ptr); }
 sstd::void_ptr::void_ptr(std::vector<sstd::void_ptr>* ptr){ _void_ptr(ptr); }
 
 sstd::void_ptr::void_ptr(std::unordered_map<std::string, std::string>* ptr){ _void_ptr(ptr); }
@@ -73,36 +73,36 @@ void sstd::void_ptr::_overwrite(T* ptr){
     this->pData      = ptr;
 }
 
-void sstd::void_ptr::overwrite(       bool* ptr){ _overwrite(ptr); }
-void sstd::void_ptr::overwrite(       char* ptr){ _overwrite(ptr); }
-//void sstd::void_ptr::overwrite(      uchar* ptr){ _overwrite(ptr); }
-void sstd::void_ptr::overwrite(      int8 * ptr){ _overwrite(ptr); }
-void sstd::void_ptr::overwrite(      int16* ptr){ _overwrite(ptr); }
-void sstd::void_ptr::overwrite(      int32* ptr){ _overwrite(ptr); }
-void sstd::void_ptr::overwrite(      int64* ptr){ _overwrite(ptr); }
-void sstd::void_ptr::overwrite(     uint8 * ptr){ _overwrite(ptr); }
-void sstd::void_ptr::overwrite(     uint16* ptr){ _overwrite(ptr); }
-void sstd::void_ptr::overwrite(     uint32* ptr){ _overwrite(ptr); }
-void sstd::void_ptr::overwrite(     uint64* ptr){ _overwrite(ptr); }
-void sstd::void_ptr::overwrite(      float* ptr){ _overwrite(ptr); }
-void sstd::void_ptr::overwrite(     double* ptr){ _overwrite(ptr); }
-void sstd::void_ptr::overwrite(std::string* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(          bool* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(          char* ptr){ _overwrite(ptr); }
+//void sstd::void_ptr::overwrite(         uchar* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(         int8 * ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(         int16* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(         int32* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(         int64* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(        uint8 * ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(        uint16* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(        uint32* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(        uint64* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(         float* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(        double* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(   std::string* ptr){ _overwrite(ptr); }
 void sstd::void_ptr::overwrite(sstd::void_ptr* ptr){ _overwrite(ptr); }
 
-void sstd::void_ptr::overwrite(std::vector<       bool>* ptr){ _overwrite(ptr); }
-void sstd::void_ptr::overwrite(std::vector<       char>* ptr){ _overwrite(ptr); }
-//void sstd::void_ptr::overwrite(std::vector<      uchar>* ptr){ _overwrite(ptr); }
-void sstd::void_ptr::overwrite(std::vector<      int8 >* ptr){ _overwrite(ptr); }
-void sstd::void_ptr::overwrite(std::vector<      int16>* ptr){ _overwrite(ptr); }
-void sstd::void_ptr::overwrite(std::vector<      int32>* ptr){ _overwrite(ptr); }
-void sstd::void_ptr::overwrite(std::vector<      int64>* ptr){ _overwrite(ptr); }
-void sstd::void_ptr::overwrite(std::vector<     uint8 >* ptr){ _overwrite(ptr); }
-void sstd::void_ptr::overwrite(std::vector<     uint16>* ptr){ _overwrite(ptr); }
-void sstd::void_ptr::overwrite(std::vector<     uint32>* ptr){ _overwrite(ptr); }
-void sstd::void_ptr::overwrite(std::vector<     uint64>* ptr){ _overwrite(ptr); }
-void sstd::void_ptr::overwrite(std::vector<      float>* ptr){ _overwrite(ptr); }
-void sstd::void_ptr::overwrite(std::vector<     double>* ptr){ _overwrite(ptr); }
-void sstd::void_ptr::overwrite(std::vector<std::string>* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(std::vector<          bool>* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(std::vector<          char>* ptr){ _overwrite(ptr); }
+//void sstd::void_ptr::overwrite(std::vector<         uchar>* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(std::vector<         int8 >* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(std::vector<         int16>* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(std::vector<         int32>* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(std::vector<         int64>* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(std::vector<        uint8 >* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(std::vector<        uint16>* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(std::vector<        uint32>* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(std::vector<        uint64>* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(std::vector<         float>* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(std::vector<        double>* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(std::vector<   std::string>* ptr){ _overwrite(ptr); }
 void sstd::void_ptr::overwrite(std::vector<sstd::void_ptr>* ptr){ _overwrite(ptr); }
 
 void sstd::void_ptr::overwrite(std::unordered_map<std::string, std::string>* ptr){ _overwrite(ptr); }
