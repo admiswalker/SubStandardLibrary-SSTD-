@@ -75,29 +75,49 @@ public:
     var operator[](int idx){
 //        printf("in ope[], int\n");
         switch(_P.typeNum()){
-        case sstd::num_vec_void_ptr: {
-            sstd::void_ptr* p = (sstd::void_ptr*)&(*cast_vec_void_ptr(_P.ptr()))[idx];
-            return var( p );
-        } break;
+        case sstd::num_vec_void_ptr: { sstd::void_ptr* p=(sstd::void_ptr*)&(*cast_vec_void_ptr(_P.ptr()))[idx]; return var( p ); } break;
         default: { sstd::pdbg("ERROR"); } break;
         }
         return var();
     }
     var operator[](char* pKey){ return var(); }
-
+    
     //---
-
+    
     sstd::void_ptr* ptr(){ return _p; }
 
-    //void push_back(){
-    //}
-    
+    //---
+
+    void push_back(const char* pRhs){
+        switch(_P.typeNum()){
+        case sstd::num_vec_void_ptr: { (*cast_vec_void_ptr(_P.ptr())).push_back(new std::string(pRhs)); } break;
+        default: { sstd::pdbg("ERROR"); } break;
+        }
+    }
+
     //---
     
-    //void resize(){}
+    void resize(uint len){
+        switch(_P.typeNum()){
+        case sstd::num_vec_void_ptr: { return (*cast_vec_void_ptr(_P.ptr())).resize( len ); } break;
+        default: { sstd::pdbg("ERROR"); } break;
+        }
+    }
     
     //---
 
+    uint size() const {
+        switch(_P.typeNum()){
+        case sstd::num_vec_void_ptr: {
+            return (*cast_vec_void_ptr(_P.ptr())).size();
+        } break;
+        default: { sstd::pdbg("ERROR"); } break;
+        }
+        return 0;
+    }
+
+    //---
+    
     void _to(std::string& dst, const sstd::void_ptr& src) const { dst = (*(std::string*)_p->ptr()); }
 
     template <typename T>
@@ -106,6 +126,8 @@ public:
         _to(ret, *_p);
         return ret;
     }
+
+    //---
 };
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
