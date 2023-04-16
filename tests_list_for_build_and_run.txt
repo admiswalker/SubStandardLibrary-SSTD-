@@ -35,7 +35,7 @@
 #../test/src_test/math/hashFnc_of_MD5_SHA1_SHA2/sstd_md5_sha1_sha2_wrapper.cpp
 ../test/src_test/memory/terp.cpp
 #../test/src_test/memory/unique_void_ptr.cpp
-#../test/src_test/memory/void_ptr.cpp
+../test/src_test/memory/void_ptr.cpp
 #../test/src_test/print/pdbg.cpp
 #../test/src_test/print/print_printn_printn_all.cpp
 #../test/src_test/python/c2py.cpp

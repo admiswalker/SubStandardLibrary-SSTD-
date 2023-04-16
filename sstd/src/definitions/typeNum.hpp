@@ -143,6 +143,9 @@ namespace sstd{
     const static uchar num_void_ptr        = 112;
     const static uchar num_vec_void_ptr    = 113;
     
+    const static uchar num_hash_str_void_ptr      = 114;
+    const static uchar num_hash_void_ptr_void_ptr = 115;
+    
     //---
 
     uchar type2num(       bool rhs);
@@ -177,7 +180,9 @@ namespace sstd{
     uchar type2num(const std::vector<std::string   >& rhs);
     uchar type2num(const std::vector<sstd::void_ptr>& rhs);
 
-    uchar type2num(const std::unordered_map<std::string, std::string>& rhs);
+    uchar type2num(const std::unordered_map<std::string,       std::string>& rhs);
+    uchar type2num(const std::unordered_map<std::string,    sstd::void_ptr>& rhs);
+    uchar type2num(const std::unordered_map<sstd::void_ptr, sstd::void_ptr>& rhs);
 };
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

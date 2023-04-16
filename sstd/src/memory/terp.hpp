@@ -15,22 +15,36 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 namespace sstd::terp{
-    class list;
+    class list; // allocate type
+    class hash; // allocate type
     
-    class var;
+    class var; // base type
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 class sstd::terp::list{
 private:
-    uint _size;
+    uint _allocate_size;
 public:
-    list(): _size(0) {}
-    list(uint size_in){ _size=size_in; }
+    list(): _allocate_size(0) {}
+    list(uint allocate_size){ _allocate_size=allocate_size; }
     ~list(){}
 
-    uint size() const { return _size; }
+    uint allocate_size() const { return _allocate_size; }
+};
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+class sstd::terp::hash{
+private:
+    uint _allocate_size;
+public:
+    hash(): _allocate_size(0) {}
+    hash(uint allocate_size){ _allocate_size=allocate_size; }
+    ~hash(){}
+
+    uint allocate_size() const { return _allocate_size; }
 };
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -68,7 +82,12 @@ public:
     }
     var operator=(const sstd::terp::list& rhs){
 //        printf("in ope=list\n");
-        (*_p).overwrite(new std::vector<sstd::void_ptr>(rhs.size()));
+        (*_p).overwrite(new std::vector<sstd::void_ptr>(rhs.allocate_size()));
+        return *this;
+    }
+    var operator=(const sstd::terp::hash& rhs){
+//        printf("in ope=list\n");
+//        (*_p).overwrite(new std::unordered_map<std::string, sstd::void_ptr>(rhs.allocate_size()));
         return *this;
     }
     

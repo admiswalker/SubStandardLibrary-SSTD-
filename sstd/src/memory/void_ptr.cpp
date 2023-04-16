@@ -54,7 +54,9 @@ sstd::void_ptr::void_ptr(std::vector<        double>* ptr){ _void_ptr(ptr); }
 sstd::void_ptr::void_ptr(std::vector<   std::string>* ptr){ _void_ptr(ptr); }
 sstd::void_ptr::void_ptr(std::vector<sstd::void_ptr>* ptr){ _void_ptr(ptr); }
 
-sstd::void_ptr::void_ptr(std::unordered_map<std::string, std::string>* ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(std::unordered_map<std::string,       std::string>* ptr){ _void_ptr(ptr); }
+sstd::void_ptr::void_ptr(std::unordered_map<std::string,    sstd::void_ptr>* ptr){ _void_ptr(ptr); }
+//sstd::void_ptr::void_ptr(std::unordered_map<sstd::void_ptr, sstd::void_ptr>* ptr){ _void_ptr(ptr); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // destructor
@@ -105,7 +107,9 @@ void sstd::void_ptr::overwrite(std::vector<        double>* ptr){ _overwrite(ptr
 void sstd::void_ptr::overwrite(std::vector<   std::string>* ptr){ _overwrite(ptr); }
 void sstd::void_ptr::overwrite(std::vector<sstd::void_ptr>* ptr){ _overwrite(ptr); }
 
-void sstd::void_ptr::overwrite(std::unordered_map<std::string, std::string>* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(std::unordered_map<std::string,       std::string>* ptr){ _overwrite(ptr); }
+void sstd::void_ptr::overwrite(std::unordered_map<std::string,    sstd::void_ptr>* ptr){ _overwrite(ptr); }
+//void sstd::void_ptr::overwrite(std::unordered_map<sstd::void_ptr, sstd::void_ptr>* ptr){ _overwrite(ptr); }
 
 void sstd::void_ptr::copy(class void_ptr& lhs, const class void_ptr& rhs){
     sstd::void_ptr::free(lhs);
@@ -145,7 +149,9 @@ void sstd::void_ptr::copy(class void_ptr& lhs, const class void_ptr& rhs){
     case sstd::num_vec_str     : { lhs.pData = new std::vector<   std::string>(*(std::vector<   std::string>*)rhs.pData); } break;
     case sstd::num_vec_void_ptr: { lhs.pData = new std::vector<sstd::void_ptr>(*(std::vector<sstd::void_ptr>*)rhs.pData); } break;
         
-    case sstd::num_hash_str_str   : { lhs.pData = new std::unordered_map<std::string,std::string>(*(std::unordered_map<std::string,std::string>*)rhs.pData); } break;
+    case sstd::num_hash_str_str          : { lhs.pData = new std::unordered_map<std::string,      std::string>(*(std::unordered_map<std::string,      std::string>*)rhs.pData); } break;
+    case sstd::num_hash_str_void_ptr     : { lhs.pData = new std::unordered_map<std::string,   sstd::void_ptr>(*(std::unordered_map<std::string,   sstd::void_ptr>*)rhs.pData); } break;
+//    case sstd::num_hash_void_ptr_void_ptr: { lhs.pData = new std::unordered_map<sstd::void_ptr,sstd::void_ptr>(*(std::unordered_map<sstd::void_ptr,sstd::void_ptr>*)rhs.pData); } break;
         
     default: { sstd::pdbg("ERROR: allocating memory is failed. typeNum '%d' is not defined.", lhs.typeNumber); } break;
         
@@ -183,7 +189,9 @@ void sstd::void_ptr::free(class void_ptr& rhs){
     case sstd::num_vec_double  : { delete (std::vector<        double>*)pData; } break;
     case sstd::num_vec_str     : { delete (std::vector<   std::string>*)pData; } break;
     case sstd::num_vec_void_ptr: { delete (std::vector<sstd::void_ptr>*)pData; } break;
-    case sstd::num_hash_str_str: { delete (std::unordered_map<std::string,std::string>*)pData; } break;
+    case sstd::num_hash_str_str          : { delete (std::unordered_map<std::string,      std::string>*)pData; } break;
+    case sstd::num_hash_str_void_ptr     : { delete (std::unordered_map<std::string,   sstd::void_ptr>*)pData; } break;
+//    case sstd::num_hash_void_ptr_void_ptr: { delete (std::unordered_map<sstd::void_ptr,sstd::void_ptr>*)pData; } break;
     default: { sstd::pdbg("ERROR: free() memory is failed. typeNum '%d' is not defined.", this->typeNumber); } break;
     }
 

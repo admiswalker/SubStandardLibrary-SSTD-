@@ -131,6 +131,9 @@ TEST(void_ptr, constructor_vec_void_ptr){
 TEST(void_ptr, constructor_hash_str_str){
     sstd::void_ptr void_ptr = sstd::void_ptr(new std::unordered_map<std::string, std::string>({{"key1", "value1"}}));
 }
+TEST(void_ptr, constructor_hash_str_void_ptr){
+    sstd::void_ptr void_ptr = sstd::void_ptr(new std::unordered_map<std::string, sstd::void_ptr>());
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // member functions
@@ -177,6 +180,7 @@ TEST(void_ptr, overwrite_vec_str     ){ SSTD_TEST_void_ptr_overwrite(std::vector
 TEST(void_ptr, overwrite_vec_void_ptr){ SSTD_TEST_void_ptr_overwrite(std::vector<sstd::void_ptr>, sstd::num_vec_void_ptr) }
 
 TEST(void_ptr, overwrite_hash_str_str   ){ SSTD_TEST_void_ptr_overwrite((std::unordered_map<std::string, std::string>), sstd::num_hash_str_str   ) }
+TEST(void_ptr, overwrite_hash_str_void_ptr   ){ SSTD_TEST_void_ptr_overwrite((std::unordered_map<std::string, sstd::void_ptr>), sstd::num_hash_str_void_ptr   ) }
 
 //---
 

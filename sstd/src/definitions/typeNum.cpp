@@ -33,5 +33,7 @@ uchar sstd::type2num(const std::vector<     double>& rhs){ return sstd::num_vec_
 uchar sstd::type2num(const std::vector<std::string   >& rhs){ return sstd::num_vec_str;      }
 uchar sstd::type2num(const std::vector<sstd::void_ptr>& rhs){ return sstd::num_vec_void_ptr; }
 
-uchar sstd::type2num(const std::unordered_map<std::string, std::string>& rhs){ return sstd::num_hash_str_str;    }
+uchar sstd::type2num(const std::unordered_map<std::string,       std::string>& rhs){ return sstd::num_hash_str_str;           }
+uchar sstd::type2num(const std::unordered_map<std::string,    sstd::void_ptr>& rhs){ return sstd::num_hash_str_void_ptr;      }
+uchar sstd::type2num(const std::unordered_map<sstd::void_ptr, sstd::void_ptr>& rhs){ return sstd::num_hash_void_ptr_void_ptr; }
 
