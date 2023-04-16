@@ -77,11 +77,11 @@ TEST(memory_terp, hash_arg_null){
     ASSERT_EQ(a.size(), (uint)1);
     ASSERT_STREQ(a["k1"].to<std::string>().c_str(), "v1");
 }
-//TEST(memory_terp, list_arg_10){
-//    sstd::terp::var a;
-//    a = sstd::terp::list(10);
-//    ASSERT_EQ(a.size(), (uint)10);
-//}
+TEST(memory_terp, hash_arg_10){
+    sstd::terp::var a;
+    a = sstd::terp::hash(14);
+    ASSERT_EQ(a.bucket_count(), (uint)17); // std::unordered_map allocates the prime number size, equal or nearest larger than the allocating size.
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
