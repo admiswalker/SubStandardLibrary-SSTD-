@@ -48,8 +48,8 @@ private:
     
 public:
     var(){ _p = &_vp; }
-    var(const var&  rhs){ _vp=rhs.vp(); _p=&_vp; }
-//    var(const var&& rhs){ _vp=rhs.vp(); _p=&_vp; }
+    var(const var&  rhs){ _vp=*rhs.p(); _p=&_vp; }
+//    var(const var&& rhs){ _vp=*rhs.p(); _p=&_vp; }
     var(sstd::void_ptr* p_in){ _p = p_in; }
     ~var(){}
     
@@ -59,8 +59,8 @@ public:
         (*_p).overwrite(new std::string(rhs));
         return *this;
     }
-    var operator=(const sstd::terp::var&  rhs){
-        *_p = rhs.vp();
+    var operator=(const sstd::terp::var& rhs){
+        *_p = *rhs.p();
         return *this;
     }
 
@@ -93,20 +93,20 @@ public:
 
     //---
     
-    sstd::void_ptr  vp() const { return _vp; }
+    //sstd::void_ptr  vp() const { return *_p; }
     sstd::void_ptr* p () const { return _p;  }
-
+    
     //---
 
     void push_back(const char* pRhs){
         if(_P.typeNum()!=sstd::num_vec_void_ptr){ sstd::pdbg("ERROR"); return; }
         (*cast_vec_void_ptr(_P.ptr())).push_back(new std::string(pRhs));
     }
-//    void push_back(const sstd::terp::list& rhs){
-//        if(_P.typeNum()!=sstd::num_vec_void_ptr){ sstd::pdbg("ERROR"); return; }
-//        (*cast_vec_void_ptr(_P.ptr())).push_back(new std::vector<sstd::void_ptr>());
-//    }
-
+    void push_back(const sstd::terp::var& rhs){
+        if(_P.typeNum()!=sstd::num_vec_void_ptr){ sstd::pdbg("ERROR"); return; }
+        (*cast_vec_void_ptr(_P.ptr())).push_back(*rhs.p());
+    }
+    
     //---
     
     void resize(uint len){

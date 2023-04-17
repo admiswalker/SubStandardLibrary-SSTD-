@@ -72,6 +72,32 @@ TEST(memory_terp, list_push_back_c){
     
     ASSERT_STREQ(a[0].to<std::string>().c_str(), "test");
 }
+TEST(memory_terp, list_push_back_list){
+    // -
+    //   - v1
+    //   - v2
+    
+    sstd::terp::var a;
+    a = sstd::terp::list();
+    a.push_back(sstd::terp::list()); // TEST THIS LINE
+    a[0].push_back("v1");
+    a[0].push_back("v2");
+    
+    ASSERT_STREQ(a[0][0].to<std::string>().c_str(), "v1");
+    ASSERT_STREQ(a[0][1].to<std::string>().c_str(), "v2");
+}
+/*
+TEST(memory_terp, list_push_back_list){
+    sstd::terp::var a;
+    a = sstd::terp::list(1);
+    a[0] = sstd::terp::list(); // TEST THIS LINE
+    a[0].push_back("v1");
+    a[0].push_back("v2");
+    
+    ASSERT_STREQ(a[0][0].to<std::string>().c_str(), "v1");
+    ASSERT_STREQ(a[0][1].to<std::string>().c_str(), "v2");
+}
+*/
 
 // typeNum()
 TEST(memory_terp, list_typeNum){
