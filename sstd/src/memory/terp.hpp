@@ -9,41 +9,32 @@
 #include "../print/print.hpp" // for debug
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-
-#define _P (*_p) // pointer object
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
+// for user
 
 namespace sstd::terp{
-//    class _list; // allocate type
-    class hash; // allocate type
-    
-    class var; // base type
+    // var
+    class var;
 
+    // list
+    var list(uint allocate_size);
     var list();
-    var list(uint allocate_size);/*{
-        var r;
-        r.overwrite(new std::vector<sstd::void_ptr>(allocate_size));
-        return r;
-    }*/
+
+    // hash
+    var hash(uint allocate_size);
+    var hash();
+    
+    // cast
+    std::vector<sstd::void_ptr>*                    cast_vec_void_ptr     (void* rhs);
+    std::unordered_map<std::string,sstd::void_ptr>* cast_hash_str_void_ptr(void* rhs);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// for internal use
 
-class sstd::terp::hash{
-private:
-    uint _allocate_size;
-public:
-    hash(): _allocate_size(0) {}
-    hash(uint allocate_size){ _allocate_size=allocate_size; }
-    ~hash(){}
-
-    uint allocate_size() const { return _allocate_size; }
-};
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
+#define _P (*_p) // pointer object
 
 namespace sstd::terp{
+    // cast
     std::vector<sstd::void_ptr>*                    cast_vec_void_ptr     (void* rhs);
     std::unordered_map<std::string,sstd::void_ptr>* cast_hash_str_void_ptr(void* rhs);
 }
@@ -60,14 +51,6 @@ public:
     var(const var&  rhs){ _vp=rhs.vp(); _p=&_vp; }
 //    var(const var&& rhs){ _vp=rhs.vp(); _p=&_vp; }
     var(sstd::void_ptr* p_in){ _p = p_in; }
-//    var(const char* rhs){
-//        _p = &_vp;
-//        _vp.overwrite(new std::string(rhs));
-//    }
-//    var(const sstd::terp::list& rhs){
-//        _p = &_vp;
-//        _vp.overwrite(new std::vector<sstd::void_ptr>());
-//    }
     ~var(){}
     
     //---
@@ -80,17 +63,8 @@ public:
         *_p = rhs.vp();
         return *this;
     }
-    //var operator=(      sstd::terp::var&& rhs){
-    //    sstd::swap(_P, rhs);
-    //}
-    //var operator=(const sstd::terp::list& rhs){
-    //    (*_p).overwrite(new std::vector<sstd::void_ptr>(rhs.allocate_size()));
-    //    return *this;
-    //}
-    var operator=(const sstd::terp::hash& rhs){
-        (*_p).overwrite(new std::unordered_map<std::string, sstd::void_ptr>(rhs.allocate_size()));
-        return *this;
-    }
+
+    //---
     
     var operator[](int idx){
         switch(_P.typeNum()){
@@ -178,5 +152,6 @@ public:
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+#undef _P
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
