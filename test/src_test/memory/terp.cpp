@@ -4,28 +4,45 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // sstd::terp::var
 
-TEST(memory_terp, constructor){
+TEST(memory_terp, var_constructor){
     sstd::terp::var a;
 }
-TEST(memory_terp, ope_eq_str){
+TEST(memory_terp, var_ope_eq_str){
     sstd::terp::var a;
     a = "test";
     ASSERT_STREQ(a.to<std::string>().c_str(), "test");
 }
-TEST(memory_terp, ope_eq_list){
+TEST(memory_terp, var_ope_eq_list){
     sstd::terp::var a;
     a = sstd::terp::list(1);
-    a[0] = "test"; // test this line
+    a[0] = "test"; // TEST THIS LINE
     
     ASSERT_STREQ(a[0].to<std::string>().c_str(), "test");
 }
-TEST(memory_terp, ope_eq_list_case02){
+TEST(memory_terp, var_ope_eq_list_case02){
     sstd::terp::var a;
     a = sstd::terp::list();
     a.resize(1);
-    a[0] = "test"; // test this line
+    a[0] = "test"; // TEST THIS LINE
     
     ASSERT_STREQ(a[0].to<std::string>().c_str(), "test");
+}
+TEST(memory_terp, var_typeNum){
+    sstd::terp::var a;
+    sstd::printn(a.typeNum());
+//    ASSERT_STREQ(a[0].to<std::string>().c_str(), "test");
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// char*: c
+
+TEST(memory_terp, c_type){
+    sstd::terp::var a;
+    
+    
+    //a = "test"; // TEST THIS LINE
+    
+//    ASSERT_STREQ(a[0].to<std::string>().c_str(), "test");
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -57,7 +74,7 @@ TEST(memory_terp, list_resize){
 TEST(memory_terp, list_push_back_c){
     sstd::terp::var a;
     a = sstd::terp::list();
-    a.push_back("test"); // test this line
+    a.push_back("test"); // TEST THIS LINE
     
     ASSERT_STREQ(a[0].to<std::string>().c_str(), "test");
 }

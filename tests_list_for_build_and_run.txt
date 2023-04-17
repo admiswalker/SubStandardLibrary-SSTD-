@@ -16,7 +16,7 @@
 #../test/src_test/container/vector/vec_manipulation.cpp
 #../test/src_test/container/vector/vvec.cpp
 #../test/src_test/definitions/typeDef.cpp
-#../test/src_test/definitions/typeNum.cpp
+../test/src_test/definitions/typeNum.cpp
 #../test/src_test/file/cp.cpp
 #../test/src_test/file/csv.cpp
 #../test/src_test/file/file.cpp

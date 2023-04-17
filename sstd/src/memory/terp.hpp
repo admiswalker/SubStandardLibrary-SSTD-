@@ -157,6 +157,15 @@ public:
         _to(ret, *_p);
         return ret;
     }
+    
+    //---
+
+    uint typeNum(){
+        return _P.typeNum();
+    }
+    std::string typeStr(){
+        return std::string();//sstd::type(_P.typeNum());
+    }
 
     //---
 };
