@@ -124,9 +124,9 @@ TEST(typeNum, typeNum2str_num_float ){ ASSERT_STREQ(sstd::typeNum2str(sstd::num_
 TEST(typeNum, typeNum2str_num_double){ ASSERT_STREQ(sstd::typeNum2str(sstd::num_double).c_str(), "double"); }
 TEST(typeNum, typeNum2str_num_str   ){ ASSERT_STREQ(sstd::typeNum2str(sstd::num_str).c_str(),    "str"   ); }
 
-TEST(typeNum, typeNum2str_num_void_ptr         ){ ASSERT_STREQ(sstd::typeNum2str(sstd::num_void_ptr         ).c_str(),    "void_ptr"         ); }
-TEST(typeNum, typeNum2str_num_vec_void_ptr     ){ ASSERT_STREQ(sstd::typeNum2str(sstd::num_vec_void_ptr     ).c_str(),    "vec_void_ptr"     ); }
-TEST(typeNum, typeNum2str_num_hash_str_void_ptr){ ASSERT_STREQ(sstd::typeNum2str(sstd::num_hash_str_void_ptr).c_str(),    "hash_str_void_ptr"); }
+TEST(typeNum, typeNum2str_num_void_ptr         ){ ASSERT_STREQ(sstd::typeNum2str(sstd::num_void_ptr         ).c_str(), "void_ptr"         ); }
+TEST(typeNum, typeNum2str_num_vec_void_ptr     ){ ASSERT_STREQ(sstd::typeNum2str(sstd::num_vec_void_ptr     ).c_str(), "vec_void_ptr"     ); }
+TEST(typeNum, typeNum2str_num_hash_str_void_ptr){ ASSERT_STREQ(sstd::typeNum2str(sstd::num_hash_str_void_ptr).c_str(), "hash_str_void_ptr"); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 

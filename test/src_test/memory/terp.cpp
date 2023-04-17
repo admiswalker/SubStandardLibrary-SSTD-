@@ -3,7 +3,7 @@
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // sstd::terp::var
-
+//*
 TEST(memory_terp, var_constructor){
     sstd::terp::var a;
 }
@@ -27,27 +27,21 @@ TEST(memory_terp, var_ope_eq_list_case02){
     
     ASSERT_STREQ(a[0].to<std::string>().c_str(), "test");
 }
-TEST(memory_terp, var_typeNum){
+
+// typeNum()
+TEST(memory_terp, var_typeNum_null){
     sstd::terp::var a;
-    sstd::printn(a.typeNum());
-//    ASSERT_STREQ(a[0].to<std::string>().c_str(), "test");
+    ASSERT_STREQ(sstd::typeNum2str(a.typeNum()).c_str(), "null"); // TEST THIS LINE
 }
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
-// char*: c
-
-TEST(memory_terp, c_type){
+TEST(memory_terp, var_typeNum_c){
     sstd::terp::var a;
-    
-    
-    //a = "test"; // TEST THIS LINE
-    
-//    ASSERT_STREQ(a[0].to<std::string>().c_str(), "test");
+    a = "test";
+    ASSERT_STREQ(sstd::typeNum2str(a.typeNum()).c_str(), "str"); // TEST THIS LINE
 }
-
+//*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // sstd::terp::list
-
+//*
 // constructors
 // size()
 TEST(memory_terp, list_arg_null){
@@ -79,9 +73,16 @@ TEST(memory_terp, list_push_back_c){
     ASSERT_STREQ(a[0].to<std::string>().c_str(), "test");
 }
 
+// typeNum()
+TEST(memory_terp, list_typeNum){
+    sstd::terp::var a;
+    a = sstd::terp::list();
+    ASSERT_STREQ(sstd::typeNum2str(a.typeNum()).c_str(), "vec_void_ptr"); // TEST THIS LINE
+}
+//*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // sstd::terp::hash
-
+//*
 // constructors
 // size()
 TEST(memory_terp, hash_arg_null){
@@ -100,6 +101,13 @@ TEST(memory_terp, hash_arg_10){
     ASSERT_EQ(a.bucket_count(), (uint)17); // std::unordered_map allocates the prime number size, equal or nearest larger than the allocating size.
 }
 
+// typeNum()
+TEST(memory_terp, hash_typeNum){
+    sstd::terp::var a;
+    a = sstd::terp::hash();
+    ASSERT_STREQ(sstd::typeNum2str(a.typeNum()).c_str(), "hash_str_void_ptr"); // TEST THIS LINE
+}
+//*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 EXECUTE_TESTS();

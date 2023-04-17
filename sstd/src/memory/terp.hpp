@@ -15,24 +15,18 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 namespace sstd::terp{
-    class list; // allocate type
+//    class _list; // allocate type
     class hash; // allocate type
     
     class var; // base type
+
+    var list();
+    var list(uint allocate_size);/*{
+        var r;
+        r.overwrite(new std::vector<sstd::void_ptr>(allocate_size));
+        return r;
+    }*/
 }
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
-
-class sstd::terp::list{
-private:
-    uint _allocate_size;
-public:
-    list(): _allocate_size(0) {}
-    list(uint allocate_size){ _allocate_size=allocate_size; }
-    ~list(){}
-
-    uint allocate_size() const { return _allocate_size; }
-};
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -50,8 +44,8 @@ public:
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 namespace sstd::terp{
-    std::vector<sstd::void_ptr>*                    cast_vec_void_ptr     (void* rhs){ return (std::vector<sstd::void_ptr>*)rhs; }
-    std::unordered_map<std::string,sstd::void_ptr>* cast_hash_str_void_ptr(void* rhs){ return (std::unordered_map<std::string,sstd::void_ptr>*)rhs; }
+    std::vector<sstd::void_ptr>*                    cast_vec_void_ptr     (void* rhs);
+    std::unordered_map<std::string,sstd::void_ptr>* cast_hash_str_void_ptr(void* rhs);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -63,6 +57,8 @@ private:
     
 public:
     var(){ _p = &_vp; }
+    var(const var&  rhs){ _vp=rhs.vp(); _p=&_vp; }
+//    var(const var&& rhs){ _vp=rhs.vp(); _p=&_vp; }
     var(sstd::void_ptr* p_in){ _p = p_in; }
 //    var(const char* rhs){
 //        _p = &_vp;
@@ -80,10 +76,17 @@ public:
         (*_p).overwrite(new std::string(rhs));
         return *this;
     }
-    var operator=(const sstd::terp::list& rhs){
-        (*_p).overwrite(new std::vector<sstd::void_ptr>(rhs.allocate_size()));
+    var operator=(const sstd::terp::var&  rhs){
+        *_p = rhs.vp();
         return *this;
     }
+    //var operator=(      sstd::terp::var&& rhs){
+    //    sstd::swap(_P, rhs);
+    //}
+    //var operator=(const sstd::terp::list& rhs){
+    //    (*_p).overwrite(new std::vector<sstd::void_ptr>(rhs.allocate_size()));
+    //    return *this;
+    //}
     var operator=(const sstd::terp::hash& rhs){
         (*_p).overwrite(new std::unordered_map<std::string, sstd::void_ptr>(rhs.allocate_size()));
         return *this;
@@ -116,16 +119,19 @@ public:
 
     //---
     
-    sstd::void_ptr* ptr(){ return _p; }
+    sstd::void_ptr  vp() const { return _vp; }
+    sstd::void_ptr* p () const { return _p;  }
 
     //---
 
     void push_back(const char* pRhs){
-        switch(_P.typeNum()){
-        case sstd::num_vec_void_ptr: { (*cast_vec_void_ptr(_P.ptr())).push_back(new std::string(pRhs)); } break;
-        default: { sstd::pdbg("ERROR"); } break;
-        }
+        if(_P.typeNum()!=sstd::num_vec_void_ptr){ sstd::pdbg("ERROR"); return; }
+        (*cast_vec_void_ptr(_P.ptr())).push_back(new std::string(pRhs));
     }
+//    void push_back(const sstd::terp::list& rhs){
+//        if(_P.typeNum()!=sstd::num_vec_void_ptr){ sstd::pdbg("ERROR"); return; }
+//        (*cast_vec_void_ptr(_P.ptr())).push_back(new std::vector<sstd::void_ptr>());
+//    }
 
     //---
     
