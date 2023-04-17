@@ -42,26 +42,18 @@ TEST(memory_terp, var_typeNum_c){
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // sstd::terp::list
 //*
-// constructors
-// size()
-TEST(memory_terp, list_arg_null){
-    sstd::terp::var a;
-    a = sstd::terp::list();
-    ASSERT_EQ(a.size(), (uint)0);
-}
-TEST(memory_terp, list_arg_10){
-    sstd::terp::var a;
-    a = sstd::terp::list(10);
-    ASSERT_EQ(a.size(), (uint)10);
-}
 
-// resize()
-TEST(memory_terp, list_resize){
+// operator=
+TEST(memory_terp, list_eq){
     sstd::terp::var a;
-    a = sstd::terp::list();
-    ASSERT_EQ(a.size(), (uint)0);
-    a.resize(10);
-    ASSERT_EQ(a.size(), (uint)10);
+    a = sstd::terp::list(1); // TEST THIS LINE
+    //a = sstd::terp::list(); a.resize(1); // same as above
+    a[0] = sstd::terp::list(); // TEST THIS LINE
+    a[0].push_back("v1");
+    a[0].push_back("v2");
+    
+    ASSERT_STREQ(a[0][0].to<std::string>().c_str(), "v1");
+    ASSERT_STREQ(a[0][1].to<std::string>().c_str(), "v2");
 }
 
 // push_back()
@@ -86,18 +78,27 @@ TEST(memory_terp, list_push_back_list){
     ASSERT_STREQ(a[0][0].to<std::string>().c_str(), "v1");
     ASSERT_STREQ(a[0][1].to<std::string>().c_str(), "v2");
 }
-/*
-TEST(memory_terp, list_push_back_list){
+
+// resize()
+TEST(memory_terp, list_resize){
     sstd::terp::var a;
-    a = sstd::terp::list(1);
-    a[0] = sstd::terp::list(); // TEST THIS LINE
-    a[0].push_back("v1");
-    a[0].push_back("v2");
-    
-    ASSERT_STREQ(a[0][0].to<std::string>().c_str(), "v1");
-    ASSERT_STREQ(a[0][1].to<std::string>().c_str(), "v2");
+    a = sstd::terp::list();
+    ASSERT_EQ(a.size(), (uint)0);
+    a.resize(10);
+    ASSERT_EQ(a.size(), (uint)10);
 }
-*/
+
+// size()
+TEST(memory_terp, list_arg_null){
+    sstd::terp::var a;
+    a = sstd::terp::list();
+    ASSERT_EQ(a.size(), (uint)0);
+}
+TEST(memory_terp, list_arg_10){
+    sstd::terp::var a;
+    a = sstd::terp::list(10);
+    ASSERT_EQ(a.size(), (uint)10);
+}
 
 // typeNum()
 TEST(memory_terp, list_typeNum){
@@ -109,7 +110,6 @@ TEST(memory_terp, list_typeNum){
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // sstd::terp::hash
 //*
-// constructors
 // size()
 TEST(memory_terp, hash_arg_null){
     sstd::terp::var a;
