@@ -15,6 +15,11 @@ namespace sstd::terp{
     // var
     class var;
 
+    // iterator
+    class iterator;
+    using _v_iterator = typename std::vector<sstd::void_ptr>::const_iterator;
+    using _h_iterator = typename std::unordered_map<std::string,sstd::void_ptr>::const_iterator;
+
     // list
     var list(uint allocate_size);
     var list();
@@ -24,8 +29,8 @@ namespace sstd::terp{
     var hash();
     
     // cast
-    std::vector<sstd::void_ptr>*                    cast_vec_void_ptr     (void* rhs);
-    std::unordered_map<std::string,sstd::void_ptr>* cast_hash_str_void_ptr(void* rhs);
+//    std::vector<sstd::void_ptr>*                    cast_vec_void_ptr     (void* rhs);
+//    std::unordered_map<std::string,sstd::void_ptr>* cast_hash_str_void_ptr(void* rhs);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -37,7 +42,69 @@ namespace sstd::terp{
     // cast
     std::vector<sstd::void_ptr>*                    cast_vec_void_ptr     (void* rhs);
     std::unordered_map<std::string,sstd::void_ptr>* cast_hash_str_void_ptr(void* rhs);
+
+    // to (data type conversion)
+    void _to(std::string& dst, const sstd::void_ptr& src);
+    void _to(std::string& dst, const std::string   & src);
 }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// iterator
+
+class sstd::terp::iterator{
+private:
+    uint _typeNum;
+    _v_iterator _v_itr;
+    _h_iterator _h_itr;
+public:
+    iterator(): _typeNum(sstd::num_null) {}
+    iterator(const _v_iterator& rhs){ _typeNum=sstd::num_vec_void_ptr;      _v_itr=rhs; }
+    iterator(const _h_iterator& rhs){ _typeNum=sstd::num_hash_str_void_ptr; _h_itr=rhs; }
+    ~iterator(){}
+
+    //---
+    
+    const _v_iterator& _v_itr_R() const { return _v_itr; }
+    const _h_iterator& _h_itr_R() const { return _h_itr; }
+
+    //---
+
+    template <typename T>
+    T first_to() const {
+        T ret = T();
+        switch(_typeNum){
+        case sstd::num_vec_void_ptr:      { sstd::terp::_to(ret, (sstd::void_ptr)(*_v_itr)      ); return ret; } break;
+        case sstd::num_hash_str_void_ptr: { sstd::terp::_to(ret, (std::string   )(*_h_itr).first); return ret; } break;
+        default: { sstd::pdbg("ERROR"); }
+        }
+        return ret;
+    }
+    template <typename T>
+    T second_to() const {
+        T ret = T();
+        return ret;
+    }
+
+    //---
+    
+    const bool operator!=(const iterator& rhs) const {
+        switch(_typeNum){
+        case sstd::num_vec_void_ptr:      { return _v_itr != rhs._v_itr_R(); } break;
+        case sstd::num_hash_str_void_ptr: { return _h_itr != rhs._h_itr_R(); } break;
+        default: { sstd::pdbg("ERROR"); }
+        }
+        return false;
+    }
+    
+    class iterator operator++(){
+        switch(_typeNum){
+        case sstd::num_vec_void_ptr:      { ++_v_itr; } break;
+        case sstd::num_hash_str_void_ptr: { ++_h_itr; } break;
+        default: { sstd::pdbg("ERROR"); }
+        }
+        return *this;
+    }
+};
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -79,6 +146,47 @@ public:
         default: { sstd::pdbg("ERROR"); } break;
         }
         return var();
+    }
+    
+    //---
+    
+    const _v_iterator _v_begin(void* p_in) const {
+        if(_p==NULL){ return _v_iterator(); }
+        std::vector<sstd::void_ptr>* p = cast_vec_void_ptr(p_in);
+        return (*p).begin();
+    }
+    const _v_iterator _v_end(void* p_in) const {
+        if(_p==NULL){ return _v_iterator(); }
+        std::vector<sstd::void_ptr>* p = cast_vec_void_ptr(p_in);
+        return (*p).end();
+    }
+    const _h_iterator _h_begin(void* p_in) const {
+        if(_p==NULL){ return _h_iterator(); }
+        std::unordered_map<std::string,sstd::void_ptr>* p = cast_hash_str_void_ptr(p_in);
+        return (*p).begin();
+    }
+    const _h_iterator _h_end(void* p_in) const {
+        if(_p==NULL){ return _h_iterator(); }
+        std::unordered_map<std::string,sstd::void_ptr>* p = cast_hash_str_void_ptr(p_in);
+        return (*p).end();
+    }
+    sstd::terp::iterator begin(){
+        switch((*_p).typeNum()){
+        case sstd::num_vec_void_ptr:      { return sstd::terp::iterator(_v_begin((*_p).ptr())); } break;
+        case sstd::num_hash_str_void_ptr: { return sstd::terp::iterator(_h_begin((*_p).ptr())); } break;
+        case sstd::num_null:              {} break;
+        default: { sstd::pdbg("ERROR"); }
+        }
+        return sstd::terp::iterator();
+    }
+    sstd::terp::iterator end(){
+        switch((*_p).typeNum()){
+        case sstd::num_vec_void_ptr:      { return sstd::terp::iterator(_v_end((*_p).ptr())); } break;
+        case sstd::num_hash_str_void_ptr: { return sstd::terp::iterator(_h_end((*_p).ptr())); } break;
+        case sstd::num_null:              {} break;
+        default: { sstd::pdbg("ERROR"); }
+        }
+        return sstd::terp::iterator();
     }
     
     //---
@@ -129,12 +237,12 @@ public:
 
     //---
     
-    void _to(std::string& dst, const sstd::void_ptr& src) const { dst = (*(std::string*)_p->ptr()); }
+//    void _to(std::string& dst, const sstd::void_ptr& src) const { dst = (*(std::string*)_p->ptr()); }
 
     template <typename T>
     const T to() const {
         T ret = T();
-        _to(ret, *_p);
+        sstd::terp::_to(ret, *_p);
         return ret;
     }
     

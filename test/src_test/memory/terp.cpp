@@ -56,6 +56,32 @@ TEST(memory_terp, list_eq){
     ASSERT_STREQ(a[0][1].to<std::string>().c_str(), "v2");
 }
 
+// begin(), end()
+TEST(memory_terp, list_begin_end){
+    sstd::terp::var a;
+    
+    auto tmp_b = a.begin();
+    auto tmp_e = a.end();
+}
+TEST(memory_terp, list_begin_end_with_objects){
+    sstd::terp::var a;
+    a = sstd::terp::list(3);
+    a[0] = "v0";
+    a[1] = "v1";
+    a[2] = "v2";
+
+    std::vector<std::string> v_ret;
+
+    for(auto itr=a.begin(); itr!=a.end(); ++itr){      // TEST THIS LINE
+        std::string tmp = itr.first_to<std::string>(); // TEST THIS LINE
+        v_ret.push_back(tmp);
+    }
+    
+    ASSERT_STREQ(v_ret[0].c_str(), "v0");
+    ASSERT_STREQ(v_ret[1].c_str(), "v1");
+    ASSERT_STREQ(v_ret[2].c_str(), "v2");
+}
+
 // push_back()
 TEST(memory_terp, list_push_back_c){
     sstd::terp::var a;
