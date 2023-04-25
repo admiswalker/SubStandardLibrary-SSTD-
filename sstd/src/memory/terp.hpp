@@ -82,6 +82,10 @@ public:
     template <typename T>
     T second_to() const {
         T ret = T();
+        switch(_typeNum){
+        case sstd::num_hash_str_void_ptr: { sstd::terp::_to(ret, (sstd::void_ptr)(*_h_itr).second); return ret; } break;
+        default: { sstd::pdbg("ERROR"); }
+        }
         return ret;
     }
 

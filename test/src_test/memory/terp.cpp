@@ -153,6 +153,32 @@ TEST(memory_terp, hash_arg_10){
     ASSERT_EQ(a.bucket_count(), (uint)17); // std::unordered_map allocates the prime number size, equal or nearest larger than the allocating size.
 }
 
+// begin(), end()
+TEST(memory_terp, hash_begin_end_with_objects){
+    sstd::terp::var a;
+    a = sstd::terp::hash();
+    a["k0"] = "v0";
+    a["k1"] = "v1";
+    a["k2"] = "v2";
+
+    std::vector<std::string> v_key;
+    std::vector<std::string> v_val;
+
+    for(auto itr=a.begin(); itr!=a.end(); ++itr){      // TEST THIS LINE
+        std::string key = itr.first_to<std::string>(); // TEST THIS LINE
+        std::string val = itr.second_to<std::string>(); // TEST THIS LINE
+        v_key.push_back(key);
+        v_val.push_back(val);
+    }
+    
+    ASSERT_STREQ(v_key[0].c_str(), "k2");
+    ASSERT_STREQ(v_key[1].c_str(), "k1");
+    ASSERT_STREQ(v_key[2].c_str(), "k0");
+    ASSERT_STREQ(v_val[0].c_str(), "v2");
+    ASSERT_STREQ(v_val[1].c_str(), "v1");
+    ASSERT_STREQ(v_val[2].c_str(), "v0");
+}
+
 // typeNum()
 TEST(memory_terp, hash_typeNum){
     sstd::terp::var a;
