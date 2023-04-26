@@ -112,6 +112,21 @@ TEST(memory_terp, list_erase_index){
     ASSERT_STREQ(a[1].to<std::string>().c_str(), "v2");
 }
 
+// pop_back()
+TEST(memory_terp, list_pop_back){
+    sstd::terp::var a;
+    a = sstd::terp::list(3);
+    a[0] = "v0";
+    a[1] = "v1";
+    a[2] = "v2";
+
+    a.pop_back(); // TEST THIS LINE
+
+    ASSERT_EQ(a.size(), (uint)2);
+    ASSERT_STREQ(a[0].to<std::string>().c_str(), "v0");
+    ASSERT_STREQ(a[1].to<std::string>().c_str(), "v1");
+}
+
 // push_back()
 TEST(memory_terp, list_push_back_c){
     sstd::terp::var a;

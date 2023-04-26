@@ -253,6 +253,17 @@ public:
     
     //---
 
+    void pop_back(){
+        switch((*_p).typeNum()){
+        case sstd::num_vec_void_ptr: { cast2vec((*_p).ptr())->pop_back(); return; } break;
+        case sstd::num_null:         {} break;
+        default: { sstd::pdbg("ERROR"); }
+        }
+        return;
+    }
+
+    //---
+
     void push_back(const char* pRhs){
         if(_P.typeNum()!=sstd::num_vec_void_ptr){ sstd::pdbg("ERROR"); return; }
         (*cast2vec(_P.ptr())).push_back(new std::string(pRhs));
