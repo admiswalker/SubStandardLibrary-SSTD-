@@ -192,9 +192,11 @@ TEST(memory_terp, hash_erase){
     std::vector<std::string> v_key;
     std::vector<std::string> v_val;
 
-    for(auto itr=a.begin(); itr!=a.end(); ++itr){      // TEST THIS LINE
-        std::string key = itr.first_to<std::string>(); // TEST THIS LINE
+    for(auto itr=a.begin(); itr!=a.end(); ++itr){       // TEST THIS LINE
+        std::string key = itr.first_to <std::string>(); // TEST THIS LINE
         std::string val = itr.second_to<std::string>(); // TEST THIS LINE
+        v_key.push_back(key);
+        v_val.push_back(val);
     }
     
     ASSERT_STREQ(v_key[0].c_str(), "k2");
@@ -204,7 +206,24 @@ TEST(memory_terp, hash_erase){
 }
 
 // find()
+TEST(memory_terp, hash_find_true){
+    sstd::terp::var a;
+    a = sstd::terp::hash();
+    a["k0"] = "v0";
 
+    auto itr = a.find("k0"); // TEST THIS LINE
+    ASSERT_TRUE( itr!=a.end() );
+    
+    ASSERT_STREQ(itr.first_to<std::string>().c_str(),  "k0");
+    ASSERT_STREQ(itr.second_to<std::string>().c_str(), "v0");
+}
+TEST(memory_terp, hash_find_false){
+    sstd::terp::var a;
+    a = sstd::terp::hash();
+
+    auto itr = a.find("k0"); // TEST THIS LINE
+    ASSERT_FALSE( itr!=a.end() );
+}
 
 // typeNum()
 TEST(memory_terp, hash_typeNum){

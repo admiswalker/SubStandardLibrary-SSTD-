@@ -222,7 +222,7 @@ public:
         case sstd::num_null:              {} break;
         default: { sstd::pdbg("ERROR"); }
         }
-        return 0;
+        return sstd::terp::iterator();
     }
     
     //---
