@@ -68,6 +68,16 @@ public:
     const _h_iterator& _h_itr_R() const { return _h_itr; }
 
     //---
+    
+    iterator operator+(const int rhs){
+        switch(_typeNum){
+        case sstd::num_vec_void_ptr:      { return iterator( _v_itr + rhs ); } break;
+        default: { sstd::pdbg("ERROR"); }
+        }
+        return iterator();
+    }
+    
+    //---
 
     template <typename T>
     T first_to() const {
@@ -108,6 +118,8 @@ public:
         }
         return *this;
     }
+
+    //---
 };
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -204,7 +216,16 @@ public:
     }
 
     //---
-
+    
+    sstd::terp::iterator erase(const sstd::terp::iterator& rhs){
+        switch((*_p).typeNum()){
+        case sstd::num_vec_void_ptr:      { return sstd::terp::iterator( cast2vec((*_p).ptr())->erase(rhs._v_itr_R()) ); } break;
+      //case sstd::num_hash_str_void_ptr: { return cast2hash((*_p).ptr())->erase(pKey); } break;
+        case sstd::num_null:              {} break;
+        default: { sstd::pdbg("ERROR"); }
+        }
+        return sstd::terp::iterator();
+    }
     uint erase(const char* pKey){
         switch((*_p).typeNum()){
         case sstd::num_hash_str_void_ptr: { return cast2hash((*_p).ptr())->erase(pKey); } break;

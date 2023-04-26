@@ -82,6 +82,36 @@ TEST(memory_terp, list_begin_end_with_objects){
     ASSERT_STREQ(v_ret[2].c_str(), "v2");
 }
 
+// erase()
+TEST(memory_terp, list_erase){
+    sstd::terp::var a;
+    a = sstd::terp::list(3);
+    a[0] = "v0";
+    a[1] = "v1";
+    a[2] = "v2";
+
+    a.erase(a.begin()); // erase 'a[0] = "v0";' // TEST THIS LINE
+    //a.erase(a.begin()+1); // erase 'a[1] = "v1";'
+
+    ASSERT_EQ(a.size(), (uint)2);
+    ASSERT_STREQ(a[0].to<std::string>().c_str(), "v1");
+    ASSERT_STREQ(a[1].to<std::string>().c_str(), "v2");
+}
+TEST(memory_terp, list_erase_index){
+    sstd::terp::var a;
+    a = sstd::terp::list(3);
+    a[0] = "v0";
+    a[1] = "v1";
+    a[2] = "v2";
+
+    //a.erase(a.begin()); // erase 'a[0] = "v0";'
+    a.erase(a.begin()+1); // erase 'a[1] = "v1";' // TEST THIS LINE
+
+    ASSERT_EQ(a.size(), (uint)2);
+    ASSERT_STREQ(a[0].to<std::string>().c_str(), "v0");
+    ASSERT_STREQ(a[1].to<std::string>().c_str(), "v2");
+}
+
 // push_back()
 TEST(memory_terp, list_push_back_c){
     sstd::terp::var a;
