@@ -39,8 +39,8 @@ sstd::terp::var sstd::terp::hash(){ return sstd::terp::hash(0); }
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // cast
 
-std::vector<sstd::void_ptr>*                    sstd::terp::cast_vec_void_ptr     (void* rhs){ return (std::vector<sstd::void_ptr>*)rhs; }
-std::unordered_map<std::string,sstd::void_ptr>* sstd::terp::cast_hash_str_void_ptr(void* rhs){ return (std::unordered_map<std::string,sstd::void_ptr>*)rhs; }
+std::vector<sstd::void_ptr>*                    sstd::terp::cast2vec (void* rhs){ return (std::vector<sstd::void_ptr>*)rhs; }
+std::unordered_map<std::string,sstd::void_ptr>* sstd::terp::cast2hash(void* rhs){ return (std::unordered_map<std::string,sstd::void_ptr>*)rhs; }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
