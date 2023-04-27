@@ -27,10 +27,6 @@ namespace sstd::terp{
     // hash
     var hash(uint allocate_size);
     var hash();
-    
-    // cast
-//    std::vector<sstd::void_ptr>*                    cast2vec (void* rhs);
-//    std::unordered_map<std::string,sstd::void_ptr>* cast2hash(void* rhs);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -148,21 +144,25 @@ public:
     }
 
     //---
-    
-    var operator[](int idx){
+
+    var _ope_subscript_idx_base(const int idx) const {
         switch(_P.typeNum()){
         case sstd::num_vec_void_ptr: { sstd::void_ptr* p=(sstd::void_ptr*)&(*cast2vec(_P.ptr()))[idx]; return var( p ); } break;
         default: { sstd::pdbg("ERROR"); } break;
         }
         return var();
     }
-    var operator[](const char* pKey){
+    var _ope_subscript_pKey_base(const char* pKey) const {
         switch(_P.typeNum()){
         case sstd::num_hash_str_void_ptr: { sstd::void_ptr* p=(sstd::void_ptr*)&(*cast2hash(_P.ptr()))[pKey]; return var( p ); } break;
         default: { sstd::pdbg("ERROR"); } break;
         }
         return var();
     }
+    var operator[](      int idx)       { return _ope_subscript_idx_base(idx); }
+    var operator[](const int idx) const { return _ope_subscript_idx_base(idx); }
+    //var operator[](const char* pKey)       { return _ope_subscript_pKey_base(pKey); }
+    var operator[](const char* pKey) const { return _ope_subscript_pKey_base(pKey); }
     
     //---
     
@@ -186,7 +186,7 @@ public:
         std::unordered_map<std::string,sstd::void_ptr>* p = cast2hash(p_in);
         return (*p).end();
     }
-    sstd::terp::iterator begin(){
+    sstd::terp::iterator begin() const {
         switch((*_p).typeNum()){
         case sstd::num_vec_void_ptr:      { return sstd::terp::iterator(_v_begin((*_p).ptr())); } break;
         case sstd::num_hash_str_void_ptr: { return sstd::terp::iterator(_h_begin((*_p).ptr())); } break;
@@ -195,7 +195,7 @@ public:
         }
         return sstd::terp::iterator();
     }
-    sstd::terp::iterator end(){
+    sstd::terp::iterator end() const {
         switch((*_p).typeNum()){
         case sstd::num_vec_void_ptr:      { return sstd::terp::iterator(_v_end((*_p).ptr())); } break;
         case sstd::num_hash_str_void_ptr: { return sstd::terp::iterator(_h_end((*_p).ptr())); } break;
@@ -306,7 +306,7 @@ public:
     
     //---
 
-    uint typeNum(){
+    uint typeNum() const {
         return _P.typeNum();
     }
     std::string typeStr(){
@@ -315,6 +315,10 @@ public:
 
     //---
 };
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 

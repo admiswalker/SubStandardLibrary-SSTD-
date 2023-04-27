@@ -60,6 +60,7 @@
 #include "src/math/math.hpp"
 #include "src/math/signal.hpp"
 
+#include "src/memory/terp/print.hpp"
 #include "src/memory/terp/terp.hpp"
 #include "src/memory/unique_void_ptr.hpp"
 #include "src/memory/void_ptr.hpp"
