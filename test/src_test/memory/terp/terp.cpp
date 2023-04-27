@@ -1,5 +1,5 @@
 #include <sstd/sstd.hpp>
-#include "../../gtest_parallel/test_main.hpp"
+#include "../../../gtest_parallel/test_main.hpp"
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // sstd::terp::var

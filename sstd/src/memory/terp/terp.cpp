@@ -1,7 +1,7 @@
 #include "terp.hpp"
 
-#include "../definitions/typeNum.hpp"
-#include "../print/pdbg.hpp"
+#include "../../definitions/typeNum.hpp"
+#include "../../print/pdbg.hpp"
 
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

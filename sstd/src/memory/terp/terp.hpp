@@ -1,12 +1,12 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "void_ptr.hpp"
-#include "../definitions/typeDef.h"
-#include "../definitions/typeNum.hpp"
-#include "../print/pdbg.hpp"
+#include "../void_ptr.hpp"
+#include "../../definitions/typeDef.h"
+#include "../../definitions/typeNum.hpp"
+#include "../../print/pdbg.hpp"
 
-#include "../print/print.hpp" // for debug
+#include "../../print/print.hpp" // for debug
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // for user
