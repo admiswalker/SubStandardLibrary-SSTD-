@@ -16,7 +16,7 @@ void _print_terp_hash(const sstd::terp::var& rhs);
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 void _print_terp_str(const sstd::terp::var& rhs){
-    printf("%s", rhs.to<std::string>().c_str());
+    printf("\"%s\"", rhs.to<std::string>().c_str());
 }
 void _print_terp_list_internal(const sstd::terp::var& rhs){
     switch(rhs.typeNum()){
@@ -36,6 +36,12 @@ void _print_terp_list(const sstd::terp::var& rhs){
     printf("]");
 }
 void _print_terp_hash(const sstd::terp::var& rhs){
+    printf("{");
+    for(auto itr=rhs.begin(); itr!=rhs.end(); ++itr){
+        if(itr!=rhs.begin()){ printf(", "); }
+        printf("%s: %s", itr.first_to<std::string>().c_str(), itr.second_to<std::string>().c_str());
+    }
+    printf("}");
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

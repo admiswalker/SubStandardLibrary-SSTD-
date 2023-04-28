@@ -1,11 +1,11 @@
 #pragma once
 #include <string>
 #include <vector>
+
 #include "../void_ptr.hpp"
 #include "../../definitions/typeDef.h"
 #include "../../definitions/typeNum.hpp"
 #include "../../print/pdbg.hpp"
-
 #include "../../print/print.hpp" // for debug
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -17,8 +17,6 @@ namespace sstd::terp{
 
     // iterator
     class iterator;
-    using _v_iterator = typename std::vector<sstd::void_ptr>::const_iterator;
-    using _h_iterator = typename std::unordered_map<std::string,sstd::void_ptr>::const_iterator;
 
     // list
     var list(uint allocate_size);
@@ -35,6 +33,10 @@ namespace sstd::terp{
 #define _P (*_p) // pointer object
 
 namespace sstd::terp{
+    // iterator
+    using _v_iterator = typename std::vector<sstd::void_ptr>::const_iterator;
+    using _h_iterator = typename std::unordered_map<std::string,sstd::void_ptr>::const_iterator;
+
     // cast
     std::vector<sstd::void_ptr>*                    cast2vec (void* rhs);
     std::unordered_map<std::string,sstd::void_ptr>* cast2hash(void* rhs);
@@ -53,25 +55,19 @@ private:
     _v_iterator _v_itr;
     _h_iterator _h_itr;
 public:
-    iterator(): _typeNum(sstd::num_null) {}
-    iterator(const _v_iterator& rhs){ _typeNum=sstd::num_vec_void_ptr;      _v_itr=rhs; }
-    iterator(const _h_iterator& rhs){ _typeNum=sstd::num_hash_str_void_ptr; _h_itr=rhs; }
-    ~iterator(){}
+    iterator();
+    iterator(const _v_iterator& rhs);
+    iterator(const _h_iterator& rhs);
+    ~iterator();
 
     //---
     
-    const _v_iterator& _v_itr_R() const { return _v_itr; }
-    const _h_iterator& _h_itr_R() const { return _h_itr; }
+    const _v_iterator& _v_itr_R() const;
+    const _h_iterator& _h_itr_R() const;
 
     //---
     
-    iterator operator+(const int rhs){
-        switch(_typeNum){
-        case sstd::num_vec_void_ptr:      { return iterator( _v_itr + rhs ); } break;
-        default: { sstd::pdbg("ERROR"); }
-        }
-        return iterator();
-    }
+    iterator operator+(const int rhs);
     
     //---
 
@@ -85,6 +81,7 @@ public:
         }
         return ret;
     }
+    
     template <typename T>
     T second_to() const {
         T ret = T();
@@ -94,26 +91,12 @@ public:
         }
         return ret;
     }
-
+    sstd::terp::var second();
+    
     //---
     
-    const bool operator!=(const iterator& rhs) const {
-        switch(_typeNum){
-        case sstd::num_vec_void_ptr:      { return _v_itr != rhs._v_itr_R(); } break;
-        case sstd::num_hash_str_void_ptr: { return _h_itr != rhs._h_itr_R(); } break;
-        default: { sstd::pdbg("ERROR"); }
-        }
-        return false;
-    }
-    
-    class iterator operator++(){
-        switch(_typeNum){
-        case sstd::num_vec_void_ptr:      { ++_v_itr; } break;
-        case sstd::num_hash_str_void_ptr: { ++_h_itr; } break;
-        default: { sstd::pdbg("ERROR"); }
-        }
-        return *this;
-    }
+    const bool operator!=(const iterator& rhs) const;
+    class iterator operator++();
 
     //---
 };
@@ -126,43 +109,23 @@ private:
     sstd::void_ptr* _p;
     
 public:
-    var(){ _p = &_vp; }
-    var(const var&  rhs){ _vp=*rhs.p(); _p=&_vp; }
-//    var(const var&& rhs){ _vp=*rhs.p(); _p=&_vp; }
-    var(sstd::void_ptr* p_in){ _p = p_in; }
-    ~var(){}
+    var();
+    var(const var&  rhs);
+    var(const sstd::void_ptr& vp_in);
+    var(      sstd::void_ptr*  p_in);
+    ~var();
     
     //---
     
-    var operator=(const char* rhs){
-        (*_p).overwrite(new std::string(rhs));
-        return *this;
-    }
-    var operator=(const sstd::terp::var& rhs){
-        *_p = *rhs.p();
-        return *this;
-    }
+    var operator=(const char* rhs);
+    var operator=(const sstd::terp::var& rhs);
 
     //---
 
-    var _ope_subscript_idx_base(const int idx) const {
-        switch(_P.typeNum()){
-        case sstd::num_vec_void_ptr: { sstd::void_ptr* p=(sstd::void_ptr*)&(*cast2vec(_P.ptr()))[idx]; return var( p ); } break;
-        default: { sstd::pdbg("ERROR"); } break;
-        }
-        return var();
-    }
-    var _ope_subscript_pKey_base(const char* pKey) const {
-        switch(_P.typeNum()){
-        case sstd::num_hash_str_void_ptr: { sstd::void_ptr* p=(sstd::void_ptr*)&(*cast2hash(_P.ptr()))[pKey]; return var( p ); } break;
-        default: { sstd::pdbg("ERROR"); } break;
-        }
-        return var();
-    }
-    var operator[](      int idx)       { return _ope_subscript_idx_base(idx); }
-    var operator[](const int idx) const { return _ope_subscript_idx_base(idx); }
-    //var operator[](const char* pKey)       { return _ope_subscript_pKey_base(pKey); }
-    var operator[](const char* pKey) const { return _ope_subscript_pKey_base(pKey); }
+    var operator[](      int idx);
+    var operator[](const int idx) const;
+    //var operator[](const char* pKey);
+    var operator[](const char* pKey) const;
     
     //---
     

@@ -22,7 +22,7 @@ TEST(memory_terp_print, var_num_str){
     testing::internal::CaptureStdout();
     sstd::print(a); // TEST THIS LINE
     std::string ret = testing::internal::GetCapturedStdout().c_str();
-    ASSERT_STREQ(ret.c_str(), "test\n");
+    ASSERT_STREQ(ret.c_str(), "\"test\"\n");
 }
 
 //*/
@@ -41,7 +41,7 @@ TEST(memory_terp_print, list_depth1){
     testing::internal::CaptureStdout();
     sstd::print(a); // TEST THIS LINE
     std::string ret = testing::internal::GetCapturedStdout().c_str();
-    ASSERT_STREQ(ret.c_str(), "[v0 v1 v2]\n");
+    ASSERT_STREQ(ret.c_str(), "[\"v0\" \"v1\" \"v2\"]\n");
 }
 TEST(memory_terp_print, list_depth2){
     sstd::terp::var a;
@@ -57,7 +57,7 @@ TEST(memory_terp_print, list_depth2){
     testing::internal::CaptureStdout();
     sstd::print(a); // TEST THIS LINE
     std::string ret = testing::internal::GetCapturedStdout().c_str();
-    ASSERT_STREQ(ret.c_str(), "[v0 v1 v2 [v30 v31 v32]]\n");
+    ASSERT_STREQ(ret.c_str(), "[\"v0\" \"v1\" \"v2\" [\"v30\" \"v31\" \"v32\"]]\n");
 }
 
 //*/
@@ -66,7 +66,17 @@ TEST(memory_terp_print, list_depth2){
 //*
 
 // print()
-TEST(memory_terp_print, hash){
+TEST(memory_terp_print, hash_depth1){
+    sstd::terp::var a;
+    a = sstd::terp::hash();
+    a["k0"] = "v0";
+    a["k1"] = "v1";
+    a["k2"] = "v2";
+    
+    //testing::internal::CaptureStdout();
+    sstd::print(a); // TEST THIS LINE
+    //std::string ret = testing::internal::GetCapturedStdout().c_str();
+    //ASSERT_STREQ(ret.c_str(), "[v0 v1 v2]\n");
 }
 
 //*/

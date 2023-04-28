@@ -10,11 +10,116 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // for internal use
 
-//-----------------------------------------------------------------------------------------------------------------------------------------------
-// iterator
-
 void sstd::terp::_to(std::string& dst, const sstd::void_ptr& src){ dst = (*(std::string*)src.ptr()); }
 void sstd::terp::_to(std::string& dst, const std::string   & src){ dst =                 src       ; }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// sstd::terp::iterator
+
+// constructors
+sstd::terp::iterator::iterator(): _typeNum(sstd::num_null) {}
+sstd::terp::iterator::iterator(const _v_iterator& rhs){ _typeNum=sstd::num_vec_void_ptr;      _v_itr=rhs; }
+sstd::terp::iterator::iterator(const _h_iterator& rhs){ _typeNum=sstd::num_hash_str_void_ptr; _h_itr=rhs; }
+sstd::terp::iterator::~iterator(){}
+
+//---
+
+const sstd::terp::_v_iterator& sstd::terp::iterator::_v_itr_R() const { return _v_itr; }
+const sstd::terp::_h_iterator& sstd::terp::iterator::_h_itr_R() const { return _h_itr; }
+
+//---
+
+sstd::terp::iterator sstd::terp::iterator::operator+(const int rhs){
+    switch(_typeNum){
+    case sstd::num_vec_void_ptr:      { return iterator( _v_itr + rhs ); } break;
+    default: { sstd::pdbg("ERROR"); }
+    }
+    return iterator();
+}
+
+//---
+
+sstd::terp::var sstd::terp::iterator::second(){
+    switch(_typeNum){
+    case sstd::num_hash_str_void_ptr: {
+        return sstd::terp::var((*_h_itr).second);
+    } break;
+    default: { sstd::pdbg("ERROR"); }
+    }
+    return sstd::terp::var();
+}
+
+//---
+
+const bool sstd::terp::iterator::operator!=(const iterator& rhs) const {
+    switch(_typeNum){
+    case sstd::num_vec_void_ptr:      { return _v_itr != rhs._v_itr_R(); } break;
+    case sstd::num_hash_str_void_ptr: { return _h_itr != rhs._h_itr_R(); } break;
+    default: { sstd::pdbg("ERROR"); }
+    }
+    return false;
+}
+
+sstd::terp::iterator sstd::terp::iterator::operator++(){
+    switch(_typeNum){
+    case sstd::num_vec_void_ptr:      { ++_v_itr; } break;
+    case sstd::num_hash_str_void_ptr: { ++_h_itr; } break;
+    default: { sstd::pdbg("ERROR"); }
+    }
+    return *this;
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// sstd::terp::var
+
+// constructors
+sstd::terp::var::var(){ _p = &_vp; }
+sstd::terp::var::var(const var&  rhs){ _vp=*rhs.p(); _p=&_vp; }
+sstd::terp::var::var(const sstd::void_ptr& vp_in){ _vp=vp_in; _p=&_vp; }
+sstd::terp::var::var(      sstd::void_ptr*  p_in){ _p = p_in; }
+sstd::terp::var::~var(){}
+
+//---
+
+sstd::terp::var sstd::terp::var::operator=(const char* rhs){
+    (*_p).overwrite(new std::string(rhs));
+    return *this;
+}
+sstd::terp::var sstd::terp::var::operator=(const sstd::terp::var& rhs){
+    *_p = *rhs.p();
+    return *this;
+}
+
+//---
+
+sstd::terp::var _ope_subscript_idx_base(const sstd::void_ptr* _p, const int idx){
+    switch((*_p).typeNum()){
+    case sstd::num_vec_void_ptr: { sstd::void_ptr* p=(sstd::void_ptr*)&(*sstd::terp::cast2vec((*_p).ptr()))[idx]; return sstd::terp::var( p ); } break;
+    default: { sstd::pdbg("ERROR"); } break;
+    }
+    return sstd::terp::var();
+}
+sstd::terp::var _ope_subscript_pKey_base(const sstd::void_ptr* _p, const char* pKey){
+    switch((*_p).typeNum()){
+    case sstd::num_hash_str_void_ptr: { sstd::void_ptr* p=(sstd::void_ptr*)&(*sstd::terp::cast2hash((*_p).ptr()))[pKey]; return sstd::terp::var( p ); } break;
+    default: { sstd::pdbg("ERROR"); } break;
+    }
+    return sstd::terp::var();
+}
+sstd::terp::var sstd::terp::var::operator[](      int idx)       { return _ope_subscript_idx_base(_p, idx); }
+sstd::terp::var sstd::terp::var::operator[](const int idx) const { return _ope_subscript_idx_base(_p, idx); }
+//sstd::terp::var sstd::terp::var::operator[](const char* pKey)       { return _ope_subscript_pKey_base(_p, pKey); }
+sstd::terp::var sstd::terp::var::operator[](const char* pKey) const { return _ope_subscript_pKey_base(_p, pKey); }
+
+//---
+//---
+//---
+//---
+//---
+//---
+//---
+//---
+
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // sstd::terp::list
