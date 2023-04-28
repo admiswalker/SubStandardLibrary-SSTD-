@@ -30,16 +30,10 @@ namespace sstd::terp{
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // for internal use
 
-#define _P (*_p) // pointer object
-
 namespace sstd::terp{
     // iterator
     using _v_iterator = typename std::vector<sstd::void_ptr>::const_iterator;
     using _h_iterator = typename std::unordered_map<std::string,sstd::void_ptr>::const_iterator;
-
-    // cast
-    std::vector<sstd::void_ptr>*                    cast2vec (void* rhs);
-    std::unordered_map<std::string,sstd::void_ptr>* cast2hash(void* rhs);
 
     // to (data type conversion)
     void _to(std::string& dst, const sstd::void_ptr& src);
@@ -130,95 +124,41 @@ public:
     //---
     
     sstd::terp::iterator begin() const;
-    sstd::terp::iterator end() const;
+    sstd::terp::iterator end  () const;
     
     //---
     
-    uint bucket_count(){
-        switch(_P.typeNum()){
-        case sstd::num_hash_str_void_ptr: { return (*cast2hash(_P.ptr())).bucket_count(); } break;
-        default: { sstd::pdbg("ERROR"); } break;
-        }
-        return 0;
-    }
+    uint bucket_count();
 
     //---
     
-    sstd::terp::iterator erase(const sstd::terp::iterator& rhs){
-        switch((*_p).typeNum()){
-        case sstd::num_vec_void_ptr:      { return sstd::terp::iterator( cast2vec((*_p).ptr())->erase(rhs._v_itr_R()) ); } break;
-      //case sstd::num_hash_str_void_ptr: { return cast2hash((*_p).ptr())->erase(pKey); } break;
-        case sstd::num_null:              {} break;
-        default: { sstd::pdbg("ERROR"); }
-        }
-        return sstd::terp::iterator();
-    }
-    uint erase(const char* pKey){
-        switch((*_p).typeNum()){
-        case sstd::num_hash_str_void_ptr: { return cast2hash((*_p).ptr())->erase(pKey); } break;
-        case sstd::num_null:              {} break;
-        default: { sstd::pdbg("ERROR"); }
-        }
-        return 0;
-    }
+    sstd::terp::iterator erase(const sstd::terp::iterator& rhs);
+    uint erase(const char* pKey);
     
     //---
     
-    sstd::terp::iterator find(const char* pKey){
-        switch((*_p).typeNum()){
-        case sstd::num_hash_str_void_ptr: { return sstd::terp::iterator( cast2hash((*_p).ptr())->find(pKey) ); } break;
-        case sstd::num_null:              {} break;
-        default: { sstd::pdbg("ERROR"); }
-        }
-        return sstd::terp::iterator();
-    }
+    sstd::terp::iterator find(const char* pKey);
     
     //---
     
-    //sstd::void_ptr  vp() const { return *_p; }
-    sstd::void_ptr* p () const { return _p;  }
+    sstd::void_ptr* p() const;
     
     //---
 
-    void pop_back(){
-        switch((*_p).typeNum()){
-        case sstd::num_vec_void_ptr: { cast2vec((*_p).ptr())->pop_back(); return; } break;
-        case sstd::num_null:         {} break;
-        default: { sstd::pdbg("ERROR"); }
-        }
-        return;
-    }
+    void pop_back();
 
     //---
 
-    void push_back(const char* pRhs){
-        if(_P.typeNum()!=sstd::num_vec_void_ptr){ sstd::pdbg("ERROR"); return; }
-        (*cast2vec(_P.ptr())).push_back(new std::string(pRhs));
-    }
-    void push_back(const sstd::terp::var& rhs){
-        if(_P.typeNum()!=sstd::num_vec_void_ptr){ sstd::pdbg("ERROR"); return; }
-        (*cast2vec(_P.ptr())).push_back(*rhs.p());
-    }
+    void push_back(const char* pRhs);
+    void push_back(const sstd::terp::var& rhs);
     
     //---
     
-    void resize(uint len){
-        switch(_P.typeNum()){
-        case sstd::num_vec_void_ptr: { return (*cast2vec(_P.ptr())).resize( len ); } break;
-        default: { sstd::pdbg("ERROR"); } break;
-        }
-    }
+    void resize(uint len);
     
     //---
 
-    uint size() const {
-        switch(_P.typeNum()){
-        case sstd::num_vec_void_ptr     : { return (*cast2vec (_P.ptr())).size(); } break;
-        case sstd::num_hash_str_void_ptr: { return (*cast2hash(_P.ptr())).size(); } break;
-        default: { sstd::pdbg("ERROR"); } break;
-        }
-        return 0;
-    }
+    uint size() const;
 
     //---
     
@@ -233,22 +173,10 @@ public:
     
     //---
 
-    uint typeNum() const {
-        return _P.typeNum();
-    }
-    std::string typeStr(){
-        return std::string();//sstd::type(_P.typeNum());
-    }
+    uint typeNum() const;
+    std::string typeStr() const;
 
     //---
 };
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
-
-#undef _P
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
