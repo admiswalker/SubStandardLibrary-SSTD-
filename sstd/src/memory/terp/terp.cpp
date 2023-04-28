@@ -112,6 +112,42 @@ sstd::terp::var sstd::terp::var::operator[](const int idx) const { return _ope_s
 sstd::terp::var sstd::terp::var::operator[](const char* pKey) const { return _ope_subscript_pKey_base(_p, pKey); }
 
 //---
+
+const sstd::terp::_v_iterator _v_begin(void* p_in){
+    std::vector<sstd::void_ptr>* p = sstd::terp::cast2vec(p_in);
+    return (*p).begin();
+}
+const sstd::terp::_v_iterator _v_end(void* p_in){
+    std::vector<sstd::void_ptr>* p = sstd::terp::cast2vec(p_in);
+    return (*p).end();
+}
+const sstd::terp::_h_iterator _h_begin(void* p_in){
+    std::unordered_map<std::string,sstd::void_ptr>* p = sstd::terp::cast2hash(p_in);
+    return (*p).begin();
+}
+const sstd::terp::_h_iterator _h_end(void* p_in){
+    std::unordered_map<std::string,sstd::void_ptr>* p = sstd::terp::cast2hash(p_in);
+    return (*p).end();
+}
+sstd::terp::iterator sstd::terp::var::begin() const {
+    switch((*_p).typeNum()){
+    case sstd::num_vec_void_ptr:      { return sstd::terp::iterator(_v_begin((*_p).ptr())); } break;
+    case sstd::num_hash_str_void_ptr: { return sstd::terp::iterator(_h_begin((*_p).ptr())); } break;
+    case sstd::num_null:              {} break;
+    default: { sstd::pdbg("ERROR"); }
+    }
+    return sstd::terp::iterator();
+}
+sstd::terp::iterator sstd::terp::var::end() const {
+    switch((*_p).typeNum()){
+    case sstd::num_vec_void_ptr:      { return sstd::terp::iterator(_v_end((*_p).ptr())); } break;
+    case sstd::num_hash_str_void_ptr: { return sstd::terp::iterator(_h_end((*_p).ptr())); } break;
+    case sstd::num_null:              {} break;
+    default: { sstd::pdbg("ERROR"); }
+    }
+    return sstd::terp::iterator();
+}
+
 //---
 //---
 //---

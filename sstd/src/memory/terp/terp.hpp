@@ -129,44 +129,8 @@ public:
     
     //---
     
-    const _v_iterator _v_begin(void* p_in) const {
-        if(_p==NULL){ return _v_iterator(); }
-        std::vector<sstd::void_ptr>* p = cast2vec(p_in);
-        return (*p).begin();
-    }
-    const _v_iterator _v_end(void* p_in) const {
-        if(_p==NULL){ return _v_iterator(); }
-        std::vector<sstd::void_ptr>* p = cast2vec(p_in);
-        return (*p).end();
-    }
-    const _h_iterator _h_begin(void* p_in) const {
-        if(_p==NULL){ return _h_iterator(); }
-        std::unordered_map<std::string,sstd::void_ptr>* p = cast2hash(p_in);
-        return (*p).begin();
-    }
-    const _h_iterator _h_end(void* p_in) const {
-        if(_p==NULL){ return _h_iterator(); }
-        std::unordered_map<std::string,sstd::void_ptr>* p = cast2hash(p_in);
-        return (*p).end();
-    }
-    sstd::terp::iterator begin() const {
-        switch((*_p).typeNum()){
-        case sstd::num_vec_void_ptr:      { return sstd::terp::iterator(_v_begin((*_p).ptr())); } break;
-        case sstd::num_hash_str_void_ptr: { return sstd::terp::iterator(_h_begin((*_p).ptr())); } break;
-        case sstd::num_null:              {} break;
-        default: { sstd::pdbg("ERROR"); }
-        }
-        return sstd::terp::iterator();
-    }
-    sstd::terp::iterator end() const {
-        switch((*_p).typeNum()){
-        case sstd::num_vec_void_ptr:      { return sstd::terp::iterator(_v_end((*_p).ptr())); } break;
-        case sstd::num_hash_str_void_ptr: { return sstd::terp::iterator(_h_end((*_p).ptr())); } break;
-        case sstd::num_null:              {} break;
-        default: { sstd::pdbg("ERROR"); }
-        }
-        return sstd::terp::iterator();
-    }
+    sstd::terp::iterator begin() const;
+    sstd::terp::iterator end() const;
     
     //---
     
