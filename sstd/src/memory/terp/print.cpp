@@ -39,7 +39,8 @@ void _print_terp_hash(const sstd::terp::var& rhs){
     printf("{");
     for(auto itr=rhs.begin(); itr!=rhs.end(); ++itr){
         if(itr!=rhs.begin()){ printf(", "); }
-        printf("%s: %s", itr.first_to<std::string>().c_str(), itr.second_to<std::string>().c_str());
+        printf("\"%s\": ", itr.first_to<std::string>().c_str()); // _print_terp_list_internal(itr.first());
+        _print_terp_list_internal(itr.second());
     }
     printf("}");
 }

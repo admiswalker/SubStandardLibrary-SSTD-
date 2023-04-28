@@ -73,10 +73,26 @@ TEST(memory_terp_print, hash_depth1){
     a["k1"] = "v1";
     a["k2"] = "v2";
     
-    //testing::internal::CaptureStdout();
+    testing::internal::CaptureStdout();
     sstd::print(a); // TEST THIS LINE
-    //std::string ret = testing::internal::GetCapturedStdout().c_str();
-    //ASSERT_STREQ(ret.c_str(), "[v0 v1 v2]\n");
+    std::string ret = testing::internal::GetCapturedStdout().c_str();
+    ASSERT_STREQ(ret.c_str(), "{\"k2\": \"v2\", \"k1\": \"v1\", \"k0\": \"v0\"}\n");
+}
+TEST(memory_terp_print, hash_depth2){
+    sstd::terp::var a;
+    a = sstd::terp::hash();
+    a["k0"] = "v0";
+    a["k1"] = "v1";
+    a["k2"] = "v2";
+    a["k3"] = sstd::terp::hash();
+    a["k3"]["k0"] = "v0";
+    a["k3"]["k1"] = "v1";
+    a["k3"]["k2"] = "v2";
+    
+    testing::internal::CaptureStdout();
+    sstd::print(a); // TEST THIS LINE
+    std::string ret = testing::internal::GetCapturedStdout().c_str();
+    ASSERT_STREQ(ret.c_str(), "{\"k3\": {\"k2\": \"v2\", \"k1\": \"v1\", \"k0\": \"v0\"}, \"k2\": \"v2\", \"k1\": \"v1\", \"k0\": \"v0\"}\n");
 }
 
 //*/
