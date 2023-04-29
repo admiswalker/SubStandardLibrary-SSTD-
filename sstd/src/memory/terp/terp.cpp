@@ -8,6 +8,7 @@
 // for internal use
 
 // cast
+std::string*                                    _cast2str (void* rhs){ return (                std::string*)rhs; }
 std::vector<sstd::void_ptr>*                    _cast2vec (void* rhs){ return (std::vector<sstd::void_ptr>*)rhs; }
 std::unordered_map<std::string,sstd::void_ptr>* _cast2hash(void* rhs){ return (std::unordered_map<std::string,sstd::void_ptr>*)rhs; }
 
@@ -266,4 +267,36 @@ sstd::terp::var sstd::terp::hash(uint allocate_size){
 sstd::terp::var sstd::terp::hash(){ return sstd::terp::hash(0); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// tmp
+
+bool operator==(const sstd::void_ptr& lhs, const sstd::void_ptr& rhs){
+
+    //if(lhs.size()!=rhs.size()){ return false; }
+    
+    
+    return true;
+}
+class hash_ope{
+std::size_t operator()(const sstd::void_ptr& key) const {
+    //std::string bytes(reinterpret_cast<const char*>(&key), sizeof(HashTableKey));
+    std::string hash_seed;
+    switch(key.typeNum()){
+    case sstd::num_str:                 { hash_seed = *_cast2str((key.ptr())); } break;
+    //case sstd::num_vec_void_ptr:      { return (*_cast2vec (key.ptr())); } break;
+    //case sstd::num_hash_str_void_ptr: { return (*_cast2hash(key.ptr())); } break;
+    default: { sstd::pdbg("ERROR"); } break;
+    }
+    return std::hash<std::string>()(hash_seed);
+}
+};
+void sstd::terp::hash_test(){
+    //using _h_iterator = typename std::unordered_map<std::string,sstd::void_ptr>::const_iterator;
+
+    printf("in hash_test()\n");
+
+    
+    //std::unordered_map<std::string,sstd::void_ptr> tmp;
+    std::unordered_map<sstd::void_ptr,sstd::void_ptr,hash_ope> tmp;
+
+}
 
