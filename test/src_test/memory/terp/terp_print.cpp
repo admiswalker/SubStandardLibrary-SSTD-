@@ -97,5 +97,26 @@ TEST(memory_terp_print, hash_depth2){
 
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// complex test cases
+
+// print()
+TEST(memory_terp_print, hash_list_hash){
+    sstd::terp::var a;
+    a = sstd::terp::hash();
+    a["k0"] = "v0";
+    a["k1"] = sstd::terp::list(2);
+    a["k1"][0] = "v10";
+    a["k1"][1] = sstd::terp::hash();
+    a["k1"][1]["k110"] = "v110";
+    a["k1"][1]["k111"] = "v111";
+    
+    testing::internal::CaptureStdout();
+    sstd::print(a); // TEST THIS LINE
+    std::string ret = testing::internal::GetCapturedStdout().c_str();
+    ASSERT_STREQ(ret.c_str(), "{\"k1\": [\"v10\" {\"k111\": \"v111\", \"k110\": \"v110\"}], \"k0\": \"v0\"}\n");
+}
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 EXECUTE_TESTS();
