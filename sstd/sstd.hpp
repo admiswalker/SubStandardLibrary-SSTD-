@@ -53,6 +53,7 @@
 #include "src/file/read_write.hpp"
 #include "src/file/rm.hpp"
 #include "src/file/tinyInterpreter.hpp"
+#include "src/file/yaml.hpp"
 
 #include "src/math/hashFnc_of_MD5_SHA1_SHA2/hashSum.hpp"
 #include "src/math/hashFnc_of_MD5_SHA1_SHA2/sstd_md5_sha1_sha2_wrapper.hpp"
