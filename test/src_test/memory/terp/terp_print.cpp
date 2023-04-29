@@ -100,6 +100,21 @@ TEST(memory_terp_print, hash_depth2){
 // complex test cases
 
 // print()
+TEST(memory_terp_print, list_hash_list){
+    sstd::terp::var a;
+    a = sstd::terp::list(2);
+    a[0] = "v0";
+    a[1] = sstd::terp::hash();
+    a[1]["k10"] = "v10";
+    a[1]["k11"] = sstd::terp::list(2);
+    a[1]["k11"][0] = "v110";
+    a[1]["k11"][1] = "v111";
+    
+    testing::internal::CaptureStdout();
+    sstd::print(a); // TEST THIS LINE
+    std::string ret = testing::internal::GetCapturedStdout().c_str();
+    ASSERT_STREQ(ret.c_str(), "[\"v0\" {\"k11\": [\"v110\" \"v111\"], \"k10\": \"v10\"}]\n");
+}
 TEST(memory_terp_print, hash_list_hash){
     sstd::terp::var a;
     a = sstd::terp::hash();
