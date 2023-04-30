@@ -26,15 +26,43 @@ TEST(strEdit, theOthers){
     }
     printf("+----+---------------------------------------------------------------------+\n");
     printf("\n");
-    
-    printf("  □ splitByX\n");
-    std::vector<std::string> vecRow;
-    vecRow = sstd::split("ABC DEF",       ' ');        sstd::printn(vecRow); // "ABC DEF" -> ["ABC", "DEF"]
-    vecRow = sstd::split(" ABC   D EF  ", ' ');        sstd::printn(vecRow); // " ABC   D EF  " -> ["ABC", "D", "EF"]
-    
-    vecRow = sstd::split("ABC,DEF",              ','); sstd::printn(vecRow); // "ABC,DEF" -> ["ABC", "DEF"]
-    vecRow = sstd::split(" ABC  , D,  EF ,GH  ", ','); sstd::printn(vecRow); // " ABC  , D,  EF ,GH  " -> ["ABC", "D", "EF",  "GH"]
     sstd::rm(tmpDir);
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+TEST(strEdit, split_c_c){
+    std::vector<std::string> v;
+    
+    v = sstd::split("ABC DEF", ' '); // TEST THIS LINE
+    ASSERT_EQ(v.size(), (uint)2);
+    ASSERT_STREQ(v[0].c_str(), "ABC");
+    ASSERT_STREQ(v[1].c_str(), "DEF");
+    
+    v = sstd::split(" ABC   D EF  ", ' '); // TEST THIS LINE
+    ASSERT_EQ(v.size(), (uint)3);
+    ASSERT_STREQ(v[0].c_str(), "ABC");
+    ASSERT_STREQ(v[1].c_str(), "D"  );
+    ASSERT_STREQ(v[2].c_str(), "EF" );
+    
+    v = sstd::split("ABC,DEF", ','); // TEST THIS LINE
+    ASSERT_EQ(v.size(), (uint)2);
+    ASSERT_STREQ(v[0].c_str(), "ABC");
+    ASSERT_STREQ(v[1].c_str(), "DEF");
+    
+    v = sstd::split(" ABC  , D,  EF ,GH  ", ','); // TEST THIS LINE
+    ASSERT_EQ(v.size(), (uint)4);
+    ASSERT_STREQ(v[0].c_str(), "ABC");
+    ASSERT_STREQ(v[1].c_str(), "D"  );
+    ASSERT_STREQ(v[2].c_str(), "EF" );
+    ASSERT_STREQ(v[3].c_str(), "GH" );
+}
+TEST(strEdit, split_s_c){
+    std::vector<std::string> v;
+    v = sstd::split(std::string("ABC DEF"), ' '); // TEST THIS LINE
+    ASSERT_EQ(v.size(), (uint)2);
+    ASSERT_STREQ(v[0].c_str(), "ABC");
+    ASSERT_STREQ(v[1].c_str(), "DEF");
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
