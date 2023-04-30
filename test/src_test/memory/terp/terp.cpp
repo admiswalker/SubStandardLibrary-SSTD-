@@ -270,34 +270,30 @@ TEST(memory_terp, hash_ope_eq_true_0_keys){
 }
 TEST(memory_terp, hash_ope_eq_true_3_keys){
     sstd::terp::var lhs; lhs = sstd::terp::hash();
-    sstd::terp::var rhs; rhs = sstd::terp::hash();
     lhs["k1"] = "v1";
     lhs["k2"] = "v2";
     lhs["k3"] = "v3";
     
+    sstd::terp::var rhs; rhs = sstd::terp::hash();
     rhs["k1"] = "v1";
     rhs["k2"] = "v2";
     rhs["k3"] = "v3";
     
     ASSERT_TRUE(lhs==rhs); // TEST THIS LINE
 }
-/*
 TEST(memory_terp, hash_ope_eq_true){
-    sstd::terp::var lhs;
-    lhs = sstd::terp::list(3);
-    lhs[0] = "v0";
-    lhs[1] = "v1";
-    lhs[2] = "v2";
-
-    sstd::terp::var rhs;
-    rhs = sstd::terp::list(3);
-    rhs[0] = "v0";
-    rhs[1] = "v1";
-    rhs[2] = "v2";
-
+    sstd::terp::var lhs; lhs = sstd::terp::hash();
+    lhs["k1"] = "v1";
+    lhs["k2"] = "v2";
+    lhs["k3"] = "v3";
+    
+    sstd::terp::var rhs; rhs = sstd::terp::hash();
+    rhs["k1"] = "v1";
+    rhs["k2"] = "v2";
+    rhs["k3"] = "v3";
+    
     ASSERT_TRUE(lhs==rhs); // TEST THIS LINE
 }
-*/
 TEST(memory_terp, hash_ope_eq_false_type){
     sstd::terp::var lhs; lhs = sstd::terp::list();
     sstd::terp::var rhs; rhs = sstd::terp::hash();
@@ -315,23 +311,19 @@ TEST(memory_terp, hash_ope_eq_false_2_3_keys){
     
     ASSERT_FALSE(lhs==rhs); // TEST THIS LINE
 }
-/*
 TEST(memory_terp, hash_ope_eq_false){
-    sstd::terp::var lhs;
-    lhs = sstd::terp::list(3);
-    lhs[0] = "v0";
-    lhs[1] = "v1";
-    lhs[2] = "v2";
-
-    sstd::terp::var rhs;
-    rhs = sstd::terp::list(3);
-    rhs[0] = "v0";
-    rhs[1] = "v1";
-    rhs[2] = "NotEqualStr";
-
+    sstd::terp::var lhs; lhs = sstd::terp::hash();
+    lhs["k1"] = "v1";
+    lhs["k2"] = "v2";
+    lhs["k3"] = "v3";
+    
+    sstd::terp::var rhs; rhs = sstd::terp::hash();
+    rhs["k1"] = "v1";
+    rhs["k2"] = "v2";
+    rhs["k3"] = "NotEqualStr";
+    
     ASSERT_FALSE(lhs==rhs); // TEST THIS LINE
 }
-*/
 
 // begin(), end()
 TEST(memory_terp, hash_begin_end_with_objects){

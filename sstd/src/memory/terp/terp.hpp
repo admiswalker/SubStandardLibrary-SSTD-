@@ -142,7 +142,7 @@ public:
     
     //---
     
-    sstd::terp::iterator find(const char* pKey);
+    sstd::terp::iterator find(const char* pKey) const;
     
     //---
     

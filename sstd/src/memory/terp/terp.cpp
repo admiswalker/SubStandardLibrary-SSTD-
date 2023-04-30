@@ -107,6 +107,17 @@ bool _is_equal_list(const sstd::terp::var& lhs, const sstd::terp::var& rhs){
 }
 bool _is_equal_hash(const sstd::terp::var& lhs, const sstd::terp::var& rhs){
     if(lhs.size()!=rhs.size()){ return false; }
+
+    for(auto itr=lhs.begin(); itr!=lhs.end(); ++itr){
+        std::string key = itr.first_to<std::string>();
+        
+        auto itr_rhs = rhs.find(key.c_str());
+        if(!(itr_rhs!=rhs.end())){ return false; }
+
+        std::string val = itr.second_to<std::string>();
+        std::string val_rhs = itr_rhs.second_to<std::string>();
+        if(val!=val_rhs){ return false; }
+    }
     
     return true;
 }
@@ -216,7 +227,7 @@ uint sstd::terp::var::erase(const char* pKey){
 
 //---
 
-sstd::terp::iterator sstd::terp::var::find(const char* pKey){
+sstd::terp::iterator sstd::terp::var::find(const char* pKey) const {
     switch((*_p).typeNum()){
     case sstd::num_hash_str_void_ptr: { return sstd::terp::iterator( _cast2hash((*_p).ptr())->find(pKey) ); } break;
     case sstd::num_null:              {} break;
