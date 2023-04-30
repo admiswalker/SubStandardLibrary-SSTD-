@@ -106,6 +106,8 @@ bool _is_equal_list(const sstd::terp::var& lhs, const sstd::terp::var& rhs){
     return true;
 }
 bool _is_equal_hash(const sstd::terp::var& lhs, const sstd::terp::var& rhs){
+    if(lhs.size()!=rhs.size()){ return false; }
+    
     return true;
 }
 bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs){
