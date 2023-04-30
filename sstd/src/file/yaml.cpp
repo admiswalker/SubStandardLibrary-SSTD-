@@ -50,33 +50,47 @@ uint _data_type(uint hsc, const std::string& s){
 
     return NUM_NULL;
 }
-std::string _get_str_from_vec(const std::string& s){
+
+//---
+
+std::string _get_list_str(const std::string& s){
     if(s.size()<=2){ return std::string(); }
     return &s[2];
 }
-void _get_str_from_hash(std::string& key, std::string& val, const std::string& s){
+std::string _get_hash_str(const std::string& s){
+    return s;
 }
+
+//---
 
 void _set_val_list(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc, uint idx){
     for(uint i=idx; i<ls.size(); ++i){
         std::string s;
-        s = _get_str_from_vec(ls[i]);
+        s = _get_list_str(ls[i]);
         s = _rm_comment(s);
         if(_is_empty(s)){ continue; }
-        
-        sstd::printn(s);
-        ret.push_back(s.c_str());
-    }
-}
-void _set_val_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc, uint idx){
-    for(uint i=idx; i<ls.size(); ++i){
-        std::string s = _get_str_from_vec(ls[i]);
-        if(_is_empty(ls[i])){ continue; }
         
 //        sstd::printn(s);
         ret.push_back(s.c_str());
     }
 }
+void _set_val_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc, uint idx){
+    for(uint i=idx; i<ls.size(); ++i){
+        std::string s;
+        s = _get_hash_str(ls[i]);
+        s = _rm_comment(s);
+        if(_is_empty(s)){ continue; }
+
+        std::vector<std::string> v = sstd::split(s, ':');
+        if(v.size()!=2){ sstd::pdbg("ERROR\n"); }
+        
+//        sstd::printn(v);
+        ret[v[0].c_str()] = v[1].c_str();
+    }
+}
+
+//---
+
 void _set_val(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc, uint idx){
     if(idx>=ls.size()){ return; }
     uint typeNum = _data_type(hsc, ls[idx]);
@@ -84,7 +98,7 @@ void _set_val(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc
     switch(typeNum){
     case NUM_LIST: { ret=sstd::terp::list(); _set_val_list(ret, ls, hsc, idx); } break;
     case NUM_HASH: { ret=sstd::terp::hash(); _set_val_hash(ret, ls, hsc, idx); } break;
-    default: { sstd::pdbg("ERROR"); } break;
+    default: { sstd::pdbg("ERROR\n"); } break;
     }
 }
 
@@ -103,7 +117,7 @@ sstd::terp::var sstd::yaml_from_str(const        char* s){
     switch(typeNum){
     case NUM_LIST: { ret=sstd::terp::list(); } break;
     case NUM_HASH: { ret=sstd::terp::hash(); } break;
-    default: { sstd::pdbg("ERROR"); } break;
+    default: { sstd::pdbg("ERROR\n"); } break;
     }
 
     _set_val(ret, ls, 0, (uint)idx);

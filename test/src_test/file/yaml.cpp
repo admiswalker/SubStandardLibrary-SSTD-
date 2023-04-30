@@ -15,7 +15,7 @@ TEST(yaml, push_back_to_list){
 }
 TEST(yaml, push_back_to_hash){
     std::string s=R"(
-k1: v1
+k1: v1 # comment
 k2: v2
 
 k3: v3
