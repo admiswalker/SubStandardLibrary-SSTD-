@@ -117,6 +117,7 @@ public:
     //---
     
     bool operator==(const sstd::terp::var& rhs);
+    bool operator!=(const sstd::terp::var& rhs);
 
     //---
 

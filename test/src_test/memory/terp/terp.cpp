@@ -73,21 +73,19 @@ TEST(memory_terp, list_ope_eq_true_size_3){
     ASSERT_TRUE(lhs==rhs); // TEST THIS LINE
 }
 TEST(memory_terp, list_ope_eq_true){
-    /*
     sstd::terp::var lhs;
-    lhs = sstd::terp::list(1); // TEST THIS LINE
-    lhs[0] = sstd::terp::list(); // TEST THIS LINE
-    lhs[0].push_back("v1");
-    lhs[0].push_back("v2");
+    lhs = sstd::terp::list(3);
+    lhs[0] = "v0";
+    lhs[1] = "v1";
+    lhs[2] = "v2";
 
     sstd::terp::var rhs;
-    rhs = sstd::terp::list(1); // TEST THIS LINE
-    rhs[0] = sstd::terp::list(); // TEST THIS LINE
-    rhs[0].push_back("v1");
-    rhs[0].push_back("v2");
+    rhs = sstd::terp::list(3);
+    rhs[0] = "v0";
+    rhs[1] = "v1";
+    rhs[2] = "v2";
 
-    ASSERT_TRUE(lhs==rhs);
-    */
+    ASSERT_TRUE(lhs==rhs); // TEST THIS LINE
 }
 TEST(memory_terp, list_ope_eq_false_type){
     sstd::terp::var lhs; lhs = sstd::terp::list();
@@ -100,6 +98,19 @@ TEST(memory_terp, list_ope_eq_false_size){
     ASSERT_FALSE(lhs==rhs); // TEST THIS LINE
 }
 TEST(memory_terp, list_ope_eq_false){
+    sstd::terp::var lhs;
+    lhs = sstd::terp::list(3);
+    lhs[0] = "v0";
+    lhs[1] = "v1";
+    lhs[2] = "v2";
+
+    sstd::terp::var rhs;
+    rhs = sstd::terp::list(3);
+    rhs[0] = "v0";
+    rhs[1] = "v1";
+    rhs[2] = "NotEqualStr";
+
+    ASSERT_FALSE(lhs==rhs); // TEST THIS LINE
 }
 
 // begin(), end()

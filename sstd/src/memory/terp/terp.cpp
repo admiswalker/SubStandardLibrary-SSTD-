@@ -94,12 +94,15 @@ sstd::terp::var sstd::terp::var::operator=(const sstd::terp::var& rhs){
 
 //---
 
-bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs);
+bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs); // forward declaration
 
 bool _is_equal_list(const sstd::terp::var& lhs, const sstd::terp::var& rhs){
+    if(lhs.size()!=rhs.size()){ return false; }
+    
     for(uint i=0; i<lhs.size(); ++i){
         if(!_is_equal(lhs[i], rhs[i])){ return false; }
     }
+    
     return true;
 }
 bool _is_equal_hash(const sstd::terp::var& lhs, const sstd::terp::var& rhs){
@@ -107,21 +110,19 @@ bool _is_equal_hash(const sstd::terp::var& lhs, const sstd::terp::var& rhs){
 }
 bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs){
     if(lhs.typeNum()!=rhs.typeNum()){ return false; }
-    if(lhs.typeNum()==sstd::num_null && rhs.typeNum()==sstd::num_null){ return true; }
-    if(lhs.size()!=rhs.size()){ return false; }
     
     switch(lhs.typeNum()){
     case sstd::num_str:               { return lhs.to<std::string>()==rhs.to<std::string>(); } break;
     case sstd::num_vec_void_ptr:      { return _is_equal_list(lhs, rhs); } break;
     case sstd::num_hash_str_void_ptr: { return _is_equal_hash(lhs, rhs); } break;
+    case sstd::num_null:              { return true; } break;
     default: { sstd::pdbg("ERROR\n"); } break;
     }
     
-    return true;
+    return false;
 }
-bool sstd::terp::var::operator==(const sstd::terp::var& rhs){
-    return _is_equal(*this, rhs);
-}
+bool sstd::terp::var::operator==(const sstd::terp::var& rhs){ return  _is_equal(*this, rhs); }
+bool sstd::terp::var::operator!=(const sstd::terp::var& rhs){ return !_is_equal(*this, rhs); }
 
 //---
 
