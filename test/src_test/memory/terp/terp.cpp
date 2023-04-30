@@ -7,19 +7,19 @@
 TEST(memory_terp, var_constructor){
     sstd::terp::var a;
 }
-TEST(memory_terp, var_ope_eq_str){
+TEST(memory_terp, var_ope_assign_str){
     sstd::terp::var a;
     a = "test";
     ASSERT_STREQ(a.to<std::string>().c_str(), "test");
 }
-TEST(memory_terp, var_ope_eq_list){
+TEST(memory_terp, var_ope_assign_list){
     sstd::terp::var a;
     a = sstd::terp::list(1);
     a[0] = "test"; // TEST THIS LINE
     
     ASSERT_STREQ(a[0].to<std::string>().c_str(), "test");
 }
-TEST(memory_terp, var_ope_eq_list_case02){
+TEST(memory_terp, var_ope_assign_list_case02){
     sstd::terp::var a;
     a = sstd::terp::list();
     a.resize(1);
@@ -44,7 +44,7 @@ TEST(memory_terp, var_typeNum_c){
 //*
 
 // operator=
-TEST(memory_terp, list_eq){
+TEST(memory_terp, list_ope_assign){
     sstd::terp::var a;
     a = sstd::terp::list(1); // TEST THIS LINE
     //a = sstd::terp::list(); a.resize(1); // same as above
@@ -54,6 +54,52 @@ TEST(memory_terp, list_eq){
     
     ASSERT_STREQ(a[0][0].to<std::string>().c_str(), "v1");
     ASSERT_STREQ(a[0][1].to<std::string>().c_str(), "v2");
+}
+
+// operator==
+TEST(memory_terp, list_ope_eq_true_type){
+    sstd::terp::var lhs; lhs = sstd::terp::list();
+    sstd::terp::var rhs; rhs = sstd::terp::list();
+    ASSERT_TRUE(lhs==rhs); // TEST THIS LINE
+}
+TEST(memory_terp, list_ope_eq_true_size_0){
+    sstd::terp::var lhs; lhs = sstd::terp::list(0);
+    sstd::terp::var rhs; rhs = sstd::terp::list(0);
+    ASSERT_TRUE(lhs==rhs); // TEST THIS LINE
+}
+TEST(memory_terp, list_ope_eq_true_size_3){
+    sstd::terp::var lhs; lhs = sstd::terp::list(3);
+    sstd::terp::var rhs; rhs = sstd::terp::list(3);
+    ASSERT_TRUE(lhs==rhs); // TEST THIS LINE
+}
+TEST(memory_terp, list_ope_eq_true){
+    /*
+    sstd::terp::var lhs;
+    lhs = sstd::terp::list(1); // TEST THIS LINE
+    lhs[0] = sstd::terp::list(); // TEST THIS LINE
+    lhs[0].push_back("v1");
+    lhs[0].push_back("v2");
+
+    sstd::terp::var rhs;
+    rhs = sstd::terp::list(1); // TEST THIS LINE
+    rhs[0] = sstd::terp::list(); // TEST THIS LINE
+    rhs[0].push_back("v1");
+    rhs[0].push_back("v2");
+
+    ASSERT_TRUE(lhs==rhs);
+    */
+}
+TEST(memory_terp, list_ope_eq_false_type){
+    sstd::terp::var lhs; lhs = sstd::terp::list();
+    sstd::terp::var rhs; rhs = sstd::terp::hash();
+    ASSERT_FALSE(lhs==rhs); // TEST THIS LINE
+}
+TEST(memory_terp, list_ope_eq_false_size){
+    sstd::terp::var lhs; lhs = sstd::terp::list(0);
+    sstd::terp::var rhs; rhs = sstd::terp::list(3);
+    ASSERT_FALSE(lhs==rhs); // TEST THIS LINE
+}
+TEST(memory_terp, list_ope_eq_false){
 }
 
 // begin(), end()
@@ -160,12 +206,12 @@ TEST(memory_terp, list_resize){
 }
 
 // size()
-TEST(memory_terp, list_arg_null){
+TEST(memory_terp, list_size_arg_null){
     sstd::terp::var a;
     a = sstd::terp::list();
     ASSERT_EQ(a.size(), (uint)0);
 }
-TEST(memory_terp, list_arg_10){
+TEST(memory_terp, list_size_arg_10){
     sstd::terp::var a;
     a = sstd::terp::list(10);
     ASSERT_EQ(a.size(), (uint)10);
@@ -181,21 +227,16 @@ TEST(memory_terp, list_typeNum){
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // sstd::terp::hash
 //*
-// size()
-TEST(memory_terp, hash_arg_null){
+// operator=
+TEST(memory_terp, hash_ope_assign){
     sstd::terp::var a;
-    a = sstd::terp::hash();
-    ASSERT_EQ(a.size(), (uint)0);
+    a = sstd::terp::hash(0); // TEST THIS LINE
+    a["k1"] = sstd::terp::hash(); // TEST THIS LINE
+    a["k1"]["k11"] = "v1";
+    a["k1"]["k12"] = "v2";
     
-    a["k1"] = "v1"; // TEST THIS LINE
-    
-    ASSERT_EQ(a.size(), (uint)1);
-    ASSERT_STREQ(a["k1"].to<std::string>().c_str(), "v1");
-}
-TEST(memory_terp, hash_arg_10){
-    sstd::terp::var a;
-    a = sstd::terp::hash(14);
-    ASSERT_EQ(a.bucket_count(), (uint)17); // std::unordered_map allocates the prime number size, equal or nearest larger than the allocating size.
+    ASSERT_STREQ(a["k1"]["k11"].to<std::string>().c_str(), "v1");
+    ASSERT_STREQ(a["k1"]["k12"].to<std::string>().c_str(), "v2");
 }
 
 // begin(), end()
@@ -268,6 +309,23 @@ TEST(memory_terp, hash_find_false){
 
     auto itr = a.find("k0"); // TEST THIS LINE
     ASSERT_FALSE( itr!=a.end() );
+}
+
+// size()
+TEST(memory_terp, hash_size_arg_null){
+    sstd::terp::var a;
+    a = sstd::terp::hash();
+    ASSERT_EQ(a.size(), (uint)0);
+    
+    a["k1"] = "v1"; // TEST THIS LINE
+    
+    ASSERT_EQ(a.size(), (uint)1);
+    ASSERT_STREQ(a["k1"].to<std::string>().c_str(), "v1");
+}
+TEST(memory_terp, hash_size_arg_14){
+    sstd::terp::var a;
+    a = sstd::terp::hash(14);
+    ASSERT_EQ(a.bucket_count(), (uint)17); // std::unordered_map allocates the prime number size, equal or nearest larger than the allocating size.
 }
 
 // typeNum()

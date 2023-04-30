@@ -34,7 +34,7 @@ const sstd::terp::_h_iterator& sstd::terp::iterator::_h_itr_R() const { return _
 sstd::terp::iterator sstd::terp::iterator::operator+(const int rhs){
     switch(_typeNum){
     case sstd::num_vec_void_ptr:      { return iterator( _v_itr + rhs ); } break;
-    default: { sstd::pdbg("ERROR"); }
+    default: { sstd::pdbg("ERROR\n"); }
     }
     return iterator();
 }
@@ -46,7 +46,7 @@ sstd::terp::var sstd::terp::iterator::second(){
     case sstd::num_hash_str_void_ptr: {
         return sstd::terp::var((*_h_itr).second);
     } break;
-    default: { sstd::pdbg("ERROR"); }
+    default: { sstd::pdbg("ERROR\n"); }
     }
     return sstd::terp::var();
 }
@@ -57,7 +57,7 @@ const bool sstd::terp::iterator::operator!=(const iterator& rhs) const {
     switch(_typeNum){
     case sstd::num_vec_void_ptr:      { return _v_itr != rhs._v_itr_R(); } break;
     case sstd::num_hash_str_void_ptr: { return _h_itr != rhs._h_itr_R(); } break;
-    default: { sstd::pdbg("ERROR"); }
+    default: { sstd::pdbg("ERROR\n"); }
     }
     return false;
 }
@@ -66,7 +66,7 @@ sstd::terp::iterator sstd::terp::iterator::operator++(){
     switch(_typeNum){
     case sstd::num_vec_void_ptr:      { ++_v_itr; } break;
     case sstd::num_hash_str_void_ptr: { ++_h_itr; } break;
-    default: { sstd::pdbg("ERROR"); }
+    default: { sstd::pdbg("ERROR\n"); }
     }
     return *this;
 }
@@ -94,17 +94,48 @@ sstd::terp::var sstd::terp::var::operator=(const sstd::terp::var& rhs){
 
 //---
 
+bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs);
+
+bool _is_equal_list(const sstd::terp::var& lhs, const sstd::terp::var& rhs){
+    for(uint i=0; i<lhs.size(); ++i){
+        if(!_is_equal(lhs[i], rhs[i])){ return false; }
+    }
+    return true;
+}
+bool _is_equal_hash(const sstd::terp::var& lhs, const sstd::terp::var& rhs){
+    return true;
+}
+bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs){
+    if(lhs.typeNum()!=rhs.typeNum()){ return false; }
+    if(lhs.typeNum()==sstd::num_null && rhs.typeNum()==sstd::num_null){ return true; }
+    if(lhs.size()!=rhs.size()){ return false; }
+    
+    switch(lhs.typeNum()){
+    case sstd::num_str:               { return lhs.to<std::string>()==rhs.to<std::string>(); } break;
+    case sstd::num_vec_void_ptr:      { return _is_equal_list(lhs, rhs); } break;
+    case sstd::num_hash_str_void_ptr: { return _is_equal_hash(lhs, rhs); } break;
+    default: { sstd::pdbg("ERROR\n"); } break;
+    }
+    
+    return true;
+}
+bool sstd::terp::var::operator==(const sstd::terp::var& rhs){
+    return _is_equal(*this, rhs);
+}
+
+//---
+
 sstd::terp::var _ope_subscript_idx_base(const sstd::void_ptr* _p, const int idx){
     switch((*_p).typeNum()){
     case sstd::num_vec_void_ptr: { sstd::void_ptr* p=(sstd::void_ptr*)&(*_cast2vec((*_p).ptr()))[idx]; return sstd::terp::var( p ); } break;
-    default: { sstd::pdbg("ERROR"); } break;
+    default: { sstd::pdbg("ERROR\n"); } break;
     }
     return sstd::terp::var();
 }
 sstd::terp::var _ope_subscript_pKey_base(const sstd::void_ptr* _p, const char* pKey){
     switch((*_p).typeNum()){
     case sstd::num_hash_str_void_ptr: { sstd::void_ptr* p=(sstd::void_ptr*)&(*_cast2hash((*_p).ptr()))[pKey]; return sstd::terp::var( p ); } break;
-    default: { sstd::pdbg("ERROR"); } break;
+    default: { sstd::pdbg("ERROR\n"); } break;
     }
     return sstd::terp::var();
 }
@@ -136,7 +167,7 @@ sstd::terp::iterator sstd::terp::var::begin() const {
     case sstd::num_vec_void_ptr:      { return sstd::terp::iterator(_v_begin((*_p).ptr())); } break;
     case sstd::num_hash_str_void_ptr: { return sstd::terp::iterator(_h_begin((*_p).ptr())); } break;
     case sstd::num_null:              {} break;
-    default: { sstd::pdbg("ERROR"); }
+    default: { sstd::pdbg("ERROR\n"); }
     }
     return sstd::terp::iterator();
 }
@@ -145,7 +176,7 @@ sstd::terp::iterator sstd::terp::var::end() const {
     case sstd::num_vec_void_ptr:      { return sstd::terp::iterator(_v_end((*_p).ptr())); } break;
     case sstd::num_hash_str_void_ptr: { return sstd::terp::iterator(_h_end((*_p).ptr())); } break;
     case sstd::num_null:              {} break;
-    default: { sstd::pdbg("ERROR"); }
+    default: { sstd::pdbg("ERROR\n"); }
     }
     return sstd::terp::iterator();
 }
@@ -155,7 +186,7 @@ sstd::terp::iterator sstd::terp::var::end() const {
 uint sstd::terp::var::bucket_count(){
     switch((*_p).typeNum()){
     case sstd::num_hash_str_void_ptr: { return (*_cast2hash((*_p).ptr())).bucket_count(); } break;
-    default: { sstd::pdbg("ERROR"); } break;
+    default: { sstd::pdbg("ERROR\n"); } break;
     }
     return 0;
 }
@@ -167,7 +198,7 @@ sstd::terp::iterator sstd::terp::var::erase(const sstd::terp::iterator& rhs){
     case sstd::num_vec_void_ptr:      { return sstd::terp::iterator( _cast2vec((*_p).ptr())->erase(rhs._v_itr_R()) ); } break;
         //case sstd::num_hash_str_void_ptr: { return _cast2hash((*_p).ptr())->erase(pKey); } break;
     case sstd::num_null:              {} break;
-    default: { sstd::pdbg("ERROR"); }
+    default: { sstd::pdbg("ERROR\n"); }
     }
     return sstd::terp::iterator();
 }
@@ -175,7 +206,7 @@ uint sstd::terp::var::erase(const char* pKey){
     switch((*_p).typeNum()){
     case sstd::num_hash_str_void_ptr: { return _cast2hash((*_p).ptr())->erase(pKey); } break;
     case sstd::num_null:              {} break;
-    default: { sstd::pdbg("ERROR"); }
+    default: { sstd::pdbg("ERROR\n"); }
     }
     return 0;
 }
@@ -186,7 +217,7 @@ sstd::terp::iterator sstd::terp::var::find(const char* pKey){
     switch((*_p).typeNum()){
     case sstd::num_hash_str_void_ptr: { return sstd::terp::iterator( _cast2hash((*_p).ptr())->find(pKey) ); } break;
     case sstd::num_null:              {} break;
-    default: { sstd::pdbg("ERROR"); }
+    default: { sstd::pdbg("ERROR\n"); }
     }
     return sstd::terp::iterator();
 }
@@ -201,7 +232,7 @@ void sstd::terp::var::pop_back(){
     switch((*_p).typeNum()){
     case sstd::num_vec_void_ptr: { _cast2vec((*_p).ptr())->pop_back(); return; } break;
     case sstd::num_null:         {} break;
-    default: { sstd::pdbg("ERROR"); }
+    default: { sstd::pdbg("ERROR\n"); }
     }
     return;
 }
@@ -209,11 +240,11 @@ void sstd::terp::var::pop_back(){
 //---
 
 void sstd::terp::var::push_back(const char* pRhs){
-    if((*_p).typeNum()!=sstd::num_vec_void_ptr){ sstd::pdbg("ERROR"); return; }
+    if((*_p).typeNum()!=sstd::num_vec_void_ptr){ sstd::pdbg("ERROR\n"); return; }
     (*_cast2vec((*_p).ptr())).push_back(new std::string(pRhs));
 }
 void sstd::terp::var::push_back(const sstd::terp::var& rhs){
-    if((*_p).typeNum()!=sstd::num_vec_void_ptr){ sstd::pdbg("ERROR"); return; }
+    if((*_p).typeNum()!=sstd::num_vec_void_ptr){ sstd::pdbg("ERROR\n"); return; }
     (*_cast2vec((*_p).ptr())).push_back(*rhs.p());
 }
 
@@ -222,7 +253,7 @@ void sstd::terp::var::push_back(const sstd::terp::var& rhs){
 void sstd::terp::var::resize(uint len){
     switch((*_p).typeNum()){
     case sstd::num_vec_void_ptr: { return (*_cast2vec((*_p).ptr())).resize( len ); } break;
-    default: { sstd::pdbg("ERROR"); } break;
+    default: { sstd::pdbg("ERROR\n"); } break;
     }
 }
     
@@ -232,7 +263,7 @@ uint sstd::terp::var::size() const {
     switch((*_p).typeNum()){
     case sstd::num_vec_void_ptr     : { return (*_cast2vec ((*_p).ptr())).size(); } break;
     case sstd::num_hash_str_void_ptr: { return (*_cast2hash((*_p).ptr())).size(); } break;
-    default: { sstd::pdbg("ERROR"); } break;
+    default: { sstd::pdbg("ERROR\n"); } break;
     }
     return 0;
 }
