@@ -114,9 +114,7 @@ bool _is_equal_hash(const sstd::terp::var& lhs, const sstd::terp::var& rhs){
         auto itr_rhs = rhs.find(key.c_str());
         if(!(itr_rhs!=rhs.end())){ return false; }
 
-        std::string val = itr.second_to<std::string>();
-        std::string val_rhs = itr_rhs.second_to<std::string>();
-        if(val!=val_rhs){ return false; }
+        if(!_is_equal(itr.second(), itr_rhs.second())){ return false; }
     }
     
     return true;
