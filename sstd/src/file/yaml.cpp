@@ -15,13 +15,12 @@
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-std::string _rmComment(const std::string& s){
+std::string _rm_comment(const std::string& s){
     std::vector<std::string> v = sstd::split(s, '#');
-    sstd::printn(v);
-    //return sstd::rstrip(v[0]);
-    return "";
+    if(v.size()==0){ return std::string(); }
+    return v[0];
 }
-bool _isEmpty(const std::string& s){
+bool _is_empty(const std::string& s){
     for(uint i=0; i<s.size(); ++i){
         if(s[i]!=' '){ return false; }
     }
@@ -29,7 +28,7 @@ bool _isEmpty(const std::string& s){
 }
 void _skip_empty_line(uint& idx, const std::vector<std::string>& ls){
     for(; idx<ls.size(); ++idx){
-        if(!_isEmpty(ls[idx])){break;} // skip empty lines
+        if(!_is_empty(ls[idx])){break;} // skip empty lines
     }
 }
 
@@ -62,17 +61,17 @@ void _set_val_list(sstd::terp::var& ret, const std::vector<std::string>& ls, uin
     for(uint i=idx; i<ls.size(); ++i){
         std::string s;
         s = _get_str_from_vec(ls[i]);
-        s = _rmComment(s);
-//        if(_isEmpty(s)){ continue; }
+        s = _rm_comment(s);
+        if(_is_empty(s)){ continue; }
         
         sstd::printn(s);
-//        ret.push_back(s.c_str());
+        ret.push_back(s.c_str());
     }
 }
 void _set_val_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc, uint idx){
     for(uint i=idx; i<ls.size(); ++i){
         std::string s = _get_str_from_vec(ls[i]);
-        if(_isEmpty(ls[i])){ continue; }
+        if(_is_empty(ls[i])){ continue; }
         
 //        sstd::printn(s);
         ret.push_back(s.c_str());
