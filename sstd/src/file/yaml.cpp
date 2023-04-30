@@ -15,6 +15,12 @@
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+std::string _rmComment(const std::string& s){
+    std::vector<std::string> v = sstd::split(s, '#');
+    sstd::printn(v);
+    //return sstd::rstrip(v[0]);
+    return "";
+}
 bool _isEmpty(const std::string& s){
     for(uint i=0; i<s.size(); ++i){
         if(s[i]!=' '){ return false; }
@@ -54,14 +60,23 @@ void _get_str_from_hash(std::string& key, std::string& val, const std::string& s
 
 void _set_val_list(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc, uint idx){
     for(uint i=idx; i<ls.size(); ++i){
-        std::string s = _get_str_from_vec(ls[i]);
-        if(_isEmpty(ls[i])){ continue; }
+        std::string s;
+        s = _get_str_from_vec(ls[i]);
+        s = _rmComment(s);
+//        if(_isEmpty(s)){ continue; }
         
         sstd::printn(s);
-        ret.push_back(s.c_str());
+//        ret.push_back(s.c_str());
     }
 }
 void _set_val_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc, uint idx){
+    for(uint i=idx; i<ls.size(); ++i){
+        std::string s = _get_str_from_vec(ls[i]);
+        if(_isEmpty(ls[i])){ continue; }
+        
+//        sstd::printn(s);
+        ret.push_back(s.c_str());
+    }
 }
 void _set_val(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc, uint idx){
     if(idx>=ls.size()){ return; }

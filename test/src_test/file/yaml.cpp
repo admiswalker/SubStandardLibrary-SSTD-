@@ -5,7 +5,7 @@
 
 TEST(yaml, push_back_to_list){
     std::string s=R"(
-- a
+- a # comment
 - b
 
 - c
