@@ -422,5 +422,146 @@ TEST(memory_terp, hash_typeNum){
 }
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// complex test cases
+
+// operator==
+TEST(memory_terp, var_ope_eq_true_list_hash_list){
+    sstd::terp::var lhs;
+    lhs = sstd::terp::list(3);
+    lhs[0] = "v0";
+    lhs[1] = "v1";
+    lhs[2] = sstd::terp::hash();
+    lhs[2]["k20"] = "v0";
+    lhs[2]["k21"] = "v1";
+    lhs[2]["k22"] = sstd::terp::list(3);
+    lhs[2]["k22"][0] = "v220";
+    lhs[2]["k22"][1] = "v221";
+    lhs[2]["k22"][2] = "v222";
+
+    sstd::terp::var rhs;
+    rhs = sstd::terp::list(3);
+    rhs[0] = "v0";
+    rhs[1] = "v1";
+    rhs[2] = sstd::terp::hash();
+    rhs[2]["k20"] = "v0";
+    rhs[2]["k21"] = "v1";
+    rhs[2]["k22"] = sstd::terp::list(3);
+    rhs[2]["k22"][0] = "v220";
+    rhs[2]["k22"][1] = "v221";
+    rhs[2]["k22"][2] = "v222";
+
+    ASSERT_TRUE(lhs==rhs); // TEST THIS LINE
+}
+TEST(memory_terp, var_ope_eq_true_hash_list_hash){
+    sstd::terp::var lhs;
+    lhs = sstd::terp::hash();
+    lhs["k0"] = "v0";
+    lhs["k1"] = "v1";
+    lhs["k2"] = sstd::terp::list(3);
+    lhs["k2"][0] = "v20";
+    lhs["k2"][1] = "v21";
+    lhs["k2"][2] = sstd::terp::hash();
+    lhs["k2"][2]["k220"] = "v220";
+    lhs["k2"][2]["k221"] = "v221";
+    lhs["k2"][2]["k222"] = "v222";
+
+    sstd::terp::var rhs;
+    rhs = sstd::terp::hash();
+    rhs["k0"] = "v0";
+    rhs["k1"] = "v1";
+    rhs["k2"] = sstd::terp::list(3);
+    rhs["k2"][0] = "v20";
+    rhs["k2"][1] = "v21";
+    rhs["k2"][2] = sstd::terp::hash();
+    rhs["k2"][2]["k220"] = "v220";
+    rhs["k2"][2]["k221"] = "v221";
+    rhs["k2"][2]["k222"] = "v222";
+
+    ASSERT_TRUE(lhs==rhs); // TEST THIS LINE
+}
+TEST(memory_terp, var_ope_eq_false_list_hash_list){
+    sstd::terp::var lhs;
+    lhs = sstd::terp::list(3);
+    lhs[0] = "v0";
+    lhs[1] = "v1";
+    lhs[2] = sstd::terp::hash();
+    lhs[2]["k20"] = "v0";
+    lhs[2]["k21"] = "v1";
+    lhs[2]["k22"] = sstd::terp::list(3);
+    lhs[2]["k22"][0] = "v220";
+    lhs[2]["k22"][1] = "v221";
+    lhs[2]["k22"][2] = "v222";
+
+    sstd::terp::var rhs;
+    rhs = sstd::terp::list(3);
+    rhs[0] = "v0";
+    rhs[1] = "v1";
+    rhs[2] = sstd::terp::hash();
+    rhs[2]["k20"] = "v0";
+    rhs[2]["k21"] = "v1";
+    rhs[2]["k22"] = sstd::terp::list(3);
+    rhs[2]["k22"][0] = "v220";
+    rhs[2]["k22"][1] = "NotEqualStr";
+    rhs[2]["k22"][2] = "v222";
+
+    ASSERT_FALSE(lhs==rhs); // TEST THIS LINE
+}
+TEST(memory_terp, var_ope_eq_false_hash_list_hash){
+    sstd::terp::var lhs;
+    lhs = sstd::terp::hash();
+    lhs["k0"] = "v0";
+    lhs["k1"] = "v1";
+    lhs["k2"] = sstd::terp::list(3);
+    lhs["k2"][0] = "v20";
+    lhs["k2"][1] = "v21";
+    lhs["k2"][2] = sstd::terp::hash();
+    lhs["k2"][2]["k220"] = "v220";
+    lhs["k2"][2]["k221"] = "v221";
+    lhs["k2"][2]["k222"] = "v222";
+
+    sstd::terp::var rhs;
+    rhs = sstd::terp::hash();
+    rhs["k0"] = "v0";
+    rhs["k1"] = "v1";
+    rhs["k2"] = sstd::terp::list(3);
+    rhs["k2"][0] = "v20";
+    rhs["k2"][1] = "v21";
+    rhs["k2"][2] = sstd::terp::hash();
+    rhs["k2"][2]["k220"] = "v220";
+    rhs["k2"][2]["k221"] = "v221";
+    rhs["k2"][2]["k222"] = "NotEqualStr";
+
+    ASSERT_FALSE(lhs==rhs); // TEST THIS LINE
+}
+
+TEST(memory_terp, var_ope_eq_false_different_type){
+    sstd::terp::var lhs;
+    lhs = sstd::terp::hash();
+    lhs["k0"] = "v0";
+    lhs["k1"] = "v1";
+    lhs["k2"] = sstd::terp::list(3);
+    lhs["k2"][0] = "v20";
+    lhs["k2"][1] = "v21";
+    lhs["k2"][2] = sstd::terp::hash();
+    lhs["k2"][2]["k220"] = "v220";
+    lhs["k2"][2]["k221"] = "v221";
+    lhs["k2"][2]["k222"] = "v222";
+
+    sstd::terp::var rhs;
+    rhs = sstd::terp::hash();
+    rhs["k0"] = "v0";
+    rhs["k1"] = "v1";
+    rhs["k2"] = sstd::terp::list(3);
+    rhs["k2"][0] = "v20";
+    rhs["k2"][1] = "v21";
+    rhs["k2"][2] = sstd::terp::list(3);
+    rhs["k2"][2][0] = "v220";
+    rhs["k2"][2][1] = "v221";
+    rhs["k2"][2][2] = "NotEqualStr";
+
+    ASSERT_FALSE(lhs==rhs); // TEST THIS LINE
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 EXECUTE_TESTS();
