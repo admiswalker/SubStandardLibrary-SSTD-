@@ -105,23 +105,12 @@ void _set_val(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc
 sstd::terp::var sstd::yaml_from_str(const        char* s){
     sstd::terp::var ret;
 
-    std::vector<std::string> ls = sstd::splitByLine(s); // line string
+    std::vector<std::string> ls = sstd::splitByLine(s); // ls: line string
     //sstd::printn(ls);
 
     uint idx=0;
     _skip_empty_line(idx, ls);
-    /*
-    if(idx>=ls.size()){ return ret; }
-    uint typeNum = _data_type(0, ls[idx]);
     
-    switch(typeNum){
-    case NUM_LIST: { ret=sstd::terp::list(); } break;
-    case NUM_HASH: { ret=sstd::terp::hash(); } break;
-    default: { sstd::pdbg("ERROR\n"); } break;
-    }
-
-    _set_val(ret, ls, 0, (uint)idx);
-    */
     _set_val(ret, ls, 0, (uint)idx);
     
     return ret;
