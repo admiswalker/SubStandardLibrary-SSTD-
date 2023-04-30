@@ -57,5 +57,6 @@ void sstd::print(const sstd::terp::var& rhs){
     }
     printf("\n");
 }
+void sstd::for_printn(const sstd::terp::var& rhs){ printf(" = "); sstd::print(rhs); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
