@@ -99,8 +99,8 @@ void _push_back_for_list(sstd::terp::var& ret, const std::vector<std::string>& l
     if(_is_empty(s)){ return; }
 
     ret.push_back(s.c_str());
-    sstd::printn(hsc);
-    sstd::printn(s);
+    //sstd::printn(hsc);
+    //sstd::printn(s);
 }
 void _set_val_str(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc, uint& idx){
     for(uint i=idx; i<ls.size(); ++i){
@@ -117,8 +117,10 @@ void _set_val_list(sstd::terp::var& ret, const std::vector<std::string>& ls, uin
     
     for(uint i=idx; i<ls.size(); ++i){
         std::string s;
-        s = _get_list_str(ls[i], hsc_base);
-        s = _rm_comment(s);
+        //s = _get_list_str(ls[i], hsc_base);
+        //s = _rm_comment(s);
+        sstd::printn(ls[i]);
+        s = _rm_comment(ls[i]);
         if(_is_empty(s)){ continue; }
         
         sstd::printn(i);
@@ -129,12 +131,16 @@ void _set_val_list(sstd::terp::var& ret, const std::vector<std::string>& ls, uin
         
         //sstd::printn(hsc_tmp);
         if(hsc_tmp!=hsc_base){
+            printf("imh\n");
             const sstd::terp::var& ret_tmp=ret[ret.size()-1];
             _set_val((sstd::terp::var&)ret_tmp, ls, hsc_tmp, idx);
             continue;
         }
         
-        //sstd::printn(s);
+        if(s=="-"){
+            ret.push_back(sstd::terp::list());
+            continue;
+        }
         s = _rm_hyphen(s);
         ret.push_back(s.c_str());
     }
@@ -159,9 +165,9 @@ void _set_val_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uin
 void _set_val(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc, uint& idx){
     if(idx>=ls.size()){ return; }
     uint typeNum = _data_type(ls[idx], hsc);
-    sstd::printn(idx);
-    sstd::printn(ls[idx]);
-    sstd::printn(typeNum);
+    //sstd::printn(idx);
+    //sstd::printn(ls[idx]);
+    //sstd::printn(typeNum);
     
     switch(typeNum){
     case NUM_NULL: {                         _set_val_str (ret, ls, hsc+0, idx); } break;

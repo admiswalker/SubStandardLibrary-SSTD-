@@ -52,7 +52,7 @@ TEST(yaml, list_depth1){
 - c
 )";
     sstd::terp::var yml = sstd::yaml_from_str(s); // TEST THIS LINE
-    sstd::printn(yml);
+    //sstd::printn(yml);
 
     //---
     
