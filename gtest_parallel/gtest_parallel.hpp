@@ -171,8 +171,8 @@ namespace gtest_parallel{
         uint ri=0;
         for(; ri<vStr.size(); ++ri){
             if(vStr[ri].find("[ RUN      ]")==std::string::npos){ continue; }
-            ret_str += vStr[ri]+"\n";
-            ++ri;
+            //ret_str += vStr[ri]+"\n";
+            //++ri;
             break;
         }
         for(; ri<vStr.size(); ++ri){
