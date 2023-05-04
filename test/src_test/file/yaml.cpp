@@ -105,7 +105,7 @@ k2: v2
 k3: v3
 )";
     sstd::terp::var yml = sstd::yaml_from_str(s); // TEST THIS LINE
-    sstd::printn(yml);
+    //sstd::printn(yml);
 
     //---
     
@@ -129,7 +129,7 @@ k3:
 k4: v4
 )";
     sstd::terp::var yml = sstd::yaml_from_str(s); // TEST THIS LINE
-    sstd::printn(yml);
+    //sstd::printn(yml);
 
     //---
     

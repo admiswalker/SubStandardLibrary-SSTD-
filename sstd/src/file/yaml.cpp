@@ -137,7 +137,6 @@ void _set_val_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uin
     for(; idx<ls.size(); ++idx){
         std::string s;
         s = _rm_comment(ls[idx]);
-        sstd::printn(s);
         if(_is_empty(s)){ continue; }
         
         uint hsc = _head_space_count(s);
@@ -154,13 +153,11 @@ void _set_val_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uin
         for(uint i=0; i<v.size(); ++i){ v[i]=sstd::strip(v[i]); }
         if(v.size()==1 && sstd::charIn(':', s)){
             key_prev = v[0];
-            sstd::printn(key_prev);
             ret[key_prev.c_str()] = sstd::terp::hash();
             continue;
         }
         if(v.size()!=2){ sstd::pdbg("ERROR\n"); return; }
 
-        sstd::printn(v);
         ret[v[0].c_str()] = sstd::strip(v[1]).c_str();
     }
 }
