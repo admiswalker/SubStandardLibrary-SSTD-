@@ -102,8 +102,6 @@ void _push_back_for_list(sstd::terp::var& ret, const std::vector<std::string>& l
     if(_is_empty(s)){ return; }
 
     ret.push_back(s.c_str());
-    //sstd::printn(hsc);
-    //sstd::printn(s);
 }
 void _set_val_str(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc, uint& idx){
     for(uint i=idx; i<ls.size(); ++i){
@@ -120,23 +118,13 @@ void _set_val_list(sstd::terp::var& ret, const std::vector<std::string>& ls, uin
     
     for(; idx<ls.size(); ++idx){
         std::string s;
-        //s = _get_list_str(ls[i], hsc_base);
-        //s = _rm_comment(s);
         s = _rm_comment(ls[idx]);
         if(_is_empty(s)){ continue; }
         
-        sstd::printn(idx);
-        //sstd::printn(s);
         uint hsc = _head_space_count(s);
-        //sstd::printn(hsc_base);
-        //sstd::printn(hsc_tmp);
         
         if(hsc!=hsc_base){
-            printf("imh\n");
-            //sstd::printn(hsc_base);
-            //sstd::printn(hsc);
             const sstd::terp::var& ret_tmp=ret[ret.size()-1];
-            sstd::printn(ret_tmp.typeNum());
             _set_val((sstd::terp::var&)ret_tmp, ls, hsc, idx);
             continue;
         }
@@ -146,7 +134,6 @@ void _set_val_list(sstd::terp::var& ret, const std::vector<std::string>& ls, uin
             continue;
         }
         s = _rm_hyphen(s, hsc);
-        sstd::printn(s);
         ret.push_back(s.c_str());
     }
 }
@@ -160,7 +147,6 @@ void _set_val_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uin
         std::vector<std::string> v = sstd::split(s, ':');
         if(v.size()!=2){ sstd::pdbg("ERROR\n"); }
         
-//        sstd::printn(v);
         ret[v[0].c_str()] = sstd::strip(v[1]).c_str();
     }
 }
@@ -168,13 +154,8 @@ void _set_val_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uin
 //---
 
 void _set_val(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc, uint& idx){
-    printf("in: _set_val()\n");
     if(idx>=ls.size()){ return; }
-    sstd::printn(ls[idx]);
     uint typeNum = _data_type(ls[idx], hsc);
-    //sstd::printn(idx);
-    //sstd::printn(ls[idx]);
-    sstd::printn(typeNum);
     
     switch(typeNum){
     case NUM_NULL: { _set_val_str (ret, ls, hsc+0, idx); } break;
@@ -189,9 +170,6 @@ void _set_val(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc
 void _set_list_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc, uint& idx){
     if(idx>=ls.size()){ return; }
     uint typeNum = _data_type(ls[idx], hsc);
-    //sstd::printn(idx);
-    //sstd::printn(ls[idx]);
-    //sstd::printn(typeNum);
     
     switch(typeNum){
     case NUM_NULL: {                         } break;
