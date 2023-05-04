@@ -2,6 +2,7 @@
 
 #include "../definitions/typeDef.h"
 #include "../memory/terp/terp.hpp"
+#include "../memory/terp/print.hpp" // for debug
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 

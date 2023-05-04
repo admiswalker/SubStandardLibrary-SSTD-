@@ -34,19 +34,10 @@ void _skip_empty_line(uint& idx, const std::vector<std::string>& ls){
 
 //---
 
-uint _head_space_count(const std::string& s){
-    uint c=0;
-    for(uint i=0; i<s.size(); ++i){
-        if(s[i]!=' '){ break; }
-        ++c;
-    }
-    return c;
-}
 uint _data_type(const std::string& s, uint hsc){
     if(s.size() <= hsc+2){ return NUM_NULL; }
-    if(s[hsc]=='-' && s[hsc+1]==' '){ return NUM_LIST; }
-
     if(sstd::charIn(':', s)){ return NUM_HASH; }
+    if(s[hsc]=='-' && s[hsc+1]==' '){ return NUM_LIST; }
 
     return NUM_NULL;
 }
@@ -70,12 +61,37 @@ bool _is_hash(const std::string& s){
     
     return false;
 }
+uint _head_space_count_for_hash(const std::string& s){
+    uint c=0;
+    for(uint i=0; i<s.size(); ++i){
+        if(s[i]==' ' || s[i]=='-'){ ++c; continue; }
+        break;
+    }
+    return c;
+}
+uint _head_space_count_for_list(const std::string& s){
+    if(_is_hash(s)){ return _head_space_count_for_hash(s); }
+    uint c=0;
+    for(uint i=0; i<s.size(); ++i){
+        if(s[i]==' '){ ++c; continue; }
+        break;
+    }
+    return c;
+}
+uint _head_space_count(const std::string& s){
+    if(_is_hash(s)){ return _head_space_count_for_hash(s); }
+    return _head_space_count_for_list(s);
+}
 
 //---
 
-std::string _rm_hyphen(std::string s, uint hsc){
-    if(s.size()<=hsc+2){ return std::string();}
-    return &s[hsc+2];
+std::string _rm_hyphen(std::string s){
+    uint i=0;
+    for(; i<s.size(); ++i){
+        if(s[i]==' '||s[i]=='-'){ continue; }
+        break;
+    }
+    return &s[i];
 }
 
 //---
@@ -109,13 +125,20 @@ void _set_val_str(sstd::terp::var& ret, const std::vector<std::string>& ls, uint
     }
 }
 void _set_val_list(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc_base, uint& idx){
+    printf("in _set_val_list()\n");
     for(; idx<ls.size(); ++idx){
         std::string s;
         s = _rm_comment(ls[idx]);
         if(_is_empty(s)){ continue; }
+        sstd::printn(s);
         
         uint hsc = _head_space_count(s);
+        sstd::printn(hsc);
+        sstd::printn(hsc_base);
         if(hsc>hsc_base){
+            if(_is_hash(s)){
+                ret.push_back(sstd::terp::hash());
+            }
             const sstd::terp::var& ret_tmp=ret[ret.size()-1];
             _set_val((sstd::terp::var&)ret_tmp, ls, hsc, idx);
             continue;
@@ -128,18 +151,22 @@ void _set_val_list(sstd::terp::var& ret, const std::vector<std::string>& ls, uin
             ret.push_back(sstd::terp::list());
             continue;
         }
-        s = _rm_hyphen(s, hsc);
+        s = _rm_hyphen(s);
         ret.push_back(s.c_str());
     }
 }
 void _set_val_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc_base, uint& idx){
+    printf("in _set_val_hash()\n");
     std::string key_prev;
     for(; idx<ls.size(); ++idx){
         std::string s;
         s = _rm_comment(ls[idx]);
         if(_is_empty(s)){ continue; }
+        sstd::printn(s);
         
         uint hsc = _head_space_count(s);
+        sstd::printn(hsc);
+        sstd::printn(hsc_base);
         if(hsc>hsc_base){
             const sstd::terp::var& ret_tmp=ret[key_prev.c_str()];
             _set_val((sstd::terp::var&)ret_tmp, ls, hsc, idx);
@@ -158,7 +185,7 @@ void _set_val_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uin
         }
         if(v.size()!=2){ sstd::pdbg("ERROR\n"); return; }
 
-        ret[v[0].c_str()] = sstd::strip(v[1]).c_str();
+        ret[sstd::rstrip(_rm_hyphen(v[0])).c_str()] = sstd::strip(v[1]).c_str();
     }
 }
 
@@ -167,11 +194,12 @@ void _set_val_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uin
 void _set_val(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc, uint& idx){
     if(idx>=ls.size()){ return; }
     uint typeNum = _data_type(ls[idx], hsc);
+    sstd::printn(typeNum);
     
     switch(typeNum){
-    case NUM_NULL: { _set_val_str (ret, ls, hsc+0, idx); } break;
-    case NUM_LIST: { _set_val_list(ret, ls, hsc+0, idx); } break;
-    case NUM_HASH: { _set_val_hash(ret, ls, hsc+0, idx); } break;
+    case NUM_NULL: { _set_val_str (ret, ls, hsc, idx); } break;
+    case NUM_LIST: { _set_val_list(ret, ls, hsc, idx); } break;
+    case NUM_HASH: { _set_val_hash(ret, ls, hsc, idx); } break;
     default: { sstd::pdbg("ERROR\n"); } break;
     }
 }
