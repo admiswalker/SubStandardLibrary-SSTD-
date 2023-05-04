@@ -84,9 +84,6 @@ std::string _get_list_str(const std::string& s, uint hsc){
     if(s.size()<=hsc){ return std::string(); }
     return &s[hsc];
 }
-std::string _get_hash_str(const std::string& s){
-    return s;
-}
 
 //---
 
@@ -112,18 +109,19 @@ void _set_val_str(sstd::terp::var& ret, const std::vector<std::string>& ls, uint
     }
 }
 void _set_val_list(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc_base, uint& idx){
-    
     for(; idx<ls.size(); ++idx){
         std::string s;
         s = _rm_comment(ls[idx]);
         if(_is_empty(s)){ continue; }
         
         uint hsc = _head_space_count(s);
-        
-        if(hsc!=hsc_base){
+        if(hsc>hsc_base){
             const sstd::terp::var& ret_tmp=ret[ret.size()-1];
             _set_val((sstd::terp::var&)ret_tmp, ls, hsc, idx);
             continue;
+        }else if(hsc<hsc_base){
+            --idx;
+            break;
         }
         
         if(s=="-"){
@@ -134,16 +132,35 @@ void _set_val_list(sstd::terp::var& ret, const std::vector<std::string>& ls, uin
         ret.push_back(s.c_str());
     }
 }
-void _set_val_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc, uint& idx){
-    for(uint i=idx; i<ls.size(); ++i){
+void _set_val_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc_base, uint& idx){
+    std::string key_prev;
+    for(; idx<ls.size(); ++idx){
         std::string s;
-        s = _get_hash_str(ls[i]);
-        s = _rm_comment(s);
+        s = _rm_comment(ls[idx]);
+        sstd::printn(s);
         if(_is_empty(s)){ continue; }
-
-        std::vector<std::string> v = sstd::split(s, ':');
-        if(v.size()!=2){ sstd::pdbg("ERROR\n"); }
         
+        uint hsc = _head_space_count(s);
+        if(hsc>hsc_base){
+            const sstd::terp::var& ret_tmp=ret[key_prev.c_str()];
+            _set_val((sstd::terp::var&)ret_tmp, ls, hsc, idx);
+            continue;
+        }else if(hsc<hsc_base){
+            --idx;
+            break;
+        }
+        
+        std::vector<std::string> v = sstd::split(s, ':');
+        for(uint i=0; i<v.size(); ++i){ v[i]=sstd::strip(v[i]); }
+        if(v.size()==1 && sstd::charIn(':', s)){
+            key_prev = v[0];
+            sstd::printn(key_prev);
+            ret[key_prev.c_str()] = sstd::terp::hash();
+            continue;
+        }
+        if(v.size()!=2){ sstd::pdbg("ERROR\n"); return; }
+
+        sstd::printn(v);
         ret[v[0].c_str()] = sstd::strip(v[1]).c_str();
     }
 }

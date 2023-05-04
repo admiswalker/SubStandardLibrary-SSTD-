@@ -73,6 +73,7 @@ TEST(yaml, list_depth2){
 - 
   - c
   - d
+- e
 )";
     sstd::terp::var yml = sstd::yaml_from_str(s); // TEST THIS LINE
     //sstd::printn(yml);
@@ -80,12 +81,13 @@ TEST(yaml, list_depth2){
     //---
     
     sstd::terp::var ans;
-    ans = sstd::terp::list(3);
+    ans = sstd::terp::list(4);
     ans[0] = "a";
     ans[1] = "b";
     ans[2] = sstd::terp::list(2);
     ans[2][0] = "c";
     ans[2][1] = "d";
+    ans[3] = "e";
     
     //---
     
@@ -103,7 +105,7 @@ k2: v2
 k3: v3
 )";
     sstd::terp::var yml = sstd::yaml_from_str(s); // TEST THIS LINE
-    //sstd::printn(yml);
+    sstd::printn(yml);
 
     //---
     
@@ -118,6 +120,31 @@ k3: v3
     ASSERT_TRUE(yml==ans);
 }
 TEST(yaml, hash_depth2){
+    std::string s=R"(
+k1: v1 # comment
+k2: v2
+k3: 
+  k31: v31
+  k32: v32
+k4: v4
+)";
+    sstd::terp::var yml = sstd::yaml_from_str(s); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["k1"] = "v1";
+    ans["k2"] = "v2";
+    ans["k3"] = sstd::terp::hash();
+    ans["k3"]["k31"] = "v31";
+    ans["k3"]["k32"] = "v32";
+    ans["k4"] = "v4";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
