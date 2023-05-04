@@ -125,16 +125,12 @@ void _set_val_str(sstd::terp::var& ret, const std::vector<std::string>& ls, uint
     }
 }
 void _set_val_list(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc_base, uint& idx){
-    printf("in _set_val_list()\n");
     for(; idx<ls.size(); ++idx){
         std::string s;
         s = _rm_comment(ls[idx]);
         if(_is_empty(s)){ continue; }
-        sstd::printn(s);
         
         uint hsc = _head_space_count(s);
-        sstd::printn(hsc);
-        sstd::printn(hsc_base);
         if(hsc>hsc_base){
             if(_is_hash(s)){
                 ret.push_back(sstd::terp::hash());
@@ -156,17 +152,13 @@ void _set_val_list(sstd::terp::var& ret, const std::vector<std::string>& ls, uin
     }
 }
 void _set_val_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc_base, uint& idx){
-    printf("in _set_val_hash()\n");
     std::string key_prev;
     for(; idx<ls.size(); ++idx){
         std::string s;
         s = _rm_comment(ls[idx]);
         if(_is_empty(s)){ continue; }
-        sstd::printn(s);
         
         uint hsc = _head_space_count(s);
-        sstd::printn(hsc);
-        sstd::printn(hsc_base);
         if(hsc>hsc_base){
             const sstd::terp::var& ret_tmp=ret[key_prev.c_str()];
             _set_val((sstd::terp::var&)ret_tmp, ls, hsc, idx);
@@ -194,7 +186,7 @@ void _set_val_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uin
 void _set_val(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc, uint& idx){
     if(idx>=ls.size()){ return; }
     uint typeNum = _data_type(ls[idx], hsc);
-    sstd::printn(typeNum);
+    //sstd::printn(typeNum);
     
     switch(typeNum){
     case NUM_NULL: { _set_val_str (ret, ls, hsc, idx); } break;
