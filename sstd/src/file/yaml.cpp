@@ -41,7 +41,6 @@ uint _data_type(const std::string& s, uint hsc){
 
     return NUM_NULL;
 }
-
 bool _is_list(const std::string& s){
     for(uint i=0; i<s.size(); ++i){
         if(s[i]==' '){ continue; }
@@ -160,6 +159,11 @@ void _set_val_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uin
         
         uint hsc = _head_space_count(s);
         if(hsc>hsc_base){
+            if(_is_hash(s)){
+                ret[key_prev.c_str()] = sstd::terp::hash();
+            }else if(_is_list(s)){
+                ret[key_prev.c_str()] = sstd::terp::list();
+            }
             const sstd::terp::var& ret_tmp=ret[key_prev.c_str()];
             _set_val((sstd::terp::var&)ret_tmp, ls, hsc, idx);
             continue;
@@ -172,7 +176,7 @@ void _set_val_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uin
         for(uint i=0; i<v.size(); ++i){ v[i]=sstd::strip(v[i]); }
         if(v.size()==1 && sstd::charIn(':', s)){
             key_prev = v[0];
-            ret[key_prev.c_str()] = sstd::terp::hash();
+            //ret[key_prev.c_str()] = sstd::terp::hash();
             continue;
         }
         if(v.size()!=2){ sstd::pdbg("ERROR\n"); return; }

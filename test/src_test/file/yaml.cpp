@@ -179,6 +179,31 @@ TEST(yaml, list_hash_depth1){
 }
 
 TEST(yaml, hash_list_depth1){
+    std::string s=R"(
+k1: v1 # comment
+k2: v2
+k3: 
+  - v31
+  - v32
+k4: v4
+)";
+    sstd::terp::var yml = sstd::yaml_from_str(s); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["k1"] = "v1";
+    ans["k2"] = "v2";
+    ans["k3"] = sstd::terp::list(2);
+    ans["k3"][0] = "v31";
+    ans["k3"][1] = "v32";
+    ans["k4"] = "v4";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
 }
 
 //---
