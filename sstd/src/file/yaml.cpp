@@ -18,7 +18,7 @@
 std::string _rm_comment(const std::string& s){
     std::vector<std::string> v = sstd::split(s, '#');
     if(v.size()==0){ return std::string(); }
-    return v[0];
+    return sstd::rstrip(v[0]);
 }
 bool _is_empty(const std::string& s){
     for(uint i=0; i<s.size(); ++i){
@@ -34,7 +34,7 @@ void _skip_empty_line(uint& idx, const std::vector<std::string>& ls){
 
 //---
 
-uint _get_head_space_count(const std::string& s){
+uint _head_space_count(const std::string& s){
     uint c=0;
     for(uint i=0; i<s.size(); ++i){
         if(s[i]!=' '){ break; }
@@ -43,6 +43,9 @@ uint _get_head_space_count(const std::string& s){
     return c;
 }
 uint _data_type(const std::string& s, uint hsc){
+//    sstd::printn(hsc);
+//    sstd::printn(s[hsc]);
+//    sstd::printn(s[hsc+1]);
     if(s.size() <= hsc+2){ return NUM_NULL; }
     if(s[hsc]=='-' && s[hsc+1]==' '){ return NUM_LIST; }
 
@@ -73,9 +76,9 @@ bool _is_hash(const std::string& s){
 
 //---
 
-std::string _rm_hyphen(std::string s){
-    if(s.size()<=2){ return std::string();}
-    return &s[2];
+std::string _rm_hyphen(std::string s, uint hsc){
+    if(s.size()<=hsc+2){ return std::string();}
+    return &s[hsc+2];
 }
 
 //---
@@ -115,25 +118,26 @@ void _set_val_str(sstd::terp::var& ret, const std::vector<std::string>& ls, uint
 }
 void _set_val_list(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc_base, uint& idx){
     
-    for(uint i=idx; i<ls.size(); ++i){
+    for(; idx<ls.size(); ++idx){
         std::string s;
         //s = _get_list_str(ls[i], hsc_base);
         //s = _rm_comment(s);
-        sstd::printn(ls[i]);
-        s = _rm_comment(ls[i]);
+        s = _rm_comment(ls[idx]);
         if(_is_empty(s)){ continue; }
         
-        sstd::printn(i);
-        sstd::printn(s);
-        uint hsc_tmp = _get_head_space_count(s);
-        sstd::printn(hsc_base);
-        sstd::printn(hsc_tmp);
-        
+        sstd::printn(idx);
+        //sstd::printn(s);
+        uint hsc = _head_space_count(s);
+        //sstd::printn(hsc_base);
         //sstd::printn(hsc_tmp);
-        if(hsc_tmp!=hsc_base){
+        
+        if(hsc!=hsc_base){
             printf("imh\n");
+            //sstd::printn(hsc_base);
+            //sstd::printn(hsc);
             const sstd::terp::var& ret_tmp=ret[ret.size()-1];
-            _set_val((sstd::terp::var&)ret_tmp, ls, hsc_tmp, idx);
+            sstd::printn(ret_tmp.typeNum());
+            _set_val((sstd::terp::var&)ret_tmp, ls, hsc, idx);
             continue;
         }
         
@@ -141,7 +145,8 @@ void _set_val_list(sstd::terp::var& ret, const std::vector<std::string>& ls, uin
             ret.push_back(sstd::terp::list());
             continue;
         }
-        s = _rm_hyphen(s);
+        s = _rm_hyphen(s, hsc);
+        sstd::printn(s);
         ret.push_back(s.c_str());
     }
 }
@@ -156,13 +161,32 @@ void _set_val_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uin
         if(v.size()!=2){ sstd::pdbg("ERROR\n"); }
         
 //        sstd::printn(v);
-        ret[v[0].c_str()] = v[1].c_str();
+        ret[v[0].c_str()] = sstd::strip(v[1]).c_str();
     }
 }
 
 //---
 
 void _set_val(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc, uint& idx){
+    printf("in: _set_val()\n");
+    if(idx>=ls.size()){ return; }
+    sstd::printn(ls[idx]);
+    uint typeNum = _data_type(ls[idx], hsc);
+    //sstd::printn(idx);
+    //sstd::printn(ls[idx]);
+    sstd::printn(typeNum);
+    
+    switch(typeNum){
+    case NUM_NULL: { _set_val_str (ret, ls, hsc+0, idx); } break;
+    case NUM_LIST: { _set_val_list(ret, ls, hsc+0, idx); } break;
+    case NUM_HASH: { _set_val_hash(ret, ls, hsc+0, idx); } break;
+    default: { sstd::pdbg("ERROR\n"); } break;
+    }
+}
+
+//---
+
+void _set_list_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc, uint& idx){
     if(idx>=ls.size()){ return; }
     uint typeNum = _data_type(ls[idx], hsc);
     //sstd::printn(idx);
@@ -170,12 +194,14 @@ void _set_val(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc
     //sstd::printn(typeNum);
     
     switch(typeNum){
-    case NUM_NULL: {                         _set_val_str (ret, ls, hsc+0, idx); } break;
-    case NUM_LIST: { ret=sstd::terp::list(); _set_val_list(ret, ls, hsc+0, idx); } break;
-    case NUM_HASH: { ret=sstd::terp::hash(); _set_val_hash(ret, ls, hsc+0, idx); } break;
+    case NUM_NULL: {                         } break;
+    case NUM_LIST: { ret=sstd::terp::list(); } break;
+    case NUM_HASH: { ret=sstd::terp::hash(); } break;
     default: { sstd::pdbg("ERROR\n"); } break;
     }
 }
+
+//---
 
 sstd::terp::var sstd::yaml_from_str(const        char* s){
     sstd::terp::var ret;
@@ -185,7 +211,8 @@ sstd::terp::var sstd::yaml_from_str(const        char* s){
 
     uint idx=0;
     _skip_empty_line(idx, ls);
-    
+
+    _set_list_hash(ret, ls, 0, idx);
     _set_val(ret, ls, 0, idx);
     
     return ret;
