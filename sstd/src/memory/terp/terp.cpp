@@ -151,10 +151,10 @@ sstd::terp::var _ope_subscript_pKey_base(const sstd::void_ptr* _p, const char* p
     }
     return sstd::terp::var();
 }
-sstd::terp::var sstd::terp::var::operator[](      int idx)       { return _ope_subscript_idx_base(_p, idx); }
-sstd::terp::var sstd::terp::var::operator[](const int idx) const { return _ope_subscript_idx_base(_p, idx); }
-//sstd::terp::var sstd::terp::var::operator[](const char* pKey)       { return _ope_subscript_pKey_base(_p, pKey); }
-sstd::terp::var sstd::terp::var::operator[](const char* pKey) const { return _ope_subscript_pKey_base(_p, pKey); }
+      sstd::terp::var sstd::terp::var::operator[](const int idx)       { return _ope_subscript_idx_base(_p, idx); }
+const sstd::terp::var sstd::terp::var::operator[](const int idx) const { return _ope_subscript_idx_base(_p, idx); }
+      sstd::terp::var sstd::terp::var::operator[](const char* pKey)       { return _ope_subscript_pKey_base(_p, pKey); }
+const sstd::terp::var sstd::terp::var::operator[](const char* pKey) const { return _ope_subscript_pKey_base(_p, pKey); }
 
 //---
 

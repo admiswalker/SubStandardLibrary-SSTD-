@@ -121,10 +121,10 @@ public:
 
     //---
 
-    var operator[](      int idx);
-    var operator[](const int idx) const;
-    //var operator[](const char* pKey);
-    var operator[](const char* pKey) const;
+          var operator[](const int idx);
+    const var operator[](const int idx) const;
+          var operator[](const char* pKey);
+    const var operator[](const char* pKey) const;
     
     //---
     

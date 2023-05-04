@@ -43,9 +43,6 @@ uint _head_space_count(const std::string& s){
     return c;
 }
 uint _data_type(const std::string& s, uint hsc){
-//    sstd::printn(hsc);
-//    sstd::printn(s[hsc]);
-//    sstd::printn(s[hsc+1]);
     if(s.size() <= hsc+2){ return NUM_NULL; }
     if(s[hsc]=='-' && s[hsc+1]==' '){ return NUM_LIST; }
 
