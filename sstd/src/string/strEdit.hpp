@@ -8,8 +8,15 @@ namespace sstd{
     std::vector<std::string> splitByLine(const        char* str);
     std::vector<std::string> splitByLine(const std::string& str);
 
+    std::vector<std::string> split(const char*        str);
+    std::vector<std::string> split(const std::string& str);
     std::vector<std::string> split(const char*        str, const char X);
     std::vector<std::string> split(const std::string& str, const char X);
+    
+    std::vector<std::string> split_rmSpace(const char*        str);               // rm: remove
+    std::vector<std::string> split_rmSpace(const std::string& str);               // rm: remove
+    std::vector<std::string> split_rmSpace(const char*        str, const char X); // rm: remove
+    std::vector<std::string> split_rmSpace(const std::string& str, const char X); // rm: remove
     
     // remove space or tab.
     std::string              lstrip   (const                    char * str); // removing head tab and spaces

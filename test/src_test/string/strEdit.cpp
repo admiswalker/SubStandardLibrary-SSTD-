@@ -31,38 +31,54 @@ TEST(strEdit, theOthers){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-TEST(strEdit, split_c_c){
-    std::vector<std::string> v;
-    
-    v = sstd::split("ABC DEF", ' '); // TEST THIS LINE
-    ASSERT_EQ(v.size(), (uint)2);
-    ASSERT_STREQ(v[0].c_str(), "ABC");
-    ASSERT_STREQ(v[1].c_str(), "DEF");
-    
-    v = sstd::split(" ABC   D EF  ", ' '); // TEST THIS LINE
-    ASSERT_EQ(v.size(), (uint)3);
-    ASSERT_STREQ(v[0].c_str(), "ABC");
-    ASSERT_STREQ(v[1].c_str(), "D"  );
-    ASSERT_STREQ(v[2].c_str(), "EF" );
-    
-    v = sstd::split("ABC,DEF", ','); // TEST THIS LINE
-    ASSERT_EQ(v.size(), (uint)2);
-    ASSERT_STREQ(v[0].c_str(), "ABC");
-    ASSERT_STREQ(v[1].c_str(), "DEF");
-    
-    v = sstd::split(" ABC  , D,  EF ,GH  ", ','); // TEST THIS LINE
-    ASSERT_EQ(v.size(), (uint)4);
-    ASSERT_STREQ(v[0].c_str(), "ABC");
-    ASSERT_STREQ(v[1].c_str(), "D"  );
-    ASSERT_STREQ(v[2].c_str(), "EF" );
-    ASSERT_STREQ(v[3].c_str(), "GH" );
+TEST(strEdit, split_c){
+    std::vector<std::string> v = sstd::split(" a  b, c"); // TEST THIS LINE
+    ASSERT_TRUE( v == std::vector<std::string>({"a", "b,", "c"}) );
+}
+TEST(strEdit, split_c_c_space){
+    std::vector<std::string> v = sstd::split(" a  b, c", ' '); // TEST THIS LINE
+    ASSERT_TRUE( v == std::vector<std::string>({"", "a", "", "b,", "c"}) );
+}
+TEST(strEdit, split_c_c_comma){
+    std::vector<std::string> v = sstd::split(" a  b, c", ','); // TEST THIS LINE
+    ASSERT_TRUE( v == std::vector<std::string>({" a  b", " c"}) );
+}
+
+//---
+
+TEST(strEdit, split_s){
+    std::vector<std::string> v = sstd::split(std::string(" a  b, c")); // TEST THIS LINE
+    ASSERT_TRUE( v == std::vector<std::string>({"a", "b,", "c"}) );
 }
 TEST(strEdit, split_s_c){
-    std::vector<std::string> v;
-    v = sstd::split(std::string("ABC DEF"), ' '); // TEST THIS LINE
-    ASSERT_EQ(v.size(), (uint)2);
-    ASSERT_STREQ(v[0].c_str(), "ABC");
-    ASSERT_STREQ(v[1].c_str(), "DEF");
+    std::vector<std::string> v = sstd::split(std::string(" a  b, c"), ' '); // TEST THIS LINE
+    ASSERT_TRUE( v == std::vector<std::string>({"", "a", "", "b,", "c"}) );
+}
+
+//---
+
+TEST(strEdit, split_rmSpace_c){
+    std::vector<std::string> v = sstd::split_rmSpace(" a  b, c"); // TEST THIS LINE
+    ASSERT_TRUE( v == std::vector<std::string>({"a", "b,", "c"}) );
+}
+TEST(strEdit, split_rmSpace_c_c_space){
+    std::vector<std::string> v = sstd::split_rmSpace(" a  b, c", ' '); // TEST THIS LINE
+    ASSERT_TRUE( v == std::vector<std::string>({"a", "b,", "c"}) );
+}
+TEST(strEdit, split_rmSpace_c_c_comma){
+    std::vector<std::string> v = sstd::split_rmSpace(" a  b, c", ','); // TEST THIS LINE
+    ASSERT_TRUE( v == std::vector<std::string>({"a  b", "c"}) );
+}
+
+//---
+
+TEST(strEdit, split_rmSpace_s){
+    std::vector<std::string> v = sstd::split_rmSpace(std::string(" a  b, c")); // TEST THIS LINE
+    ASSERT_TRUE( v == std::vector<std::string>({"a", "b,", "c"}) );
+}
+TEST(strEdit, split_rmSpace_s_c_space){
+    std::vector<std::string> v = sstd::split_rmSpace(std::string(" a  b, c"), ' '); // TEST THIS LINE
+    ASSERT_TRUE( v == std::vector<std::string>({"a", "b,", "c"}) );
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
