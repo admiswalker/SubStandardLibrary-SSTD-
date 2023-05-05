@@ -34,11 +34,10 @@ void _skip_empty_line(uint& idx, const std::vector<std::string>& ls){
 
 //---
 
-uint _data_type(const std::string& s, uint hsc){
-    if(s.size() <= hsc+2){ return NUM_NULL; }
+uint _data_type(std::string s){
     if(sstd::charIn(':', s)){ return NUM_HASH; }
-    if(s[hsc]=='-' && s[hsc+1]==' '){ return NUM_LIST; }
-
+    s = sstd::lstrip(s);
+    if(s.size()>=2 && s[0]=='-' && s[1]==' '){ return NUM_LIST; }
     return NUM_NULL;
 }
 bool _is_list(const std::string& s){
@@ -150,18 +149,33 @@ void _set_val_list(sstd::terp::var& ret, const std::vector<std::string>& ls, uin
         ret.push_back(s.c_str());
     }
 }
+void _set_val(sstd::terp::var& ret, const std::string& key_prev, std::string s, uint typeNum){
+    if(typeNum==NUM_HASH){
+        std::vector<std::string> v = sstd::split(s, ':');
+        for(uint i=0; i<v.size(); ++i){ v[i]=sstd::strip(v[i]); }
+        if(v.size()!=2){ sstd::pdbg("ERROR\n"); return; }
+
+        ret[sstd::rstrip(_rm_hyphen(v[0])).c_str()] = sstd::strip(v[1]).c_str();
+    }else if(typeNum==NUM_LIST){
+    }else{
+        sstd::printn("ERROR\n");
+    }
+}
 void _set_val_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc_base, uint& idx){
     std::string key_prev;
     for(; idx<ls.size(); ++idx){
         std::string s;
         s = _rm_comment(ls[idx]);
         if(_is_empty(s)){ continue; }
+        uint typeNum = _data_type(s);
         
         uint hsc = _head_space_count(s);
         if(hsc>hsc_base){
-            if(_is_hash(s)){
+//            if(_is_hash(s)){
+            if(typeNum==NUM_HASH){
                 ret[key_prev.c_str()] = sstd::terp::hash();
-            }else if(_is_list(s)){
+            }else if(typeNum==NUM_LIST){
+//            }else if(_is_list(s)){
                 ret[key_prev.c_str()] = sstd::terp::list();
             }
             const sstd::terp::var& ret_tmp=ret[key_prev.c_str()];
@@ -172,6 +186,7 @@ void _set_val_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uin
             break;
         }
         
+        /*
         std::vector<std::string> v = sstd::split(s, ':');
         for(uint i=0; i<v.size(); ++i){ v[i]=sstd::strip(v[i]); }
         if(v.size()==1 && sstd::charIn(':', s)){
@@ -182,6 +197,14 @@ void _set_val_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uin
         if(v.size()!=2){ sstd::pdbg("ERROR\n"); return; }
 
         ret[sstd::rstrip(_rm_hyphen(v[0])).c_str()] = sstd::strip(v[1]).c_str();
+        */
+        if(typeNum==NUM_HASH && sstd::rstrip(s)[s.size()-1]==':'){
+            std::vector<std::string> v = sstd::split(s, ':');
+            for(uint i=0; i<v.size(); ++i){ v[i]=sstd::strip(v[i]); }
+            key_prev = v[0];
+            continue;
+        }
+        _set_val(ret, key_prev, s, typeNum);
     }
 }
 
@@ -189,7 +212,7 @@ void _set_val_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uin
 
 void _set_val(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc, uint& idx){
     if(idx>=ls.size()){ return; }
-    uint typeNum = _data_type(ls[idx], hsc);
+    uint typeNum = _data_type(ls[idx]);
     //sstd::printn(typeNum);
     
     switch(typeNum){
@@ -204,7 +227,7 @@ void _set_val(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc
 
 void _set_list_hash(sstd::terp::var& ret, const std::vector<std::string>& ls, uint hsc, uint& idx){
     if(idx>=ls.size()){ return; }
-    uint typeNum = _data_type(ls[idx], hsc);
+    uint typeNum = _data_type(ls[idx]);
     
     switch(typeNum){
     case NUM_NULL: {                         } break;
