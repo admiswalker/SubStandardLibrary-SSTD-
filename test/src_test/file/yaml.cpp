@@ -28,7 +28,7 @@ b
     testing::internal::CaptureStdout();
     sstd::terp::var yml = sstd::yaml_from_str(s); // TEST THIS LINE
     std::string ret = testing::internal::GetCapturedStdout().c_str();
-    ASSERT_TRUE(sstd::strIn("_set_val_str():", ret.c_str()));
+    ASSERT_TRUE(sstd::strIn("OverWritting the existing data. (String data type can only take one data.)", ret.c_str()));
     //sstd::printn(yml);
 
     //---
