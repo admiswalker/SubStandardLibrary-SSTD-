@@ -290,7 +290,7 @@ void _get_value(std::string& ret_val1, std::string& ret_val2, std::string s, uin
     }
 }
 
-std::vector<struct command> _test(const std::vector<std::string>& ls){
+std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
     std::vector<struct command> v_cmd;
     sstd::printn(ls);
     
@@ -343,15 +343,21 @@ std::vector<struct command> _test(const std::vector<std::string>& ls){
     
     return v_cmd;
 }
+void _construct_terpVar(sstd::terp::var& ret, const std::vector<struct command>& v_cmd){
+    return;
+}
 
 sstd::terp::var sstd::yaml_from_str(const        char* s){
     sstd::terp::var ret;
 
     std::vector<std::string> ls = sstd::splitByLine(s); // ls: line string
     //sstd::printn(ls);
-    std::vector<struct command> v_cmd = _test(ls);
+    std::vector<struct command> v_cmd = _parse_yaml(ls);
     printf("\n");
     _print(v_cmd);
+    _construct_terpVar(ret, v_cmd);
+    printf("\n");
+    printf("\n");
 
     uint idx=0;
     _skip_empty_line(idx, ls);
