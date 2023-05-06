@@ -312,16 +312,12 @@ void _get_value(std::string& ret_val1, std::string& ret_val2, std::string s, uin
 
 std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
     std::vector<struct command> v_cmd;
-    sstd::printn(ls);
     
     for(uint i=0; i<ls.size(); ++i){
-//        sstd::printn(ls[i]);
-
         std::string s;
         s = ls[i];
         s = _rm_comment(s);
         if(s.size()==0){ continue; }
-//        sstd::printn(s);
         uint type = _data_type_ver2(s);
         uint hsc = _head_space_count(s, type);
         std::string val1, val2; _get_value(val1, val2, s, type);
@@ -398,23 +394,14 @@ void _set_val_ver2(sstd::terp::var& ret, const std::string& key_prev, std::strin
     }
 }
 void _construct_terpVar(sstd::terp::var& ret, const std::vector<struct command>& v_cmd){
-
-    //std::vector<sstd::terp::var*> v_dst;
     std::vector<sstd::void_ptr*> v_dst;
     std::vector<uint> v_hsc;
     v_dst.push_back(ret.p());
     v_hsc.push_back(0);
 
     for(uint i=0; i<v_cmd.size(); ++i){
-        sstd::printn(v_dst.size());
-        sstd::printn(v_hsc.size());
         sstd::terp::var var = sstd::terp::var( v_dst[v_dst.size()-1] );
         uint hsc_base = v_hsc[v_hsc.size()-1];
-        //uint typeNum = v_cmd[i].typeNum;
-        sstd::printn(i);
-        sstd::printn_all(var.typeNum());
-        sstd::printn_all(var);
-        _print(v_cmd[i]);
         
         // set dst type (if dst is sstd::num_null)
         if(var.typeNum()==sstd::num_null){
@@ -426,24 +413,12 @@ void _construct_terpVar(sstd::terp::var& ret, const std::vector<struct command>&
             default: { sstd::pdbg_err("Unexpected data type\n"); } break;
             }
         }
-        sstd::printn_all(var.typeNum());
         
         if(v_cmd[i].hsc > hsc_base){
-            printf("in sw push\n");
-//            switch(v_cmd[i].verb){
-//            case '-': { v_dst.push_back( var[var.size()-1].p() );          v_hsc.push_back(v_cmd[i].hsc); } break;
-//            case ':': { v_dst.push_back( var[v_cmd[i].val1.c_str()].p() ); v_hsc.push_back(v_cmd[i].hsc); } break;
-//            switch(var.typeNum()){
-//            case sstd::num_vec_void_ptr:      { v_dst.push_back( var[var.size()-1].p() );          v_hsc.push_back(v_cmd[i].hsc); } break;
-//            case sstd::num_hash_str_void_ptr: { v_dst.push_back( var[v_cmd[i].val1.c_str()].p() ); v_hsc.push_back(v_cmd[i].hsc); } break;
-//            default: { sstd::pdbg_err("ERROR\n"); } break;
-//            }
-//            sstd::printn_all(var.typeNum());
             v_hsc.push_back(v_cmd[i].hsc);
             --i;
             continue;
         }else if(v_cmd[i].hsc < hsc_base){
-            printf("in sw pop\n");
             v_dst.pop_back();
             v_hsc.pop_back();
             --i;
@@ -462,7 +437,6 @@ void _construct_terpVar(sstd::terp::var& ret, const std::vector<struct command>&
             }else{
                 var.push_back( sstd::terp::list() );
                 v_dst.push_back( var[var.size()-1].p() );
-                //v_hsc.push_back(v_cmd[i].hsc);
             }
         } break;
         case 'x': {
@@ -474,7 +448,6 @@ void _construct_terpVar(sstd::terp::var& ret, const std::vector<struct command>&
                 var[ v_cmd[i].val1.c_str() ] = v_cmd[i].val2.c_str();
             }else{
                 v_dst.push_back( var[v_cmd[i].val1.c_str()].p() );
-                //v_hsc.push_back(v_cmd[i].hsc);
             }
         } break;
         default: { sstd::pdbg_err("ERROR\n"); } break;
@@ -488,15 +461,9 @@ sstd::terp::var sstd::yaml_from_str(const        char* s){
     sstd::terp::var ret;
 
     std::vector<std::string> ls = sstd::splitByLine(s); // ls: line string
-    //sstd::printn(ls);
     std::vector<struct command> v_cmd = _parse_yaml(ls);
-    printf("\n");
-    //_print(v_cmd);
     sstd::terp::var ret2;
     _construct_terpVar(ret2, v_cmd);
-    printf("\n");
-    sstd::printn(ret2);
-    printf("\n");
     
     /*
     uint idx=0;
