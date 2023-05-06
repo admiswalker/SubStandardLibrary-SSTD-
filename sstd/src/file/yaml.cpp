@@ -104,7 +104,7 @@ void _print(const std::vector<struct command>& v_cmd){
 
 //---
 
-uint _data_type_ver2(std::string s){
+uint _data_type(std::string s){
     bool is_l = _is_list(s);
     bool is_h = _is_hash(s);
 
@@ -149,7 +149,7 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
         s = ls[i];
         s = _rm_comment(s);
         if(s.size()==0){ continue; }
-        uint type = _data_type_ver2(s);
+        uint type = _data_type(s);
         uint hsc = _head_space_count(s, type);
         std::string val1, val2; _get_value(val1, val2, s, type);
         
@@ -210,21 +210,8 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
     
     return v_cmd;
 }
-void _set_val_ver2(sstd::terp::var& ret, const std::string& key_prev, std::string s, uint typeNum){
-    if(typeNum==NUM_HASH){
-        std::vector<std::string> v = sstd::split(s, ':');
-        for(uint i=0; i<v.size(); ++i){ v[i]=sstd::strip(v[i]); } // remove spaces
-        if(v.size()!=2){ sstd::pdbg_err("ERROR\n"); return; }
-
-        ret[sstd::rstrip(_rm_hyphen(v[0])).c_str()] = sstd::strip(v[1]).c_str();
-    }else if(typeNum==NUM_LIST){
-        s = _rm_hyphen(s);
-        ret.push_back(s.c_str());
-    }else{
-        sstd::printn("ERROR\n");
-    }
-}
-void _construct_terpVar(sstd::terp::var& ret, const std::vector<struct command>& v_cmd){
+sstd::terp::var _construct_var(const std::vector<struct command>& v_cmd){
+    sstd::terp::var ret;
     std::vector<sstd::void_ptr*> v_dst;
     std::vector<uint> v_hsc;
     v_dst.push_back(ret.p());
@@ -285,19 +272,18 @@ void _construct_terpVar(sstd::terp::var& ret, const std::vector<struct command>&
         default: { sstd::pdbg_err("ERROR\n"); } break;
         }
     }
-    
-    return ;
+
+    return ret;
 }
 
-sstd::terp::var sstd::yaml_from_str(const        char* s){
-    sstd::terp::var ret;
+//---
 
+sstd::terp::var sstd::yaml_from_str(const        char* s){
     std::vector<std::string> ls = sstd::splitByLine(s); // ls: line string
     std::vector<struct command> v_cmd = _parse_yaml(ls);
-    sstd::terp::var ret2;
-    _construct_terpVar(ret2, v_cmd);
+    sstd::terp::var ret = _construct_var(v_cmd);
     
-    return ret2;
+    return ret;
 }
 sstd::terp::var sstd::yaml_from_str(const std::string& s){ return sstd::yaml_from_str(s.c_str()); }
 
