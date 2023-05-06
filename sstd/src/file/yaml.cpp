@@ -22,32 +22,22 @@ std::string _rm_comment(const std::string& s){
     if(v.size()==0){ return std::string(); }
     return sstd::rstrip(v[0]);
 }
-bool _is_empty(const std::string& s){
-    for(uint i=0; i<s.size(); ++i){
-        if(s[i]!=' '){ return false; }
+
+std::string _rm_hyphen(std::string s){
+    uint i=0;
+    for(; i<s.size(); ++i){
+        if(s[i]==' '||s[i]=='-'){ continue; }
+        break;
     }
-    return true;
+    return &s[i];
 }
 
 //---
 
-uint _data_type(std::string s){
-    if(sstd::charIn(':', s)){ return NUM_HASH; }
-    s = sstd::lstrip(s);
-    if(s.size()>=2 && s[0]=='-' && s[1]==' '){ return NUM_LIST; }
-    return NUM_NULL;
-}
 bool _is_list(const std::string& s){
     for(uint i=0; i<s.size(); ++i){
         if(s[i]==' '){ continue; }
         if(s[i]=='-'){ return true; }
-    }
-    return false;
-}
-bool _is_list_value(const std::string& s){
-    for(uint i=0; i+1<s.size(); ++i){
-        if(s[i]==' '){ continue; }
-        if(s[i]=='-' && s[i+1]==' '){ return true; }
     }
     return false;
 }
@@ -56,6 +46,9 @@ bool _is_hash(const std::string& s){
     
     return false;
 }
+
+//---
+
 uint _head_space_count_for_hash(const std::string& s){
     uint c=0;
     for(uint i=0; i<s.size(); ++i){
@@ -81,19 +74,6 @@ uint _head_space_count(const std::string& s, uint typeNum){
     if(typeNum==NUM_HASH || typeNum==NUM_LIST_AND_HASH){ return _head_space_count_for_hash(s); }
     return _head_space_count_for_list(s);
 }
-
-//---
-
-std::string _rm_hyphen(std::string s){
-    uint i=0;
-    for(; i<s.size(); ++i){
-        if(s[i]==' '||s[i]=='-'){ continue; }
-        break;
-    }
-    return &s[i];
-}
-
-//---
 
 //---
 
@@ -123,22 +103,7 @@ void _print(const std::vector<struct command>& v_cmd){
 }
 
 //---
-/*
-void _set_val(sstd::terp::var& ret, const std::string& key_prev, std::string s, uint typeNum){
-    if(typeNum==NUM_HASH){
-        std::vector<std::string> v = sstd::split(s, ':');
-        for(uint i=0; i<v.size(); ++i){ v[i]=sstd::strip(v[i]); } // remove spaces
-        if(v.size()!=2){ sstd::pdbg_err("ERROR\n"); return; }
 
-        ret[sstd::rstrip(_rm_hyphen(v[0])).c_str()] = sstd::strip(v[1]).c_str();
-    }else if(typeNum==NUM_LIST){
-        s = _rm_hyphen(s);
-        ret.push_back(s.c_str());
-    }else{
-        sstd::printn("ERROR\n");
-    }
-}
-*/
 uint _data_type_ver2(std::string s){
     bool is_l = _is_list(s);
     bool is_h = _is_hash(s);
