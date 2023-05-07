@@ -71,7 +71,7 @@ public:
         switch(_typeNum){
         case sstd::num_vec_void_ptr:      { sstd::terp::_to(ret, (sstd::void_ptr)(*_v_itr)      ); return ret; } break;
         case sstd::num_hash_str_void_ptr: { sstd::terp::_to(ret, (std::string   )(*_h_itr).first); return ret; } break;
-        default: { sstd::pdbg("ERROR\n"); }
+        default: { sstd::pdbg_err("ERROR\n"); }
         }
         return ret;
     }
@@ -81,7 +81,7 @@ public:
         T ret = T();
         switch(_typeNum){
         case sstd::num_hash_str_void_ptr: { sstd::terp::_to(ret, (sstd::void_ptr)(*_h_itr).second); return ret; } break;
-        default: { sstd::pdbg("ERROR\n"); }
+        default: { sstd::pdbg_err("ERROR\n"); }
         }
         return ret;
     }

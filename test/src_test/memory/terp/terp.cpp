@@ -7,6 +7,8 @@
 TEST(memory_terp, var_constructor){
     sstd::terp::var a;
 }
+
+// operator=
 TEST(memory_terp, var_ope_assign_str){
     sstd::terp::var a;
     a = "test";
@@ -44,7 +46,7 @@ TEST(memory_terp, var_typeNum_c){
 //*
 
 // operator=
-TEST(memory_terp, list_ope_assign){
+TEST(memory_terp, list_ope_assign){ // Ope=
     sstd::terp::var a;
     a = sstd::terp::list(1); // TEST THIS LINE
     //a = sstd::terp::list(); a.resize(1); // same as above
@@ -560,6 +562,29 @@ TEST(memory_terp, var_ope_eq_false_different_type){
     rhs["k2"][2][2] = "NotEqualStr";
 
     ASSERT_FALSE(lhs==rhs); // TEST THIS LINE
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// check error messages
+
+// operator[]
+TEST(memory_terp, var_ope_subscript_insert_char_to_list_type){
+    sstd::terp::var a;
+    a = sstd::terp::list();
+
+    testing::internal::CaptureStdout();
+    a["k0"] = "v0"; // TEST THIS LINE
+    std::string ret = testing::internal::GetCapturedStdout().c_str();
+    ASSERT_TRUE(sstd::strIn("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var takes \"sstd::terp::list()\" type, but treat as a \"sstd::terp::hash()\".\n", ret.c_str()));
+}
+TEST(memory_terp, var_ope_subscript_insert_number_to_hash_type){
+    sstd::terp::var a;
+    a = sstd::terp::hash();
+
+    testing::internal::CaptureStdout();
+    a[0] = "v0"; // TEST THIS LINE
+    std::string ret = testing::internal::GetCapturedStdout().c_str();
+    ASSERT_TRUE(sstd::strIn("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var takes \"sstd::terp::hash()\" type, but treat as a \"sstd::terp::list()\".\n", ret.c_str()));
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
