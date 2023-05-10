@@ -246,6 +246,35 @@ TEST(yaml, list_hash_list){ // depth2
 }
 
 TEST(yaml, hash_list_hash){ // depth2
+    std::string s=R"(
+k1: v1 # comment
+k2: v2
+k3: 
+  - v31
+  - k32: v321
+  - v33
+k4: v4
+)";
+    sstd::terp::var yml = sstd::yaml_from_str(s); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["k1"] = "v1";
+    ans["k2"] = "v2";
+    ans["k3"] = sstd::terp::list(3);
+    ans["k3"][0] = "v31";
+    ans["k3"][1] = sstd::terp::hash();
+    ans["k3"][1]["k32"] = "v321";
+    ans["k3"][2] = "v33";
+    ans["k4"] = "v4";
+    //sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
