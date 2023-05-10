@@ -150,7 +150,7 @@ k4: v4
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // complex test cases
 
-TEST(yaml, list_hash_depth1){
+TEST(yaml, list_hash){ // depth1
     std::string s=R"(
 - a # comment
 - b
@@ -178,7 +178,7 @@ TEST(yaml, list_hash_depth1){
     ASSERT_TRUE(yml==ans);
 }
 
-TEST(yaml, hash_list_depth1){
+TEST(yaml, hash_list){ // depth1
     std::string s=R"(
 k1: v1 # comment
 k2: v2
@@ -208,16 +208,44 @@ k4: v4
 
 //---
 
-TEST(yaml, list_hash_depth2){
-}
-TEST(yaml, hash_list_depth2){
+TEST(yaml, list_hash_list){ // depth2
+    std::string s=R"(
+- a # comment
+- b
+
+- k1: v1
+  k2:
+    - v21
+    - v22
+    - v23
+  k3: v3
+- c
+)";
+    sstd::terp::var yml = sstd::yaml_from_str(s); // TEST THIS LINE
+    //sstd::printn(yml);
+    
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(4);
+    ans[0] = "a";
+    ans[1] = "b";
+    ans[2] = sstd::terp::hash();
+    ans[2]["k1"] = "v1";
+    ans[2]["k2"] = sstd::terp::list(3);
+    ans[2]["k2"][0] = "v21";
+    ans[2]["k2"][1] = "v22";
+    ans[2]["k2"][2] = "v23";
+    ans[2]["k3"] = "v3";
+    ans[3] = "c";
+    //sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
 }
 
-//---
-
-TEST(yaml, list_hash_list){
-}
-TEST(yaml, hash_list_hash){
+TEST(yaml, hash_list_hash){ // depth2
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
