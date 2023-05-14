@@ -279,6 +279,11 @@ k4: v4
 
 //---
 
+TEST(yaml, list_hash_list_hash){ // depth4
+}
+
+//---
+
 TEST(yaml, hash_list_hash_list){ // depth4
     std::string s=R"(
 k1: v1 # comment
