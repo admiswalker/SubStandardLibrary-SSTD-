@@ -218,8 +218,12 @@ sstd::terp::var _construct_var(const std::vector<struct command>& v_cmd){
     v_hsc.push_back(0);
 
     for(uint i=0; i<v_cmd.size(); ++i){
+        _print(v_cmd[i]);
         sstd::terp::var var = sstd::terp::var( v_dst[v_dst.size()-1] );
         uint hsc_base = v_hsc[v_hsc.size()-1];
+        sstd::printn(v_dst);
+        sstd::printn(v_hsc);
+        //printf("\n");
         
         // set dst type (if dst is sstd::num_null)
         if(var.typeNum()==sstd::num_null){
@@ -281,6 +285,7 @@ sstd::terp::var _construct_var(const std::vector<struct command>& v_cmd){
 sstd::terp::var sstd::yaml_from_str(const        char* s){
     std::vector<std::string> ls = sstd::splitByLine(s); // ls: line string
     std::vector<struct command> v_cmd = _parse_yaml(ls);
+    //_print(v_cmd);
     sstd::terp::var ret = _construct_var(v_cmd);
     
     return ret;
