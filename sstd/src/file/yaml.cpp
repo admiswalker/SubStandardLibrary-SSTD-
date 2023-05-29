@@ -58,7 +58,7 @@ uint _head_space_count_for_hash(const std::string& s){
     return c;
 }
 uint _head_space_count_for_list(const std::string& s){
-    if(_is_hash(s)){ return _head_space_count_for_hash(s); }
+//    if(_is_hash(s)){ return _head_space_count_for_hash(s); }
     uint c=0;
     for(uint i=0; i<s.size(); ++i){
         if(s[i]==' '){ ++c; continue; }
@@ -66,19 +66,20 @@ uint _head_space_count_for_list(const std::string& s){
     }
     return c;
 }
-uint _head_space_count(const std::string& s){
-    if(_is_hash(s)){ return _head_space_count_for_hash(s); }
-    return _head_space_count_for_list(s);
-}
-uint _head_space_count(const std::string& s, uint typeNum){
-    if(typeNum==NUM_HASH || typeNum==NUM_LIST_AND_HASH){ return _head_space_count_for_hash(s); }
-    return _head_space_count_for_list(s);
-}
+//uint _head_space_count(const std::string& s){
+//    if(_is_hash(s)){ return _head_space_count_for_hash(s); }
+//    return _head_space_count_for_list(s);
+//}
+//uint _head_space_count(const std::string& s, uint typeNum){
+//    if(typeNum==NUM_HASH || typeNum==NUM_LIST_AND_HASH){ return _head_space_count_for_hash(s); }
+//    return _head_space_count_for_list(s);
+//}
 
 //---
 
 struct command{
-    uint hsc; // head space count
+    uint hsc_lx; // hsc: head space count, _lx: list-index.
+    uint hsc_hx; // hsc: head space count, _hx: hash-index.
     char verb;
     std::string val1; // "list value" or "hash key"
     std::string val2; // "hash value" if Not required "sstd::terp::var"
@@ -88,7 +89,8 @@ struct command{
     std::string rawStr;
 };
 void _print(const struct command& cmd){
-    printf("hsc: %d\n",  cmd.hsc         );
+    printf("hsc_lx: %d\n",  cmd.hsc_lx   );
+    printf("hsc_hx: %d\n",  cmd.hsc_hx   );
     printf("verb: %c\n", cmd.verb        );
     printf("val1: %s\n", cmd.val1.c_str());
     printf("val2: %s\n", cmd.val2.c_str());
@@ -150,13 +152,15 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
         s = _rm_comment(s);
         if(s.size()==0){ continue; }
         uint type = _data_type(s);
-        uint hsc = _head_space_count(s, type);
+        uint hsc_lx = _head_space_count_for_list(s);
+        uint hsc_hx = _head_space_count_for_hash(s);
         std::string val1, val2; _get_value(val1, val2, s, type);
         
         struct command c;
         switch(type){
         case NUM_STR: {
-            c.hsc     = hsc;
+            c.hsc_lx  = hsc_lx;
+            c.hsc_hx  = hsc_hx;
             c.verb    = 's';
             c.val1    = val1;
             //c.val2    = val2;
@@ -166,7 +170,8 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
             v_cmd.push_back(c);
         } break;
         case NUM_LIST: {
-            c.hsc     = hsc;
+            c.hsc_lx  = hsc_lx;
+            c.hsc_hx  = hsc_hx;
             c.verb    = '-';
             c.val1    = val1;
             //c.val2    = val2;
@@ -176,7 +181,8 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
             v_cmd.push_back(c);
         } break;
         case NUM_HASH: {
-            c.hsc     = hsc;
+            c.hsc_lx  = hsc_lx;
+            c.hsc_hx  = hsc_hx;
             c.verb    = ':';
             c.val1    = val1;
             c.val2    = val2;
@@ -186,7 +192,8 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
             v_cmd.push_back(c);
         } break;
         case NUM_LIST_AND_HASH:{
-            c.hsc     = hsc;
+            c.hsc_lx  = hsc_lx;
+            c.hsc_hx  = hsc_hx;
             c.verb    = 'x'; // x: list x(and) hash: 
             c.val1    = "";
             c.val2    = "";
@@ -195,7 +202,8 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
             
             v_cmd.push_back(c);
             
-            c.hsc     = hsc;
+            c.hsc_lx  = hsc_lx;
+            c.hsc_hx  = hsc_hx;
             c.verb    = ':';
             c.val1    = val1;
             c.val2    = val2;
@@ -213,16 +221,19 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
 sstd::terp::var _construct_var(const std::vector<struct command>& v_cmd){
     sstd::terp::var ret;
     std::vector<sstd::void_ptr*> v_dst;
-    std::vector<uint> v_hsc;
+    std::vector<uint> v_hsc_lx; // v: vector, hsc: head space count, _l: list-index.
+    std::vector<uint> v_hsc_hx; // v: vector, hsc: head space count. _h: hash-index.
     v_dst.push_back(ret.p());
-    v_hsc.push_back(0);
+    v_hsc_lx.push_back(0);
 
     for(uint i=0; i<v_cmd.size(); ++i){
         _print(v_cmd[i]);
         sstd::terp::var var = sstd::terp::var( v_dst[v_dst.size()-1] );
-        uint hsc_base = v_hsc[v_hsc.size()-1];
+        uint hsc_base_lx = v_hsc_lx[v_hsc_lx.size()-1];
+        uint hsc_base_hx = v_hsc_hx[v_hsc_hx.size()-1];
         sstd::printn(v_dst);
-        sstd::printn(v_hsc);
+        sstd::printn(v_hsc_lx);
+        sstd::printn(v_hsc_hx);
         //printf("\n");
         
         // set dst type (if dst is sstd::num_null)
@@ -237,13 +248,15 @@ sstd::terp::var _construct_var(const std::vector<struct command>& v_cmd){
         }
 
         // check indent
-        if(v_cmd[i].hsc > hsc_base){
-            v_hsc.push_back(v_cmd[i].hsc);
+        if(v_cmd[i].hsc_lx > hsc_base_lx){
+            v_hsc_lx.push_back(v_cmd[i].hsc_lx);
+            v_hsc_hx.push_back(v_cmd[i].hsc_hx);
             --i;
             continue;
-        }else if(v_cmd[i].hsc < hsc_base){
+        }else if(v_cmd[i].hsc_lx < hsc_base_lx){
             v_dst.pop_back();
-            v_hsc.pop_back();
+            v_hsc_lx.pop_back();
+            v_hsc_hx.pop_back();
             --i;
             continue;
         }
