@@ -298,7 +298,7 @@ k3:
 k4: v4
 )";
     sstd::terp::var yml = sstd::yaml_from_str(s); // TEST THIS LINE
-    sstd::printn(yml);
+    //sstd::printn(yml);
 
     //---
     
@@ -315,7 +315,7 @@ k4: v4
     ans["k3"][1]["k32"][2] = "v323";
     ans["k3"][2] = "v33";
     ans["k4"] = "v4";
-    sstd::printn(ans);
+    //sstd::printn(ans);
     
     //---
     
