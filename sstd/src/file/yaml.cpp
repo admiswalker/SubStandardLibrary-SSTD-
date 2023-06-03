@@ -58,7 +58,6 @@ uint _head_space_count_for_hash(const std::string& s){
     return c;
 }
 uint _head_space_count_for_list(const std::string& s){
-//    if(_is_hash(s)){ return _head_space_count_for_hash(s); }
     uint c=0;
     for(uint i=0; i<s.size(); ++i){
         if(s[i]==' '){ ++c; continue; }
@@ -66,6 +65,17 @@ uint _head_space_count_for_list(const std::string& s){
     }
     return c;
 }
+uint _hsc_lx(const std::string& s){
+    return _head_space_count_for_list(s);
+}
+uint _hsc_hx(const std::string& s){
+    if(_is_hash(s)){
+        return _head_space_count_for_hash(s);
+    }else{
+        return _head_space_count_for_list(s);
+    }
+}
+
 //uint _head_space_count(const std::string& s){
 //    if(_is_hash(s)){ return _head_space_count_for_hash(s); }
 //    return _head_space_count_for_list(s);
@@ -152,8 +162,8 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
         s = _rm_comment(s);
         if(s.size()==0){ continue; }
         uint type = _data_type(s);
-        uint hsc_lx = _head_space_count_for_list(s);
-        uint hsc_hx = _head_space_count_for_hash(s);
+        uint hsc_lx = _hsc_lx(s);
+        uint hsc_hx = _hsc_hx(s);
         std::string val1, val2; _get_value(val1, val2, s, type);
         
         struct command c;
@@ -221,11 +231,12 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
 sstd::terp::var _construct_var(const std::vector<struct command>& v_cmd){
     sstd::terp::var ret;
     std::vector<sstd::void_ptr*> v_dst;
-    std::vector<uint> v_hsc_lx; // v: vector, hsc: head space count, _l: list-index.
-    std::vector<uint> v_hsc_hx; // v: vector, hsc: head space count. _h: hash-index.
+    std::vector<uint> v_hsc_lx; // v: vector, hsc: head space count, _lx: list-index.
+    std::vector<uint> v_hsc_hx; // v: vector, hsc: head space count. _hx: hash-index.
     v_dst.push_back(ret.p());
     v_hsc_lx.push_back(0);
-
+    v_hsc_hx.push_back(0);
+    
     for(uint i=0; i<v_cmd.size(); ++i){
         _print(v_cmd[i]);
         sstd::terp::var var = sstd::terp::var( v_dst[v_dst.size()-1] );
@@ -234,6 +245,7 @@ sstd::terp::var _construct_var(const std::vector<struct command>& v_cmd){
         sstd::printn(v_dst);
         sstd::printn(v_hsc_lx);
         sstd::printn(v_hsc_hx);
+        sstd::printn(ret);
         //printf("\n");
         
         // set dst type (if dst is sstd::num_null)
@@ -246,28 +258,86 @@ sstd::terp::var _construct_var(const std::vector<struct command>& v_cmd){
             default: { sstd::pdbg_err("Unexpected data type\n"); } break;
             }
         }
-
-        // check indent
+        /*
+        // check indent for list
         if(v_cmd[i].hsc_lx > hsc_base_lx){
             v_hsc_lx.push_back(v_cmd[i].hsc_lx);
-            v_hsc_hx.push_back(v_cmd[i].hsc_hx);
             --i;
             continue;
         }else if(v_cmd[i].hsc_lx < hsc_base_lx){
             v_dst.pop_back();
             v_hsc_lx.pop_back();
+            --i;
+            continue;
+        }
+        // check indent for hash
+        if(v_cmd[i].hsc_hx > hsc_base_hx){
+            v_hsc_hx.push_back(v_cmd[i].hsc_hx);
+            --i;
+            continue;
+        }else if(v_cmd[i].hsc_hx < hsc_base_hx){
+            v_dst.pop_back();
             v_hsc_hx.pop_back();
             --i;
             continue;
         }
-        
+        //*/
+        switch(var.typeNum()){
+        case sstd::num_vec_void_ptr: {
+            // check indent for list
+            if(v_cmd[i].hsc_lx > hsc_base_lx){
+                v_hsc_lx.push_back(v_cmd[i].hsc_lx);
+                --i;
+                continue;
+            }else if(v_cmd[i].hsc_lx < hsc_base_lx){
+                v_dst.pop_back();
+                v_hsc_lx.pop_back();
+                --i;
+                continue;
+            }
+        } break;
+        case sstd::num_hash_str_void_ptr: {
+            // check indent for hash
+            if(v_cmd[i].hsc_hx > hsc_base_hx){
+                v_hsc_hx.push_back(v_cmd[i].hsc_hx);
+                --i;
+                continue;
+            }else if(v_cmd[i].hsc_hx < hsc_base_hx){
+                v_dst.pop_back();
+                v_hsc_hx.pop_back();
+                --i;
+                continue;
+            }
+        } break;
+        case sstd::num_null: {} break;
+        default: { sstd::pdbg_err("Unexpected data type\n"); } break;
+        }
+        /*
+        // v_dst pop_back()
+        switch(var.typeNum()){
+        case sstd::num_vec_void_ptr: { // for sstd::terp::list()
+            if(v_cmd[i].hsc_lx < hsc_base_lx){
+                v_dst.pop_back();
+            }
+            continue;
+        } break;
+        case sstd::num_hash_str_void_ptr: { // for sstd::terp::hash()
+            if(v_cmd[i].hsc_hx < hsc_base_hx){
+                v_dst.pop_back();
+            }
+            continue;
+        } break;
+        default: { sstd::pdbg_err("Unexpected data type\n"); } break;
+        }
+        */
+
         // set dst and value
         switch(v_cmd[i].verb){
-        case 's': {
+        case 's': { // 's': string
             if(var.typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data. (String data type can only take one data.)\n"); break; }
             var = v_cmd[i].val1.c_str();
         } break;
-        case '-': {
+        case '-': { // '-': list
             if(v_cmd[i].val1.size()!=0){
                 var.push_back( v_cmd[i].val1.c_str() );
             }else{
@@ -275,11 +345,11 @@ sstd::terp::var _construct_var(const std::vector<struct command>& v_cmd){
                 v_dst.push_back( var[var.size()-1].p() );
             }
         } break;
-        case 'x': {
+        case 'x': { // 'x': list-and-hash
             var.push_back( sstd::terp::hash() );
             v_dst.push_back( var[var.size()-1].p() );
         } break;
-        case ':': {
+        case ':': { // ':': hash
             if(v_cmd[i].val2.size()!=0){
                 var[ v_cmd[i].val1.c_str() ] = v_cmd[i].val2.c_str();
             }else{
