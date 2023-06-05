@@ -150,6 +150,7 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
         s = ls[i];
         s = _rm_comment(s);
         if(s.size()==0){ continue; }
+        if(s=="..."){ return v_cmd; } // detect end marker
         uint type = _data_type(s);
         uint hsc_lx = _hsc_lx(s);
         uint hsc_hx = _hsc_hx(s);
