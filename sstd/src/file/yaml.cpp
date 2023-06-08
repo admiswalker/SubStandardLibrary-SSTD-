@@ -115,6 +115,16 @@ uint _data_type(std::string s){
     
     return NUM_STR;
 }
+uint _data_sub_type(std::string s){
+    bool is_v; // |: vertical line
+    bool is_g; // >: greater than sign
+    
+    bool is_p; // p: plus
+    bool is_m; // m: minus
+    uint num;
+    
+    return NUM_NULL;
+}
 std::vector<std::string> _get_verb(std::string s){
     std::vector<std::string> v;
     if(sstd::charIn('-', s)){ v.push_back("-"); }
@@ -142,10 +152,32 @@ void _get_value(std::string& ret_val1, std::string& ret_val2, std::string s, uin
     }
 }
 
+std::string _get_multi_line_str(const std::vector<std::string>& ls, uint& i){
+    std::string ret;
+    
+    for(; i<ls.size(); ++i){
+        std::string s;
+        s = ls[i];
+        s = _rm_comment(s);
+        if(s.size()==0){ continue; }
+        if(s=="..."){ --i; return ret; } // detect end marker
+        uint type = _data_type(s);
+        switch(type){
+        case NUM_STR: {
+            ret += sstd::strip(s) + "\n";
+        } break;
+        default: { --i; return ret; } break;
+        }
+    }
+    
+    return ret;
+}
+
 std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
     std::vector<struct command> v_cmd;
-    
+
     for(uint i=0; i<ls.size(); ++i){
+        sstd::printn(i);
         std::string s;
         s = ls[i];
         s = _rm_comment(s);
@@ -155,7 +187,19 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
         uint hsc_lx = _hsc_lx(s);
         uint hsc_hx = _hsc_hx(s);
         std::string val1, val2; _get_value(val1, val2, s, type);
-        
+        //*
+        if(val1=="|"){
+            // case: "- |"
+            sstd::printn(val1);
+            ++i;
+            val1 = _get_multi_line_str(ls, i);
+            sstd::printn(val1);
+        }
+        if(val2=="|"){
+            // case: "hash-key: |"
+            //val2 = ;
+        }
+        //*/
         struct command c;
         switch(type){
         case NUM_STR: {
@@ -184,8 +228,8 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
             c.hsc_lx  = hsc_lx;
             c.hsc_hx  = hsc_hx;
             c.verb    = ':';
-            c.val1    = val1;
-            c.val2    = val2;
+            c.val1    = val1; // key
+            c.val2    = val2; // value
             c.lineNum = i;     // debug info
             c.rawStr  = ls[i]; // debug info
             
@@ -205,8 +249,8 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
             c.hsc_lx  = hsc_lx;
             c.hsc_hx  = hsc_hx;
             c.verb    = ':';
-            c.val1    = val1;
-            c.val2    = val2;
+            c.val1    = val1; // key
+            c.val2    = val2; // value
             c.lineNum = i;     // debug info
             c.rawStr  = ls[i]; // debug info
             
@@ -318,7 +362,8 @@ sstd::terp::var _construct_var(const std::vector<struct command>& v_cmd){
 sstd::terp::var sstd::yaml_from_str(const        char* s){
     std::vector<std::string> ls = sstd::splitByLine(s); // ls: line string
     std::vector<struct command> v_cmd = _parse_yaml(ls);
-    //_print(v_cmd);
+    _print(v_cmd);
+    //sstd::terp::var ret;
     sstd::terp::var ret = _construct_var(v_cmd);
     
     return ret;
