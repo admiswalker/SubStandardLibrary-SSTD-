@@ -188,19 +188,20 @@ std::string _get_multi_line_str(const uint hsc_prev, const std::string& opt, int
             if(indent_width>=0){
                 uint hsc = _head_space_count(s);
                 if(hsc+indent_width <= hsc_prev){ sstd::pdbg_err("indent indecation is too large."); }
-                
-    sstd::printn(hsc);
-    sstd::printn(indent_width);
-    sstd::printn(hsc_prev);
-    if(hsc+indent_width == hsc_prev+1){ separator = '\n'; } // for "- >1", "- >2"
-    if(hsc_prev+indent_width == hsc){
-        s = sstd::strip(s);
-        
-    }else{
-                s = sstd::rstrip(s);
-                if(indent_width < (int)s.size()){ s = &s[indent_width]; }
-    }
-                
+
+                sstd::printn(hsc);
+                sstd::printn(indent_width);
+                sstd::printn(hsc_prev);
+                //if(hsc+indent_width == hsc_prev+1){ separator = '\n'; } // for "- >[Num]", "- >[Num]"
+                if(hsc_prev+indent_width == hsc){
+                    s = sstd::strip(s); // for "- >[Num]", "- >[Num]"
+                }else{
+                    s = sstd::rstrip(s);
+                    if(indent_width < (int)s.size()){
+                        separator = '\n';
+                        s = &s[hsc_prev+indent_width];
+                    }
+                }
             }else{
                 s = sstd::strip(s);
             }
