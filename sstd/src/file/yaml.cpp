@@ -177,7 +177,6 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
     std::vector<struct command> v_cmd;
 
     for(uint i=0; i<ls.size(); ++i){
-        sstd::printn(i);
         std::string s;
         s = ls[i];
         s = _rm_comment(s);
@@ -190,10 +189,8 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
         //*
         if(val1=="|"){
             // case: "- |"
-            sstd::printn(val1);
             ++i;
             val1 = _get_multi_line_str(ls, i);
-            sstd::printn(val1);
         }
         if(val2=="|"){
             // case: "hash-key: |"
@@ -362,7 +359,7 @@ sstd::terp::var _construct_var(const std::vector<struct command>& v_cmd){
 sstd::terp::var sstd::yaml_from_str(const        char* s){
     std::vector<std::string> ls = sstd::splitByLine(s); // ls: line string
     std::vector<struct command> v_cmd = _parse_yaml(ls);
-    _print(v_cmd);
+    //_print(v_cmd);
     //sstd::terp::var ret;
     sstd::terp::var ret = _construct_var(v_cmd);
     
