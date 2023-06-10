@@ -184,23 +184,19 @@ std::string _get_multi_line_str(const std::string& opt, const std::vector<std::s
         uint type = _data_type(s);
         if(type==NUM_STR){
             v_tmp.push_back(sstd::strip(s));
-            //ret += sstd::strip(s) + separator;
         }else{
             --i;
             break;
         }
     }
-    sstd::printn(v_tmp);
 
     if      (opt=="|"  || opt==">" ){
         _rremove_ow(v_tmp);
         ret = _join(v_tmp, separator);
-        //sstd::rstrip_ow(ret, '\n'); // remove "separator" at the end of the string
         ret += "\n";
     }else if(opt=="|-" || opt==">-"){
         _rremove_ow(v_tmp);
         ret = _join(v_tmp, separator);
-        //sstd::rstrip_ow(ret, '\n'); // remove "separator" at the end of the string
     }else if(opt=="|+" || opt==">+"){
         uint cnt = _rcount_empty(v_tmp) + 1;
         _rremove_ow(v_tmp);
@@ -208,14 +204,7 @@ std::string _get_multi_line_str(const std::string& opt, const std::vector<std::s
     }else{
         sstd::pdbg_err("Unexpected case\n");
     }
-    /*
-    if      (opt=="|"  || opt==">" ){
-        sstd::rstrip_ow(ret, '\n'); // remove "separator" at the end of the string
-        ret += "\n";
-    }else if(opt=="|-" || opt==">-"){
-        sstd::rstrip_ow(ret, '\n'); // remove "separator" at the end of the string
-    }
-    */
+    
     return ret;
 }
 void _check_val_and_overwrite_multi_line_str(std::string& val_rw, const std::vector<std::string>& ls, uint& i){

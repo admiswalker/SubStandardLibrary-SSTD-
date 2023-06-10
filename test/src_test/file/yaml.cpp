@@ -480,7 +480,7 @@ TEST(yaml, multi_line_str_by_list_greater_minus){ // - >-
 - c
 )";
     sstd::terp::var yml = sstd::yaml_from_str(s); // TEST THIS LINE
-    sstd::printn(yml);
+    //sstd::printn(yml);
 
     //---
     
@@ -507,7 +507,7 @@ TEST(yaml, multi_line_str_by_list_greater_plus){ // - >+
 - c
 )";
     sstd::terp::var yml = sstd::yaml_from_str(s); // TEST THIS LINE
-    sstd::printn(yml);
+    //sstd::printn(yml);
 
     //---
     
