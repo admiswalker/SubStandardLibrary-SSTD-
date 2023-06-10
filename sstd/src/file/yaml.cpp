@@ -168,7 +168,7 @@ std::string _join(const std::vector<std::string>& v, const char separator){
     }
     return ret;
 }
-std::string _get_multi_line_str(const std::string& opt, int indent_width, const std::vector<std::string>& ls, uint& i){
+std::string _get_multi_line_str(const uint hsc_prev, const std::string& opt, int indent_width, const std::vector<std::string>& ls, uint& i){
     std::string ret;
     std::vector<std::string> v_tmp;
 
@@ -185,6 +185,9 @@ std::string _get_multi_line_str(const std::string& opt, int indent_width, const 
         uint type = _data_type(s);
         if(type==NUM_STR){
             if(indent_width>=0){
+                uint hsc = _head_space_count(s);
+                if(hsc+indent_width <= hsc_prev){ sstd::pdbg_err("indent indecation is too large."); }
+                
                 s = sstd::rstrip(s);
                 if(indent_width < (int)s.size()){ s = &s[indent_width]; }
             }else{
@@ -214,10 +217,7 @@ std::string _get_multi_line_str(const std::string& opt, int indent_width, const 
 
     return ret;
 }
-void _check_val_and_overwrite_multi_line_str(std::string& val_rw, const std::vector<std::string>& ls, uint& i){
-//    std::string val; int num=0;
-//    val_rw = val;
-//    sstd::printn(val_rw);
+void _check_val_and_overwrite_multi_line_str(const uint hsc_prev, std::string& val_rw, const std::vector<std::string>& ls, uint& i){
     int indent_width = -1;
 
     if      (val_rw.starts_with("|-") || val_rw.starts_with(">-") ||    // case: "- |-123", "- >-123", "hash-key: |-123" or "hash-key: >-123"
@@ -227,19 +227,21 @@ void _check_val_and_overwrite_multi_line_str(std::string& val_rw, const std::vec
         if(val_rw.size()>=3){
             indent_width = std::stoi(&val_rw[2]);
         }
-        val_rw = _get_multi_line_str(opt, indent_width, ls, i);
+        val_rw = _get_multi_line_str(hsc_prev, opt, indent_width, ls, i);
     }else if(val_rw.starts_with("|" ) || val_rw.starts_with(">" )){ // case: "- |123",  "- >123",  "hash-key: |123"  or "hash-key: >123"
         ++i;
         std::string opt; opt += val_rw[0];
         if(val_rw.size()>=2){
             indent_width = std::stoi(&val_rw[1]);
         }
-        val_rw = _get_multi_line_str(opt, indent_width, ls, i);
+        val_rw = _get_multi_line_str(hsc_prev, opt, indent_width, ls, i);
     }
 }
 
 std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
     std::vector<struct command> v_cmd;
+    uint hsc_lx_prev = 0;
+    uint hsc_hx_prev = 0;
 
     for(uint i=0; i<ls.size(); ++i){
         std::string s;
@@ -253,8 +255,8 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
         std::string val1, val2; _get_value(val1, val2, s, type);
 
         // for multiple line string
-        _check_val_and_overwrite_multi_line_str(val1, ls, i); // for list (val1=="|0123" or val1=="|-0123" val1=="|+0123")
-        _check_val_and_overwrite_multi_line_str(val2, ls, i); // for hash (val2=="|0123" or val2=="|-0123" val2=="|+0123")
+        _check_val_and_overwrite_multi_line_str(hsc_lx_prev, val1, ls, i); // for list (val1=="|0123" or val1=="|-0123" val1=="|+0123")
+        _check_val_and_overwrite_multi_line_str(hsc_hx_prev, val2, ls, i); // for hash (val2=="|0123" or val2=="|-0123" val2=="|+0123")
 
         struct command c;
         switch(type){
@@ -314,6 +316,9 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
         } break;
         default: { sstd::pdbg_err("ERROR\n"); } break;
         };
+
+        hsc_lx_prev = hsc_lx;
+        hsc_hx_prev = hsc_hx;
     }
     
     return v_cmd;
