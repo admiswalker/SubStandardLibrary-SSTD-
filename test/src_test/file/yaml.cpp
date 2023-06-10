@@ -433,10 +433,67 @@ TEST(yaml, multi_line_str_by_list_vertical_line_plus){ // - |+
     ASSERT_TRUE(yml==ans);
 }
 
-// TEST(yaml, multi_line_str_by_list_vertical_line_num_0){ // - |0 (Can't set 0)
+//TEST(yaml, multi_line_str_by_list_vertical_line_num_0){ // - |0 (can not set 0. can not set smaller value than indent spaces)
+//}
+
+TEST(yaml, multi_line_str_by_list_vertical_line_num_1){ // - |1
+    std::string s=R"(
+- a # comment
+- |1
+  b1
+  b2
+  b3
+
+
+- c
+)";
+    sstd::terp::var yml = sstd::yaml_from_str(s); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(3);
+    ans[0] = "a";
+    ans[1] = " b1\n b2\n b3\n";
+    ans[2] = "c";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+
+TEST(yaml, multi_line_str_by_list_vertical_line_num_2){ // - |2
+    std::string s=R"(
+- a # comment
+- |2
+  b1
+  b2
+  b3
+
+
+- c
+)";
+    sstd::terp::var yml = sstd::yaml_from_str(s); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(3);
+    ans[0] = "a";
+    ans[1] = "b1\nb2\nb3\n";
+    ans[2] = "c";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+
+// TEST(yaml, multi_line_str_by_list_vertical_line_minus_num_0){ // - |-0
 // }
 
-// TEST(yaml, multi_line_str_by_list_vertical_line_num_2){ // - |2
+// TEST(yaml, multi_line_str_by_list_vertical_line_plus_num_0){ // - |+0
 // }
 
 //---

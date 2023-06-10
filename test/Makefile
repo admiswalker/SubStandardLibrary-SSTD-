@@ -1,7 +1,7 @@
 # Options: コンパイルオプション
 CFLAGS  = -L../sstd/lib -I../sstd/include -lsstd # sstd
 CFLAGS += -L../googletest-master/build/lib -I../googletest-master/googletest/include -lgtest -pthread # google test
-CFLAGS += -std=c++11 # CFLAGS += -std=gnu++0x
+CFLAGS += -std=c++2a # C++20
 CFLAGS += -Wall
 CFLAGS += -O3
 

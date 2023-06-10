@@ -1,5 +1,6 @@
-#include <vector>
+#include <cassert>
 #include <string>
+#include <vector>
 
 #include "yaml.hpp"
 
@@ -143,7 +144,7 @@ void _get_value(std::string& ret_val1, std::string& ret_val2, std::string s, uin
     }
 }
 
-void _rremove_ow(std::vector<std::string>& v){ // remove tail empty elements
+void _rremove_empty_ow(std::vector<std::string>& v){ // remove tail empty elements
     for(int i=v.size()-1; i>=0; --i){
         if(v[i].size()!=0){ break; }
         v.pop_back();
@@ -167,7 +168,7 @@ std::string _join(const std::vector<std::string>& v, const char separator){
     }
     return ret;
 }
-std::string _get_multi_line_str(const std::string& opt, const std::vector<std::string>& ls, uint& i){
+std::string _get_multi_line_str(const std::string& opt, int indent_width, const std::vector<std::string>& ls, uint& i){
     std::string ret;
     std::vector<std::string> v_tmp;
 
@@ -183,7 +184,13 @@ std::string _get_multi_line_str(const std::string& opt, const std::vector<std::s
         
         uint type = _data_type(s);
         if(type==NUM_STR){
-            v_tmp.push_back(sstd::strip(s));
+            if(indent_width>=0){
+                s = sstd::rstrip(s);
+                if(indent_width < (int)s.size()){ s = &s[indent_width]; }
+            }else{
+                s = sstd::strip(s);
+            }
+            v_tmp.push_back(s);
         }else{
             --i;
             break;
@@ -191,32 +198,54 @@ std::string _get_multi_line_str(const std::string& opt, const std::vector<std::s
     }
 
     if      (opt=="|"  || opt==">" ){
-        _rremove_ow(v_tmp);
+        _rremove_empty_ow(v_tmp);
         ret = _join(v_tmp, separator);
         ret += "\n";
     }else if(opt=="|-" || opt==">-"){
-        _rremove_ow(v_tmp);
+        _rremove_empty_ow(v_tmp);
         ret = _join(v_tmp, separator);
     }else if(opt=="|+" || opt==">+"){
         uint cnt = _rcount_empty(v_tmp) + 1;
-        _rremove_ow(v_tmp);
+        _rremove_empty_ow(v_tmp);
         ret = _join(v_tmp, separator) + std::string(cnt, '\n');
     }else{
         sstd::pdbg_err("Unexpected case\n");
     }
-    
+
     return ret;
 }
 void _check_val_and_overwrite_multi_line_str(std::string& val_rw, const std::vector<std::string>& ls, uint& i){
-    if      (val_rw=="|"  || val_rw==">" ){ // case: "- |",  "- >"  or "hash-key: |"
+//    std::string val; int num=0;
+//    val_rw = val;
+//    sstd::printn(val_rw);
+    int indent_width = -1;
+
+    if      (val_rw.starts_with("|-") || val_rw.starts_with(">-")){ // case: "- |-123", "- >-123", "hash-key: |-123" or "hash-key: >-123"
         ++i;
-        val_rw = _get_multi_line_str(val_rw, ls, i);
-    }else if(val_rw=="|-" || val_rw==">-"){ // case: "- |-", "- >-" or "hash-key: |-"
+        std::string opt; opt += val_rw[0]; opt += val_rw[1];
+//        if(val_rw.size()>=3){
+//            std::string s = &val_rw[2];
+//            int num = std::stoi(&val_rw[1]);
+//            sstd::printn(num);
+//        }
+        val_rw = _get_multi_line_str(opt, indent_width, ls, i);
+    }else if(val_rw.starts_with("|+") || val_rw.starts_with(">+")){ // case: "- |+123", "- >+123", "hash-key: |+123" or "hash-key: >+123"
         ++i;
-        val_rw = _get_multi_line_str(val_rw, ls, i);
-    }else if(val_rw=="|+" || val_rw==">+"){ // case: "- |+", "- >+" or "hash-key: |+"
+        std::string opt; opt += val_rw[0]; opt += val_rw[1];
+//        if(val_rw.size()>=3){
+//            std::string s = &val_rw[2];
+//            int num = std::stoi(&val_rw[1]);
+//            sstd::printn(num);
+//        }
+        val_rw = _get_multi_line_str(opt, indent_width, ls, i);
+    }else if(val_rw.starts_with("|" ) || val_rw.starts_with(">" )){ // case: "- |123",  "- >123",  "hash-key: |123"  or "hash-key: >123"
         ++i;
-        val_rw = _get_multi_line_str(val_rw, ls, i);
+        std::string opt; opt += val_rw[0];
+        if(val_rw.size()>=2){
+            indent_width = std::stoi(&val_rw[1]);
+            sstd::printn(indent_width);
+        }
+        val_rw = _get_multi_line_str(opt, indent_width, ls, i);
     }
 }
 
@@ -235,8 +264,8 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
         std::string val1, val2; _get_value(val1, val2, s, type);
 
         // for multiple line string
-        _check_val_and_overwrite_multi_line_str(val1, ls, i); // for list (val1=="|" or val1=="|-" val1=="|+")
-        _check_val_and_overwrite_multi_line_str(val2, ls, i); // for hash (val2=="|" or val2=="|-" val2=="|+")
+        _check_val_and_overwrite_multi_line_str(val1, ls, i); // for list (val1=="|0123" or val1=="|-0123" val1=="|+0123")
+        _check_val_and_overwrite_multi_line_str(val2, ls, i); // for hash (val2=="|0123" or val2=="|-0123" val2=="|+0123")
 
         struct command c;
         switch(type){
