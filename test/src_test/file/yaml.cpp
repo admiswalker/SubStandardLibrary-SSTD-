@@ -620,14 +620,86 @@ k3: c
 
 //---
 
-// TEST(yaml, multi_line_str_by_list_greater){ // : >
-// }
+TEST(yaml, multi_line_str_by_hash_greater){ // : >
+    std::string s=R"(
+k1: a # comment
+k2: >
+  b1
+  b2
+  b3
 
-// TEST(yaml, multi_line_str_by_list_greater_minus){ // : >-
-// }
 
-// TEST(yaml, multi_line_str_by_list_greater_plus){ // : >+
-// }
+k3: c
+)";
+    sstd::terp::var yml = sstd::yaml_from_str(s); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["k1"] = "a";
+    ans["k2"] = "b1 b2 b3\n";
+    ans["k3"] = "c";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+
+TEST(yaml, multi_line_str_by_hash_greater_minus){ // : >-
+    std::string s=R"(
+k1: a # comment
+k2: >-
+  b1
+  b2
+  b3
+
+
+k3: c
+)";
+    sstd::terp::var yml = sstd::yaml_from_str(s); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["k1"] = "a";
+    ans["k2"] = "b1 b2 b3";
+    ans["k3"] = "c";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+
+TEST(yaml, multi_line_str_by_hash_greater_plus){ // : >+
+    std::string s=R"(
+k1: a # comment
+k2: >+
+  b1
+  b2
+  b3
+
+
+k3: c
+)";
+    sstd::terp::var yml = sstd::yaml_from_str(s); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["k1"] = "a";
+    ans["k2"] = "b1 b2 b3\n\n\n";
+    ans["k3"] = "c";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
 
 // TEST(yaml, multi_line_str_by_list_greater_num_0){ // : >0 (Can't set 0)
 // }
