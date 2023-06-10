@@ -858,8 +858,35 @@ k3: c
     ASSERT_TRUE(yml==ans);
 }
 
-// TEST(yaml, multi_line_str_by_hash_vertical_line_num_0){ // : |0 (Can't set 0)
+// TEST(yaml, multi_line_str_by_hash_vertical_line_num_0){ // : |0 (Can't set 0. Because of the indent under hash struct is equal or larger than 1)
 // }
+
+TEST(yaml, multi_line_str_by_hash_vertical_line_num_1){ // : |1
+    std::string s=R"(
+k1: a # comment
+k2: |1
+  b1
+  b2
+  b3
+
+
+k3: c
+)";
+    sstd::terp::var yml = sstd::yaml_from_str(s); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["k1"] = "a";
+    ans["k2"] = " b1\n b2\n b3\n";
+    ans["k3"] = "c";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
 
 // TEST(yaml, multi_line_str_by_hash_vertical_line_num_2){ // : |2
 // }
@@ -947,10 +974,10 @@ k3: c
     ASSERT_TRUE(yml==ans);
 }
 
-// TEST(yaml, multi_line_str_by_list_greater_num_0){ // : >0 (Can't set 0)
+// TEST(yaml, multi_line_str_by_list_greater_num_0){ // : >0 (Can't set 0. Because of the indent under hash struct is equal or larger than 1)
 // }
 
-// TEST(yaml, multi_line_str_by_list_greater_num_2){ // : >2 (Can't set 0)
+// TEST(yaml, multi_line_str_by_list_greater_num_2){ // : >2
 // }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
