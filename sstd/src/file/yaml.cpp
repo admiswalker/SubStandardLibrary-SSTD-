@@ -149,7 +149,6 @@ std::string _get_multi_line_str(const std::vector<std::string>& ls, uint& i, con
         std::string s;
         s = ls[i];
         s = _rm_comment(s);
-        if(s.size()==0){ continue; }
         if(s=="..."){ --i; return ret; } // detect end marker
         
         uint type = _data_type(s);
@@ -161,8 +160,11 @@ std::string _get_multi_line_str(const std::vector<std::string>& ls, uint& i, con
         }
     }
 
-    if(opt=="|-"){
-        ret.pop_back();
+    if(opt=="|"){
+        sstd::rstrip_ow(ret, '\n'); // remove "\n" at the end of the string
+        ret += "\n";
+    }else if(opt=="|-"){
+        sstd::rstrip_ow(ret, '\n'); // remove "\n" at the end of the string
     }
     
     return ret;
@@ -188,6 +190,10 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
             val1 = _get_multi_line_str(ls, i, val1);
         }
         if(val1=="|-"){ // case: "- |-"
+            ++i;
+            val1 = _get_multi_line_str(ls, i, val1);
+        }
+        if(val1=="|+"){ // case: "- |+"
             ++i;
             val1 = _get_multi_line_str(ls, i, val1);
         }
