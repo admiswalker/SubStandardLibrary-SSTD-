@@ -145,6 +145,10 @@ void _get_value(std::string& ret_val1, std::string& ret_val2, std::string s, uin
 
 std::string _get_multi_line_str(const std::string& opt, const std::vector<std::string>& ls, uint& i){
     std::string ret;
+
+    char separator='\n';
+    //if(sstd::charIn('|', opt)){ separator = '\n'; }
+    if(sstd::charIn('>', opt)){ separator =  ' '; }
     
     for(; i<ls.size(); ++i){
         std::string s;
@@ -154,30 +158,30 @@ std::string _get_multi_line_str(const std::string& opt, const std::vector<std::s
         
         uint type = _data_type(s);
         if(type==NUM_STR){
-            ret += sstd::strip(s) + "\n";
+            ret += sstd::strip(s) + separator;
         }else{
             --i;
             break;
         }
     }
 
-    if(opt=="|"){
-        sstd::rstrip_ow(ret, '\n'); // remove "\n" at the end of the string
+    if      (opt=="|"  || opt==">" ){
+        sstd::rstrip_ow(ret, separator); // remove "separator" at the end of the string
         ret += "\n";
-    }else if(opt=="|-"){
-        sstd::rstrip_ow(ret, '\n'); // remove "\n" at the end of the string
+    }else if(opt=="|-" || opt==">-"){
+        sstd::rstrip_ow(ret, separator); // remove "separator" at the end of the string
     }
     
     return ret;
 }
 void _check_val_and_overwrite_multi_line_str(std::string& val_rw, const std::vector<std::string>& ls, uint& i){
-    if(val_rw=="|"){        // case: "- |"  or "hash-key: |"
+    if      (val_rw=="|"  || val_rw==">" ){ // case: "- |",  "- >"  or "hash-key: |"
         ++i;
         val_rw = _get_multi_line_str(val_rw, ls, i);
-    }else if(val_rw=="|-"){ // case: "- |-" or "hash-key: |-"
+    }else if(val_rw=="|-" || val_rw==">-"){ // case: "- |-", "- >-" or "hash-key: |-"
         ++i;
         val_rw = _get_multi_line_str(val_rw, ls, i);
-    }else if(val_rw=="|+"){ // case: "- |+" or "hash-key: |+"
+    }else if(val_rw=="|+" || val_rw==">+"){ // case: "- |+", "- >+" or "hash-key: |+"
         ++i;
         val_rw = _get_multi_line_str(val_rw, ls, i);
     }

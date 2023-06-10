@@ -441,8 +441,32 @@ TEST(yaml, multi_line_str_by_list_vertical_line_plus){ // - |+
 
 //---
 
-// TEST(yaml, multi_line_str_by_list_greater){ // - >
-// }
+TEST(yaml, multi_line_str_by_list_greater){ // - >
+    std::string s=R"(
+- a # comment
+- >
+  b1
+  b2
+  b3
+
+
+- c
+)";
+    sstd::terp::var yml = sstd::yaml_from_str(s); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(3);
+    ans[0] = "a";
+    ans[1] = "b1 b2 b3\n";
+    ans[2] = "c";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
 
 // TEST(yaml, multi_line_str_by_list_greater_minus){ // - >-
 // }
