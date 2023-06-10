@@ -41,8 +41,9 @@ bool _is_hash(const std::string& s){
 }
 bool _is_list(const std::string& s){
     for(uint i=0; i<s.size(); ++i){
-        if(s[i]==' '){ continue; }
-        if(s[i]=='-'){ return true; }
+        if      (s[i]==' '){ continue;
+        }else if(s[i]=='-'){ return true;
+        }else              { return false; }
     }
     return false;
 }
@@ -142,7 +143,7 @@ void _get_value(std::string& ret_val1, std::string& ret_val2, std::string s, uin
     }
 }
 
-std::string _get_multi_line_str(const std::vector<std::string>& ls, uint& i, const std::string& opt){
+std::string _get_multi_line_str(const std::string& opt, const std::vector<std::string>& ls, uint& i){
     std::string ret;
     
     for(; i<ls.size(); ++i){
@@ -169,6 +170,18 @@ std::string _get_multi_line_str(const std::vector<std::string>& ls, uint& i, con
     
     return ret;
 }
+void _check_val_and_overwrite_multi_line_str(std::string& val_rw, const std::vector<std::string>& ls, uint& i){
+    if(val_rw=="|"){        // case: "- |"  or "hash-key: |"
+        ++i;
+        val_rw = _get_multi_line_str(val_rw, ls, i);
+    }else if(val_rw=="|-"){ // case: "- |-" or "hash-key: |-"
+        ++i;
+        val_rw = _get_multi_line_str(val_rw, ls, i);
+    }else if(val_rw=="|+"){ // case: "- |+" or "hash-key: |+"
+        ++i;
+        val_rw = _get_multi_line_str(val_rw, ls, i);
+    }
+}
 
 std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
     std::vector<struct command> v_cmd;
@@ -184,24 +197,9 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
         uint hsc_hx = _hsc_hx(s);
         std::string val1, val2; _get_value(val1, val2, s, type);
 
-        // for list
-        if(val1=="|"){ // case: "- |"
-            ++i;
-            val1 = _get_multi_line_str(ls, i, val1);
-        }
-        if(val1=="|-"){ // case: "- |-"
-            ++i;
-            val1 = _get_multi_line_str(ls, i, val1);
-        }
-        if(val1=="|+"){ // case: "- |+"
-            ++i;
-            val1 = _get_multi_line_str(ls, i, val1);
-        }
-
-        // for hash
-        if(val2=="|"){ // case: "hash-key: |"
-            //val2 = ;
-        }
+        // for multiple line string
+        _check_val_and_overwrite_multi_line_str(val1, ls, i); // for list (val1=="|" or val1=="|-" val1=="|+")
+        _check_val_and_overwrite_multi_line_str(val2, ls, i); // for hash (val2=="|" or val2=="|-" val2=="|+")
 
         struct command c;
         switch(type){
