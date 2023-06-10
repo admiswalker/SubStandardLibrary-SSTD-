@@ -188,7 +188,7 @@ std::string _get_multi_line_str(const uint hsc_prev, const std::string& opt, int
             if(indent_width>=0 && s.size()>0){
                 uint hsc = _head_space_count(s);
                 
-                if(hsc+1 <= (hsc_prev + indent_width)){ sstd::pdbg_err("indent indecation is too large."); }
+                if(hsc+1 <= (hsc_prev + indent_width)){ sstd::pdbg_err("indent indecation is too large.\n"); }
 
                 if(hsc_prev + indent_width == hsc){ // for "- >[Num]", "- >[Num]"
                     s = sstd::strip(s);

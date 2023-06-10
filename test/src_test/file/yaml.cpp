@@ -675,7 +675,7 @@ TEST(yaml, multi_line_str_by_list_greater_num_1){ // - >1
 - c
 )";
     sstd::terp::var yml = sstd::yaml_from_str(s); // TEST THIS LINE
-    sstd::printn(yml);
+    //sstd::printn(yml);
 
     //---
     
@@ -702,7 +702,7 @@ TEST(yaml, multi_line_str_by_list_greater_num_1_case02){ // - >1
 - c
 )";
     sstd::terp::var yml = sstd::yaml_from_str(s); // TEST THIS LINE
-    sstd::printn(yml);
+    //sstd::printn(yml);
 
     //---
     
@@ -758,7 +758,7 @@ TEST(yaml, multi_line_str_by_list_greater_num_4){ // - >4
 - c
 )";
     sstd::terp::var yml = sstd::yaml_from_str(s); // TEST THIS LINE
-    sstd::printn(yml);
+    //sstd::printn(yml);
 
     //---
     
