@@ -193,9 +193,14 @@ std::string _get_multi_line_str(const uint hsc_prev, const std::string& opt, int
     sstd::printn(indent_width);
     sstd::printn(hsc_prev);
     if(hsc+indent_width == hsc_prev+1){ separator = '\n'; } // for "- >1", "- >2"
-                
+    if(hsc_prev+indent_width == hsc){
+        s = sstd::strip(s);
+        
+    }else{
                 s = sstd::rstrip(s);
                 if(indent_width < (int)s.size()){ s = &s[indent_width]; }
+    }
+                
             }else{
                 s = sstd::strip(s);
             }
@@ -246,8 +251,6 @@ void _check_val_and_overwrite_multi_line_str(const uint hsc_prev, std::string& v
 
 std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
     std::vector<struct command> v_cmd;
-    uint hsc_lx_prev = 0;
-    uint hsc_hx_prev = 0;
 
     for(uint i=0; i<ls.size(); ++i){
         std::string s;
@@ -261,8 +264,8 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
         std::string val1, val2; _get_value(val1, val2, s, type);
 
         // for multiple line string
-        _check_val_and_overwrite_multi_line_str(hsc_lx_prev, val1, ls, i); // for list (val1=="|0123" or val1=="|-0123" val1=="|+0123")
-        _check_val_and_overwrite_multi_line_str(hsc_hx_prev, val2, ls, i); // for hash (val2=="|0123" or val2=="|-0123" val2=="|+0123")
+        _check_val_and_overwrite_multi_line_str(hsc_lx, val1, ls, i); // for list (val1=="|0123" or val1=="|-0123" val1=="|+0123")
+        _check_val_and_overwrite_multi_line_str(hsc_hx, val2, ls, i); // for hash (val2=="|0123" or val2=="|-0123" val2=="|+0123")
 
         struct command c;
         switch(type){
@@ -322,9 +325,6 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
         } break;
         default: { sstd::pdbg_err("ERROR\n"); } break;
         };
-
-        hsc_lx_prev = hsc_lx;
-        hsc_hx_prev = hsc_hx;
     }
     
     return v_cmd;

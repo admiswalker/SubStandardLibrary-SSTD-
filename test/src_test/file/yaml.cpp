@@ -716,8 +716,8 @@ TEST(yaml, multi_line_str_by_list_greater_num_2){ // - >2
     
     ASSERT_TRUE(yml==ans);
 }
-/*
-TEST(yaml, multi_line_str_by_list_greater_num_2){ // - >4
+
+TEST(yaml, multi_line_str_by_list_greater_num_4){ // - >4
     std::string s=R"(
 - a # comment
 - 
@@ -737,14 +737,15 @@ TEST(yaml, multi_line_str_by_list_greater_num_2){ // - >4
     sstd::terp::var ans;
     ans = sstd::terp::list(3);
     ans[0] = "a";
-    ans[1] = "b1 b2 b3\n";
+    ans[1] = sstd::terp::list(1);
+    ans[1][0] = "b1 b2 b3\n";
     ans[2] = "c";
     
     //---
     
     ASSERT_TRUE(yml==ans);
 }
-*/
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Multi line string for hash
 
