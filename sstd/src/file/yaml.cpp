@@ -220,30 +220,19 @@ void _check_val_and_overwrite_multi_line_str(std::string& val_rw, const std::vec
 //    sstd::printn(val_rw);
     int indent_width = -1;
 
-    if      (val_rw.starts_with("|-") || val_rw.starts_with(">-")){ // case: "- |-123", "- >-123", "hash-key: |-123" or "hash-key: >-123"
+    if      (val_rw.starts_with("|-") || val_rw.starts_with(">-") ||    // case: "- |-123", "- >-123", "hash-key: |-123" or "hash-key: >-123"
+             val_rw.starts_with("|+") || val_rw.starts_with(">+")    ){ // case: "- |+123", "- >+123", "hash-key: |+123" or "hash-key: >+123"
         ++i;
         std::string opt; opt += val_rw[0]; opt += val_rw[1];
-//        if(val_rw.size()>=3){
-//            std::string s = &val_rw[2];
-//            int num = std::stoi(&val_rw[1]);
-//            sstd::printn(num);
-//        }
-        val_rw = _get_multi_line_str(opt, indent_width, ls, i);
-    }else if(val_rw.starts_with("|+") || val_rw.starts_with(">+")){ // case: "- |+123", "- >+123", "hash-key: |+123" or "hash-key: >+123"
-        ++i;
-        std::string opt; opt += val_rw[0]; opt += val_rw[1];
-//        if(val_rw.size()>=3){
-//            std::string s = &val_rw[2];
-//            int num = std::stoi(&val_rw[1]);
-//            sstd::printn(num);
-//        }
+        if(val_rw.size()>=3){
+            indent_width = std::stoi(&val_rw[2]);
+        }
         val_rw = _get_multi_line_str(opt, indent_width, ls, i);
     }else if(val_rw.starts_with("|" ) || val_rw.starts_with(">" )){ // case: "- |123",  "- >123",  "hash-key: |123"  or "hash-key: >123"
         ++i;
         std::string opt; opt += val_rw[0];
         if(val_rw.size()>=2){
             indent_width = std::stoi(&val_rw[1]);
-            sstd::printn(indent_width);
         }
         val_rw = _get_multi_line_str(opt, indent_width, ls, i);
     }
