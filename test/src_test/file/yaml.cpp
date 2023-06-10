@@ -378,7 +378,7 @@ TEST(yaml, multi_line_str_by_list_vertical_line){ // - |
     
     ASSERT_TRUE(yml==ans);
 }
-/*
+
 TEST(yaml, multi_line_str_by_list_vertical_line_minus){ // - |-
     std::string s=R"(
 - a # comment
@@ -405,7 +405,7 @@ TEST(yaml, multi_line_str_by_list_vertical_line_minus){ // - |-
     
     ASSERT_TRUE(yml==ans);
 }
-//*/
+
 // TEST(yaml, multi_line_str_by_list_vertical_line_plus){ // - |+
 // }
 
