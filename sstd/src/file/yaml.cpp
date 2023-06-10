@@ -143,8 +143,33 @@ void _get_value(std::string& ret_val1, std::string& ret_val2, std::string s, uin
     }
 }
 
+void _rremove_ow(std::vector<std::string>& v){ // remove tail empty elements
+    for(int i=v.size()-1; i>=0; --i){
+        if(v[i].size()!=0){ break; }
+        v.pop_back();
+    }
+}
+uint _rcount_empty(std::vector<std::string>& v){
+    uint cnt=0;
+    for(int i=v.size()-1; i>=0; --i){
+        if(v[i].size()!=0){ break; }
+        ++cnt;
+    }
+    return cnt;
+}
+std::string _join(const std::vector<std::string>& v, const char separator){
+    std::string ret;
+    for(uint i=0; i<v.size()-1; ++i){
+        ret += v[i] + separator;
+    }
+    if(v.size()>=1){
+        ret += v[v.size()-1];
+    }
+    return ret;
+}
 std::string _get_multi_line_str(const std::string& opt, const std::vector<std::string>& ls, uint& i){
     std::string ret;
+    std::vector<std::string> v_tmp;
 
     char separator='\n';
     //if(sstd::charIn('|', opt)){ separator = '\n'; }
@@ -158,20 +183,39 @@ std::string _get_multi_line_str(const std::string& opt, const std::vector<std::s
         
         uint type = _data_type(s);
         if(type==NUM_STR){
-            ret += sstd::strip(s) + separator;
+            v_tmp.push_back(sstd::strip(s));
+            //ret += sstd::strip(s) + separator;
         }else{
             --i;
             break;
         }
     }
+    sstd::printn(v_tmp);
 
     if      (opt=="|"  || opt==">" ){
-        sstd::rstrip_ow(ret, separator); // remove "separator" at the end of the string
+        _rremove_ow(v_tmp);
+        ret = _join(v_tmp, separator);
+        //sstd::rstrip_ow(ret, '\n'); // remove "separator" at the end of the string
         ret += "\n";
     }else if(opt=="|-" || opt==">-"){
-        sstd::rstrip_ow(ret, separator); // remove "separator" at the end of the string
+        _rremove_ow(v_tmp);
+        ret = _join(v_tmp, separator);
+        //sstd::rstrip_ow(ret, '\n'); // remove "separator" at the end of the string
+    }else if(opt=="|+" || opt==">+"){
+        uint cnt = _rcount_empty(v_tmp) + 1;
+        _rremove_ow(v_tmp);
+        ret = _join(v_tmp, separator) + std::string(cnt, '\n');
+    }else{
+        sstd::pdbg_err("Unexpected case\n");
     }
-    
+    /*
+    if      (opt=="|"  || opt==">" ){
+        sstd::rstrip_ow(ret, '\n'); // remove "separator" at the end of the string
+        ret += "\n";
+    }else if(opt=="|-" || opt==">-"){
+        sstd::rstrip_ow(ret, '\n'); // remove "separator" at the end of the string
+    }
+    */
     return ret;
 }
 void _check_val_and_overwrite_multi_line_str(std::string& val_rw, const std::vector<std::string>& ls, uint& i){

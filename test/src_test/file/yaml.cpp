@@ -480,7 +480,7 @@ TEST(yaml, multi_line_str_by_list_greater_minus){ // - >-
 - c
 )";
     sstd::terp::var yml = sstd::yaml_from_str(s); // TEST THIS LINE
-    //sstd::printn(yml);
+    sstd::printn(yml);
 
     //---
     
@@ -495,8 +495,32 @@ TEST(yaml, multi_line_str_by_list_greater_minus){ // - >-
     ASSERT_TRUE(yml==ans);
 }
 
-// TEST(yaml, multi_line_str_by_list_greater_plus){ // - >+
-// }
+TEST(yaml, multi_line_str_by_list_greater_plus){ // - >+
+    std::string s=R"(
+- a # comment
+- >+
+  b1
+  b2
+  b3
+
+
+- c
+)";
+    sstd::terp::var yml = sstd::yaml_from_str(s); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(3);
+    ans[0] = "a";
+    ans[1] = "b1 b2 b3\n\n\n";
+    ans[2] = "c";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
 
 // TEST(yaml, multi_line_str_by_list_greater_num_0){ // - >0 (Can't set 0)
 // }
