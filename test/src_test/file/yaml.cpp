@@ -1235,8 +1235,34 @@ TEST(yaml, yaml_load_all){
     ASSERT_TRUE(vYml[1]==ans2);
 }
 
-// TEST(yaml, yaml_load_fp_all){
-// }
+TEST(yaml, yaml_load_fp_all){
+    //sstd::printn(sstd::system("pwd"));
+    sstd::file fp;
+    ASSERT_TRUE(fp.fopen("./test/src_test/file/yaml_test/test_yaml_load_all.yaml", "r"));
+    
+    std::vector<sstd::terp::var> vYml; ASSERT_TRUE(sstd::yaml_load_all(vYml, fp)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans1;
+    ans1 = sstd::terp::list(3);
+    ans1[0] = "a1";
+    ans1[1] = "b1";
+    ans1[2] = "c1";
+
+    sstd::terp::var ans2;
+    ans2 = sstd::terp::list(3);
+    ans2[0] = "a2";
+    ans2[1] = "b2";
+    ans2[2] = "c2";
+
+    //---
+    
+    ASSERT_EQ(vYml.size(), (uint)2);
+    ASSERT_TRUE(vYml[0]==ans1);
+    ASSERT_TRUE(vYml[1]==ans2);
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 

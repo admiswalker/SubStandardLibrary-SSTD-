@@ -480,7 +480,6 @@ bool sstd::yaml_load_all(std::vector<sstd::terp::var>& ret_vYml, const std::stri
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 bool sstd::yaml_load(sstd::terp::var& ret_yml, sstd::file& fp){
-    
     size_t size = fp.fsize();
     std::vector<char> raw(size+1, 0);
     if(fp.fread((uchar*)&raw[0], sizeof(char), size)!=size){
@@ -493,7 +492,19 @@ bool sstd::yaml_load(sstd::terp::var& ret_yml, sstd::file& fp){
     
     return true;
 }
-// std::vector<sstd::terp::var> sstd::yaml_load_all(sstd::file& fp); // sstd::file fp; fp.open("xxx");
+bool sstd::yaml_load_all(std::vector<sstd::terp::var>& ret_vYml, sstd::file& fp){
+    size_t size = fp.fsize();
+    std::vector<char> raw(size+1, 0);
+    if(fp.fread((uchar*)&raw[0], sizeof(char), size)!=size){
+        sstd::pdbg_err("fread was failed.\n");
+        return false;
+    }
+    //printf("&raw[0] = %s\n", &raw[0]);
+    
+    if(!sstd::yaml_load_all(ret_vYml, (const char*)&raw[0])){ return false; }
+    
+    return true;
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
