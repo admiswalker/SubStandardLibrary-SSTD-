@@ -1119,9 +1119,65 @@ k3: c
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Double quotation ""
 
+TEST(yaml, double_quotation_list_case01){
+    std::string s=R"(
+- "a: b"
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = "a: b";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+/*
+TEST(yaml, double_quotation_list_case02){
+    std::string s=R"(
+- "a b c"
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = "a b c";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, double_quotation_list_case03){
+    std::string s=R"(
+- "- a"
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = "- a";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+*/
+
 // example.yaml
 // 
 // - "a b c"
+// - "a: b"
+// - "- a"
 // - "key 1": "value 1"
 // - "I am a cat.\
 //    There is no name yet."
