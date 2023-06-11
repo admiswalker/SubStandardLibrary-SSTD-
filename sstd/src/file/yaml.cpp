@@ -424,7 +424,7 @@ sstd::terp::var _construct_var(const std::vector<struct command>& v_cmd){
 
 //---
 
-sstd::terp::var sstd::yaml_from_str(const        char* s){
+sstd::terp::var sstd::yaml_load(const        char* s){
     std::vector<std::string> ls = sstd::splitByLine(s); // ls: line string
     std::vector<struct command> v_cmd = _parse_yaml(ls);
     //_print(v_cmd);
@@ -433,6 +433,30 @@ sstd::terp::var sstd::yaml_from_str(const        char* s){
     
     return ret;
 }
-sstd::terp::var sstd::yaml_from_str(const std::string& s){ return sstd::yaml_from_str(s.c_str()); }
+sstd::terp::var sstd::yaml_load(const std::string& s){ return sstd::yaml_load(s.c_str()); }
+
+//---
+
+// std::vector<sstd::terp::var> sstd::yaml_load_all(const        char* s);
+// std::vector<sstd::terp::var> sstd::yaml_load_all(const std::string& s);
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+
+bool sstd::yaml_load(sstd::terp::var& ret_yml, sstd::file& fp){
+    
+    size_t size = fp.fsize();
+    std::vector<char> raw(size+1, 0);
+    if(fp.fread((uchar*)&raw[0], sizeof(char), size)!=size){
+        sstd::pdbg_err("fread was failed.\n");
+        return false;
+    }
+    //printf("&raw[0] = %s\n", &raw[0]);
+    
+    ret_yml = sstd::yaml_load((const char*)&raw[0]);
+    
+    return true;
+}
+// std::vector<sstd::terp::var> sstd::yaml_load_all(sstd::file& fp); // sstd::file fp; fp.open("xxx");
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
