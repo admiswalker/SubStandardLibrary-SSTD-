@@ -1235,7 +1235,36 @@ TEST(yaml, yaml_load_all){
     ASSERT_TRUE(vYml[1]==ans2);
 }
 
-TEST(yaml, yaml_load_fp_all){
+// TEST(yaml, yaml_load_all_fp){ // Define at yaml_load(fp) section
+// }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// yaml_load(fp)
+
+TEST(yaml, yaml_load_fp){
+    
+    //sstd::printn(sstd::system("pwd"));
+    sstd::file fp;
+    ASSERT_TRUE(fp.fopen("./test/src_test/file/yaml_test/test.yaml", "r"));
+    
+    sstd::terp::var yml;
+    ASSERT_TRUE(sstd::yaml_load(yml, fp)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(3);
+    ans[0] = "a";
+    ans[1] = "b";
+    ans[2] = "c";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+
+TEST(yaml, yaml_load_all_fp){
     //sstd::printn(sstd::system("pwd"));
     sstd::file fp;
     ASSERT_TRUE(fp.fopen("./test/src_test/file/yaml_test/test_yaml_load_all.yaml", "r"));
@@ -1263,33 +1292,6 @@ TEST(yaml, yaml_load_fp_all){
     ASSERT_TRUE(vYml[0]==ans1);
     ASSERT_TRUE(vYml[1]==ans2);
 }
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
-
-TEST(yaml, yaml_load_fp){
-    
-    //sstd::printn(sstd::system("pwd"));
-    sstd::file fp;
-    ASSERT_TRUE(fp.fopen("./test/src_test/file/yaml_test/test.yaml", "r"));
-    
-    sstd::terp::var yml;
-    ASSERT_TRUE(sstd::yaml_load(yml, fp)); // TEST THIS LINE
-    //sstd::printn(yml);
-
-    //---
-    
-    sstd::terp::var ans;
-    ans = sstd::terp::list(3);
-    ans[0] = "a";
-    ans[1] = "b";
-    ans[2] = "c";
-    
-    //---
-    
-    ASSERT_TRUE(yml==ans);
-}
-// TEST(yaml, yaml_load_all_fp){
-// }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
