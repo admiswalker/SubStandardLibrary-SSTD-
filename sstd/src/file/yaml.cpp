@@ -332,11 +332,11 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
     
     return true;
 }
-bool _construct_var(sstd::terp::var& ret_var, const std::vector<struct command>& v_cmd){
+bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>& v_cmd){
     std::vector<sstd::void_ptr*> v_dst;
     std::vector<uint> v_hsc_lx; // v: vector, hsc: head space count, _lx: list-index.
     std::vector<uint> v_hsc_hx; // v: vector, hsc: head space count. _hx: hash-index.
-    v_dst.push_back(ret_var.p());
+    v_dst.push_back(ret_yml.p());
     v_hsc_lx.push_back(0);
     v_hsc_hx.push_back(0);
     
@@ -358,7 +358,7 @@ bool _construct_var(sstd::terp::var& ret_var, const std::vector<struct command>&
             case '-': { var = sstd::terp::list(); } break;
             case 'x': {                           } break;
             case ':': { var = sstd::terp::hash(); } break;
-            default: { sstd::pdbg_err("Unexpected data type\n"); } break;
+            default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
             }
         }
 
@@ -428,23 +428,54 @@ bool _construct_var(sstd::terp::var& ret_var, const std::vector<struct command>&
 
 //---
 
-bool sstd::yaml_load(sstd::terp::var& ret_var,  const char* s){
+bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     bool tf = true;
     
     std::vector<std::string> ls = sstd::splitByLine(s); // ls: line string
     std::vector<struct command> v_cmd; if(!_parse_yaml(v_cmd, ls)){ return false; }
     //_print(v_cmd);
-    if(!_construct_var(ret_var, v_cmd)){ return false; }
+    if(!_construct_var(ret_yml, v_cmd)){ return false; }
     
     return tf;
 }
-//    bool yaml_load     (           sstd::terp::var & ret_var,  const std::string& s);
-bool sstd::yaml_load(           sstd::terp::var & ret_var,  const std::string& s){ return sstd::yaml_load(ret_var, s.c_str()); }
+bool sstd::yaml_load(sstd::terp::var& ret_yml, const std::string& s){ return sstd::yaml_load(ret_yml, s.c_str()); }
 
 //---
 
-// std::vector<sstd::terp::var> sstd::yaml_load_all(const        char* s);
-// std::vector<sstd::terp::var> sstd::yaml_load_all(const std::string& s);
+std::vector<std::vector<std::string>> _split_by_separator(const std::vector<std::string>& ls){
+    std::vector<std::vector<std::string>> v_ls;
+
+    std::vector<std::string> ls_tmp;
+    for(uint i=0; i<ls.size(); ++i){
+        std::string s = ls[i];
+        s = _rm_comment(s);
+        if(s=="---"){ // detect the separator
+            v_ls.push_back(std::move(ls_tmp));
+            ls_tmp.clear();
+            continue;
+        }
+        
+        ls_tmp.push_back(std::move(ls[i]));
+    }
+    v_ls.push_back(std::move(ls_tmp));
+    
+    return v_ls;
+}
+bool sstd::yaml_load_all(std::vector<sstd::terp::var>& ret_vYml, const        char* s){
+    std::vector<std::string> ls = sstd::splitByLine(s); // v: vector, ls: line string
+    std::vector<std::vector<std::string>> v_ls = _split_by_separator(ls);
+    
+    for(uint i=0; i<v_ls.size(); ++i){
+        sstd::terp::var ret_yml;
+        std::vector<struct command> v_cmd; if(!_parse_yaml(v_cmd, v_ls[i])){ return false; }
+        if(!_construct_var(ret_yml, v_cmd)){ return false; }
+        
+        ret_vYml.push_back(ret_yml);
+    }
+    
+    return true;
+}
+bool sstd::yaml_load_all(std::vector<sstd::terp::var>& ret_vYml, const std::string& s){ return sstd::yaml_load_all(ret_vYml, s.c_str()); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 

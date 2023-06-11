@@ -1170,12 +1170,6 @@ k3: c
 //       - c3
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-// Split file ---
-
-// TEST(yaml, yaml_load_all){
-// }
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
 // End marker ...
 
 TEST(yaml, end_marker){
@@ -1201,6 +1195,48 @@ TEST(yaml, end_marker){
     
     ASSERT_TRUE(yml==ans);
 }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// Split file ---
+
+TEST(yaml, yaml_load_all){
+    std::string s=R"(
+- a1 # comment
+- b1
+- c1
+
+--- # separator
+
+- a2 # comment
+- b2
+- c2
+)";
+    std::vector<sstd::terp::var> vYml; ASSERT_TRUE(sstd::yaml_load_all(vYml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans1;
+    ans1 = sstd::terp::list(3);
+    ans1[0] = "a1";
+    ans1[1] = "b1";
+    ans1[2] = "c1";
+
+    sstd::terp::var ans2;
+    ans2 = sstd::terp::list(3);
+    ans2[0] = "a2";
+    ans2[1] = "b2";
+    ans2[2] = "c2";
+
+    //---
+    
+    ASSERT_EQ(vYml.size(), (uint)2);
+    ASSERT_TRUE(vYml[0]==ans1);
+    ASSERT_TRUE(vYml[1]==ans2);
+}
+
+// TEST(yaml, yaml_load_fp_all){
+// }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
