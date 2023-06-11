@@ -136,7 +136,7 @@ bool _get_value(std::string& ret_val1, std::string& ret_val2, std::string s, uin
     } break;
     case NUM_HASH:
     case NUM_LIST_AND_HASH: {
-        printf("imhere\n\n");
+//        printf("imhere\n\n");
         std::vector<std::string> v = sstd::split(s, ':'); // _split_dq_sq() に置き換える. _qd: double quotation, _sq: single quatation
         if(v.size()>=1){ ret_val1 = sstd::strip(_rm_hyphen(v[0])); }
         if(v.size()>=2){ ret_val2 = sstd::strip(           v[1] ); }
@@ -254,7 +254,7 @@ bool _check_val_and_overwrite_multi_line_str(const uint hsc_prev, std::string& v
     return true;
 }
 
-bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::string>& ls){
+bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::string>& ls, const uint base_idx){
     
     for(uint i=0; i<ls.size(); ++i){
         std::string s;
@@ -279,8 +279,8 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             c.verb    = 's';
             c.val1    = val1;
             //c.val2    = val2;
-            c.lineNum = i;     // debug info
-            c.rawStr  = ls[i]; // debug info
+            c.lineNum = base_idx + i; // debug info
+            c.rawStr  = ls[i];        // debug info
             
             ret_vCmd.push_back(c);
         } break;
@@ -290,8 +290,8 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             c.verb    = '-';
             c.val1    = val1;
             //c.val2    = val2;
-            c.lineNum = i;     // debug info
-            c.rawStr  = ls[i]; // debug info
+            c.lineNum = base_idx + i; // debug info
+            c.rawStr  = ls[i];        // debug info
             
             ret_vCmd.push_back(c);
         } break;
@@ -301,8 +301,8 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             c.verb    = ':';
             c.val1    = val1; // key
             c.val2    = val2; // value
-            c.lineNum = i;     // debug info
-            c.rawStr  = ls[i]; // debug info
+            c.lineNum = base_idx + i; // debug info
+            c.rawStr  = ls[i];        // debug info
             
             ret_vCmd.push_back(c);
         } break;
@@ -312,8 +312,8 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             c.verb    = 'x'; // x: list x(and) hash: 
             c.val1    = "";
             c.val2    = "";
-            c.lineNum = i;     // debug info
-            c.rawStr  = ls[i]; // debug info
+            c.lineNum = base_idx + i; // debug info
+            c.rawStr  = ls[i];        // debug info
             
             ret_vCmd.push_back(c);
             
@@ -322,8 +322,8 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             c.verb    = ':';
             c.val1    = val1; // key
             c.val2    = val2; // value
-            c.lineNum = i;     // debug info
-            c.rawStr  = ls[i]; // debug info
+            c.lineNum = base_idx + i; // debug info
+            c.rawStr  = ls[i];        // debug info
             
             ret_vCmd.push_back(c);
         } break;
@@ -433,7 +433,7 @@ bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     bool tf = true;
     
     std::vector<std::string> ls = sstd::splitByLine(s); // ls: line string
-    std::vector<struct command> v_cmd; if(!_parse_yaml(v_cmd, ls)){ return false; }
+    std::vector<struct command> v_cmd; if(!_parse_yaml(v_cmd, ls, 0)){ return false; }
     //_print(v_cmd);
     if(!_construct_var(ret_yml, v_cmd)){ return false; }
     
@@ -465,13 +465,15 @@ std::vector<std::vector<std::string>> _split_by_separator(const std::vector<std:
 bool sstd::yaml_load_all(std::vector<sstd::terp::var>& ret_vYml, const        char* s){
     std::vector<std::string> ls = sstd::splitByLine(s); // v: vector, ls: line string
     std::vector<std::vector<std::string>> v_ls = _split_by_separator(ls);
-    
+
+    uint base_idx=0;
     for(uint i=0; i<v_ls.size(); ++i){
         sstd::terp::var ret_yml;
-        std::vector<struct command> v_cmd; if(!_parse_yaml(v_cmd, v_ls[i])){ return false; }
+        std::vector<struct command> v_cmd; if(!_parse_yaml(v_cmd, v_ls[i], base_idx)){ return false; }
         if(!_construct_var(ret_yml, v_cmd)){ return false; }
         
-        ret_vYml.push_back(ret_yml);
+        ret_vYml.push_back(std::move(ret_yml));
+        base_idx += v_ls[i].size() + 1;
     }
     
     return true;
