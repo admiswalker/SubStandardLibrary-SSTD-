@@ -1118,7 +1118,7 @@ k3: c
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Double quotation ""
-/*
+//*
 TEST(yaml, double_quotation_list_case01){
     std::string s=R"(
 - "a: b"
@@ -1136,7 +1136,7 @@ TEST(yaml, double_quotation_list_case01){
     
     ASSERT_TRUE(yml==ans);
 }
-*/
+//*/
 /*
 TEST(yaml, double_quotation_list_case02){
     std::string s=R"(
