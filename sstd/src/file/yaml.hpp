@@ -12,10 +12,10 @@ namespace sstd{
     bool yaml_load    (            sstd::terp::var & ret_var, sstd::file& fp);
 //    bool yaml_load_all(std::vector<sstd::terp::var>& ret_var, sstd::file& fp);
 
-                sstd::terp::var  yaml_load    (const        char* s);
-                sstd::terp::var  yaml_load    (const std::string& s);
-//    bool yaml_load     (           sstd::terp::var & ret_var,  const        char* s);
-//    bool yaml_load     (           sstd::terp::var & ret_var,  const std::string& s);
+//                sstd::terp::var  yaml_load    (const        char* s);
+//                sstd::terp::var  yaml_load    (const std::string& s);
+    bool yaml_load     (           sstd::terp::var & ret_var,  const        char* s);
+    bool yaml_load     (           sstd::terp::var & ret_var,  const std::string& s);
 //    bool yaml_load_all(std::vector<sstd::terp::var>& ret_vVar, const        char* s);
 //    bool yaml_load_all(std::vector<sstd::terp::var>& ret_vVar, const std::string& s);
 }

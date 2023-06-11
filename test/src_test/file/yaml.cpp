@@ -8,7 +8,7 @@ TEST(yaml, var_str_1_line){
     std::string s=R"(
 a # comment
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -26,7 +26,7 @@ a # comment
 b
 )";
     testing::internal::CaptureStdout();
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     std::string ret = testing::internal::GetCapturedStdout().c_str();
     ASSERT_TRUE(sstd::strIn("OverWritting the existing data. (String data type can only take one data.)", ret.c_str()));
     //sstd::printn(yml);
@@ -51,7 +51,7 @@ TEST(yaml, list_depth1){
 
 - c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -75,7 +75,7 @@ TEST(yaml, list_depth2){
   - d
 - e
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -104,7 +104,7 @@ k2: v2
 
 k3: v3
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -128,7 +128,7 @@ k3:
   k32: v32
 k4: v4
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -159,7 +159,7 @@ TEST(yaml, list_hash){ // depth2
   k2: v2
 - c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
     
     //---
@@ -187,7 +187,7 @@ k3:
   - v32
 k4: v4
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -221,7 +221,7 @@ TEST(yaml, list_hash_list){ // depth3
   k3: v3
 - c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
     
     //---
@@ -255,7 +255,7 @@ k3:
   - v33
 k4: v4
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -297,7 +297,7 @@ k3:
   - v33
 k4: v4
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -363,7 +363,7 @@ TEST(yaml, multi_line_str_by_list_vertical_line){ // - |
 
 - c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -390,7 +390,7 @@ TEST(yaml, multi_line_str_by_list_vertical_line_minus){ // - |-
 
 - c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -417,7 +417,7 @@ TEST(yaml, multi_line_str_by_list_vertical_line_plus){ // - |+
 
 - c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -447,7 +447,7 @@ TEST(yaml, multi_line_str_by_list_vertical_line_num_1){ // - |1
 
 - c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -474,7 +474,7 @@ TEST(yaml, multi_line_str_by_list_vertical_line_num_1_case02){ // - |1
 
 - c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -501,7 +501,7 @@ TEST(yaml, multi_line_str_by_list_vertical_line_num_2){ // - |2
 
 - c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -531,7 +531,7 @@ TEST(yaml, multi_line_str_by_list_vertical_line_minus_num_1){
 
 - c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -561,7 +561,7 @@ TEST(yaml, multi_line_str_by_list_vertical_line_plus_num_1){
 
 - c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -590,7 +590,7 @@ TEST(yaml, multi_line_str_by_list_greater){ // - >
 
 - c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -617,7 +617,7 @@ TEST(yaml, multi_line_str_by_list_greater_minus){ // - >-
 
 - c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -644,7 +644,7 @@ TEST(yaml, multi_line_str_by_list_greater_plus){ // - >+
 
 - c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -674,7 +674,7 @@ TEST(yaml, multi_line_str_by_list_greater_num_1){ // - >1
 
 - c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -701,7 +701,7 @@ TEST(yaml, multi_line_str_by_list_greater_num_1_case02){ // - >1
 
 - c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -729,7 +729,7 @@ TEST(yaml, multi_line_str_by_list_greater_num_2){ // - >2
 
 - c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -757,7 +757,7 @@ TEST(yaml, multi_line_str_by_list_greater_num_4){ // - >4
 
 - c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -785,7 +785,7 @@ TEST(yaml, multi_line_str_by_list_greater_minus_num_1){ // - >-1
 
 - c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -824,7 +824,7 @@ k2: |
 
 k3: c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -851,7 +851,7 @@ k2: |-
 
 k3: c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -878,7 +878,7 @@ k2: |+
 
 k3: c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -908,7 +908,7 @@ k2: |1
 
 k3: c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -935,7 +935,7 @@ k2: |2
 
 k3: c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -976,7 +976,7 @@ k2: >
 
 k3: c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -1003,7 +1003,7 @@ k2: >-
 
 k3: c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -1030,7 +1030,7 @@ k2: >+
 
 k3: c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -1060,7 +1060,7 @@ k2: >1
 
 k3: c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -1087,7 +1087,7 @@ k2: >2
 
 k3: c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---
@@ -1187,7 +1187,7 @@ TEST(yaml, end_marker){
 
 - c
 )";
-    sstd::terp::var yml = sstd::yaml_load(s); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);
 
     //---

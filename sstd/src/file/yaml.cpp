@@ -123,7 +123,7 @@ std::vector<std::string> _get_verb(std::string s){
     if(sstd::charIn(':', s)){ v.push_back(":"); }
     return v;
 }
-void _get_value(std::string& ret_val1, std::string& ret_val2, std::string s, uint typeNum){
+bool _get_value(std::string& ret_val1, std::string& ret_val2, std::string s, uint typeNum){
     ret_val1.clear();
     ret_val2.clear();
     
@@ -140,8 +140,10 @@ void _get_value(std::string& ret_val1, std::string& ret_val2, std::string s, uin
         if(v.size()>=1){ ret_val1 = sstd::strip(_rm_hyphen(v[0])); }
         if(v.size()>=2){ ret_val2 = sstd::strip(           v[1] ); }
     } break;
-    default: { sstd::pdbg_err("ERROR\n"); } break;
+    default: { sstd::pdbg_err("Unexpected typeNum\n"); return false; } break;
     }
+
+    return true;
 }
 
 void _rremove_empty_ow(std::vector<std::string>& v){ // remove tail empty elements
@@ -168,8 +170,7 @@ std::string _join(const std::vector<std::string>& v, const char separator){
     }
     return ret;
 }
-std::string _get_multi_line_str(const uint hsc_prev, const std::string& opt, int indent_width, const std::vector<std::string>& ls, uint& i){
-    std::string ret;
+bool _get_multi_line_str(std::string& ret, const uint hsc_prev, const std::string& opt, int indent_width, const std::vector<std::string>& ls, uint& i){
     std::vector<std::string> v_tmp;
 
     char separator='\n';
@@ -181,14 +182,14 @@ std::string _get_multi_line_str(const uint hsc_prev, const std::string& opt, int
         std::string s;
         s = ls[i];
         s = _rm_comment(s);
-        if(s=="..."){ --i; return ret; } // detect end marker
+        if(s=="..."){ --i; return true; } // detect end marker
         
         uint type = _data_type(s);
         if(type==NUM_STR){
             if(indent_width>=0 && s.size()>0){
                 uint hsc = _head_space_count(s);
                 
-                if(hsc+1 <= (hsc_prev + indent_width)){ sstd::pdbg_err("indent indecation is too large.\n"); }
+                if(hsc+1 <= (hsc_prev + indent_width)){ sstd::pdbg_err("indent indecation is too large.\n"); return false; }
 
                 if(hsc_prev + indent_width == hsc){ // for "- >[Num]", "- >[Num]"
                     s = sstd::strip(s);
@@ -221,12 +222,12 @@ std::string _get_multi_line_str(const uint hsc_prev, const std::string& opt, int
         _rremove_empty_ow(v_tmp);
         ret = _join(v_tmp, separator) + std::string(cnt, '\n');
     }else{
-        sstd::pdbg_err("Unexpected case\n");
+        sstd::pdbg_err("Unexpected case\n"); return false;
     }
 
-    return ret;
+    return true;
 }
-void _check_val_and_overwrite_multi_line_str(const uint hsc_prev, std::string& val_rw, const std::vector<std::string>& ls, uint& i){
+bool _check_val_and_overwrite_multi_line_str(const uint hsc_prev, std::string& val_rw, const std::vector<std::string>& ls, uint& i){
     int indent_width = -1;
 
     if      (val_rw.starts_with("|-") || val_rw.starts_with(">-") ||    // case: "- |-123", "- >-123", "hash-key: |-123" or "hash-key: >-123"
@@ -236,30 +237,34 @@ void _check_val_and_overwrite_multi_line_str(const uint hsc_prev, std::string& v
         if(val_rw.size()>=3){
             indent_width = std::stoi(&val_rw[2]);
         }
-        val_rw = _get_multi_line_str(hsc_prev, opt, indent_width, ls, i);
+        
+        if(!_get_multi_line_str(val_rw, hsc_prev, opt, indent_width, ls, i)){ return false; }
+        
     }else if(val_rw.starts_with("|" ) || val_rw.starts_with(">" )){ // case: "- |123",  "- >123",  "hash-key: |123"  or "hash-key: >123"
         ++i;
         std::string opt; opt += val_rw[0];
         if(val_rw.size()>=2){
             indent_width = std::stoi(&val_rw[1]);
         }
-        val_rw = _get_multi_line_str(hsc_prev, opt, indent_width, ls, i);
+        
+        if(!_get_multi_line_str(val_rw, hsc_prev, opt, indent_width, ls, i)){ return false; }
     }
+
+    return true;
 }
 
-std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
-    std::vector<struct command> v_cmd;
-
+bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::string>& ls){
+    
     for(uint i=0; i<ls.size(); ++i){
         std::string s;
         s = ls[i];
         s = _rm_comment(s);
         if(s.size()==0){ continue; }
-        if(s=="..."){ return v_cmd; } // detect end marker
+        if(s=="..."){ return true; } // detect end marker
         uint type = _data_type(s);
         uint hsc_lx = _hsc_lx(s);
         uint hsc_hx = _hsc_hx(s);
-        std::string val1, val2; _get_value(val1, val2, s, type);
+        std::string val1, val2; if(!_get_value(val1, val2, s, type)){ return false; }
 
         // for multiple line string
         _check_val_and_overwrite_multi_line_str(hsc_lx, val1, ls, i); // for list (val1=="|0123" or val1=="|-0123" val1=="|+0123")
@@ -276,7 +281,7 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
             c.lineNum = i;     // debug info
             c.rawStr  = ls[i]; // debug info
             
-            v_cmd.push_back(c);
+            ret_vCmd.push_back(c);
         } break;
         case NUM_LIST: {
             c.hsc_lx  = hsc_lx;
@@ -287,7 +292,7 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
             c.lineNum = i;     // debug info
             c.rawStr  = ls[i]; // debug info
             
-            v_cmd.push_back(c);
+            ret_vCmd.push_back(c);
         } break;
         case NUM_HASH: {
             c.hsc_lx  = hsc_lx;
@@ -298,7 +303,7 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
             c.lineNum = i;     // debug info
             c.rawStr  = ls[i]; // debug info
             
-            v_cmd.push_back(c);
+            ret_vCmd.push_back(c);
         } break;
         case NUM_LIST_AND_HASH:{
             c.hsc_lx  = hsc_lx;
@@ -309,7 +314,7 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
             c.lineNum = i;     // debug info
             c.rawStr  = ls[i]; // debug info
             
-            v_cmd.push_back(c);
+            ret_vCmd.push_back(c);
             
             c.hsc_lx  = hsc_lx;
             c.hsc_hx  = hsc_hx;
@@ -319,20 +324,19 @@ std::vector<struct command> _parse_yaml(const std::vector<std::string>& ls){
             c.lineNum = i;     // debug info
             c.rawStr  = ls[i]; // debug info
             
-            v_cmd.push_back(c);
+            ret_vCmd.push_back(c);
         } break;
-        default: { sstd::pdbg_err("ERROR\n"); } break;
+        default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
         };
     }
     
-    return v_cmd;
+    return true;
 }
-sstd::terp::var _construct_var(const std::vector<struct command>& v_cmd){
-    sstd::terp::var ret;
+bool _construct_var(sstd::terp::var& ret_var, const std::vector<struct command>& v_cmd){
     std::vector<sstd::void_ptr*> v_dst;
     std::vector<uint> v_hsc_lx; // v: vector, hsc: head space count, _lx: list-index.
     std::vector<uint> v_hsc_hx; // v: vector, hsc: head space count. _hx: hash-index.
-    v_dst.push_back(ret.p());
+    v_dst.push_back(ret_var.p());
     v_hsc_lx.push_back(0);
     v_hsc_hx.push_back(0);
     
@@ -344,7 +348,7 @@ sstd::terp::var _construct_var(const std::vector<struct command>& v_cmd){
         //sstd::printn(v_dst);
         //sstd::printn(v_hsc_lx);
         //sstd::printn(v_hsc_hx);
-        //sstd::printn(ret);
+        //sstd::printn(ret_var);
         //printf("\n");
         
         // set dst type (if dst is sstd::num_null)
@@ -419,21 +423,23 @@ sstd::terp::var _construct_var(const std::vector<struct command>& v_cmd){
         }
     }
 
-    return ret;
+    return true;
 }
 
 //---
 
-sstd::terp::var sstd::yaml_load(const        char* s){
-    std::vector<std::string> ls = sstd::splitByLine(s); // ls: line string
-    std::vector<struct command> v_cmd = _parse_yaml(ls);
-    //_print(v_cmd);
-    //sstd::terp::var ret;
-    sstd::terp::var ret = _construct_var(v_cmd);
+bool sstd::yaml_load(sstd::terp::var& ret_var,  const char* s){
+    bool tf = true;
     
-    return ret;
+    std::vector<std::string> ls = sstd::splitByLine(s); // ls: line string
+    std::vector<struct command> v_cmd; if(!_parse_yaml(v_cmd, ls)){ return false; }
+    //_print(v_cmd);
+    if(!_construct_var(ret_var, v_cmd)){ return false; }
+    
+    return tf;
 }
-sstd::terp::var sstd::yaml_load(const std::string& s){ return sstd::yaml_load(s.c_str()); }
+//    bool yaml_load     (           sstd::terp::var & ret_var,  const std::string& s);
+bool sstd::yaml_load(           sstd::terp::var & ret_var,  const std::string& s){ return sstd::yaml_load(ret_var, s.c_str()); }
 
 //---
 
@@ -452,7 +458,7 @@ bool sstd::yaml_load(sstd::terp::var& ret_yml, sstd::file& fp){
     }
     //printf("&raw[0] = %s\n", &raw[0]);
     
-    ret_yml = sstd::yaml_load((const char*)&raw[0]);
+    if(!sstd::yaml_load(ret_yml, (const char*)&raw[0])){ return false; }
     
     return true;
 }
