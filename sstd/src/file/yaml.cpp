@@ -32,11 +32,11 @@ std::vector<std::string> sstd::_splitByLine_dq_sq(const char* str){
     std::string buf;
     for(uint r=0; str[r]!=0; ++r){ // r: read place
         buf.clear();
-        for(; str[r]!=0; ++r){
-            if(str[r]=='\\'){ is_escaped=true; continue; }
+        for(; str[r]!='\0'; ++r){
+            if(str[r]=='\\'){ is_escaped=true; buf+=str[r]; ++r; if(str[r]=='\0'){break;} }
             
-            if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; continue; }
-            if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; continue; }
+            if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
+            if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
             
             if(!in_d_quate && !in_s_quate && str[r]==0x0A){ break; }                        // Uinx
             if(!in_d_quate && !in_s_quate && str[r]==0x0D && str[r+1]==0x0A){ ++r; break; } // Windows
@@ -46,6 +46,8 @@ std::vector<std::string> sstd::_splitByLine_dq_sq(const char* str){
         }
         ret.push_back(std::move(buf));
     }
+    if(in_d_quate){ sstd::pdbg_err("double quatation is not closed\n"); }
+    if(in_s_quate){ sstd::pdbg_err("single quatation is not closed\n"); }
     
     return ret;
 }

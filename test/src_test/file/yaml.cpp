@@ -1136,10 +1136,10 @@ g"
 
     std::vector<std::string> ans;
     ans.push_back("");
-    ans.push_back(R"(a: b c
+    ans.push_back(R"("a: b c
 
 def
-g)");
+g")");
     ans.push_back("");
     //sstd::printn(ans);
 
@@ -1156,18 +1156,18 @@ g"
 
 )";
     std::vector<std::string> l = sstd::_splitByLine_dq_sq(s); // TEST THIS LINE
-    //sstd::printn(l);
+    sstd::printn(l);
 
     //--
 
     std::vector<std::string> ans;
-    ans.push_back("\"");
-    ans.push_back(R"(a: b c"
+    ans.push_back(R"(\")");
+    ans.push_back(R"("a: b c\"
 
 def'
-g)");
+g")");
     ans.push_back("");
-    //sstd::printn(ans);
+    sstd::printn(ans);
 
     //---
     
@@ -1191,10 +1191,10 @@ g'
 
     std::vector<std::string> ans;
     ans.push_back("");
-    ans.push_back(R"(a: b c
+    ans.push_back(R"('a: b c
 
 def
-g)");
+g')");
     ans.push_back("");
     //sstd::printn(ans);
 
@@ -1216,11 +1216,11 @@ g'
     //--
 
     std::vector<std::string> ans;
-    ans.push_back("\"");
-    ans.push_back(R"(a: b c'
+    ans.push_back(R"(\")");
+    ans.push_back(R"('a: b c\'
 
 def"
-g)");
+g')");
     ans.push_back("");
     //sstd::printn(ans);
 
