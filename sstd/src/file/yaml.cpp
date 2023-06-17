@@ -17,6 +17,43 @@
 #define NUM_LIST_AND_HASH 4
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// dq and sq functions
+
+// - dq: double quotation
+// - sq: single quatation
+
+std::vector<std::string> sstd::_splitByLine_dq_sq(const char* str){
+    
+    std::vector<std::string> ret;
+    
+    bool is_escaped=false;
+    bool in_d_quate=false; // double quate
+    bool in_s_quate=false; // single quate
+    std::string buf;
+    for(uint r=0; str[r]!=0; ++r){ // r: read place
+        buf.clear();
+        for(; str[r]!=0; ++r){
+            if(str[r]=='\\'){ is_escaped=true; continue; }
+            
+            if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; continue; }
+            if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; continue; }
+            
+            if(!in_d_quate && !in_s_quate && str[r]==0x0A){ break; }                        // Uinx
+            if(!in_d_quate && !in_s_quate && str[r]==0x0D && str[r+1]==0x0A){ ++r; break; } // Windows
+            buf += str[r];
+            
+            is_escaped=false;
+        }
+        ret.push_back(std::move(buf));
+    }
+    
+    return ret;
+}
+std::vector<std::string> sstd::_splitByLine_dq_sq(const std::string& str){
+    return sstd::_splitByLine_dq_sq(str.c_str());
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 std::string _rm_comment(const std::string& s){
     std::vector<std::string> v = sstd::split(s, '#');
@@ -35,9 +72,23 @@ std::string _rm_hyphen(std::string s){
 
 //---
 
-bool _is_hash(const std::string& s){
-    if(sstd::charIn(':', s)){ return true; }
+std::string _rm_bw_dq_sq(const std::string& s){ // _bw: between, _dq: double quotation, _sq: single quatation
+    std::string ret;
+
+    bool in_quate=false;
+    for(uint i=0; i<s.size(); ++i){
+        if( s[i] == '"' ){
+            in_quate = !in_quate;
+        }else{
+            if( !in_quate ){ ret += s[i]; }
+        }
+    }
     
+    return ret;
+}
+
+bool _is_hash(const std::string& s){
+    if(sstd::charIn(':', _rm_bw_dq_sq(s))){ return true; }
     return false;
 }
 bool _is_list(const std::string& s){
@@ -126,10 +177,10 @@ std::vector<std::string> _get_verb(std::string s){
 bool _get_value(std::string& ret_val1, std::string& ret_val2, std::string s, uint typeNum){
     ret_val1.clear();
     ret_val2.clear();
-    
+
     switch(typeNum){
     case NUM_STR:  {
-        ret_val1 = sstd::strip(s); // _strip_dq_sq() に置き換える. _qd: double quotation, _sq: single quatation
+        ret_val1 = sstd::strip(s); // _strip_dq_sq() に置き換える. _dq: double quotation, _sq: single quatation
     } break;
     case NUM_LIST: {
         ret_val1 = sstd::strip(_rm_hyphen(s)); // _strip_dq_sq() に置き換える. _qd: double quotation, _sq: single quatation
@@ -432,7 +483,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
 bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     bool tf = true;
     
-    std::vector<std::string> ls = sstd::splitByLine(s); // ls: line string
+    std::vector<std::string> ls = sstd::splitByLine(s); // ls: line string  // ここ，_splitByLine_dq_sq() に置き換える
     std::vector<struct command> v_cmd; if(!_parse_yaml(v_cmd, ls, 0)){ return false; }
     //_print(v_cmd);
     if(!_construct_var(ret_yml, v_cmd)){ return false; }
@@ -463,7 +514,8 @@ std::vector<std::vector<std::string>> _split_by_separator(const std::vector<std:
     return v_ls;
 }
 bool sstd::yaml_load_all(std::vector<sstd::terp::var>& ret_vYml, const        char* s){
-    std::vector<std::string> ls = sstd::splitByLine(s); // v: vector, ls: line string
+    //std::vector<std::string> ls = sstd::splitByLine(s); // v: vector, ls: line string // ここ，_splitByLine_dq_sq() に置き換える
+    std::vector<std::string> ls = sstd::_splitByLine_dq_sq(s); // v: vector, ls: line string
     std::vector<std::vector<std::string>> v_ls = _split_by_separator(ls);
 
     uint base_idx=0;

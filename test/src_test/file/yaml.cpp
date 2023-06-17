@@ -1118,8 +1118,168 @@ k3: c
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Double quotation ""
-//*
-TEST(yaml, double_quotation_list_case01){
+
+//---
+
+TEST(yaml_dependent_fn, _splitByLine_dq_sq__dq){
+    std::string s=R"(
+"a: b c
+
+def
+g"
+
+)";
+    std::vector<std::string> l = sstd::_splitByLine_dq_sq(s); // TEST THIS LINE
+    //sstd::printn(l);
+
+    //--
+
+    std::vector<std::string> ans;
+    ans.push_back("");
+    ans.push_back(R"(a: b c
+
+def
+g)");
+    ans.push_back("");
+    //sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(l==ans);
+}
+TEST(yaml_dependent_fn, _splitByLine_dq_sq__dq_escape){
+    std::string s=R"(\"
+"a: b c\"
+
+def'
+g"
+
+)";
+    std::vector<std::string> l = sstd::_splitByLine_dq_sq(s); // TEST THIS LINE
+    //sstd::printn(l);
+
+    //--
+
+    std::vector<std::string> ans;
+    ans.push_back("\"");
+    ans.push_back(R"(a: b c"
+
+def'
+g)");
+    ans.push_back("");
+    //sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(l==ans);
+}
+
+//---
+
+TEST(yaml_dependent_fn, _splitByLine_dq_sq__sq){
+    std::string s=R"(
+'a: b c
+
+def
+g'
+
+)";
+    std::vector<std::string> l = sstd::_splitByLine_dq_sq(s); // TEST THIS LINE
+    //sstd::printn(l);
+
+    //--
+
+    std::vector<std::string> ans;
+    ans.push_back("");
+    ans.push_back(R"(a: b c
+
+def
+g)");
+    ans.push_back("");
+    //sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(l==ans);
+}
+TEST(yaml_dependent_fn, _splitByLine_dq_sq__sq_escape){
+    std::string s=R"(\"
+'a: b c\'
+
+def"
+g'
+
+)";
+    std::vector<std::string> l = sstd::_splitByLine_dq_sq(s); // TEST THIS LINE
+    //sstd::printn(l);
+
+    //--
+
+    std::vector<std::string> ans;
+    ans.push_back("\"");
+    ans.push_back(R"(a: b c'
+
+def"
+g)");
+    ans.push_back("");
+    //sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(l==ans);
+}
+
+//------------------------------------------------
+
+TEST(yaml, double_quotation_list_NUM_STR){
+    std::string s=R"(
+"a: b c
+
+def
+g"
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans=R"(
+"a: b c
+
+def
+g"
+)";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+/*
+TEST(yaml, double_quotation_list_NUM_STR){
+    std::string s=R"(
+"a: b"
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = "a: b";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+*/
+
+// TEST(yaml, double_quotation_list_NUM_LIST){}
+// TEST(yaml, double_quotation_list_NUM_HASH){}
+// TEST(yaml, double_quotation_list_NUM_LIST_AND_HASH){}
+
+/*
+TEST(yaml, double_quotation_list_case02){
     std::string s=R"(
 - "a: b"
 )";
