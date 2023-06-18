@@ -9,7 +9,7 @@ TEST(yaml, var_str_1_line){
 a # comment
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+    //sstd::printn(yml);
 
     //---
     
@@ -29,7 +29,7 @@ b
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     std::string ret = testing::internal::GetCapturedStdout().c_str();
     ASSERT_TRUE(sstd::strIn("OverWritting the existing data. (String data type can only take one data.)", ret.c_str()));
-    sstd::printn(yml);
+    //sstd::printn(yml);
 
     //---
     
@@ -1380,7 +1380,7 @@ def
 g"
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+    //sstd::printn(yml);
 
     //---
     
@@ -1389,7 +1389,7 @@ g"
 
 def
 g)";
-    sstd::printn(ans);
+    //sstd::printn(ans);
     
     //---
     
@@ -1401,38 +1401,57 @@ TEST(yaml, double_quotation_list_NUM_LIST){
 - "a: b c "
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+    //sstd::printn(yml);
 
     //---
     
     sstd::terp::var ans;
     ans = sstd::terp::list(1);
     ans[0] = "a: b c ";
-    sstd::printn(ans);
+    //sstd::printn(ans);
     
     //---
     
     ASSERT_TRUE(yml==ans);
 }
 
-TEST(yaml, double_quotation_list_NUM_HASH){
+TEST(yaml, double_quotation_list_NUM_HASH_dq){
     std::string s=R"(
-key1: "a: b c "
+"key1": "a: b c "
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+    //sstd::printn(yml);
 
     //---
     
     sstd::terp::var ans;
     ans = sstd::terp::hash();
     ans["key1"] = "a: b c ";
-    sstd::printn(ans);
+    //sstd::printn(ans);
     
     //---
     
     ASSERT_TRUE(yml==ans);
 }
+TEST(yaml, double_quotation_list_NUM_HASH_sq){
+    std::string s=R"(
+'key1': 'a: b c '
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["key1"] = "a: b c ";
+    //sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+
 // TEST(yaml, double_quotation_list_NUM_LIST_AND_HASH){}
 
 /*

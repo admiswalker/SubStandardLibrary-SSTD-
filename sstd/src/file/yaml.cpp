@@ -103,7 +103,7 @@ std::vector<std::string> sstd::_splitByLine_dq_sq(const char* str){
     bool in_d_quate=false; // double quate
     bool in_s_quate=false; // single quate
     std::string buf;
-    for(uint r=0; str[r]!=0; ++r){ // r: read place
+    for(uint r=0; str[r]!=0;){ // r: read place
         buf.clear();
         for(; str[r]!='\0'; ++r){
             if(str[r]=='\\'){ is_escaped=true; buf+=str[r]; ++r; if(str[r]=='\0'){break;} }
@@ -111,8 +111,8 @@ std::vector<std::string> sstd::_splitByLine_dq_sq(const char* str){
             if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
             if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
             
-            if(!in_d_quate && !in_s_quate && str[r]==0x0A){ break; }                        // Uinx
-            if(!in_d_quate && !in_s_quate && str[r]==0x0D && str[r+1]==0x0A){ ++r; break; } // Windows
+            if(!in_d_quate && !in_s_quate && str[r]==0x0A                  ){ r+=1; break; } // Uinx
+            if(!in_d_quate && !in_s_quate && str[r]==0x0D && str[r+1]==0x0A){ r+=2; break; } // Windows
             buf += str[r];
             
             is_escaped=false;
@@ -138,7 +138,7 @@ std::vector<std::string> sstd::_split_dq_sq(const char* str, const char X){
     bool in_d_quate=false; // double quate
     bool in_s_quate=false; // single quate
     std::string buf;
-    for(uint r=0; str[r]!=0; ++r){ // r: read place
+    for(uint r=0; str[r]!='\0';){ // r: read place
         buf.clear();
         for(; str[r]!='\0'; ++r){
             if(str[r]=='\\'){ is_escaped=true; buf+=str[r]; ++r; if(str[r]=='\0'){break;} }
@@ -146,7 +146,7 @@ std::vector<std::string> sstd::_split_dq_sq(const char* str, const char X){
             if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
             if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
             
-            if(!in_d_quate && !in_s_quate && str[r]==X){ break; }
+            if(!in_d_quate && !in_s_quate && str[r]==X){ ++r; break; }
             buf += str[r];
             
             is_escaped=false;
@@ -298,12 +298,11 @@ bool _get_value(std::string& ret_val1, std::string& ret_val2, std::string s, uin
     } break;
     case NUM_HASH:
     case NUM_LIST_AND_HASH: {
-        printf("imhere\n\n");
         //std::vector<std::string> v = sstd::split(s, ':'); // _split_dq_sq() に置き換える. _qd: double quotation, _sq: single quatation
         std::vector<std::string> v = sstd::_split_dq_sq(s, ':'); // _qd: double quotation, _sq: single quatation
         if(v.size()>=1){ ret_val1 = sstd::_strip_dq_sq(_rm_hyphen(v[0])); }
         if(v.size()>=2){ ret_val2 = sstd::_strip_dq_sq(           v[1] ); }
-        //if(v.size()>=3){ sstd::pdbg("Unexptected split by ':'."); return false; }
+        if(v.size()>=3){ sstd::printn(v); sstd::pdbg("Unexptected split by ':'."); return false; }
     } break;
     default: { sstd::pdbg_err("Unexpected typeNum\n"); return false; } break;
     }
