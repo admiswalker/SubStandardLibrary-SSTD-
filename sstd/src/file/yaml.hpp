@@ -22,6 +22,12 @@ namespace sstd{
 // dependent fn
 
 namespace sstd{
+
+    std::string _strip_dq_sq(const        char* str);
+    std::string _strip_dq_sq(const std::string& str);
+
+    //---
+    
     std::vector<std::string> _splitByLine_dq_sq(const        char* str);
     std::vector<std::string> _splitByLine_dq_sq(const std::string& str);
 }

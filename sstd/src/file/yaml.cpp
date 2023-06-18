@@ -22,6 +22,74 @@
 // - dq: double quotation
 // - sq: single quatation
 
+//---
+
+std::string sstd::_strip_dq_sq(const        char* str){
+    return std::move(sstd::_strip_dq_sq(std::string(str)));
+}
+std::string sstd::_strip_dq_sq(const std::string& str){
+
+    // remove head and tail ' ' and '\t'
+    int li=0, ri=((int)str.size())-1;
+    for(; li<(int)str.size(); ++li){
+        if(str[li]!=' ' && str[li]!='\t'){ break; }
+    }
+    for(; ri>=li; --ri){
+        if(str[ri]!=' ' && str[ri]!='\t'){ break; }
+    }
+
+    // remove head and tail '"' or '\''
+    {
+        char c_head, c_tail;
+        if((ri - li)<= 1){ return std::string(); }
+        
+        // rm '"'
+        c_head = str[li];
+        c_tail = str[ri];
+        if(c_head=='"' && c_tail=='"' ){
+            ++li;
+            --ri;
+        }
+        
+        // rm '\''
+        c_head = str[li];
+        c_tail = str[ri];
+        if(c_head=='\'' && c_tail=='\'' ){
+            ++li;
+            --ri;
+        }
+    }
+//    return str.substr(li, ri);
+
+    std::string ret;
+    
+    // decode escape sequence
+    for(int i=li; i<=ri; ++i){
+        if(str[i]=='\\'){
+            ++i; if(i>ri){ sstd::pdbg_err("decode escape sequence is failed.\n"); break; }
+            
+            switch(str[i]){
+            case 'n' : { ret += '\n'; } break; // new line
+            case 't' : { ret += '\t'; } break; // tab
+            case 'b' : { ret += '\b'; } break; // back space
+            case '"' : { ret += '\"'; } break; // double quate
+            case '?' : { ret += '\?'; } break; // question mark
+            case 'r' : { ret += '\r'; } break; // return
+            case 'a' : { ret += '\a'; } break; // bell (alert)
+            case '\\': { ret += '\\'; } break; // back slash
+            case '\'': { ret += '\''; } break; // single quate
+            default: break;
+            }
+        }else{
+            ret += str[i];
+        }
+    }
+
+    return ret;
+}
+
+//---
+
 std::vector<std::string> sstd::_splitByLine_dq_sq(const char* str){
     
     std::vector<std::string> ret;
@@ -46,8 +114,8 @@ std::vector<std::string> sstd::_splitByLine_dq_sq(const char* str){
         }
         ret.push_back(std::move(buf));
     }
-    if(in_d_quate){ sstd::pdbg_err("double quatation is not closed\n"); }
-    if(in_s_quate){ sstd::pdbg_err("single quatation is not closed\n"); }
+    if(in_d_quate){ sstd::pdbg_err("double quatation is not closed\n"); return std::vector<std::string>(); }
+    if(in_s_quate){ sstd::pdbg_err("single quatation is not closed\n"); return std::vector<std::string>(); }
     
     return ret;
 }
@@ -182,7 +250,8 @@ bool _get_value(std::string& ret_val1, std::string& ret_val2, std::string s, uin
 
     switch(typeNum){
     case NUM_STR:  {
-        ret_val1 = sstd::strip(s); // _strip_dq_sq() に置き換える. _dq: double quotation, _sq: single quatation
+        //ret_val1 = sstd::strip(s); // _strip_dq_sq() に置き換える. _dq: double quotation, _sq: single quatation
+        ret_val1 = sstd::_strip_dq_sq(s);
     } break;
     case NUM_LIST: {
         ret_val1 = sstd::strip(_rm_hyphen(s)); // _strip_dq_sq() に置き換える. _qd: double quotation, _sq: single quatation
@@ -485,7 +554,8 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
 bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     bool tf = true;
     
-    std::vector<std::string> ls = sstd::splitByLine(s); // ls: line string  // ここ，_splitByLine_dq_sq() に置き換える
+    //std::vector<std::string> ls = sstd::splitByLine(s); // ls: line string  // ここ，_splitByLine_dq_sq() に置き換える
+    std::vector<std::string> ls = sstd::_splitByLine_dq_sq(s); // v: vector, ls: line string
     std::vector<struct command> v_cmd; if(!_parse_yaml(v_cmd, ls, 0)){ return false; }
     //_print(v_cmd);
     if(!_construct_var(ret_yml, v_cmd)){ return false; }
