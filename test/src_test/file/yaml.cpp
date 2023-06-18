@@ -1452,7 +1452,7 @@ TEST(yaml, double_quotation_list_NUM_HASH_sq){
     ASSERT_TRUE(yml==ans);
 }
 
-// TEST(yaml, double_quotation_list_NUM_LIST_AND_HASH){}
+TEST(yaml, double_quotation_list_NUM_LIST_AND_HASH){}
 
 /*
 TEST(yaml, double_quotation_list_case02){
