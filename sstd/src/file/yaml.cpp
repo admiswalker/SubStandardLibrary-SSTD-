@@ -530,7 +530,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
             switch(v_cmd[i].verb){
             case 's': {                           } break;
             case '-': { var = sstd::terp::list(); } break;
-            case 'x': {                           } break;
+            case 'x': { var = sstd::terp::list(); } break;
             case ':': { var = sstd::terp::hash(); } break;
             default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
             }

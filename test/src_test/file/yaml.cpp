@@ -160,9 +160,10 @@ TEST(yaml, list_and_hash__NUM_LIST_AND_HASH){
     //---
     
     sstd::terp::var ans;
-    ans = sstd::terp::list();
+    ans = sstd::terp::list(1);
     ans[0] = sstd::terp::hash();
     ans[0]["k1"] = "v1";
+    sstd::printn(ans);
     
     //---
     
