@@ -292,20 +292,27 @@ std::vector<std::string> _get_verb(std::string s){
 bool _get_value(std::string& ret_val1, std::string& ret_val2, std::string s, uint typeNum){
     ret_val1.clear();
     ret_val2.clear();
+    sstd::printn(typeNum);
 
     switch(typeNum){
     case NUM_STR:  {
+        printf("NUM_STR\n");
         ret_val1 = sstd::_strip_dq_sq(s);
     } break;
     case NUM_LIST: {
+        printf("NUM_LIST\n");
         ret_val1 = sstd::_strip_dq_sq(_rm_hyphen(s));
     } break;
     case NUM_HASH:
     case NUM_LIST_AND_HASH: {
+        printf("NUM_HASH and NUM_LIST_AND_HASH\n");
         std::vector<std::string> v = sstd::_split_dq_sq(s, ':');
+        sstd::printn(v);
         if(v.size()>=1){ ret_val1 = sstd::_strip_dq_sq(_rm_hyphen(v[0])); }
         if(v.size()>=2){ ret_val2 = sstd::_strip_dq_sq(           v[1] ); }
         if(v.size()>=3){ sstd::printn(v); sstd::pdbg("Unexptected split by ':'."); return false; }
+        sstd::printn(ret_val1);
+        sstd::printn(ret_val2);
     } break;
     default: { sstd::pdbg_err("Unexpected typeNum\n"); return false; } break;
     }
@@ -600,7 +607,7 @@ bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     
     std::vector<std::string> ls = sstd::_splitByLine_dq_sq(s); // v: vector, ls: line string
     std::vector<struct command> v_cmd; if(!_parse_yaml(v_cmd, ls, 0)){ return false; }
-    //_print(v_cmd);
+    _print(v_cmd);
     if(!_construct_var(ret_yml, v_cmd)){ return false; }
     
     return tf;
