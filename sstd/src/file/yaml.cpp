@@ -289,17 +289,14 @@ bool _get_value(std::string& ret_val1, std::string& ret_val2, std::string s, uin
 
     switch(typeNum){
     case NUM_STR:  {
-        //ret_val1 = sstd::strip(s); // _strip_dq_sq() に置き換える. _dq: double quotation, _sq: single quatation
         ret_val1 = sstd::_strip_dq_sq(s);
     } break;
     case NUM_LIST: {
-        //ret_val1 = sstd::strip(_rm_hyphen(s)); // _strip_dq_sq() に置き換える. _qd: double quotation, _sq: single quatation
         ret_val1 = sstd::_strip_dq_sq(_rm_hyphen(s));
     } break;
     case NUM_HASH:
     case NUM_LIST_AND_HASH: {
-        //std::vector<std::string> v = sstd::split(s, ':'); // _split_dq_sq() に置き換える. _qd: double quotation, _sq: single quatation
-        std::vector<std::string> v = sstd::_split_dq_sq(s, ':'); // _qd: double quotation, _sq: single quatation
+        std::vector<std::string> v = sstd::_split_dq_sq(s, ':');
         if(v.size()>=1){ ret_val1 = sstd::_strip_dq_sq(_rm_hyphen(v[0])); }
         if(v.size()>=2){ ret_val2 = sstd::_strip_dq_sq(           v[1] ); }
         if(v.size()>=3){ sstd::printn(v); sstd::pdbg("Unexptected split by ':'."); return false; }
