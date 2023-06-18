@@ -155,7 +155,7 @@ TEST(yaml, list_and_hash__NUM_LIST_AND_HASH){
 - k1: v1
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+    //sstd::printn(yml);
 
     //---
     
@@ -163,7 +163,7 @@ TEST(yaml, list_and_hash__NUM_LIST_AND_HASH){
     ans = sstd::terp::list(1);
     ans[0] = sstd::terp::hash();
     ans[0]["k1"] = "v1";
-    sstd::printn(ans);
+    //sstd::printn(ans);
     
     //---
     
@@ -1513,11 +1513,10 @@ TEST(yaml, double_quotation_list_NUM_HASH_sq_case02){ // escape \' and non escap
 
 TEST(yaml, double_quotation_list_NUM_LIST_AND_HASH){
     std::string s=R"(
-- key1: val1
-#- 'key1': 'a: b c '
+- 'key1': 'a: b c '
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+    //sstd::printn(yml);
 
     //---
     
@@ -1525,7 +1524,7 @@ TEST(yaml, double_quotation_list_NUM_LIST_AND_HASH){
     ans = sstd::terp::list(1);
     ans[0] = sstd::terp::hash();
     ans[0]["key1"] = "a: b c ";
-    sstd::printn(ans);
+    //sstd::printn(ans);
     
     //---
     
