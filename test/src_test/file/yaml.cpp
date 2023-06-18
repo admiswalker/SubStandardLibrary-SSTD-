@@ -9,7 +9,7 @@ TEST(yaml, var_str_1_line){
 a # comment
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
+    sstd::printn(yml);
 
     //---
     
@@ -29,7 +29,7 @@ b
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     std::string ret = testing::internal::GetCapturedStdout().c_str();
     ASSERT_TRUE(sstd::strIn("OverWritting the existing data. (String data type can only take one data.)", ret.c_str()));
-    //sstd::printn(yml);
+    sstd::printn(yml);
 
     //---
     
@@ -1231,6 +1231,104 @@ g')");
 
 //------------------------------------------------
 
+TEST(yaml_dependent_fn, _strip_dq_sq_0_case01){
+    std::string s=R"()";
+    std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
+    //sstd::printn(l);
+
+    //--
+
+    std::string ans=R"()";
+    //sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(l==ans);
+}
+TEST(yaml_dependent_fn, _strip_dq_sq_0_case02){
+    std::string s=R"("")";
+    std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
+    //sstd::printn(l);
+
+    //--
+
+    std::string ans=R"()";
+    //sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(l==ans);
+}
+TEST(yaml_dependent_fn, _strip_dq_sq_0_case03){
+    std::string s=R"('')";
+    std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
+    //sstd::printn(l);
+
+    //--
+
+    std::string ans=R"()";
+    //sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(l==ans);
+}
+TEST(yaml_dependent_fn, _strip_dq_sq_1_case01){
+    std::string s=R"(a)";
+    std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
+    //sstd::printn(l);
+
+    //--
+
+    std::string ans=R"(a)";
+    //sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(l==ans);
+}
+TEST(yaml_dependent_fn, _strip_dq_sq_1_case02){
+    std::string s=R"(" a ")";
+    std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
+    //sstd::printn(l);
+
+    //--
+
+    std::string ans=R"( a )";
+    //sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(l==ans);
+}
+TEST(yaml_dependent_fn, _strip_dq_sq_2){
+    std::string s=R"(ab)";
+    std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
+    //sstd::printn(l);
+
+    //--
+
+    std::string ans=R"(ab)";
+    //sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(l==ans);
+}
+TEST(yaml_dependent_fn, _strip_dq_sq_3){
+    std::string s=R"(abc)";
+    std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
+    //sstd::printn(l);
+
+    //--
+
+    std::string ans=R"(abc)";
+    //sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(l==ans);
+}
 TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape){
     std::string s=R"("a: b c\"
 

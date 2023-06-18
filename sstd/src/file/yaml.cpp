@@ -31,22 +31,24 @@ std::string sstd::_strip_dq_sq(const std::string& str){
 
     // remove head and tail ' ' and '\t'
     int li=0, ri=((int)str.size())-1;
-    for(; li<(int)str.size(); ++li){
+    while(li<(int)str.size()){
         if(str[li]!=' ' && str[li]!='\t'){ break; }
+        ++li;
     }
-    for(; ri>=li; --ri){
+    while(ri>=li){
         if(str[ri]!=' ' && str[ri]!='\t'){ break; }
+        --ri;
     }
 
     // remove head and tail '"' or '\''
     {
         char c_head, c_tail;
-        if((ri - li)<= 1){ return std::string(); }
+        if((ri+1 - li)<= 0){ return std::string(); }
         
         // rm '"'
         c_head = str[li];
         c_tail = str[ri];
-        if(c_head=='"' && c_tail=='"' ){
+        if(c_head=='"' && c_tail=='"'){
             ++li;
             --ri;
         }
@@ -54,13 +56,13 @@ std::string sstd::_strip_dq_sq(const std::string& str){
         // rm '\''
         c_head = str[li];
         c_tail = str[ri];
-        if(c_head=='\'' && c_tail=='\'' ){
+        if(c_head=='\'' && c_tail=='\''){
             ++li;
             --ri;
         }
     }
 //    return str.substr(li, ri);
-
+    
     std::string ret;
     
     // decode escape sequence
