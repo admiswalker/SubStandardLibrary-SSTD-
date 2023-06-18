@@ -181,24 +181,30 @@ std::string _rm_hyphen(std::string s){
 
 //---
 
-std::string _rm_bw_dq_sq(const std::string& s){ // _bw: between, _dq: double quotation, _sq: single quatation
+std::string _rm_bw_dq_sq(const std::string& str){ // _bw: between, _dq: double quotation, _sq: single quatation
     std::string ret;
-
-    bool in_quate=false;
-    for(uint i=0; i<s.size(); ++i){
-        if( s[i] == '"' ){
-            in_quate = !in_quate;
-        }else{
-            if( !in_quate ){ ret += s[i]; }
-        }
-    }
     
+    bool is_escaped=false;
+    bool in_d_quate=false; // double quate
+    bool in_s_quate=false; // single quate
+    for(uint r=0; str[r]!='\0'; ++r){ // r: read place
+        if(str[r]=='\\'){ is_escaped=true; ++r; if(str[r]=='\0'){break;} continue; }
+        
+        if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
+        if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
+        is_escaped=false;
+
+        if(in_s_quate || in_d_quate){ continue; }
+        ret += str[r];
+    }
+    if(in_d_quate){ sstd::pdbg_err("double quatation is not closed\n"); return std::string(); }
+    if(in_s_quate){ sstd::pdbg_err("single quatation is not closed\n"); return std::string(); }
+
     return ret;
 }
 
 bool _is_hash(const std::string& s){
-    if(sstd::charIn(':', _rm_bw_dq_sq(s))){ return true; }
-    return false;
+    return sstd::charIn(':', _rm_bw_dq_sq(s));
 }
 bool _is_list(const std::string& s){
     for(uint i=0; i<s.size(); ++i){
