@@ -22,6 +22,8 @@
 // - dq: double quotation
 // - sq: single quatation
 
+// ここの関数は，あとで各々の sstd namespace のファイルに移す
+
 //---
 
 std::string sstd::_strip_dq_sq(const        char* str){
@@ -81,6 +83,7 @@ std::string sstd::_strip_dq_sq(const std::string& str){
             case '\\': { ret += '\\'; } break; // back slash
             case '\'': { ret += '\''; } break; // single quate
             default: break;
+                //default: { sstd::pdbg_err("unexpected escape sequence.\n"); } break;
             }
         }else{
             ret += str[i];
@@ -90,7 +93,7 @@ std::string sstd::_strip_dq_sq(const std::string& str){
     return ret;
 }
 
-//---
+//-----------------------------
 
 std::vector<std::string> sstd::_splitByLine_dq_sq(const char* str){
     
@@ -123,6 +126,40 @@ std::vector<std::string> sstd::_splitByLine_dq_sq(const char* str){
 }
 std::vector<std::string> sstd::_splitByLine_dq_sq(const std::string& str){
     return sstd::_splitByLine_dq_sq(str.c_str());
+}
+
+//-------------------------------
+
+std::vector<std::string> sstd::_split_dq_sq(const char* str, const char X){
+    
+    std::vector<std::string> ret;
+    
+    bool is_escaped=false;
+    bool in_d_quate=false; // double quate
+    bool in_s_quate=false; // single quate
+    std::string buf;
+    for(uint r=0; str[r]!=0; ++r){ // r: read place
+        buf.clear();
+        for(; str[r]!='\0'; ++r){
+            if(str[r]=='\\'){ is_escaped=true; buf+=str[r]; ++r; if(str[r]=='\0'){break;} }
+            
+            if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
+            if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
+            
+            if(!in_d_quate && !in_s_quate && str[r]==X){ break; }
+            buf += str[r];
+            
+            is_escaped=false;
+        }
+        ret.push_back(std::move(buf));
+    }
+    if(in_d_quate){ sstd::pdbg_err("double quatation is not closed\n"); return std::vector<std::string>(); }
+    if(in_s_quate){ sstd::pdbg_err("single quatation is not closed\n"); return std::vector<std::string>(); }
+    
+    return ret;
+}
+std::vector<std::string> sstd::_split_dq_sq(const std::string& str, const char X){
+    return std::move(sstd::_split_dq_sq(str.c_str(), X));
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -256,14 +293,17 @@ bool _get_value(std::string& ret_val1, std::string& ret_val2, std::string s, uin
         ret_val1 = sstd::_strip_dq_sq(s);
     } break;
     case NUM_LIST: {
-        ret_val1 = sstd::strip(_rm_hyphen(s)); // _strip_dq_sq() に置き換える. _qd: double quotation, _sq: single quatation
+        //ret_val1 = sstd::strip(_rm_hyphen(s)); // _strip_dq_sq() に置き換える. _qd: double quotation, _sq: single quatation
+        ret_val1 = sstd::_strip_dq_sq(_rm_hyphen(s));
     } break;
     case NUM_HASH:
     case NUM_LIST_AND_HASH: {
         printf("imhere\n\n");
-        std::vector<std::string> v = sstd::split(s, ':'); // _split_dq_sq() に置き換える. _qd: double quotation, _sq: single quatation
-        if(v.size()>=1){ ret_val1 = sstd::strip(_rm_hyphen(v[0])); }
-        if(v.size()>=2){ ret_val2 = sstd::strip(           v[1] ); }
+        //std::vector<std::string> v = sstd::split(s, ':'); // _split_dq_sq() に置き換える. _qd: double quotation, _sq: single quatation
+        std::vector<std::string> v = sstd::_split_dq_sq(s, ':'); // _qd: double quotation, _sq: single quatation
+        if(v.size()>=1){ ret_val1 = sstd::_strip_dq_sq(_rm_hyphen(v[0])); }
+        if(v.size()>=2){ ret_val2 = sstd::_strip_dq_sq(           v[1] ); }
+        //if(v.size()>=3){ sstd::pdbg("Unexptected split by ':'."); return false; }
     } break;
     default: { sstd::pdbg_err("Unexpected typeNum\n"); return false; } break;
     }
