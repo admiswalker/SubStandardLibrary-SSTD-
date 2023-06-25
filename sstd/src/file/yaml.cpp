@@ -26,6 +26,28 @@
 
 //---
 
+std::string sstd::_join(const std::vector<std::string>& v, const std::string& delimiter){
+    std::string ret;
+
+    if(v.size()>=1){
+        ret += v[0];
+    }
+    for(uint i=1; i<v.size(); ++i){
+        ret += delimiter + v[i];
+    }
+    return ret;
+}
+
+//---
+
+void sstd::_strip_ow(std::vector<std::string>& v){
+    for(uint i=0; i<v.size(); ++i){
+        sstd::strip_ow(v[i]);
+    }
+}
+
+//---
+
 std::string sstd::_strip_dq_sq(const        char* str){
     return std::move(sstd::_strip_dq_sq(std::string(str)));
 }
@@ -34,14 +56,14 @@ std::string sstd::_strip_dq_sq(const std::string& str){
     // remove head and tail ' ' and '\t'
     int li=0, ri=((int)str.size())-1;
     while(li<(int)str.size()){
-        if(str[li]!=' ' && str[li]!='\t'){ break; }
+        if(str[li]!=' ' && str[li]!='\t'){ break; } // remove head ' ' and '\t'
         ++li;
     }
     while(ri>=li){
-        if(str[ri]!=' ' && str[ri]!='\t'){ break; }
+        if(str[ri]!=' ' && str[ri]!='\t'){ break; } // remove tail ' ' and '\t'
         --ri;
     }
-
+    
     // remove head and tail '"' or '\''
     {
         char c_head, c_tail;
@@ -64,15 +86,21 @@ std::string sstd::_strip_dq_sq(const std::string& str){
         }
     }
 //    return str.substr(li, ri);
+
+    std::vector<std::string> vTmp = sstd::splitByLine(str.substr(li, ri));
+    std::string tmp = sstd::_join(vTmp, "\n");
+    sstd::printn(tmp);
     
     std::string ret;
     
     // decode escape sequence
-    for(int i=li; i<=ri; ++i){
-        if(str[i]=='\\'){
-            ++i; if(i>ri){ sstd::pdbg_err("decode escape sequence is failed.\n"); break; }
+//    for(int i=li; i<=ri; ++i){
+    for(uint i=0; i<tmp.size(); ++i){
+        if(tmp[i]=='\\'){
+            //++i; if(i>ri){ sstd::pdbg_err("decode escape sequence is failed.\n"); break; }
+            ++i; if(i>=tmp.size()){ sstd::pdbg_err("decode escape sequence is failed.\n"); break; }
             
-            switch(str[i]){
+            switch(tmp[i]){
             case 'n' : { ret += '\n'; } break; // new line
             case 't' : { ret += '\t'; } break; // tab
             case 'b' : { ret += '\b'; } break; // back space
@@ -82,11 +110,12 @@ std::string sstd::_strip_dq_sq(const std::string& str){
             case 'a' : { ret += '\a'; } break; // bell (alert)
             case '\\': { ret += '\\'; } break; // back slash
             case '\'': { ret += '\''; } break; // single quate
+            case '\n': { ret += ' '; } break; // for yaml parse rule
             default: break;
                 //default: { sstd::pdbg_err("unexpected escape sequence.\n"); } break;
             }
         }else{
-            ret += str[i];
+            ret += tmp[i];
         }
     }
 
@@ -348,7 +377,7 @@ bool _get_multi_line_str(std::string& ret, const uint hsc_prev, const std::strin
     for(; i<ls.size(); ++i){
         std::string s;
         s = ls[i];
-        s = _rm_comment(s);
+        s = _rm_comment(s); // s = _rm_comment_dq_sq(s); に置き換える
         if(s=="..."){ --i; return true; } // detect end marker
         
         uint type = _data_type(s);
@@ -425,12 +454,13 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
     for(uint i=0; i<ls.size(); ++i){
         std::string s;
         s = ls[i];
-        s = _rm_comment(s);
+        s = _rm_comment(s); // s = _rm_comment_dq_sq(s); に置き換える
         if(s.size()==0){ continue; }
         if(s=="..."){ return true; } // detect end marker
         uint type = _data_type(s);
         uint hsc_lx = _hsc_lx(s);
         uint hsc_hx = _hsc_hx(s);
+        sstd::printn(s);
         std::string val1, val2; if(!_get_value(val1, val2, s, type)){ return false; }
 
         // for multiple line string
@@ -599,8 +629,9 @@ bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     bool tf = true;
     
     std::vector<std::string> ls = sstd::_splitByLine_dq_sq(s); // v: vector, ls: line string
+    sstd::printn(ls);
     std::vector<struct command> v_cmd; if(!_parse_yaml(v_cmd, ls, 0)){ return false; }
-    //_print(v_cmd);
+    _print(v_cmd);
     if(!_construct_var(ret_yml, v_cmd)){ return false; }
     
     return tf;
@@ -615,7 +646,7 @@ std::vector<std::vector<std::string>> _split_by_separator(const std::vector<std:
     std::vector<std::string> ls_tmp;
     for(uint i=0; i<ls.size(); ++i){
         std::string s = ls[i];
-        s = _rm_comment(s);
+        s = _rm_comment(s); // s = _rm_comment_dq_sq(s); に置き換える
         if(s=="---"){ // detect the separator
             v_ls.push_back(std::move(ls_tmp));
             ls_tmp.clear();

@@ -1352,7 +1352,10 @@ TEST(yaml_dependent_fn, _strip_dq_sq_3){
     
     ASSERT_TRUE(l==ans);
 }
-TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape){
+
+//---
+
+TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case01){
     std::string s=R"("a: b c\"
 
 def'
@@ -1372,7 +1375,42 @@ g)";
     
     ASSERT_TRUE(l==ans);
 }
-TEST(yaml_dependent_fn, _strip_dq_sq__sq_escape){
+TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case02){
+    std::string s=R"("\
+   abc\
+   def")";
+    std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
+    sstd::printn(l);
+
+    //--
+
+    std::string ans=R"(abcdef)";
+    sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(l==ans);
+}
+TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case03){
+    std::string s=R"("
+   abc
+   def")";
+    std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
+    //sstd::printn(l);
+
+    //--
+
+    std::string ans=R"( abc def)";
+    //sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(l==ans);
+}
+
+//---
+
+TEST(yaml_dependent_fn, _strip_dq_sq__sq_escape_case01){
     std::string s=R"('a: b c\'
 
 def"
@@ -1419,7 +1457,9 @@ g)";
     ASSERT_TRUE(yml==ans);
 }
 
-TEST(yaml, double_quotation_list_NUM_LIST){
+//---
+
+TEST(yaml, double_quotation_list_NUM_LIST_case01){
     std::string s=R"(
 - "a: b c "
 )";
@@ -1437,6 +1477,28 @@ TEST(yaml, double_quotation_list_NUM_LIST){
     
     ASSERT_TRUE(yml==ans);
 }
+TEST(yaml, double_quotation_list_NUM_LIST_case02){ // WIP
+    std::string s=R"(
+- "\
+   abc\
+   def"
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = "abcdef";
+    sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+
+//---
 
 TEST(yaml, double_quotation_list_NUM_HASH_dq_case01){
     std::string s=R"(
@@ -1511,7 +1573,28 @@ TEST(yaml, double_quotation_list_NUM_HASH_sq_case02){ // escape \' and non escap
     ASSERT_TRUE(yml==ans);
 }
 
-TEST(yaml, double_quotation_list_NUM_LIST_AND_HASH){
+//---
+
+TEST(yaml, double_quotation_list_NUM_LIST_AND_HASH_dq_case01){
+    std::string s=R"(
+- "key1": "a: b c "
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = sstd::terp::hash();
+    ans[0]["key1"] = "a: b c ";
+    //sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, double_quotation_list_NUM_LIST_AND_HASH_sq_case01){
     std::string s=R"(
 - 'key1': 'a: b c '
 )";
@@ -1530,6 +1613,8 @@ TEST(yaml, double_quotation_list_NUM_LIST_AND_HASH){
     
     ASSERT_TRUE(yml==ans);
 }
+
+//---
 
 /*
 TEST(yaml, double_quotation_list_case02){

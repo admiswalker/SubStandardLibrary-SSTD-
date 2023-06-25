@@ -23,6 +23,14 @@ namespace sstd{
 
 namespace sstd{
 
+    std::string _join(const std::vector<std::string>& v, const std::string& delimiter);
+
+    //---
+    
+    void _strip_ow(std::vector<std::string>& v);
+
+    //---
+
     std::string _strip_dq_sq(const        char* str);
     std::string _strip_dq_sq(const std::string& str);
 
