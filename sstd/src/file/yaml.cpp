@@ -163,12 +163,26 @@ std::string sstd::_strip_dq_sq(const std::string& str){
 
     std::string ret;
 
+    bool escape = false;
     uint new_line_cnt=0;
     for(uint i=0; i<tmp.size(); ++i){
+        if(tmp[i]=='\\'){
+            escape=true;
+            continue;
+//            ++i; if(i>=tmp.size()){ sstd::pdbg_err("decode escape sequence is failed.\n"); break; }
+//            switch(tmp[i]){
+//            case '\n': {  } break;
+//            case ' ' : {  } break;
+//            default: break;
+//            }
+        }
+        
         if(tmp[i]=='\n'){ ++new_line_cnt; continue; }
         
         if(new_line_cnt==1){
-            ret += " ";
+            if(!escape){
+                ret += " ";
+            }
         }else if(new_line_cnt>=2){
             for(uint i_t=0; i_t<new_line_cnt-1; ++i_t){ ret += "\\n"; }
         }
@@ -176,6 +190,7 @@ std::string sstd::_strip_dq_sq(const std::string& str){
         ret += tmp[i];
         
         new_line_cnt=0;
+        escape = false;
     }
     
 //    std::vector<std::string> vTmp = sstd::splitByLine(tmp);
