@@ -48,11 +48,81 @@ void sstd::_strip_ow(std::vector<std::string>& v){
 
 //---
 
+std::string _mearge_vec_by_space_or_newLines(const std::vector<std::string>& v){
+    sstd::printn(v);
+    std::string ret;
+
+    std::vector<std::string> v_delmiter;
+
+    uint cnt=0;
+    for(uint i=0; i<v.size(); ++i){
+        if(v[i].size()==(uint)0){
+            ++cnt;
+            continue;
+        }
+        sstd::printn(cnt);
+        
+        if(cnt!=0){
+            std::string tmp;
+            for(uint i_t=0; i_t<cnt; ++i_t){ tmp += "\\n"; }
+            v_delmiter.push_back(tmp);
+        }
+        cnt=0;
+    }
+    sstd::printn(v_delmiter);
+    
+    bool is_prev_empty=false;
+    uint i_vd=0;
+    uint i=0;
+    for(; i<v.size(); ++i){
+        if(v[i].size()==(uint)0){ is_prev_empty=true; continue; }
+        
+        if(is_prev_empty){
+            if(i_vd>=v_delmiter.size()){ sstd::pdbg_err("i_vd out the range of v_delmiter size.\n"); return ret; }
+            ret += v_delmiter[i_vd]; ++i_vd;
+        }else if(i!=0){
+            ret += " ";
+        }
+        
+        ret += v[i];
+        is_prev_empty=false;
+    }
+//    if(v[v.size()-1].size()!=0){
+//        ret += " " + v[ v.size()-1 ];
+//    }
+    
+    //v_tmp.clean();
+    
+    /*
+    std::string delimiter;
+    for(int i=0; i<(int)v.size()-1; ++i){
+        bool is_delimiter_inserted=false;
+        
+        if(v[i].size()==0 || v[i]=="\\"){
+            delimiter += "\\n";
+            continue;
+        }else{
+            delimiter += " ";
+        }
+        
+        ret += delimiter;
+        ret += v[i];
+        
+        delimiter.clear();
+    }
+    ret += v[v.size()-1];
+    */
+    return ret;
+}
+
+//---
+
 std::string sstd::_strip_dq_sq(const        char* str){
     return std::move(sstd::_strip_dq_sq(std::string(str)));
 }
 std::string sstd::_strip_dq_sq(const std::string& str){
-
+//    bool dq_sq_is_used = false;
+    
     // remove head and tail ' ' and '\t'
     int li=0, ri=((int)str.size())-1;
     while(li<(int)str.size()){
@@ -73,6 +143,7 @@ std::string sstd::_strip_dq_sq(const std::string& str){
         c_head = str[li];
         c_tail = str[ri];
         if(c_head=='"' && c_tail=='"'){
+//            dq_sq_is_used = true;
             ++li;
             --ri;
         }
@@ -81,18 +152,50 @@ std::string sstd::_strip_dq_sq(const std::string& str){
         c_head = str[li];
         c_tail = str[ri];
         if(c_head=='\'' && c_tail=='\''){
+//            dq_sq_is_used = true;
             ++li;
             --ri;
         }
     }
 //    return str.substr(li, ri);
 
-    std::vector<std::string> vTmp = sstd::splitByLine(str.substr(li, ri));
-    std::string tmp = sstd::_join(vTmp, "\n");
-    sstd::printn(tmp);
-    
+    std::string tmp = str.substr(li, ri);
+
     std::string ret;
+
+    uint new_line_cnt=0;
+    for(uint i=0; i<tmp.size(); ++i){
+        if(tmp[i]=='\n'){ ++new_line_cnt; continue; }
+        
+        if(new_line_cnt==1){
+            ret += " ";
+        }else if(new_line_cnt>=2){
+            for(uint i_t=0; i_t<new_line_cnt-1; ++i_t){ ret += "\\n"; }
+        }
+        
+        ret += tmp[i];
+        
+        new_line_cnt=0;
+    }
     
+//    std::vector<std::string> vTmp = sstd::splitByLine(tmp);
+//    for(uint i=0; i<vTmp.size(); ++i){
+//        vTmp[i];
+//    }
+    
+//    if(dq_sq_is_used){
+//        std::vector<std::string> vTmp = sstd::splitByLine(tmp);
+//        sstd::_strip_ow(vTmp);
+//        tmp = sstd::_join(vTmp, "\n");
+//        sstd::printn(tmp);
+//    }
+
+    
+//    std::string ret = _mearge_vec_by_space_or_newLines(vTmp);
+    
+    /*
+    std::string ret;
+
     // decode escape sequence
 //    for(int i=li; i<=ri; ++i){
     for(uint i=0; i<tmp.size(); ++i){
@@ -110,15 +213,16 @@ std::string sstd::_strip_dq_sq(const std::string& str){
             case 'a' : { ret += '\a'; } break; // bell (alert)
             case '\\': { ret += '\\'; } break; // back slash
             case '\'': { ret += '\''; } break; // single quate
-            case '\n': { ret += ' '; } break; // for yaml parse rule
+//            case ' ': {} break;
             default: break;
-                //default: { sstd::pdbg_err("unexpected escape sequence.\n"); } break;
             }
+        }else if(tmp[i]=='\n'){
+            ret += ' ';
         }else{
             ret += tmp[i];
         }
     }
-
+    */
     return ret;
 }
 

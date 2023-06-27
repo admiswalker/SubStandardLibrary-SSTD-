@@ -1356,26 +1356,74 @@ TEST(yaml_dependent_fn, _strip_dq_sq_3){
 //---
 
 TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case01){
-    std::string s=R"("a: b c\"
-
-def'
-g"   )";
+    std::string s=R"("abc
+def
+ghi"   )";
     std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
-    //sstd::printn(l);
+    sstd::printn(l);
 
     //--
 
-    std::string ans=R"(a: b c"
-
-def'
-g)";
-    //sstd::printn(ans);
+    std::string ans=R"(abc def ghi)";
+    sstd::printn(ans);
 
     //---
     
     ASSERT_TRUE(l==ans);
 }
-TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case02){
+TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case02){ // WIP
+    std::string s=R"("abc\
+def
+ghi"   )";
+    std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
+    sstd::printn(l);
+
+    //--
+
+    std::string ans=R"(abcdef ghi)";
+    sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(l==ans);
+}
+TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case03){ // WIP
+    std::string s=R"("abc
+
+
+def
+ghi"   )";
+    std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
+    sstd::printn(l);
+
+    //--
+
+    std::string ans=R"(abc\n\ndef ghi)";
+    sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(l==ans);
+}
+TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case04){ // WIP
+    std::string s=R"("abc\
+
+
+def
+ghi"   )";
+    std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
+    sstd::printn(l);
+
+    //--
+
+    std::string ans=R"(abc\n\ndef ghi)";
+    sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(l==ans);
+}
+TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case05){
     std::string s=R"("\
    abc\
    def")";
@@ -1391,17 +1439,17 @@ TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case02){
     
     ASSERT_TRUE(l==ans);
 }
-TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case03){
+TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case06){
     std::string s=R"("
    abc
    def")";
     std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
-    //sstd::printn(l);
+    sstd::printn(l);
 
     //--
 
     std::string ans=R"( abc def)";
-    //sstd::printn(ans);
+    sstd::printn(ans);
 
     //---
     
