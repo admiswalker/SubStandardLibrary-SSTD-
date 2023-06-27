@@ -186,6 +186,9 @@ std::string sstd::_strip_dq_sq(const std::string& str){
         }else if(new_line_cnt>=2){
             for(uint i_t=0; i_t<new_line_cnt-1; ++i_t){ ret += "\\n"; }
         }
+
+        while(tmp[i]==' ' && i<tmp.size()){ ++i; }
+        if(i>=tmp.size()){ break; }
         
         ret += tmp[i];
         
