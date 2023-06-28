@@ -130,39 +130,45 @@ std::string sstd::_strip_dq_sq(const std::string& str){
         ++li;
     }
     while(ri>=li){
+        sstd::printn(ri);
+        sstd::printn(str[ri]);
         if(str[ri]!=' ' && str[ri]!='\t'){ break; } // remove tail ' ' and '\t'
         --ri;
     }
+        sstd::printn(li);
+        sstd::printn(ri);
+    sstd::printn(str.substr(li, ri-li+1));
     
     // remove head and tail '"' or '\''
+    std::string tmp;
     {
-        char c_head, c_tail;
         if((ri+1 - li)<= 0){ return std::string(); }
         
+        char c_head = str[li];
+        char c_tail = str[ri];
+        
         // rm '"'
-        c_head = str[li];
-        c_tail = str[ri];
         if(c_head=='"' && c_tail=='"'){
 //            dq_sq_is_used = true;
+            printf("in dq \n");
             ++li;
             --ri;
         }
         
         // rm '\''
-        c_head = str[li];
-        c_tail = str[ri];
         if(c_head=='\'' && c_tail=='\''){
 //            dq_sq_is_used = true;
+            printf("in sq \n");
             ++li;
             --ri;
         }
+        
+        tmp = str.substr(li, ri-li+1);
     }
-//    return str.substr(li, ri);
-
-    std::string tmp = str.substr(li, ri);
-
+    sstd::printn(tmp);
+    
     std::string ret;
-
+    
     bool escape = false;
     uint new_line_cnt=0;
     for(uint i=0; i<tmp.size(); ++i){

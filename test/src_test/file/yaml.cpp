@@ -1355,8 +1355,39 @@ TEST(yaml_dependent_fn, _strip_dq_sq_3){
 
 //---
 
+TEST(yaml_dependent_fn, _strip_dq_sq__non_dq_sq_case01){
+    std::string s=R"(abc)";
+    std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
+    sstd::printn(l);
+
+    //--
+
+    std::string ans=R"(abc)";
+    sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(l==ans);
+}
+
+//---
+
+TEST(yaml_dependent_fn, _strip_dq_sq__non_dq_sq_case00){
+    std::string s=R"("abc")";
+    std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
+    sstd::printn(l);
+
+    //--
+
+    std::string ans=R"(abc)";
+    sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(l==ans);
+}
 TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case01){
-    std::string s=R"("abc
+    std::string s=R"(  "abc
 def
 ghi"   )";
     std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
@@ -1376,12 +1407,12 @@ TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case02){ // WIP
 def
 ghi"   )";
     std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
-    sstd::printn(l);
+    //sstd::printn(l);
 
     //--
 
     std::string ans=R"(abcdef ghi)";
-    sstd::printn(ans);
+    //sstd::printn(ans);
 
     //---
     
@@ -1394,12 +1425,12 @@ TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case03){ // WIP
 def
 ghi"   )";
     std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
-    sstd::printn(l);
+    //sstd::printn(l);
 
     //--
 
     std::string ans=R"(abc\n\ndef ghi)";
-    sstd::printn(ans);
+    //sstd::printn(ans);
 
     //---
     
@@ -1412,12 +1443,12 @@ TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case04){ // WIP
 def
 ghi"   )";
     std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
-    sstd::printn(l);
+    //sstd::printn(l);
 
     //--
 
     std::string ans=R"(abc\n\ndef ghi)";
-    sstd::printn(ans);
+    //sstd::printn(ans);
 
     //---
     
@@ -1428,12 +1459,12 @@ TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case05){
    abc\
    def")";
     std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
-    sstd::printn(l);
+    //sstd::printn(l);
 
     //--
 
     std::string ans=R"(abcdef)";
-    sstd::printn(ans);
+    //sstd::printn(ans);
 
     //---
     
@@ -1444,12 +1475,12 @@ TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case06){
    abc
    def")";
     std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
-    sstd::printn(l);
+    //sstd::printn(l);
 
     //--
 
     std::string ans=R"( abc def)";
-    sstd::printn(ans);
+    //sstd::printn(ans);
 
     //---
     
@@ -1461,12 +1492,12 @@ TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case07){
 def\"
 g"   )";
     std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
-    sstd::printn(l);
+    //sstd::printn(l);
 
     //--
 
     std::string ans=R"(a: b c'\ndef\" g)";
-    sstd::printn(ans);
+    //sstd::printn(ans);
 
     //---
     
