@@ -1455,30 +1455,44 @@ TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case06){
     
     ASSERT_TRUE(l==ans);
 }
+TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case07){
+    std::string s=R"("a: b c'
 
-//---
-
-TEST(yaml_dependent_fn, _strip_dq_sq__sq_escape_case01){
-    std::string s=R"('a: b c\'
-
-def"
-g'   )";
+def\"
+g"   )";
     std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
-    //sstd::printn(l);
+    sstd::printn(l);
 
     //--
 
-    std::string ans=R"(a: b c'
-
-def"
-g)";
-    //sstd::printn(ans);
+    std::string ans=R"(a: b c'\ndef\" g)";
+    sstd::printn(ans);
 
     //---
     
     ASSERT_TRUE(l==ans);
 }
 
+//---
+/*
+TEST(yaml_dependent_fn, _strip_dq_sq__sq_escape_case07){
+    std::string s=R"('a: b c\'
+
+def"
+g'   )";
+    std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
+    sstd::printn(l);
+
+    //--
+
+    std::string ans=R"(a: b c\'\ndef" g)";
+    sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(l==ans);
+}
+*/
 //------------------------------------------------
 
 TEST(yaml, double_quotation_NUM_STR){

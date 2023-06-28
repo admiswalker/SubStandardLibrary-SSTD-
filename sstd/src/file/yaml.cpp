@@ -169,12 +169,12 @@ std::string sstd::_strip_dq_sq(const std::string& str){
         if(tmp[i]=='\\'){
             escape=true;
             continue;
-//            ++i; if(i>=tmp.size()){ sstd::pdbg_err("decode escape sequence is failed.\n"); break; }
-//            switch(tmp[i]){
-//            case '\n': {  } break;
-//            case ' ' : {  } break;
-//            default: break;
-//            }
+        }
+        if(escape){
+            switch(tmp[i]){
+            case '"': { ret += '\\'; } break;
+            default: break;
+            }
         }
         
         if(tmp[i]=='\n'){ ++new_line_cnt; continue; }
@@ -186,8 +186,8 @@ std::string sstd::_strip_dq_sq(const std::string& str){
         }else if(new_line_cnt>=2){
             for(uint i_t=0; i_t<new_line_cnt-1; ++i_t){ ret += "\\n"; }
         }
-
-        while(tmp[i]==' ' && i<tmp.size()){ ++i; }
+        
+        while(new_line_cnt!=0 && tmp[i]==' ' && i<tmp.size()){ ++i; } // remove head ' '
         if(i>=tmp.size()){ break; }
         
         ret += tmp[i];
