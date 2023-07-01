@@ -1358,12 +1358,12 @@ TEST(yaml_dependent_fn, _strip_dq_sq_3){
 TEST(yaml_dependent_fn, _strip_dq_sq__non_dq_sq_case01){
     std::string s=R"(abc)";
     std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
-    sstd::printn(l);
+    //sstd::printn(l);
 
     //--
 
     std::string ans=R"(abc)";
-    sstd::printn(ans);
+    //sstd::printn(ans);
 
     //---
     
@@ -1375,12 +1375,12 @@ TEST(yaml_dependent_fn, _strip_dq_sq__non_dq_sq_case01){
 TEST(yaml_dependent_fn, _strip_dq_sq__non_dq_sq_case00){
     std::string s=R"("abc")";
     std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
-    sstd::printn(l);
+    //sstd::printn(l);
 
     //--
 
     std::string ans=R"(abc)";
-    sstd::printn(ans);
+    //sstd::printn(ans);
 
     //---
     
@@ -1391,12 +1391,12 @@ TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case01){
 def
 ghi"   )";
     std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
-    sstd::printn(l);
+    //sstd::printn(l);
 
     //--
 
     std::string ans=R"(abc def ghi)";
-    sstd::printn(ans);
+    //sstd::printn(ans);
 
     //---
     
@@ -1577,14 +1577,14 @@ TEST(yaml, double_quotation_list_NUM_LIST_case02){ // WIP
    def"
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+    //sstd::printn(yml);
 
     //---
     
     sstd::terp::var ans;
     ans = sstd::terp::list(1);
     ans[0] = "abcdef";
-    sstd::printn(ans);
+    //sstd::printn(ans);
     
     //---
     

@@ -49,7 +49,6 @@ void sstd::_strip_ow(std::vector<std::string>& v){
 //---
 
 std::string _mearge_vec_by_space_or_newLines(const std::vector<std::string>& v){
-    sstd::printn(v);
     std::string ret;
 
     std::vector<std::string> v_delmiter;
@@ -60,7 +59,6 @@ std::string _mearge_vec_by_space_or_newLines(const std::vector<std::string>& v){
             ++cnt;
             continue;
         }
-        sstd::printn(cnt);
         
         if(cnt!=0){
             std::string tmp;
@@ -69,7 +67,6 @@ std::string _mearge_vec_by_space_or_newLines(const std::vector<std::string>& v){
         }
         cnt=0;
     }
-    sstd::printn(v_delmiter);
     
     bool is_prev_empty=false;
     uint i_vd=0;
@@ -130,14 +127,9 @@ std::string sstd::_strip_dq_sq(const std::string& str){
         ++li;
     }
     while(ri>=li){
-        sstd::printn(ri);
-        sstd::printn(str[ri]);
         if(str[ri]!=' ' && str[ri]!='\t'){ break; } // remove tail ' ' and '\t'
         --ri;
     }
-        sstd::printn(li);
-        sstd::printn(ri);
-    sstd::printn(str.substr(li, ri-li+1));
     
     // remove head and tail '"' or '\''
     std::string tmp;
@@ -150,7 +142,6 @@ std::string sstd::_strip_dq_sq(const std::string& str){
         // rm '"'
         if(c_head=='"' && c_tail=='"'){
 //            dq_sq_is_used = true;
-            printf("in dq \n");
             ++li;
             --ri;
         }
@@ -158,14 +149,12 @@ std::string sstd::_strip_dq_sq(const std::string& str){
         // rm '\''
         if(c_head=='\'' && c_tail=='\''){
 //            dq_sq_is_used = true;
-            printf("in sq \n");
             ++li;
             --ri;
         }
         
         tmp = str.substr(li, ri-li+1);
     }
-    sstd::printn(tmp);
     
     std::string ret;
     
@@ -588,7 +577,6 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
         uint type = _data_type(s);
         uint hsc_lx = _hsc_lx(s);
         uint hsc_hx = _hsc_hx(s);
-        sstd::printn(s);
         std::string val1, val2; if(!_get_value(val1, val2, s, type)){ return false; }
 
         // for multiple line string
@@ -757,9 +745,9 @@ bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     bool tf = true;
     
     std::vector<std::string> ls = sstd::_splitByLine_dq_sq(s); // v: vector, ls: line string
-    sstd::printn(ls);
+    //sstd::printn(ls);
     std::vector<struct command> v_cmd; if(!_parse_yaml(v_cmd, ls, 0)){ return false; }
-    _print(v_cmd);
+    //_print(v_cmd);
     if(!_construct_var(ret_yml, v_cmd)){ return false; }
     
     return tf;
