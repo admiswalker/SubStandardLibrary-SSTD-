@@ -1539,10 +1539,7 @@ g"
     //---
     
     sstd::terp::var ans;
-    ans=R"(a: b c"
-
-def
-g)";
+    ans=R"(a: b c\"\ndef g)";
     //sstd::printn(ans);
     
     //---
@@ -1622,7 +1619,7 @@ TEST(yaml, double_quotation_list_NUM_HASH_dq_case02){ // escape \" and non escap
     
     sstd::terp::var ans;
     ans = sstd::terp::hash();
-    ans["key1 \"'"] = " a: b c \"' ";
+    ans[R"(key1 \"')"] = R"( a: b c \"' )";
     //sstd::printn(ans);
     
     //---
