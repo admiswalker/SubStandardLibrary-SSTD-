@@ -84,31 +84,7 @@ std::string _mearge_vec_by_space_or_newLines(const std::vector<std::string>& v){
         ret += v[i];
         is_prev_empty=false;
     }
-//    if(v[v.size()-1].size()!=0){
-//        ret += " " + v[ v.size()-1 ];
-//    }
     
-    //v_tmp.clean();
-    
-    /*
-    std::string delimiter;
-    for(int i=0; i<(int)v.size()-1; ++i){
-        bool is_delimiter_inserted=false;
-        
-        if(v[i].size()==0 || v[i]=="\\"){
-            delimiter += "\\n";
-            continue;
-        }else{
-            delimiter += " ";
-        }
-        
-        ret += delimiter;
-        ret += v[i];
-        
-        delimiter.clear();
-    }
-    ret += v[v.size()-1];
-    */
     return ret;
 }
 
@@ -118,7 +94,6 @@ std::string sstd::_strip_dq_sq(const        char* str){
     return std::move(sstd::_strip_dq_sq(std::string(str)));
 }
 std::string sstd::_strip_dq_sq(const std::string& str){
-//    bool dq_sq_is_used = false;
     
     // remove head and tail ' ' and '\t'
     int li=0, ri=((int)str.size())-1;
@@ -141,14 +116,12 @@ std::string sstd::_strip_dq_sq(const std::string& str){
         
         // rm '"'
         if(c_head=='"' && c_tail=='"'){
-//            dq_sq_is_used = true;
             ++li;
             --ri;
         }
         
         // rm '\''
         if(c_head=='\'' && c_tail=='\''){
-//            dq_sq_is_used = true;
             ++li;
             --ri;
         }
@@ -165,7 +138,7 @@ std::string sstd::_strip_dq_sq(const std::string& str){
             escape=true;
             continue;
         }
-//        if(escape){
+//        if(escape){ // when using a escaped notation rule
 //            switch(tmp[i]){
 //            case '"': { ret += '\\'; } break;
 //            default: break;
@@ -179,7 +152,7 @@ std::string sstd::_strip_dq_sq(const std::string& str){
                 ret += " ";
             }
         }else if(new_line_cnt>=2){
-            //for(uint i_t=0; i_t<new_line_cnt-1; ++i_t){ ret += "\\n"; }
+//            for(uint i_t=0; i_t<new_line_cnt-1; ++i_t){ ret += "\\n"; } // when using a escaped notation rule
             for(uint i_t=0; i_t<new_line_cnt-1; ++i_t){ ret += '\n'; }
         }
         
@@ -192,51 +165,6 @@ std::string sstd::_strip_dq_sq(const std::string& str){
         escape = false;
     }
     
-//    std::vector<std::string> vTmp = sstd::splitByLine(tmp);
-//    for(uint i=0; i<vTmp.size(); ++i){
-//        vTmp[i];
-//    }
-    
-//    if(dq_sq_is_used){
-//        std::vector<std::string> vTmp = sstd::splitByLine(tmp);
-//        sstd::_strip_ow(vTmp);
-//        tmp = sstd::_join(vTmp, "\n");
-//        sstd::printn(tmp);
-//    }
-
-    
-//    std::string ret = _mearge_vec_by_space_or_newLines(vTmp);
-    
-    /*
-    std::string ret;
-
-    // decode escape sequence
-//    for(int i=li; i<=ri; ++i){
-    for(uint i=0; i<tmp.size(); ++i){
-        if(tmp[i]=='\\'){
-            //++i; if(i>ri){ sstd::pdbg_err("decode escape sequence is failed.\n"); break; }
-            ++i; if(i>=tmp.size()){ sstd::pdbg_err("decode escape sequence is failed.\n"); break; }
-            
-            switch(tmp[i]){
-            case 'n' : { ret += '\n'; } break; // new line
-            case 't' : { ret += '\t'; } break; // tab
-            case 'b' : { ret += '\b'; } break; // back space
-            case '"' : { ret += '\"'; } break; // double quate
-            case '?' : { ret += '\?'; } break; // question mark
-            case 'r' : { ret += '\r'; } break; // return
-            case 'a' : { ret += '\a'; } break; // bell (alert)
-            case '\\': { ret += '\\'; } break; // back slash
-            case '\'': { ret += '\''; } break; // single quate
-//            case ' ': {} break;
-            default: break;
-            }
-        }else if(tmp[i]=='\n'){
-            ret += ' ';
-        }else{
-            ret += tmp[i];
-        }
-    }
-    */
     return ret;
 }
 
