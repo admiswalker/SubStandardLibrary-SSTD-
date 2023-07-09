@@ -974,8 +974,32 @@ k3: c
     ASSERT_TRUE(yml==ans);
 }
 
-// TEST(yaml, multi_line_str_by_hash_vertical_line_minus_num_1){ // : |-1
-// }
+TEST(yaml, multi_line_str_by_hash_vertical_line_minus_num_1){ // : |-1
+    std::string s=R"(
+k1: a # comment
+k2: |-1
+  b1
+  b2
+  b3
+
+
+k3: c
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["k1"] = "a";
+    ans["k2"] = " b1\n b2\n b3";
+    ans["k3"] = "c";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
 
 // TEST(yaml, multi_line_str_by_hash_vertical_line_minus_num_2){ // : |-2
 // }
