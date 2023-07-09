@@ -165,12 +165,12 @@ std::string sstd::_strip_dq_sq(const std::string& str){
             escape=true;
             continue;
         }
-        if(escape){
-            switch(tmp[i]){
-            case '"': { ret += '\\'; } break;
-            default: break;
-            }
-        }
+//        if(escape){
+//            switch(tmp[i]){
+//            case '"': { ret += '\\'; } break;
+//            default: break;
+//            }
+//        }
         
         if(tmp[i]=='\n'){ ++new_line_cnt; continue; }
         
@@ -179,7 +179,8 @@ std::string sstd::_strip_dq_sq(const std::string& str){
                 ret += " ";
             }
         }else if(new_line_cnt>=2){
-            for(uint i_t=0; i_t<new_line_cnt-1; ++i_t){ ret += "\\n"; }
+            //for(uint i_t=0; i_t<new_line_cnt-1; ++i_t){ ret += "\\n"; }
+            for(uint i_t=0; i_t<new_line_cnt-1; ++i_t){ ret += '\n'; }
         }
         
         while(new_line_cnt!=0 && tmp[i]==' ' && i<tmp.size()){ ++i; } // remove head ' '

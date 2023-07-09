@@ -1402,7 +1402,7 @@ ghi"   )";
     
     ASSERT_TRUE(l==ans);
 }
-TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case02){ // WIP
+TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case02){
     std::string s=R"("abc\
 def
 ghi"   )";
@@ -1418,7 +1418,7 @@ ghi"   )";
     
     ASSERT_TRUE(l==ans);
 }
-TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case03){ // WIP
+TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case03){
     std::string s=R"("abc
 
 
@@ -1429,14 +1429,16 @@ ghi"   )";
 
     //--
 
-    std::string ans=R"(abc\n\ndef ghi)";
+    std::string ans=R"(abc
+
+def ghi)";
     //sstd::printn(ans);
 
     //---
     
     ASSERT_TRUE(l==ans);
 }
-TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case04){ // WIP
+TEST(yaml_dependent_fn, _strip_dq_sq__dq_escape_case04){
     std::string s=R"("abc\
 
 
@@ -1447,7 +1449,9 @@ ghi"   )";
 
     //--
 
-    std::string ans=R"(abc\n\ndef ghi)";
+    std::string ans=R"(abc
+
+def ghi)";
     //sstd::printn(ans);
 
     //---
@@ -1496,7 +1500,8 @@ g"   )";
 
     //--
 
-    std::string ans=R"(a: b c'\ndef\" g)";
+    std::string ans=R"(a: b c'
+def" g)";
     //sstd::printn(ans);
 
     //---
@@ -1539,7 +1544,8 @@ g"
     //---
     
     sstd::terp::var ans;
-    ans=R"(a: b c\"\ndef g)";
+    ans=R"(a: b c"
+def g)";
     //sstd::printn(ans);
     
     //---
@@ -1619,7 +1625,7 @@ TEST(yaml, double_quotation_list_NUM_HASH_dq_case02){ // escape \" and non escap
     
     sstd::terp::var ans;
     ans = sstd::terp::hash();
-    ans[R"(key1 \"')"] = R"( a: b c \"' )";
+    ans[R"(key1 "')"] = R"( a: b c "' )";
     //sstd::printn(ans);
     
     //---
