@@ -1347,38 +1347,37 @@ TEST(yaml, double_quotation_list_NUM_LIST_AND_HASH_sq_case01){
 
 //---
 
-/*
-TEST(yaml, double_quotation_list_case02){
+TEST(yaml, double_quotation_list_case01){
     std::string s=R"(
 - "a: b"
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+    //sstd::printn(yml);
 
     //---
     
     sstd::terp::var ans;
     ans = sstd::terp::list(1);
     ans[0] = "a: b";
+    //sstd::printn(ans);
     
     //---
     
     ASSERT_TRUE(yml==ans);
 }
-//*/
-/*
 TEST(yaml, double_quotation_list_case02){
     std::string s=R"(
 - "a b c"
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+    //sstd::printn(yml);
 
     //---
     
     sstd::terp::var ans;
     ans = sstd::terp::list(1);
     ans[0] = "a b c";
+    //sstd::printn(ans);
     
     //---
     
@@ -1389,19 +1388,19 @@ TEST(yaml, double_quotation_list_case03){
 - "- a"
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+    //sstd::printn(yml);
 
     //---
     
     sstd::terp::var ans;
     ans = sstd::terp::list(1);
     ans[0] = "- a";
+    //sstd::printn(ans);
     
     //---
     
     ASSERT_TRUE(yml==ans);
 }
-*/
 
 // example.yaml
 // 
