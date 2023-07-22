@@ -128,8 +128,29 @@ std::string sstd::_strip_dq_sq(const std::string& str){
         
         tmp = str.substr(li, ri-li+1);
     }
-    
+
+    return tmp;
+}
+
+//---
+
+std::string sstd::_extract_dq_sq_value(const std::string& str){
+    std::string tmp;
     std::string ret;
+
+    // Space conversion
+    //   - example 1: "a b c " -> "a b c "
+    //   - example 2: "a  \n  b  \n  c  " -> "a\nb\nc  "
+    for(uint i=0; i<str.size(); ++i){
+        if(str[i]=='\n'){
+            sstd::rstrip_ow(tmp);
+            tmp += str[i];
+            ++i; while(i<str.size() && str[i]==' '){ ++i; } --i;
+        }else{
+            tmp += str[i];
+        }
+//        tmp += str[i];
+    }
     
     bool escape = false;
     uint new_line_cnt=0;
@@ -156,11 +177,11 @@ std::string sstd::_strip_dq_sq(const std::string& str){
             for(uint i_t=0; i_t<new_line_cnt-1; ++i_t){ ret += '\n'; }
         }
         
-        while(new_line_cnt!=0 && tmp[i]==' ' && i<tmp.size()){ ++i; } // remove head ' '
-        if(i>=tmp.size()){ break; }
-        
+//        while(new_line_cnt!=0 && tmp[i]==' ' && i<tmp.size()){ ++i; } // remove head ' '
+//        if(i>=tmp.size()){ break; }
+            
         ret += tmp[i];
-        
+            
         new_line_cnt=0;
         escape = false;
     }
@@ -370,16 +391,16 @@ bool _get_value(std::string& ret_val1, std::string& ret_val2, std::string s, uin
 
     switch(typeNum){
     case NUM_STR:  {
-        ret_val1 = sstd::_strip_dq_sq(s);
+        ret_val1 = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(s));
     } break;
     case NUM_LIST: {
-        ret_val1 = sstd::_strip_dq_sq(_rm_hyphen(s));
+        ret_val1 = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(_rm_hyphen(s)));
     } break;
     case NUM_HASH:
     case NUM_LIST_AND_HASH: {
         std::vector<std::string> v = sstd::_split_dq_sq(s, ':');
-        if(v.size()>=1){ ret_val1 = sstd::_strip_dq_sq(_rm_hyphen(v[0])); }
-        if(v.size()>=2){ ret_val2 = sstd::_strip_dq_sq(           v[1] ); }
+        if(v.size()>=1){ ret_val1 = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(_rm_hyphen(v[0]))); }
+        if(v.size()>=2){ ret_val2 = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(           v[1] )); }
         if(v.size()>=3){ sstd::printn(v); sstd::pdbg("Unexptected split by ':'."); return false; }
     } break;
     default: { sstd::pdbg_err("Unexpected typeNum\n"); return false; } break;

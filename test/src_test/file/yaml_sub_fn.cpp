@@ -245,11 +245,11 @@ TEST(yaml_sub_fn, _strip_dq_sq__non_dq_sq_case00){
     
     ASSERT_TRUE(l==ans);
 }
-TEST(yaml_sub_fn, _strip_dq_sq__dq_escape_case01){
+TEST(yaml_sub_fn, _extract_dq_sq_value__dq_escape_case01){
     std::string s=R"(  "abc
 def
 ghi"   )";
-    std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
+    std::string l = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(s)); // TEST THIS LINE
     //sstd::printn(l);
 
     //--
@@ -261,11 +261,11 @@ ghi"   )";
     
     ASSERT_TRUE(l==ans);
 }
-TEST(yaml_sub_fn, _strip_dq_sq__dq_escape_case02){
+TEST(yaml_sub_fn, _extract_dq_sq_value__dq_escape_case02){
     std::string s=R"("abc\
 def
 ghi"   )";
-    std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
+    std::string l = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(s)); // TEST THIS LINE
     //sstd::printn(l);
 
     //--
@@ -277,13 +277,13 @@ ghi"   )";
     
     ASSERT_TRUE(l==ans);
 }
-TEST(yaml_sub_fn, _strip_dq_sq__dq_escape_case03){
+TEST(yaml_sub_fn, _extract_dq_sq_value__dq_escape_case03){
     std::string s=R"("abc
 
 
 def
 ghi"   )";
-    std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
+    std::string l = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(s)); // TEST THIS LINE
     //sstd::printn(l);
 
     //--
@@ -297,13 +297,13 @@ def ghi)";
     
     ASSERT_TRUE(l==ans);
 }
-TEST(yaml_sub_fn, _strip_dq_sq__dq_escape_case04){
+TEST(yaml_sub_fn, _extract_dq_sq_value__dq_escape_case04){
     std::string s=R"("abc\
 
 
 def
 ghi"   )";
-    std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
+    std::string l = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(s)); // TEST THIS LINE
     //sstd::printn(l);
 
     //--
@@ -317,11 +317,11 @@ def ghi)";
     
     ASSERT_TRUE(l==ans);
 }
-TEST(yaml_sub_fn, _strip_dq_sq__dq_escape_case05){
+TEST(yaml_sub_fn, _extract_dq_sq_value__dq_escape_case05){
     std::string s=R"("\
    abc\
    def")";
-    std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
+    std::string l = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(s)); // TEST THIS LINE
     //sstd::printn(l);
 
     //--
@@ -333,11 +333,11 @@ TEST(yaml_sub_fn, _strip_dq_sq__dq_escape_case05){
     
     ASSERT_TRUE(l==ans);
 }
-TEST(yaml_sub_fn, _strip_dq_sq__dq_escape_case06){
+TEST(yaml_sub_fn, _extract_dq_sq_value__dq_escape_case06){
     std::string s=R"("
    abc
    def")";
-    std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
+    std::string l = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(s)); // TEST THIS LINE
     //sstd::printn(l);
 
     //--
@@ -349,12 +349,12 @@ TEST(yaml_sub_fn, _strip_dq_sq__dq_escape_case06){
     
     ASSERT_TRUE(l==ans);
 }
-TEST(yaml_sub_fn, _strip_dq_sq__dq_escape_case07){
+TEST(yaml_sub_fn, _extract_dq_sq_value__dq_escape_case07){
     std::string s=R"("a: b c'
 
 def\"
 g"   )";
-    std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
+    std::string l = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(s)); // TEST THIS LINE
     //sstd::printn(l);
 
     //--
@@ -370,12 +370,12 @@ def" g)";
 
 //---
 
-TEST(yaml_sub_fn, _strip_dq_sq__sq_escape_case07){
+TEST(yaml_sub_fn, _extract_dq_sq_value__sq_escape_case07){
     std::string s=R"('a: b c\'
 
 def"
 g'   )";
-    std::string l = sstd::_strip_dq_sq(s); // TEST THIS LINE
+    std::string l = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(s)); // TEST THIS LINE
     //sstd::printn(l);
 
     //--
