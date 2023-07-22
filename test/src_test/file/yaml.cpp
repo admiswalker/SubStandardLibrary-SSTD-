@@ -1562,6 +1562,66 @@ TEST(yaml, double_quotation_complicated_multiline_test_case08){
     
     ASSERT_TRUE(yml==ans);
 }
+TEST(yaml, double_quotation_complicated_multiline_test_case09){
+    std::string s=R"(
+- "\
+    I am a cat.\
+    There is no name yet."
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = "I am a cat.There is no name yet.";
+    //sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, double_quotation_complicated_multiline_test_case10){
+    std::string s=R"(
+- "
+    I am a cat.\
+    There is no name yet."
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = " I am a cat.There is no name yet.";
+    //sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, double_quotation_complicated_multiline_test_case11){
+    std::string s=R"(
+- "   \
+    I am a cat.\
+    There is no name yet."
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = "   I am a cat.There is no name yet.";
+    //sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
 
 /*
 TEST(yaml, double_quotation_complicated_test_case01){
