@@ -149,9 +149,10 @@ std::string sstd::_extract_dq_sq_value(const std::string& str){
         }else{
             tmp += str[i];
         }
-//        tmp += str[i];
     }
     
+    // conversion
+    //   - example 1: "a\nb\nc  " -> "a b c  "
     bool escape = false;
     uint new_line_cnt=0;
     for(uint i=0; i<tmp.size(); ++i){
@@ -177,9 +178,6 @@ std::string sstd::_extract_dq_sq_value(const std::string& str){
             for(uint i_t=0; i_t<new_line_cnt-1; ++i_t){ ret += '\n'; }
         }
         
-//        while(new_line_cnt!=0 && tmp[i]==' ' && i<tmp.size()){ ++i; } // remove head ' '
-//        if(i>=tmp.size()){ break; }
-            
         ret += tmp[i];
             
         new_line_cnt=0;
