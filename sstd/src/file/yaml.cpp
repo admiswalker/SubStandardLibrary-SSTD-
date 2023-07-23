@@ -306,14 +306,6 @@ bool _is_list(uint& cnt, const std::string& s){
         if(v[i].size()==1 && v[i]=="-"){ ++cnt; }
     }
     return cnt >= 1;
-    /*
-    for(uint i=0; i<s.size(); ++i){
-        if      (s[i]==' '){ continue;
-        }else if(s[i]=='-'){ return true;
-        }else              { return false; }
-    }
-    return false;
-    */
 }
 
 //---
@@ -384,16 +376,6 @@ void _data_type(uint& type, uint& num, std::string s){
     
     type = NUM_STR;
     return;
-    /*
-    bool is_l = _is_list(num, s);
-    bool is_h = _is_hash(     s);
-    
-    if(is_l && is_h){ return NUM_LIST_AND_HASH; }
-    if(is_l){ return NUM_LIST; }
-    if(is_h){ return NUM_HASH; }
-    
-    return NUM_STR;
-    */
 }
 std::vector<std::string> _get_verb(std::string s){
     std::vector<std::string> v;
