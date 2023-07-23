@@ -600,6 +600,30 @@ TEST(yaml, multi_line_str_by_list_vertical_line_plus_num_1){
     ASSERT_TRUE(yml==ans);
 }
 
+TEST(yaml, multi_line_str_by_list_vertical_line_with_different_head_spaces){
+    std::string s=R"(
+- |
+  a
+  b
+    c
+    d
+  e
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = "a\nb\n    c\n    d\ne\n";
+    sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+
 //---
 
 TEST(yaml, multi_line_str_by_list_greater){ // - >
@@ -1700,32 +1724,6 @@ TEST(yaml, double_quotation_complicated_multiline_test_case12){
     ans[0] = sstd::terp::hash();
     ans[0]["key1"] = "I am a cat.There is no name yet.";
     //sstd::printn(ans);
-    
-    //---
-    
-    ASSERT_TRUE(yml==ans);
-}
-
-//---
-
-TEST(yaml, double_quotation_complicated_multiline_test_case13){
-    std::string s=R"(
-- |
-  a
-  b
-    c
-    d
-  e
-)";
-    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
-
-    //---
-    
-    sstd::terp::var ans;
-    ans = sstd::terp::list(1);
-    ans[0] = "a\nb\n    c\n    d\ne\n";
-    sstd::printn(ans);
     
     //---
     
