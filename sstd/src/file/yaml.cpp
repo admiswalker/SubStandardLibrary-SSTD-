@@ -579,8 +579,20 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             ret_vCmd.push_back(c);
         } break;
         case NUM_LIST_AND_HASH:{
-            c.hsc_lx  = hsc_lx;
-            c.hsc_hx  = hsc_hx;
+            for(uint ti=0; ti<type_cnt-1; ++ti){
+                c.hsc_lx  = hsc_lx + 2*ti;
+                c.hsc_hx  = hsc_hx + 2*ti;
+                c.verb    = '-'; // x: list x(and) hash: 
+                c.val1    = "";
+                c.val2    = "";
+                c.lineNum = base_idx + i; // debug info
+                c.rawStr  = ls[i];        // debug info
+                
+                ret_vCmd.push_back(c);
+            }
+            
+            c.hsc_lx  = hsc_lx + 2*(type_cnt-1);
+            c.hsc_hx  = hsc_hx + 2*(type_cnt-1);
             c.verb    = 'x'; // x: list x(and) hash: 
             c.val1    = "";
             c.val2    = "";
@@ -589,8 +601,8 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             
             ret_vCmd.push_back(c);
             
-            c.hsc_lx  = hsc_lx;
-            c.hsc_hx  = hsc_hx;
+            c.hsc_lx  = hsc_lx + 2*(type_cnt-1);
+            c.hsc_hx  = hsc_hx + 2*(type_cnt-1);
             c.verb    = ':';
             c.val1    = val1; // key
             c.val2    = val2; // value

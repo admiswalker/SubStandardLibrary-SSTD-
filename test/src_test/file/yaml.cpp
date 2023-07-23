@@ -1751,31 +1751,66 @@ TEST(yaml, multipul_list_indication_case04){
     
     ASSERT_TRUE(yml==ans);
 }
+TEST(yaml, multipul_list_indication_case05){
+    std::string s=R"(
+- - key1: val1
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
 
-// example.yaml
-// 
-// - a
-// - b
-// - - c1 # <- multiple list indication
-//   - c2
-//   - c3
-// - - d: d2
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = sstd::terp::list(1);
+    ans[0][0] = sstd::terp::hash();
+    ans[0][0]["key1"] = "val1";
+    //sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, multipul_list_indication_case06){
+    std::string s=R"(
+- a
+- b
+- - c1
+  - c2
+  - c3
+- - d1: d2
+- - - - e1
+      - e2
+      - e3
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
 
-// example.yaml
-// 
-// - a
-// - b
-// - - - c1 # <- multiple list indication
-//     - c2
-//     - c3
-
-// example.yaml
-// 
-// - a
-// - b
-// - - - - c1 # <- multiple list indication
-//       - c2
-//       - c3
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(5);
+    ans[0] = "a";
+    ans[1] = "b";
+    ans[2] = sstd::terp::list(3);
+    ans[2][0] = "c1";
+    ans[2][1] = "c2";
+    ans[2][2] = "c3";
+    ans[3] = sstd::terp::list(1);
+    ans[3][0] = sstd::terp::hash();
+    ans[3][0]["d1"] = "d2";
+    ans[4] = sstd::terp::list(1);
+    ans[4][0] = sstd::terp::list(1);
+    ans[4][0][0] = sstd::terp::list(3);
+    ans[4][0][0][0] = "e1";
+    ans[4][0][0][1] = "e2";
+    ans[4][0][0][2] = "e3";
+    //sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // End marker ...
