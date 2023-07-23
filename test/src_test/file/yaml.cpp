@@ -1402,6 +1402,65 @@ TEST(yaml, double_quotation_list_case03){
     ASSERT_TRUE(yml==ans);
 }
 
+//---
+// NULL case
+
+TEST(yaml, double_quotation_empty_list_case01){
+    std::string s=R"(
+- ""
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = "";
+    //sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, double_quotation_empty_list_hash_case01){
+    std::string s=R"(
+- "": ""
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = sstd::terp::hash();
+    ans[0][""] = "";
+    //sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, double_quotation_empty_hash_case01){
+    std::string s=R"(
+"": ""
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans[""] = "";
+    //sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Complicated test
 
@@ -1641,6 +1700,32 @@ TEST(yaml, double_quotation_complicated_multiline_test_case12){
     ans[0] = sstd::terp::hash();
     ans[0]["key1"] = "I am a cat.There is no name yet.";
     //sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+
+//---
+
+TEST(yaml, double_quotation_complicated_multiline_test_case13){
+    std::string s=R"(
+- |
+  a
+  b
+    c
+    d
+  e
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = "a\nb\n    c\n    d\ne\n";
+    sstd::printn(ans);
     
     //---
     

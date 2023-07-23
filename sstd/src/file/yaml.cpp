@@ -90,10 +90,12 @@ std::string _mearge_vec_by_space_or_newLines(const std::vector<std::string>& v){
 
 //---
 
-std::string sstd::_strip_dq_sq(const        char* str){
-    return std::move(sstd::_strip_dq_sq(std::string(str)));
+std::string sstd::_strip_dq_sq(bool& ret_dq, bool& ret_sq, const        char* str){
+    return std::move(sstd::_strip_dq_sq(ret_dq, ret_sq, std::string(str)));
 }
-std::string sstd::_strip_dq_sq(const std::string& str){
+std::string sstd::_strip_dq_sq(bool& ret_dq, bool& ret_sq, const std::string& str){
+    ret_dq=false;
+    ret_sq=false;
     
     // remove head and tail ' ' and '\t'
     int li=0, ri=((int)str.size())-1;
@@ -118,12 +120,14 @@ std::string sstd::_strip_dq_sq(const std::string& str){
         if(c_head=='"' && c_tail=='"'){
             ++li;
             --ri;
+            ret_dq=true;
         }
         
         // rm '\''
         if(c_head=='\'' && c_tail=='\''){
             ++li;
             --ri;
+            ret_sq=true;
         }
         
         tmp = str.substr(li, ri-li+1);
@@ -131,6 +135,8 @@ std::string sstd::_strip_dq_sq(const std::string& str){
 
     return tmp;
 }
+std::string sstd::_strip_dq_sq(const        char* str){ bool ret_dq, ret_sq; return sstd::_strip_dq_sq(ret_dq, ret_sq, str); }
+std::string sstd::_strip_dq_sq(const std::string& str){ bool ret_dq, ret_sq; return sstd::_strip_dq_sq(ret_dq, ret_sq, str); }
 
 //---
 
@@ -341,6 +347,8 @@ struct command{
     uint hsc_lx; // hsc: head space count, _lx: list-index.
     uint hsc_hx; // hsc: head space count, _hx: hash-index.
     char verb;
+    bool val1_use_dq_sq;
+    bool val2_use_dq_sq;
     std::string val1; // "list value" or "hash key"
     std::string val2; // "hash value" if Not required "sstd::terp::var"
 
@@ -383,22 +391,25 @@ std::vector<std::string> _get_verb(std::string s){
     if(sstd::charIn(':', s)){ v.push_back(":"); }
     return v;
 }
-bool _get_value(std::string& ret_val1, std::string& ret_val2, std::string s, uint typeNum){
+bool _get_value(bool& ret_val1_use_dq_sq, bool& ret_val2_use_dq_sq, std::string& ret_val1, std::string& ret_val2, std::string s, uint typeNum){
     ret_val1.clear();
     ret_val2.clear();
-
+    bool dq, sq;
+    
     switch(typeNum){
     case NUM_STR:  {
-        ret_val1 = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(s));
+        ret_val1 = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(dq, sq, s));
+        ret_val1_use_dq_sq = ( dq || sq );
     } break;
     case NUM_LIST: {
-        ret_val1 = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(_rm_hyphen(s)));
+        ret_val1 = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(dq, sq, _rm_hyphen(s)));
+        ret_val1_use_dq_sq = ( dq || sq );
     } break;
     case NUM_HASH:
     case NUM_LIST_AND_HASH: {
         std::vector<std::string> v = sstd::_split_dq_sq(s, ':');
-        if(v.size()>=1){ ret_val1 = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(_rm_hyphen(v[0]))); }
-        if(v.size()>=2){ ret_val2 = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(           v[1] )); }
+        if(v.size()>=1){ ret_val1 = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(dq, sq, _rm_hyphen(v[0]))); ret_val1_use_dq_sq = ( dq || sq ); }
+        if(v.size()>=2){ ret_val2 = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(dq, sq,            v[1] )); ret_val2_use_dq_sq = ( dq || sq ); }
         if(v.size()>=3){ sstd::printn(v); sstd::pdbg("Unexptected split by ':'."); return false; }
     } break;
     default: { sstd::pdbg_err("Unexpected typeNum\n"); return false; } break;
@@ -525,7 +536,10 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
         uint type=NUM_NULL, type_cnt=0; _data_type(type, type_cnt, s);
         uint hsc_lx = _hsc_lx(s);
         uint hsc_hx = _hsc_hx(s);
-        std::string val1, val2; if(!_get_value(val1, val2, s, type)){ return false; }
+        
+        bool val1_use_dq_sq, val2_use_dq_sq;
+        std::string val1, val2;
+        if(!_get_value(val1_use_dq_sq, val2_use_dq_sq, val1, val2, s, type)){ return false; }
 
         // for multiple line string
         _check_val_and_overwrite_multi_line_str(hsc_lx, val1, ls, i); // for list (val1=="|0123" or val1=="|-0123" val1=="|+0123")
@@ -534,80 +548,94 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
         struct command c;
         switch(type){
         case NUM_STR: {
-            c.hsc_lx  = hsc_lx;
-            c.hsc_hx  = hsc_hx;
-            c.verb    = 's';
-            c.val1    = val1;
-            //c.val2    = val2;
-            c.lineNum = base_idx + i; // debug info
-            c.rawStr  = ls[i];        // debug info
+            c.hsc_lx         = hsc_lx;
+            c.hsc_hx         = hsc_hx;
+            c.verb           = 's';
+            c.val1_use_dq_sq = val1_use_dq_sq;
+            c.val2_use_dq_sq = val2_use_dq_sq;
+            c.val1           = val1;
+            //c.val2           = val2;
+            c.lineNum        = base_idx + i; // debug info
+            c.rawStr         = ls[i];        // debug info
             
             ret_vCmd.push_back(c);
         } break;
         case NUM_LIST: {
             for(uint ti=0; ti<type_cnt-1; ++ti){
-                c.hsc_lx  = hsc_lx + 2*ti;
-                c.hsc_hx  = hsc_hx + 2*ti;
-                c.verb    = '-';
-                //c.val1    = val1;
-                //c.val2    = val2;
-                c.lineNum = base_idx + i; // debug info
-                c.rawStr  = ls[i];        // debug info
+                c.hsc_lx         = hsc_lx + 2*ti;
+                c.hsc_hx         = hsc_hx + 2*ti;
+                c.verb           = '-';
+                c.val1_use_dq_sq = false;
+                c.val2_use_dq_sq = false;
+                //c.val1           = val1;
+                //c.val2           = val2;
+                c.lineNum        = base_idx + i; // debug info
+                c.rawStr         = ls[i];        // debug info
             
                 ret_vCmd.push_back(c);
             }
             
-            c.hsc_lx  = hsc_lx + 2*(type_cnt-1);
-            c.hsc_hx  = hsc_hx + 2*(type_cnt-1);
-            c.verb    = '-';
-            c.val1    = val1;
-            //c.val2    = val2;
-            c.lineNum = base_idx + i; // debug info
-            c.rawStr  = ls[i];        // debug info
+            c.hsc_lx         = hsc_lx + 2*(type_cnt-1);
+            c.hsc_hx         = hsc_hx + 2*(type_cnt-1);
+            c.verb           = '-';
+            c.val1_use_dq_sq = val1_use_dq_sq;
+            c.val2_use_dq_sq = val2_use_dq_sq;
+            c.val1           = val1;
+            //c.val2           = val2;
+            c.lineNum        = base_idx + i; // debug info
+            c.rawStr         = ls[i];        // debug info
             
             ret_vCmd.push_back(c);
         } break;
         case NUM_HASH: {
-            c.hsc_lx  = hsc_lx;
-            c.hsc_hx  = hsc_hx;
-            c.verb    = ':';
-            c.val1    = val1; // key
-            c.val2    = val2; // value
-            c.lineNum = base_idx + i; // debug info
-            c.rawStr  = ls[i];        // debug info
+            c.hsc_lx         = hsc_lx;
+            c.hsc_hx         = hsc_hx;
+            c.verb           = ':';
+            c.val1_use_dq_sq = val1_use_dq_sq;
+            c.val2_use_dq_sq = val2_use_dq_sq;
+            c.val1           = val1; // key
+            c.val2           = val2; // value
+            c.lineNum        = base_idx + i; // debug info
+            c.rawStr         = ls[i];        // debug info
             
             ret_vCmd.push_back(c);
         } break;
         case NUM_LIST_AND_HASH:{
             for(uint ti=0; ti<type_cnt-1; ++ti){
-                c.hsc_lx  = hsc_lx + 2*ti;
-                c.hsc_hx  = hsc_hx + 2*ti;
-                c.verb    = '-'; // x: list x(and) hash: 
-                c.val1    = "";
-                c.val2    = "";
-                c.lineNum = base_idx + i; // debug info
-                c.rawStr  = ls[i];        // debug info
+                c.hsc_lx         = hsc_lx + 2*ti;
+                c.hsc_hx         = hsc_hx + 2*ti;
+                c.verb           = '-'; // x: list x(and) hash: 
+                c.val1_use_dq_sq = false;
+                c.val2_use_dq_sq = false;
+                //c.val1           = "";
+                //c.val2           = "";
+                c.lineNum        = base_idx + i; // debug info
+                c.rawStr         = ls[i];        // debug info
                 
                 ret_vCmd.push_back(c);
             }
             
-            c.hsc_lx  = hsc_lx + 2*(type_cnt-1);
-            c.hsc_hx  = hsc_hx + 2*(type_cnt-1);
-            c.verb    = 'x'; // x: list x(and) hash: 
-            c.val1    = "";
-            c.val2    = "";
-            c.lineNum = base_idx + i; // debug info
-            c.rawStr  = ls[i];        // debug info
+            c.hsc_lx         = hsc_lx + 2*(type_cnt-1);
+            c.hsc_hx         = hsc_hx + 2*(type_cnt-1);
+            c.verb           = 'x'; // x: list x(and) hash: 
+            c.val1_use_dq_sq = false;
+            c.val2_use_dq_sq = false;
+            //c.val1           = "";
+            //c.val2           = "";
+            c.lineNum        = base_idx + i; // debug info
+            c.rawStr         = ls[i];        // debug info
             
             ret_vCmd.push_back(c);
             
-            c.hsc_lx  = hsc_lx + 2*(type_cnt-1);
-            c.hsc_hx  = hsc_hx + 2*(type_cnt-1);
-            c.verb    = ':';
-            c.val1    = val1; // key
-            c.val2    = val2; // value
-            c.lineNum = base_idx + i; // debug info
-            c.rawStr  = ls[i];        // debug info
+            c.hsc_lx         = hsc_lx + 2*(type_cnt-1);
+            c.hsc_hx         = hsc_hx + 2*(type_cnt-1);
+            c.verb           = ':';
+            c.val1_use_dq_sq = val1_use_dq_sq;
+            c.val2_use_dq_sq = val2_use_dq_sq;
+            c.val1           = val1; // key
+            c.val2           = val2; // value
+            c.lineNum        = base_idx + i; // debug info
+            c.rawStr         = ls[i];        // debug info
             
             ret_vCmd.push_back(c);
         } break;
@@ -686,7 +714,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
             var = v_cmd[i].val1.c_str();
         } break;
         case '-': { // '-': list
-            if(v_cmd[i].val1.size()!=0){ // bug (サイズ 0 の文字列を代入できないバグ)
+            if(v_cmd[i].val1.size()>=1 || v_cmd[i].val1_use_dq_sq){
                 var.push_back( v_cmd[i].val1.c_str() );
             }else{
                 var.push_back( sstd::terp::list() );
@@ -698,7 +726,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
             v_dst.push_back( var[var.size()-1].p() );
         } break;
         case ':': { // ':': hash
-            if(v_cmd[i].val2.size()!=0){ // bug (サイズ 0 の文字列を代入できないバグ)
+            if(v_cmd[i].val2.size()>=1 || v_cmd[i].val2_use_dq_sq){
                 var[ v_cmd[i].val1.c_str() ] = v_cmd[i].val2.c_str();
             }else{
                 v_dst.push_back( var[v_cmd[i].val1.c_str()].p() );

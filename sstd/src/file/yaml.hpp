@@ -33,6 +33,8 @@ namespace sstd{
 
     std::string _strip_dq_sq(const        char* str);
     std::string _strip_dq_sq(const std::string& str);
+    std::string _strip_dq_sq(bool& ret_dq, bool& ret_sq, const        char* str);
+    std::string _strip_dq_sq(bool& ret_dq, bool& ret_sq, const std::string& str);
 
     std::string _extract_dq_sq_value(const std::string& str);
     std::string _extract_dq_sq_value(const std::string& str);
