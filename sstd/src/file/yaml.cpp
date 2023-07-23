@@ -300,13 +300,20 @@ std::string _rm_bw_dq_sq(const std::string& str){ // _bw: between, _dq: double q
 bool _is_hash(const std::string& s){
     return sstd::charIn(':', _rm_bw_dq_sq(s));
 }
-bool _is_list(const std::string& s){
+bool _is_list(uint& cnt, const std::string& s){
+    std::vector<std::string> v = sstd::split(s, ' ');
+    for(uint i=0; i<v.size(); ++i){
+        if(v[i].size()==1 && v[i]=="-"){ ++cnt; }
+    }
+    return cnt >= 1;
+    /*
     for(uint i=0; i<s.size(); ++i){
         if      (s[i]==' '){ continue;
         }else if(s[i]=='-'){ return true;
         }else              { return false; }
     }
     return false;
+    */
 }
 
 //---
@@ -350,13 +357,13 @@ struct command{
     std::string rawStr;
 };
 void _print(const struct command& cmd){
-    printf("hsc_lx: %d\n",  cmd.hsc_lx   );
-    printf("hsc_hx: %d\n",  cmd.hsc_hx   );
-    printf("verb: %c\n", cmd.verb        );
-    printf("val1: %s\n", cmd.val1.c_str());
-    printf("val2: %s\n", cmd.val2.c_str());
-    printf("lineNum: %d\n", cmd.lineNum);
-    printf("rawStr: %s\n", cmd.rawStr.c_str());
+    printf("hsc_lx: %d\n",  cmd.hsc_lx        );
+    printf("hsc_hx: %d\n",  cmd.hsc_hx        );
+    printf("verb: %c\n",    cmd.verb          );
+    printf("val1: %s\n",    cmd.val1.c_str()  );
+    printf("val2: %s\n",    cmd.val2.c_str()  );
+    printf("lineNum: %d\n", cmd.lineNum       );
+    printf("rawStr: %s\n",  cmd.rawStr.c_str());
     printf("\n");
 }
 void _print(const std::vector<struct command>& v_cmd){
@@ -367,15 +374,26 @@ void _print(const std::vector<struct command>& v_cmd){
 
 //---
 
-uint _data_type(std::string s){
-    bool is_l = _is_list(s);
-    bool is_h = _is_hash(s);
-
+void _data_type(uint& type, uint& num, std::string s){
+    bool is_l = _is_list(num, s);
+    bool is_h = _is_hash(     s);
+    
+    if(is_l && is_h){ type = NUM_LIST_AND_HASH; return; }
+    if(is_l){ type = NUM_LIST; return; }
+    if(is_h){ type = NUM_HASH; return; }
+    
+    type = NUM_STR;
+    return;
+    /*
+    bool is_l = _is_list(num, s);
+    bool is_h = _is_hash(     s);
+    
     if(is_l && is_h){ return NUM_LIST_AND_HASH; }
     if(is_l){ return NUM_LIST; }
     if(is_h){ return NUM_HASH; }
     
     return NUM_STR;
+    */
 }
 std::vector<std::string> _get_verb(std::string s){
     std::vector<std::string> v;
@@ -438,14 +456,14 @@ bool _get_multi_line_str(std::string& ret, const uint hsc_prev, const std::strin
     //if(sstd::charIn('|', opt)){ separator = '\n'; }
     if(sstd::charIn('>', opt)){ separator =  ' '; }
 //    if(indent_width == hsc_prev){ separator = '\n'; }
- 
+    
     for(; i<ls.size(); ++i){
         std::string s;
         s = ls[i];
         s = _rm_comment(s); // s = _rm_comment_dq_sq(s); に置き換える
         if(s=="..."){ --i; return true; } // detect end marker
         
-        uint type = _data_type(s);
+        uint type=NUM_NULL, type_cnt=0; _data_type(type, type_cnt, s);
         if(type==NUM_STR){
             if(indent_width>=0 && s.size()>0){
                 uint hsc = _head_space_count(s);
@@ -522,7 +540,7 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
         s = _rm_comment(s); // s = _rm_comment_dq_sq(s); に置き換える
         if(s.size()==0){ continue; }
         if(s=="..."){ return true; } // detect end marker
-        uint type = _data_type(s);
+        uint type=NUM_NULL, type_cnt=0; _data_type(type, type_cnt, s);
         uint hsc_lx = _hsc_lx(s);
         uint hsc_hx = _hsc_hx(s);
         std::string val1, val2; if(!_get_value(val1, val2, s, type)){ return false; }
@@ -545,8 +563,20 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             ret_vCmd.push_back(c);
         } break;
         case NUM_LIST: {
-            c.hsc_lx  = hsc_lx;
-            c.hsc_hx  = hsc_hx;
+            for(uint ti=0; ti<type_cnt-1; ++ti){
+                c.hsc_lx  = hsc_lx + 2*ti;
+                c.hsc_hx  = hsc_hx + 2*ti;
+                c.verb    = '-';
+                //c.val1    = val1;
+                //c.val2    = val2;
+                c.lineNum = base_idx + i; // debug info
+                c.rawStr  = ls[i];        // debug info
+            
+                ret_vCmd.push_back(c);
+            }
+            
+            c.hsc_lx  = hsc_lx + 2*(type_cnt-1);
+            c.hsc_hx  = hsc_hx + 2*(type_cnt-1);
             c.verb    = '-';
             c.val1    = val1;
             //c.val2    = val2;
@@ -662,7 +692,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
             var = v_cmd[i].val1.c_str();
         } break;
         case '-': { // '-': list
-            if(v_cmd[i].val1.size()!=0){
+            if(v_cmd[i].val1.size()!=0){ // bug (サイズ 0 の文字列を代入できないバグ)
                 var.push_back( v_cmd[i].val1.c_str() );
             }else{
                 var.push_back( sstd::terp::list() );
@@ -674,7 +704,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
             v_dst.push_back( var[var.size()-1].p() );
         } break;
         case ':': { // ':': hash
-            if(v_cmd[i].val2.size()!=0){
+            if(v_cmd[i].val2.size()!=0){ // bug (サイズ 0 の文字列を代入できないバグ)
                 var[ v_cmd[i].val1.c_str() ] = v_cmd[i].val2.c_str();
             }else{
                 v_dst.push_back( var[v_cmd[i].val1.c_str()].p() );

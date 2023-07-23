@@ -1623,52 +1623,134 @@ TEST(yaml, double_quotation_complicated_multiline_test_case11){
     ASSERT_TRUE(yml==ans);
 }
 
-/*
-TEST(yaml, double_quotation_complicated_test_case01){
+//---
+
+TEST(yaml, double_quotation_complicated_multiline_test_case12){
     std::string s=R"(
-- "I am a cat.     
+- key1: "\
+    I am a cat.\
     There is no name yet."
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+    //sstd::printn(yml);
 
     //---
     
     sstd::terp::var ans;
     ans = sstd::terp::list(1);
-    //ans[0] = sstd::terp::hash();
-    //ans[0]["key 1"] = "value 1";
-    ans[0] = "I am a cat. There is no name yet.";
-    sstd::printn(ans);
+    ans[0] = sstd::terp::hash();
+    ans[0]["key1"] = "I am a cat.There is no name yet.";
+    //sstd::printn(ans);
     
     //---
     
-    //ASSERT_TRUE(yml==ans);
     ASSERT_TRUE(yml==ans);
 }
-//*/
-
-// example.yaml
-// 
-// - "I am a cat.\
-//    There is no name yet."
-// - key1: "\
-//    I am a cat.\
-//    There is no name yet."
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
-// Single quotation ''
-
-// example.yaml
-// 
-// - 'I am a cat.\
-//    There is no name yet.'
-// - key1: '\
-//    I am a cat.\
-//    There is no name yet.'
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Multipul list indication
+
+TEST(yaml, multipul_list_indication_case01){
+    std::string s=R"(
+- - a
+#- 
+#  - a
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = sstd::terp::list(1);
+    ans[0][0] = "a";
+    //sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, multipul_list_indication_case02){
+    std::string s=R"(
+- 
+  - a
+  - - b # TEST THIS LINE
+#- 
+#  - a
+#  - 
+#    - b # TEST THIS LINE
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = sstd::terp::list(2);
+    ans[0][0] = "a";
+    ans[0][1] = sstd::terp::list(1);
+    ans[0][1][0] = "b";
+    //sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, multipul_list_indication_case03){
+    std::string s=R"(
+- - - a
+#- 
+#  - 
+#    - a
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = sstd::terp::list(1);
+    ans[0][0] = sstd::terp::list(1);
+    ans[0][0][0] = "a";
+    //sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, multipul_list_indication_case04){
+    std::string s=R"(
+- - a
+  - - - - b
+#- 
+#  - a
+#  - 
+#    - 
+#      - 
+#        - b
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = sstd::terp::list(2);
+    ans[0][0] = "a";
+    ans[0][1] = sstd::terp::list(1);
+    ans[0][1][0] = sstd::terp::list(1);
+    ans[0][1][0][0] = sstd::terp::list(1);
+    ans[0][1][0][0][0] = "b";
+    //sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
 
 // example.yaml
 // 
@@ -1677,6 +1759,7 @@ TEST(yaml, double_quotation_complicated_test_case01){
 // - - c1 # <- multiple list indication
 //   - c2
 //   - c3
+// - - d: d2
 
 // example.yaml
 // 
