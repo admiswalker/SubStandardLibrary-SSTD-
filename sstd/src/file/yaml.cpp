@@ -449,7 +449,7 @@ bool _get_multi_line_str(std::string& ret, const uint hsc_prev, const std::strin
     //if(sstd::charIn('|', opt)){ separator = '\n'; }
     if(sstd::charIn('>', opt)){ separator =  ' '; }
 //    if(indent_width == hsc_prev){ separator = '\n'; }
-    
+
     for(; i<ls.size(); ++i){
         std::string s;
         s = ls[i];
@@ -499,7 +499,7 @@ bool _get_multi_line_str(std::string& ret, const uint hsc_prev, const std::strin
 
     return true;
 }
-bool _check_val_and_overwrite_multi_line_str(const uint hsc_prev, std::string& val_rw, const std::vector<std::string>& ls, uint& i){
+bool _check_val_and_overwrite_multi_line_str(std::string& val_rw, const uint hsc_prev, const std::vector<std::string>& ls, uint& i){
     int indent_width = -1;
 
     if      (val_rw.starts_with("|-") || val_rw.starts_with(">-") ||    // case: "- |-123", "- >-123", "hash-key: |-123" or "hash-key: >-123"
@@ -508,6 +508,8 @@ bool _check_val_and_overwrite_multi_line_str(const uint hsc_prev, std::string& v
         std::string opt; opt += val_rw[0]; opt += val_rw[1];
         if(val_rw.size()>=3){
             indent_width = std::stoi(&val_rw[2]);
+        }else{
+            indent_width = _head_space_count(ls[i]);;
         }
         
         if(!_get_multi_line_str(val_rw, hsc_prev, opt, indent_width, ls, i)){ return false; }
@@ -517,6 +519,8 @@ bool _check_val_and_overwrite_multi_line_str(const uint hsc_prev, std::string& v
         std::string opt; opt += val_rw[0];
         if(val_rw.size()>=2){
             indent_width = std::stoi(&val_rw[1]);
+        }else{
+            indent_width = _head_space_count(ls[i]);;
         }
         
         if(!_get_multi_line_str(val_rw, hsc_prev, opt, indent_width, ls, i)){ return false; }
@@ -528,9 +532,9 @@ bool _check_val_and_overwrite_multi_line_str(const uint hsc_prev, std::string& v
 bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::string>& ls, const uint base_idx){
     
     for(uint i=0; i<ls.size(); ++i){
-        std::string s;
-        s = ls[i];
-        s = _rm_comment(s); // s = _rm_comment_dq_sq(s); に置き換える
+        std::string raw, s;
+        raw = ls[i];
+        s = _rm_comment(raw); // s = _rm_comment_dq_sq(s); に置き換える
         if(s.size()==0){ continue; }
         if(s=="..."){ return true; } // detect end marker
         uint type=NUM_NULL, type_cnt=0; _data_type(type, type_cnt, s);
@@ -542,8 +546,8 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
         if(!_get_value(val1_use_dq_sq, val2_use_dq_sq, val1, val2, s, type)){ return false; }
 
         // for multiple line string
-        _check_val_and_overwrite_multi_line_str(hsc_lx, val1, ls, i); // for list (val1=="|0123" or val1=="|-0123" val1=="|+0123")
-        _check_val_and_overwrite_multi_line_str(hsc_hx, val2, ls, i); // for hash (val2=="|0123" or val2=="|-0123" val2=="|+0123")
+        _check_val_and_overwrite_multi_line_str(val1, hsc_lx, ls, i); // for list (val1=="|0123" or val1=="|-0123" val1=="|+0123")
+        _check_val_and_overwrite_multi_line_str(val2, hsc_hx, ls, i); // for hash (val2=="|0123" or val2=="|-0123" val2=="|+0123")
 
         struct command c;
         switch(type){
@@ -556,7 +560,7 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             c.val1           = val1;
             //c.val2           = val2;
             c.lineNum        = base_idx + i; // debug info
-            c.rawStr         = ls[i];        // debug info
+            c.rawStr         = raw;          // debug info
             
             ret_vCmd.push_back(c);
         } break;
@@ -570,7 +574,7 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
                 //c.val1           = val1;
                 //c.val2           = val2;
                 c.lineNum        = base_idx + i; // debug info
-                c.rawStr         = ls[i];        // debug info
+                c.rawStr         = raw;          // debug info
             
                 ret_vCmd.push_back(c);
             }
@@ -583,7 +587,7 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             c.val1           = val1;
             //c.val2           = val2;
             c.lineNum        = base_idx + i; // debug info
-            c.rawStr         = ls[i];        // debug info
+            c.rawStr         = raw;          // debug info
             
             ret_vCmd.push_back(c);
         } break;
@@ -596,7 +600,7 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             c.val1           = val1; // key
             c.val2           = val2; // value
             c.lineNum        = base_idx + i; // debug info
-            c.rawStr         = ls[i];        // debug info
+            c.rawStr         = raw;          // debug info
             
             ret_vCmd.push_back(c);
         } break;
@@ -610,7 +614,7 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
                 //c.val1           = "";
                 //c.val2           = "";
                 c.lineNum        = base_idx + i; // debug info
-                c.rawStr         = ls[i];        // debug info
+                c.rawStr         = raw;          // debug info
                 
                 ret_vCmd.push_back(c);
             }
@@ -623,7 +627,7 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             //c.val1           = "";
             //c.val2           = "";
             c.lineNum        = base_idx + i; // debug info
-            c.rawStr         = ls[i];        // debug info
+            c.rawStr         = raw;          // debug info
             
             ret_vCmd.push_back(c);
             
@@ -635,7 +639,7 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             c.val1           = val1; // key
             c.val2           = val2; // value
             c.lineNum        = base_idx + i; // debug info
-            c.rawStr         = ls[i];        // debug info
+            c.rawStr         = raw;          // debug info
             
             ret_vCmd.push_back(c);
         } break;
