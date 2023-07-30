@@ -623,6 +623,29 @@ TEST(yaml, multi_line_str_by_list_vertical_line_with_different_head_spaces__vert
     
     ASSERT_TRUE(yml==ans);
 }
+TEST(yaml, multi_line_str_by_list_vertical_line_with_different_head_spaces__vertical_1){
+    std::string s=R"(
+- |1
+  a
+  b
+    c
+    d
+  e
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = " a\n b\n   c\n   d\n e\n";
+    //sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
 TEST(yaml, multi_line_str_by_list_vertical_line_with_different_head_spaces__vertical_minus){
     std::string s=R"(
 - |-
