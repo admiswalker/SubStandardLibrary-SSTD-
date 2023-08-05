@@ -2,6 +2,7 @@
 
 #include "../../definitions/typeNum.hpp"
 #include "../../print/pdbg.hpp"
+#include "../../string/ssprintf.hpp"
 
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -12,8 +13,16 @@ std::string*                                    _cast2str (void* rhs){ return ( 
 std::vector<sstd::void_ptr>*                    _cast2vec (void* rhs){ return (std::vector<sstd::void_ptr>*)rhs; }
 std::unordered_map<std::string,sstd::void_ptr>* _cast2hash(void* rhs){ return (std::unordered_map<std::string,sstd::void_ptr>*)rhs; }
 
-void sstd::terp::_to(std::string& dst, const sstd::void_ptr& src){ dst = (*(std::string*)src.ptr()); }
-void sstd::terp::_to(std::string& dst, const std::string   & src){ dst =                 src       ; }
+#define STR (*(std::string*)src.ptr())
+void sstd::terp::_to(      char & dst, const sstd::void_ptr& src){ dst = STR.size()>=1 ? STR[0] : 0; }
+void sstd::terp::_to(     int8  & dst, const sstd::void_ptr& src){ dst = strtol(STR.c_str(), NULL, 10); }
+void sstd::terp::_to(     int16 & dst, const sstd::void_ptr& src){ dst = strtol(STR.c_str(), NULL, 10); }
+void sstd::terp::_to(     int32 & dst, const sstd::void_ptr& src){ dst = strtol(STR.c_str(), NULL, 10); }
+void sstd::terp::_to(    uint8  & dst, const sstd::void_ptr& src){ dst = strtoul(STR.c_str(), NULL, 10); }
+void sstd::terp::_to(const char*& dst, const sstd::void_ptr& src){ dst = STR.c_str(); }
+void sstd::terp::_to(std::string& dst, const sstd::void_ptr& src){ dst = STR; }
+void sstd::terp::_to(std::string& dst, const std::string   & src){ dst = src; }
+#undef STR
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // sstd::terp::iterator
@@ -79,6 +88,13 @@ sstd::terp::var::var(){ _p = &_vp; }
 sstd::terp::var::var(const var&  rhs){ _vp=*rhs.p(); _p=&_vp; }
 sstd::terp::var::var(const sstd::void_ptr& vp_in){ _vp=vp_in; _p=&_vp; }
 sstd::terp::var::var(      sstd::void_ptr*  p_in){ _p = p_in; }
+sstd::terp::var::var(      char         rhs){ _p=&_vp; (*_p).overwrite(new std::string({rhs})); }
+sstd::terp::var::var(      int8         rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%d", rhs))); }
+sstd::terp::var::var(      int16        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%d", rhs))); }
+sstd::terp::var::var(      int32        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%d", rhs))); }
+sstd::terp::var::var(     uint8         rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%u", rhs))); }
+sstd::terp::var::var(const char*        rhs){ _p=&_vp; (*_p).overwrite(new std::string(rhs)); }
+sstd::terp::var::var(const std::string& rhs){ _p=&_vp; (*_p).overwrite(new std::string(rhs)); }
 sstd::terp::var::~var(){}
 
 //---

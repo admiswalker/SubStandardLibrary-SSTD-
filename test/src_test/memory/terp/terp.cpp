@@ -565,6 +565,45 @@ TEST(memory_terp, var_ope_eq_false_different_type){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// Type Conversion
+
+TEST(memory_terp, var_constructor_and_to_char){
+    char ans = 'c';
+    sstd::terp::var v = ans;
+    char ret = v.to<char>(); // TEST THIS LINE
+    ASSERT_TRUE(ret==ans);
+}
+
+#define TEST_VAR_CONSTRUCTOR_AND_TO(T, in)      \
+    T ans = in;                                 \
+    sstd::terp::var v = ans;                    \
+    T ret = v.to<T>(); /* TEST THIS LINE */     \
+    sstd::printn(ret);\
+    ASSERT_TRUE(ret==ans);
+TEST(memory_terp, var_constructor_and_to_int8_min){ TEST_VAR_CONSTRUCTOR_AND_TO(int8, -128); }
+TEST(memory_terp, var_constructor_and_to_int8_max){ TEST_VAR_CONSTRUCTOR_AND_TO(int8,  127); }
+TEST(memory_terp, var_constructor_and_to_int16_min){ TEST_VAR_CONSTRUCTOR_AND_TO(int16, -32768); }
+TEST(memory_terp, var_constructor_and_to_int16_max){ TEST_VAR_CONSTRUCTOR_AND_TO(int16,  32767); }
+TEST(memory_terp, var_constructor_and_to_int32_min){ TEST_VAR_CONSTRUCTOR_AND_TO(int32, -2147483648); }
+TEST(memory_terp, var_constructor_and_to_int32_max){ TEST_VAR_CONSTRUCTOR_AND_TO(int32,  2147483647); }
+TEST(memory_terp, var_constructor_and_to_uint8_min){ TEST_VAR_CONSTRUCTOR_AND_TO(uint8, 0); }
+TEST(memory_terp, var_constructor_and_to_uint8_max){ TEST_VAR_CONSTRUCTOR_AND_TO(uint8, 255); }
+#undef TEST_VAR_CONSTRUCTOR_AND_TO
+
+TEST(memory_terp, var_constructor_and_to_pchar){
+    const char* ans = "char";
+    sstd::terp::var v = ans;
+    const char* ret = v.to<const char*>(); // TEST THIS LINE
+    ASSERT_TRUE(std::string(ret)==std::string(ans));
+}
+TEST(memory_terp, var_constructor_and_to_string){
+    std::string ans = "string";
+    sstd::terp::var v = ans;
+    std::string ret = v.to<std::string>(); // TEST THIS LINE
+    ASSERT_TRUE(ret==ans);
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 // check error messages
 
 // operator[]
