@@ -23,6 +23,8 @@ void sstd::terp::_to(    uint8  & dst, const sstd::void_ptr& src){ dst = strtoul
 void sstd::terp::_to(    uint16 & dst, const sstd::void_ptr& src){ dst = strtoul(STR.c_str(), NULL, 10); }
 void sstd::terp::_to(    uint32 & dst, const sstd::void_ptr& src){ dst = strtoul(STR.c_str(), NULL, 10); }
 void sstd::terp::_to(    uint64 & dst, const sstd::void_ptr& src){ dst = strtoull(STR.c_str(), NULL, 10); }
+void sstd::terp::_to(     float & dst, const sstd::void_ptr& src){ dst = strtof(STR.c_str(), NULL); }
+void sstd::terp::_to(    double & dst, const sstd::void_ptr& src){ dst = strtod(STR.c_str(), NULL); }
 void sstd::terp::_to(const char*& dst, const sstd::void_ptr& src){ dst = STR.c_str(); }
 void sstd::terp::_to(std::string& dst, const sstd::void_ptr& src){ dst = STR; }
 void sstd::terp::_to(std::string& dst, const std::string   & src){ dst = src; }
@@ -101,6 +103,26 @@ sstd::terp::var::var(     uint8         rhs){ _p=&_vp; (*_p).overwrite(new std::
 sstd::terp::var::var(     uint16        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%u", rhs))); }
 sstd::terp::var::var(     uint32        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%u", rhs))); }
 sstd::terp::var::var(     uint64        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%lu", rhs))); }
+uint _digits(double rhs){
+    uint num=0;
+    while((int)rhs!=0){
+        rhs *= 0.1;
+        ++num;
+    }
+    return num;
+}
+std::string _format(float rhs){
+    uint digits=_digits(rhs);
+    if(digits<=6){ return sstd::ssprintf("%%%u.%uf", digits, 15-digits);
+    }else{ return sstd::ssprintf("%%f"); }
+}
+std::string _format(double rhs){
+    uint digits=_digits(rhs);
+    if(digits<=15){ return sstd::ssprintf("%%%u.%ulf", digits, 15-digits);
+    }else{ return sstd::ssprintf("%%lf"); }
+}
+sstd::terp::var::var(      float        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf(_format(rhs).c_str(), rhs))); }
+sstd::terp::var::var(     double        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf(_format(rhs).c_str(), rhs))); }
 sstd::terp::var::var(const char*        rhs){ _p=&_vp; (*_p).overwrite(new std::string(rhs)); }
 sstd::terp::var::var(const std::string& rhs){ _p=&_vp; (*_p).overwrite(new std::string(rhs)); }
 sstd::terp::var::~var(){}

@@ -36,6 +36,8 @@ namespace sstd::terp{
     using _h_iterator = typename std::unordered_map<std::string,sstd::void_ptr>::const_iterator;
 
     // to (data type conversion)
+//    void _to(      bool & dst, const sstd::void_ptr& src);
+    
     void _to(      char & dst, const sstd::void_ptr& src);
     void _to(     int8  & dst, const sstd::void_ptr& src);
     void _to(     int16 & dst, const sstd::void_ptr& src);
@@ -45,7 +47,8 @@ namespace sstd::terp{
     void _to(    uint16 & dst, const sstd::void_ptr& src);
     void _to(    uint32 & dst, const sstd::void_ptr& src);
     void _to(    uint64 & dst, const sstd::void_ptr& src);
-    
+    void _to(    float & dst, const sstd::void_ptr& src);
+    void _to(    double & dst, const sstd::void_ptr& src);
     void _to(const char*& dst, const sstd::void_ptr& src);
     void _to(std::string& dst, const sstd::void_ptr& src);
     void _to(std::string& dst, const std::string   & src);
@@ -127,6 +130,8 @@ public:
     var(const uint16       rhs);
     var(const uint32       rhs);
     var(const uint64       rhs);
+    var(const  float       rhs);
+    var(const double       rhs);
     var(const char*        rhs);
     var(const std::string& rhs);
     ~var();
