@@ -36,8 +36,7 @@ namespace sstd::terp{
     using _h_iterator = typename std::unordered_map<std::string,sstd::void_ptr>::const_iterator;
 
     // to (data type conversion)
-//    void _to(      bool & dst, const sstd::void_ptr& src);
-    
+    void _to(      bool & dst, const sstd::void_ptr& src);
     void _to(      char & dst, const sstd::void_ptr& src);
     void _to(     int8  & dst, const sstd::void_ptr& src);
     void _to(     int16 & dst, const sstd::void_ptr& src);
@@ -121,6 +120,7 @@ public:
     var(const var&  rhs);
     var(const sstd::void_ptr& vp_in);
     var(      sstd::void_ptr*  p_in);
+    var(const bool         rhs);
     var(const char         rhs);
     var(const  int8        rhs);
     var(const  int16       rhs);

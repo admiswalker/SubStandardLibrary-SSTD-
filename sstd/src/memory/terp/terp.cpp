@@ -14,7 +14,16 @@ std::vector<sstd::void_ptr>*                    _cast2vec (void* rhs){ return (s
 std::unordered_map<std::string,sstd::void_ptr>* _cast2hash(void* rhs){ return (std::unordered_map<std::string,sstd::void_ptr>*)rhs; }
 
 #define STR (*(std::string*)src.ptr())
-void sstd::terp::_to(      char & dst, const sstd::void_ptr& src){ dst = STR.size()>=1 ? STR[0] : 0; }
+void sstd::terp::_to(     bool  & dst, const sstd::void_ptr& src){
+    if(STR=="true"||STR=="yes"||STR=="on"){
+        dst = true;
+    }else if(STR=="false"||STR=="no"||STR=="off"){
+        dst = false;
+    }else{
+        sstd::pdbg_err("input string is not bool type.\n");
+    }
+}
+void sstd::terp::_to(     char  & dst, const sstd::void_ptr& src){ dst = STR.size()>=1 ? STR[0] : 0; }
 void sstd::terp::_to(     int8  & dst, const sstd::void_ptr& src){ dst = strtol(STR.c_str(), NULL, 10); }
 void sstd::terp::_to(     int16 & dst, const sstd::void_ptr& src){ dst = strtol(STR.c_str(), NULL, 10); }
 void sstd::terp::_to(     int32 & dst, const sstd::void_ptr& src){ dst = strtol(STR.c_str(), NULL, 10); }
@@ -89,20 +98,6 @@ sstd::terp::iterator sstd::terp::iterator::operator++(){
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // sstd::terp::var
 
-// constructors
-sstd::terp::var::var(){ _p = &_vp; }
-sstd::terp::var::var(const var&  rhs){ _vp=*rhs.p(); _p=&_vp; }
-sstd::terp::var::var(const sstd::void_ptr& vp_in){ _vp=vp_in; _p=&_vp; }
-sstd::terp::var::var(      sstd::void_ptr*  p_in){ _p = p_in; }
-sstd::terp::var::var(      char         rhs){ _p=&_vp; (*_p).overwrite(new std::string({rhs})); }
-sstd::terp::var::var(      int8         rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%d", rhs))); }
-sstd::terp::var::var(      int16        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%d", rhs))); }
-sstd::terp::var::var(      int32        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%d", rhs))); }
-sstd::terp::var::var(      int64        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%ld", rhs))); }
-sstd::terp::var::var(     uint8         rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%u", rhs))); }
-sstd::terp::var::var(     uint16        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%u", rhs))); }
-sstd::terp::var::var(     uint32        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%u", rhs))); }
-sstd::terp::var::var(     uint64        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%lu", rhs))); }
 uint _digits(double rhs){
     uint num=0;
     while((int)rhs!=0){
@@ -114,13 +109,29 @@ uint _digits(double rhs){
 std::string _format(float rhs){
     uint digits=_digits(rhs);
     if(digits<=6){ return sstd::ssprintf("%%%u.%uf", digits, 15-digits);
-    }else{ return sstd::ssprintf("%%f"); }
+    }    else    { return sstd::ssprintf("%%f"); }
 }
 std::string _format(double rhs){
     uint digits=_digits(rhs);
     if(digits<=15){ return sstd::ssprintf("%%%u.%ulf", digits, 15-digits);
-    }else{ return sstd::ssprintf("%%lf"); }
+    }    else     { return sstd::ssprintf("%%lf"); }
 }
+
+// constructors
+sstd::terp::var::var(){ _p = &_vp; }
+sstd::terp::var::var(const var&  rhs){ _vp=*rhs.p(); _p=&_vp; }
+sstd::terp::var::var(const sstd::void_ptr& vp_in){ _vp=vp_in; _p=&_vp; }
+sstd::terp::var::var(      sstd::void_ptr*  p_in){ _p = p_in; }
+sstd::terp::var::var(      bool         rhs){ _p=&_vp; (*_p).overwrite(new std::string(rhs?"true":"false")); }
+sstd::terp::var::var(      char         rhs){ _p=&_vp; (*_p).overwrite(new std::string({rhs})); }
+sstd::terp::var::var(      int8         rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%d", rhs))); }
+sstd::terp::var::var(      int16        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%d", rhs))); }
+sstd::terp::var::var(      int32        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%d", rhs))); }
+sstd::terp::var::var(      int64        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%ld", rhs))); }
+sstd::terp::var::var(     uint8         rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%u", rhs))); }
+sstd::terp::var::var(     uint16        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%u", rhs))); }
+sstd::terp::var::var(     uint32        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%u", rhs))); }
+sstd::terp::var::var(     uint64        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%lu", rhs))); }
 sstd::terp::var::var(      float        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf(_format(rhs).c_str(), rhs))); }
 sstd::terp::var::var(     double        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf(_format(rhs).c_str(), rhs))); }
 sstd::terp::var::var(const char*        rhs){ _p=&_vp; (*_p).overwrite(new std::string(rhs)); }

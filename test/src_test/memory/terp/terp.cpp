@@ -567,18 +567,16 @@ TEST(memory_terp, var_ope_eq_false_different_type){
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Type Conversion
 
-TEST(memory_terp, var_constructor_and_to_char){
-    char ans = 'c';
-    sstd::terp::var v = ans;
-    char ret = v.to<char>(); // TEST THIS LINE
-    ASSERT_TRUE(ret==ans);
-}
-
 #define TEST_VAR_CONSTRUCTOR_AND_TO(T, in)      \
     T ans = in;                                 \
     sstd::terp::var v = ans;                    \
     T ret = v.to<T>(); /* TEST THIS LINE */     \
     ASSERT_TRUE(ret==ans);
+
+TEST(memory_terp, var_constructor_and_to_bool_true){ TEST_VAR_CONSTRUCTOR_AND_TO(bool, true); }
+TEST(memory_terp, var_constructor_and_to_bool_false){ TEST_VAR_CONSTRUCTOR_AND_TO(bool, false); }
+TEST(memory_terp, var_constructor_and_to_char){ TEST_VAR_CONSTRUCTOR_AND_TO(char, 'c'); }
+
 TEST(memory_terp, var_constructor_and_to_int8_min){ TEST_VAR_CONSTRUCTOR_AND_TO(int8, -128); }
 TEST(memory_terp, var_constructor_and_to_int8_max){ TEST_VAR_CONSTRUCTOR_AND_TO(int8,  127); }
 TEST(memory_terp, var_constructor_and_to_int16_min){ TEST_VAR_CONSTRUCTOR_AND_TO(int16, -32768); }
@@ -595,13 +593,13 @@ TEST(memory_terp, var_constructor_and_to_uint32_min){ TEST_VAR_CONSTRUCTOR_AND_T
 TEST(memory_terp, var_constructor_and_to_uint32_max){ TEST_VAR_CONSTRUCTOR_AND_TO(uint32, 4294967295); }
 TEST(memory_terp, var_constructor_and_to_uint64_min){ TEST_VAR_CONSTRUCTOR_AND_TO(uint64, 0); }
 TEST(memory_terp, var_constructor_and_to_uint64_max){ TEST_VAR_CONSTRUCTOR_AND_TO(uint64, 18446744073709551615); }
+
 TEST(memory_terp, var_constructor_and_to_float_case01){ TEST_VAR_CONSTRUCTOR_AND_TO(float, 0.12345); }
 TEST(memory_terp, var_constructor_and_to_float_case02_01){ TEST_VAR_CONSTRUCTOR_AND_TO(float, 123456); }
 TEST(memory_terp, var_constructor_and_to_float_case02_02){ TEST_VAR_CONSTRUCTOR_AND_TO(float, 12345678); }
 TEST(memory_terp, var_constructor_and_to_double_case01){ TEST_VAR_CONSTRUCTOR_AND_TO(double, 0.123456789012345); }
 TEST(memory_terp, var_constructor_and_to_double_case02_01){ TEST_VAR_CONSTRUCTOR_AND_TO(double, 123456789012345); }
 TEST(memory_terp, var_constructor_and_to_double_case02_02){ TEST_VAR_CONSTRUCTOR_AND_TO(double, 12345678901234567); }
-#undef TEST_VAR_CONSTRUCTOR_AND_TO
 
 TEST(memory_terp, var_constructor_and_to_pchar){
     const char* ans = "char";
@@ -609,11 +607,19 @@ TEST(memory_terp, var_constructor_and_to_pchar){
     const char* ret = v.to<const char*>(); // TEST THIS LINE
     ASSERT_TRUE(std::string(ret)==std::string(ans));
 }
-TEST(memory_terp, var_constructor_and_to_string){
-    std::string ans = "string";
-    sstd::terp::var v = ans;
-    std::string ret = v.to<std::string>(); // TEST THIS LINE
-    ASSERT_TRUE(ret==ans);
+TEST(memory_terp, var_constructor_and_to_string){ TEST_VAR_CONSTRUCTOR_AND_TO(std::string, "string"); }
+
+#undef TEST_VAR_CONSTRUCTOR_AND_TO
+
+TEST(memory_terp, var_constructor_and_to_bool_err){
+    sstd::terp::var v = "invalid string";
+    
+    testing::internal::CaptureStdout();
+    bool ret = v.to<bool>(); // TEST THIS LINE
+    std::string ret_str = testing::internal::GetCapturedStdout().c_str();
+    
+    ASSERT_TRUE(ret==false);
+    ASSERT_TRUE(sstd::strIn("input string is not bool type.", ret_str.c_str()));
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
