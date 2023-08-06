@@ -352,25 +352,24 @@ k4: v4
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // TypeConversion
 
-// to<std::string>
+// Note. TypeConversion segment is implemented and tested on terp.cpp/hpp.
 
 // to<bool>
 // to<char>
-
 // to<int>
 // to<int8>
 // to<int16>
 // to<int32>
 // to<int64>
-
 // to<uint>
 // to<uint8>
 // to<uint16>
 // to<uint32>
 // to<uint64>
-
 // to<float>
 // to<double>
+// to<const char*>
+// to<std::string>
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Multi line string for list
