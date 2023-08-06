@@ -40,7 +40,11 @@ namespace sstd::terp{
     void _to(     int8  & dst, const sstd::void_ptr& src);
     void _to(     int16 & dst, const sstd::void_ptr& src);
     void _to(     int32 & dst, const sstd::void_ptr& src);
+    void _to(     int64 & dst, const sstd::void_ptr& src);
     void _to(    uint8  & dst, const sstd::void_ptr& src);
+    void _to(    uint16 & dst, const sstd::void_ptr& src);
+    void _to(    uint32 & dst, const sstd::void_ptr& src);
+    void _to(    uint64 & dst, const sstd::void_ptr& src);
     
     void _to(const char*& dst, const sstd::void_ptr& src);
     void _to(std::string& dst, const sstd::void_ptr& src);
@@ -118,7 +122,11 @@ public:
     var(const  int8        rhs);
     var(const  int16       rhs);
     var(const  int32       rhs);
+    var(const  int64       rhs);
     var(const uint8        rhs);
+    var(const uint16       rhs);
+    var(const uint32       rhs);
+    var(const uint64       rhs);
     var(const char*        rhs);
     var(const std::string& rhs);
     ~var();
