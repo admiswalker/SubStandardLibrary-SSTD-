@@ -18,6 +18,7 @@ jobs:
       run: |
         apk add coreutils make gcc g++ cmake
         apk add python3 py3-pip py3-numpy py3-matplotlib
+        rm /usr/bin/python
         ln -s /usr/bin/python3.10 /usr/bin/python
     - name: Build googletest
       run: |
