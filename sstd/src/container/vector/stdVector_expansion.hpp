@@ -42,6 +42,46 @@ namespace sstd_stdVecEx{
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+#define SSTD_DEF_stdVecEx_Operator(Func, Ope)                            \
+    template <typename T>                   inline std::vector<T> operator Ope(const std::vector<T>& lhs, const std::vector<T>& rhs){ return Func<T>         (lhs, rhs); } \
+    template <typename T, typename rhsType> inline std::vector<T> operator Ope(const std::vector<T>& lhs, const        rhsType& rhs){ return Func<T, rhsType>(lhs, rhs); } \
+    template <typename T, typename lhsType> inline std::vector<T> operator Ope(const        lhsType& lhs, const std::vector<T>& rhs){ return Func<T, lhsType>(lhs, rhs); }
+#define SSTD_DEF_stdVecEx_Operator_eq(Func, Ope)                        \
+    template <typename T>                   inline std::vector<T>& operator Ope(std::vector<T>& lhs, const std::vector<T>& rhs){ return Func<T>         (lhs, rhs); } \
+    template <typename T, typename rhsType> inline std::vector<T>& operator Ope(std::vector<T>& lhs, const        rhsType& rhs){ return Func<T, rhsType>(lhs, rhs); }
+
+// operators for mathematics
+SSTD_DEF_stdVecEx_Operator   (sstd_stdVecEx::add   , + );
+SSTD_DEF_stdVecEx_Operator_eq(sstd_stdVecEx::add_eq, +=);
+SSTD_DEF_stdVecEx_Operator   (sstd_stdVecEx::sub   , - );
+SSTD_DEF_stdVecEx_Operator_eq(sstd_stdVecEx::sub_eq, -=);
+SSTD_DEF_stdVecEx_Operator   (sstd_stdVecEx::mul   , * );
+SSTD_DEF_stdVecEx_Operator_eq(sstd_stdVecEx::mul_eq, *=);
+SSTD_DEF_stdVecEx_Operator   (sstd_stdVecEx::div   , / );
+SSTD_DEF_stdVecEx_Operator_eq(sstd_stdVecEx::div_eq, /=);
+SSTD_DEF_stdVecEx_Operator   (sstd_stdVecEx::mod   , % );
+SSTD_DEF_stdVecEx_Operator_eq(sstd_stdVecEx::mod_eq, %=);
+SSTD_DEF_stdVecEx_Operator   (sstd_stdVecEx::pow   , ^ );
+SSTD_DEF_stdVecEx_Operator_eq(sstd_stdVecEx::pow_eq, ^=);
+
+// operators for std::vector
+SSTD_DEF_stdVecEx_Operator   (sstd_stdVecEx::push_front   , >> );
+SSTD_DEF_stdVecEx_Operator_eq(sstd_stdVecEx::push_front_eq, >>=);
+SSTD_DEF_stdVecEx_Operator   (sstd_stdVecEx::push_back    , << );
+SSTD_DEF_stdVecEx_Operator_eq(sstd_stdVecEx::push_back_eq , <<=);
+
+#undef SSTD_DEF_stdVecEx_Operator    // Deletion of used definition, in order not to pollute the namespace
+#undef SSTD_DEF_stdVecEx_Operator_eq // Deletion of used definition, in order not to pollute the namespace
+
+//---
+
+template <typename T> inline std::vector<T>& operator++(std::vector<T>& rhs)     {                         for(uint p=0; p<rhs.size(); ++p){ ++rhs[p]; } return rhs; } // ++rhs
+template <typename T> inline std::vector<T>  operator++(std::vector<T>& rhs, int){ std::vector<T> ret=rhs; for(uint p=0; p<rhs.size(); ++p){ ++rhs[p]; } return ret; } //   rhs++
+template <typename T> inline std::vector<T>& operator--(std::vector<T>& rhs)     {                         for(uint p=0; p<rhs.size(); ++p){ --rhs[p]; } return rhs; } // --rhs
+template <typename T> inline std::vector<T>  operator--(std::vector<T>& rhs, int){ std::vector<T> ret=rhs; for(uint p=0; p<rhs.size(); ++p){ --rhs[p]; } return ret; } //   rhs--
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
 // operators for mathematics
 #define SSTD_DEF_stdVecEx_o(Func, Ope)                                  \
     template <typename T>                                               \
@@ -199,46 +239,6 @@ inline std::vector<T>& sstd_stdVecEx::push_back_eq(std::vector<T>& lhs, const rh
     lhs.push_back(rhs);
     return lhs;
 }
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
-
-#define SSTD_DEF_stdVecEx_Operator(Func, Ope)                            \
-    template <typename T>                   inline std::vector<T> operator Ope(const std::vector<T>& lhs, const std::vector<T>& rhs){ return Func<T>         (lhs, rhs); } \
-    template <typename T, typename rhsType> inline std::vector<T> operator Ope(const std::vector<T>& lhs, const        rhsType& rhs){ return Func<T, rhsType>(lhs, rhs); } \
-    template <typename T, typename lhsType> inline std::vector<T> operator Ope(const        lhsType& lhs, const std::vector<T>& rhs){ return Func<T, lhsType>(lhs, rhs); }
-#define SSTD_DEF_stdVecEx_Operator_eq(Func, Ope)                        \
-    template <typename T>                   inline std::vector<T>& operator Ope(std::vector<T>& lhs, const std::vector<T>& rhs){ return Func<T>         (lhs, rhs); } \
-    template <typename T, typename rhsType> inline std::vector<T>& operator Ope(std::vector<T>& lhs, const        rhsType& rhs){ return Func<T, rhsType>(lhs, rhs); }
-
-// operators for mathematics
-SSTD_DEF_stdVecEx_Operator   (sstd_stdVecEx::add   , + );
-SSTD_DEF_stdVecEx_Operator_eq(sstd_stdVecEx::add_eq, +=);
-SSTD_DEF_stdVecEx_Operator   (sstd_stdVecEx::sub   , - );
-SSTD_DEF_stdVecEx_Operator_eq(sstd_stdVecEx::sub_eq, -=);
-SSTD_DEF_stdVecEx_Operator   (sstd_stdVecEx::mul   , * );
-SSTD_DEF_stdVecEx_Operator_eq(sstd_stdVecEx::mul_eq, *=);
-SSTD_DEF_stdVecEx_Operator   (sstd_stdVecEx::div   , / );
-SSTD_DEF_stdVecEx_Operator_eq(sstd_stdVecEx::div_eq, /=);
-SSTD_DEF_stdVecEx_Operator   (sstd_stdVecEx::mod   , % );
-SSTD_DEF_stdVecEx_Operator_eq(sstd_stdVecEx::mod_eq, %=);
-SSTD_DEF_stdVecEx_Operator   (sstd_stdVecEx::pow   , ^ );
-SSTD_DEF_stdVecEx_Operator_eq(sstd_stdVecEx::pow_eq, ^=);
-
-// operators for std::vector
-SSTD_DEF_stdVecEx_Operator   (sstd_stdVecEx::push_front   , >> );
-SSTD_DEF_stdVecEx_Operator_eq(sstd_stdVecEx::push_front_eq, >>=);
-SSTD_DEF_stdVecEx_Operator   (sstd_stdVecEx::push_back    , << );
-SSTD_DEF_stdVecEx_Operator_eq(sstd_stdVecEx::push_back_eq , <<=);
-
-#undef SSTD_DEF_stdVecEx_Operator    // Deletion of used definition, in order not to pollute the namespace
-#undef SSTD_DEF_stdVecEx_Operator_eq // Deletion of used definition, in order not to pollute the namespace
-
-//---
-
-template <typename T> inline std::vector<T>& operator++(std::vector<T>& rhs)     {                         for(uint p=0; p<rhs.size(); ++p){ ++rhs[p]; } return rhs; } // ++rhs
-template <typename T> inline std::vector<T>  operator++(std::vector<T>& rhs, int){ std::vector<T> ret=rhs; for(uint p=0; p<rhs.size(); ++p){ ++rhs[p]; } return ret; } //   rhs++
-template <typename T> inline std::vector<T>& operator--(std::vector<T>& rhs)     {                         for(uint p=0; p<rhs.size(); ++p){ --rhs[p]; } return rhs; } // --rhs
-template <typename T> inline std::vector<T>  operator--(std::vector<T>& rhs, int){ std::vector<T> ret=rhs; for(uint p=0; p<rhs.size(); ++p){ --rhs[p]; } return ret; } //   rhs--
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
