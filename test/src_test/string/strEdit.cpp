@@ -113,17 +113,24 @@ TEST(strEdit, strip){
     ASSERT_TRUE(sstd::strip(str_in.c_str()) == str_ans);
     ASSERT_TRUE(sstd::strip(str_in        ) == str_ans);
 }
+TEST(strEdit, strip_vec){
+    std::vector<std::string> vecStr_in  = {" \t abcd01 \t ", " \t abcd02 \t ", " \t abcd03 \t "};
+    std::vector<std::string> vecStr_ans = {"abcd01", "abcd02", "abcd03"};
+    ASSERT_TRUE(sstd::strip(vecStr_in) == vecStr_ans);
+}
 TEST(strEdit, strip_ow){
     std::string str_in  = " \t abcd \t ";
     std::string str_ans = "abcd";
     sstd::strip_ow(str_in);
     ASSERT_TRUE(str_in == str_ans);
 }
-TEST(strEdit, strip_vec){
+TEST(strEdit, strip_vec_ow){
     std::vector<std::string> vecStr_in  = {" \t abcd01 \t ", " \t abcd02 \t ", " \t abcd03 \t "};
     std::vector<std::string> vecStr_ans = {"abcd01", "abcd02", "abcd03"};
-    ASSERT_TRUE(sstd::strip(vecStr_in) == vecStr_ans);
+    sstd::strip_ow(vecStr_in);
+    ASSERT_TRUE(vecStr_in == vecStr_ans);
 }
+
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 

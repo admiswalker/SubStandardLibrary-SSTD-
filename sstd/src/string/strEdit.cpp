@@ -141,10 +141,6 @@ std::string strip_base(const uchar* str){
 std::string sstd::strip(const        char* str){ return strip_base((const uchar*)str        ); }
 std::string sstd::strip(const std::string& str){ return strip_base((const uchar*)str.c_str()); }
 
-void sstd::strip_ow(std::string& str){
-    str = lstrip_base((const uchar*)str.c_str());
-    sstd::rstrip_ow(str);
-}
 std::vector<std::string> sstd::strip(const std::vector<std::string>& vec){
     std::vector<std::string> ret(vec.size()); ret.clear();
     
@@ -153,6 +149,16 @@ std::vector<std::string> sstd::strip(const std::vector<std::string>& vec){
     }
     
     return ret;
+}
+
+void sstd::strip_ow(std::string& str){
+    str = lstrip_base((const uchar*)str.c_str());
+    sstd::rstrip_ow(str);
+}
+void sstd::strip_ow(std::vector<std::string>& v){
+    for(uint i=0; i<v.size(); ++i){
+        sstd::strip_ow(v[i]);
+    }
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

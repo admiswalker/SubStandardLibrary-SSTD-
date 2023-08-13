@@ -39,13 +39,13 @@ std::string sstd::_join(const std::vector<std::string>& v, const std::string& de
 }
 
 //---
-
+/*
 void sstd::_strip_ow(std::vector<std::string>& v){
     for(uint i=0; i<v.size(); ++i){
         sstd::strip_ow(v[i]);
     }
 }
-
+*/
 //---
 
 std::string _mearge_vec_by_space_or_newLines(const std::vector<std::string>& v){
