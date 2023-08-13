@@ -40,7 +40,7 @@
 TARGET = libsstd.a
 
 # Options: コンパイルオプション
-CFLAGS  = -std=gnu++0x
+CFLAGS  = -std=gnu++2a # C++20
 CFLAGS += -Wall
 CFLAGS += -O3
 

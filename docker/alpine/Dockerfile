@@ -11,5 +11,6 @@ RUN apk update --no-cache && apk add --no-cache \
     py3-numpy \
     py3-matplotlib
 
+RUN rm /usr/bin/python
 RUN ln -s /usr/bin/python3.10 /usr/bin/python
 

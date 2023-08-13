@@ -26,15 +26,59 @@ TEST(strEdit, theOthers){
     }
     printf("+----+---------------------------------------------------------------------+\n");
     printf("\n");
-    
-    printf("  □ splitByX\n");
-    std::vector<std::string> vecRow;
-    vecRow = sstd::split("ABC DEF",       ' ');        sstd::printn(vecRow); // "ABC DEF" -> ["ABC", "DEF"]
-    vecRow = sstd::split(" ABC   D EF  ", ' ');        sstd::printn(vecRow); // " ABC   D EF  " -> ["ABC", "D", "EF"]
-    
-    vecRow = sstd::split("ABC,DEF",              ','); sstd::printn(vecRow); // "ABC,DEF" -> ["ABC", "DEF"]
-    vecRow = sstd::split(" ABC  , D,  EF ,GH  ", ','); sstd::printn(vecRow); // " ABC  , D,  EF ,GH  " -> ["ABC", "D", "EF",  "GH"]
     sstd::rm(tmpDir);
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+TEST(strEdit, split_c){
+    std::vector<std::string> v = sstd::split(" a  b, c"); // TEST THIS LINE
+    ASSERT_TRUE( v == std::vector<std::string>({"a", "b,", "c"}) );
+}
+TEST(strEdit, split_c_c_space){
+    std::vector<std::string> v = sstd::split(" a  b, c", ' '); // TEST THIS LINE
+    ASSERT_TRUE( v == std::vector<std::string>({"", "a", "", "b,", "c"}) );
+}
+TEST(strEdit, split_c_c_comma){
+    std::vector<std::string> v = sstd::split(" a  b, c", ','); // TEST THIS LINE
+    ASSERT_TRUE( v == std::vector<std::string>({" a  b", " c"}) );
+}
+
+//---
+
+TEST(strEdit, split_s){
+    std::vector<std::string> v = sstd::split(std::string(" a  b, c")); // TEST THIS LINE
+    ASSERT_TRUE( v == std::vector<std::string>({"a", "b,", "c"}) );
+}
+TEST(strEdit, split_s_c){
+    std::vector<std::string> v = sstd::split(std::string(" a  b, c"), ' '); // TEST THIS LINE
+    ASSERT_TRUE( v == std::vector<std::string>({"", "a", "", "b,", "c"}) );
+}
+
+//---
+
+TEST(strEdit, split_rmSpace_c){
+    std::vector<std::string> v = sstd::split_rmSpace(" a  b, c"); // TEST THIS LINE
+    ASSERT_TRUE( v == std::vector<std::string>({"a", "b,", "c"}) );
+}
+TEST(strEdit, split_rmSpace_c_c_space){
+    std::vector<std::string> v = sstd::split_rmSpace(" a  b, c", ' '); // TEST THIS LINE
+    ASSERT_TRUE( v == std::vector<std::string>({"a", "b,", "c"}) );
+}
+TEST(strEdit, split_rmSpace_c_c_comma){
+    std::vector<std::string> v = sstd::split_rmSpace(" a  b, c", ','); // TEST THIS LINE
+    ASSERT_TRUE( v == std::vector<std::string>({"a  b", "c"}) );
+}
+
+//---
+
+TEST(strEdit, split_rmSpace_s){
+    std::vector<std::string> v = sstd::split_rmSpace(std::string(" a  b, c")); // TEST THIS LINE
+    ASSERT_TRUE( v == std::vector<std::string>({"a", "b,", "c"}) );
+}
+TEST(strEdit, split_rmSpace_s_c_space){
+    std::vector<std::string> v = sstd::split_rmSpace(std::string(" a  b, c"), ' '); // TEST THIS LINE
+    ASSERT_TRUE( v == std::vector<std::string>({"a", "b,", "c"}) );
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

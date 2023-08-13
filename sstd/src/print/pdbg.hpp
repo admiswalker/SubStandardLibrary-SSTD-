@@ -18,6 +18,8 @@ namespace sstd{
 
 #define pdbg(...) pdbg_dummy();{printf("\u001b[1m\u001b[31m%s:%d %s(): \u001b[0m", __FILE__, __LINE__, __func__);printf(__VA_ARGS__);}
 #define pdbg_err(...) pdbg_dummy();{printf("\u001b[1m%s:%d %s(): \u001b[31merror: \u001b[0m", __FILE__, __LINE__, __func__);printf(__VA_ARGS__);}
+#define pdbg_err(...) pdbg_dummy();{printf("\u001b[1m%s:%d %s(): \u001b[31merror: \u001b[0m", __FILE__, __LINE__, __func__);printf(__VA_ARGS__);}
+#define pdbg_err_str(...) ssprintf("%s:%d %s(): error: %s", __FILE__, __LINE__, __func__, sstd::ssprintf(__VA_ARGS__).c_str())
 //  \u001b[1m  : set bold
 //  \u001b[31m  :  set output red
 //  \u001b[0m   :  reset bold and color

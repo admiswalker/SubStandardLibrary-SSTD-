@@ -53,6 +53,7 @@
 #include "src/file/read_write.hpp"
 #include "src/file/rm.hpp"
 #include "src/file/tinyInterpreter.hpp"
+#include "src/file/yaml.hpp"
 
 #include "src/math/hashFnc_of_MD5_SHA1_SHA2/hashSum.hpp"
 #include "src/math/hashFnc_of_MD5_SHA1_SHA2/sstd_md5_sha1_sha2_wrapper.hpp"
@@ -60,8 +61,10 @@
 #include "src/math/math.hpp"
 #include "src/math/signal.hpp"
 
+#include "src/memory/terp/print.hpp"
+#include "src/memory/terp/terp.hpp"
 #include "src/memory/unique_void_ptr.hpp"
-#include "src/memory/void_ptr_obj.hpp"
+#include "src/memory/void_ptr.hpp"
 
 //#include "src/print/pdbg.hpp" // 後ろで include しないと，extern での定義を置換してしまう．
 //#include "src/print/print.hpp" // 後ろで include しないと，extern での定義を置換してしまう．

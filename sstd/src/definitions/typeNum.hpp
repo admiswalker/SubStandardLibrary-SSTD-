@@ -4,12 +4,16 @@
 #include <unordered_map>
 #include <vector>
 #include "../definitions/typeDef.h"
+#include "../memory/void_ptr.hpp"
+#include "../container/matrixContainer_colMajor/mat_c.hpp"
+#include "../container/matrixContainer_rowMajor/mat_r.hpp"
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 namespace sstd{
     const static uchar        num_void   = 200;
     const static uchar        num_len    = 201;
+    const static uchar        num_err    = 254;
     const static uchar        num_null   = 255;
 
     const static uchar        num_bool   =   0;
@@ -139,21 +143,30 @@ namespace sstd{
     const static uchar num_hash_str_double = 110;
     const static uchar num_hash_str_str    = 111;
 
+    const static uchar num_void_ptr        = 112;
+    const static uchar num_vec_void_ptr    = 113;
+    const static uchar num_vvec_void_ptr   = 114;
+    const static uchar num_mat_c_void_ptr  = 115;
+    const static uchar num_mat_r_void_ptr  = 116;
+    
+    const static uchar num_hash_str_void_ptr      = 117;
+    const static uchar num_hash_void_ptr_void_ptr = 118;
+    
     //---
 
-    uchar type2num(       bool rhs);
-    uchar type2num(       char rhs);
-  //uchar type2num(      uchar rhs); // same as uint8
-    uchar type2num(       int8 rhs);
-    uchar type2num(      int16 rhs);
-    uchar type2num(      int32 rhs);
-    uchar type2num(      int64 rhs);
-    uchar type2num(      uint8 rhs);
-    uchar type2num(     uint16 rhs);
-    uchar type2num(     uint32 rhs);
-    uchar type2num(     uint64 rhs);
-    uchar type2num(      float rhs);
-    uchar type2num(     double rhs);
+    uchar type2num(              bool rhs);
+    uchar type2num(              char rhs);
+  //uchar type2num(             uchar rhs); // same as uint8
+    uchar type2num(              int8 rhs);
+    uchar type2num(             int16 rhs);
+    uchar type2num(             int32 rhs);
+    uchar type2num(             int64 rhs);
+    uchar type2num(             uint8 rhs);
+    uchar type2num(            uint16 rhs);
+    uchar type2num(            uint32 rhs);
+    uchar type2num(            uint64 rhs);
+    uchar type2num(             float rhs);
+    uchar type2num(            double rhs);
     uchar type2num(const std::string& rhs);
 
     uchar type2num(const std::vector<       bool>& rhs);
@@ -171,7 +184,78 @@ namespace sstd{
     uchar type2num(const std::vector<     double>& rhs);
     uchar type2num(const std::vector<std::string>& rhs);
 
-    uchar type2num(const std::unordered_map<std::string, std::string>& rhs);
+    uchar type2num(const std::vector<std::vector<       bool>>& rhs);
+    uchar type2num(const std::vector<std::vector<       char>>& rhs);
+  //uchar type2num(const std::vector<std::vector<      uchar>>& rhs); // same as uint8
+    uchar type2num(const std::vector<std::vector<       int8>>& rhs);
+    uchar type2num(const std::vector<std::vector<      int16>>& rhs);
+    uchar type2num(const std::vector<std::vector<      int32>>& rhs);
+    uchar type2num(const std::vector<std::vector<      int64>>& rhs);
+    uchar type2num(const std::vector<std::vector<      uint8>>& rhs);
+    uchar type2num(const std::vector<std::vector<     uint16>>& rhs);
+    uchar type2num(const std::vector<std::vector<     uint32>>& rhs);
+    uchar type2num(const std::vector<std::vector<     uint64>>& rhs);
+    uchar type2num(const std::vector<std::vector<      float>>& rhs);
+    uchar type2num(const std::vector<std::vector<     double>>& rhs);
+    uchar type2num(const std::vector<std::vector<std::string>>& rhs);
+
+    uchar type2num(const sstd::mat_c<       bool>& rhs);
+    uchar type2num(const sstd::mat_c<       char>& rhs);
+  //uchar type2num(const sstd::mat_c<      uchar>& rhs); // same as uint8
+    uchar type2num(const sstd::mat_c<       int8>& rhs);
+    uchar type2num(const sstd::mat_c<      int16>& rhs);
+    uchar type2num(const sstd::mat_c<      int32>& rhs);
+    uchar type2num(const sstd::mat_c<      int64>& rhs);
+    uchar type2num(const sstd::mat_c<      uint8>& rhs);
+    uchar type2num(const sstd::mat_c<     uint16>& rhs);
+    uchar type2num(const sstd::mat_c<     uint32>& rhs);
+    uchar type2num(const sstd::mat_c<     uint64>& rhs);
+    uchar type2num(const sstd::mat_c<      float>& rhs);
+    uchar type2num(const sstd::mat_c<     double>& rhs);
+    uchar type2num(const sstd::mat_c<std::string>& rhs);
+
+    uchar type2num(const sstd::mat_r<       bool>& rhs);
+    uchar type2num(const sstd::mat_r<       char>& rhs);
+  //uchar type2num(const sstd::mat_r<      uchar>& rhs); // same as uint8
+    uchar type2num(const sstd::mat_r<       int8>& rhs);
+    uchar type2num(const sstd::mat_r<      int16>& rhs);
+    uchar type2num(const sstd::mat_r<      int32>& rhs);
+    uchar type2num(const sstd::mat_r<      int64>& rhs);
+    uchar type2num(const sstd::mat_r<      uint8>& rhs);
+    uchar type2num(const sstd::mat_r<     uint16>& rhs);
+    uchar type2num(const sstd::mat_r<     uint32>& rhs);
+    uchar type2num(const sstd::mat_r<     uint64>& rhs);
+    uchar type2num(const sstd::mat_r<      float>& rhs);
+    uchar type2num(const sstd::mat_r<     double>& rhs);
+    uchar type2num(const sstd::mat_r<std::string>& rhs);
+
+    uchar type2num(const std::unordered_map<std::string,       bool>& rhs);
+    uchar type2num(const std::unordered_map<std::string,       char>& rhs);
+  //uchar type2num(const std::unordered_map<std::string,      uchar>& rhs); // same as uint8
+    uchar type2num(const std::unordered_map<std::string,       int8>& rhs);
+    uchar type2num(const std::unordered_map<std::string,      int16>& rhs);
+    uchar type2num(const std::unordered_map<std::string,      int32>& rhs);
+    uchar type2num(const std::unordered_map<std::string,      int64>& rhs);
+    uchar type2num(const std::unordered_map<std::string,      uint8>& rhs);
+    uchar type2num(const std::unordered_map<std::string,     uint16>& rhs);
+    uchar type2num(const std::unordered_map<std::string,     uint32>& rhs);
+    uchar type2num(const std::unordered_map<std::string,     uint64>& rhs);
+    uchar type2num(const std::unordered_map<std::string,      float>& rhs);
+    uchar type2num(const std::unordered_map<std::string,     double>& rhs);
+    uchar type2num(const std::unordered_map<std::string,std::string>& rhs);
+
+    uchar type2num(const sstd::void_ptr& rhs);
+    uchar type2num(const             std::vector<sstd::void_ptr> & rhs);
+    uchar type2num(const std::vector<std::vector<sstd::void_ptr>>& rhs);
+    uchar type2num(const sstd::mat_c<sstd::void_ptr>& rhs);
+    uchar type2num(const sstd::mat_r<sstd::void_ptr>& rhs);
+
+    uchar type2num(const std::unordered_map<std::string,    sstd::void_ptr>& rhs);
+    //uchar type2num(const std::unordered_map<sstd::void_ptr, sstd::void_ptr>& rhs);
+
+    //---
+
+    std::string typeNum2str(uchar rhs);
 };
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

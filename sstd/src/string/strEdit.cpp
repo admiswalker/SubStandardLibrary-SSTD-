@@ -11,11 +11,11 @@ std::vector<std::string> sstd::splitByLine(const char* str){
     std::vector<std::string> ret;
     
     std::string buf;
-    for(uint r=0; str[r]!=0; ++r){ // r: read place
+    for(uint r=0; str[r]!=0;){ // r: read place
         buf.clear();
         for(; str[r]!=0; ++r){
-            if(str[r]==0x0A){ break; }                        // Uinx
-            if(str[r]==0x0D && str[r+1]==0x0A){ ++r; break; } // Windows
+            if(str[r]==0x0A                  ){ r+=1; break; } // Uinx
+            if(str[r]==0x0D && str[r+1]==0x0A){ r+=2; break; } // Windows
             buf += str[r];
         }
         ret.push_back(std::move(buf));
@@ -29,32 +29,13 @@ std::vector<std::string> sstd::splitByLine(const std::string& str){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-std::vector<std::string> asASpcase(const char* str){
+std::vector<std::string> _asAX_rmSpace(const char* str, const char X){
     std::vector<std::string> splitList;
     
     std::string buf;
     uint i=0;
-    while(str[i]!=0){ if(' '==str[i]){++i;}else{break;} } // skip space
-    while(str[i]!=0){
-        if(' '==str[i]){
-            splitList.push_back(buf); buf.clear();
-            ++i;
-            while(str[i]!=0){ if(' '==str[i]){++i;}else{break;} } // skip space
-        }else{
-            buf+=str[i];
-            ++i;
-        }
-    }
-    if(buf.size()!=0){ splitList.push_back(buf); }
-    return splitList;
-}
-std::vector<std::string> asAX(const char* str, const char X){
-    std::vector<std::string> splitList;
-    
-    std::string buf;
-    uint i=0;
-    while(str[i]!=0){ if(' '==str[i]){++i;}else{break;} } // skip space
-    while(str[i]!=0){
+    while(str[i]!='\0'){ if(' '==str[i]){++i;}else{break;} } // skip space
+    while(str[i]!='\0'){
         if(X==str[i]){
             sstd::rstrip_ow(buf); splitList.push_back(buf); buf.clear();
             ++i;
@@ -67,13 +48,38 @@ std::vector<std::string> asAX(const char* str, const char X){
     if(buf.size()!=0){ sstd::rstrip_ow(buf); splitList.push_back(buf); }
     return splitList;
 }
-std::vector<std::string> sstd::split(const char* str, const char X){
-    if(X==' '){ return asASpcase(str);
-    }  else   { return asAX     (str, X); }
+std::vector<std::string> _asAX(const char* str, const char X){
+    std::vector<std::string> splitList;
+    
+    std::string buf;
+    uint i=0;
+//    while(str[i]!='\0'){ if(' '==str[i]){++i;}else{break;} } // skip space
+    while(str[i]!='\0'){
+        if(X==str[i]){
+//            sstd::rstrip_ow(buf); splitList.push_back(buf); buf.clear();
+            splitList.push_back(buf); buf.clear();
+            ++i;
+//            while(str[i]!=0){ if(' '==str[i]){++i;}else{break;} } // skip space
+        }else{
+            buf+=str[i];
+            ++i;
+        }
+    }
+//    if(buf.size()!=0){ sstd::rstrip_ow(buf); splitList.push_back(buf); }
+    if(buf.size()!=0){ splitList.push_back(buf); }
+    return splitList;
 }
-std::vector<std::string> sstd::split(const std::string& str, const char X){
-    return std::move(sstd::split(str.c_str(), X));
-}
+std::vector<std::string> sstd::split(const        char* str              ){ return _asAX_rmSpace(str,         ' '); }
+std::vector<std::string> sstd::split(const std::string& str              ){ return _asAX_rmSpace(str.c_str(), ' '); }
+std::vector<std::string> sstd::split(const        char* str, const char X){ return _asAX(str,          X ); }
+std::vector<std::string> sstd::split(const std::string& str, const char X){ return _asAX(str.c_str(),  X ); }
+
+//---
+
+std::vector<std::string> sstd::split_rmSpace(const        char* str              ){ return _asAX_rmSpace(str,         ' '); }
+std::vector<std::string> sstd::split_rmSpace(const std::string& str              ){ return _asAX_rmSpace(str.c_str(), ' '); }
+std::vector<std::string> sstd::split_rmSpace(const        char* str, const char X){ return _asAX_rmSpace(str        ,  X ); }
+std::vector<std::string> sstd::split_rmSpace(const std::string& str, const char X){ return _asAX_rmSpace(str.c_str(),  X ); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
