@@ -320,3 +320,28 @@ void        sstd::stripAll_ow(      std::string& str, const std::string& stripLi
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+template <typename T>
+std::string _join(const std::vector<std::string>& v, T delimiter){
+    std::string ret;
+    if(v.size()==0){ return ret; }
+    
+    ret += v[0];
+    for(uint i=1; i<v.size(); ++i){
+        ret += delimiter + v[i];
+    }
+    
+    return ret;
+}
+
+std::string sstd::join(const std::vector<std::string>& v, const char delimiter){
+    return _join<const char>(v, delimiter);
+}
+std::string sstd::join(const std::vector<std::string>& v, const char* delimiter){
+    return _join<const char*>(v, delimiter);
+}
+std::string sstd::join(const std::vector<std::string>& v, const std::string& delimiter){
+    return sstd::join(v, delimiter.c_str());
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+

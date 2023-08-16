@@ -25,7 +25,7 @@
 // ここの関数は，あとで各々の sstd namespace のファイルに移す
 
 //---
-
+/*
 std::string sstd::_join(const std::vector<std::string>& v, const std::string& delimiter){
     std::string ret;
 
@@ -37,7 +37,7 @@ std::string sstd::_join(const std::vector<std::string>& v, const std::string& de
     }
     return ret;
 }
-
+*/
 //---
 /*
 void sstd::_strip_ow(std::vector<std::string>& v){
@@ -432,6 +432,7 @@ uint _rcount_empty(std::vector<std::string>& v){
     }
     return cnt;
 }
+/*
 std::string _join(const std::vector<std::string>& v, const char separator){
     std::string ret;
     for(uint i=0; i<v.size()-1; ++i){
@@ -442,6 +443,7 @@ std::string _join(const std::vector<std::string>& v, const char separator){
     }
     return ret;
 }
+*/
 bool _get_multi_line_str(std::string& ret, const uint hsc_prev, const std::string& opt, int indent_width, const std::vector<std::string>& ls, uint& i){
     std::vector<std::string> v_tmp;
 
@@ -484,15 +486,15 @@ bool _get_multi_line_str(std::string& ret, const uint hsc_prev, const std::strin
 
     if      (opt=="|"  || opt==">" ){
         _rremove_empty_ow(v_tmp);
-        ret = _join(v_tmp, separator);
+        ret = sstd::join(v_tmp, separator);
         ret += "\n";
     }else if(opt=="|-" || opt==">-"){
         _rremove_empty_ow(v_tmp);
-        ret = _join(v_tmp, separator);
+        ret = sstd::join(v_tmp, separator);
     }else if(opt=="|+" || opt==">+"){
         uint cnt = _rcount_empty(v_tmp) + 1;
         _rremove_empty_ow(v_tmp);
-        ret = _join(v_tmp, separator) + std::string(cnt, '\n');
+        ret = sstd::join(v_tmp, separator) + std::string(cnt, '\n');
     }else{
         sstd::pdbg_err("Unexpected case\n"); return false;
     }

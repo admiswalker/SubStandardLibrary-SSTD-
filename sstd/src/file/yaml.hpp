@@ -23,7 +23,7 @@ namespace sstd{
 
 namespace sstd{
 
-    std::string _join(const std::vector<std::string>& v, const std::string& delimiter);
+    //std::string _join(const std::vector<std::string>& v, const std::string& delimiter);
 
     //---
     

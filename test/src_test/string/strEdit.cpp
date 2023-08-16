@@ -371,4 +371,50 @@ TEST(strEdit, stripAll_ow_case02){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+TEST(strEdit, join_c_0){
+    std::vector<std::string> v_in = {};
+    std::string ans = "";
+    ASSERT_STREQ(sstd::join(v_in,',').c_str(), ans.c_str());
+}
+TEST(strEdit, join_c_1){
+    std::vector<std::string> v_in = {"a"};
+    std::string ans = "a";
+    ASSERT_STREQ(sstd::join(v_in,',').c_str(), ans.c_str());
+}
+TEST(strEdit, join_c_2){
+    std::vector<std::string> v_in = {"a", "b"};
+    std::string ans = "a,b";
+    ASSERT_STREQ(sstd::join(v_in,',').c_str(), ans.c_str());
+}
+TEST(strEdit, join_c_3){
+    std::vector<std::string> v_in = {"a", "b", "c"};
+    std::string ans = "a,b,c";
+    ASSERT_STREQ(sstd::join(v_in,',').c_str(), ans.c_str());
+}
+
+//---
+
+TEST(strEdit, join_s_0){
+    std::vector<std::string> v_in = {};
+    std::string ans = "";
+    ASSERT_STREQ(sstd::join(v_in,std::string(", ")).c_str(), ans.c_str());
+}
+TEST(strEdit, join_s_1){
+    std::vector<std::string> v_in = {"a"};
+    std::string ans = "a";
+    ASSERT_STREQ(sstd::join(v_in,std::string(", ")).c_str(), ans.c_str());
+}
+TEST(strEdit, join_s_2){
+    std::vector<std::string> v_in = {"a", "b"};
+    std::string ans = "a, b";
+    ASSERT_STREQ(sstd::join(v_in,std::string(", ")).c_str(), ans.c_str());
+}
+TEST(strEdit, join_s_3){
+    std::vector<std::string> v_in = {"a", "b", "c"};
+    std::string ans = "a, b, c";
+    ASSERT_STREQ(sstd::join(v_in,std::string(", ")).c_str(), ans.c_str());
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
 EXECUTE_TESTS();

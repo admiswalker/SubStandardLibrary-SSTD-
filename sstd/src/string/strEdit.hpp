@@ -58,5 +58,9 @@ namespace sstd{
     void                      stripAll_ow(      std::string& str, const std::string& stripList);
     // todo: rm '\t'
     // todo: implementing memcopy version. Ref: https://postd.cc/how-quickly-can-you-remove-spaces-from-a-string/
-}
 
+    std::string join(const std::vector<std::string>& v, const        char  delimiter);
+    std::string join(const std::vector<std::string>& v, const        char* delimiter);
+    std::string join(const std::vector<std::string>& v, const std::string& delimiter);
+    
+}
