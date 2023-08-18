@@ -45,9 +45,11 @@ namespace sstd{
     std::vector<std::string> _splitByLine_dq_sq(const std::string& str);
 
     //---
-
-    std::vector<std::string> _split_dq_sq(const        char* str, const char X);
-    std::vector<std::string> _split_dq_sq(const std::string& str, const char X);
+    
+    bool _split_dq_sq(std::vector<std::string>& ret, const        char* str, const char X);
+    bool _split_dq_sq(std::vector<std::string>& ret, const std::string& str, const char X);
+//    std::vector<std::string> _split_dq_sq(const        char* str, const char X);
+//    std::vector<std::string> _split_dq_sq(const std::string& str, const char X);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

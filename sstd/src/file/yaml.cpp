@@ -230,9 +230,7 @@ std::vector<std::string> sstd::_splitByLine_dq_sq(const std::string& str){
 
 //-------------------------------
 
-std::vector<std::string> sstd::_split_dq_sq(const char* str, const char X){
-    
-    std::vector<std::string> ret;
+bool sstd::_split_dq_sq(std::vector<std::string>& ret, const char* str, const char X){
     
     bool is_escaped=false;
     bool in_d_quate=false; // double quate
@@ -253,13 +251,13 @@ std::vector<std::string> sstd::_split_dq_sq(const char* str, const char X){
         }
         ret.push_back(std::move(buf));
     }
-    if(in_d_quate){ sstd::pdbg_err("double quatation is not closed\n"); return std::vector<std::string>(); }
-    if(in_s_quate){ sstd::pdbg_err("single quatation is not closed\n"); return std::vector<std::string>(); }
+    if(in_d_quate){ return false; }
+    if(in_s_quate){ return false; }
     
-    return ret;
+    return true;
 }
-std::vector<std::string> sstd::_split_dq_sq(const std::string& str, const char X){
-    return std::move(sstd::_split_dq_sq(str.c_str(), X));
+bool sstd::_split_dq_sq(std::vector<std::string>& ret, const std::string& str, const char X){
+    return sstd::_split_dq_sq(ret, str.c_str(), X);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -407,7 +405,7 @@ bool _get_value(bool& ret_val1_use_dq_sq, bool& ret_val2_use_dq_sq, std::string&
     } break;
     case NUM_HASH:
     case NUM_LIST_AND_HASH: {
-        std::vector<std::string> v = sstd::_split_dq_sq(s, ':');
+        std::vector<std::string> v; if(!sstd::_split_dq_sq(v, s, ':')){ sstd::pdbg_err("single quatation or double quatation is not closed\n"); return false; }
         if(v.size()>=1){ ret_val1 = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(dq, sq, _rm_hyphen(v[0]))); ret_val1_use_dq_sq = ( dq || sq ); }
         if(v.size()>=2){ ret_val2 = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(dq, sq,            v[1] )); ret_val2_use_dq_sq = ( dq || sq ); }
         if(v.size()>=3){ sstd::printn(v); sstd::pdbg("Unexptected split by ':'."); return false; }
