@@ -27,6 +27,39 @@ std::vector<std::string> sstd::splitByLine(const std::string& str){
     return sstd::splitByLine(str.c_str());
 }
 
+//---
+
+bool sstd::splitByLine_sq_dq(std::vector<std::string>& ret, const char* str){
+    
+    bool is_escaped=false;
+    bool in_d_quate=false; // double quate
+    bool in_s_quate=false; // single quate
+    std::string buf;
+    for(uint r=0; str[r]!=0;){ // r: read place
+        buf.clear();
+        for(; str[r]!='\0'; ++r){
+            if(str[r]=='\\'){ is_escaped=true; buf+=str[r]; ++r; if(str[r]=='\0'){break;} }
+            
+            if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
+            if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
+            
+            if(!in_d_quate && !in_s_quate && str[r]==0x0A                  ){ r+=1; break; } // Uinx
+            if(!in_d_quate && !in_s_quate && str[r]==0x0D && str[r+1]==0x0A){ r+=2; break; } // Windows
+            buf += str[r];
+            
+            is_escaped=false;
+        }
+        ret.push_back(std::move(buf));
+    }
+    if(in_d_quate){ ret.clear(); return false; }
+    if(in_s_quate){ ret.clear(); return false; }
+    
+    return true;
+}
+bool sstd::splitByLine_sq_dq(std::vector<std::string>& ret, const std::string& str){
+    return sstd::splitByLine_sq_dq(ret, str.c_str());
+}
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 std::vector<std::string> _asAX_rmSpace(const char* str, const char X){

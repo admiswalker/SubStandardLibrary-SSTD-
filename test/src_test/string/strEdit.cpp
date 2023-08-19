@@ -31,6 +31,34 @@ TEST(strEdit, theOthers){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+//splitByLine
+
+//TEST(strEdit, splitByLine){}
+
+TEST(strEdit, splitByLine_sq_dq){
+    
+    std::vector<std::string> ret_v;
+    std::string s = R"(
+"abc
+def"
+
+"ghi"
+
+)";
+    bool ret_tf = sstd::splitByLine_sq_dq(ret_v, s); // TEST THIS LINE
+    //sstd::printn(ret_v);
+
+    ASSERT_TRUE( ret_v == std::vector<std::string>({
+R"()",
+R"("abc
+def")",
+R"()",
+R"("ghi")",
+R"()"}) );
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
 TEST(strEdit, split_c){
     std::vector<std::string> v = sstd::split(" a  b, c"); // TEST THIS LINE
     ASSERT_TRUE( v == std::vector<std::string>({"a", "b,", "c"}) );
@@ -90,7 +118,7 @@ TEST(strEdit, split_sq_dq_s_c__case_true_0){
     bool ret_tf;
     std::vector<std::string> ret_v;
     ret_tf = sstd::split_sq_dq(ret_v, s, X); // TEST THIS LINE
-    sstd::printn(ret_v);
+//    sstd::printn(ret_v);
     
     ASSERT_TRUE(ret_tf);
     ASSERT_TRUE(ret_v.size() == (uint)0 );
@@ -102,7 +130,7 @@ TEST(strEdit, split_sq_dq_s_c__case_true_1){
     bool ret_tf;
     std::vector<std::string> ret_v;
     ret_tf = sstd::split_sq_dq(ret_v, s, X); // TEST THIS LINE
-    sstd::printn(ret_v);
+//    sstd::printn(ret_v);
     
     ASSERT_TRUE(ret_tf);
     ASSERT_TRUE(ret_v == std::vector<std::string>({" abc "}) );
@@ -114,7 +142,7 @@ TEST(strEdit, split_sq_dq_s_c__case_true_2){
     bool ret_tf;
     std::vector<std::string> ret_v;
     ret_tf = sstd::split_sq_dq(ret_v, s, X); // TEST THIS LINE
-    sstd::printn(ret_v);
+//    sstd::printn(ret_v);
     
     ASSERT_TRUE(ret_tf);
     ASSERT_TRUE(ret_v == std::vector<std::string>({" abc ", " def "}) );
@@ -126,7 +154,7 @@ TEST(strEdit, split_sq_dq_s_c__case_true_3){
     bool ret_tf;
     std::vector<std::string> ret_v;
     ret_tf = sstd::split_sq_dq(ret_v, s, X); // TEST THIS LINE
-    sstd::printn(ret_v);
+//    sstd::printn(ret_v);
     
     ASSERT_TRUE(ret_tf);
     ASSERT_TRUE(ret_v == std::vector<std::string>({" abc ", " def ", " ghi "}) );
@@ -141,7 +169,7 @@ TEST(strEdit, split_sq_dq_s_c__case_true_sq){
     bool ret_tf;
     std::vector<std::string> ret_v;
     ret_tf = sstd::split_sq_dq(ret_v, s, X); // TEST THIS LINE
-    sstd::printn(ret_v);
+//    sstd::printn(ret_v);
     
     ASSERT_TRUE(ret_tf);
     ASSERT_TRUE(ret_v == std::vector<std::string>({"' a:b:c '", "' d:ef '", "' gh:i '"}) );
@@ -154,7 +182,7 @@ TEST(strEdit, split_sq_dq_s_c__case_true_dq){
     bool ret_tf;
     std::vector<std::string> ret_v;
     ret_tf = sstd::split_sq_dq(ret_v, s, X); // TEST THIS LINE
-    sstd::printn(ret_v);
+//    sstd::printn(ret_v);
     
     ASSERT_TRUE(ret_tf);
     ASSERT_TRUE(ret_v == std::vector<std::string>({R"(" a:b:c ")", R"(" d:ef ")", R"(" gh:i ")"}) );
@@ -169,7 +197,7 @@ TEST(strEdit, split_sq_dq_s_c__case_false_sq_01){
     bool ret_tf;
     std::vector<std::string> ret_v;
     ret_tf = sstd::split_sq_dq(ret_v, s, X); // TEST THIS LINE
-    sstd::printn(ret_v);
+//    sstd::printn(ret_v);
     
     ASSERT_TRUE(!ret_tf);
     ASSERT_TRUE(ret_v.size() == (uint)0 );
@@ -181,7 +209,7 @@ TEST(strEdit, split_sq_dq_s_c__case_false_sq_02){
     bool ret_tf;
     std::vector<std::string> ret_v;
     ret_tf = sstd::split_sq_dq(ret_v, s, X); // TEST THIS LINE
-    sstd::printn(ret_v);
+//    sstd::printn(ret_v);
     
     ASSERT_TRUE(!ret_tf);
     ASSERT_TRUE(ret_v.size() == (uint)0 );
@@ -193,7 +221,7 @@ TEST(strEdit, split_sq_dq_s_c__case_false_dq_01){
     bool ret_tf;
     std::vector<std::string> ret_v;
     ret_tf = sstd::split_sq_dq(ret_v, s, X); // TEST THIS LINE
-    sstd::printn(ret_v);
+//    sstd::printn(ret_v);
     
     ASSERT_TRUE(!ret_tf);
     ASSERT_TRUE(ret_v.size() == (uint)0 );
@@ -205,7 +233,7 @@ TEST(strEdit, split_sq_dq_s_c__case_false_dq_02){
     bool ret_tf;
     std::vector<std::string> ret_v;
     ret_tf = sstd::split_sq_dq(ret_v, s, X); // TEST THIS LINE
-    sstd::printn(ret_v);
+//    sstd::printn(ret_v);
     
     ASSERT_TRUE(!ret_tf);
     ASSERT_TRUE(ret_v.size() == (uint)0 );
