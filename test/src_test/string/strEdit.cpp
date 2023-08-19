@@ -83,6 +83,136 @@ TEST(strEdit, split_rmSpace_s_c_space){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+TEST(strEdit, split_sq_dq_s_c__case_true_0){
+    std::string s = "";
+    const char X = ':';
+
+    bool ret_tf;
+    std::vector<std::string> ret_v;
+    ret_tf = sstd::split_sq_dq(ret_v, s, X); // TEST THIS LINE
+    sstd::printn(ret_v);
+    
+    ASSERT_TRUE(ret_tf);
+    ASSERT_TRUE(ret_v.size() == (uint)0 );
+}
+TEST(strEdit, split_sq_dq_s_c__case_true_1){
+    std::string s = " abc ";
+    const char X = ':';
+
+    bool ret_tf;
+    std::vector<std::string> ret_v;
+    ret_tf = sstd::split_sq_dq(ret_v, s, X); // TEST THIS LINE
+    sstd::printn(ret_v);
+    
+    ASSERT_TRUE(ret_tf);
+    ASSERT_TRUE(ret_v == std::vector<std::string>({" abc "}) );
+}
+TEST(strEdit, split_sq_dq_s_c__case_true_2){
+    std::string s = " abc : def ";
+    const char X = ':';
+
+    bool ret_tf;
+    std::vector<std::string> ret_v;
+    ret_tf = sstd::split_sq_dq(ret_v, s, X); // TEST THIS LINE
+    sstd::printn(ret_v);
+    
+    ASSERT_TRUE(ret_tf);
+    ASSERT_TRUE(ret_v == std::vector<std::string>({" abc ", " def "}) );
+}
+TEST(strEdit, split_sq_dq_s_c__case_true_3){
+    std::string s = " abc : def : ghi ";
+    const char X = ':';
+
+    bool ret_tf;
+    std::vector<std::string> ret_v;
+    ret_tf = sstd::split_sq_dq(ret_v, s, X); // TEST THIS LINE
+    sstd::printn(ret_v);
+    
+    ASSERT_TRUE(ret_tf);
+    ASSERT_TRUE(ret_v == std::vector<std::string>({" abc ", " def ", " ghi "}) );
+}
+
+//---
+
+TEST(strEdit, split_sq_dq_s_c__case_true_sq){
+    std::string s = "' a:b:c ':' d:ef ':' gh:i '";
+    const char X = ':';
+
+    bool ret_tf;
+    std::vector<std::string> ret_v;
+    ret_tf = sstd::split_sq_dq(ret_v, s, X); // TEST THIS LINE
+    sstd::printn(ret_v);
+    
+    ASSERT_TRUE(ret_tf);
+    ASSERT_TRUE(ret_v == std::vector<std::string>({"' a:b:c '", "' d:ef '", "' gh:i '"}) );
+}
+
+TEST(strEdit, split_sq_dq_s_c__case_true_dq){
+    std::string s = R"(" a:b:c ":" d:ef ":" gh:i ")";
+    const char X = ':';
+
+    bool ret_tf;
+    std::vector<std::string> ret_v;
+    ret_tf = sstd::split_sq_dq(ret_v, s, X); // TEST THIS LINE
+    sstd::printn(ret_v);
+    
+    ASSERT_TRUE(ret_tf);
+    ASSERT_TRUE(ret_v == std::vector<std::string>({R"(" a:b:c ")", R"(" d:ef ")", R"(" gh:i ")"}) );
+}
+
+//---
+
+TEST(strEdit, split_sq_dq_s_c__case_false_sq_01){
+    std::string s = R"(' a:b:c : d:ef )";
+    const char X = ':';
+
+    bool ret_tf;
+    std::vector<std::string> ret_v;
+    ret_tf = sstd::split_sq_dq(ret_v, s, X); // TEST THIS LINE
+    sstd::printn(ret_v);
+    
+    ASSERT_TRUE(!ret_tf);
+    ASSERT_TRUE(ret_v.size() == (uint)0 );
+}
+TEST(strEdit, split_sq_dq_s_c__case_false_sq_02){
+    std::string s = R"( a:b:c : d:ef ')";
+    const char X = ':';
+
+    bool ret_tf;
+    std::vector<std::string> ret_v;
+    ret_tf = sstd::split_sq_dq(ret_v, s, X); // TEST THIS LINE
+    sstd::printn(ret_v);
+    
+    ASSERT_TRUE(!ret_tf);
+    ASSERT_TRUE(ret_v.size() == (uint)0 );
+}
+TEST(strEdit, split_sq_dq_s_c__case_false_dq_01){
+    std::string s = R"(" a:b:c : d:ef )";
+    const char X = ':';
+
+    bool ret_tf;
+    std::vector<std::string> ret_v;
+    ret_tf = sstd::split_sq_dq(ret_v, s, X); // TEST THIS LINE
+    sstd::printn(ret_v);
+    
+    ASSERT_TRUE(!ret_tf);
+    ASSERT_TRUE(ret_v.size() == (uint)0 );
+}
+TEST(strEdit, split_sq_dq_s_c__case_false_dq_02){
+    std::string s = R"( a:b:c : d:ef ")";
+    const char X = ':';
+
+    bool ret_tf;
+    std::vector<std::string> ret_v;
+    ret_tf = sstd::split_sq_dq(ret_v, s, X); // TEST THIS LINE
+    sstd::printn(ret_v);
+    
+    ASSERT_TRUE(!ret_tf);
+    ASSERT_TRUE(ret_v.size() == (uint)0 );
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
 TEST(strEdit, lstrip){
     std::string str_in  = " \t abcd \t ";
     std::string str_ans =     "abcd \t ";

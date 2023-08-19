@@ -90,10 +90,10 @@ std::string _mearge_vec_by_space_or_newLines(const std::vector<std::string>& v){
 
 //---
 
-std::string sstd::_strip_dq_sq(bool& ret_dq, bool& ret_sq, const        char* str){
-    return std::move(sstd::_strip_dq_sq(ret_dq, ret_sq, std::string(str)));
+std::string sstd::_strip_sq_dq(bool& ret_dq, bool& ret_sq, const        char* str){
+    return std::move(sstd::_strip_sq_dq(ret_dq, ret_sq, std::string(str)));
 }
-std::string sstd::_strip_dq_sq(bool& ret_dq, bool& ret_sq, const std::string& str){
+std::string sstd::_strip_sq_dq(bool& ret_dq, bool& ret_sq, const std::string& str){
     ret_dq=false;
     ret_sq=false;
     
@@ -135,12 +135,12 @@ std::string sstd::_strip_dq_sq(bool& ret_dq, bool& ret_sq, const std::string& st
 
     return tmp;
 }
-std::string sstd::_strip_dq_sq(const        char* str){ bool ret_dq, ret_sq; return sstd::_strip_dq_sq(ret_dq, ret_sq, str); }
-std::string sstd::_strip_dq_sq(const std::string& str){ bool ret_dq, ret_sq; return sstd::_strip_dq_sq(ret_dq, ret_sq, str); }
+std::string sstd::_strip_sq_dq(const        char* str){ bool ret_dq, ret_sq; return sstd::_strip_sq_dq(ret_dq, ret_sq, str); }
+std::string sstd::_strip_sq_dq(const std::string& str){ bool ret_dq, ret_sq; return sstd::_strip_sq_dq(ret_dq, ret_sq, str); }
 
 //---
 
-std::string sstd::_extract_dq_sq_value(const std::string& str){
+std::string sstd::_extract_sq_dq_value(const std::string& str){
     std::string tmp;
     std::string ret;
 
@@ -195,7 +195,7 @@ std::string sstd::_extract_dq_sq_value(const std::string& str){
 
 //-----------------------------
 
-std::vector<std::string> sstd::_splitByLine_dq_sq(const char* str){
+std::vector<std::string> sstd::_splitByLine_sq_dq(const char* str){
     
     std::vector<std::string> ret;
     
@@ -224,13 +224,13 @@ std::vector<std::string> sstd::_splitByLine_dq_sq(const char* str){
     
     return ret;
 }
-std::vector<std::string> sstd::_splitByLine_dq_sq(const std::string& str){
-    return sstd::_splitByLine_dq_sq(str.c_str());
+std::vector<std::string> sstd::_splitByLine_sq_dq(const std::string& str){
+    return sstd::_splitByLine_sq_dq(str.c_str());
 }
 
 //-------------------------------
-
-bool sstd::_split_dq_sq(std::vector<std::string>& ret, const char* str, const char X){
+/*
+bool sstd::_split_sq_dq(std::vector<std::string>& ret, const char* str, const char X){
     
     bool is_escaped=false;
     bool in_d_quate=false; // double quate
@@ -256,10 +256,10 @@ bool sstd::_split_dq_sq(std::vector<std::string>& ret, const char* str, const ch
     
     return true;
 }
-bool sstd::_split_dq_sq(std::vector<std::string>& ret, const std::string& str, const char X){
-    return sstd::_split_dq_sq(ret, str.c_str(), X);
+bool sstd::_split_sq_dq(std::vector<std::string>& ret, const std::string& str, const char X){
+    return sstd::_split_sq_dq(ret, str.c_str(), X);
 }
-
+*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 std::string _rm_comment(const std::string& s){
@@ -279,7 +279,7 @@ std::string _rm_hyphen(std::string s){
 
 //---
 
-std::string _rm_bw_dq_sq(const std::string& str){ // _bw: between, _dq: double quotation, _sq: single quatation
+std::string _rm_bw_sq_dq(const std::string& str){ // _bw: between, _dq: double quotation, _sq: single quatation
     std::string ret;
     
     bool is_escaped=false;
@@ -302,7 +302,7 @@ std::string _rm_bw_dq_sq(const std::string& str){ // _bw: between, _dq: double q
 }
 
 bool _is_hash(const std::string& s){
-    return sstd::charIn(':', _rm_bw_dq_sq(s));
+    return sstd::charIn(':', _rm_bw_sq_dq(s));
 }
 bool _is_list(uint& cnt, const std::string& s){
     std::vector<std::string> v = sstd::split(s, ' ');
@@ -345,8 +345,8 @@ struct command{
     uint hsc_lx; // hsc: head space count, _lx: list-index.
     uint hsc_hx; // hsc: head space count, _hx: hash-index.
     char verb;
-    bool val1_use_dq_sq;
-    bool val2_use_dq_sq;
+    bool val1_use_sq_dq;
+    bool val2_use_sq_dq;
     std::string val1; // "list value" or "hash key"
     std::string val2; // "hash value" if Not required "sstd::terp::var"
 
@@ -389,25 +389,25 @@ std::vector<std::string> _get_verb(std::string s){
     if(sstd::charIn(':', s)){ v.push_back(":"); }
     return v;
 }
-bool _get_value(bool& ret_val1_use_dq_sq, bool& ret_val2_use_dq_sq, std::string& ret_val1, std::string& ret_val2, std::string s, uint typeNum){
+bool _get_value(bool& ret_val1_use_sq_dq, bool& ret_val2_use_sq_dq, std::string& ret_val1, std::string& ret_val2, std::string s, uint typeNum){
     ret_val1.clear();
     ret_val2.clear();
     bool dq, sq;
     
     switch(typeNum){
     case NUM_STR:  {
-        ret_val1 = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(dq, sq, s));
-        ret_val1_use_dq_sq = ( dq || sq );
+        ret_val1 = sstd::_extract_sq_dq_value(sstd::_strip_sq_dq(dq, sq, s));
+        ret_val1_use_sq_dq = ( dq || sq );
     } break;
     case NUM_LIST: {
-        ret_val1 = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(dq, sq, _rm_hyphen(s)));
-        ret_val1_use_dq_sq = ( dq || sq );
+        ret_val1 = sstd::_extract_sq_dq_value(sstd::_strip_sq_dq(dq, sq, _rm_hyphen(s)));
+        ret_val1_use_sq_dq = ( dq || sq );
     } break;
     case NUM_HASH:
     case NUM_LIST_AND_HASH: {
-        std::vector<std::string> v; if(!sstd::_split_dq_sq(v, s, ':')){ sstd::pdbg_err("single quatation or double quatation is not closed\n"); return false; }
-        if(v.size()>=1){ ret_val1 = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(dq, sq, _rm_hyphen(v[0]))); ret_val1_use_dq_sq = ( dq || sq ); }
-        if(v.size()>=2){ ret_val2 = sstd::_extract_dq_sq_value(sstd::_strip_dq_sq(dq, sq,            v[1] )); ret_val2_use_dq_sq = ( dq || sq ); }
+        std::vector<std::string> v; if(!sstd::split_sq_dq(v, s, ':')){ sstd::pdbg_err("single quatation or double quatation is not closed\n"); return false; }
+        if(v.size()>=1){ ret_val1 = sstd::_extract_sq_dq_value(sstd::_strip_sq_dq(dq, sq, _rm_hyphen(v[0]))); ret_val1_use_sq_dq = ( dq || sq ); }
+        if(v.size()>=2){ ret_val2 = sstd::_extract_sq_dq_value(sstd::_strip_sq_dq(dq, sq,            v[1] )); ret_val2_use_sq_dq = ( dq || sq ); }
         if(v.size()>=3){ sstd::printn(v); sstd::pdbg("Unexptected split by ':'."); return false; }
     } break;
     default: { sstd::pdbg_err("Unexpected typeNum\n"); return false; } break;
@@ -453,7 +453,7 @@ bool _get_multi_line_str(std::string& ret, const uint hsc_prev, const std::strin
     for(; i<ls.size(); ++i){
         std::string s;
         s = ls[i];
-        s = _rm_comment(s); // s = _rm_comment_dq_sq(s); に置き換える
+        s = _rm_comment(s); // s = _rm_comment_sq_dq(s); に置き換える
         if(s=="..."){ --i; return true; } // detect end marker
         
         uint type=NUM_NULL, type_cnt=0; _data_type(type, type_cnt, s);
@@ -534,16 +534,16 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
     for(uint i=0; i<ls.size(); ++i){
         std::string raw, s;
         raw = ls[i];
-        s = _rm_comment(raw); // s = _rm_comment_dq_sq(s); に置き換える
+        s = _rm_comment(raw); // s = _rm_comment_sq_dq(s); に置き換える
         if(s.size()==0){ continue; }
         if(s=="..."){ return true; } // detect end marker
         uint type=NUM_NULL, type_cnt=0; _data_type(type, type_cnt, s);
         uint hsc_lx = _hsc_lx(s);
         uint hsc_hx = _hsc_hx(s);
         
-        bool val1_use_dq_sq, val2_use_dq_sq;
+        bool val1_use_sq_dq, val2_use_sq_dq;
         std::string val1, val2;
-        if(!_get_value(val1_use_dq_sq, val2_use_dq_sq, val1, val2, s, type)){ return false; }
+        if(!_get_value(val1_use_sq_dq, val2_use_sq_dq, val1, val2, s, type)){ return false; }
 
         // for multiple line string
         _check_val_and_overwrite_multi_line_str(val1, hsc_lx, ls, i); // for list (val1=="|0123" or val1=="|-0123" val1=="|+0123")
@@ -555,8 +555,8 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             c.hsc_lx         = hsc_lx;
             c.hsc_hx         = hsc_hx;
             c.verb           = 's';
-            c.val1_use_dq_sq = val1_use_dq_sq;
-            c.val2_use_dq_sq = val2_use_dq_sq;
+            c.val1_use_sq_dq = val1_use_sq_dq;
+            c.val2_use_sq_dq = val2_use_sq_dq;
             c.val1           = val1;
             //c.val2           = val2;
             c.lineNum        = base_idx + i; // debug info
@@ -569,8 +569,8 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
                 c.hsc_lx         = hsc_lx + 2*ti;
                 c.hsc_hx         = hsc_hx + 2*ti;
                 c.verb           = '-';
-                c.val1_use_dq_sq = false;
-                c.val2_use_dq_sq = false;
+                c.val1_use_sq_dq = false;
+                c.val2_use_sq_dq = false;
                 //c.val1           = val1;
                 //c.val2           = val2;
                 c.lineNum        = base_idx + i; // debug info
@@ -582,8 +582,8 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             c.hsc_lx         = hsc_lx + 2*(type_cnt-1);
             c.hsc_hx         = hsc_hx + 2*(type_cnt-1);
             c.verb           = '-';
-            c.val1_use_dq_sq = val1_use_dq_sq;
-            c.val2_use_dq_sq = val2_use_dq_sq;
+            c.val1_use_sq_dq = val1_use_sq_dq;
+            c.val2_use_sq_dq = val2_use_sq_dq;
             c.val1           = val1;
             //c.val2           = val2;
             c.lineNum        = base_idx + i; // debug info
@@ -595,8 +595,8 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             c.hsc_lx         = hsc_lx;
             c.hsc_hx         = hsc_hx;
             c.verb           = ':';
-            c.val1_use_dq_sq = val1_use_dq_sq;
-            c.val2_use_dq_sq = val2_use_dq_sq;
+            c.val1_use_sq_dq = val1_use_sq_dq;
+            c.val2_use_sq_dq = val2_use_sq_dq;
             c.val1           = val1; // key
             c.val2           = val2; // value
             c.lineNum        = base_idx + i; // debug info
@@ -609,8 +609,8 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
                 c.hsc_lx         = hsc_lx + 2*ti;
                 c.hsc_hx         = hsc_hx + 2*ti;
                 c.verb           = '-'; // x: list x(and) hash: 
-                c.val1_use_dq_sq = false;
-                c.val2_use_dq_sq = false;
+                c.val1_use_sq_dq = false;
+                c.val2_use_sq_dq = false;
                 //c.val1           = "";
                 //c.val2           = "";
                 c.lineNum        = base_idx + i; // debug info
@@ -622,8 +622,8 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             c.hsc_lx         = hsc_lx + 2*(type_cnt-1);
             c.hsc_hx         = hsc_hx + 2*(type_cnt-1);
             c.verb           = 'x'; // x: list x(and) hash: 
-            c.val1_use_dq_sq = false;
-            c.val2_use_dq_sq = false;
+            c.val1_use_sq_dq = false;
+            c.val2_use_sq_dq = false;
             //c.val1           = "";
             //c.val2           = "";
             c.lineNum        = base_idx + i; // debug info
@@ -634,8 +634,8 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             c.hsc_lx         = hsc_lx + 2*(type_cnt-1);
             c.hsc_hx         = hsc_hx + 2*(type_cnt-1);
             c.verb           = ':';
-            c.val1_use_dq_sq = val1_use_dq_sq;
-            c.val2_use_dq_sq = val2_use_dq_sq;
+            c.val1_use_sq_dq = val1_use_sq_dq;
+            c.val2_use_sq_dq = val2_use_sq_dq;
             c.val1           = val1; // key
             c.val2           = val2; // value
             c.lineNum        = base_idx + i; // debug info
@@ -718,7 +718,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
             var = v_cmd[i].val1.c_str();
         } break;
         case '-': { // '-': list
-            if(v_cmd[i].val1.size()>=1 || v_cmd[i].val1_use_dq_sq){
+            if(v_cmd[i].val1.size()>=1 || v_cmd[i].val1_use_sq_dq){
                 var.push_back( v_cmd[i].val1.c_str() );
             }else{
                 var.push_back( sstd::terp::list() );
@@ -730,7 +730,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
             v_dst.push_back( var[var.size()-1].p() );
         } break;
         case ':': { // ':': hash
-            if(v_cmd[i].val2.size()>=1 || v_cmd[i].val2_use_dq_sq){
+            if(v_cmd[i].val2.size()>=1 || v_cmd[i].val2_use_sq_dq){
                 var[ v_cmd[i].val1.c_str() ] = v_cmd[i].val2.c_str();
             }else{
                 v_dst.push_back( var[v_cmd[i].val1.c_str()].p() );
@@ -748,7 +748,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
 bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     bool tf = true;
     
-    std::vector<std::string> ls = sstd::_splitByLine_dq_sq(s); // v: vector, ls: line string
+    std::vector<std::string> ls = sstd::_splitByLine_sq_dq(s); // v: vector, ls: line string
     //sstd::printn(ls);
     std::vector<struct command> v_cmd; if(!_parse_yaml(v_cmd, ls, 0)){ return false; }
     //_print(v_cmd);
@@ -766,7 +766,7 @@ std::vector<std::vector<std::string>> _split_by_separator(const std::vector<std:
     std::vector<std::string> ls_tmp;
     for(uint i=0; i<ls.size(); ++i){
         std::string s = ls[i];
-        s = _rm_comment(s); // s = _rm_comment_dq_sq(s); に置き換える
+        s = _rm_comment(s); // s = _rm_comment_sq_dq(s); に置き換える
         if(s=="---"){ // detect the separator
             v_ls.push_back(std::move(ls_tmp));
             ls_tmp.clear();
@@ -780,7 +780,7 @@ std::vector<std::vector<std::string>> _split_by_separator(const std::vector<std:
     return v_ls;
 }
 bool sstd::yaml_load_all(std::vector<sstd::terp::var>& ret_vYml, const        char* s){
-    std::vector<std::string> ls = sstd::_splitByLine_dq_sq(s); // v: vector, ls: line string
+    std::vector<std::string> ls = sstd::_splitByLine_sq_dq(s); // v: vector, ls: line string
     std::vector<std::vector<std::string>> v_ls = _split_by_separator(ls);
 
     uint base_idx=0;

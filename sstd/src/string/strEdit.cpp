@@ -83,6 +83,38 @@ std::vector<std::string> sstd::split_rmSpace(const std::string& str, const char 
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+bool sstd::split_sq_dq(std::vector<std::string>& ret, const char* str, const char X){
+    
+    bool is_escaped=false;
+    bool in_d_quate=false; // double quate
+    bool in_s_quate=false; // single quate
+    std::string buf;
+    for(uint r=0; str[r]!='\0';){ // r: read place
+        buf.clear();
+        for(; str[r]!='\0'; ++r){
+            if(str[r]=='\\'){ is_escaped=true; buf+=str[r]; ++r; if(str[r]=='\0'){break;} }
+            
+            if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
+            if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
+            
+            if(!in_d_quate && !in_s_quate && str[r]==X){ ++r; break; }
+            buf += str[r];
+            
+            is_escaped=false;
+        }
+        ret.push_back(std::move(buf));
+    }
+    if(in_d_quate){ ret.clear(); return false; }
+    if(in_s_quate){ ret.clear(); return false; }
+    
+    return true;
+}
+bool sstd::split_sq_dq(std::vector<std::string>& ret, const std::string& str, const char X){
+    return sstd::split_sq_dq(ret, str.c_str(), X);
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
 std::string lstrip_base(const uchar* str){
     std::string ret;
     
