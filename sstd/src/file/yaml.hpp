@@ -27,14 +27,9 @@ namespace sstd{
 
     //---
     
-    void _strip_ow(std::vector<std::string>& v);
-
+    //void _strip_ow(std::vector<std::string>& v);
+    
     //---
-
-    std::string _strip_sq_dq(const        char* str);
-    std::string _strip_sq_dq(const std::string& str);
-    std::string _strip_sq_dq(bool& ret_dq, bool& ret_sq, const        char* str);
-    std::string _strip_sq_dq(bool& ret_dq, bool& ret_sq, const std::string& str);
 
     std::string _extract_sq_dq_value(const std::string& str);
     std::string _extract_sq_dq_value(const std::string& str);

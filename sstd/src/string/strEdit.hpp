@@ -23,6 +23,8 @@ namespace sstd{
 
     bool split_sq_dq(std::vector<std::string>& ret, const        char* str, const char X);
     bool split_sq_dq(std::vector<std::string>& ret, const std::string& str, const char X);
+
+    //---
     
     // remove space or tab.
     std::string              lstrip   (const                    char * str); // removing head tab and spaces
@@ -65,8 +67,14 @@ namespace sstd{
     // todo: rm '\t'
     // todo: implementing memcopy version. Ref: https://postd.cc/how-quickly-can-you-remove-spaces-from-a-string/
 
+    std::string strip_sq_dq(                            const        char* str);
+    std::string strip_sq_dq(                            const std::string& str);
+    std::string strip_sq_dq(bool& ret_sq, bool& ret_dq, const        char* str);
+    std::string strip_sq_dq(bool& ret_sq, bool& ret_dq, const std::string& str);
+
+    //---
+    
     std::string join(const std::vector<std::string>& v, const        char  delimiter);
     std::string join(const std::vector<std::string>& v, const        char* delimiter);
     std::string join(const std::vector<std::string>& v, const std::string& delimiter);
-    
 }

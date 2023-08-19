@@ -90,56 +90,6 @@ std::string _mearge_vec_by_space_or_newLines(const std::vector<std::string>& v){
 
 //---
 
-std::string sstd::_strip_sq_dq(bool& ret_dq, bool& ret_sq, const        char* str){
-    return std::move(sstd::_strip_sq_dq(ret_dq, ret_sq, std::string(str)));
-}
-std::string sstd::_strip_sq_dq(bool& ret_dq, bool& ret_sq, const std::string& str){
-    ret_dq=false;
-    ret_sq=false;
-    
-    // remove head and tail ' ' and '\t'
-    int li=0, ri=((int)str.size())-1;
-    while(li<(int)str.size()){
-        if(str[li]!=' ' && str[li]!='\t'){ break; } // remove head ' ' and '\t'
-        ++li;
-    }
-    while(ri>=li){
-        if(str[ri]!=' ' && str[ri]!='\t'){ break; } // remove tail ' ' and '\t'
-        --ri;
-    }
-    
-    // remove head and tail '"' or '\''
-    std::string tmp;
-    {
-        if((ri+1 - li)<= 0){ return std::string(); }
-        
-        char c_head = str[li];
-        char c_tail = str[ri];
-        
-        // rm '"'
-        if(c_head=='"' && c_tail=='"'){
-            ++li;
-            --ri;
-            ret_dq=true;
-        }
-        
-        // rm '\''
-        if(c_head=='\'' && c_tail=='\''){
-            ++li;
-            --ri;
-            ret_sq=true;
-        }
-        
-        tmp = str.substr(li, ri-li+1);
-    }
-
-    return tmp;
-}
-std::string sstd::_strip_sq_dq(const        char* str){ bool ret_dq, ret_sq; return sstd::_strip_sq_dq(ret_dq, ret_sq, str); }
-std::string sstd::_strip_sq_dq(const std::string& str){ bool ret_dq, ret_sq; return sstd::_strip_sq_dq(ret_dq, ret_sq, str); }
-
-//---
-
 std::string sstd::_extract_sq_dq_value(const std::string& str){
     std::string tmp;
     std::string ret;
@@ -396,23 +346,23 @@ bool _get_value(bool& ret_val1_use_sq_dq, bool& ret_val2_use_sq_dq, std::string&
     
     switch(typeNum){
     case NUM_STR:  {
-        ret_val1 = sstd::_extract_sq_dq_value(sstd::_strip_sq_dq(dq, sq, s));
+        ret_val1 = sstd::_extract_sq_dq_value(sstd::strip_sq_dq(sq, dq, s));
         ret_val1_use_sq_dq = ( dq || sq );
     } break;
     case NUM_LIST: {
-        ret_val1 = sstd::_extract_sq_dq_value(sstd::_strip_sq_dq(dq, sq, _rm_hyphen(s)));
+        ret_val1 = sstd::_extract_sq_dq_value(sstd::strip_sq_dq(sq, dq, _rm_hyphen(s)));
         ret_val1_use_sq_dq = ( dq || sq );
     } break;
     case NUM_HASH:
     case NUM_LIST_AND_HASH: {
         std::vector<std::string> v; if(!sstd::split_sq_dq(v, s, ':')){ sstd::pdbg_err("single quatation or double quatation is not closed\n"); return false; }
-        if(v.size()>=1){ ret_val1 = sstd::_extract_sq_dq_value(sstd::_strip_sq_dq(dq, sq, _rm_hyphen(v[0]))); ret_val1_use_sq_dq = ( dq || sq ); }
-        if(v.size()>=2){ ret_val2 = sstd::_extract_sq_dq_value(sstd::_strip_sq_dq(dq, sq,            v[1] )); ret_val2_use_sq_dq = ( dq || sq ); }
+        if(v.size()>=1){ ret_val1 = sstd::_extract_sq_dq_value(sstd::strip_sq_dq(sq, dq, _rm_hyphen(v[0]))); ret_val1_use_sq_dq = ( sq || dq ); }
+        if(v.size()>=2){ ret_val2 = sstd::_extract_sq_dq_value(sstd::strip_sq_dq(sq, dq,            v[1] )); ret_val2_use_sq_dq = ( sq || dq ); }
         if(v.size()>=3){ sstd::printn(v); sstd::pdbg("Unexptected split by ':'."); return false; }
     } break;
     default: { sstd::pdbg_err("Unexpected typeNum\n"); return false; } break;
     }
-
+    
     return true;
 }
 
@@ -718,7 +668,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
             var = v_cmd[i].val1.c_str();
         } break;
         case '-': { // '-': list
-            if(v_cmd[i].val1.size()>=1 || v_cmd[i].val1_use_sq_dq){
+            if(v_cmd[i].val1.size()>=1 || v_cmd[i].val1_use_sq_dq){ // 'val1_use_sq_dq' is required to detect 0 length string
                 var.push_back( v_cmd[i].val1.c_str() );
             }else{
                 var.push_back( sstd::terp::list() );
@@ -730,7 +680,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
             v_dst.push_back( var[var.size()-1].p() );
         } break;
         case ':': { // ':': hash
-            if(v_cmd[i].val2.size()>=1 || v_cmd[i].val2_use_sq_dq){
+            if(v_cmd[i].val2.size()>=1 || v_cmd[i].val2_use_sq_dq){ // 'val2_use_sq_dq' is required to detect 0 length string
                 var[ v_cmd[i].val1.c_str() ] = v_cmd[i].val2.c_str();
             }else{
                 v_dst.push_back( var[v_cmd[i].val1.c_str()].p() );

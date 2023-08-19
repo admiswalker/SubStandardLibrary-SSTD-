@@ -48,6 +48,7 @@ def"
     bool ret_tf = sstd::splitByLine_sq_dq(ret_v, s); // TEST THIS LINE
     //sstd::printn(ret_v);
 
+    ASSERT_TRUE( ret_tf );
     ASSERT_TRUE( ret_v == std::vector<std::string>({
 R"()",
 R"("abc
@@ -526,6 +527,52 @@ TEST(strEdit, stripAll_ow_case02){
     sstd::stripAll_ow(str_in, "x0");
     ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
 }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+#define TEST_strip_sq_dq__ret_ret_c(ANS_STR, ANS_RET_SQ, ANS_RET_DQ, STR_IN) \
+    const char* s = STR_IN;                                             \
+                                                                        \
+    bool ret_sq;                                                        \
+    bool ret_dq;                                                        \
+    std::string ret_s = sstd::strip_sq_dq(ret_sq, ret_dq, s); /* TEST THIS LINE */ \
+                                                                        \
+    ASSERT_TRUE(ret_s == std::string(ANS_STR) );                        \
+    ASSERT_TRUE(ret_sq == ANS_RET_SQ);                                  \
+    ASSERT_TRUE(ret_dq == ANS_RET_DQ);
+
+TEST(strEdit, strip_sq_dq__ret_ret_c_01){
+    TEST_strip_sq_dq__ret_ret_c("abcdef", false, false, R"(abcdef)");
+}
+TEST(strEdit, strip_sq_dq__ret_ret_c_02){
+    TEST_strip_sq_dq__ret_ret_c("abcdef", false, false, R"(   abcdef   )");
+}
+TEST(strEdit, strip_sq_dq__ret_ret_c_sq_01){
+    TEST_strip_sq_dq__ret_ret_c("abcdef", true, false, R"('abcdef')");
+}
+TEST(strEdit, strip_sq_dq__ret_ret_c_sq_02){
+    TEST_strip_sq_dq__ret_ret_c(" abcdef ", true, false, R"(   ' abcdef '   )");
+}
+TEST(strEdit, strip_sq_dq__ret_ret_c_sq_single_l){
+    TEST_strip_sq_dq__ret_ret_c("'abcdef", false, false, R"('abcdef)");
+}
+TEST(strEdit, strip_sq_dq__ret_ret_c_sq_single_r){
+    TEST_strip_sq_dq__ret_ret_c("abcdef'", false, false, R"(abcdef')");
+}
+TEST(strEdit, strip_sq_dq__ret_ret_c_dq_01){
+    TEST_strip_sq_dq__ret_ret_c("abcdef", false, true, R"("abcdef")");
+}
+TEST(strEdit, strip_sq_dq__ret_ret_c_dq_02){
+    TEST_strip_sq_dq__ret_ret_c(" abcdef ", false, true, R"(  " abcdef "  )");
+}
+TEST(strEdit, strip_sq_dq__ret_ret_c_dq_single_l){
+    TEST_strip_sq_dq__ret_ret_c(R"("abcdef)", false, false, R"("abcdef)");
+}
+TEST(strEdit, strip_sq_dq__ret_ret_c_dq_single_r){
+    TEST_strip_sq_dq__ret_ret_c(R"(abcdef")", false, false, R"(abcdef")");
+}
+
+#undef TEST_strip_sq_dq__ret_ret_c
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 

@@ -385,6 +385,56 @@ void        sstd::stripAll_ow(      std::string& str, const std::string& stripLi
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+std::string sstd::strip_sq_dq(bool& ret_sq, bool& ret_dq, const        char* str){
+    return std::move(sstd::strip_sq_dq(ret_sq, ret_dq, std::string(str)));
+}
+std::string sstd::strip_sq_dq(bool& ret_sq, bool& ret_dq, const std::string& str){
+    ret_dq=false;
+    ret_sq=false;
+    
+    // remove head and tail ' ' and '\t'
+    int li=0, ri=((int)str.size())-1;
+    while(li<(int)str.size()){
+        if(str[li]!=' ' && str[li]!='\t'){ break; } // remove head ' ' and '\t'
+        ++li;
+    }
+    while(ri>=li){
+        if(str[ri]!=' ' && str[ri]!='\t'){ break; } // remove tail ' ' and '\t'
+        --ri;
+    }
+    
+    // remove head and tail '"' or '\''
+    std::string tmp;
+    {
+        if((ri+1 - li)<= 0){ return std::string(); }
+        
+        char c_head = str[li];
+        char c_tail = str[ri];
+        
+        // rm '"'
+        if(c_head=='"' && c_tail=='"'){
+            ++li;
+            --ri;
+            ret_dq=true;
+        }
+        
+        // rm '\''
+        if(c_head=='\'' && c_tail=='\''){
+            ++li;
+            --ri;
+            ret_sq=true;
+        }
+        
+        tmp = str.substr(li, ri-li+1);
+    }
+
+    return tmp;
+}
+std::string sstd::strip_sq_dq(const        char* str){ bool ret_sq, ret_dq; return sstd::strip_sq_dq(ret_sq, ret_dq, str); }
+std::string sstd::strip_sq_dq(const std::string& str){ bool ret_sq, ret_dq; return sstd::strip_sq_dq(ret_sq, ret_dq, str); }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
 template <typename T>
 std::string _join(const std::vector<std::string>& v, T delimiter){
     std::string ret;
