@@ -5,6 +5,14 @@
 #include <vector>
 
 namespace sstd{
+    // - dq: double quotation
+    // - sq: single quatation
+    
+    //bool extract_quoted(std::string& ret, const std::string& str);
+    bool extract_unquoted(std::string& ret, const std::string& str);
+    
+    //---
+    
     std::vector<std::string> splitByLine(const        char* str);
     std::vector<std::string> splitByLine(const std::string& str);
     

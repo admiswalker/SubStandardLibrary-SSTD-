@@ -31,11 +31,6 @@ namespace sstd{
     
     //---
 
-    std::string _extract_sq_dq_value(const std::string& str);
-    std::string _extract_sq_dq_value(const std::string& str);
-
-    //---
-    
     //std::vector<std::string> _splitByLine_sq_dq(const        char* str);
     //std::vector<std::string> _splitByLine_sq_dq(const std::string& str);
 

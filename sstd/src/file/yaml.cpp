@@ -47,7 +47,7 @@ void sstd::_strip_ow(std::vector<std::string>& v){
 }
 */
 //---
-
+/*
 std::string _mearge_vec_by_space_or_newLines(const std::vector<std::string>& v){
     std::string ret;
 
@@ -87,10 +87,10 @@ std::string _mearge_vec_by_space_or_newLines(const std::vector<std::string>& v){
     
     return ret;
 }
-
+*/
 //---
 
-std::string sstd::_extract_sq_dq_value(const std::string& str){
+std::string _extract_sq_dq_value(const std::string& str){
     std::string tmp;
     std::string ret;
 
@@ -228,7 +228,7 @@ std::string _rm_hyphen(std::string s){
 }
 
 //---
-
+/*
 std::string _rm_bw_sq_dq(const std::string& str){ // _bw: between, _dq: double quotation, _sq: single quatation
     std::string ret;
     
@@ -250,16 +250,21 @@ std::string _rm_bw_sq_dq(const std::string& str){ // _bw: between, _dq: double q
 
     return ret;
 }
-
-bool _is_hash(const std::string& s){
-    return sstd::charIn(':', _rm_bw_sq_dq(s));
+*/
+bool _is_hash(bool& ret, const std::string& s){
+    ret = false;
+    std::string ret_s;
+    if(!sstd::extract_unquoted(ret_s, s)){ sstd::pdbg_err("quate is not closed\n"); return false; }
+    ret = sstd::charIn(':', ret_s);
+    return true;
 }
-bool _is_list(uint& cnt, const std::string& s){
+void _is_list(bool& ret, uint& cnt, const std::string& s){
     std::vector<std::string> v = sstd::split(s, ' ');
     for(uint i=0; i<v.size(); ++i){
         if(v[i].size()==1 && v[i]=="-"){ ++cnt; }
     }
-    return cnt >= 1;
+    ret = ( cnt >= 1 );
+    return;
 }
 
 //---
@@ -280,13 +285,17 @@ uint _head_space_count(const std::string& s){
     }
     return c;
 }
-uint _hsc_hx(const std::string& s){
-    if(_is_hash(s)){ return _head_space_or_hyphen_count(s);
-    }     else     { return _head_space_count(s);
+bool _hsc_hx(uint& ret, const std::string& s){
+    bool is_h;
+    if(!_is_hash(is_h, s)){ sstd::pdbg_err("quate is not closed\n"); return false; }
+    
+    if(is_h){ ret = _head_space_or_hyphen_count(s); return true;
+    }  else { ret = _head_space_count(s);           return true;
     }
 }
-uint _hsc_lx(const std::string& s){
-    return _head_space_count(s);
+void _hsc_lx(uint& ret, const std::string& s){
+    ret = _head_space_count(s);
+    return;
 }
 
 //---
@@ -308,6 +317,8 @@ void _print(const struct command& cmd){
     printf("hsc_lx: %d\n",  cmd.hsc_lx        );
     printf("hsc_hx: %d\n",  cmd.hsc_hx        );
     printf("verb: %c\n",    cmd.verb          );
+    printf("val1_use_sq_dq: %s\n", (cmd.val1_use_sq_dq ? "true":"false") );
+    printf("val2_use_sq_dq: %s\n", (cmd.val2_use_sq_dq ? "true":"false") );
     printf("val1: %s\n",    cmd.val1.c_str()  );
     printf("val2: %s\n",    cmd.val2.c_str()  );
     printf("lineNum: %d\n", cmd.lineNum       );
@@ -323,8 +334,8 @@ void _print(const std::vector<struct command>& v_cmd){
 //---
 
 void _data_type(uint& type, uint& num, std::string s){
-    bool is_l = _is_list(num, s);
-    bool is_h = _is_hash(     s);
+    bool is_l; _is_list(is_l, num, s);
+    bool is_h; _is_hash(is_h,      s);
     
     if(is_l && is_h){ type = NUM_LIST_AND_HASH; return; }
     if(is_l){ type = NUM_LIST; return; }
@@ -340,24 +351,26 @@ std::vector<std::string> _get_verb(std::string s){
     return v;
 }
 bool _get_value(bool& ret_val1_use_sq_dq, bool& ret_val2_use_sq_dq, std::string& ret_val1, std::string& ret_val2, std::string s, uint typeNum){
+    ret_val1_use_sq_dq=false;
+    ret_val2_use_sq_dq=false;
     ret_val1.clear();
     ret_val2.clear();
     bool dq, sq;
     
     switch(typeNum){
     case NUM_STR:  {
-        ret_val1 = sstd::_extract_sq_dq_value(sstd::strip_sq_dq(sq, dq, s));
+        ret_val1 = _extract_sq_dq_value(sstd::strip_sq_dq(sq, dq, s));
         ret_val1_use_sq_dq = ( dq || sq );
     } break;
     case NUM_LIST: {
-        ret_val1 = sstd::_extract_sq_dq_value(sstd::strip_sq_dq(sq, dq, _rm_hyphen(s)));
+        ret_val1 = _extract_sq_dq_value(sstd::strip_sq_dq(sq, dq, _rm_hyphen(s)));
         ret_val1_use_sq_dq = ( dq || sq );
     } break;
     case NUM_HASH:
     case NUM_LIST_AND_HASH: {
         std::vector<std::string> v; if(!sstd::split_sq_dq(v, s, ':')){ sstd::pdbg_err("single quatation or double quatation is not closed\n"); return false; }
-        if(v.size()>=1){ ret_val1 = sstd::_extract_sq_dq_value(sstd::strip_sq_dq(sq, dq, _rm_hyphen(v[0]))); ret_val1_use_sq_dq = ( sq || dq ); }
-        if(v.size()>=2){ ret_val2 = sstd::_extract_sq_dq_value(sstd::strip_sq_dq(sq, dq,            v[1] )); ret_val2_use_sq_dq = ( sq || dq ); }
+        if(v.size()>=1){ ret_val1 = _extract_sq_dq_value(sstd::strip_sq_dq(sq, dq, _rm_hyphen(v[0]))); ret_val1_use_sq_dq = ( sq || dq ); }
+        if(v.size()>=2){ ret_val2 = _extract_sq_dq_value(sstd::strip_sq_dq(sq, dq,            v[1] )); ret_val2_use_sq_dq = ( sq || dq ); }
         if(v.size()>=3){ sstd::printn(v); sstd::pdbg("Unexptected split by ':'."); return false; }
     } break;
     default: { sstd::pdbg_err("Unexpected typeNum\n"); return false; } break;
@@ -459,7 +472,7 @@ bool _check_val_and_overwrite_multi_line_str(std::string& val_rw, const uint hsc
         if(val_rw.size()>=3){
             indent_width = std::stoi(&val_rw[2]);
         }else{
-            indent_width = _head_space_count(ls[i]);;
+            indent_width = _head_space_count(ls[i]);
         }
         
         if(!_get_multi_line_str(val_rw, hsc_prev, opt, indent_width, ls, i)){ return false; }
@@ -470,7 +483,7 @@ bool _check_val_and_overwrite_multi_line_str(std::string& val_rw, const uint hsc
         if(val_rw.size()>=2){
             indent_width = std::stoi(&val_rw[1]);
         }else{
-            indent_width = _head_space_count(ls[i]);;
+            indent_width = _head_space_count(ls[i]);
         }
         
         if(!_get_multi_line_str(val_rw, hsc_prev, opt, indent_width, ls, i)){ return false; }
@@ -488,8 +501,8 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
         if(s.size()==0){ continue; }
         if(s=="..."){ return true; } // detect end marker
         uint type=NUM_NULL, type_cnt=0; _data_type(type, type_cnt, s);
-        uint hsc_lx = _hsc_lx(s);
-        uint hsc_hx = _hsc_hx(s);
+        uint hsc_lx=0;     _hsc_lx(hsc_lx, s);
+        uint hsc_hx=0; if(!_hsc_hx(hsc_hx, s)){ sstd::pdbg_err("quate is not closed\n"); return false; }
         
         bool val1_use_sq_dq, val2_use_sq_dq;
         std::string val1, val2;
@@ -609,14 +622,12 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
     
     for(uint i=0; i<v_cmd.size(); ++i){
         //_print(v_cmd[i]);
+        if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
         sstd::terp::var var = sstd::terp::var( v_dst[v_dst.size()-1] );
+        if(v_hsc_lx.size()==0){ sstd::pdbg_err("v_hsc_lx is out of range\n"); return false; }
+        if(v_hsc_hx.size()==0){ sstd::pdbg_err("v_hsc_hx is out of range\n"); return false; }
         uint hsc_base_lx = v_hsc_lx[v_hsc_lx.size()-1];
         uint hsc_base_hx = v_hsc_hx[v_hsc_hx.size()-1];
-        //sstd::printn(v_dst);
-        //sstd::printn(v_hsc_lx);
-        //sstd::printn(v_hsc_hx);
-        //sstd::printn(ret_var);
-        //printf("\n");
         
         // set dst type (if dst is sstd::num_null)
         if(var.typeNum()==sstd::num_null){
