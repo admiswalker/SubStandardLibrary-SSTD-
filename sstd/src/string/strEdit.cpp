@@ -13,10 +13,10 @@ bool sstd::extract_unquoted(std::string& ret, const std::string& str){
     bool in_d_quate=false; // double quate
     bool in_s_quate=false; // single quate
     for(uint r=0; str[r]!='\0'; ++r){ // r: read place
-        if(str[r]=='\\'){ is_escaped=true; ++r; if(str[r]=='\0'){break;} continue; }
+        if(str[r]=='\\'){ ret+=str[r]; is_escaped=true; continue; }
         
-        if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
-        if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
+        if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; continue; }
+        if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; continue; }
         is_escaped=false;
         
         if(in_s_quate || in_d_quate){ continue; }

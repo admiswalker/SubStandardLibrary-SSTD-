@@ -31,6 +31,63 @@ TEST(strEdit, theOthers){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+TEST(strEdit, extract_unquoted){
+    std::string ret_s;
+    std::string s = R"(
+
+abcdef
+"AB
+CD"
+
+'ghi'
+
+)";
+    std::string ans_s = R"(
+
+abcdef
+
+
+
+
+)";
+    bool ret_tf = sstd::extract_unquoted(ret_s, s); // TEST THIS LINE
+    //sstd::printn(ret_tf);
+    //sstd::printn(ret_s);
+
+    ASSERT_TRUE( ret_tf );
+    ASSERT_STREQ(ret_s.c_str(), ans_s.c_str());
+}
+TEST(strEdit, extract_unquoted_escaped){
+    std::string ret_s;
+    std::string s = R"(
+
+abcdef
+\"AB
+CD\"
+
+\'ghi\'
+
+)";
+    std::string ans_s = R"(
+
+abcdef
+\"AB
+CD\"
+
+\'ghi\'
+
+)";
+    bool ret_tf = sstd::extract_unquoted(ret_s, s); // TEST THIS LINE
+    //sstd::printn(ret_tf);
+    //sstd::printn(ret_s);
+
+    ASSERT_TRUE( ret_tf );
+    ASSERT_STREQ(ret_s.c_str(), ans_s.c_str());
+}
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
 //splitByLine
 
 //TEST(strEdit, splitByLine){}
