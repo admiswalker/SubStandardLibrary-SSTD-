@@ -13,7 +13,7 @@
 #../test/src_test/container/matrixContainer_rowMajor/mat_r.cpp
 #../test/src_test/container/vector/slice.cpp
 #../test/src_test/container/vector/stdVector_expansion.cpp
-#../test/src_test/container/vector/vec_manipulation.cpp
+../test/src_test/container/vector/vec_manipulation.cpp
 #../test/src_test/container/vector/vvec.cpp
 #../test/src_test/definitions/typeDef.cpp
 #../test/src_test/definitions/typeNum.cpp
@@ -43,7 +43,7 @@
 #../test/src_test/print/print_printn_printn_all.cpp
 #../test/src_test/python/c2py.cpp
 #../test/src_test/string/encode_decode.cpp
-../test/src_test/string/strEdit.cpp
+#../test/src_test/string/strEdit.cpp
 #../test/src_test/string/strmatch.cpp
 #../test/src_test/string/utf8.cpp
 #../test/src_test/sys/status.cpp
