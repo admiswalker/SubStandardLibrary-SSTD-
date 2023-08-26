@@ -6,9 +6,31 @@
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-//bool extract_quoted(std::string& ret, const std::string& str){}
+bool sstd::extract_quoted(std::vector<std::string>& ret_v, const        char* str){
+    std::string ret_s;
+    
+    bool is_escaped=false;
+    bool in_d_quate=false; // double quate
+    bool in_s_quate=false; // single quate
+    for(uint r=0; str[r]!='\0'; ++r){ // r: read place
+        if(str[r]=='\\'){ ret_s+=str[r]; is_escaped=true; continue; }
+        
+        if(!is_escaped && !in_s_quate && str[r]=='"' ){ if(in_d_quate){ret_v.push_back(ret_s);ret_s.clear();} in_d_quate=!in_d_quate; continue; }
+        if(!is_escaped && !in_d_quate && str[r]=='\''){ if(in_s_quate){ret_v.push_back(ret_s);ret_s.clear();} in_s_quate=!in_s_quate; continue; }
+        is_escaped=false;
+        
+        if(!(in_s_quate || in_d_quate)){ continue; }
+        ret_s += str[r];
+    }
+    if(in_d_quate){ return false; }
+    if(in_s_quate){ return false; }
 
-bool sstd::extract_unquoted(std::string& ret, const std::string& str){
+    return true;
+}
+bool sstd::extract_quoted(std::vector<std::string>& ret, const std::string& str){ return sstd::extract_quoted(ret, str.c_str()); }
+
+
+bool sstd::extract_unquoted(std::string& ret, const char* str){
     bool is_escaped=false;
     bool in_d_quate=false; // double quate
     bool in_s_quate=false; // single quate
@@ -27,6 +49,7 @@ bool sstd::extract_unquoted(std::string& ret, const std::string& str){
 
     return true;
 }
+bool sstd::extract_unquoted(std::string& ret, const std::string& str){ return sstd::extract_unquoted(ret, str.c_str()); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 

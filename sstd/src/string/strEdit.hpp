@@ -8,7 +8,9 @@ namespace sstd{
     // - dq: double quotation
     // - sq: single quatation
     
-    //bool extract_quoted(std::string& ret, const std::string& str);
+    bool extract_quoted(std::vector<std::string>& ret, const        char* str);
+    bool extract_quoted(std::vector<std::string>& ret, const std::string& str);
+    bool extract_unquoted(std::string& ret, const        char* str);
     bool extract_unquoted(std::string& ret, const std::string& str);
     
     //---
