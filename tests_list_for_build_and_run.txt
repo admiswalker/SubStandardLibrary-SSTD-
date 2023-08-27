@@ -30,7 +30,6 @@
 #../test/src_test/file/rm.cpp
 #../test/src_test/file/tinyInterpreter.cpp
 ../test/src_test/file/yaml.cpp
-../test/src_test/file/yaml_sub_fn.cpp
 #../test/src_test/math/math.cpp
 #../test/src_test/math/signal.cpp
 #../test/src_test/math/hashFnc_of_MD5_SHA1_SHA2/hashSum.cpp
