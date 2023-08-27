@@ -6,25 +6,31 @@
 namespace sstd{
     //-----------------------------------------------------------------------------------------------------------------------------------------------
     
-    template<typename T> std::vector<T> rmEmpty   (const std::vector<T>& vec);
-    template<typename T> void           rmEmpty_ow(      std::vector<T>& vec);
+    template<typename T> std::vector<T> rmEmpty   (const std::vector<T>& vec); // remove empty elements
+    template<typename T> void           rmEmpty_ow(      std::vector<T>& vec); // remove empty elements overwrite
     
     //---
 
-    template<typename T> std::vector<T> rmEmpty_l   (const std::vector<T>& vec);
-    template<typename T> void           rmEmpty_l_ow(      std::vector<T>& vec);
+    template<typename T> std::vector<T> rmEmpty_l   (const std::vector<T>& vec); // remove empty elements from left side
+    template<typename T> void           rmEmpty_l_ow(      std::vector<T>& vec); // remove empty elements from left side overwrite
     
     //---
     
-    template<typename T> std::vector<T> rmEmpty_r   (const std::vector<T>& vec);
-    template<typename T> void           rmEmpty_r_ow(      std::vector<T>& vec);
+    template<typename T> std::vector<T> rmEmpty_r   (const std::vector<T>& vec); // remove empty elements from right side
+    template<typename T> void           rmEmpty_r_ow(      std::vector<T>& vec); // remove empty elements from right side overwrite
     
-    //-----------------------------------------------------------------------------------------------------------------------------------------------
+    //---
     // rmEmpty_ow(arg1, arg2, ...) of multiple vector arguments
     
     template<typename T>                      inline void _rmEmpty_ow(const std::vector<bool>& v, std::vector<T>& head);
     template<typename Head, typename... Tail> inline void _rmEmpty_ow(const std::vector<bool>& v, Head&& head, Tail&&... tail);
     template<typename Head, typename... Tail> inline void rmEmpty_ow(Head&& head, Tail&&... tail);
+    
+    //-----------------------------------------------------------------------------------------------------------------------------------------------
+
+    template<typename T> uint cntEmpty  (const std::vector<T>& vec); // count empty elements
+    template<typename T> uint cntEmpty_l(const std::vector<T>& vec); // count empty elements from left side
+    template<typename T> uint cntEmpty_r(const std::vector<T>& vec); // count empty elements from right side
     
     //-----------------------------------------------------------------------------------------------------------------------------------------------
 }
@@ -122,6 +128,33 @@ inline void sstd::rmEmpty_ow(Head&& head, Tail&&... tail){
         
     sstd::_rmEmpty_ow(v, std::forward<Head>(head));
     sstd::_rmEmpty_ow(v, std::forward<Tail>(tail)...);
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+template<typename T> uint sstd::cntEmpty  (const std::vector<T>& vec){
+    uint cnt=0;
+    for(uint i=0; i<vec.size(); ++i){
+        if(vec[i].size()!=0){ continue; }
+        ++cnt;
+    }
+    return cnt;
+}
+template<typename T> uint sstd::cntEmpty_l(const std::vector<T>& vec){
+    uint cnt=0;
+    for(uint i=0; i<vec.size(); ++i){
+        if(vec[i].size()!=0){ break; }
+        ++cnt;
+    }
+    return cnt;
+}
+template<typename T> uint sstd::cntEmpty_r(const std::vector<T>& vec){
+    uint cnt=0;
+    for(int i=vec.size()-1; i>=0; ++i){
+        if(vec[i].size()!=0){ break; }
+        ++cnt;
+    }
+    return cnt;
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
