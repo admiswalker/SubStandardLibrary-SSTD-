@@ -6,6 +6,53 @@
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+bool sstd::extract_quoted(std::vector<std::string>& ret_v, const        char* str){
+    std::string ret_s;
+    
+    bool is_escaped=false;
+    bool in_d_quate=false; // double quate
+    bool in_s_quate=false; // single quate
+    for(uint r=0; str[r]!='\0'; ++r){ // r: read place
+        if(str[r]=='\\'){ ret_s+=str[r]; is_escaped=true; continue; }
+        
+        if(!is_escaped && !in_s_quate && str[r]=='"' ){ if(in_d_quate){ret_v.push_back(ret_s);ret_s.clear();} in_d_quate=!in_d_quate; continue; }
+        if(!is_escaped && !in_d_quate && str[r]=='\''){ if(in_s_quate){ret_v.push_back(ret_s);ret_s.clear();} in_s_quate=!in_s_quate; continue; }
+        is_escaped=false;
+        
+        if(!(in_s_quate || in_d_quate)){ continue; }
+        ret_s += str[r];
+    }
+    if(in_d_quate){ return false; }
+    if(in_s_quate){ return false; }
+
+    return true;
+}
+bool sstd::extract_quoted(std::vector<std::string>& ret, const std::string& str){ return sstd::extract_quoted(ret, str.c_str()); }
+
+
+bool sstd::extract_unquoted(std::string& ret, const char* str){
+    bool is_escaped=false;
+    bool in_d_quate=false; // double quate
+    bool in_s_quate=false; // single quate
+    for(uint r=0; str[r]!='\0'; ++r){ // r: read place
+        if(str[r]=='\\'){ ret+=str[r]; is_escaped=true; continue; }
+        
+        if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; continue; }
+        if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; continue; }
+        is_escaped=false;
+        
+        if(in_s_quate || in_d_quate){ continue; }
+        ret += str[r];
+    }
+    if(in_d_quate){ return false; }
+    if(in_s_quate){ return false; }
+
+    return true;
+}
+bool sstd::extract_unquoted(std::string& ret, const std::string& str){ return sstd::extract_unquoted(ret, str.c_str()); }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
 std::vector<std::string> sstd::splitByLine(const char* str){
 
     std::vector<std::string> ret;
@@ -25,6 +72,39 @@ std::vector<std::string> sstd::splitByLine(const char* str){
 }
 std::vector<std::string> sstd::splitByLine(const std::string& str){
     return sstd::splitByLine(str.c_str());
+}
+
+//---
+
+bool sstd::splitByLine_quotes(std::vector<std::string>& ret, const char* str){
+    
+    bool is_escaped=false;
+    bool in_d_quate=false; // double quate
+    bool in_s_quate=false; // single quate
+    std::string buf;
+    for(uint r=0; str[r]!=0;){ // r: read place
+        buf.clear();
+        for(; str[r]!='\0'; ++r){
+            if(str[r]=='\\'){ is_escaped=true; buf+=str[r]; ++r; if(str[r]=='\0'){break;} }
+            
+            if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
+            if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
+            
+            if(!in_d_quate && !in_s_quate && str[r]==0x0A                  ){ r+=1; break; } // Uinx
+            if(!in_d_quate && !in_s_quate && str[r]==0x0D && str[r+1]==0x0A){ r+=2; break; } // Windows
+            buf += str[r];
+            
+            is_escaped=false;
+        }
+        ret.push_back(std::move(buf));
+    }
+    if(in_d_quate){ ret.clear(); return false; }
+    if(in_s_quate){ ret.clear(); return false; }
+    
+    return true;
+}
+bool sstd::splitByLine_quotes(std::vector<std::string>& ret, const std::string& str){
+    return sstd::splitByLine_quotes(ret, str.c_str());
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -80,6 +160,38 @@ std::vector<std::string> sstd::split_rmSpace(const        char* str             
 std::vector<std::string> sstd::split_rmSpace(const std::string& str              ){ return _asAX_rmSpace(str.c_str(), ' '); }
 std::vector<std::string> sstd::split_rmSpace(const        char* str, const char X){ return _asAX_rmSpace(str        ,  X ); }
 std::vector<std::string> sstd::split_rmSpace(const std::string& str, const char X){ return _asAX_rmSpace(str.c_str(),  X ); }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+bool sstd::split_quotes(std::vector<std::string>& ret, const char* str, const char X){
+    
+    bool is_escaped=false;
+    bool in_d_quate=false; // double quate
+    bool in_s_quate=false; // single quate
+    std::string buf;
+    for(uint r=0; str[r]!='\0';){ // r: read place
+        buf.clear();
+        for(; str[r]!='\0'; ++r){
+            if(str[r]=='\\'){ is_escaped=true; buf+=str[r]; ++r; if(str[r]=='\0'){break;} }
+            
+            if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
+            if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
+            
+            if(!in_d_quate && !in_s_quate && str[r]==X){ ++r; break; }
+            buf += str[r];
+            
+            is_escaped=false;
+        }
+        ret.push_back(std::move(buf));
+    }
+    if(in_d_quate){ ret.clear(); return false; }
+    if(in_s_quate){ ret.clear(); return false; }
+    
+    return true;
+}
+bool sstd::split_quotes(std::vector<std::string>& ret, const std::string& str, const char X){
+    return sstd::split_quotes(ret, str.c_str(), X);
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -141,10 +253,6 @@ std::string strip_base(const uchar* str){
 std::string sstd::strip(const        char* str){ return strip_base((const uchar*)str        ); }
 std::string sstd::strip(const std::string& str){ return strip_base((const uchar*)str.c_str()); }
 
-void sstd::strip_ow(std::string& str){
-    str = lstrip_base((const uchar*)str.c_str());
-    sstd::rstrip_ow(str);
-}
 std::vector<std::string> sstd::strip(const std::vector<std::string>& vec){
     std::vector<std::string> ret(vec.size()); ret.clear();
     
@@ -153,6 +261,16 @@ std::vector<std::string> sstd::strip(const std::vector<std::string>& vec){
     }
     
     return ret;
+}
+
+void sstd::strip_ow(std::string& str){
+    str = lstrip_base((const uchar*)str.c_str());
+    sstd::rstrip_ow(str);
+}
+void sstd::strip_ow(std::vector<std::string>& v){
+    for(uint i=0; i<v.size(); ++i){
+        sstd::strip_ow(v[i]);
+    }
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -311,6 +429,81 @@ void stripAll_ow_base(std::string& str, const char* stripList, const uint sLen){
 }
 void        sstd::stripAll_ow(      std::string& str, const        char* stripList){ stripAll_ow_base(str, stripList,         strlen(stripList)); return; }
 void        sstd::stripAll_ow(      std::string& str, const std::string& stripList){ stripAll_ow_base(str, stripList.c_str(),  stripList.size()); return; }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+std::string sstd::strip_quotes(bool& ret_sq, bool& ret_dq, const        char* str){
+    return std::move(sstd::strip_quotes(ret_sq, ret_dq, std::string(str)));
+}
+std::string sstd::strip_quotes(bool& ret_sq, bool& ret_dq, const std::string& str){
+    ret_dq=false;
+    ret_sq=false;
+    
+    // remove head and tail ' ' and '\t'
+    int li=0, ri=((int)str.size())-1;
+    while(li<(int)str.size()){
+        if(str[li]!=' ' && str[li]!='\t'){ break; } // remove head ' ' and '\t'
+        ++li;
+    }
+    while(ri>=li){
+        if(str[ri]!=' ' && str[ri]!='\t'){ break; } // remove tail ' ' and '\t'
+        --ri;
+    }
+    
+    // remove head and tail '"' or '\''
+    std::string tmp;
+    {
+        if((ri+1 - li)<= 0){ return std::string(); }
+        
+        char c_head = str[li];
+        char c_tail = str[ri];
+        
+        // rm '"'
+        if(c_head=='"' && c_tail=='"'){
+            ++li;
+            --ri;
+            ret_dq=true;
+        }
+        
+        // rm '\''
+        if(c_head=='\'' && c_tail=='\''){
+            ++li;
+            --ri;
+            ret_sq=true;
+        }
+        
+        tmp = str.substr(li, ri-li+1);
+    }
+
+    return tmp;
+}
+std::string sstd::strip_quotes(const        char* str){ bool ret_sq, ret_dq; return sstd::strip_quotes(ret_sq, ret_dq, str); }
+std::string sstd::strip_quotes(const std::string& str){ bool ret_sq, ret_dq; return sstd::strip_quotes(ret_sq, ret_dq, str); }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+template <typename T>
+std::string _join(const std::vector<std::string>& v, T delimiter){
+    std::string ret;
+    if(v.size()==0){ return ret; }
+    
+    ret += v[0];
+    for(uint i=1; i<v.size(); ++i){
+        ret += delimiter + v[i];
+    }
+    
+    return ret;
+}
+
+std::string sstd::join(const std::vector<std::string>& v, const char delimiter){
+    return _join<const char>(v, delimiter);
+}
+std::string sstd::join(const std::vector<std::string>& v, const char* delimiter){
+    return _join<const char*>(v, delimiter);
+}
+std::string sstd::join(const std::vector<std::string>& v, const std::string& delimiter){
+    return sstd::join(v, delimiter.c_str());
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
