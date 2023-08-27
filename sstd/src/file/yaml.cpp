@@ -4,6 +4,7 @@
 
 #include "yaml.hpp"
 
+#include "../container/vector/vec_manipulation.hpp"
 #include "../definitions/typeDef.h"
 #include "../string/strEdit.hpp"
 #include "../string/strmatch.hpp"
@@ -378,13 +379,13 @@ bool _get_value(bool& ret_val1_use_sq_dq, bool& ret_val2_use_sq_dq, std::string&
     
     return true;
 }
-
+/*
 void _rremove_empty_ow(std::vector<std::string>& v){ // remove tail empty elements
     for(int i=v.size()-1; i>=0; --i){
         if(v[i].size()!=0){ break; }
         v.pop_back();
     }
-}
+}*/
 uint _rcount_empty(std::vector<std::string>& v){
     uint cnt=0;
     for(int i=v.size()-1; i>=0; --i){
@@ -446,15 +447,15 @@ bool _get_multi_line_str(std::string& ret, const uint hsc_prev, const std::strin
     }
 
     if      (opt=="|"  || opt==">" ){
-        _rremove_empty_ow(v_tmp);
+        sstd::rmEmpty_r_ow(v_tmp);
         ret = sstd::join(v_tmp, separator);
         ret += "\n";
     }else if(opt=="|-" || opt==">-"){
-        _rremove_empty_ow(v_tmp);
+        sstd::rmEmpty_r_ow(v_tmp);
         ret = sstd::join(v_tmp, separator);
     }else if(opt=="|+" || opt==">+"){
         uint cnt = _rcount_empty(v_tmp) + 1;
-        _rremove_empty_ow(v_tmp);
+        sstd::rmEmpty_r_ow(v_tmp);
         ret = sstd::join(v_tmp, separator) + std::string(cnt, '\n');
     }else{
         sstd::pdbg_err("Unexpected case\n"); return false;
