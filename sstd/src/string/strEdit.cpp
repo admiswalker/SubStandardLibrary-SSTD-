@@ -76,7 +76,7 @@ std::vector<std::string> sstd::splitByLine(const std::string& str){
 
 //---
 
-bool sstd::splitByLine_sq_dq(std::vector<std::string>& ret, const char* str){
+bool sstd::splitByLine_quotes(std::vector<std::string>& ret, const char* str){
     
     bool is_escaped=false;
     bool in_d_quate=false; // double quate
@@ -103,8 +103,8 @@ bool sstd::splitByLine_sq_dq(std::vector<std::string>& ret, const char* str){
     
     return true;
 }
-bool sstd::splitByLine_sq_dq(std::vector<std::string>& ret, const std::string& str){
-    return sstd::splitByLine_sq_dq(ret, str.c_str());
+bool sstd::splitByLine_quotes(std::vector<std::string>& ret, const std::string& str){
+    return sstd::splitByLine_quotes(ret, str.c_str());
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -163,7 +163,7 @@ std::vector<std::string> sstd::split_rmSpace(const std::string& str, const char 
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-bool sstd::split_sq_dq(std::vector<std::string>& ret, const char* str, const char X){
+bool sstd::split_quotes(std::vector<std::string>& ret, const char* str, const char X){
     
     bool is_escaped=false;
     bool in_d_quate=false; // double quate
@@ -189,8 +189,8 @@ bool sstd::split_sq_dq(std::vector<std::string>& ret, const char* str, const cha
     
     return true;
 }
-bool sstd::split_sq_dq(std::vector<std::string>& ret, const std::string& str, const char X){
-    return sstd::split_sq_dq(ret, str.c_str(), X);
+bool sstd::split_quotes(std::vector<std::string>& ret, const std::string& str, const char X){
+    return sstd::split_quotes(ret, str.c_str(), X);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -432,10 +432,10 @@ void        sstd::stripAll_ow(      std::string& str, const std::string& stripLi
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-std::string sstd::strip_sq_dq(bool& ret_sq, bool& ret_dq, const        char* str){
-    return std::move(sstd::strip_sq_dq(ret_sq, ret_dq, std::string(str)));
+std::string sstd::strip_quotes(bool& ret_sq, bool& ret_dq, const        char* str){
+    return std::move(sstd::strip_quotes(ret_sq, ret_dq, std::string(str)));
 }
-std::string sstd::strip_sq_dq(bool& ret_sq, bool& ret_dq, const std::string& str){
+std::string sstd::strip_quotes(bool& ret_sq, bool& ret_dq, const std::string& str){
     ret_dq=false;
     ret_sq=false;
     
@@ -477,8 +477,8 @@ std::string sstd::strip_sq_dq(bool& ret_sq, bool& ret_dq, const std::string& str
 
     return tmp;
 }
-std::string sstd::strip_sq_dq(const        char* str){ bool ret_sq, ret_dq; return sstd::strip_sq_dq(ret_sq, ret_dq, str); }
-std::string sstd::strip_sq_dq(const std::string& str){ bool ret_sq, ret_dq; return sstd::strip_sq_dq(ret_sq, ret_dq, str); }
+std::string sstd::strip_quotes(const        char* str){ bool ret_sq, ret_dq; return sstd::strip_quotes(ret_sq, ret_dq, str); }
+std::string sstd::strip_quotes(const std::string& str){ bool ret_sq, ret_dq; return sstd::strip_quotes(ret_sq, ret_dq, str); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 

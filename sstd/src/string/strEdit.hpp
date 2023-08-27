@@ -18,8 +18,8 @@ namespace sstd{
     std::vector<std::string> splitByLine(const        char* str);
     std::vector<std::string> splitByLine(const std::string& str);
     
-    bool splitByLine_sq_dq(std::vector<std::string>& ret, const        char* str);
-    bool splitByLine_sq_dq(std::vector<std::string>& ret, const std::string& str);
+    bool splitByLine_quotes(std::vector<std::string>& ret, const        char* str);
+    bool splitByLine_quotes(std::vector<std::string>& ret, const std::string& str);
 
     std::vector<std::string> split(const char*        str);
     std::vector<std::string> split(const std::string& str);
@@ -31,8 +31,8 @@ namespace sstd{
     std::vector<std::string> split_rmSpace(const char*        str, const char X); // rm: remove
     std::vector<std::string> split_rmSpace(const std::string& str, const char X); // rm: remove
 
-    bool split_sq_dq(std::vector<std::string>& ret, const        char* str, const char X);
-    bool split_sq_dq(std::vector<std::string>& ret, const std::string& str, const char X);
+    bool split_quotes(std::vector<std::string>& ret, const        char* str, const char X);
+    bool split_quotes(std::vector<std::string>& ret, const std::string& str, const char X);
 
     //---
     
@@ -77,10 +77,10 @@ namespace sstd{
     // todo: rm '\t'
     // todo: implementing memcopy version. Ref: https://postd.cc/how-quickly-can-you-remove-spaces-from-a-string/
 
-    std::string strip_sq_dq(                            const        char* str);
-    std::string strip_sq_dq(                            const std::string& str);
-    std::string strip_sq_dq(bool& ret_sq, bool& ret_dq, const        char* str);
-    std::string strip_sq_dq(bool& ret_sq, bool& ret_dq, const std::string& str);
+    std::string strip_quotes(                            const        char* str);
+    std::string strip_quotes(                            const std::string& str);
+    std::string strip_quotes(bool& ret_sq, bool& ret_dq, const        char* str);
+    std::string strip_quotes(bool& ret_sq, bool& ret_dq, const std::string& str);
 
     //---
     
