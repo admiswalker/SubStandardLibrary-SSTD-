@@ -10,6 +10,12 @@
 #include "../string/strmatch.hpp"
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// Abbreviations
+//
+// - dq: double quotation
+// - sq: single quatation
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 #define NUM_NULL 255
 #define NUM_STR  1
@@ -18,78 +24,6 @@
 #define NUM_LIST_AND_HASH 4
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-// dq and sq functions
-
-// - dq: double quotation
-// - sq: single quatation
-
-// ここの関数は，あとで各々の sstd namespace のファイルに移す
-
-//---
-/*
-std::string sstd::_join(const std::vector<std::string>& v, const std::string& delimiter){
-    std::string ret;
-
-    if(v.size()>=1){
-        ret += v[0];
-    }
-    for(uint i=1; i<v.size(); ++i){
-        ret += delimiter + v[i];
-    }
-    return ret;
-}
-*/
-//---
-/*
-void sstd::_strip_ow(std::vector<std::string>& v){
-    for(uint i=0; i<v.size(); ++i){
-        sstd::strip_ow(v[i]);
-    }
-}
-*/
-//---
-/*
-std::string _mearge_vec_by_space_or_newLines(const std::vector<std::string>& v){
-    std::string ret;
-
-    std::vector<std::string> v_delmiter;
-
-    uint cnt=0;
-    for(uint i=0; i<v.size(); ++i){
-        if(v[i].size()==(uint)0){
-            ++cnt;
-            continue;
-        }
-        
-        if(cnt!=0){
-            std::string tmp;
-            for(uint i_t=0; i_t<cnt; ++i_t){ tmp += "\\n"; }
-            v_delmiter.push_back(tmp);
-        }
-        cnt=0;
-    }
-    
-    bool is_prev_empty=false;
-    uint i_vd=0;
-    uint i=0;
-    for(; i<v.size(); ++i){
-        if(v[i].size()==(uint)0){ is_prev_empty=true; continue; }
-        
-        if(is_prev_empty){
-            if(i_vd>=v_delmiter.size()){ sstd::pdbg_err("i_vd out the range of v_delmiter size.\n"); return ret; }
-            ret += v_delmiter[i_vd]; ++i_vd;
-        }else if(i!=0){
-            ret += " ";
-        }
-        
-        ret += v[i];
-        is_prev_empty=false;
-    }
-    
-    return ret;
-}
-*/
-//---
 
 std::string _extract_quotes_value(const std::string& str){
     std::string tmp;
@@ -144,73 +78,6 @@ std::string _extract_quotes_value(const std::string& str){
     return ret;
 }
 
-//-----------------------------
-/*
-std::vector<std::string> sstd::_splitByLine_quotes(const char* str){
-    
-    std::vector<std::string> ret;
-    
-    bool is_escaped=false;
-    bool in_d_quate=false; // double quate
-    bool in_s_quate=false; // single quate
-    std::string buf;
-    for(uint r=0; str[r]!=0;){ // r: read place
-        buf.clear();
-        for(; str[r]!='\0'; ++r){
-            if(str[r]=='\\'){ is_escaped=true; buf+=str[r]; ++r; if(str[r]=='\0'){break;} }
-            
-            if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
-            if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
-            
-            if(!in_d_quate && !in_s_quate && str[r]==0x0A                  ){ r+=1; break; } // Uinx
-            if(!in_d_quate && !in_s_quate && str[r]==0x0D && str[r+1]==0x0A){ r+=2; break; } // Windows
-            buf += str[r];
-            
-            is_escaped=false;
-        }
-        ret.push_back(std::move(buf));
-    }
-    if(in_d_quate){ sstd::pdbg_err("double quatation is not closed\n"); return std::vector<std::string>(); }
-    if(in_s_quate){ sstd::pdbg_err("single quatation is not closed\n"); return std::vector<std::string>(); }
-    
-    return ret;
-}
-std::vector<std::string> sstd::_splitByLine_quotes(const std::string& str){
-    return sstd::_splitByLine_quotes(str.c_str());
-}
-*/
-//-------------------------------
-/*
-bool sstd::_split_quotes(std::vector<std::string>& ret, const char* str, const char X){
-    
-    bool is_escaped=false;
-    bool in_d_quate=false; // double quate
-    bool in_s_quate=false; // single quate
-    std::string buf;
-    for(uint r=0; str[r]!='\0';){ // r: read place
-        buf.clear();
-        for(; str[r]!='\0'; ++r){
-            if(str[r]=='\\'){ is_escaped=true; buf+=str[r]; ++r; if(str[r]=='\0'){break;} }
-            
-            if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
-            if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
-            
-            if(!in_d_quate && !in_s_quate && str[r]==X){ ++r; break; }
-            buf += str[r];
-            
-            is_escaped=false;
-        }
-        ret.push_back(std::move(buf));
-    }
-    if(in_d_quate){ return false; }
-    if(in_s_quate){ return false; }
-    
-    return true;
-}
-bool sstd::_split_quotes(std::vector<std::string>& ret, const std::string& str, const char X){
-    return sstd::_split_quotes(ret, str.c_str(), X);
-}
-*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 std::string _rm_comment(const std::string& s){
@@ -229,29 +96,7 @@ std::string _rm_hyphen(std::string s){
 }
 
 //---
-/*
-std::string _rm_bw_quotes(const std::string& str){ // _bw: between, _dq: double quotation, _sq: single quatation
-    std::string ret;
-    
-    bool is_escaped=false;
-    bool in_d_quate=false; // double quate
-    bool in_s_quate=false; // single quate
-    for(uint r=0; str[r]!='\0'; ++r){ // r: read place
-        if(str[r]=='\\'){ is_escaped=true; ++r; if(str[r]=='\0'){break;} continue; }
-        
-        if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
-        if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
-        is_escaped=false;
 
-        if(in_s_quate || in_d_quate){ continue; }
-        ret += str[r];
-    }
-    if(in_d_quate){ sstd::pdbg_err("double quatation is not closed\n"); return std::string(); }
-    if(in_s_quate){ sstd::pdbg_err("single quatation is not closed\n"); return std::string(); }
-
-    return ret;
-}
-*/
 bool _is_hash(bool& ret, const std::string& s){
     ret = false;
     std::string ret_s;
@@ -379,34 +224,7 @@ bool _get_value(bool& ret_val1_use_quotes, bool& ret_val2_use_quotes, std::strin
     
     return true;
 }
-/*
-void _rremove_empty_ow(std::vector<std::string>& v){ // remove tail empty elements
-    for(int i=v.size()-1; i>=0; --i){
-        if(v[i].size()!=0){ break; }
-        v.pop_back();
-    }
-}*/
-/*
-uint _rcount_empty(std::vector<std::string>& v){
-    uint cnt=0;
-    for(int i=v.size()-1; i>=0; --i){
-        if(v[i].size()!=0){ break; }
-        ++cnt;
-    }
-    return cnt;
-}*/
-/*
-std::string _join(const std::vector<std::string>& v, const char separator){
-    std::string ret;
-    for(uint i=0; i<v.size()-1; ++i){
-        ret += v[i] + separator;
-    }
-    if(v.size()>=1){
-        ret += v[v.size()-1];
-    }
-    return ret;
-}
-*/
+
 bool _get_multi_line_str(std::string& ret, const uint hsc_prev, const std::string& opt, int indent_width, const std::vector<std::string>& ls, uint& i){
     std::vector<std::string> v_tmp;
 

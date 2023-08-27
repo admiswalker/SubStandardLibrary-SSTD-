@@ -19,27 +19,3 @@ namespace sstd{
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-// dependent fn
-
-namespace sstd{
-
-    //std::string _join(const std::vector<std::string>& v, const std::string& delimiter);
-
-    //---
-    
-    //void _strip_ow(std::vector<std::string>& v);
-    
-    //---
-
-    //std::vector<std::string> _splitByLine_sq_dq(const        char* str);
-    //std::vector<std::string> _splitByLine_sq_dq(const std::string& str);
-
-    //---
-    
-    //bool _split_sq_dq(std::vector<std::string>& ret, const        char* str, const char X);
-    //bool _split_sq_dq(std::vector<std::string>& ret, const std::string& str, const char X);
-//    std::vector<std::string> _split_sq_dq(const        char* str, const char X);
-//    std::vector<std::string> _split_sq_dq(const std::string& str, const char X);
-}
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
