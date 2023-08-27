@@ -386,6 +386,7 @@ void _rremove_empty_ow(std::vector<std::string>& v){ // remove tail empty elemen
         v.pop_back();
     }
 }*/
+/*
 uint _rcount_empty(std::vector<std::string>& v){
     uint cnt=0;
     for(int i=v.size()-1; i>=0; --i){
@@ -393,7 +394,7 @@ uint _rcount_empty(std::vector<std::string>& v){
         ++cnt;
     }
     return cnt;
-}
+}*/
 /*
 std::string _join(const std::vector<std::string>& v, const char separator){
     std::string ret;
@@ -454,7 +455,7 @@ bool _get_multi_line_str(std::string& ret, const uint hsc_prev, const std::strin
         sstd::rmEmpty_r_ow(v_tmp);
         ret = sstd::join(v_tmp, separator);
     }else if(opt=="|+" || opt==">+"){
-        uint cnt = _rcount_empty(v_tmp) + 1;
+        uint cnt = sstd::cntEmpty_r(v_tmp) + 1;
         sstd::rmEmpty_r_ow(v_tmp);
         ret = sstd::join(v_tmp, separator) + std::string(cnt, '\n');
     }else{

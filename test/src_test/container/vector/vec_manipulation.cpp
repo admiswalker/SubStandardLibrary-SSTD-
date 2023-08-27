@@ -193,8 +193,8 @@ TEST(vec_manipulation, rmEmpty_ow_multiple_vector_arguments_03){
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 TEST(vec_manipulation, cntEmpty){
-    std::vector<std::string> v = {"", "- 1", "- 2", "- 3", ""};
-    uint ans = 2;
+    std::vector<std::string> v = {"", "- 1", "- 2", "", "- 3", ""};
+    uint ans = 3;
     
     ASSERT_EQ(sstd::cntEmpty(v), ans);
 }
@@ -214,8 +214,8 @@ TEST(vec_manipulation, cntEmpty_full){
 //---
 
 TEST(vec_manipulation, cntEmpty_l){
-    std::vector<std::string> v = {"", "- 1", "- 2", "- 3", ""};
-    uint ans = 1;
+    std::vector<std::string> v = {"", "", "- 1", "- 2", "- 3", "", ""};
+    uint ans = 2;
     
     ASSERT_EQ(sstd::cntEmpty_l(v), ans);
 }
@@ -235,8 +235,8 @@ TEST(vec_manipulation, cntEmpty_l_full){
 //---
 
 TEST(vec_manipulation, cntEmpty_r){
-    std::vector<std::string> v = {"", "- 1", "- 2", "- 3", ""};
-    uint ans = 1;
+    std::vector<std::string> v = {"", "", "- 1", "- 2", "- 3", "", ""};
+    uint ans = 2;
     
     ASSERT_EQ(sstd::cntEmpty_r(v), ans);
 }

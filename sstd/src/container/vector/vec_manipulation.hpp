@@ -150,7 +150,7 @@ template<typename T> uint sstd::cntEmpty_l(const std::vector<T>& vec){
 }
 template<typename T> uint sstd::cntEmpty_r(const std::vector<T>& vec){
     uint cnt=0;
-    for(int i=vec.size()-1; i>=0; ++i){
+    for(int i=vec.size()-1; i>=0; --i){
         if(vec[i].size()!=0){ break; }
         ++cnt;
     }
