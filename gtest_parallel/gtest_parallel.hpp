@@ -161,7 +161,7 @@ namespace gtest_parallel{
     void execute_tests(int& tf_end, int& failed, struct execution_settings& failedTest, std::string& ret_str, struct execution_settings& exeList, const std::string& google_test_option){
 
         std::string s;
-        int ret = system_stdout_stderr(s, exeList.exePath+" "+google_test_option+" --gtest_filter="+exeList.testCaseName+exeList.testName);
+        int ret = system_stdout_stderr(s, "stdbuf -i0 -o0 -e0 "+exeList.exePath+" "+google_test_option+" --gtest_filter="+exeList.testCaseName+exeList.testName);
         if(ret!=0){
             failed = 1;
             failedTest = exeList;
@@ -175,12 +175,17 @@ namespace gtest_parallel{
             //++ri;
             break;
         }
+        bool print_ok_or_failed = false;
         for(; ri<vStr.size(); ++ri){
             ret_str += vStr[ri]+"\n";
-            if(vStr[ri].find("[       OK ]")!=std::string::npos){ break; }
-            if(vStr[ri].find("[  FAILED  ]")!=std::string::npos){ break; }
+            if(vStr[ri].find("[       OK ]")!=std::string::npos){ print_ok_or_failed=true; break; }
+            if(vStr[ri].find("[  FAILED  ]")!=std::string::npos){ print_ok_or_failed=true; break; }
         }
-
+        
+        if((!print_ok_or_failed) && ret!=0){
+            ret_str += console_color::red  +"[  FAILED  ]"+console_color::reset+"\n";
+        }
+        
         tf_end=1;
     }
     void print_results(uint& i_end_num, const std::vector<int>& vEnd, const std::vector<std::string>& vRet){
