@@ -159,14 +159,16 @@ namespace gtest_parallel{
         return exeList;
     }
     void execute_tests(int& tf_end, int& failed, struct execution_settings& failedTest, std::string& ret_str, struct execution_settings& exeList, const std::string& google_test_option){
-
+        
+        // Note:
+        //   The buffer of popen is set 0 by "stdbuf -i0 -o0 -e0", inorder not to drop the preinted messages of SEGV-ed test case.
         std::string s;
         int ret = system_stdout_stderr(s, "stdbuf -i0 -o0 -e0 "+exeList.exePath+" "+google_test_option+" --gtest_filter="+exeList.testCaseName+exeList.testName);
         if(ret!=0){
             failed = 1;
             failedTest = exeList;
         }
-    
+        
         std::vector<std::string> vStr = splitByLine(s);
         uint ri=0;
         for(; ri<vStr.size(); ++ri){
