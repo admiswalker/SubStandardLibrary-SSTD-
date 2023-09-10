@@ -343,7 +343,7 @@ uint sstd::terp::var::typeNum() const {
     return (*_p).typeNum();
 }
 std::string sstd::terp::var::typeStr() const {
-    return std::string();//sstd::type((*_p).typeNum());
+    return sstd::typeNum2str((*_p).typeNum());
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

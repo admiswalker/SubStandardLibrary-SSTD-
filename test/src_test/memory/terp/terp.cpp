@@ -40,6 +40,17 @@ TEST(memory_terp, var_typeNum_c){
     a = "test";
     ASSERT_STREQ(sstd::typeNum2str(a.typeNum()).c_str(), "str"); // TEST THIS LINE
 }
+
+// typeStr()
+TEST(memory_terp, var_typeStr_null){
+    sstd::terp::var a;
+    ASSERT_STREQ(a.typeStr().c_str(), "null"); // TEST THIS LINE
+}
+TEST(memory_terp, var_typeStr_c){
+    sstd::terp::var a;
+    a = "test";
+    ASSERT_STREQ(a.typeStr().c_str(), "str"); // TEST THIS LINE
+}
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // sstd::terp::list
@@ -243,6 +254,13 @@ TEST(memory_terp, list_typeNum){
     a = sstd::terp::list();
     ASSERT_STREQ(sstd::typeNum2str(a.typeNum()).c_str(), "vec_void_ptr"); // TEST THIS LINE
 }
+
+// typeStr()
+TEST(memory_terp, list_typeStr){
+    sstd::terp::var a;
+    a = sstd::terp::list();
+    ASSERT_STREQ(a.typeStr().c_str(), "vec_void_ptr"); // TEST THIS LINE
+}
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // sstd::terp::hash
@@ -421,6 +439,13 @@ TEST(memory_terp, hash_typeNum){
     sstd::terp::var a;
     a = sstd::terp::hash();
     ASSERT_STREQ(sstd::typeNum2str(a.typeNum()).c_str(), "hash_str_void_ptr"); // TEST THIS LINE
+}
+
+// typeStr()
+TEST(memory_terp, hash_typeStr){
+    sstd::terp::var a;
+    a = sstd::terp::hash();
+    ASSERT_STREQ(a.typeStr().c_str(), "hash_str_void_ptr"); // TEST THIS LINE
 }
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
