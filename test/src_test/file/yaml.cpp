@@ -173,7 +173,96 @@ TEST(yaml, list_and_hash__NUM_LIST_AND_HASH){
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // complex test cases
 
-TEST(yaml, list_hash){ // depth2
+TEST(yaml, list_hash_case01_01){ // depth2
+    std::string s=R"(
+- k1: v1
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+    
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = sstd::terp::hash();
+    ans[0]["k1"] = "v1";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, list_hash_case01_02){ // depth2
+    std::string s=R"(
+- k1: v1
+- k2: v2
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+    
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(2);
+    ans[0] = sstd::terp::hash();
+    ans[0]["k1"] = "v1";
+    ans[1] = sstd::terp::hash();
+    ans[1]["k2"] = "v2";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, list_hash_case01_03){ // depth2
+    std::string s=R"(
+- k1: v1
+- k2: v2
+- k3: v3
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+    
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(3);
+    ans[0] = sstd::terp::hash();
+    ans[0]["k1"] = "v1";
+    ans[1] = sstd::terp::hash();
+    ans[1]["k2"] = "v2";
+    ans[2] = sstd::terp::hash();
+    ans[2]["k3"] = "v3";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, list_hash_case01_04){ // depth2
+    std::string s=R"(
+- 
+  - k1: v1
+  - k2: v2
+- k3: v3
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+    
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(2);
+    ans[0] = sstd::terp::list(2);
+    ans[0][0] = sstd::terp::hash();
+    ans[0][0]["k1"] = "v1";
+    ans[0][1] = sstd::terp::hash();
+    ans[0][1]["k2"] = "v2";
+    ans[1] = sstd::terp::hash();
+    ans[1]["k3"] = "v3";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, list_hash_case02){ // depth2
     std::string s=R"(
 - a # comment
 - b

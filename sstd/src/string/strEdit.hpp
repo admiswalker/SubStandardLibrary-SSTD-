@@ -5,9 +5,6 @@
 #include <vector>
 
 namespace sstd{
-    // - dq: double quotation
-    // - sq: single quatation
-    
     bool extract_quoted(std::vector<std::string>& ret, const        char* str);
     bool extract_quoted(std::vector<std::string>& ret, const std::string& str);
     bool extract_unquoted(std::string& ret, const        char* str);
@@ -76,12 +73,12 @@ namespace sstd{
     void                      stripAll_ow(      std::string& str, const std::string& stripList);
     // todo: rm '\t'
     // todo: implementing memcopy version. Ref: https://postd.cc/how-quickly-can-you-remove-spaces-from-a-string/
-
+    
     std::string strip_quotes(                            const        char* str);
     std::string strip_quotes(                            const std::string& str);
-    std::string strip_quotes(bool& ret_sq, bool& ret_dq, const        char* str);
-    std::string strip_quotes(bool& ret_sq, bool& ret_dq, const std::string& str);
-
+    std::string strip_quotes(bool& ret_sq, bool& ret_dq, const        char* str); // _sq: single quatation, _dq: double quotation
+    std::string strip_quotes(bool& ret_sq, bool& ret_dq, const std::string& str); // _sq: single quatation, _dq: double quotation
+    
     //---
     
     std::string join(const std::vector<std::string>& v, const        char  delimiter);

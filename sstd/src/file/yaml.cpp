@@ -441,7 +441,8 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
     v_hsc_hx.push_back(0);
     
     for(uint i=0; i<v_cmd.size(); ++i){
-        //_print(v_cmd[i]);
+        //printf("\n\n--- begin cmd ---\n"); // for debug
+        //_print(v_cmd[i]);                  // for debug
         if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
         sstd::terp::var var = sstd::terp::var( v_dst[v_dst.size()-1] );
         if(v_hsc_lx.size()==0){ sstd::pdbg_err("v_hsc_lx is out of range\n"); return false; }
@@ -486,6 +487,11 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
                 v_hsc_hx.pop_back();
                 --i;
                 continue;
+            }else if(v_cmd[i].verb=='x'){
+                v_dst.pop_back();
+                v_hsc_hx.pop_back();
+                --i;
+                continue;
             }
         } break;
         case sstd::num_null: {} break;
@@ -519,6 +525,9 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
         } break;
         default: { sstd::pdbg_err("ERROR\n"); } break;
         }
+
+        //sstd::printn(var); // for debug
+        //sstd::printn(ret_yml); // for debug
     }
 
     return true;
