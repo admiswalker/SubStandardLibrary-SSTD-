@@ -133,4 +133,28 @@ TEST(memory_terp_print, hash_list_hash){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+TEST(memory_terp_print, for_printn){
+    sstd::terp::var a;
+    a = "string";
+    
+    testing::internal::CaptureStdout();
+    sstd::for_printn(a); // TEST THIS LINE
+    std::string ret = testing::internal::GetCapturedStdout().c_str();
+    ASSERT_STREQ(ret.c_str(), " = \"string\"\n");
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+TEST(memory_terp_print, printn_for_vT){
+    sstd::terp::var a;
+    a = "string";
+    
+    testing::internal::CaptureStdout();
+    sstd::print_for_vT(a); // TEST THIS LINE
+    std::string ret = testing::internal::GetCapturedStdout().c_str();
+    ASSERT_STREQ(ret.c_str(), "\"string\"");
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
 EXECUTE_TESTS();
