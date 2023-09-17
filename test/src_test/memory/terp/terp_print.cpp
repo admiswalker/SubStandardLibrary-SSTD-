@@ -132,6 +132,7 @@ TEST(memory_terp_print, hash_list_hash){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// for_printn
 
 TEST(memory_terp_print, for_printn){
     sstd::terp::var a;
@@ -144,8 +145,9 @@ TEST(memory_terp_print, for_printn){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// print_for_vT
 
-TEST(memory_terp_print, printn_for_vT){
+TEST(memory_terp_print, print_for_vT){
     sstd::terp::var a;
     a = "string";
     
@@ -153,6 +155,17 @@ TEST(memory_terp_print, printn_for_vT){
     sstd::print_for_vT(a); // TEST THIS LINE
     std::string ret = testing::internal::GetCapturedStdout().c_str();
     ASSERT_STREQ(ret.c_str(), "\"string\"");
+}
+TEST(memory_terp_print, print_for_vT_by_template){
+    std::vector<sstd::terp::var> a;
+    a.push_back("s1");
+    a.push_back("s2");
+    a.push_back("s3");
+    
+    testing::internal::CaptureStdout();
+    sstd::print_for_vT(a); // TEST THIS LINE
+    std::string ret = testing::internal::GetCapturedStdout().c_str();
+    ASSERT_STREQ(ret.c_str(), "[\"s1\" \"s2\" \"s3\"]");
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

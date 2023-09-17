@@ -6,5 +6,3 @@ namespace sstd{
     void for_printn(const sstd::terp::var& rhs);
     void print_for_vT(const sstd::terp::var& rhs);
 }
-
-

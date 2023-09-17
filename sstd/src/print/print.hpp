@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include "../definitions/typeDef.h"
 #include "../file/glob.hpp"
+#include "../memory/terp/print.hpp"
 
 
 namespace sstd{

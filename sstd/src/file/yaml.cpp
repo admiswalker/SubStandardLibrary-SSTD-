@@ -8,6 +8,8 @@
 #include "../definitions/typeDef.h"
 #include "../string/strEdit.hpp"
 #include "../string/strmatch.hpp"
+//#include "../print/print.hpp" // for debug
+
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Abbreviations
@@ -217,7 +219,7 @@ bool _get_value(bool& ret_val1_use_quotes, bool& ret_val2_use_quotes, std::strin
         std::vector<std::string> v; if(!sstd::split_quotes(v, s, ':')){ sstd::pdbg_err("single quatation or double quatation is not closed\n"); return false; }
         if(v.size()>=1){ ret_val1 = _extract_quotes_value(sstd::strip_quotes(sq, dq, _rm_hyphen(v[0]))); ret_val1_use_quotes = ( sq || dq ); }
         if(v.size()>=2){ ret_val2 = _extract_quotes_value(sstd::strip_quotes(sq, dq,            v[1] )); ret_val2_use_quotes = ( sq || dq ); }
-        if(v.size()>=3){ sstd::printn(v); sstd::pdbg("Unexptected split by ':'."); return false; }
+        if(v.size()>=3){ sstd::pdbg("Unexptected split by ':'."); return false; }
     } break;
     default: { sstd::pdbg_err("Unexpected typeNum\n"); return false; } break;
     }
