@@ -671,5 +671,67 @@ TEST(memory_terp, var_ope_subscript_insert_number_to_hash_type){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// type check
+
+// isHash()
+TEST(memory_terp, isHash_true01){
+    sstd::terp::var a;
+    a = sstd::terp::hash();
+    ASSERT_TRUE(sstd::terp::isHash(a));
+}
+TEST(memory_terp, isHash_true02){
+    sstd::terp::var a;
+    a = sstd::terp::hash();
+    a["k1"] = "v1";
+    ASSERT_TRUE(sstd::terp::isHash(a));
+}
+TEST(memory_terp, isHash_true03){
+    sstd::terp::var a;
+    a = sstd::terp::hash();
+    a["k1"] = sstd::terp::list();
+    ASSERT_TRUE(sstd::terp::isHash(a));
+}
+TEST(memory_terp, isHash_false){
+    sstd::terp::var a;
+    a = sstd::terp::list();
+    ASSERT_TRUE(!sstd::terp::isHash(a));
+}
+
+// isList()
+TEST(memory_terp, isList_true){
+    sstd::terp::var a;
+    a = sstd::terp::list();
+    ASSERT_TRUE(sstd::terp::isList(a));
+}
+TEST(memory_terp, isList_false){
+    sstd::terp::var a;
+    a = sstd::terp::hash();
+    ASSERT_TRUE(!sstd::terp::isList(a));
+}
+
+// isNull()
+TEST(memory_terp, isNull_true){
+    sstd::terp::var a;
+    ASSERT_TRUE(sstd::terp::isNull(a));
+}
+TEST(memory_terp, isNull_false){
+    sstd::terp::var a;
+    a = sstd::terp::hash();
+    ASSERT_TRUE(!sstd::terp::isNull(a));
+}
+
+// isValue()
+TEST(memory_terp, isValue_true){
+    sstd::terp::var a;
+    a = "str";
+    ASSERT_TRUE(sstd::terp::isValue(a));
+}
+TEST(memory_terp, isValue_false){
+    sstd::terp::var a;
+    a = sstd::terp::hash();
+    ASSERT_TRUE(!sstd::terp::isValue(a));
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 EXECUTE_TESTS();

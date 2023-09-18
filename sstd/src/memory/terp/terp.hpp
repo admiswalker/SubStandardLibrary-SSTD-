@@ -18,13 +18,19 @@ namespace sstd::terp{
     // iterator
     class iterator;
 
+    // hash
+    var hash(uint allocate_size);
+    var hash();
+
     // list
     var list(uint allocate_size);
     var list();
 
-    // hash
-    var hash(uint allocate_size);
-    var hash();
+    // type check
+    bool isHash (const sstd::terp::var& rhs);
+    bool isList (const sstd::terp::var& rhs);
+    bool isNull (const sstd::terp::var& rhs);
+    bool isValue(const sstd::terp::var& rhs);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -137,65 +143,30 @@ public:
     ~var();
     
     //---
+    // internal
+    
+    sstd::void_ptr* p() const;
+    
+    //---
+    // common
     
     var operator=(const char* rhs);
     var operator=(const sstd::terp::var& rhs);
 
-    //---
-    
     bool operator==(const sstd::terp::var& rhs);
     bool operator!=(const sstd::terp::var& rhs);
-
-    //---
 
           var operator[](const int idx);
     const var operator[](const int idx) const;
           var operator[](const char* pKey);
     const var operator[](const char* pKey) const;
     
-    //---
-    
     sstd::terp::iterator begin() const;
     sstd::terp::iterator end  () const;
     
-    //---
-    
-    uint bucket_count();
-
-    //---
-    
-    sstd::terp::iterator erase(const sstd::terp::iterator& rhs);
-    uint erase(const char* pKey);
-    
-    //---
-    
-    sstd::terp::iterator find(const char* pKey) const;
-    
-    //---
-    
-    sstd::void_ptr* p() const;
-    
-    //---
-
-    void pop_back();
-
-    //---
-
-    void push_back(const char* pRhs);
-    void push_back(const sstd::terp::var& rhs);
-    
-    //---
-    
-    void resize(uint len);
-    
-    //---
-
     uint size() const;
 
-    //---
-    
 //    void _to(std::string& dst, const sstd::void_ptr& src) const { dst = (*(std::string*)_p->ptr()); }
-
     template <typename T>
     const T to() const {
         T ret = T();
@@ -203,12 +174,28 @@ public:
         return ret;
     }
     
-    //---
-
     uint typeNum() const;
     std::string typeStr() const;
-
+    
     //---
+    // for hash type
+    
+    uint bucket_count();
+    
+    sstd::terp::iterator erase(const sstd::terp::iterator& rhs);
+    uint erase(const char* pKey);
+    
+    sstd::terp::iterator find(const char* pKey) const;
+    
+    //---
+    // for list type
+
+    void pop_back();
+
+    void push_back(const char* pRhs);
+    void push_back(const sstd::terp::var& rhs);
+    
+    void resize(uint len);
 };
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

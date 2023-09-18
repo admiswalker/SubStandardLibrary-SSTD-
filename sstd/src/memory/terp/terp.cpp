@@ -347,6 +347,16 @@ std::string sstd::terp::var::typeStr() const {
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// sstd::terp::hash
+
+sstd::terp::var sstd::terp::hash(uint allocate_size){
+    sstd::terp::var r;
+    r.p()->overwrite(new std::unordered_map<std::string, sstd::void_ptr>(allocate_size));
+    return r;
+}
+sstd::terp::var sstd::terp::hash(){ return sstd::terp::hash(0); }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 // sstd::terp::list
 
 sstd::terp::var sstd::terp::list(uint allocate_size){
@@ -357,13 +367,19 @@ sstd::terp::var sstd::terp::list(uint allocate_size){
 sstd::terp::var sstd::terp::list(){ return sstd::terp::list(0); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-// sstd::terp::hash
+// type check
 
-sstd::terp::var sstd::terp::hash(uint allocate_size){
-    sstd::terp::var r;
-    r.p()->overwrite(new std::unordered_map<std::string, sstd::void_ptr>(allocate_size));
-    return r;
+bool sstd::terp::isHash (const sstd::terp::var& rhs){
+    return ( rhs.typeNum()==sstd::num_hash_str_void_ptr || rhs.typeNum()==sstd::num_hash_void_ptr_void_ptr );
 }
-sstd::terp::var sstd::terp::hash(){ return sstd::terp::hash(0); }
+bool sstd::terp::isList (const sstd::terp::var& rhs){
+    return rhs.typeNum()==sstd::num_vec_void_ptr;
+}
+bool sstd::terp::isNull (const sstd::terp::var& rhs){
+    return rhs.typeNum()==sstd::num_null;
+}
+bool sstd::terp::isValue(const sstd::terp::var& rhs){
+    return rhs.typeNum()==sstd::num_str;
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
