@@ -293,6 +293,26 @@ TEST(strEdit, split_quotes_vs_c_x__case_false_dq_02){ TEST_SPLIT_QUOTES_VS_CS_X(
 
 #undef TEST_SPLIT_QUOTES_VS_CS_X
 
+//---
+
+#define TEST_SPLIT_QUOTES_VS_CS_XCS(RESULT, X_IN, S_IN, ...)            \
+    bool ret_tf;                                                        \
+    std::vector<std::string> ret_v;                                     \
+    ret_tf = sstd::split_quotes(ret_v, S_IN, X_IN); /* TEST THIS LINE */ \
+    /* sstd::printn(ret_v); */                                          \
+                                                                        \
+    ASSERT_TRUE(ret_tf == RESULT);                                      \
+    ASSERT_TRUE(ret_v == std::vector<std::string>({__VA_ARGS__}) );
+
+TEST(strEdit, split_quotes_vs_c_s_xc){ std::vector<std::string> ret_v; sstd::split_quotes(ret_v, "", ""); }
+TEST(strEdit, split_quotes_vs_c_s_xs){ std::vector<std::string> ret_v; sstd::split_quotes(ret_v, "", ""); }
+TEST(strEdit, split_quotes_vs_c_s_xcs_00){ TEST_SPLIT_QUOTES_VS_CS_XCS(true, " ", "a  b  c d", "a", "", "b", "", "c", "d"); }
+TEST(strEdit, split_quotes_vs_c_s_xcs_01){ TEST_SPLIT_QUOTES_VS_CS_XCS(true, ": ", "k:1:2: v:1:2:", "k:1:2", "v:1:2:"); }
+TEST(strEdit, split_quotes_vs_c_s_xcs_02){ TEST_SPLIT_QUOTES_VS_CS_XCS(true, ": ", ": k:1:2: v:1:2: ", "", "k:1:2", "v:1:2", ""); }
+TEST(strEdit, split_quotes_vs_c_s_xcs_03){ TEST_SPLIT_QUOTES_VS_CS_XCS(true, ": ", ": : k:1:2: v:1:2: : ", "", "", "k:1:2", "v:1:2", "", ""); }
+
+#undef TEST_SPLIT_QUOTES_VS_CS_XCS
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 TEST(strEdit, lstrip){

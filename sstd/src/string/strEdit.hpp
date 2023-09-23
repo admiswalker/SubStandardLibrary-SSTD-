@@ -32,6 +32,8 @@ namespace sstd{
     bool split_quotes(std::vector<std::string>& ret, const std::string& str);
     bool split_quotes(std::vector<std::string>& ret, const        char* str, const char X);
     bool split_quotes(std::vector<std::string>& ret, const std::string& str, const char X);
+    bool split_quotes(std::vector<std::string>& ret, const        char* str, const char*        X);
+    bool split_quotes(std::vector<std::string>& ret, const std::string& str, const std::string& X);
 
     //---
     

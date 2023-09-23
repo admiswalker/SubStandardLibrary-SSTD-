@@ -1,4 +1,6 @@
 ﻿#include "strEdit.hpp"
+
+#include "strmatch.hpp"
 #include "../file/file.hpp"
 #include "../print/pdbg.hpp"
 #include <string.h>
@@ -209,17 +211,55 @@ bool sstd::split_quotes(std::vector<std::string>& ret, const char* str, const ch
     bool in_s_quate=false; // single quate
     std::string buf;
     uint i=0;
-//    while(str[i]!='\0'){ if(str[i]==' '){++i;}else{break;} } // skip space
+    // while(str[i]!='\0'){ if(str[i]==' '){++i;}else{break;} } // skip space
     while(str[i]!='\0'){ // r: read place
         if(str[i]=='\\'){ is_escaped=true; buf+=str[i]; ++i; if(str[i]=='\0'){break;} }
+
+        if(!is_escaped && !in_s_quate && str[i]=='"' ){ in_d_quate = !in_d_quate; }
+        if(!is_escaped && !in_d_quate && str[i]=='\''){ in_s_quate = !in_s_quate; }
+
+        if(!in_d_quate && !in_s_quate && str[i]==X){
+            ret.push_back(buf); buf.clear();
+            ++i;
+            // while(str[i]!='\0'){ if(str[i]==' '){++i;}else{break;} } // skip space
+        }else{
+            buf += str[i];
+            ++i;
+        }
+
+        is_escaped=false;
+    }
+    if(in_d_quate){ ret.clear(); return false; }
+    if(in_s_quate){ ret.clear(); return false; }
+    if(buf.size()!=0){ ret.push_back(buf); }
+    // if(i==0 || (i>=1 && str[i-1]==X)){ ret.push_back(std::string()); } // compatible with Python split()
+    if(i>=1 && str[i-1]==X){ ret.push_back(std::string()); }
+
+    return true;
+}
+bool sstd::split_quotes(std::vector<std::string>& ret, const std::string& str, const char X){
+    return sstd::split_quotes(ret, str.c_str(), X);
+}
+
+//---
+
+bool _split_quotes_base(std::vector<std::string>& ret, const char* str, const uint str_len, const char* X, const uint X_len){
+    bool is_escaped=false;
+    bool in_d_quate=false; // double quate
+    bool in_s_quate=false; // single quate
+    std::string buf;
+    uint i=0;
+    // while(str[i]!='\0'){ if(str[i]==' '){++i;}else{break;} } // skip space
+    while(i<str_len){ // r: read place
+        if(str[i]=='\\'){ is_escaped=true; buf+=str[i]; ++i; if(i>=str_len){break;} }
         
         if(!is_escaped && !in_s_quate && str[i]=='"' ){ in_d_quate = !in_d_quate; }
         if(!is_escaped && !in_d_quate && str[i]=='\''){ in_s_quate = !in_s_quate; }
         
-        if(!in_d_quate && !in_s_quate && str[i]==X){
+        if(!in_d_quate && !in_s_quate && sstd::startswith(&str[i], X)){
             ret.push_back(buf); buf.clear();
-            ++i;
-//            while(str[i]!='\0'){ if(str[i]==' '){++i;}else{break;} } // skip space
+            i += X_len;
+            // while(str[i]!='\0'){ if(str[i]==' '){++i;}else{break;} } // skip space
         }else{
             buf += str[i];
             ++i;
@@ -230,13 +270,16 @@ bool sstd::split_quotes(std::vector<std::string>& ret, const char* str, const ch
     if(in_d_quate){ ret.clear(); return false; }
     if(in_s_quate){ ret.clear(); return false; }
     if(buf.size()!=0){ ret.push_back(buf); }
-//    if(i==0 || (i>=1 && str[i-1]==X)){ ret.push_back(std::string()); } // compatible with Python split()
-    if(i>=1 && str[i-1]==X){ ret.push_back(std::string()); }
+    // if(i==0 || (i>=X_len && sstd::startswith(&str[i-X_len], X))){ ret.push_back(std::string()); } // compatible with Python split()
+    if(i>=X_len && sstd::startswith(&str[i-X_len], X)){ ret.push_back(std::string()); }
     
     return true;
 }
-bool sstd::split_quotes(std::vector<std::string>& ret, const std::string& str, const char X){
-    return sstd::split_quotes(ret, str.c_str(), X);
+bool sstd::split_quotes(std::vector<std::string>& ret, const        char* str, const char*        X){
+    return _split_quotes_base(ret, str, strlen(str), X, strlen(X));
+}
+bool sstd::split_quotes(std::vector<std::string>& ret, const std::string& str, const std::string& X){
+    return _split_quotes_base(ret, str.c_str(), str.size(), X.c_str(), X.size());
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
