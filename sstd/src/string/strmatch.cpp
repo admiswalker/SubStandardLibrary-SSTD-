@@ -214,17 +214,14 @@ bool sstd::charIn_all(const std::string& lhs, const std::string& rhs){ return ss
 // strIn()
 
 bool sstd::strIn(const char* lhs, const char* rhs){ // Is lhs in rhs ?
+    if(lhs[0]=='\0'){ return true; }
+    
     bool ret=true;
     uint l=0, r=0;
-    for(;;){
-        if(lhs[l]=='\0'){ return ret;   }
-        if(rhs[r]=='\0'){ return false; }
-        
-        if(lhs[l]==rhs[r]){ ++l; ret=true;
-        }       else      { l=0; ret=false; }
-        
-        ++r;
+    for(; rhs[r]!='\0'; ++r){
+        if(sstd::startswith(&rhs[r], lhs)){ return true; }
     }
+    return false;
 }
 bool sstd::strIn(const char*        lhs, const std::string& rhs){ return sstd::strIn(lhs        , rhs.c_str()); }
 bool sstd::strIn(const std::string& lhs, const char*        rhs){ return sstd::strIn(lhs.c_str(), rhs        ); }

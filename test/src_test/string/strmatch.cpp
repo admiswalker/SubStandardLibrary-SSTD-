@@ -328,6 +328,9 @@ TEST(strmatch, strIn){
         bool ret=sstd::strIn(lhs, rhs); ASSERT_FALSE(ret);
     }
 }
+TEST(strmatch, strIn_02){
+    ASSERT_TRUE(sstd::strIn(": ", "k:1:: v:1"));
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
