@@ -8,7 +8,7 @@
 #include "../definitions/typeDef.h"
 #include "../string/strEdit.hpp"
 #include "../string/strmatch.hpp"
-//#include "../print/print.hpp" // for debug
+#include "../print/print.hpp" // for debug
 
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -106,15 +106,23 @@ bool _is_hash(bool& ret, const std::string& s){
     ret = sstd::charIn(':', ret_s);
     return true;
 }
-void _is_list(bool& ret, uint& cnt, const std::string& s){
-    std::vector<std::string> v = sstd::split(s, ' ');
+bool _is_list(bool& ret, uint& cnt, const std::string& s){
+    std::vector<std::string> v; if(!sstd::split_quotes(v, s, ' ')){ return false; }
+    for(uint i=0; i<v.size(); ++i){
+        if(v[i].size()==1 && v[i]=="-"){ ++cnt; }
+    }
+    ret = ( cnt >= 1 );
+    return true;
+}/*
+bool _is_flow_style(bool& ret, uint& cnt, const std::string& s){ // for flow style notation
+    std::vector<std::string> v; if(!sstd::split_quotes(v, s, ' ')){ return false; }
     for(uint i=0; i<v.size(); ++i){
         if(v[i].size()==1 && v[i]=="-"){ ++cnt; }
     }
     ret = ( cnt >= 1 );
     return;
 }
-
+ */
 //---
 
 uint _head_space_or_hyphen_count(const std::string& s){
@@ -181,16 +189,16 @@ void _print(const std::vector<struct command>& v_cmd){
 
 //---
 
-void _data_type(uint& type, uint& num, std::string s){
-    bool is_l; _is_list(is_l, num, s);
-    bool is_h; _is_hash(is_h,      s);
+bool _data_type(uint& type, uint& num, std::string s){
+    bool is_h; if(!_is_hash(is_h,      s)){ return false; }
+    bool is_l; if(!_is_list(is_l, num, s)){ return false; }
     
-    if(is_l && is_h){ type = NUM_LIST_AND_HASH; return; }
-    if(is_l){ type = NUM_LIST; return; }
-    if(is_h){ type = NUM_HASH; return; }
+    if(is_h && is_l){ type = NUM_LIST_AND_HASH; return true; }
+    if(is_h){ type = NUM_HASH; return true; }
+    if(is_l){ type = NUM_LIST; return true; }
     
     type = NUM_STR;
-    return;
+    return true;
 }
 std::vector<std::string> _get_verb(std::string s){
     std::vector<std::string> v;
@@ -241,7 +249,7 @@ bool _get_multi_line_str(std::string& ret, const uint hsc_prev, const std::strin
         s = _rm_comment(s); // s = _rm_comment_quotes(s); に置き換える
         if(s=="..."){ --i; return true; } // detect end marker
         
-        uint type=NUM_NULL, type_cnt=0; _data_type(type, type_cnt, s);
+        uint type=NUM_NULL, type_cnt=0; if(!_data_type(type, type_cnt, s)){ return false; }
         if(type==NUM_STR){
             if(indent_width>=0 && s.size()>0){
                 uint hsc = _head_space_count(s);
@@ -322,7 +330,7 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
         s = _rm_comment(raw); // s = _rm_comment_quotes(s); に置き換える
         if(s.size()==0){ continue; }
         if(s=="..."){ return true; } // detect end marker
-        uint type=NUM_NULL, type_cnt=0; _data_type(type, type_cnt, s);
+        uint type=NUM_NULL, type_cnt=0; if(!_data_type(type, type_cnt, s)){ return false; }
         uint hsc_lx=0;     _hsc_lx(hsc_lx, s);
         uint hsc_hx=0; if(!_hsc_hx(hsc_hx, s)){ sstd::pdbg_err("quate is not closed\n"); return false; }
         
@@ -350,7 +358,7 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             ret_vCmd.push_back(c);
         } break;
         case NUM_LIST: {
-            for(uint ti=0; ti<type_cnt-1; ++ti){
+            for(uint ti=0; ti<type_cnt-1; ++ti){ // for multiple list. ex: "- - a".
                 c.hsc_lx         = hsc_lx + 2*ti;
                 c.hsc_hx         = hsc_hx + 2*ti;
                 c.verb           = '-';
@@ -390,7 +398,7 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             ret_vCmd.push_back(c);
         } break;
         case NUM_LIST_AND_HASH:{
-            for(uint ti=0; ti<type_cnt-1; ++ti){
+            for(uint ti=0; ti<type_cnt-1; ++ti){ // for multiple list-hash. ex: "- - k1: v1".
                 c.hsc_lx         = hsc_lx + 2*ti;
                 c.hsc_hx         = hsc_hx + 2*ti;
                 c.verb           = '-'; // x: list x(and) hash: 
@@ -541,9 +549,9 @@ bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     bool tf = true;
     
     std::vector<std::string> ls; if(! sstd::splitByLine_quotes(ls, s)){ sstd::pdbg_err("single or double quatation is not closed\n"); return false; } // v: vector, ls: line string
-    //sstd::printn(ls);
+    sstd::printn(ls);
     std::vector<struct command> v_cmd; if(!_parse_yaml(v_cmd, ls, 0)){ return false; }
-    //_print(v_cmd);
+    _print(v_cmd);
     if(!_construct_var(ret_yml, v_cmd)){ return false; }
     
     return tf;
