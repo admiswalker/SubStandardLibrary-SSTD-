@@ -2,6 +2,28 @@
 #include "../../gtest_parallel/test_main.hpp"
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// startswith()
+
+TEST(strmatch, startswith_c_c){ sstd::startswith(            "" ,             "" ); }
+TEST(strmatch, startswith_c_s){ sstd::startswith(            "" , std::string("")); }
+TEST(strmatch, startswith_s_c){ sstd::startswith(std::string(""),             "" ); }
+TEST(strmatch, startswith_s_s){ sstd::startswith(std::string(""), std::string("")); }
+
+TEST(strmatch, startswith_null){ ASSERT_TRUE(sstd::startswith("", "")); }
+TEST(strmatch, startswith_01){ ASSERT_TRUE(sstd::startswith("abc", "")); }
+TEST(strmatch, startswith_02){ ASSERT_TRUE(!sstd::startswith("abc", "b")); }
+TEST(strmatch, startswith_03){ ASSERT_TRUE(sstd::startswith("abc", "abc")); }
+TEST(strmatch, startswith_04){ ASSERT_TRUE(sstd::startswith("abcdef", "abc")); }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// strcmp()
+
+TEST(strmatch, strcmp_c_c){ sstd::strcmp(            "" ,             "" ); }
+TEST(strmatch, strcmp_c_s){ sstd::strcmp(            "" , std::string("")); }
+TEST(strmatch, strcmp_s_c){ sstd::strcmp(std::string(""),             "" ); }
+TEST(strmatch, strcmp_s_s){ sstd::strcmp(std::string(""), std::string("")); }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 // strmatch() and strmatch_getWC()
 
 TEST(strmatch, strmatch){

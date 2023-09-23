@@ -2,6 +2,11 @@
 #include <string>
 
 namespace sstd{
+    bool startswith(const        char* str, const        char* searchString);
+    bool startswith(const        char* str, const std::string& searchString);
+    bool startswith(const std::string& str, const        char* searchString);
+    bool startswith(const std::string& str, const std::string& searchString);
+    
     bool strcmp(const        char* str1, const        char* str2);
     bool strcmp(const        char* str1, const std::string& str2);
     bool strcmp(const std::string& str1, const        char* str2);
