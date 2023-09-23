@@ -88,6 +88,12 @@ std::string _rm_comment(const std::string& s){
     return sstd::rstrip(v[0]);
 }
 
+void _rm_colon(std::string& s){
+    if(s.size()>=1){
+        s.pop_back();
+    }
+    return;
+}
 std::string _rm_hyphen(std::string s){
     uint i=0;
     for(; i<s.size(); ++i){
@@ -103,19 +109,12 @@ bool _is_hash(bool& ret, const std::string& s){
     ret = false;
     std::string ret_s;
     if(!sstd::extract_unquoted(ret_s, s)){ sstd::pdbg_err("quate is not closed\n"); return false; }
-    
-    std::vector<std::string> v;// = sstd::split(s);
-    if(!sstd::split_quotes(v, s)){ sstd::pdbg_err("quate is not closed\n"); return false; }
-    //sstd::strip(v);
-    sstd::printn(v);
-    
-    ret = v.size()>=1 && v[0].size()>=1 && v[0][v[0].size()-1]==':';
-    
+    ret = sstd::strIn(": ", ret_s) || (s.size()>=1 && s[s.size()-1]==':');
     return true;
 }
 bool _is_list(bool& ret, uint& cnt, const std::string& s){
     std::vector<std::string> v;
-    if(!sstd::split_quotes(v, s, ' ')){ sstd::pdbg_err("quate is not closed\n"); return false; }
+    if(!sstd::split_quotes(v, s)){ sstd::pdbg_err("quate is not closed\n"); return false; }
     
     for(uint i=0; i<v.size(); ++i){
         if(v[i].size()==1 && v[i]=="-"){ ++cnt; }
@@ -124,7 +123,7 @@ bool _is_list(bool& ret, uint& cnt, const std::string& s){
     
     return true;
 }
-bool _is_flow(bool& ret, const std::string& s){ // for flow style notation
+bool _is_flow(bool& ret, const std::string& s, bool is_h){ // for flow style notation
     ret = false;
     std::string ret_s;
     if(!sstd::extract_unquoted(ret_s, s)){ sstd::pdbg_err("quate is not closed\n"); return false; }
@@ -209,7 +208,8 @@ void _print(const std::vector<struct command>& v_cmd){ // for debug
 bool _data_type(uint& type, uint& num, std::string s){
     bool is_h; if(!_is_hash(is_h,      s      )){ return false; }
     bool is_l; if(!_is_list(is_l, num, s      )){ return false; }
-//    bool is_f; if(!_is_flow(is_f,      s, is_h)){ return false; }
+    bool is_f; if(!_is_flow(is_f,      s, is_h)){ return false; }
+    sstd::printn(is_f);
     
     if(is_h && is_l){ type = NUM_LIST_AND_HASH; return true; }
     if(is_h){ type = NUM_HASH; return true; }
@@ -218,11 +218,15 @@ bool _data_type(uint& type, uint& num, std::string s){
     type = NUM_STR;
     return true;
 }
-std::vector<std::string> _get_verb(std::string s){
+std::vector<std::string> _get_verb(const std::string& s){
     std::vector<std::string> v;
     if(sstd::charIn('-', s)){ v.push_back("-"); }
     if(sstd::charIn(':', s)){ v.push_back(":"); }
     return v;
+}
+bool _split_hash(std::vector<std::string>& ret_v, std::string s){
+    if(s.size()>=1 && s[s.size()-1]==':'){ s.pop_back(); ret_v.push_back(s); return true; }
+    return sstd::split_quotes(ret_v, s, ": ");
 }
 bool _get_value(bool& ret_val1_use_quotes, bool& ret_val2_use_quotes, std::string& ret_val1, std::string& ret_val2, std::string s, uint typeNum){
     ret_val1_use_quotes=false;
@@ -242,7 +246,9 @@ bool _get_value(bool& ret_val1_use_quotes, bool& ret_val2_use_quotes, std::strin
     } break;
     case NUM_HASH:
     case NUM_LIST_AND_HASH: {
-        std::vector<std::string> v; if(!sstd::split_quotes(v, s, ':')){ sstd::pdbg_err("single quatation or double quatation is not closed\n"); return false; }
+        std::vector<std::string> v;
+        if(!_split_hash(v, s)){ sstd::pdbg_err("single quatation or double quatation is not closed\n"); return false; }
+        //if(v.size()==0){ sstd::pdbg_err("Unexpected data size.\n"); return false; }
         if(v.size()>=1){ ret_val1 = _extract_quotes_value(sstd::strip_quotes(sq, dq, _rm_hyphen(v[0]))); ret_val1_use_quotes = ( sq || dq ); }
         if(v.size()>=2){ ret_val2 = _extract_quotes_value(sstd::strip_quotes(sq, dq,            v[1] )); ret_val2_use_quotes = ( sq || dq ); }
         if(v.size()>=3){ sstd::pdbg("Unexptected split by ':'."); return false; }
@@ -567,9 +573,9 @@ bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     bool tf = true;
     
     std::vector<std::string> ls; if(! sstd::splitByLine_quotes(ls, s)){ sstd::pdbg_err("single or double quatation is not closed\n"); return false; } // v: vector, ls: line string
-    sstd::printn(ls);
+    //sstd::printn(ls);
     std::vector<struct command> v_cmd; if(!_parse_yaml(v_cmd, ls, 0)){ return false; }
-    _print(v_cmd);
+    //_print(v_cmd);
     if(!_construct_var(ret_yml, v_cmd)){ return false; }
     
     return tf;

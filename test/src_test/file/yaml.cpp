@@ -97,6 +97,46 @@ TEST(yaml, list_depth2){
 //---
 // Corner case(s)
 
+TEST(yaml, list_colon){
+    std::string s=R"(
+- a:a
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = "a:a";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, list_flow_style_brackets){
+    std::string s=R"(
+- a[] # OK
+- a{} # OK
+#- []a # NG
+#- {}a # NG
+#- ][a # NG
+#- }{a # NG
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(2);
+    ans[0] = "a[]";
+    ans[1] = "a{}";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // hash
@@ -158,8 +198,9 @@ TEST(yaml, hash_null){
     std::string s=R"(
 k1:
 )";
-    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+    sstd::terp::var yml; bool ret_tf = sstd::yaml_load(yml, s); // TEST THIS LINE
+    //sstd::printn(yml);
+    ASSERT_TRUE(ret_tf);
 
     //---
     
@@ -171,12 +212,13 @@ k1:
     
     ASSERT_TRUE(yml==ans);
 }
-TEST(yaml, hash_with_colon){
+TEST(yaml, hash_with_colon_01){
     std::string s=R"(
 k:1: v:1
 )";
-    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+    sstd::terp::var yml; bool ret_tf = sstd::yaml_load(yml, s); // TEST THIS LINE
+    //sstd::printn(yml);
+    ASSERT_TRUE(ret_tf);
 
     //---
     
@@ -188,7 +230,83 @@ k:1: v:1
     
     ASSERT_TRUE(yml==ans);
 }
-/*
+TEST(yaml, hash_with_colon_02){
+    std::string s=R"(
+k:1:: v:1
+)";
+    sstd::terp::var yml; bool ret_tf = sstd::yaml_load(yml, s); // TEST THIS LINE
+    //sstd::printn(yml);
+    ASSERT_TRUE(ret_tf);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["k:1:"] = "v:1";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, hash_with_colon_03){
+    std::string s=R"(
+k:1::: v:1
+)";
+    sstd::terp::var yml; bool ret_tf = sstd::yaml_load(yml, s); // TEST THIS LINE
+    //sstd::printn(yml);
+    ASSERT_TRUE(ret_tf);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["k:1::"] = "v:1";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, hash_with_colon_04){
+    std::string s=R"(
+k:1: a":":a
+)";
+    sstd::terp::var yml; bool ret_tf = sstd::yaml_load(yml, s); // TEST THIS LINE
+    //sstd::printn(yml);
+    ASSERT_TRUE(ret_tf);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["k:1"] = "a\":\":a";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, hash_flow_style_brackets){
+    std::string s=R"(
+k[]{}: v[]{} # OK
+#[]k: []v # NG
+#][k: ][v # NG
+#{}k: {}v # NG
+#}{k: }{v # NG
+)";
+    sstd::terp::var yml; bool ret_tf = sstd::yaml_load(yml, s); // TEST THIS LINE
+    //sstd::printn(yml);
+    ASSERT_TRUE(ret_tf);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["k[]{}"] = "v[]{}";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // list and hash
 
@@ -196,8 +314,9 @@ TEST(yaml, list_and_hash__NUM_LIST_AND_HASH){
     std::string s=R"(
 - k1: v1
 )";
-    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::terp::var yml; bool ret_tf = sstd::yaml_load(yml, s); // TEST THIS LINE
     //sstd::printn(yml);
+    ASSERT_TRUE(ret_tf);
 
     //---
     
@@ -206,6 +325,55 @@ TEST(yaml, list_and_hash__NUM_LIST_AND_HASH){
     ans[0] = sstd::terp::hash();
     ans[0]["k1"] = "v1";
     //sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+
+//---
+// Corner case(s)
+
+TEST(yaml, list_and_hash__colon){
+    std::string s=R"(
+- k:1::: a":":a
+)";
+    sstd::terp::var yml; bool ret_tf = sstd::yaml_load(yml, s); // TEST THIS LINE
+    //sstd::printn(yml);
+    ASSERT_TRUE(ret_tf);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = sstd::terp::hash();
+    ans[0]["k:1::"] = "a\":\":a";
+    //sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, list_and_hash_flow_style_brackets){
+    std::string s=R"(
+- a[]: a[] # OK
+- a{}: a{} # OK
+#- []a: []a # NG (Invalid)
+#- ][a: ][a # NG (Invalid)
+#- {}a: {}a # NG (Invalid)
+#- }{a: }{a # NG (Invalid)
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(2);
+    ans[0] = sstd::terp::hash();
+    ans[0]["a[]"] = "a[]";
+    ans[1] = sstd::terp::hash();
+    ans[1]["a{}"] = "a{}";
     
     //---
     
@@ -2166,7 +2334,8 @@ TEST(yaml, flow_style_notation_list_hash){
     ASSERT_TRUE(vYml[0]==ans1);
     ASSERT_TRUE(vYml[1]==ans2);
 }
-*//*
+//*/
+/*
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // End marker ...
 
