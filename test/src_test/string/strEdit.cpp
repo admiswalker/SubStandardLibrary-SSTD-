@@ -44,8 +44,8 @@ CD"
 )";
     std::vector<std::string> ans_vs = {"AB\nCD", "ghi"};
     bool ret_tf = sstd::extract_quoted(ret_vs, s); // TEST THIS LINE
-    sstd::printn(ret_tf);
-    sstd::printn(ret_vs);
+    //sstd::printn(ret_tf);
+    //sstd::printn(ret_vs);
 
     ASSERT_TRUE( ret_tf );
     ASSERT_TRUE( ret_vs == ans_vs );
@@ -63,8 +63,8 @@ CD\"
 )";
     std::vector<std::string> ans_vs;
     bool ret_tf = sstd::extract_quoted(ret_vs, s); // TEST THIS LINE
-    sstd::printn(ret_tf);
-    sstd::printn(ret_vs);
+    //sstd::printn(ret_tf);
+    //sstd::printn(ret_vs);
 
     ASSERT_TRUE( ret_tf );
     ASSERT_TRUE( ret_vs == ans_vs );
@@ -74,8 +74,8 @@ TEST(strEdit, extract_quoted__false_unclosed_double_quate){
     std::string s = R"( "ABCD )";
     std::vector<std::string> ans_vs;
     bool ret_tf = sstd::extract_quoted(ret_vs, s); // TEST THIS LINE
-    sstd::printn(ret_tf);
-    sstd::printn(ret_vs);
+    //sstd::printn(ret_tf);
+    //sstd::printn(ret_vs);
 
     ASSERT_FALSE( ret_tf );
 }
@@ -84,8 +84,8 @@ TEST(strEdit, extract_quoted__false_unclosed_single_quate){
     std::string s = R"( 'ABCD )";
     std::vector<std::string> ans_vs;
     bool ret_tf = sstd::extract_quoted(ret_vs, s); // TEST THIS LINE
-    sstd::printn(ret_tf);
-    sstd::printn(ret_vs);
+    //sstd::printn(ret_tf);
+    //sstd::printn(ret_vs);
 
     ASSERT_FALSE( ret_tf );
 }
