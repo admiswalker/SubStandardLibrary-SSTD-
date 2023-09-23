@@ -97,6 +97,23 @@ TEST(yaml, list_depth2){
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // hash
 
+TEST(yaml, hash_depth1_null){
+    std::string s=R"(
+k1: 
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["k1"];
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
 TEST(yaml, hash_depth1){
     std::string s=R"(
 k1: v1 # comment
@@ -1577,7 +1594,7 @@ TEST(yaml, double_quotation_list_case04){
     
     ASSERT_TRUE(yml==ans);
 }
-/*
+
 //---
 // NULL case
 

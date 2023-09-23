@@ -107,22 +107,29 @@ bool _is_hash(bool& ret, const std::string& s){
     return true;
 }
 bool _is_list(bool& ret, uint& cnt, const std::string& s){
-    std::vector<std::string> v; if(!sstd::split_quotes(v, s, ' ')){ return false; }
+    std::vector<std::string> v; if(!sstd::split_quotes(v, s, ' ')){ sstd::pdbg_err("quate is not closed\n"); return false; }
     for(uint i=0; i<v.size(); ++i){
         if(v[i].size()==1 && v[i]=="-"){ ++cnt; }
     }
     ret = ( cnt >= 1 );
     return true;
-}/*
-bool _is_flow_style(bool& ret, uint& cnt, const std::string& s){ // for flow style notation
-    std::vector<std::string> v; if(!sstd::split_quotes(v, s, ' ')){ return false; }
-    for(uint i=0; i<v.size(); ++i){
-        if(v[i].size()==1 && v[i]=="-"){ ++cnt; }
-    }
-    ret = ( cnt >= 1 );
-    return;
 }
- */
+bool _is_flow(bool& ret, const std::string& s){ // for flow style notation
+    ret = false;
+    std::string ret_s;
+    if(!sstd::extract_unquoted(ret_s, s)){ sstd::pdbg_err("quate is not closed\n"); return false; }
+    for(uint i=0; i<ret_s.size(); ++i){
+        if(ret_s[i]==' ' || ret_s[i]=='-' || ret_s[i]==' '){ continue; }
+        
+        if(ret_s[i]=='{' || ret_s[i]=='['){
+            ret=true; return true;
+        }else{
+            return true;
+        }
+    }
+    return true;
+}
+
 //---
 
 uint _head_space_or_hyphen_count(const std::string& s){
@@ -169,7 +176,7 @@ struct command{
     uint lineNum;
     std::string rawStr;
 };
-void _print(const struct command& cmd){
+void _print(const struct command& cmd){ // for debug
     printf("hsc_lx: %d\n",  cmd.hsc_lx        );
     printf("hsc_hx: %d\n",  cmd.hsc_hx        );
     printf("verb: %c\n",    cmd.verb          );
@@ -181,7 +188,7 @@ void _print(const struct command& cmd){
     printf("rawStr: %s\n",  cmd.rawStr.c_str());
     printf("\n");
 }
-void _print(const std::vector<struct command>& v_cmd){
+void _print(const std::vector<struct command>& v_cmd){ // for debug
     for(uint i=0; i<v_cmd.size(); ++i){
         _print(v_cmd[i]);
     }
@@ -192,6 +199,7 @@ void _print(const std::vector<struct command>& v_cmd){
 bool _data_type(uint& type, uint& num, std::string s){
     bool is_h; if(!_is_hash(is_h,      s)){ return false; }
     bool is_l; if(!_is_list(is_l, num, s)){ return false; }
+    bool is_f; if(!_is_flow(is_f,      s)){ return false; }
     
     if(is_h && is_l){ type = NUM_LIST_AND_HASH; return true; }
     if(is_h){ type = NUM_HASH; return true; }
