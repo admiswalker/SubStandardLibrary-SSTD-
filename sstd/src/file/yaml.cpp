@@ -103,15 +103,25 @@ bool _is_hash(bool& ret, const std::string& s){
     ret = false;
     std::string ret_s;
     if(!sstd::extract_unquoted(ret_s, s)){ sstd::pdbg_err("quate is not closed\n"); return false; }
-    ret = sstd::charIn(':', ret_s);
+    
+    std::vector<std::string> v;// = sstd::split(s);
+    if(!sstd::split_quotes(v, s)){ sstd::pdbg_err("quate is not closed\n"); return false; }
+    //sstd::strip(v);
+    sstd::printn(v);
+    
+    ret = v.size()>=1 && v[0].size()>=1 && v[0][v[0].size()-1]==':';
+    
     return true;
 }
 bool _is_list(bool& ret, uint& cnt, const std::string& s){
-    std::vector<std::string> v; if(!sstd::split_quotes(v, s, ' ')){ sstd::pdbg_err("quate is not closed\n"); return false; }
+    std::vector<std::string> v;
+    if(!sstd::split_quotes(v, s, ' ')){ sstd::pdbg_err("quate is not closed\n"); return false; }
+    
     for(uint i=0; i<v.size(); ++i){
         if(v[i].size()==1 && v[i]=="-"){ ++cnt; }
     }
     ret = ( cnt >= 1 );
+    
     return true;
 }
 bool _is_flow(bool& ret, const std::string& s){ // for flow style notation
@@ -197,9 +207,9 @@ void _print(const std::vector<struct command>& v_cmd){ // for debug
 //---
 
 bool _data_type(uint& type, uint& num, std::string s){
-    bool is_h; if(!_is_hash(is_h,      s)){ return false; }
-    bool is_l; if(!_is_list(is_l, num, s)){ return false; }
-    bool is_f; if(!_is_flow(is_f,      s)){ return false; }
+    bool is_h; if(!_is_hash(is_h,      s      )){ return false; }
+    bool is_l; if(!_is_list(is_l, num, s      )){ return false; }
+//    bool is_f; if(!_is_flow(is_f,      s, is_h)){ return false; }
     
     if(is_h && is_l){ type = NUM_LIST_AND_HASH; return true; }
     if(is_h){ type = NUM_HASH; return true; }

@@ -28,6 +28,8 @@ namespace sstd{
     std::vector<std::string> split_rmSpace(const char*        str, const char X); // rm: remove
     std::vector<std::string> split_rmSpace(const std::string& str, const char X); // rm: remove
 
+    bool split_quotes(std::vector<std::string>& ret, const        char* str);
+    bool split_quotes(std::vector<std::string>& ret, const std::string& str);
     bool split_quotes(std::vector<std::string>& ret, const        char* str, const char X);
     bool split_quotes(std::vector<std::string>& ret, const std::string& str, const char X);
 

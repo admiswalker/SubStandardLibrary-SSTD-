@@ -114,7 +114,7 @@ std::vector<std::string> _asAX_rmSpace(const char* str, const char X){
     
     std::string buf;
     uint i=0;
-    while(str[i]!='\0'){ if(' '==str[i]){++i;}else{break;} } // skip space
+    while(str[i]!='\0'){ if(str[i]==' '){++i;}else{break;} } // skip space
     while(str[i]!='\0'){
         if(X==str[i]){
             sstd::rstrip_ow(buf); splitList.push_back(buf); buf.clear();
@@ -126,6 +126,7 @@ std::vector<std::string> _asAX_rmSpace(const char* str, const char X){
         }
     }
     if(buf.size()!=0){ sstd::rstrip_ow(buf); splitList.push_back(buf); }
+//    if(i>=1 && str[i-1]==X){ splitList.push_back(std::string()); }
     return splitList;
 }
 std::vector<std::string> _asAX(const char* str, const char X){
@@ -147,6 +148,7 @@ std::vector<std::string> _asAX(const char* str, const char X){
     }
 //    if(buf.size()!=0){ sstd::rstrip_ow(buf); splitList.push_back(buf); }
     if(buf.size()!=0){ splitList.push_back(buf); }
+    if(i>=1 && str[i-1]==X){ splitList.push_back(std::string()); }
     return splitList;
 }
 std::vector<std::string> sstd::split(const        char* str              ){ return _asAX_rmSpace(str,         ' '); }
@@ -163,29 +165,73 @@ std::vector<std::string> sstd::split_rmSpace(const std::string& str, const char 
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-bool sstd::split_quotes(std::vector<std::string>& ret, const char* str, const char X){
-    
+bool sstd::split_quotes(std::vector<std::string>& ret, const        char* str){
     bool is_escaped=false;
     bool in_d_quate=false; // double quate
     bool in_s_quate=false; // single quate
     std::string buf;
-    for(uint r=0; str[r]!='\0';){ // r: read place
-        buf.clear();
-        for(; str[r]!='\0'; ++r){
-            if(str[r]=='\\'){ is_escaped=true; buf+=str[r]; ++r; if(str[r]=='\0'){break;} }
-            
-            if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
-            if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
-            
-            if(!in_d_quate && !in_s_quate && str[r]==X){ ++r; break; }
-            buf += str[r];
-            
-            is_escaped=false;
+    uint i=0;
+    while(str[i]!='\0'){ if(str[i]==' '){++i;}else{break;} } // skip space
+    while(str[i]!='\0'){ // r: read place
+        if(str[i]=='\\'){ is_escaped=true; buf+=str[i]; ++i; if(str[i]=='\0'){break;} }
+        
+        if(!is_escaped && !in_s_quate && str[i]=='"' ){ in_d_quate = !in_d_quate; }
+        if(!is_escaped && !in_d_quate && str[i]=='\''){ in_s_quate = !in_s_quate; }
+        
+        if(!in_d_quate && !in_s_quate && str[i]==' '){
+            ret.push_back(buf); buf.clear();
+            ++i;
+            while(str[i]!='\0'){ if(str[i]==' '){++i;}else{break;} } // skip space
+        }else{
+            buf += str[i];
+            ++i;
         }
-        ret.push_back(std::move(buf));
+        
+        is_escaped=false;
     }
     if(in_d_quate){ ret.clear(); return false; }
     if(in_s_quate){ ret.clear(); return false; }
+    if(buf.size()!=0){ ret.push_back(buf); }
+//    if(r==0 || (r>=1 && str[r-1]==X)){ ret.push_back(std::string()); }
+//    if(r>=1 && str[r-1]==X){ ret.push_back(std::string()); }
+    
+    return true;
+}
+bool sstd::split_quotes(std::vector<std::string>& ret, const std::string& str){
+    return sstd::split_quotes(ret, str.c_str());
+}
+
+//---
+
+bool sstd::split_quotes(std::vector<std::string>& ret, const char* str, const char X){
+    bool is_escaped=false;
+    bool in_d_quate=false; // double quate
+    bool in_s_quate=false; // single quate
+    std::string buf;
+    uint i=0;
+//    while(str[i]!='\0'){ if(str[i]==' '){++i;}else{break;} } // skip space
+    while(str[i]!='\0'){ // r: read place
+        if(str[i]=='\\'){ is_escaped=true; buf+=str[i]; ++i; if(str[i]=='\0'){break;} }
+        
+        if(!is_escaped && !in_s_quate && str[i]=='"' ){ in_d_quate = !in_d_quate; }
+        if(!is_escaped && !in_d_quate && str[i]=='\''){ in_s_quate = !in_s_quate; }
+        
+        if(!in_d_quate && !in_s_quate && str[i]==X){
+            ret.push_back(buf); buf.clear();
+            ++i;
+//            while(str[i]!='\0'){ if(str[i]==' '){++i;}else{break;} } // skip space
+        }else{
+            buf += str[i];
+            ++i;
+        }
+        
+        is_escaped=false;
+    }
+    if(in_d_quate){ ret.clear(); return false; }
+    if(in_s_quate){ ret.clear(); return false; }
+    if(buf.size()!=0){ ret.push_back(buf); }
+//    if(i==0 || (i>=1 && str[i-1]==X)){ ret.push_back(std::string()); } // compatible with Python split()
+    if(i>=1 && str[i-1]==X){ ret.push_back(std::string()); }
     
     return true;
 }

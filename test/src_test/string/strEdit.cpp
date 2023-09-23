@@ -187,185 +187,111 @@ R"()"}) );
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-TEST(strEdit, split_c){
-    std::vector<std::string> v = sstd::split(" a  b, c"); // TEST THIS LINE
-    ASSERT_TRUE( v == std::vector<std::string>({"a", "b,", "c"}) );
-}
-TEST(strEdit, split_c_c_space){
-    std::vector<std::string> v = sstd::split(" a  b, c", ' '); // TEST THIS LINE
-    ASSERT_TRUE( v == std::vector<std::string>({"", "a", "", "b,", "c"}) );
-}
-TEST(strEdit, split_c_c_comma){
-    std::vector<std::string> v = sstd::split(" a  b, c", ','); // TEST THIS LINE
-    ASSERT_TRUE( v == std::vector<std::string>({" a  b", " c"}) );
-}
+#define TEST_SPLIT_CS(S_IN, ...)                                        \
+    std::vector<std::string> ret_v = sstd::split(S_IN); /* TEST THIS LINE */ \
+    /* sstd::printn(ret_v); */                                          \
+    ASSERT_TRUE(ret_v == std::vector<std::string>({__VA_ARGS__}) );
+
+TEST(strEdit, split_c_0){ TEST_SPLIT_CS(" a  b, c", "a", "b,", "c"); }
+TEST(strEdit, split_c_1){ TEST_SPLIT_CS(" a  b, c ", "a", "b,", "c"); }
+TEST(strEdit, split_c_2){ TEST_SPLIT_CS("  a  b, c  ", "a", "b,", "c"); }
+TEST(strEdit, split_s){ TEST_SPLIT_CS(std::string(" a  b, c"), "a", "b,", "c"); }
+
+#undef TEST_SPLIT_CS
 
 //---
 
-TEST(strEdit, split_s){
-    std::vector<std::string> v = sstd::split(std::string(" a  b, c")); // TEST THIS LINE
-    ASSERT_TRUE( v == std::vector<std::string>({"a", "b,", "c"}) );
-}
-TEST(strEdit, split_s_c){
-    std::vector<std::string> v = sstd::split(std::string(" a  b, c"), ' '); // TEST THIS LINE
-    ASSERT_TRUE( v == std::vector<std::string>({"", "a", "", "b,", "c"}) );
-}
+#define TEST_SPLIT_CS_X(X_IN, S_IN, ...)                                 \
+    std::vector<std::string> ret_v = sstd::split(S_IN, X_IN); /* TEST THIS LINE */ \
+    /* sstd::printn(ret_v); */                                          \
+    ASSERT_TRUE(ret_v == std::vector<std::string>({__VA_ARGS__}) );
+
+TEST(strEdit, split_c_c_space_0){ TEST_SPLIT_CS_X(' ', "a  b, c", "a", "", "b,", "c"); }
+TEST(strEdit, split_c_c_space_1){ TEST_SPLIT_CS_X(' ', " a  b, c ", "", "a", "", "b,", "c", ""); }
+TEST(strEdit, split_c_c_space_2){ TEST_SPLIT_CS_X(' ', "  a  b, c  ", "", "", "a", "", "b,", "c", "", ""); }
+TEST(strEdit, split_c_c_comma){ TEST_SPLIT_CS_X(',', " a  b, c", " a  b", " c"); }
+
+TEST(strEdit, split_s_c){ TEST_SPLIT_CS_X(' ', std::string(" a  b, c"), "", "a", "", "b,", "c"); }
+
+#undef TEST_SPLIT_CS_X
 
 //---
 
-TEST(strEdit, split_rmSpace_c){
-    std::vector<std::string> v = sstd::split_rmSpace(" a  b, c"); // TEST THIS LINE
-    ASSERT_TRUE( v == std::vector<std::string>({"a", "b,", "c"}) );
-}
-TEST(strEdit, split_rmSpace_c_c_space){
-    std::vector<std::string> v = sstd::split_rmSpace(" a  b, c", ' '); // TEST THIS LINE
-    ASSERT_TRUE( v == std::vector<std::string>({"a", "b,", "c"}) );
-}
-TEST(strEdit, split_rmSpace_c_c_comma){
-    std::vector<std::string> v = sstd::split_rmSpace(" a  b, c", ','); // TEST THIS LINE
-    ASSERT_TRUE( v == std::vector<std::string>({"a  b", "c"}) );
-}
+#define TEST_SPLIT_RMSPACE_CS(S_IN, ...)                                \
+    std::vector<std::string> ret_v = sstd::split_rmSpace(S_IN); /* TEST THIS LINE */ \
+    /* sstd::printn(ret_v); */                                          \
+    ASSERT_TRUE(ret_v == std::vector<std::string>({__VA_ARGS__}) );
+
+TEST(strEdit, split_rmSpace_c){ TEST_SPLIT_RMSPACE_CS(" a  b, c", "a", "b,", "c"); }
+TEST(strEdit, split_rmSpace_s){ TEST_SPLIT_RMSPACE_CS(std::string(" a  b, c"), "a", "b,", "c"); }
+
+#undef TEST_SPLIT_RMSPACE_CS
 
 //---
 
-TEST(strEdit, split_rmSpace_s){
-    std::vector<std::string> v = sstd::split_rmSpace(std::string(" a  b, c")); // TEST THIS LINE
-    ASSERT_TRUE( v == std::vector<std::string>({"a", "b,", "c"}) );
-}
-TEST(strEdit, split_rmSpace_s_c_space){
-    std::vector<std::string> v = sstd::split_rmSpace(std::string(" a  b, c"), ' '); // TEST THIS LINE
-    ASSERT_TRUE( v == std::vector<std::string>({"a", "b,", "c"}) );
-}
+#define TEST_SPLIT_RMSPACE_CS_X(X_IN, S_IN, ...)                        \
+    std::vector<std::string> ret_v = sstd::split_rmSpace(S_IN, X_IN); /* TEST THIS LINE */ \
+    /* sstd::printn(ret_v); */                                          \
+    ASSERT_TRUE(ret_v == std::vector<std::string>({__VA_ARGS__}) );
+
+TEST(strEdit, split_rmSpace_c_c_space){ TEST_SPLIT_RMSPACE_CS_X(' ', " a  b, c", "a", "b,", "c"); }
+TEST(strEdit, split_rmSpace_c_c_comma){ TEST_SPLIT_RMSPACE_CS_X(',', " a  b, c", "a  b", "c"); }
+TEST(strEdit, split_rmSpace_s_c_space){ TEST_SPLIT_RMSPACE_CS_X(' ', std::string(" a  b, c"), "a", "b,", "c"); }
+
+#undef TEST_SPLIT_RMSPACE_CS_X
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-TEST(strEdit, split_quotes_s_c__case_true_0){
-    std::string s = "";
-    const char X = ':';
+#define TEST_SPLIT_QUOTES_VS_CS(RESULT, S_IN, ...)                      \
+    bool ret_tf;                                                        \
+    std::vector<std::string> ret_v;                                     \
+    ret_tf = sstd::split_quotes(ret_v, S_IN); /* TEST THIS LINE */      \
+    /* sstd::printn(ret_v); */                                          \
+                                                                        \
+    ASSERT_TRUE(ret_tf == RESULT);                                      \
+    ASSERT_TRUE(ret_v == std::vector<std::string>({__VA_ARGS__}) );
 
-    bool ret_tf;
-    std::vector<std::string> ret_v;
-    ret_tf = sstd::split_quotes(ret_v, s, X); // TEST THIS LINE
-//    sstd::printn(ret_v);
-    
-    ASSERT_TRUE(ret_tf);
-    ASSERT_TRUE(ret_v.size() == (uint)0 );
-}
-TEST(strEdit, split_quotes_s_c__case_true_1){
-    std::string s = " abc ";
-    const char X = ':';
+TEST(strEdit, split_quotes_vs_s){ TEST_SPLIT_QUOTES_VS_CS(true, std::string("a  b  c d"), "a", "b", "c", "d"); }
 
-    bool ret_tf;
-    std::vector<std::string> ret_v;
-    ret_tf = sstd::split_quotes(ret_v, s, X); // TEST THIS LINE
-//    sstd::printn(ret_v);
-    
-    ASSERT_TRUE(ret_tf);
-    ASSERT_TRUE(ret_v == std::vector<std::string>({" abc "}) );
-}
-TEST(strEdit, split_quotes_s_c__case_true_2){
-    std::string s = " abc : def ";
-    const char X = ':';
+TEST(strEdit, split_quotes_vs_c__case_true_space_0){ TEST_SPLIT_QUOTES_VS_CS(true, "a  b  c d", "a", "b", "c", "d"); }
+TEST(strEdit, split_quotes_vs_c__case_true_space_1){ TEST_SPLIT_QUOTES_VS_CS(true, " a  b  c d ", "a", "b", "c", "d"); }
+TEST(strEdit, split_quotes_vs_c__case_true_space_2){ TEST_SPLIT_QUOTES_VS_CS(true, "  a  b  c d  ", "a", "b", "c", "d"); }
 
-    bool ret_tf;
-    std::vector<std::string> ret_v;
-    ret_tf = sstd::split_quotes(ret_v, s, X); // TEST THIS LINE
-//    sstd::printn(ret_v);
-    
-    ASSERT_TRUE(ret_tf);
-    ASSERT_TRUE(ret_v == std::vector<std::string>({" abc ", " def "}) );
-}
-TEST(strEdit, split_quotes_s_c__case_true_3){
-    std::string s = " abc : def : ghi ";
-    const char X = ':';
-
-    bool ret_tf;
-    std::vector<std::string> ret_v;
-    ret_tf = sstd::split_quotes(ret_v, s, X); // TEST THIS LINE
-//    sstd::printn(ret_v);
-    
-    ASSERT_TRUE(ret_tf);
-    ASSERT_TRUE(ret_v == std::vector<std::string>({" abc ", " def ", " ghi "}) );
-}
+#undef TEST_SPLIT_QUOTES_VS_CS
 
 //---
 
-TEST(strEdit, split_quotes_s_c__case_true_sq){
-    std::string s = "' a:b:c ':' d:ef ':' gh:i '";
-    const char X = ':';
+#define TEST_SPLIT_QUOTES_VS_CS_X(RESULT, X_IN, S_IN, ...)              \
+    bool ret_tf;                                                        \
+    std::vector<std::string> ret_v;                                     \
+    ret_tf = sstd::split_quotes(ret_v, S_IN, X_IN); /* TEST THIS LINE */ \
+    /* sstd::printn(ret_v); */                                          \
+                                                                        \
+    ASSERT_TRUE(ret_tf == RESULT);                                      \
+    ASSERT_TRUE(ret_v == std::vector<std::string>({__VA_ARGS__}) );
 
-    bool ret_tf;
-    std::vector<std::string> ret_v;
-    ret_tf = sstd::split_quotes(ret_v, s, X); // TEST THIS LINE
-//    sstd::printn(ret_v);
-    
-    ASSERT_TRUE(ret_tf);
-    ASSERT_TRUE(ret_v == std::vector<std::string>({"' a:b:c '", "' d:ef '", "' gh:i '"}) );
-}
+TEST(strEdit, split_quotes_vs_c_s){ TEST_SPLIT_QUOTES_VS_CS_X(true, ' ', std::string("a  b  c d"), "a", "", "b", "", "c", "d"); }
 
-TEST(strEdit, split_quotes_s_c__case_true_dq){
-    std::string s = R"(" a:b:c ":" d:ef ":" gh:i ")";
-    const char X = ':';
+//TEST(strEdit, split_quotes_vs_c_x__case_true_null){ TEST_SPLIT_QUOTES_VS_CS_X(true, ' ', "", ""); } // for compatible with Python split()
 
-    bool ret_tf;
-    std::vector<std::string> ret_v;
-    ret_tf = sstd::split_quotes(ret_v, s, X); // TEST THIS LINE
-//    sstd::printn(ret_v);
-    
-    ASSERT_TRUE(ret_tf);
-    ASSERT_TRUE(ret_v == std::vector<std::string>({R"(" a:b:c ")", R"(" d:ef ")", R"(" gh:i ")"}) );
-}
+TEST(strEdit, split_quotes_vs_c_x__case_true_space_0){ TEST_SPLIT_QUOTES_VS_CS_X(true, ' ', "a  b  c d", "a", "", "b", "", "c", "d"); }
+TEST(strEdit, split_quotes_vs_c_x__case_true_space_1){ TEST_SPLIT_QUOTES_VS_CS_X(true, ' ', " a  b  c d ", "", "a", "", "b", "", "c", "d", ""); }
+TEST(strEdit, split_quotes_vs_c_x__case_true_space_2){ TEST_SPLIT_QUOTES_VS_CS_X(true, ' ', "  a  b  c d  ", "", "", "a", "", "b", "", "c", "d", "", ""); }
 
-//---
+//TEST(strEdit, split_quotes_vs_c_x__case_true_0){ TEST_SPLIT_QUOTES_VS_CS_X(true, ':', "", ""); } // for compatible with Python split()
+TEST(strEdit, split_quotes_vs_c_x__case_true_1){ TEST_SPLIT_QUOTES_VS_CS_X(true, ':', " abc ", " abc "); }
+TEST(strEdit, split_quotes_vs_c_x__case_true_2){ TEST_SPLIT_QUOTES_VS_CS_X(true, ':', " abc : def ", " abc ", " def "); }
+TEST(strEdit, split_quotes_vs_c_x__case_true_3){ TEST_SPLIT_QUOTES_VS_CS_X(true, ':', " abc : def : ghi ", " abc ", " def ", " ghi "); }
 
-TEST(strEdit, split_quotes_s_c__case_false_sq_01){
-    std::string s = R"(' a:b:c : d:ef )";
-    const char X = ':';
+TEST(strEdit, split_quotes_vs_c_x__case_true_sq){ TEST_SPLIT_QUOTES_VS_CS_X(true, ':', "' a:b:c ':' d:ef ':' gh:i '", "' a:b:c '", "' d:ef '", "' gh:i '"); }
+TEST(strEdit, split_quotes_vs_c_x__case_true_dq){ TEST_SPLIT_QUOTES_VS_CS_X(true, ':', R"(" a:b:c ":" d:ef ":" gh:i ")", R"(" a:b:c ")", R"(" d:ef ")", R"(" gh:i ")"); }
 
-    bool ret_tf;
-    std::vector<std::string> ret_v;
-    ret_tf = sstd::split_quotes(ret_v, s, X); // TEST THIS LINE
-//    sstd::printn(ret_v);
-    
-    ASSERT_TRUE(!ret_tf);
-    ASSERT_TRUE(ret_v.size() == (uint)0 );
-}
-TEST(strEdit, split_quotes_s_c__case_false_sq_02){
-    std::string s = R"( a:b:c : d:ef ')";
-    const char X = ':';
+TEST(strEdit, split_quotes_vs_c_x__case_false_sq_01){ TEST_SPLIT_QUOTES_VS_CS_X(false, ':', R"(' a:b:c : d:ef )"); }
+TEST(strEdit, split_quotes_vs_c_x__case_false_sq_02){ TEST_SPLIT_QUOTES_VS_CS_X(false, ':', R"( a:b:c : d:ef ')"); }
+TEST(strEdit, split_quotes_vs_c_x__case_false_dq_01){ TEST_SPLIT_QUOTES_VS_CS_X(false, ':', R"(" a:b:c : d:ef )"); }
+TEST(strEdit, split_quotes_vs_c_x__case_false_dq_02){ TEST_SPLIT_QUOTES_VS_CS_X(false, ':', R"( a:b:c : d:ef ")"); }
 
-    bool ret_tf;
-    std::vector<std::string> ret_v;
-    ret_tf = sstd::split_quotes(ret_v, s, X); // TEST THIS LINE
-//    sstd::printn(ret_v);
-    
-    ASSERT_TRUE(!ret_tf);
-    ASSERT_TRUE(ret_v.size() == (uint)0 );
-}
-TEST(strEdit, split_quotes_s_c__case_false_dq_01){
-    std::string s = R"(" a:b:c : d:ef )";
-    const char X = ':';
-
-    bool ret_tf;
-    std::vector<std::string> ret_v;
-    ret_tf = sstd::split_quotes(ret_v, s, X); // TEST THIS LINE
-//    sstd::printn(ret_v);
-    
-    ASSERT_TRUE(!ret_tf);
-    ASSERT_TRUE(ret_v.size() == (uint)0 );
-}
-TEST(strEdit, split_quotes_s_c__case_false_dq_02){
-    std::string s = R"( a:b:c : d:ef ")";
-    const char X = ':';
-
-    bool ret_tf;
-    std::vector<std::string> ret_v;
-    ret_tf = sstd::split_quotes(ret_v, s, X); // TEST THIS LINE
-//    sstd::printn(ret_v);
-    
-    ASSERT_TRUE(!ret_tf);
-    ASSERT_TRUE(ret_v.size() == (uint)0 );
-}
+#undef TEST_SPLIT_QUOTES_VS_CS_X
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
