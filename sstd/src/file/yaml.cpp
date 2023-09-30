@@ -24,6 +24,8 @@
 #define NUM_LIST 2
 #define NUM_HASH 3
 #define NUM_LIST_AND_HASH 4
+#define NUM_BLOCK_STYLE 5
+#define NUM_FLOW_STYLE 6
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -175,7 +177,7 @@ void _hsc_lx(uint& ret, const std::string& s){
 struct command{
     uint hsc_lx; // hsc: head space count, _lx: list-index.
     uint hsc_hx; // hsc: head space count, _hx: hash-index.
-    char verb;
+    uint8 type;
     bool val1_use_quotes;
     bool val2_use_quotes;
     std::string val1; // "list value" or "hash key"
@@ -188,7 +190,7 @@ struct command{
 void _print(const struct command& cmd){ // for debug
     printf("hsc_lx: %d\n",  cmd.hsc_lx        );
     printf("hsc_hx: %d\n",  cmd.hsc_hx        );
-    printf("verb: %c\n",    cmd.verb          );
+    printf("type: %c\n",    cmd.type          );
     printf("val1_use_quotes: %s\n", (cmd.val1_use_quotes ? "true":"false") );
     printf("val2_use_quotes: %s\n", (cmd.val2_use_quotes ? "true":"false") );
     printf("val1: %s\n",    cmd.val1.c_str()  );
@@ -205,24 +207,22 @@ void _print(const std::vector<struct command>& v_cmd){ // for debug
 
 //---
 
-bool _data_type(uint& type, uint& num, std::string s){
+bool _data_type_and_format(uint& type, uint& format, uint& num, std::string s){
     bool is_h; if(!_is_hash(is_h,      s      )){ return false; }
     bool is_l; if(!_is_list(is_l, num, s      )){ return false; }
     bool is_f; if(!_is_flow(is_f,      s, is_h)){ return false; }
-    sstd::printn(is_f);
+
+    if(is_h && is_l){ type = NUM_LIST_AND_HASH;
+    }else if( is_h ){ type = NUM_HASH;
+    }else if( is_l ){ type = NUM_LIST;
+    }else           { type = NUM_STR;
+    }
+
+    if(!is_f){ format = NUM_BLOCK_STYLE;
+    }  else  { format = NUM_FLOW_STYLE;
+    }
     
-    if(is_h && is_l){ type = NUM_LIST_AND_HASH; return true; }
-    if(is_h){ type = NUM_HASH; return true; }
-    if(is_l){ type = NUM_LIST; return true; }
-    
-    type = NUM_STR;
     return true;
-}
-std::vector<std::string> _get_verb(const std::string& s){
-    std::vector<std::string> v;
-    if(sstd::charIn('-', s)){ v.push_back("-"); }
-    if(sstd::charIn(':', s)){ v.push_back(":"); }
-    return v;
 }
 bool _split_hash(std::vector<std::string>& ret_v, std::string s){
     if(s.size()>=1 && s[s.size()-1]==':'){ s.pop_back(); ret_v.push_back(s); return true; }
@@ -273,7 +273,7 @@ bool _get_multi_line_str(std::string& ret, const uint hsc_prev, const std::strin
         s = _rm_comment(s); // s = _rm_comment_quotes(s); に置き換える
         if(s=="..."){ --i; return true; } // detect end marker
         
-        uint type=NUM_NULL, type_cnt=0; if(!_data_type(type, type_cnt, s)){ return false; }
+        uint type=NUM_NULL, format=NUM_BLOCK_STYLE, type_cnt=0; if(!_data_type_and_format(type, format, type_cnt, s)){ return false; }
         if(type==NUM_STR){
             if(indent_width>=0 && s.size()>0){
                 uint hsc = _head_space_count(s);
@@ -354,7 +354,7 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
         s = _rm_comment(raw); // s = _rm_comment_quotes(s); に置き換える
         if(s.size()==0){ continue; }
         if(s=="..."){ return true; } // detect end marker
-        uint type=NUM_NULL, type_cnt=0; if(!_data_type(type, type_cnt, s)){ return false; }
+        uint type=NUM_NULL, format=NUM_BLOCK_STYLE, type_cnt=0; if(!_data_type_and_format(type, format, type_cnt, s)){ return false; }
         uint hsc_lx=0;     _hsc_lx(hsc_lx, s);
         uint hsc_hx=0; if(!_hsc_hx(hsc_hx, s)){ sstd::pdbg_err("quate is not closed\n"); return false; }
         
@@ -371,7 +371,7 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
         case NUM_STR: {
             c.hsc_lx         = hsc_lx;
             c.hsc_hx         = hsc_hx;
-            c.verb           = 's';
+            c.type           = NUM_STR;
             c.val1_use_quotes = val1_use_quotes;
             c.val2_use_quotes = val2_use_quotes;
             c.val1           = val1;
@@ -385,7 +385,7 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             for(uint ti=0; ti<type_cnt-1; ++ti){ // for multiple list. ex: "- - a".
                 c.hsc_lx         = hsc_lx + 2*ti;
                 c.hsc_hx         = hsc_hx + 2*ti;
-                c.verb           = '-';
+                c.type           = NUM_LIST;
                 c.val1_use_quotes = false;
                 c.val2_use_quotes = false;
                 //c.val1           = val1;
@@ -398,7 +398,7 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             
             c.hsc_lx         = hsc_lx + 2*(type_cnt-1);
             c.hsc_hx         = hsc_hx + 2*(type_cnt-1);
-            c.verb           = '-';
+            c.type           = NUM_LIST;
             c.val1_use_quotes = val1_use_quotes;
             c.val2_use_quotes = val2_use_quotes;
             c.val1           = val1;
@@ -411,7 +411,7 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
         case NUM_HASH: {
             c.hsc_lx         = hsc_lx;
             c.hsc_hx         = hsc_hx;
-            c.verb           = ':';
+            c.type           = NUM_HASH;
             c.val1_use_quotes = val1_use_quotes;
             c.val2_use_quotes = val2_use_quotes;
             c.val1           = val1; // key
@@ -425,7 +425,7 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             for(uint ti=0; ti<type_cnt-1; ++ti){ // for multiple list-hash. ex: "- - k1: v1".
                 c.hsc_lx         = hsc_lx + 2*ti;
                 c.hsc_hx         = hsc_hx + 2*ti;
-                c.verb           = '-'; // x: list x(and) hash: 
+                c.type           = NUM_LIST;
                 c.val1_use_quotes = false;
                 c.val2_use_quotes = false;
                 //c.val1           = "";
@@ -438,7 +438,7 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             
             c.hsc_lx         = hsc_lx + 2*(type_cnt-1);
             c.hsc_hx         = hsc_hx + 2*(type_cnt-1);
-            c.verb           = 'x'; // x: list x(and) hash: 
+            c.type           = NUM_LIST_AND_HASH;
             c.val1_use_quotes = false;
             c.val2_use_quotes = false;
             //c.val1           = "";
@@ -450,7 +450,7 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             
             c.hsc_lx         = hsc_lx + 2*(type_cnt-1);
             c.hsc_hx         = hsc_hx + 2*(type_cnt-1);
-            c.verb           = ':';
+            c.type           = NUM_HASH;
             c.val1_use_quotes = val1_use_quotes;
             c.val2_use_quotes = val2_use_quotes;
             c.val1           = val1; // key
@@ -486,11 +486,11 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
         
         // set dst type (if dst is sstd::num_null)
         if(var.typeNum()==sstd::num_null){
-            switch(v_cmd[i].verb){
-            case 's': {                           } break;
-            case '-': { var = sstd::terp::list(); } break;
-            case 'x': { var = sstd::terp::list(); } break;
-            case ':': { var = sstd::terp::hash(); } break;
+            switch(v_cmd[i].type){
+            case NUM_STR:           {                           } break;
+            case NUM_LIST:          { var = sstd::terp::list(); } break;
+            case NUM_LIST_AND_HASH: { var = sstd::terp::list(); } break;
+            case NUM_HASH:          { var = sstd::terp::hash(); } break;
             default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
             }
         }
@@ -521,7 +521,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
                 v_hsc_hx.pop_back();
                 --i;
                 continue;
-            }else if(v_cmd[i].verb=='x'){
+            }else if(v_cmd[i].type==NUM_LIST_AND_HASH){
                 v_dst.pop_back();
                 v_hsc_hx.pop_back();
                 --i;
@@ -533,12 +533,12 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
         }
 
         // set dst and value
-        switch(v_cmd[i].verb){
-        case 's': { // 's': string
+        switch(v_cmd[i].type){
+        case NUM_STR: {
             if(var.typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data. (String data type can only take one data.)\n"); break; }
             var = v_cmd[i].val1.c_str();
         } break;
-        case '-': { // '-': list
+        case NUM_LIST: {
             if(v_cmd[i].val1.size()>=1 || v_cmd[i].val1_use_quotes){ // 'val1_use_quotes' is required to detect 0 length string
                 var.push_back( v_cmd[i].val1.c_str() );
             }else{
@@ -546,11 +546,11 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
                 v_dst.push_back( var[var.size()-1].p() );
             }
         } break;
-        case 'x': { // 'x': list-and-hash
+        case NUM_LIST_AND_HASH: {
             var.push_back( sstd::terp::hash() );
             v_dst.push_back( var[var.size()-1].p() );
         } break;
-        case ':': { // ':': hash
+        case NUM_HASH: {
             if(v_cmd[i].val2.size()>=1 || v_cmd[i].val2_use_quotes){ // 'val2_use_quotes' is required to detect 0 length string
                 var[ v_cmd[i].val1.c_str() ] = v_cmd[i].val2.c_str();
             }else{
