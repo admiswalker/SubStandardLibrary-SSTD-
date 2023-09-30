@@ -2278,6 +2278,27 @@ TEST(yaml, flow_style_notation_list){
     //---
     
     ASSERT_TRUE(yml==ans);
+}/*
+TEST(yaml, flow_style_notation_list){
+    std::string s=R"(
+[a, 
+b
+, c]
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(3);
+    ans[0] = "a1";
+    ans[1] = "b1";
+    ans[2] = "c1";
+
+    //---
+    
+    ASSERT_TRUE(yml==ans);
 }
 /*
 TEST(yaml, flow_style_notation_hash){
