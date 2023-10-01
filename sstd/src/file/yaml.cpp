@@ -178,6 +178,7 @@ struct command{
     uint hsc_lx; // hsc: head space count, _lx: list-index.
     uint hsc_hx; // hsc: head space count, _hx: hash-index.
     uint8 type;
+    uint8 format;
     bool val1_use_quotes;
     bool val2_use_quotes;
     std::string val1; // "list value" or "hash key"
@@ -188,15 +189,16 @@ struct command{
     std::string rawStr;
 };
 void _print(const struct command& cmd){ // for debug
-    printf("hsc_lx: %d\n",  cmd.hsc_lx        );
-    printf("hsc_hx: %d\n",  cmd.hsc_hx        );
-    printf("type: %c\n",    cmd.type          );
+    printf("hsc_lx: %d\n",           cmd.hsc_lx                            );
+    printf("hsc_hx: %d\n",           cmd.hsc_hx                            );
+    printf("type: %d\n",             cmd.type                              );
+    printf("format: %c\n",           cmd.format                            );
     printf("val1_use_quotes: %s\n", (cmd.val1_use_quotes ? "true":"false") );
     printf("val2_use_quotes: %s\n", (cmd.val2_use_quotes ? "true":"false") );
-    printf("val1: %s\n",    cmd.val1.c_str()  );
-    printf("val2: %s\n",    cmd.val2.c_str()  );
-    printf("lineNum: %d\n", cmd.lineNum       );
-    printf("rawStr: %s\n",  cmd.rawStr.c_str());
+    printf("val1: %s\n",             cmd.val1.c_str()                      );
+    printf("val2: %s\n",             cmd.val2.c_str()                      );
+    printf("lineNum: %d\n",          cmd.lineNum                           );
+    printf("rawStr: %s\n",           cmd.rawStr.c_str()                    );
     printf("\n");
 }
 void _print(const std::vector<struct command>& v_cmd){ // for debug
@@ -369,94 +371,101 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
         struct command c;
         switch(type){
         case NUM_STR: {
-            c.hsc_lx         = hsc_lx;
-            c.hsc_hx         = hsc_hx;
-            c.type           = NUM_STR;
+            c.hsc_lx          = hsc_lx;
+            c.hsc_hx          = hsc_hx;
+            c.type            = NUM_STR;
+            c.format          = format;
             c.val1_use_quotes = val1_use_quotes;
             c.val2_use_quotes = val2_use_quotes;
-            c.val1           = val1;
+            c.val1            = val1;
             //c.val2           = val2;
-            c.lineNum        = base_idx + i; // debug info
-            c.rawStr         = raw;          // debug info
+            c.lineNum         = base_idx + i; // debug info
+            c.rawStr          = raw;          // debug info
             
             ret_vCmd.push_back(c);
         } break;
         case NUM_LIST: {
             for(uint ti=0; ti<type_cnt-1; ++ti){ // for multiple list. ex: "- - a".
-                c.hsc_lx         = hsc_lx + 2*ti;
-                c.hsc_hx         = hsc_hx + 2*ti;
-                c.type           = NUM_LIST;
+                c.hsc_lx          = hsc_lx + 2*ti;
+                c.hsc_hx          = hsc_hx + 2*ti;
+                c.type            = NUM_LIST;
+                c.format          = format;
                 c.val1_use_quotes = false;
                 c.val2_use_quotes = false;
                 //c.val1           = val1;
                 //c.val2           = val2;
-                c.lineNum        = base_idx + i; // debug info
-                c.rawStr         = raw;          // debug info
+                c.lineNum         = base_idx + i; // debug info
+                c.rawStr          = raw;          // debug info
             
                 ret_vCmd.push_back(c);
             }
             
-            c.hsc_lx         = hsc_lx + 2*(type_cnt-1);
-            c.hsc_hx         = hsc_hx + 2*(type_cnt-1);
-            c.type           = NUM_LIST;
+            c.hsc_lx          = hsc_lx + 2*(type_cnt-1);
+            c.hsc_hx          = hsc_hx + 2*(type_cnt-1);
+            c.type            = NUM_LIST;
+            c.format          = format;
             c.val1_use_quotes = val1_use_quotes;
             c.val2_use_quotes = val2_use_quotes;
-            c.val1           = val1;
+            c.val1            = val1;
             //c.val2           = val2;
-            c.lineNum        = base_idx + i; // debug info
-            c.rawStr         = raw;          // debug info
+            c.lineNum         = base_idx + i; // debug info
+            c.rawStr          = raw;          // debug info
             
             ret_vCmd.push_back(c);
         } break;
         case NUM_HASH: {
-            c.hsc_lx         = hsc_lx;
-            c.hsc_hx         = hsc_hx;
-            c.type           = NUM_HASH;
+            c.hsc_lx          = hsc_lx;
+            c.hsc_hx          = hsc_hx;
+            c.type            = NUM_HASH;
+            c.format          = format;
             c.val1_use_quotes = val1_use_quotes;
             c.val2_use_quotes = val2_use_quotes;
-            c.val1           = val1; // key
-            c.val2           = val2; // value
-            c.lineNum        = base_idx + i; // debug info
-            c.rawStr         = raw;          // debug info
+            c.val1            = val1; // key
+            c.val2            = val2; // value
+            c.lineNum         = base_idx + i; // debug info
+            c.rawStr          = raw;          // debug info
             
             ret_vCmd.push_back(c);
         } break;
         case NUM_LIST_AND_HASH:{
             for(uint ti=0; ti<type_cnt-1; ++ti){ // for multiple list-hash. ex: "- - k1: v1".
-                c.hsc_lx         = hsc_lx + 2*ti;
-                c.hsc_hx         = hsc_hx + 2*ti;
-                c.type           = NUM_LIST;
+                c.hsc_lx          = hsc_lx + 2*ti;
+                c.hsc_hx          = hsc_hx + 2*ti;
+                c.type            = NUM_LIST;
+                c.format          = format;
                 c.val1_use_quotes = false;
                 c.val2_use_quotes = false;
                 //c.val1           = "";
                 //c.val2           = "";
-                c.lineNum        = base_idx + i; // debug info
-                c.rawStr         = raw;          // debug info
+                c.lineNum         = base_idx + i; // debug info
+                c.rawStr          = raw;          // debug info
                 
                 ret_vCmd.push_back(c);
             }
             
-            c.hsc_lx         = hsc_lx + 2*(type_cnt-1);
-            c.hsc_hx         = hsc_hx + 2*(type_cnt-1);
-            c.type           = NUM_LIST_AND_HASH;
+            c.hsc_lx          = hsc_lx + 2*(type_cnt-1);
+            c.hsc_hx          = hsc_hx + 2*(type_cnt-1);
+            c.type            = NUM_LIST_AND_HASH;
+            c.format          = format;
             c.val1_use_quotes = false;
             c.val2_use_quotes = false;
             //c.val1           = "";
             //c.val2           = "";
-            c.lineNum        = base_idx + i; // debug info
-            c.rawStr         = raw;          // debug info
+            c.lineNum         = base_idx + i; // debug info
+            c.rawStr          = raw;          // debug info
             
             ret_vCmd.push_back(c);
             
-            c.hsc_lx         = hsc_lx + 2*(type_cnt-1);
-            c.hsc_hx         = hsc_hx + 2*(type_cnt-1);
-            c.type           = NUM_HASH;
+            c.hsc_lx          = hsc_lx + 2*(type_cnt-1);
+            c.hsc_hx          = hsc_hx + 2*(type_cnt-1);
+            c.type            = NUM_HASH;
+            c.format          = format;
             c.val1_use_quotes = val1_use_quotes;
             c.val2_use_quotes = val2_use_quotes;
-            c.val1           = val1; // key
-            c.val2           = val2; // value
-            c.lineNum        = base_idx + i; // debug info
-            c.rawStr         = raw;          // debug info
+            c.val1            = val1; // key
+            c.val2            = val2; // value
+            c.lineNum         = base_idx + i; // debug info
+            c.rawStr          = raw;          // debug info
             
             ret_vCmd.push_back(c);
         } break;
@@ -491,6 +500,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
             case NUM_LIST:          { var = sstd::terp::list(); } break;
             case NUM_LIST_AND_HASH: { var = sstd::terp::list(); } break;
             case NUM_HASH:          { var = sstd::terp::hash(); } break;
+//            case NUM_FORMAT:        { sstd::pdbg_err("in NUM_FORMAT\n");                          } break;
             default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
             }
         }
@@ -536,7 +546,10 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
         switch(v_cmd[i].type){
         case NUM_STR: {
             if(var.typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data. (String data type can only take one data.)\n"); break; }
-            var = v_cmd[i].val1.c_str();
+            
+            if      (v_cmd[i].format==NUM_BLOCK_STYLE){ var = v_cmd[i].val1.c_str();
+            }else if(v_cmd[i].format==NUM_FLOW_STYLE ){ sstd::pdbg_err("NUM_FLOW_STYLE is not in support.");
+            }else                                     { sstd::pdbg_err("Unexpected data fromat."); }
         } break;
         case NUM_LIST: {
             if(v_cmd[i].val1.size()>=1 || v_cmd[i].val1_use_quotes){ // 'val1_use_quotes' is required to detect 0 length string
