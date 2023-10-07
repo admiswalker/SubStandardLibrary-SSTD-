@@ -2,6 +2,29 @@
 #include "../../gtest_parallel/test_main.hpp"
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// tests of sub-functions
+
+TEST(yaml, _split_quotes_by_control_chars_01){
+    std::vector<std::string> ret_v;
+    const char* str = " [ a, b , c , { k1:v1, k 2 : v 2 , k3:}] ";
+    bool tf = sstd_yaml::_split_quotes_by_control_chars(ret_v, str, strlen(str));
+
+    sstd::printn(tf);
+    sstd::printn(ret_v);
+    sstd::printn(ret_v);
+    // ret_v = [
+    // ""
+    // "["
+    // "a"
+    // ","
+    // "b "
+    // ","
+    // "c "
+    // ","
+    // "" "{" "k1" ":" "v1" "," "k 2 " ":" "v 2 " "," "k3" ":" "" "}" "" "]"]
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 // var
 
 TEST(yaml, var_str_1_line){

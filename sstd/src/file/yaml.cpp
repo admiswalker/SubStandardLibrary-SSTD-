@@ -475,6 +475,48 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
     
     return true;
 }
+bool sstd_yaml::_split_quotes_by_control_chars(std::vector<std::string>& ret, const char* str, const uint str_len){
+    bool detected_char=false;
+    
+    bool is_escaped=false;
+    bool in_d_quate=false; // double quate
+    bool in_s_quate=false; // single quate
+    std::string buf;
+    uint i=0;
+    // while(str[i]!='\0'){ if(str[i]==' '){++i;}else{break;} } // skip space
+    while(i<str_len){ // r: read place
+        if(str[i]=='\\'){ is_escaped=true; buf+=str[i]; ++i; if(i>=str_len){break;} }
+        
+        if(!is_escaped && !in_s_quate && str[i]=='"' ){ in_d_quate = !in_d_quate; }
+        if(!is_escaped && !in_d_quate && str[i]=='\''){ in_s_quate = !in_s_quate; }
+        
+        if(!in_d_quate && !in_s_quate && (str[i]=='[' || str[i]==']' || str[i]=='{' || str[i]=='}' || str[i]==':' || str[i]==',')){
+            if(buf.size()!=0){
+                ret.push_back(sstd::rstrip(buf));
+                buf.clear();
+            }
+            ret.push_back(std::string(1, str[i])); // append a control char
+            detected_char=false;
+            ++i;
+        }else{
+            if(!detected_char && str[i]==' '){
+                detected_char=true;
+            }else{
+                buf += str[i];
+            }
+            ++i;
+        }
+        
+        is_escaped=false;
+    }
+    if(in_d_quate){ ret.clear(); return false; }
+    if(in_s_quate){ ret.clear(); return false; }
+    if(buf.size()!=0){ ret.push_back(buf); }
+    // if(i==0 || (i>=X_len && sstd::startswith(&str[i-X_len], X))){ ret.push_back(std::string()); } // compatible with Python split()
+    //if(i>=1 && (str[i]=='[' || str[i]==']' || str[i]=='{' || str[i]=='}' || str[i]==',')){ ret.push_back(std::string()); }
+    
+    return true;
+}
 bool _flow_style_str_to_obj(sstd::terp::var& var, const std::string& s){
     //sstd::printn(s);
     std::vector<sstd::void_ptr*> v_dst;
