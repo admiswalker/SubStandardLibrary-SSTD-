@@ -475,6 +475,28 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
     
     return true;
 }
+bool _flow_style_str_to_obj(sstd::terp::var& var, const std::string& s){
+    //sstd::printn(s);
+    std::vector<sstd::void_ptr*> v_dst;
+    v_dst.push_back(var.p());
+    
+    for(uint i=0; i<s.size(); ++i){
+        sstd::terp::var var = sstd::terp::var( v_dst[v_dst.size()-1] );
+        
+        if(s[i]=='['){
+            var = sstd::terp::list();
+            // var.push_back( sstd::terp::list() );
+            //v_dst.push_back( var[var.size()-1].p() );
+        }else if(s[i]=='{'){ // var.push_back( sstd::terp::hash() ); v_dst.push_back( var[var.size()-1].p() );
+        }else if(s[i]==']'){
+            //v_dst.pop_back();
+        }else if(s[i]=='}'){ // v_dst.pop_back();
+        }else{
+            var.push_back( s[i] );
+        }
+    }
+    return true;
+}
 bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>& v_cmd){
     std::vector<sstd::void_ptr*> v_dst;
     std::vector<uint> v_hsc_lx; // v: vector, hsc: head space count, _lx: list-index.
@@ -548,7 +570,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
             if(var.typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data. (String data type can only take one data.)\n"); break; }
             
             if      (v_cmd[i].format==NUM_BLOCK_STYLE){ var = v_cmd[i].val1.c_str();
-            }else if(v_cmd[i].format==NUM_FLOW_STYLE ){ sstd::pdbg_err("NUM_FLOW_STYLE is not in support.");
+            }else if(v_cmd[i].format==NUM_FLOW_STYLE ){ if(!_flow_style_str_to_obj(var, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
             }else                                     { sstd::pdbg_err("Unexpected data fromat."); }
         } break;
         case NUM_LIST: {
