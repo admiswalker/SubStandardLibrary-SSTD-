@@ -19,8 +19,9 @@ namespace sstd{
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// internal functions for unit test
 
-namespace sstd_yaml{ // for unit test
+namespace sstd_yaml{
     bool _split_quotes_by_control_chars(std::vector<std::string>& ret, const char* str, const uint str_len);
 }
 

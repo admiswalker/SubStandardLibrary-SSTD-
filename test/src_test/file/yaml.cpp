@@ -5,23 +5,28 @@
 // tests of sub-functions
 
 TEST(yaml, _split_quotes_by_control_chars_01){
-    std::vector<std::string> ret_v;
+    std::vector<std::string> ret;
     const char* str = " [ a, b , c , { k1:v1, k 2 : v 2 , k3:}] ";
-    bool tf = sstd_yaml::_split_quotes_by_control_chars(ret_v, str, strlen(str));
-
-    sstd::printn(tf);
-    sstd::printn(ret_v);
-    sstd::printn(ret_v);
-    // ret_v = [
-    // ""
-    // "["
-    // "a"
-    // ","
-    // "b "
-    // ","
-    // "c "
-    // ","
-    // "" "{" "k1" ":" "v1" "," "k 2 " ":" "v 2 " "," "k3" ":" "" "}" "" "]"]
+    bool tf = sstd_yaml::_split_quotes_by_control_chars(ret, str, strlen(str)); // TEST THIS LINE
+    
+//    sstd::printn(tf);
+//    sstd::printn(ret);
+    
+    std::vector<std::string> ret_ans = {"[", "a", ",", "b", ",", "c", ",", "{", "k1", ":", "v1", ",", "k 2", ":", "v 2", ",", "k3", ":", "}", "]"};
+    ASSERT_TRUE(tf);
+    ASSERT_TRUE(ret == ret_ans);
+}
+TEST(yaml, _split_quotes_by_control_chars_02){
+    std::vector<std::string> ret;
+    const char* str = " \" [ \", ' [ ] {} ' ,  a, b , c , { k1:v1, k 2 : v 2 , k3:}] ";
+    bool tf = sstd_yaml::_split_quotes_by_control_chars(ret, str, strlen(str)); // TEST THIS LINE
+    
+//    sstd::printn(tf);
+//    sstd::printn(ret);
+    
+    std::vector<std::string> ret_ans = {"\" [ \"", ",", "' [ ] {} '", ",", "a", ",", "b", ",", "c", ",", "{", "k1", ":", "v1", ",", "k 2", ":", "v 2", ",", "k3", ":", "}", "]"};
+    ASSERT_TRUE(tf);
+    ASSERT_TRUE(ret == ret_ans);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -75,7 +80,7 @@ TEST(yaml, list_depth1){
 - c
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
+    sstd::printn(yml);
 
     //---
     
@@ -84,6 +89,7 @@ TEST(yaml, list_depth1){
     ans[0] = "a";
     ans[1] = "b";
     ans[2] = "c";
+    sstd::printn(ans);
     
     //---
     
@@ -2283,7 +2289,7 @@ TEST(yaml, multipul_list_indication_case06){
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // flow style notation
 
-TEST(yaml, flow_style_notation_list){
+TEST(yaml, flow_style_notation_list_01){
     std::string s=R"(
 [a, b, c]
 )";
@@ -2294,14 +2300,60 @@ TEST(yaml, flow_style_notation_list){
     
     sstd::terp::var ans;
     ans = sstd::terp::list(3);
-    ans[0] = "a1";
-    ans[1] = "b1";
-    ans[2] = "c1";
+    ans[0] = "a";
+    ans[1] = "b";
+    ans[2] = "c";
+    sstd::printn(ans);
 
     //---
     
     ASSERT_TRUE(yml==ans);
-}/*
+}
+TEST(yaml, flow_style_notation_list_02){
+    std::string s=R"(
+[a, [b], c, [d, [e]], f]
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(5);
+    ans[0] = "a";
+    ans[1] = sstd::terp::list(1);
+    ans[1][0] = "b";
+    ans[2] = "c";
+    ans[3] = sstd::terp::list(2);
+    ans[3][0] = "d";
+    ans[3][1] = sstd::terp::list(1);
+    ans[3][1][0] = "e";
+    ans[4] = "f";
+    sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, flow_style_notation_hash_01){
+    std::string s=R"(
+{k1: v1}
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::hash(5);
+    ans["k1"] = "v1";
+    sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}//*/
+/*
 TEST(yaml, flow_style_notation_list){
     std::string s=R"(
 [a, 

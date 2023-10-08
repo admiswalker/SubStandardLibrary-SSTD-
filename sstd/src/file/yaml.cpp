@@ -192,7 +192,7 @@ void _print(const struct command& cmd){ // for debug
     printf("hsc_lx: %d\n",           cmd.hsc_lx                            );
     printf("hsc_hx: %d\n",           cmd.hsc_hx                            );
     printf("type: %d\n",             cmd.type                              );
-    printf("format: %c\n",           cmd.format                            );
+    printf("format: %d\n",           cmd.format                            );
     printf("val1_use_quotes: %s\n", (cmd.val1_use_quotes ? "true":"false") );
     printf("val2_use_quotes: %s\n", (cmd.val2_use_quotes ? "true":"false") );
     printf("val1: %s\n",             cmd.val1.c_str()                      );
@@ -475,35 +475,31 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
     
     return true;
 }
+bool _is_control_chars(const char c){
+    return (c=='[' || c==']' || c=='{' || c=='}' || c==':' || c==',');
+}
 bool sstd_yaml::_split_quotes_by_control_chars(std::vector<std::string>& ret, const char* str, const uint str_len){
-    bool detected_char=false;
-    
     bool is_escaped=false;
     bool in_d_quate=false; // double quate
     bool in_s_quate=false; // single quate
     std::string buf;
     uint i=0;
-    // while(str[i]!='\0'){ if(str[i]==' '){++i;}else{break;} } // skip space
     while(i<str_len){ // r: read place
         if(str[i]=='\\'){ is_escaped=true; buf+=str[i]; ++i; if(i>=str_len){break;} }
         
         if(!is_escaped && !in_s_quate && str[i]=='"' ){ in_d_quate = !in_d_quate; }
         if(!is_escaped && !in_d_quate && str[i]=='\''){ in_s_quate = !in_s_quate; }
         
-        if(!in_d_quate && !in_s_quate && (str[i]=='[' || str[i]==']' || str[i]=='{' || str[i]=='}' || str[i]==':' || str[i]==',')){
+        if(!in_d_quate && !in_s_quate && (_is_control_chars(str[i]))){
+            buf = sstd::strip(buf);
             if(buf.size()!=0){
-                ret.push_back(sstd::rstrip(buf));
+                ret.push_back(buf);
                 buf.clear();
             }
             ret.push_back(std::string(1, str[i])); // append a control char
-            detected_char=false;
             ++i;
         }else{
-            if(!detected_char && str[i]==' '){
-                detected_char=true;
-            }else{
-                buf += str[i];
-            }
+            buf += str[i];
             ++i;
         }
         
@@ -511,13 +507,60 @@ bool sstd_yaml::_split_quotes_by_control_chars(std::vector<std::string>& ret, co
     }
     if(in_d_quate){ ret.clear(); return false; }
     if(in_s_quate){ ret.clear(); return false; }
+    buf = sstd::strip(buf);
     if(buf.size()!=0){ ret.push_back(buf); }
-    // if(i==0 || (i>=X_len && sstd::startswith(&str[i-X_len], X))){ ret.push_back(std::string()); } // compatible with Python split()
-    //if(i>=1 && (str[i]=='[' || str[i]==']' || str[i]=='{' || str[i]=='}' || str[i]==',')){ ret.push_back(std::string()); }
     
     return true;
 }
-bool _flow_style_str_to_obj(sstd::terp::var& var, const std::string& s){
+bool _flow_style_str_to_obj(sstd::terp::var& var_rw, const std::string& s_r){
+    std::vector<std::string> v_cs; // vector of commands and string
+    if(!sstd_yaml::_split_quotes_by_control_chars(v_cs, s_r.c_str(), s_r.size())){ sstd::pdbg_err("_split_quotes_by_control_chars() is failed. Un-cloused quate.\n"); return false; }
+    sstd::printn(v_cs);
+    
+    std::vector<sstd::void_ptr*> v_dst;
+    //std::vector<uint> v_hsc_lx; // v: vector, hsc: head space count, _lx: list-index.
+    //std::vector<uint> v_hsc_hx; // v: vector, hsc: head space count. _hx: hash-index.
+    v_dst.push_back(var_rw.p());
+    //v_hsc_lx.push_back(0);
+    //v_hsc_hx.push_back(0);
+    
+    for(uint i=0; i<v_cs.size(); ++i){
+        if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
+        sstd::terp::var var = sstd::terp::var( v_dst[v_dst.size()-1] );
+        //if(v_hsc_lx.size()==0){ sstd::pdbg_err("v_hsc_lx is out of range\n"); return false; }
+        //if(v_hsc_hx.size()==0){ sstd::pdbg_err("v_hsc_hx is out of range\n"); return false; }
+        
+        if(v_cs[i].size()==1 && _is_control_chars(v_cs[i][0])){
+            switch(v_cs[i][0]){
+            case '[': {
+                if(var.typeNum()==sstd::num_null){
+                    var = sstd::terp::list();
+                }else{
+                    var.push_back( sstd::terp::list() );
+                    v_dst.push_back( var[var.size()-1].p() );
+                    continue;
+                }
+            } break;
+            case ']': { v_dst.pop_back(); } break;
+            case '{': {
+                if(var.typeNum()==sstd::num_null){
+                    var = sstd::terp::hash();
+                }else{
+                    var.push_back( sstd::terp::hash() );
+                    v_dst.push_back( var[var.size()-1].p() );
+                    continue;
+                }
+            } break;
+            case '}': { v_dst.pop_back(); } break;
+            case ':': {} break;
+            case ',': {} break;
+            default: { sstd::pdbg_err("Unexpected char\n"); return false; } break;
+            }
+        }else{
+            var.push_back(v_cs[i]);
+        }
+    }
+    /*
     //sstd::printn(s);
     std::vector<sstd::void_ptr*> v_dst;
     v_dst.push_back(var.p());
@@ -536,7 +579,8 @@ bool _flow_style_str_to_obj(sstd::terp::var& var, const std::string& s){
         }else{
             var.push_back( s[i] );
         }
-    }
+    }*/
+    
     return true;
 }
 bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>& v_cmd){
@@ -650,9 +694,9 @@ bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     bool tf = true;
     
     std::vector<std::string> ls; if(! sstd::splitByLine_quotes(ls, s)){ sstd::pdbg_err("single or double quatation is not closed\n"); return false; } // v: vector, ls: line string
-    //sstd::printn(ls);
+    sstd::printn(ls);
     std::vector<struct command> v_cmd; if(!_parse_yaml(v_cmd, ls, 0)){ return false; }
-    //_print(v_cmd);
+    _print(v_cmd);
     if(!_construct_var(ret_yml, v_cmd)){ return false; }
     
     return tf;
