@@ -703,13 +703,15 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
         if(v_cmd[i].type==NUM_LIST && needs_to_set_dst1){
             var.push_back( sstd::terp::list() );
             v_dst.push_back( var[var.size()-1].p() );
+            if(v_cmd[i].format==NUM_BLOCK_STYLE){ continue; }
         }
         bool needs_to_set_dst2 = !(v_cmd[i].val2.size()>=1 || v_cmd[i].val2_use_quotes);
         if(v_cmd[i].type==NUM_HASH && needs_to_set_dst2){
             v_dst.push_back( var[v_cmd[i].val1.c_str()].p() );
+            if(v_cmd[i].format==NUM_BLOCK_STYLE){ continue; }
         }
 
-        // set dst and value
+        // set value
         if(v_cmd[i].format==NUM_BLOCK_STYLE){
             switch(v_cmd[i].type){
             case NUM_STR: {
@@ -717,23 +719,14 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
                 var = v_cmd[i].val1.c_str();
             } break;
             case NUM_LIST: {
-                if(v_cmd[i].val1.size()>=1 || v_cmd[i].val1_use_quotes){ // 'val1_use_quotes' is required to detect 0 length string
-                    var.push_back( v_cmd[i].val1.c_str() );
-                }else{
-//                    var.push_back( sstd::terp::list() );
-//                    v_dst.push_back( var[var.size()-1].p() );
-                }
+                var.push_back( v_cmd[i].val1.c_str() );
             } break;
             case NUM_LIST_AND_HASH: {
                 var.push_back( sstd::terp::hash() );
                 v_dst.push_back( var[var.size()-1].p() );
             } break;
             case NUM_HASH: {
-                if(v_cmd[i].val2.size()>=1 || v_cmd[i].val2_use_quotes){ // 'val2_use_quotes' is required to detect 0 length string
-                    var[ v_cmd[i].val1.c_str() ] = v_cmd[i].val2.c_str();
-                }else{
-//                    v_dst.push_back( var[v_cmd[i].val1.c_str()].p() );
-                }
+                var[ v_cmd[i].val1.c_str() ] = v_cmd[i].val2.c_str();
             } break;
             default: { sstd::pdbg_err("ERROR\n"); } break;
             }
