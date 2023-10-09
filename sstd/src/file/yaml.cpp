@@ -700,44 +700,13 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
 
         // set dst
         bool needs_to_set_dst1 = !(v_cmd[i].val1.size()>=1 || v_cmd[i].val1_use_quotes);
-//        bool needs_to_set_dst2 = !(v_cmd[i].val2.size()>=1 || v_cmd[i].val2_use_quotes);
-//        if(needs_to_set_dst1 || needs_to_set_dst2){
-        if(needs_to_set_dst1){
-            switch(v_cmd[i].type){
-            case NUM_STR: {} break;
-            case NUM_LIST: {
-                var.push_back( sstd::terp::list() );
-                v_dst.push_back( var[var.size()-1].p() );
-            } break;
-            case NUM_LIST_AND_HASH: {
-//                var.push_back( sstd::terp::hash() );
-//                v_dst.push_back( var[var.size()-1].p() );
-            } break;
-            case NUM_HASH: {
-//                v_dst.push_back( var[v_cmd[i].val1.c_str()].p() );
-            } break;
-            default: { sstd::pdbg_err("ERROR\n"); } break;
-            }
-
+        if(v_cmd[i].type==NUM_LIST && needs_to_set_dst1){
+            var.push_back( sstd::terp::list() );
+            v_dst.push_back( var[var.size()-1].p() );
         }
         bool needs_to_set_dst2 = !(v_cmd[i].val2.size()>=1 || v_cmd[i].val2_use_quotes);
-        if(needs_to_set_dst2){
-            switch(v_cmd[i].type){
-            case NUM_STR: {} break;
-            case NUM_LIST: {
-//                var.push_back( sstd::terp::list() );
-//                v_dst.push_back( var[var.size()-1].p() );
-            } break;
-            case NUM_LIST_AND_HASH: {
-//                var.push_back( sstd::terp::hash() );
-//                v_dst.push_back( var[var.size()-1].p() );
-            } break;
-            case NUM_HASH: {
-                v_dst.push_back( var[v_cmd[i].val1.c_str()].p() );
-            } break;
-            default: { sstd::pdbg_err("ERROR\n"); } break;
-            }
-
+        if(v_cmd[i].type==NUM_HASH && needs_to_set_dst2){
+            v_dst.push_back( var[v_cmd[i].val1.c_str()].p() );
         }
 
         // set dst and value
