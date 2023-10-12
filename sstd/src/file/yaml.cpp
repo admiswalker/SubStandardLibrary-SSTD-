@@ -715,52 +715,44 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
         }
 
         // set value
-//        if(v_cmd[i].format==NUM_BLOCK_STYLE){
+        if(v_cmd[i].format==NUM_BLOCK_STYLE){
             switch(v_cmd[i].type){
             case NUM_STR: {
-                if(v_cmd[i].format==NUM_BLOCK_STYLE){
-                    if(var.typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data. (String data type can only take one data.)\n"); break; }
-                    var = v_cmd[i].val1.c_str();
-                }else{
-                    if(!_flow_style_str_to_obj(var, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
-                }
+                if(var.typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data. (String data type can only take one data.)\n"); break; }
+                var = v_cmd[i].val1.c_str();
             } break;
             case NUM_LIST: {
-                if(v_cmd[i].format==NUM_BLOCK_STYLE){
-                    var.push_back( v_cmd[i].val1.c_str() );
-                }else{
-                    sstd::terp::var var_tmp;
-                    if(!_flow_style_str_to_obj(var_tmp, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
-                    var.push_back( var_tmp ); // NOTE: ここ std::move() できるように確認する
-                }
+                var.push_back( v_cmd[i].val1.c_str() );
             } break;
             case NUM_LIST_AND_HASH: {
-//                if(v_cmd[i].format==NUM_BLOCK_STYLE){
-                    var.push_back( sstd::terp::hash() );
-                    v_dst.push_back( var[var.size()-1].p() );
-//                }else{
-                    //sstd::terp::var var_tmp;
-//                    if(!_flow_style_str_to_obj(var, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
-                    //var[var.size()-1]
-//                }
+                var.push_back( sstd::terp::hash() );
+                v_dst.push_back( var[var.size()-1].p() );
             } break;
             case NUM_HASH: {
-                if(v_cmd[i].format==NUM_BLOCK_STYLE){
-                    var[ v_cmd[i].val1.c_str() ] = v_cmd[i].val2.c_str();
-                }else{
-                    if(!_flow_style_str_to_obj(var, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
-                }
+                var[ v_cmd[i].val1.c_str() ] = v_cmd[i].val2.c_str();
             } break;
             default: { sstd::pdbg_err("ERROR\n"); } break;
             }
-//        }else if(v_cmd[i].format==NUM_FLOW_STYLE){
-//            printf("in 720\n");
-//            sstd::printn(v_cmd[i].type);
-//            _print(v_cmd[i]);
-//            if(!_flow_style_str_to_obj(var, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
-//        }else{
-//            sstd::pdbg_err("Unexpected data fromat.");
-//        }
+        }else if(v_cmd[i].format==NUM_FLOW_STYLE){
+            switch(v_cmd[i].type){
+            case NUM_STR: {
+                if(!_flow_style_str_to_obj(var, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
+            } break;
+            case NUM_LIST: {
+                sstd::terp::var var_tmp;
+                if(!_flow_style_str_to_obj(var_tmp, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
+                var.push_back( var_tmp ); // NOTE: ここ std::move() できるように確認する
+            } break;
+            case NUM_LIST_AND_HASH: {
+            } break;
+            case NUM_HASH: {
+                if(!_flow_style_str_to_obj(var, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
+            } break;
+            default: { sstd::pdbg_err("ERROR\n"); } break;
+            }
+        }else{
+            sstd::pdbg_err("Unexpected data fromat.");
+        }
 //        sstd::printn(ret_yml);
         
         //sstd::printn(var); // for debug
