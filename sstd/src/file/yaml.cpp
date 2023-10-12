@@ -242,7 +242,8 @@ bool _get_value(bool& ret_val1_use_quotes, bool& ret_val2_use_quotes, std::strin
     ret_val1.clear();
     ret_val2.clear();
     bool dq, sq;
-    
+
+    // switch(v_cmd[i].format + v_cmd[i].type){ // 730 行目的なかんじ (<-) に修正したい
     if(format==NUM_BLOCK_STYLE_BASE){
         switch(typeNum){
         case NUM_STR:  {
@@ -275,7 +276,7 @@ bool _get_value(bool& ret_val1_use_quotes, bool& ret_val2_use_quotes, std::strin
         case NUM_HASH:
         case NUM_LIST_AND_HASH: {
             ret_val1 = _extract_quotes_value(sstd::strip_quotes(sq, dq, _rm_hyphen(s)));
-            ret_val1_use_quotes = ( sq || dq );
+            ret_val1_use_quotes = ( dq || sq );
         } break;
         default: { sstd::pdbg_err("Unexpected typeNum\n"); return false; } break;
         }
