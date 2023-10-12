@@ -542,7 +542,7 @@ bool _get_hash_value(bool& is_null, std::string& ret_value, const std::vector<st
         is_null = false;
         i += 2;
         return true; // get value
-    }else if(i+2<v_cs.size() && v_cs[i+1][0]==':' && (v_cs[i+1][0]=='}' || v_cs[i+1][0]==',')){
+    }else if(i+2<v_cs.size() && v_cs[i+1][0]==':' && (v_cs[i+2][0]=='}' || v_cs[i+2][0]==',')){
         // { "k1": } or { "k1":, "k2" }
         is_null = true;
         i += 2;
@@ -596,6 +596,8 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
             default: { sstd::pdbg_err("Unexpected char\n"); return false; } break;
             }
         }else{
+            //sstd::printn(v_cs[i]);
+            //sstd::printn(var.typeNum());
             switch(var.typeNum()){
             case sstd::num_vec_void_ptr: {
                 // list
@@ -610,6 +612,7 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
                     if(!is_null){ var[ key.c_str() ] = val.c_str();
                     }   else    { var[ key.c_str() ]; }
                 }else{
+                    printf("in615\n");
                     v_dst.push_back( var[key.c_str()].p() );
                 }
             } break;
@@ -640,8 +643,8 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
     v_hsc_hx.push_back(0);
     
     for(uint i=0; i<v_cmd.size(); ++i){
-        printf("\n\n--- begin cmd ---\n"); // for debug
-        _print(v_cmd[i]);                  // for debug
+        //printf("\n\n--- begin cmd ---\n"); // for debug
+        //_print(v_cmd[i]);                  // for debug
         if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
         sstd::terp::var var = sstd::terp::var( v_dst[v_dst.size()-1] );
         if(v_hsc_lx.size()==0){ sstd::pdbg_err("v_hsc_lx is out of range\n"); return false; }
@@ -699,43 +702,66 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
         }
 
         // set dst
-        bool needs_to_set_dst1 = !(v_cmd[i].val1.size()>=1 || v_cmd[i].val1_use_quotes);
-        if(v_cmd[i].type==NUM_LIST && needs_to_set_dst1){
+        bool needs_to_set_dst_list = !(v_cmd[i].val1.size()>=1 || v_cmd[i].val1_use_quotes);
+        if(v_cmd[i].type==NUM_LIST && needs_to_set_dst_list){
             var.push_back( sstd::terp::list() );
             v_dst.push_back( var[var.size()-1].p() );
             if(v_cmd[i].format==NUM_BLOCK_STYLE){ continue; }
         }
-        bool needs_to_set_dst2 = !(v_cmd[i].val2.size()>=1 || v_cmd[i].val2_use_quotes);
-        if(v_cmd[i].type==NUM_HASH && needs_to_set_dst2){
+        bool needs_to_set_dst_hash = !(v_cmd[i].val2.size()>=1 || v_cmd[i].val2_use_quotes);
+        if(v_cmd[i].type==NUM_HASH && needs_to_set_dst_hash){
             v_dst.push_back( var[v_cmd[i].val1.c_str()].p() );
             if(v_cmd[i].format==NUM_BLOCK_STYLE){ continue; }
         }
 
         // set value
-        if(v_cmd[i].format==NUM_BLOCK_STYLE){
+//        if(v_cmd[i].format==NUM_BLOCK_STYLE){
             switch(v_cmd[i].type){
             case NUM_STR: {
-                if(var.typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data. (String data type can only take one data.)\n"); break; }
-                var = v_cmd[i].val1.c_str();
+                if(v_cmd[i].format==NUM_BLOCK_STYLE){
+                    if(var.typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data. (String data type can only take one data.)\n"); break; }
+                    var = v_cmd[i].val1.c_str();
+                }else{
+                    if(!_flow_style_str_to_obj(var, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
+                }
             } break;
             case NUM_LIST: {
-                var.push_back( v_cmd[i].val1.c_str() );
+                if(v_cmd[i].format==NUM_BLOCK_STYLE){
+                    var.push_back( v_cmd[i].val1.c_str() );
+                }else{
+                    sstd::terp::var var_tmp;
+                    if(!_flow_style_str_to_obj(var_tmp, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
+                    var.push_back( var_tmp ); // NOTE: ここ std::move() できるように確認する
+                }
             } break;
             case NUM_LIST_AND_HASH: {
-                var.push_back( sstd::terp::hash() );
-                v_dst.push_back( var[var.size()-1].p() );
+//                if(v_cmd[i].format==NUM_BLOCK_STYLE){
+                    var.push_back( sstd::terp::hash() );
+                    v_dst.push_back( var[var.size()-1].p() );
+//                }else{
+                    //sstd::terp::var var_tmp;
+//                    if(!_flow_style_str_to_obj(var, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
+                    //var[var.size()-1]
+//                }
             } break;
             case NUM_HASH: {
-                var[ v_cmd[i].val1.c_str() ] = v_cmd[i].val2.c_str();
+                if(v_cmd[i].format==NUM_BLOCK_STYLE){
+                    var[ v_cmd[i].val1.c_str() ] = v_cmd[i].val2.c_str();
+                }else{
+                    if(!_flow_style_str_to_obj(var, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
+                }
             } break;
             default: { sstd::pdbg_err("ERROR\n"); } break;
             }
-        }else if(v_cmd[i].format==NUM_FLOW_STYLE){
-            printf("in 720\n");
-            if(!_flow_style_str_to_obj(var, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
-        }else{
-            sstd::pdbg_err("Unexpected data fromat.");
-        }
+//        }else if(v_cmd[i].format==NUM_FLOW_STYLE){
+//            printf("in 720\n");
+//            sstd::printn(v_cmd[i].type);
+//            _print(v_cmd[i]);
+//            if(!_flow_style_str_to_obj(var, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
+//        }else{
+//            sstd::pdbg_err("Unexpected data fromat.");
+//        }
+//        sstd::printn(ret_yml);
         
         //sstd::printn(var); // for debug
         //sstd::printn(ret_yml); // for debug
