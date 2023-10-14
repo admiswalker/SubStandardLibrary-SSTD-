@@ -39,6 +39,8 @@ void sstd::terp::_to(std::string& dst, const sstd::void_ptr& src){ dst = STR; }
 void sstd::terp::_to(std::string& dst, const std::string   & src){ dst = src; }
 #undef STR
 
+#define NULL_CHECK(p) if(p==NULL){ sstd::pdbg_err("NULL pointer is detected\n"); return; }
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // sstd::terp::iterator
 
@@ -298,8 +300,9 @@ sstd::void_ptr* sstd::terp::var::p() const { return _p; }
 //---
 
 void sstd::terp::var::pop_back(){
+    NULL_CHECK(_p);
     switch((*_p).typeNum()){
-    case sstd::num_vec_void_ptr: { _cast2vec((*_p).ptr())->pop_back(); return; } break;
+    case sstd::num_vec_void_ptr: { if(_cast2vec((*_p).ptr())->size()==0){return;} _cast2vec((*_p).ptr())->pop_back(); return; } break;
     case sstd::num_null:         {} break;
     default: { sstd::pdbg_err("ERROR\n"); }
     }
@@ -309,12 +312,19 @@ void sstd::terp::var::pop_back(){
 //---
 
 void sstd::terp::var::push_back(const char* pRhs){
+    NULL_CHECK(_p);
     if((*_p).typeNum()!=sstd::num_vec_void_ptr){ sstd::pdbg_err("push_back(char*) is failed. Unexpedted data type. This function requires sstd::num_vec_void_ptr type, but takes %s type.\n", sstd::typeNum2str((*_p).typeNum()).c_str()); return; }
     (*_cast2vec((*_p).ptr())).push_back(new std::string(pRhs));
 }
 void sstd::terp::var::push_back(const sstd::terp::var& rhs){
+    NULL_CHECK(_p);
     if((*_p).typeNum()!=sstd::num_vec_void_ptr){ sstd::pdbg_err("push_back(var&) is failed. Unexpedted data type. This function requires sstd::num_vec_void_ptr type, but takes %s type.\n", sstd::typeNum2str((*_p).typeNum()).c_str()); return; }
     (*_cast2vec((*_p).ptr())).push_back(*rhs.p());
+}
+void sstd::terp::var::push_back(      sstd::terp::var&& rhs){
+    NULL_CHECK(_p);
+    if((*_p).typeNum()!=sstd::num_vec_void_ptr){ sstd::pdbg_err("push_back(var&) is failed. Unexpedted data type. This function requires sstd::num_vec_void_ptr type, but takes %s type.\n", sstd::typeNum2str((*_p).typeNum()).c_str()); return; }
+    (*_cast2vec((*_p).ptr())).push_back(std::move(*rhs.p())); // call move constructor of "sstd::void_ptr::void_ptr()"
 }
 
 //---

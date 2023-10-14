@@ -53,6 +53,19 @@ TEST(memory_terp, var_typeStr_c){
 }
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// common
+
+// to
+TEST(memory_terp, to_SEGV_null_ptr){
+    sstd::terp::var a;
+    a = sstd::terp::list();
+    
+    testing::internal::CaptureStdout();
+    a[0].to<std::string>(); // TEST THIS LINE
+    ASSERT_TRUE(sstd::strIn("NULL pointer is detected", testing::internal::GetCapturedStdout()));
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 // sstd::terp::list
 //*
 
@@ -203,6 +216,12 @@ TEST(memory_terp, list_pop_back){
     ASSERT_STREQ(a[0].to<std::string>().c_str(), "v0");
     ASSERT_STREQ(a[1].to<std::string>().c_str(), "v1");
 }
+TEST(memory_terp, list_pop_back_avoid_SEGV_0_size){
+    sstd::terp::var a;
+    a = sstd::terp::list();
+    
+    a.pop_back(); // TEST THIS LINE
+}
 
 // push_back()
 TEST(memory_terp, list_push_back_c){
@@ -212,7 +231,7 @@ TEST(memory_terp, list_push_back_c){
     
     ASSERT_STREQ(a[0].to<std::string>().c_str(), "test");
 }
-TEST(memory_terp, list_push_back_list){
+TEST(memory_terp, list_push_back_var_list){
     // -
     //   - v1
     //   - v2
@@ -222,6 +241,54 @@ TEST(memory_terp, list_push_back_list){
     a.push_back(sstd::terp::list()); // TEST THIS LINE
     a[0].push_back("v1");
     a[0].push_back("v2");
+    
+    ASSERT_STREQ(a[0][0].to<std::string>().c_str(), "v1");
+    ASSERT_STREQ(a[0][1].to<std::string>().c_str(), "v2");
+}
+TEST(memory_terp, list_push_back_var_avoid_SEGV_null_ptr){
+    sstd::terp::var a;
+    a = sstd::terp::list();
+    
+    testing::internal::CaptureStdout();
+    a[0].push_back(""); // TEST THIS LINE
+    ASSERT_TRUE(sstd::strIn("NULL pointer is detected", testing::internal::GetCapturedStdout()));
+}
+TEST(memory_terp, list_push_back_var_avoid_SEGV_push_back_var){
+    sstd::terp::var a, tmp;
+    a = sstd::terp::list();
+    
+    testing::internal::CaptureStdout();
+    a[0].push_back(tmp); // TEST THIS LINE
+    ASSERT_TRUE(sstd::strIn("NULL pointer is detected", testing::internal::GetCapturedStdout()));
+}
+TEST(memory_terp, list_push_back_var){
+    // -
+    //   - v1
+    //   - v2
+    
+    sstd::terp::var tmp;
+    sstd::terp::var a;
+    tmp = sstd::terp::list();
+    tmp.push_back("v1");
+    tmp.push_back("v2");
+    a = sstd::terp::list();
+    a.push_back(tmp); // TEST THIS LINE
+    
+    ASSERT_STREQ(a[0][0].to<std::string>().c_str(), "v1");
+    ASSERT_STREQ(a[0][1].to<std::string>().c_str(), "v2");
+}
+TEST(memory_terp, list_push_back_var_move){
+    // -
+    //   - v1
+    //   - v2
+    
+    sstd::terp::var tmp;
+    sstd::terp::var a;
+    tmp = sstd::terp::list();
+    tmp.push_back("v1");
+    tmp.push_back("v2");
+    a = sstd::terp::list();
+    a.push_back(std::move(tmp)); // TEST THIS LINE
     
     ASSERT_STREQ(a[0][0].to<std::string>().c_str(), "v1");
     ASSERT_STREQ(a[0][1].to<std::string>().c_str(), "v2");

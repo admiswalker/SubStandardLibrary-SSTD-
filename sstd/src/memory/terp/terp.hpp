@@ -170,6 +170,7 @@ public:
     template <typename T>
     const T to() const {
         T ret = T();
+        if(_p==NULL){ sstd::pdbg_err("NULL pointer is detected\n"); return ret; }
         sstd::terp::_to(ret, *_p);
         return ret;
     }
@@ -193,7 +194,8 @@ public:
     void pop_back();
 
     void push_back(const char* pRhs);
-    void push_back(const sstd::terp::var& rhs);
+    void push_back(const sstd::terp::var&  rhs);
+    void push_back(      sstd::terp::var&& rhs);
     
     void resize(uint len);
 };
