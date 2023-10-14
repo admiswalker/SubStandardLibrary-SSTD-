@@ -619,7 +619,6 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
                     if(!is_null){ var[ key.c_str() ] = val.c_str();
                     }   else    { var[ key.c_str() ]; }
                 }else{
-                    printf("in615\n");
                     v_dst.push_back( var[key.c_str()].p() );
                 }
             } break;
@@ -736,7 +735,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
         case NUM_FLOW_STYLE_BASE + NUM_LIST: {
             sstd::terp::var var_tmp;
             if(!_flow_style_str_to_obj(var_tmp, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
-            var.push_back( var_tmp ); // NOTE: ここ std::move() できるように確認する
+            var.push_back(std::move( var_tmp ));
         } break;
         case NUM_BLOCK_STYLE_BASE + NUM_LIST_AND_HASH: {
             var.push_back( sstd::terp::hash() );
