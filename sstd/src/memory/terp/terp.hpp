@@ -14,6 +14,7 @@
 namespace sstd::terp{
     // var
     class var;
+    class var_v2;
 
     // iterator
     class iterator;
@@ -25,6 +26,11 @@ namespace sstd::terp{
     // list
     var list(uint allocate_size);
     var list();
+    var_v2 list_v2(uint allocate_size);
+    var_v2 list_v2();
+    
+//    void free(class sstd::terp::var_v2& lhs);
+//    void copy(class sstd::terp::var_v2& lhs, const class sstd::terp::var_v2& rhs);
 
     // type check
     bool isHash (const sstd::terp::var& rhs);
@@ -198,6 +204,108 @@ public:
     void push_back(      sstd::terp::var&& rhs);
     
     void resize(uint len);
+};
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+class sstd::terp::var_v2{
+private:
+    void* _p;
+    uint _type;
+    
+public:
+    var_v2();
+    var_v2(const class var_v2&  rhs);
+    //var_v2(      class var_v2&& rhs);
+    //var_v2(const sstd::void_ptr& vp_in);
+    //var_v2(      sstd::void_ptr*  p_in);
+    //var_v2(const bool         rhs);
+    //var_v2(const char         rhs);
+    //var_v2(const  int8        rhs);
+    //var_v2(const  int16       rhs);
+    //var_v2(const  int32       rhs);
+    //var_v2(const  int64       rhs);
+    //var_v2(const uint8        rhs);
+    //var_v2(const uint16       rhs);
+    //var_v2(const uint32       rhs);
+    //var_v2(const uint64       rhs);
+    //var_v2(const  float       rhs);
+    //var_v2(const double       rhs);
+    //var_v2(const char*        rhs);
+    //var_v2(const std::string& rhs);
+    ~var_v2();
+    
+    //---
+    // internal
+    
+    void* p() const;
+    uint type() const;
+    
+    void*& p_RW();
+    uint & type_RW();
+    
+    //---
+    // common
+
+    void free();
+    void copy(const class sstd::terp::var_v2& rhs);
+    
+    //template <typename T>
+    //void _overwrite(T* ptr);
+    
+    var_v2& operator=(const sstd::terp::var_v2& rhs);
+    //var_v2 operator=(      sstd::terp::var_v2&& rhs);
+    
+    //var_v2 operator=(const char* rhs);
+
+    //bool operator==(const sstd::terp::var_v2& rhs);
+    //bool operator!=(const sstd::terp::var_v2& rhs);
+
+          var_v2& operator[](const int idx);
+    //const var_v2& operator[](const int idx) const;
+    //      var_v2 operator[](const char* pKey);
+    //const var_v2 operator[](const char* pKey) const;
+    
+    //sstd::terp::iterator begin() const;
+    //sstd::terp::iterator end  () const;
+    
+    //uint size() const;
+
+//    void _to(std::string& dst, const sstd::void_ptr& src) const { dst = (*(std::string*)_p->ptr()); }
+    //template <typename T>
+    //const T to() const {
+    //    T ret = T();
+    //    if(_p==NULL){ sstd::pdbg_err("NULL pointer is detected\n"); return ret; }
+    //    sstd::terp::_to(ret, *_p);
+    //    return ret;
+    //}
+    
+    //uint typeNum() const;
+    //std::string typeStr() const;
+    
+    //---
+    // for hash type
+    
+    //uint bucket_count();
+    
+    //sstd::terp::iterator erase(const sstd::terp::iterator& rhs);
+    //uint erase(const char* pKey);
+    
+    //sstd::terp::iterator find(const char* pKey) const;
+    
+    //---
+    // for list type
+
+//    void list_v2(uint allocate_size);
+//    void list_v2();
+
+    //void pop_back();
+
+    //void push_back(const char* pRhs);
+    //void push_back(const sstd::terp::var_v2&  rhs);
+    //void push_back(      sstd::terp::var_v2&& rhs);
+    
+    //void resize(uint len);
 };
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

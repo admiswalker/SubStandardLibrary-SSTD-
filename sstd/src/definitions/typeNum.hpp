@@ -152,6 +152,8 @@ namespace sstd{
     const static uchar num_hash_str_void_ptr      = 117;
     const static uchar num_hash_void_ptr_void_ptr = 118;
     
+    const static uchar num_vec_terp_var_v2        = 119;
+    
     //---
 
     uchar type2num(              bool rhs);
