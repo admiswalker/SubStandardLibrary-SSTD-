@@ -2296,7 +2296,7 @@ TEST(yaml, block_list_and_flow_list){
 - [a, b, c]
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+    //sstd::printn(yml);
 
     //---
     
@@ -2306,7 +2306,7 @@ TEST(yaml, block_list_and_flow_list){
     ans[0][0] = "a";
     ans[0][1] = "b";
     ans[0][2] = "c";
-    sstd::printn(ans);
+    //sstd::printn(ans);
 
     //---
     
@@ -2317,7 +2317,7 @@ TEST(yaml, block_list_and_flow_hash){
 - {k1:v1, k2:v2, k3:v3}
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+    //sstd::printn(yml);
 
     //---
     
@@ -2327,7 +2327,7 @@ TEST(yaml, block_list_and_flow_hash){
     ans[0]["k1"] = "v1";
     ans[0]["k2"] = "v2";
     ans[0]["k3"] = "v3";
-    sstd::printn(ans);
+    //sstd::printn(ans);
 
     //---
     
