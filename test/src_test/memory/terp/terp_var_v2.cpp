@@ -334,19 +334,19 @@ TEST(memory_terp_v2, list_size_arg_10){
 TEST(memory_terp_v2, list_typeNum){
     sstd::terp::var_v2 a;
     a = sstd::terp::list_v2();
-    ASSERT_STREQ(sstd::typeNum2str(a.typeNum()).c_str(), "vec_void_ptr"); // TEST THIS LINE
+    ASSERT_STREQ(sstd::typeNum2str(a.typeNum()).c_str(), "vec_terp_var_v2"); // TEST THIS LINE
 }
-/*
+
 // typeStr()
 TEST(memory_terp_v2, list_typeStr){
     sstd::terp::var_v2 a;
     a = sstd::terp::list_v2();
-    ASSERT_STREQ(a.typeStr().c_str(), "vec_void_ptr"); // TEST THIS LINE
+    ASSERT_STREQ(a.typeStr().c_str(), "vec_terp_var_v2"); // TEST THIS LINE
 }
-//*/
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // sstd::terp::hash
-/*
+
 // operator=
 TEST(memory_terp_v2, hash_ope_assign){
     sstd::terp::var_v2 a;
@@ -515,7 +515,7 @@ TEST(memory_terp_v2, hash_size_arg_14){
     a = sstd::terp::hash_v2(14);
     ASSERT_EQ(a.bucket_count(), (uint)17); // std::unordered_map allocates the prime number size, equal or nearest larger than the allocating size.
 }
-
+/*
 // typeNum()
 TEST(memory_terp_v2, hash_typeNum){
     sstd::terp::var_v2 a;

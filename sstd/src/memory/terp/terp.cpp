@@ -717,13 +717,21 @@ bool sstd::terp::var_v2::operator!=(const sstd::terp::var_v2& rhs){ return !_is_
 #define _CAST2HASH(_P) (*(std::unordered_map<std::string,sstd::terp::var_v2>*)_P)
 
 #define _OPE_SUBSCRIPT_IDX_BASE()                                       \
-    switch(this->_type){                                                \
+    switch(_type){                                                      \
     case sstd::num_vec_terp_var_v2: { return _CAST2VEC(this->_p)[idx]; } break; \
     default: { sstd::pdbg_err("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var takes \"sstd::terp::hash()\" type, but treat as a \"sstd::terp::list()\".\n"); } break; \
     }                                                                   \
     return *this;
-      sstd::terp::var_v2& sstd::terp::var_v2::operator[](const int idx)       { _OPE_SUBSCRIPT_IDX_BASE(); }
-const sstd::terp::var_v2& sstd::terp::var_v2::operator[](const int idx) const { _OPE_SUBSCRIPT_IDX_BASE(); }
+#define _OPE_SUBSCRIPT_KEY_BASE()                                       \
+    switch(_type){                                                      \
+    case sstd::num_hash_terp_var_v2: { return _CAST2HASH(_p)[pKey]; } break; \
+    default: { sstd::pdbg_err("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var takes \"sstd::terp::list()\" type, but treat as a \"sstd::terp::hash()\".\n"); } break; \
+    }                                                                   \
+    return *this;
+      sstd::terp::var_v2& sstd::terp::var_v2::operator[](const   int  idx)       { _OPE_SUBSCRIPT_IDX_BASE(); }
+const sstd::terp::var_v2& sstd::terp::var_v2::operator[](const   int  idx) const { _OPE_SUBSCRIPT_IDX_BASE(); }
+      sstd::terp::var_v2& sstd::terp::var_v2::operator[](const char* pKey)       { _OPE_SUBSCRIPT_KEY_BASE(); }
+const sstd::terp::var_v2& sstd::terp::var_v2::operator[](const char* pKey) const { _OPE_SUBSCRIPT_KEY_BASE(); }
 
 //---
 

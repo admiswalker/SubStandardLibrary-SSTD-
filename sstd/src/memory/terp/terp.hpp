@@ -283,8 +283,8 @@ public:
 
           var_v2& operator[](const int idx);
     const var_v2& operator[](const int idx) const;
-    //      var_v2 operator[](const char* pKey);
-    //const var_v2 operator[](const char* pKey) const;
+          var_v2& operator[](const char* pKey);
+    const var_v2& operator[](const char* pKey) const;
     
     sstd::terp::iterator_v2 begin() const;
     sstd::terp::iterator_v2 end  () const;
