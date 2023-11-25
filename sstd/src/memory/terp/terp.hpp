@@ -279,7 +279,7 @@ public:
     var_v2& operator=(const char* rhs);
 
     bool operator==(const sstd::terp::var_v2& rhs);
-    //bool operator!=(const sstd::terp::var_v2& rhs);
+    bool operator!=(const sstd::terp::var_v2& rhs);
 
           var_v2& operator[](const int idx);
     const var_v2& operator[](const int idx) const;
@@ -306,10 +306,10 @@ public:
     //---
     // for hash type
     
-    //uint bucket_count();
+    uint bucket_count();
     
-    //sstd::terp::iterator_v2 erase(const sstd::terp::iterator_v2& rhs);
-    //uint erase(const char* pKey);
+    sstd::terp::iterator_v2 erase(const sstd::terp::iterator_v2& rhs);
+    uint erase(const char* pKey);
     
     sstd::terp::iterator_v2 find(const char* pKey) const;
     
@@ -319,11 +319,11 @@ public:
 //    void list_v2(uint allocate_size);
 //    void list_v2();
 
-    //void pop_back();
+    void pop_back();
 
     void push_back(const char* pRhs);
-    //void push_back(const sstd::terp::var_v2&  rhs);
-    //void push_back(      sstd::terp::var_v2&& rhs);
+    void push_back(const sstd::terp::var_v2&  rhs);
+    void push_back(      sstd::terp::var_v2&& rhs);
     
     void resize(uint len);
 };
@@ -341,7 +341,7 @@ namespace sstd::terp{
 
 class sstd::terp::iterator_v2{
 private:
-    uint _typeNum;
+    uint _type;
     _v_iterator_v2 _v_itr;
     _h_iterator_v2 _h_itr;
 public:
@@ -364,7 +364,7 @@ public:
     template <typename T>
     T first_to() const {
         T ret = T();
-        switch(_typeNum){
+        switch(this->_type){
         case sstd::num_vec_terp_var_v2:  { sstd::terp::_to_v2(ret, (sstd::terp::var_v2)(*_v_itr)      ); return ret; } break;
         case sstd::num_hash_terp_var_v2: { sstd::terp::_to_v2(ret, (std::string       )(*_h_itr).first); return ret; } break;
         default: { sstd::pdbg_err("ERROR\n"); }
@@ -375,7 +375,7 @@ public:
     template <typename T>
     T second_to() const {
         T ret = T();
-        switch(_typeNum){
+        switch(this->_type){
         case sstd::num_hash_terp_var_v2: { sstd::terp::_to_v2(ret, (sstd::terp::var_v2)(*_h_itr).second); return ret; } break;
         default: { sstd::pdbg_err("ERROR\n"); }
         }

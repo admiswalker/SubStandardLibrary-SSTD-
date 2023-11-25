@@ -131,7 +131,7 @@ TEST(memory_terp_v2, list_ope_eq_false_type){
     sstd::terp::var_v2 lhs; lhs = sstd::terp::list_v2();
     sstd::terp::var_v2 rhs; rhs = sstd::terp::hash_v2();
     ASSERT_FALSE(lhs==rhs); // TEST THIS LINE
-}/*
+}
 TEST(memory_terp_v2, list_ope_eq_false_size){
     sstd::terp::var_v2 lhs; lhs = sstd::terp::list_v2(0);
     sstd::terp::var_v2 rhs; rhs = sstd::terp::list_v2(3);
@@ -253,6 +253,7 @@ TEST(memory_terp_v2, list_push_back_var_list){
     sstd::terp::var_v2 a;
     a = sstd::terp::list_v2();
     a.push_back(sstd::terp::list_v2()); // TEST THIS LINE
+    a[0] = sstd::terp::list_v2();
     a[0].push_back("v1");
     a[0].push_back("v2");
     
@@ -261,7 +262,7 @@ TEST(memory_terp_v2, list_push_back_var_list){
 }
 TEST(memory_terp_v2, list_push_back_var_avoid_SEGV_null_ptr){
     sstd::terp::var_v2 a;
-    a = sstd::terp::list_v2();
+    a = sstd::terp::list_v2(1);
     
     testing::internal::CaptureStdout();
     a[0].push_back(""); // TEST THIS LINE
@@ -269,7 +270,7 @@ TEST(memory_terp_v2, list_push_back_var_avoid_SEGV_null_ptr){
 }
 TEST(memory_terp_v2, list_push_back_var_avoid_SEGV_push_back_var){
     sstd::terp::var_v2 a, tmp;
-    a = sstd::terp::list_v2();
+    a = sstd::terp::list_v2(1);
     
     testing::internal::CaptureStdout();
     a[0].push_back(tmp); // TEST THIS LINE
@@ -335,7 +336,7 @@ TEST(memory_terp_v2, list_typeNum){
     a = sstd::terp::list_v2();
     ASSERT_STREQ(sstd::typeNum2str(a.typeNum()).c_str(), "vec_void_ptr"); // TEST THIS LINE
 }
-
+/*
 // typeStr()
 TEST(memory_terp_v2, list_typeStr){
     sstd::terp::var_v2 a;
