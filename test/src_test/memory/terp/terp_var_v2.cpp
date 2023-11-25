@@ -101,26 +101,26 @@ TEST(memory_terp_v2, list_ope_eq_true_type){
     sstd::terp::var_v2 lhs; lhs = sstd::terp::list_v2();
     sstd::terp::var_v2 rhs; rhs = sstd::terp::list_v2();
     ASSERT_TRUE(lhs==rhs); // TEST THIS LINE
-}/*
+}
 TEST(memory_terp_v2, list_ope_eq_true_size_0){
-    sstd::terp::var_v2 lhs; lhs = sstd::terp::list(0);
-    sstd::terp::var_v2 rhs; rhs = sstd::terp::list(0);
+    sstd::terp::var_v2 lhs; lhs = sstd::terp::list_v2(0);
+    sstd::terp::var_v2 rhs; rhs = sstd::terp::list_v2(0);
     ASSERT_TRUE(lhs==rhs); // TEST THIS LINE
 }
 TEST(memory_terp_v2, list_ope_eq_true_size_3){
-    sstd::terp::var_v2 lhs; lhs = sstd::terp::list(3);
-    sstd::terp::var_v2 rhs; rhs = sstd::terp::list(3);
+    sstd::terp::var_v2 lhs; lhs = sstd::terp::list_v2(3);
+    sstd::terp::var_v2 rhs; rhs = sstd::terp::list_v2(3);
     ASSERT_TRUE(lhs==rhs); // TEST THIS LINE
 }
 TEST(memory_terp_v2, list_ope_eq_true){
     sstd::terp::var_v2 lhs;
-    lhs = sstd::terp::list(3);
+    lhs = sstd::terp::list_v2(3);
     lhs[0] = "v0";
     lhs[1] = "v1";
     lhs[2] = "v2";
 
     sstd::terp::var_v2 rhs;
-    rhs = sstd::terp::list(3);
+    rhs = sstd::terp::list_v2(3);
     rhs[0] = "v0";
     rhs[1] = "v1";
     rhs[2] = "v2";
@@ -129,23 +129,23 @@ TEST(memory_terp_v2, list_ope_eq_true){
 }
 TEST(memory_terp_v2, list_ope_eq_false_type){
     sstd::terp::var_v2 lhs; lhs = sstd::terp::list_v2();
-    sstd::terp::var_v2 rhs; rhs = sstd::terp::hash();
+    sstd::terp::var_v2 rhs; rhs = sstd::terp::hash_v2();
     ASSERT_FALSE(lhs==rhs); // TEST THIS LINE
-}
+}/*
 TEST(memory_terp_v2, list_ope_eq_false_size){
-    sstd::terp::var_v2 lhs; lhs = sstd::terp::list(0);
-    sstd::terp::var_v2 rhs; rhs = sstd::terp::list(3);
+    sstd::terp::var_v2 lhs; lhs = sstd::terp::list_v2(0);
+    sstd::terp::var_v2 rhs; rhs = sstd::terp::list_v2(3);
     ASSERT_FALSE(lhs==rhs); // TEST THIS LINE
 }
 TEST(memory_terp_v2, list_ope_eq_false){
     sstd::terp::var_v2 lhs;
-    lhs = sstd::terp::list(3);
+    lhs = sstd::terp::list_v2(3);
     lhs[0] = "v0";
     lhs[1] = "v1";
     lhs[2] = "v2";
 
     sstd::terp::var_v2 rhs;
-    rhs = sstd::terp::list(3);
+    rhs = sstd::terp::list_v2(3);
     rhs[0] = "v0";
     rhs[1] = "v1";
     rhs[2] = "NotEqualStr";
@@ -169,7 +169,7 @@ TEST(memory_terp_v2, list_begin_end){
 }
 TEST(memory_terp_v2, list_begin_end_with_objects){
     sstd::terp::var_v2 a;
-    a = sstd::terp::list(3);
+    a = sstd::terp::list_v2(3);
     a[0] = "v0";
     a[1] = "v1";
     a[2] = "v2";
@@ -189,7 +189,7 @@ TEST(memory_terp_v2, list_begin_end_with_objects){
 // erase()
 TEST(memory_terp_v2, list_erase){
     sstd::terp::var_v2 a;
-    a = sstd::terp::list(3);
+    a = sstd::terp::list_v2(3);
     a[0] = "v0";
     a[1] = "v1";
     a[2] = "v2";
@@ -203,7 +203,7 @@ TEST(memory_terp_v2, list_erase){
 }
 TEST(memory_terp_v2, list_erase_index){
     sstd::terp::var_v2 a;
-    a = sstd::terp::list(3);
+    a = sstd::terp::list_v2(3);
     a[0] = "v0";
     a[1] = "v1";
     a[2] = "v2";
@@ -219,7 +219,7 @@ TEST(memory_terp_v2, list_erase_index){
 // pop_back()
 TEST(memory_terp_v2, list_pop_back){
     sstd::terp::var_v2 a;
-    a = sstd::terp::list(3);
+    a = sstd::terp::list_v2(3);
     a[0] = "v0";
     a[1] = "v1";
     a[2] = "v2";
@@ -325,7 +325,7 @@ TEST(memory_terp_v2, list_size_arg_null){
 }
 TEST(memory_terp_v2, list_size_arg_10){
     sstd::terp::var_v2 a;
-    a = sstd::terp::list(10);
+    a = sstd::terp::list_v2(10);
     ASSERT_EQ(a.size(), (uint)10);
 }
 
@@ -349,8 +349,8 @@ TEST(memory_terp_v2, list_typeStr){
 // operator=
 TEST(memory_terp_v2, hash_ope_assign){
     sstd::terp::var_v2 a;
-    a = sstd::terp::hash(0); // TEST THIS LINE
-    a["k1"] = sstd::terp::hash(); // TEST THIS LINE
+    a = sstd::terp::hash_v2(0); // TEST THIS LINE
+    a["k1"] = sstd::terp::hash_v2(); // TEST THIS LINE
     a["k1"]["k11"] = "v1";
     a["k1"]["k12"] = "v2";
     
@@ -360,22 +360,22 @@ TEST(memory_terp_v2, hash_ope_assign){
 
 // operator==
 TEST(memory_terp_v2, hash_ope_eq_true_type){
-    sstd::terp::var_v2 lhs; lhs = sstd::terp::hash();
-    sstd::terp::var_v2 rhs; rhs = sstd::terp::hash();
+    sstd::terp::var_v2 lhs; lhs = sstd::terp::hash_v2();
+    sstd::terp::var_v2 rhs; rhs = sstd::terp::hash_v2();
     ASSERT_TRUE(lhs==rhs); // TEST THIS LINE
 }
 TEST(memory_terp_v2, hash_ope_eq_true_0_keys){
-    sstd::terp::var_v2 lhs; lhs = sstd::terp::hash();
-    sstd::terp::var_v2 rhs; rhs = sstd::terp::hash();
+    sstd::terp::var_v2 lhs; lhs = sstd::terp::hash_v2();
+    sstd::terp::var_v2 rhs; rhs = sstd::terp::hash_v2();
     ASSERT_TRUE(lhs==rhs); // TEST THIS LINE
 }
 TEST(memory_terp_v2, hash_ope_eq_true_3_keys){
-    sstd::terp::var_v2 lhs; lhs = sstd::terp::hash();
+    sstd::terp::var_v2 lhs; lhs = sstd::terp::hash_v2();
     lhs["k1"] = "v1";
     lhs["k2"] = "v2";
     lhs["k3"] = "v3";
     
-    sstd::terp::var_v2 rhs; rhs = sstd::terp::hash();
+    sstd::terp::var_v2 rhs; rhs = sstd::terp::hash_v2();
     rhs["k1"] = "v1";
     rhs["k2"] = "v2";
     rhs["k3"] = "v3";
@@ -383,12 +383,12 @@ TEST(memory_terp_v2, hash_ope_eq_true_3_keys){
     ASSERT_TRUE(lhs==rhs); // TEST THIS LINE
 }
 TEST(memory_terp_v2, hash_ope_eq_true){
-    sstd::terp::var_v2 lhs; lhs = sstd::terp::hash();
+    sstd::terp::var_v2 lhs; lhs = sstd::terp::hash_v2();
     lhs["k1"] = "v1";
     lhs["k2"] = "v2";
     lhs["k3"] = "v3";
     
-    sstd::terp::var_v2 rhs; rhs = sstd::terp::hash();
+    sstd::terp::var_v2 rhs; rhs = sstd::terp::hash_v2();
     rhs["k1"] = "v1";
     rhs["k2"] = "v2";
     rhs["k3"] = "v3";
@@ -397,12 +397,12 @@ TEST(memory_terp_v2, hash_ope_eq_true){
 }
 TEST(memory_terp_v2, hash_ope_eq_false_type){
     sstd::terp::var_v2 lhs; lhs = sstd::terp::list_v2();
-    sstd::terp::var_v2 rhs; rhs = sstd::terp::hash();
+    sstd::terp::var_v2 rhs; rhs = sstd::terp::hash_v2();
     ASSERT_FALSE(lhs==rhs); // TEST THIS LINE
 }
 TEST(memory_terp_v2, hash_ope_eq_false_2_3_keys){
-    sstd::terp::var_v2 lhs; lhs = sstd::terp::hash();
-    sstd::terp::var_v2 rhs; rhs = sstd::terp::hash();
+    sstd::terp::var_v2 lhs; lhs = sstd::terp::hash_v2();
+    sstd::terp::var_v2 rhs; rhs = sstd::terp::hash_v2();
     lhs["k1"] = "v1";
     lhs["k2"] = "v2";
     lhs["k3"] = "v3";
@@ -413,12 +413,12 @@ TEST(memory_terp_v2, hash_ope_eq_false_2_3_keys){
     ASSERT_FALSE(lhs==rhs); // TEST THIS LINE
 }
 TEST(memory_terp_v2, hash_ope_eq_false){
-    sstd::terp::var_v2 lhs; lhs = sstd::terp::hash();
+    sstd::terp::var_v2 lhs; lhs = sstd::terp::hash_v2();
     lhs["k1"] = "v1";
     lhs["k2"] = "v2";
     lhs["k3"] = "v3";
     
-    sstd::terp::var_v2 rhs; rhs = sstd::terp::hash();
+    sstd::terp::var_v2 rhs; rhs = sstd::terp::hash_v2();
     rhs["k1"] = "v1";
     rhs["k2"] = "v2";
     rhs["k3"] = "NotEqualStr";
@@ -429,7 +429,7 @@ TEST(memory_terp_v2, hash_ope_eq_false){
 // begin(), end()
 TEST(memory_terp_v2, hash_begin_end_with_objects){
     sstd::terp::var_v2 a;
-    a = sstd::terp::hash();
+    a = sstd::terp::hash_v2();
     a["k0"] = "v0";
     a["k1"] = "v1";
     a["k2"] = "v2";
@@ -455,7 +455,7 @@ TEST(memory_terp_v2, hash_begin_end_with_objects){
 // erase()
 TEST(memory_terp_v2, hash_erase){
     sstd::terp::var_v2 a;
-    a = sstd::terp::hash();
+    a = sstd::terp::hash_v2();
     a["k0"] = "v0";
     a["k1"] = "v1";
     a["k2"] = "v2";
@@ -481,7 +481,7 @@ TEST(memory_terp_v2, hash_erase){
 // find()
 TEST(memory_terp_v2, hash_find_true){
     sstd::terp::var_v2 a;
-    a = sstd::terp::hash();
+    a = sstd::terp::hash_v2();
     a["k0"] = "v0";
 
     auto itr = a.find("k0"); // TEST THIS LINE
@@ -492,7 +492,7 @@ TEST(memory_terp_v2, hash_find_true){
 }
 TEST(memory_terp_v2, hash_find_false){
     sstd::terp::var_v2 a;
-    a = sstd::terp::hash();
+    a = sstd::terp::hash_v2();
 
     auto itr = a.find("k0"); // TEST THIS LINE
     ASSERT_FALSE( itr!=a.end() );
@@ -501,7 +501,7 @@ TEST(memory_terp_v2, hash_find_false){
 // size()
 TEST(memory_terp_v2, hash_size_arg_null){
     sstd::terp::var_v2 a;
-    a = sstd::terp::hash();
+    a = sstd::terp::hash_v2();
     ASSERT_EQ(a.size(), (uint)0);
     
     a["k1"] = "v1"; // TEST THIS LINE
@@ -511,21 +511,21 @@ TEST(memory_terp_v2, hash_size_arg_null){
 }
 TEST(memory_terp_v2, hash_size_arg_14){
     sstd::terp::var_v2 a;
-    a = sstd::terp::hash(14);
+    a = sstd::terp::hash_v2(14);
     ASSERT_EQ(a.bucket_count(), (uint)17); // std::unordered_map allocates the prime number size, equal or nearest larger than the allocating size.
 }
 
 // typeNum()
 TEST(memory_terp_v2, hash_typeNum){
     sstd::terp::var_v2 a;
-    a = sstd::terp::hash();
+    a = sstd::terp::hash_v2();
     ASSERT_STREQ(sstd::typeNum2str(a.typeNum()).c_str(), "hash_str_void_ptr"); // TEST THIS LINE
 }
 
 // typeStr()
 TEST(memory_terp_v2, hash_typeStr){
     sstd::terp::var_v2 a;
-    a = sstd::terp::hash();
+    a = sstd::terp::hash_v2();
     ASSERT_STREQ(a.typeStr().c_str(), "hash_str_void_ptr"); // TEST THIS LINE
 }
 //*/
@@ -535,25 +535,25 @@ TEST(memory_terp_v2, hash_typeStr){
 // operator==
 TEST(memory_terp_v2, var_ope_eq_true_list_hash_list){
     sstd::terp::var_v2 lhs;
-    lhs = sstd::terp::list(3);
+    lhs = sstd::terp::list_v2(3);
     lhs[0] = "v0";
     lhs[1] = "v1";
-    lhs[2] = sstd::terp::hash();
+    lhs[2] = sstd::terp::hash_v2();
     lhs[2]["k20"] = "v0";
     lhs[2]["k21"] = "v1";
-    lhs[2]["k22"] = sstd::terp::list(3);
+    lhs[2]["k22"] = sstd::terp::list_v2(3);
     lhs[2]["k22"][0] = "v220";
     lhs[2]["k22"][1] = "v221";
     lhs[2]["k22"][2] = "v222";
 
     sstd::terp::var_v2 rhs;
-    rhs = sstd::terp::list(3);
+    rhs = sstd::terp::list_v2(3);
     rhs[0] = "v0";
     rhs[1] = "v1";
-    rhs[2] = sstd::terp::hash();
+    rhs[2] = sstd::terp::hash_v2();
     rhs[2]["k20"] = "v0";
     rhs[2]["k21"] = "v1";
-    rhs[2]["k22"] = sstd::terp::list(3);
+    rhs[2]["k22"] = sstd::terp::list_v2(3);
     rhs[2]["k22"][0] = "v220";
     rhs[2]["k22"][1] = "v221";
     rhs[2]["k22"][2] = "v222";
@@ -562,25 +562,25 @@ TEST(memory_terp_v2, var_ope_eq_true_list_hash_list){
 }
 TEST(memory_terp_v2, var_ope_eq_true_hash_list_hash){
     sstd::terp::var_v2 lhs;
-    lhs = sstd::terp::hash();
+    lhs = sstd::terp::hash_v2();
     lhs["k0"] = "v0";
     lhs["k1"] = "v1";
-    lhs["k2"] = sstd::terp::list(3);
+    lhs["k2"] = sstd::terp::list_v2(3);
     lhs["k2"][0] = "v20";
     lhs["k2"][1] = "v21";
-    lhs["k2"][2] = sstd::terp::hash();
+    lhs["k2"][2] = sstd::terp::hash_v2();
     lhs["k2"][2]["k220"] = "v220";
     lhs["k2"][2]["k221"] = "v221";
     lhs["k2"][2]["k222"] = "v222";
 
     sstd::terp::var_v2 rhs;
-    rhs = sstd::terp::hash();
+    rhs = sstd::terp::hash_v2();
     rhs["k0"] = "v0";
     rhs["k1"] = "v1";
-    rhs["k2"] = sstd::terp::list(3);
+    rhs["k2"] = sstd::terp::list_v2(3);
     rhs["k2"][0] = "v20";
     rhs["k2"][1] = "v21";
-    rhs["k2"][2] = sstd::terp::hash();
+    rhs["k2"][2] = sstd::terp::hash_v2();
     rhs["k2"][2]["k220"] = "v220";
     rhs["k2"][2]["k221"] = "v221";
     rhs["k2"][2]["k222"] = "v222";
@@ -589,25 +589,25 @@ TEST(memory_terp_v2, var_ope_eq_true_hash_list_hash){
 }
 TEST(memory_terp_v2, var_ope_eq_false_list_hash_list){
     sstd::terp::var_v2 lhs;
-    lhs = sstd::terp::list(3);
+    lhs = sstd::terp::list_v2(3);
     lhs[0] = "v0";
     lhs[1] = "v1";
-    lhs[2] = sstd::terp::hash();
+    lhs[2] = sstd::terp::hash_v2();
     lhs[2]["k20"] = "v0";
     lhs[2]["k21"] = "v1";
-    lhs[2]["k22"] = sstd::terp::list(3);
+    lhs[2]["k22"] = sstd::terp::list_v2(3);
     lhs[2]["k22"][0] = "v220";
     lhs[2]["k22"][1] = "v221";
     lhs[2]["k22"][2] = "v222";
 
     sstd::terp::var_v2 rhs;
-    rhs = sstd::terp::list(3);
+    rhs = sstd::terp::list_v2(3);
     rhs[0] = "v0";
     rhs[1] = "v1";
-    rhs[2] = sstd::terp::hash();
+    rhs[2] = sstd::terp::hash_v2();
     rhs[2]["k20"] = "v0";
     rhs[2]["k21"] = "v1";
-    rhs[2]["k22"] = sstd::terp::list(3);
+    rhs[2]["k22"] = sstd::terp::list_v2(3);
     rhs[2]["k22"][0] = "v220";
     rhs[2]["k22"][1] = "NotEqualStr";
     rhs[2]["k22"][2] = "v222";
@@ -616,25 +616,25 @@ TEST(memory_terp_v2, var_ope_eq_false_list_hash_list){
 }
 TEST(memory_terp_v2, var_ope_eq_false_hash_list_hash){
     sstd::terp::var_v2 lhs;
-    lhs = sstd::terp::hash();
+    lhs = sstd::terp::hash_v2();
     lhs["k0"] = "v0";
     lhs["k1"] = "v1";
-    lhs["k2"] = sstd::terp::list(3);
+    lhs["k2"] = sstd::terp::list_v2(3);
     lhs["k2"][0] = "v20";
     lhs["k2"][1] = "v21";
-    lhs["k2"][2] = sstd::terp::hash();
+    lhs["k2"][2] = sstd::terp::hash_v2();
     lhs["k2"][2]["k220"] = "v220";
     lhs["k2"][2]["k221"] = "v221";
     lhs["k2"][2]["k222"] = "v222";
 
     sstd::terp::var_v2 rhs;
-    rhs = sstd::terp::hash();
+    rhs = sstd::terp::hash_v2();
     rhs["k0"] = "v0";
     rhs["k1"] = "v1";
-    rhs["k2"] = sstd::terp::list(3);
+    rhs["k2"] = sstd::terp::list_v2(3);
     rhs["k2"][0] = "v20";
     rhs["k2"][1] = "v21";
-    rhs["k2"][2] = sstd::terp::hash();
+    rhs["k2"][2] = sstd::terp::hash_v2();
     rhs["k2"][2]["k220"] = "v220";
     rhs["k2"][2]["k221"] = "v221";
     rhs["k2"][2]["k222"] = "NotEqualStr";
@@ -644,25 +644,25 @@ TEST(memory_terp_v2, var_ope_eq_false_hash_list_hash){
 
 TEST(memory_terp_v2, var_ope_eq_false_different_type){
     sstd::terp::var_v2 lhs;
-    lhs = sstd::terp::hash();
+    lhs = sstd::terp::hash_v2();
     lhs["k0"] = "v0";
     lhs["k1"] = "v1";
-    lhs["k2"] = sstd::terp::list(3);
+    lhs["k2"] = sstd::terp::list_v2(3);
     lhs["k2"][0] = "v20";
     lhs["k2"][1] = "v21";
-    lhs["k2"][2] = sstd::terp::hash();
+    lhs["k2"][2] = sstd::terp::hash_v2();
     lhs["k2"][2]["k220"] = "v220";
     lhs["k2"][2]["k221"] = "v221";
     lhs["k2"][2]["k222"] = "v222";
 
     sstd::terp::var_v2 rhs;
-    rhs = sstd::terp::hash();
+    rhs = sstd::terp::hash_v2();
     rhs["k0"] = "v0";
     rhs["k1"] = "v1";
-    rhs["k2"] = sstd::terp::list(3);
+    rhs["k2"] = sstd::terp::list_v2(3);
     rhs["k2"][0] = "v20";
     rhs["k2"][1] = "v21";
-    rhs["k2"][2] = sstd::terp::list(3);
+    rhs["k2"][2] = sstd::terp::list_v2(3);
     rhs["k2"][2][0] = "v220";
     rhs["k2"][2][1] = "v221";
     rhs["k2"][2][2] = "NotEqualStr";
@@ -739,16 +739,16 @@ TEST(memory_terp_v2, var_ope_subscript_insert_char_to_list_type){
     testing::internal::CaptureStdout();
     a["k0"] = "v0"; // TEST THIS LINE
     std::string ret = testing::internal::GetCapturedStdout().c_str();
-    ASSERT_TRUE(sstd::strIn("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var_v2 takes \"sstd::terp::list_v2()\" type, but treat as a \"sstd::terp::hash()\".\n", ret.c_str()));
+    ASSERT_TRUE(sstd::strIn("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var_v2 takes \"sstd::terp::list_v2()\" type, but treat as a \"sstd::terp::hash_v2()\".\n", ret.c_str()));
 }
 TEST(memory_terp_v2, var_ope_subscript_insert_number_to_hash_type){
     sstd::terp::var_v2 a;
-    a = sstd::terp::hash();
+    a = sstd::terp::hash_v2();
 
     testing::internal::CaptureStdout();
     a[0] = "v0"; // TEST THIS LINE
     std::string ret = testing::internal::GetCapturedStdout().c_str();
-    ASSERT_TRUE(sstd::strIn("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var_v2 takes \"sstd::terp::hash()\" type, but treat as a \"sstd::terp::list_v2()\".\n", ret.c_str()));
+    ASSERT_TRUE(sstd::strIn("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var_v2 takes \"sstd::terp::hash_v2()\" type, but treat as a \"sstd::terp::list_v2()\".\n", ret.c_str()));
 }
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -757,18 +757,18 @@ TEST(memory_terp_v2, var_ope_subscript_insert_number_to_hash_type){
 // isHash()
 TEST(memory_terp_v2, isHash_true01){
     sstd::terp::var_v2 a;
-    a = sstd::terp::hash();
+    a = sstd::terp::hash_v2();
     ASSERT_TRUE(sstd::terp::isHash(a));
 }
 TEST(memory_terp_v2, isHash_true02){
     sstd::terp::var_v2 a;
-    a = sstd::terp::hash();
+    a = sstd::terp::hash_v2();
     a["k1"] = "v1";
     ASSERT_TRUE(sstd::terp::isHash(a));
 }
 TEST(memory_terp_v2, isHash_true03){
     sstd::terp::var_v2 a;
-    a = sstd::terp::hash();
+    a = sstd::terp::hash_v2();
     a["k1"] = sstd::terp::list_v2();
     ASSERT_TRUE(sstd::terp::isHash(a));
 }
@@ -786,7 +786,7 @@ TEST(memory_terp_v2, isList_true){
 }
 TEST(memory_terp_v2, isList_false){
     sstd::terp::var_v2 a;
-    a = sstd::terp::hash();
+    a = sstd::terp::hash_v2();
     ASSERT_TRUE(!sstd::terp::isList(a));
 }
 
@@ -797,7 +797,7 @@ TEST(memory_terp_v2, isNull_true){
 }
 TEST(memory_terp_v2, isNull_false){
     sstd::terp::var_v2 a;
-    a = sstd::terp::hash();
+    a = sstd::terp::hash_v2();
     ASSERT_TRUE(!sstd::terp::isNull(a));
 }
 
@@ -809,7 +809,7 @@ TEST(memory_terp_v2, isValue_true){
 }
 TEST(memory_terp_v2, isValue_false){
     sstd::terp::var_v2 a;
-    a = sstd::terp::hash();
+    a = sstd::terp::hash_v2();
     ASSERT_TRUE(!sstd::terp::isValue(a));
 }
 //*/

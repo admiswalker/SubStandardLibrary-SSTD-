@@ -441,6 +441,16 @@ sstd::terp::var sstd::terp::hash(uint allocate_size){
 }
 sstd::terp::var sstd::terp::hash(){ return sstd::terp::hash(0); }
 
+//---
+
+sstd::terp::var_v2 sstd::terp::hash_v2(uint allocate_size){
+    sstd::terp::var_v2 r;
+    r.type_RW() = num_hash_terp_var_v2;
+    r.p_RW()    = new std::unordered_map<std::string, sstd::void_ptr>(allocate_size);
+    return r;
+}
+sstd::terp::var_v2 sstd::terp::hash_v2(){ return sstd::terp::hash_v2(0); }
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // sstd::terp::list
 
@@ -455,14 +465,14 @@ sstd::terp::var sstd::terp::list(){ return sstd::terp::list(0); }
 
 sstd::terp::var_v2 sstd::terp::list_v2(uint allocate_size){
     sstd::terp::var_v2 r;
-    r.p_RW()    = new std::vector<sstd::terp::var_v2>(allocate_size);
     r.type_RW() = num_vec_terp_var_v2;
+    r.p_RW()    = new std::vector<sstd::terp::var_v2>(allocate_size);
     return r;
 }
 sstd::terp::var_v2 sstd::terp::list_v2(){
     sstd::terp::var_v2 r;
-    r.p_RW()    = new std::vector<sstd::terp::var_v2>();
     r.type_RW() = num_vec_terp_var_v2;
+    r.p_RW()    = new std::vector<sstd::terp::var_v2>();
     return r;
 }
 
@@ -586,7 +596,8 @@ void sstd::terp::var_v2::copy(const class sstd::terp::var_v2& rhs){
     case sstd::num_hash_str_void_ptr     : { this->_p = new std::unordered_map<std::string,   sstd::void_ptr>(*(std::unordered_map<std::string,   sstd::void_ptr>*)rhs.p()); } break;
 //    case sstd::num_hash_void_ptr_void_ptr: { this->_p = new std::unordered_map<sstd::void_ptr,sstd::void_ptr>(*(std::unordered_map<sstd::void_ptr,sstd::void_ptr>*)rhs.p()); } break;
         
-    case sstd::num_vec_terp_var_v2: { this->_p = new std::vector<sstd::terp::var_v2>(*(std::vector<sstd::terp::var_v2>*)rhs.p()); } break;
+    case sstd::num_vec_terp_var_v2:  { this->_p = new std::vector<sstd::terp::var_v2>(*(std::vector<sstd::terp::var_v2>*)rhs.p()); } break;
+    case sstd::num_hash_terp_var_v2: { this->_p = new std::unordered_map<std::string,sstd::terp::var_v2>(*(std::unordered_map<std::string,sstd::terp::var_v2>*)rhs.p()); } break;
        
     default: { sstd::pdbg("ERROR: allocating memory is failed. typeNum '%d' is not defined.", this->_type); } break;
         
@@ -637,6 +648,7 @@ void sstd::terp::var_v2::free(){
     case sstd::num_hash_str_void_ptr     : { delete (std::unordered_map<std::string,   sstd::void_ptr>*)_p; } break;
 //    case sstd::num_hash_void_ptr_void_ptr: { delete (std::unordered_map<sstd::void_ptr,sstd::void_ptr>*)_p; } break;
     case sstd::num_vec_terp_var_v2: { delete (std::vector<sstd::terp::var_v2>*)_p; } break;
+    case sstd::num_hash_terp_var_v2: { delete (std::unordered_map<std::string,sstd::terp::var_v2>*)_p; } break;
     default: { sstd::pdbg("ERROR: free() memory is failed. typeNum '%d' is not defined.", this->_type); } break;
     }
 

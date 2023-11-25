@@ -23,6 +23,8 @@ namespace sstd::terp{
     // hash
     var hash(uint allocate_size);
     var hash();
+    var_v2 hash_v2(uint allocate_size);
+    var_v2 hash_v2();
 
     // list
     var list(uint allocate_size);
