@@ -58,7 +58,7 @@ TEST(memory_terp, var_typeStr_c){
 // to
 TEST(memory_terp, to_SEGV_null_ptr){
     sstd::terp::var a;
-    a = sstd::terp::list();
+    a = sstd::terp::list(1);
     
     testing::internal::CaptureStdout();
     a[0].to<std::string>(); // TEST THIS LINE
