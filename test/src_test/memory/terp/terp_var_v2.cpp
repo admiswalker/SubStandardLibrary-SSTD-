@@ -682,7 +682,7 @@ TEST(memory_terp_v2, var_ope_eq_false_different_type){
 
 TEST(memory_terp_v2, var_constructor_and_to_bool_true){ TEST_VAR_CONSTRUCTOR_AND_TO(bool, true); }
 TEST(memory_terp_v2, var_constructor_and_to_bool_false){ TEST_VAR_CONSTRUCTOR_AND_TO(bool, false); }
-TEST(memory_terp_v2, var_constructor_and_to_char){ TEST_VAR_CONSTRUCTOR_AND_TO(char, 'c'); }/*
+TEST(memory_terp_v2, var_constructor_and_to_char){ TEST_VAR_CONSTRUCTOR_AND_TO(char, 'c'); }
 
 TEST(memory_terp_v2, var_constructor_and_to_int8_min){ TEST_VAR_CONSTRUCTOR_AND_TO(int8, -128); }
 TEST(memory_terp_v2, var_constructor_and_to_int8_max){ TEST_VAR_CONSTRUCTOR_AND_TO(int8,  127); }
@@ -699,7 +699,7 @@ TEST(memory_terp_v2, var_constructor_and_to_uint16_max){ TEST_VAR_CONSTRUCTOR_AN
 TEST(memory_terp_v2, var_constructor_and_to_uint32_min){ TEST_VAR_CONSTRUCTOR_AND_TO(uint32, 0); }
 TEST(memory_terp_v2, var_constructor_and_to_uint32_max){ TEST_VAR_CONSTRUCTOR_AND_TO(uint32, 4294967295); }
 TEST(memory_terp_v2, var_constructor_and_to_uint64_min){ TEST_VAR_CONSTRUCTOR_AND_TO(uint64, 0); }
-TEST(memory_terp_v2, var_constructor_and_to_uint64_max){ TEST_VAR_CONSTRUCTOR_AND_TO(uint64, 18446744073709551615); }
+TEST(memory_terp_v2, var_constructor_and_to_uint64_max){ TEST_VAR_CONSTRUCTOR_AND_TO(uint64, 18446744073709551615); }/*
 
 TEST(memory_terp_v2, var_constructor_and_to_float_case01){ TEST_VAR_CONSTRUCTOR_AND_TO(float, 0.12345); }
 TEST(memory_terp_v2, var_constructor_and_to_float_case02_01){ TEST_VAR_CONSTRUCTOR_AND_TO(float, 123456); }
