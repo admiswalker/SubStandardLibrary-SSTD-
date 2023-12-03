@@ -699,7 +699,7 @@ TEST(memory_terp_v2, var_constructor_and_to_uint16_max){ TEST_VAR_CONSTRUCTOR_AN
 TEST(memory_terp_v2, var_constructor_and_to_uint32_min){ TEST_VAR_CONSTRUCTOR_AND_TO(uint32, 0); }
 TEST(memory_terp_v2, var_constructor_and_to_uint32_max){ TEST_VAR_CONSTRUCTOR_AND_TO(uint32, 4294967295); }
 TEST(memory_terp_v2, var_constructor_and_to_uint64_min){ TEST_VAR_CONSTRUCTOR_AND_TO(uint64, 0); }
-TEST(memory_terp_v2, var_constructor_and_to_uint64_max){ TEST_VAR_CONSTRUCTOR_AND_TO(uint64, 18446744073709551615); }/*
+TEST(memory_terp_v2, var_constructor_and_to_uint64_max){ TEST_VAR_CONSTRUCTOR_AND_TO(uint64, 18446744073709551615); }
 
 TEST(memory_terp_v2, var_constructor_and_to_float_case01){ TEST_VAR_CONSTRUCTOR_AND_TO(float, 0.12345); }
 TEST(memory_terp_v2, var_constructor_and_to_float_case02_01){ TEST_VAR_CONSTRUCTOR_AND_TO(float, 123456); }
@@ -713,7 +713,7 @@ TEST(memory_terp_v2, var_constructor_and_to_pchar){
     sstd::terp::var_v2 v = ans;
     const char* ret = v.to<const char*>(); // TEST THIS LINE
     ASSERT_TRUE(std::string(ret)==std::string(ans));
-}
+}/*
 TEST(memory_terp_v2, var_constructor_and_to_string){ TEST_VAR_CONSTRUCTOR_AND_TO(std::string, "string"); }
 
 #undef TEST_VAR_CONSTRUCTOR_AND_TO

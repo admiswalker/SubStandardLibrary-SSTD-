@@ -246,10 +246,10 @@ public:
     var_v2(const uint16       rhs);
     var_v2(const uint32       rhs);
     var_v2(const uint64       rhs);
-    //var_v2(const  float       rhs);
-    //var_v2(const double       rhs);
+    var_v2(const  float       rhs);
+    var_v2(const double       rhs);
     var_v2(const char*        rhs);
-    //var_v2(const std::string& rhs);
+    var_v2(const std::string& rhs);
     ~var_v2();
     
     //---

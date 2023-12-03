@@ -522,8 +522,8 @@ sstd::terp::var_v2::var_v2(       uint8         rhs){ _type=sstd::num_str; _p=ne
 sstd::terp::var_v2::var_v2(       uint16        rhs){ _type=sstd::num_str; _p=new std::string(sstd::ssprintf("%u", rhs)); }
 sstd::terp::var_v2::var_v2(       uint32        rhs){ _type=sstd::num_str; _p=new std::string(sstd::ssprintf("%u", rhs)); }
 sstd::terp::var_v2::var_v2(       uint64        rhs){ _type=sstd::num_str; _p=new std::string(sstd::ssprintf("%lu", rhs)); }
-//sstd::terp::var_v2::var_v2(        float        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf(_format(rhs).c_str(), rhs))); }
-//sstd::terp::var_v2::var_v2(       double        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf(_format(rhs).c_str(), rhs))); }
+sstd::terp::var_v2::var_v2(        float        rhs){ _type=sstd::num_str; _p=new std::string(sstd::ssprintf(_format(rhs).c_str(), rhs)); }
+sstd::terp::var_v2::var_v2(       double        rhs){ _type=sstd::num_str; _p=new std::string(sstd::ssprintf(_format(rhs).c_str(), rhs)); }
 sstd::terp::var_v2::var_v2(const char*        rhs): _type(sstd::num_str), _p(new std::string(rhs)) {}
 //sstd::terp::var_v2::var_v2(const std::string& rhs){ _p=&_vp; (*_p).overwrite(new std::string(rhs)); }
 
