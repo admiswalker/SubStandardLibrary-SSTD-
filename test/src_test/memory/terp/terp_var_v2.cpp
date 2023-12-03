@@ -681,8 +681,8 @@ TEST(memory_terp_v2, var_ope_eq_false_different_type){
     ASSERT_TRUE(ret==ans);
 
 TEST(memory_terp_v2, var_constructor_and_to_bool_true){ TEST_VAR_CONSTRUCTOR_AND_TO(bool, true); }
-/*TEST(memory_terp_v2, var_constructor_and_to_bool_false){ TEST_VAR_CONSTRUCTOR_AND_TO(bool, false); }
-TEST(memory_terp_v2, var_constructor_and_to_char){ TEST_VAR_CONSTRUCTOR_AND_TO(char, 'c'); }
+TEST(memory_terp_v2, var_constructor_and_to_bool_false){ TEST_VAR_CONSTRUCTOR_AND_TO(bool, false); }
+TEST(memory_terp_v2, var_constructor_and_to_char){ TEST_VAR_CONSTRUCTOR_AND_TO(char, 'c'); }/*
 
 TEST(memory_terp_v2, var_constructor_and_to_int8_min){ TEST_VAR_CONSTRUCTOR_AND_TO(int8, -128); }
 TEST(memory_terp_v2, var_constructor_and_to_int8_max){ TEST_VAR_CONSTRUCTOR_AND_TO(int8,  127); }

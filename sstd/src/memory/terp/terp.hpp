@@ -237,7 +237,7 @@ public:
     var_v2(const class var_v2&  rhs);
     var_v2(      class var_v2&& rhs);
     var_v2(const bool         rhs);
-    //var_v2(const char         rhs);
+    var_v2(const char         rhs);
     //var_v2(const  int8        rhs);
     //var_v2(const  int16       rhs);
     //var_v2(const  int32       rhs);
