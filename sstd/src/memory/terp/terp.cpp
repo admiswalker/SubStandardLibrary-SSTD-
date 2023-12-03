@@ -39,6 +39,17 @@ void sstd::terp::_to(const char*& dst, const sstd::void_ptr& src){ dst = STR.c_s
 void sstd::terp::_to(std::string& dst, const sstd::void_ptr& src){ dst = STR; }
 void sstd::terp::_to(std::string& dst, const std::string   & src){ dst = src; }
 
+//---
+
+void sstd::terp::_to_v2(     bool  & dst, const sstd::terp::var_v2& src){
+    if(STR_V2=="true"||STR_V2=="yes"||STR_V2=="on"){
+        dst = true;
+    }else if(STR_V2=="false"||STR_V2=="no"||STR_V2=="off"){
+        dst = false;
+    }else{
+        sstd::pdbg_err("input string is not bool type.\n");
+    }
+}
 void sstd::terp::_to_v2(     char  & dst, const sstd::terp::var_v2& src){ dst = STR_V2.size()>=1 ? STR_V2[0] : 0; }
 void sstd::terp::_to_v2(     int8  & dst, const sstd::terp::var_v2& src){ dst = strtol(STR_V2.c_str(), NULL, 10); }
 void sstd::terp::_to_v2(     int16 & dst, const sstd::terp::var_v2& src){ dst = strtol(STR_V2.c_str(), NULL, 10); }
@@ -498,29 +509,21 @@ bool sstd::terp::isValue(const sstd::terp::var& rhs){
 // sstd::terp::var_v2
 
 // constructors
-sstd::terp::var_v2::var_v2(): _type(sstd::num_null), _p(NULL) {}
-sstd::terp::var_v2::var_v2(const class var_v2&  rhs): _type(sstd::num_null), _p(NULL) {
-    this->copy(rhs);
-}
-sstd::terp::var_v2::var_v2(      class var_v2&& rhs): _type(sstd::num_null), _p(NULL) {
-    this->free();
-    this->move(std::move(rhs));
-}
-
-//sstd::terp::var_v2::var_v2(const sstd::void_ptr& vp_in){ _vp=vp_in; _p=&_vp; }
-//sstd::terp::var_v2::var_v2(      sstd::void_ptr*  p_in){ _p = p_in; }
-//sstd::terp::var_v2::var_v2(      bool         rhs){ _p=&_vp; (*_p).overwrite(new std::string(rhs?"true":"false")); }
-//sstd::terp::var_v2::var_v2(      char         rhs){ _p=&_vp; (*_p).overwrite(new std::string({rhs})); }
-//sstd::terp::var_v2::var_v2(      int8         rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%d", rhs))); }
-//sstd::terp::var_v2::var_v2(      int16        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%d", rhs))); }
-//sstd::terp::var_v2::var_v2(      int32        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%d", rhs))); }
-//sstd::terp::var_v2::var_v2(      int64        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%ld", rhs))); }
-//sstd::terp::var_v2::var_v2(     uint8         rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%u", rhs))); }
-//sstd::terp::var_v2::var_v2(     uint16        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%u", rhs))); }
-//sstd::terp::var_v2::var_v2(     uint32        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%u", rhs))); }
-//sstd::terp::var_v2::var_v2(     uint64        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%lu", rhs))); }
-//sstd::terp::var_v2::var_v2(      float        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf(_format(rhs).c_str(), rhs))); }
-//sstd::terp::var_v2::var_v2(     double        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf(_format(rhs).c_str(), rhs))); }
+sstd::terp::var_v2::var_v2():                         _type(sstd::num_null), _p(NULL) {}
+sstd::terp::var_v2::var_v2(const class var_v2&  rhs): _type(sstd::num_null), _p(NULL) { copy(rhs); }
+sstd::terp::var_v2::var_v2(      class var_v2&& rhs): _type(sstd::num_null), _p(NULL) { free(); move(std::move(rhs)); }
+sstd::terp::var_v2::var_v2(        bool         rhs){ _type=sstd::num_str; _p=new std::string(rhs?"true":"false"); }
+//sstd::terp::var_v2::var_v2(        char         rhs){ _p=&_vp; (*_p).overwrite(new std::string({rhs})); }
+//sstd::terp::var_v2::var_v2(        int8         rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%d", rhs))); }
+//sstd::terp::var_v2::var_v2(        int16        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%d", rhs))); }
+//sstd::terp::var_v2::var_v2(        int32        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%d", rhs))); }
+//sstd::terp::var_v2::var_v2(        int64        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%ld", rhs))); }
+//sstd::terp::var_v2::var_v2(       uint8         rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%u", rhs))); }
+//sstd::terp::var_v2::var_v2(       uint16        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%u", rhs))); }
+//sstd::terp::var_v2::var_v2(       uint32        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%u", rhs))); }
+//sstd::terp::var_v2::var_v2(       uint64        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf("%lu", rhs))); }
+//sstd::terp::var_v2::var_v2(        float        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf(_format(rhs).c_str(), rhs))); }
+//sstd::terp::var_v2::var_v2(       double        rhs){ _p=&_vp; (*_p).overwrite(new std::string(sstd::ssprintf(_format(rhs).c_str(), rhs))); }
 sstd::terp::var_v2::var_v2(const char*        rhs): _type(sstd::num_str), _p(new std::string(rhs)) {}
 //sstd::terp::var_v2::var_v2(const std::string& rhs){ _p=&_vp; (*_p).overwrite(new std::string(rhs)); }
 
@@ -748,18 +751,18 @@ const sstd::terp::_h_iterator_v2 _h_end_v2(void* p_in){
     return _CAST2HASH(p_in).end();
 }
 sstd::terp::iterator_v2 sstd::terp::var_v2::begin() const {
-    switch(this->_type){
-    case sstd::num_vec_terp_var_v2:  { return sstd::terp::iterator_v2(_v_begin_v2(this->_p)); } break;
-    case sstd::num_hash_terp_var_v2: { return sstd::terp::iterator_v2(_h_begin_v2(this->_p)); } break;
+    switch(_type){
+    case sstd::num_vec_terp_var_v2:  { return sstd::terp::iterator_v2(_v_begin_v2(_p)); } break;
+    case sstd::num_hash_terp_var_v2: { return sstd::terp::iterator_v2(_h_begin_v2(_p)); } break;
     case sstd::num_null:             {} break;
     default: { sstd::pdbg_err("ERROR\n"); }
     }
     return sstd::terp::iterator_v2();
 }
 sstd::terp::iterator_v2 sstd::terp::var_v2::end() const {
-    switch(this->_type){
-    case sstd::num_vec_terp_var_v2:  { return sstd::terp::iterator_v2(_v_end_v2(this->_p)); } break;
-    case sstd::num_hash_terp_var_v2: { return sstd::terp::iterator_v2(_h_end_v2(this->_p)); } break;
+    switch(_type){
+    case sstd::num_vec_terp_var_v2:  { return sstd::terp::iterator_v2(_v_end_v2(_p)); } break;
+    case sstd::num_hash_terp_var_v2: { return sstd::terp::iterator_v2(_h_end_v2(_p)); } break;
     case sstd::num_null:             {} break;
     default: { sstd::pdbg_err("ERROR\n"); }
     }
@@ -769,14 +772,14 @@ sstd::terp::iterator_v2 sstd::terp::var_v2::end() const {
 //---
 
 uint sstd::terp::var_v2::typeNum() const { return this->_type; }
-std::string sstd::terp::var_v2::typeStr() const { return sstd::typeNum2str(this->_type); }
+std::string sstd::terp::var_v2::typeStr() const { return sstd::typeNum2str(_type); }
 
 //---
 // for hash type
 
 uint sstd::terp::var_v2::bucket_count(){
-    switch(this->_type){
-    case sstd::num_hash_str_void_ptr: { return _CAST2HASH(this->_p).bucket_count(); } break;
+    switch(_type){
+    case sstd::num_hash_terp_var_v2: { return _CAST2HASH(_p).bucket_count(); } break;
     default: { sstd::pdbg_err("ERROR\n"); } break;
     }
     return 0;
@@ -785,16 +788,16 @@ uint sstd::terp::var_v2::bucket_count(){
 //---
 
 sstd::terp::iterator_v2 sstd::terp::var_v2::erase(const sstd::terp::iterator_v2& rhs){
-    switch(this->_type){
-    case sstd::num_vec_terp_var_v2:  { return sstd::terp::iterator_v2( _CAST2VEC(this->_p).erase(rhs._v_itr_R()) ); } break;
+    switch(_type){
+    case sstd::num_vec_terp_var_v2:  { return sstd::terp::iterator_v2( _CAST2VEC(_p).erase(rhs._v_itr_R()) ); } break;
     case sstd::num_null:             {} break;
     default: { sstd::pdbg_err("ERROR\n"); }
     }
     return sstd::terp::iterator_v2();
 }
 uint sstd::terp::var_v2::erase(const char* pKey){
-    switch(this->_type){
-    case sstd::num_hash_terp_var_v2: { return _CAST2HASH(this->_p).erase(pKey); } break;
+    switch(_type){
+    case sstd::num_hash_terp_var_v2: { return _CAST2HASH(_p).erase(pKey); } break;
     case sstd::num_null:             {} break;
     default: { sstd::pdbg_err("ERROR\n"); }
     }
@@ -804,8 +807,8 @@ uint sstd::terp::var_v2::erase(const char* pKey){
 //---
 
 sstd::terp::iterator_v2 sstd::terp::var_v2::find(const char* pKey) const {
-    switch(this->_type){
-    case sstd::num_hash_terp_var_v2: { return sstd::terp::iterator_v2( _CAST2HASH(this->_p).find(pKey) ); } break;
+    switch(_type){
+    case sstd::num_hash_terp_var_v2: { return sstd::terp::iterator_v2( _CAST2HASH(_p).find(pKey) ); } break;
     case sstd::num_null:             {} break;
     default: { sstd::pdbg_err("ERROR\n"); }
     }

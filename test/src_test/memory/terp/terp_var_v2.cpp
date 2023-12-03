@@ -515,24 +515,24 @@ TEST(memory_terp_v2, hash_size_arg_14){
     a = sstd::terp::hash_v2(14);
     ASSERT_EQ(a.bucket_count(), (uint)17); // std::unordered_map allocates the prime number size, equal or nearest larger than the allocating size.
 }
-/*
+
 // typeNum()
 TEST(memory_terp_v2, hash_typeNum){
     sstd::terp::var_v2 a;
     a = sstd::terp::hash_v2();
-    ASSERT_STREQ(sstd::typeNum2str(a.typeNum()).c_str(), "hash_str_void_ptr"); // TEST THIS LINE
+    ASSERT_STREQ(sstd::typeNum2str(a.typeNum()).c_str(), "hash_terp_var_v2"); // TEST THIS LINE
 }
 
 // typeStr()
 TEST(memory_terp_v2, hash_typeStr){
     sstd::terp::var_v2 a;
     a = sstd::terp::hash_v2();
-    ASSERT_STREQ(a.typeStr().c_str(), "hash_str_void_ptr"); // TEST THIS LINE
+    ASSERT_STREQ(a.typeStr().c_str(), "hash_terp_var_v2"); // TEST THIS LINE
 }
-//*/
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // complex test cases
-/*
+
 // operator==
 TEST(memory_terp_v2, var_ope_eq_true_list_hash_list){
     sstd::terp::var_v2 lhs;
@@ -670,18 +670,18 @@ TEST(memory_terp_v2, var_ope_eq_false_different_type){
 
     ASSERT_FALSE(lhs==rhs); // TEST THIS LINE
 }
-//*/
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Type Conversion
 
-#define TEST_VAR_CONSTRUCTOR_AND_TO(T, in)      \
-    T ans = in;                                 \
+#define TEST_VAR_CONSTRUCTOR_AND_TO(T, in)         \
+    T ans = in;                                    \
     sstd::terp::var_v2 v = ans;                    \
-    T ret = v.to<T>(); /* TEST THIS LINE */     \
+    T ret = v.to<T>(); /* TEST THIS LINE */        \
     ASSERT_TRUE(ret==ans);
-/*
+
 TEST(memory_terp_v2, var_constructor_and_to_bool_true){ TEST_VAR_CONSTRUCTOR_AND_TO(bool, true); }
-TEST(memory_terp_v2, var_constructor_and_to_bool_false){ TEST_VAR_CONSTRUCTOR_AND_TO(bool, false); }
+/*TEST(memory_terp_v2, var_constructor_and_to_bool_false){ TEST_VAR_CONSTRUCTOR_AND_TO(bool, false); }
 TEST(memory_terp_v2, var_constructor_and_to_char){ TEST_VAR_CONSTRUCTOR_AND_TO(char, 'c'); }
 
 TEST(memory_terp_v2, var_constructor_and_to_int8_min){ TEST_VAR_CONSTRUCTOR_AND_TO(int8, -128); }
