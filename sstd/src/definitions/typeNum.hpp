@@ -149,11 +149,11 @@ namespace sstd{
     const static uchar num_mat_c_void_ptr  = 115;
     const static uchar num_mat_r_void_ptr  = 116;
     
-    const static uchar num_hash_str_void_ptr      = 117;
-    const static uchar num_hash_void_ptr_void_ptr = 118;
+    const static uchar num_hash_str_void_ptr      = 117; // delete later
+    const static uchar num_hash_void_ptr_void_ptr = 118; // delete later
     
-    const static uchar num_vec_terp_var_v2        = 119;
-    const static uchar num_hash_terp_var_v2       = 120;
+    const static uchar num_vec_terp_var        = 119;
+    const static uchar num_hash_terp_var       = 120;
     
     //---
 

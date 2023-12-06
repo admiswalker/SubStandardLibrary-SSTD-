@@ -3,7 +3,7 @@
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // sstd::terp::var
-//*
+
 TEST(memory_terp, var_constructor){
     sstd::terp::var a;
 }
@@ -51,7 +51,7 @@ TEST(memory_terp, var_typeStr_c){
     a = "test";
     ASSERT_STREQ(a.typeStr().c_str(), "str"); // TEST THIS LINE
 }
-//*/
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // common
 
@@ -67,7 +67,6 @@ TEST(memory_terp, to_SEGV_null_ptr){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // sstd::terp::list
-//*
 
 // operator=
 TEST(memory_terp, list_ope_assign){ // Ope=
@@ -239,6 +238,7 @@ TEST(memory_terp, list_push_back_var_list){
     sstd::terp::var a;
     a = sstd::terp::list();
     a.push_back(sstd::terp::list()); // TEST THIS LINE
+    a[0] = sstd::terp::list();
     a[0].push_back("v1");
     a[0].push_back("v2");
     
@@ -247,7 +247,7 @@ TEST(memory_terp, list_push_back_var_list){
 }
 TEST(memory_terp, list_push_back_var_avoid_SEGV_null_ptr){
     sstd::terp::var a;
-    a = sstd::terp::list();
+    a = sstd::terp::list(1);
     
     testing::internal::CaptureStdout();
     a[0].push_back(""); // TEST THIS LINE
@@ -255,7 +255,7 @@ TEST(memory_terp, list_push_back_var_avoid_SEGV_null_ptr){
 }
 TEST(memory_terp, list_push_back_var_avoid_SEGV_push_back_var){
     sstd::terp::var a, tmp;
-    a = sstd::terp::list();
+    a = sstd::terp::list(1);
     
     testing::internal::CaptureStdout();
     a[0].push_back(tmp); // TEST THIS LINE
@@ -319,19 +319,19 @@ TEST(memory_terp, list_size_arg_10){
 TEST(memory_terp, list_typeNum){
     sstd::terp::var a;
     a = sstd::terp::list();
-    ASSERT_STREQ(sstd::typeNum2str(a.typeNum()).c_str(), "vec_void_ptr"); // TEST THIS LINE
+    ASSERT_STREQ(sstd::typeNum2str(a.typeNum()).c_str(), "vec_terp_var"); // TEST THIS LINE
 }
 
 // typeStr()
 TEST(memory_terp, list_typeStr){
     sstd::terp::var a;
     a = sstd::terp::list();
-    ASSERT_STREQ(a.typeStr().c_str(), "vec_void_ptr"); // TEST THIS LINE
+    ASSERT_STREQ(a.typeStr().c_str(), "vec_terp_var"); // TEST THIS LINE
 }
-//*/
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // sstd::terp::hash
-//*
+
 // operator=
 TEST(memory_terp, hash_ope_assign){
     sstd::terp::var a;
@@ -505,16 +505,16 @@ TEST(memory_terp, hash_size_arg_14){
 TEST(memory_terp, hash_typeNum){
     sstd::terp::var a;
     a = sstd::terp::hash();
-    ASSERT_STREQ(sstd::typeNum2str(a.typeNum()).c_str(), "hash_str_void_ptr"); // TEST THIS LINE
+    ASSERT_STREQ(sstd::typeNum2str(a.typeNum()).c_str(), "hash_terp_var"); // TEST THIS LINE
 }
 
 // typeStr()
 TEST(memory_terp, hash_typeStr){
     sstd::terp::var a;
     a = sstd::terp::hash();
-    ASSERT_STREQ(a.typeStr().c_str(), "hash_str_void_ptr"); // TEST THIS LINE
+    ASSERT_STREQ(a.typeStr().c_str(), "hash_terp_var"); // TEST THIS LINE
 }
-//*/
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // complex test cases
 
@@ -659,10 +659,10 @@ TEST(memory_terp, var_ope_eq_false_different_type){
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Type Conversion
 
-#define TEST_VAR_CONSTRUCTOR_AND_TO(T, in)      \
-    T ans = in;                                 \
+#define TEST_VAR_CONSTRUCTOR_AND_TO(T, in)         \
+    T ans = in;                                    \
     sstd::terp::var v = ans;                    \
-    T ret = v.to<T>(); /* TEST THIS LINE */     \
+    T ret = v.to<T>(); /* TEST THIS LINE */        \
     ASSERT_TRUE(ret==ans);
 
 TEST(memory_terp, var_constructor_and_to_bool_true){ TEST_VAR_CONSTRUCTOR_AND_TO(bool, true); }
