@@ -32,14 +32,16 @@ namespace sstd::terp{
     var_v2 list_v2(uint allocate_size);
     var_v2 list_v2();
     
-//    void free(class sstd::terp::var_v2& lhs);
-//    void copy(class sstd::terp::var_v2& lhs, const class sstd::terp::var_v2& rhs);
-
     // type check
     bool isHash (const sstd::terp::var& rhs);
     bool isList (const sstd::terp::var& rhs);
     bool isNull (const sstd::terp::var& rhs);
     bool isValue(const sstd::terp::var& rhs);
+
+    bool isHash (const sstd::terp::var_v2& rhs);
+    bool isList (const sstd::terp::var_v2& rhs);
+    bool isNull (const sstd::terp::var_v2& rhs);
+    bool isValue(const sstd::terp::var_v2& rhs);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

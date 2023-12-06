@@ -503,6 +503,21 @@ bool sstd::terp::isValue(const sstd::terp::var& rhs){
     return rhs.typeNum()==sstd::num_str;
 }
 
+//---
+
+bool sstd::terp::isHash (const sstd::terp::var_v2& rhs){
+    return ( rhs.typeNum()==sstd::num_hash_str_void_ptr || rhs.typeNum()==sstd::num_hash_terp_var_v2 );
+}
+bool sstd::terp::isList (const sstd::terp::var_v2& rhs){
+    return rhs.typeNum()==sstd::num_vec_terp_var_v2;
+}
+bool sstd::terp::isNull (const sstd::terp::var_v2& rhs){
+    return rhs.typeNum()==sstd::num_null;
+}
+bool sstd::terp::isValue(const sstd::terp::var_v2& rhs){
+    return rhs.typeNum()==sstd::num_str;
+}
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -525,7 +540,7 @@ sstd::terp::var_v2::var_v2(       uint64        rhs){ _type=sstd::num_str; _p=ne
 sstd::terp::var_v2::var_v2(        float        rhs){ _type=sstd::num_str; _p=new std::string(sstd::ssprintf(_format(rhs).c_str(), rhs)); }
 sstd::terp::var_v2::var_v2(       double        rhs){ _type=sstd::num_str; _p=new std::string(sstd::ssprintf(_format(rhs).c_str(), rhs)); }
 sstd::terp::var_v2::var_v2(const char*        rhs): _type(sstd::num_str), _p(new std::string(rhs)) {}
-//sstd::terp::var_v2::var_v2(const std::string& rhs){ _p=&_vp; (*_p).overwrite(new std::string(rhs)); }
+sstd::terp::var_v2::var_v2(const std::string& rhs){ _type=sstd::num_str; _p=new std::string(rhs); }
 
 sstd::terp::var_v2::~var_v2(){ sstd::terp::var_v2::free(); }
 

@@ -713,9 +713,8 @@ TEST(memory_terp_v2, var_constructor_and_to_pchar){
     sstd::terp::var_v2 v = ans;
     const char* ret = v.to<const char*>(); // TEST THIS LINE
     ASSERT_TRUE(std::string(ret)==std::string(ans));
-}/*
+}
 TEST(memory_terp_v2, var_constructor_and_to_string){ TEST_VAR_CONSTRUCTOR_AND_TO(std::string, "string"); }
-
 #undef TEST_VAR_CONSTRUCTOR_AND_TO
 
 TEST(memory_terp_v2, var_constructor_and_to_bool_err){
@@ -728,10 +727,10 @@ TEST(memory_terp_v2, var_constructor_and_to_bool_err){
     ASSERT_TRUE(ret==false);
     ASSERT_TRUE(sstd::strIn("input string is not bool type.", ret_str.c_str()));
 }
-//*/
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // check error messages
-/*
+
 // operator[]
 TEST(memory_terp_v2, var_ope_subscript_insert_char_to_list_type){
     sstd::terp::var_v2 a;
@@ -740,7 +739,7 @@ TEST(memory_terp_v2, var_ope_subscript_insert_char_to_list_type){
     testing::internal::CaptureStdout();
     a["k0"] = "v0"; // TEST THIS LINE
     std::string ret = testing::internal::GetCapturedStdout().c_str();
-    ASSERT_TRUE(sstd::strIn("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var_v2 takes \"sstd::terp::list_v2()\" type, but treat as a \"sstd::terp::hash_v2()\".\n", ret.c_str()));
+    ASSERT_TRUE(sstd::strIn("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var takes \"sstd::terp::list()\" type, but treat as a \"sstd::terp::hash()\".\n", ret.c_str()));
 }
 TEST(memory_terp_v2, var_ope_subscript_insert_number_to_hash_type){
     sstd::terp::var_v2 a;
@@ -749,12 +748,12 @@ TEST(memory_terp_v2, var_ope_subscript_insert_number_to_hash_type){
     testing::internal::CaptureStdout();
     a[0] = "v0"; // TEST THIS LINE
     std::string ret = testing::internal::GetCapturedStdout().c_str();
-    ASSERT_TRUE(sstd::strIn("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var_v2 takes \"sstd::terp::hash_v2()\" type, but treat as a \"sstd::terp::list_v2()\".\n", ret.c_str()));
+    ASSERT_TRUE(sstd::strIn("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var takes \"sstd::terp::hash()\" type, but treat as a \"sstd::terp::list()\".\n", ret.c_str()));
 }
-//*/
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // type check
-/*
+
 // isHash()
 TEST(memory_terp_v2, isHash_true01){
     sstd::terp::var_v2 a;
@@ -813,7 +812,7 @@ TEST(memory_terp_v2, isValue_false){
     a = sstd::terp::hash_v2();
     ASSERT_TRUE(!sstd::terp::isValue(a));
 }
-//*/
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 EXECUTE_TESTS();
