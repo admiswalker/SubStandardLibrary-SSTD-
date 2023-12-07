@@ -607,11 +607,11 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
             //sstd::printn(v_cs[i]);
             //sstd::printn(var.typeNum());
             switch(var.typeNum()){
-            case sstd::num_vec_void_ptr: {
+            case sstd::num_vec_terp_var: {
                 // list
                 var.push_back(v_cs[i]);
             } break;
-            case sstd::num_hash_str_void_ptr: {
+            case sstd::num_hash_terp_var: {
                 // hash
                 bool is_null;
                 std::string key = v_cs[i];
@@ -662,7 +662,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
         
         // check indent
         switch(var.typeNum()){
-        case sstd::num_vec_void_ptr: {
+        case sstd::num_vec_terp_var: {
             // list
             if(v_cmd[i].hsc_lx > hsc_base_lx){
                 v_hsc_lx.push_back(v_cmd[i].hsc_lx);
@@ -675,7 +675,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
                 continue;
             }
         } break;
-        case sstd::num_hash_str_void_ptr: {
+        case sstd::num_hash_terp_var: {
             // hash
             if(v_cmd[i].hsc_hx > hsc_base_hx){
                 v_hsc_hx.push_back(v_cmd[i].hsc_hx);

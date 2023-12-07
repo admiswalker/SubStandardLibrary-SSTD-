@@ -164,7 +164,7 @@ std::string _format(double rhs){
 }
 
 // constructors
-sstd::terp::var::var():                         _type(sstd::num_null), _p(NULL) {}
+sstd::terp::var::var():                      _type(sstd::num_null), _p(NULL) {}
 sstd::terp::var::var(const class var&  rhs): _type(sstd::num_null), _p(NULL) { copy(rhs); }
 sstd::terp::var::var(      class var&& rhs): _type(sstd::num_null), _p(NULL) { free(); move(std::move(rhs)); }
 sstd::terp::var::var(        bool         rhs){ _type=sstd::num_str; _p=new std::string(rhs?"true":"false"); }
