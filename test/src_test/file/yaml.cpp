@@ -178,7 +178,7 @@ k2: v2
 k3: v3
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
+    sstd::printn(yml);
 
     //---
     
@@ -187,6 +187,7 @@ k3: v3
     ans["k1"] = "v1";
     ans["k2"] = "v2";
     ans["k3"] = "v3";
+    sstd::printn(ans);
     
     //---
     

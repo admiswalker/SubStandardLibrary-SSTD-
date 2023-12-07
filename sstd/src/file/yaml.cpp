@@ -131,17 +131,26 @@ bool _is_list(bool& ret, uint& cnt, const std::string& s){
     
     return true;
 }
-bool _is_flow(bool& ret, const std::string& s){ // for flow style notation
+std::string _extract_hash_value(const std::string& s){
+    for(uint i=0; i<s.size()-1; ++i){
+        if(s[i]==':' && s[i+1]==' ' && i+2<s.size()){ return std::string(&s[i+2]); }
+    }
+    
+    return "";
+}
+bool _is_flow(bool& ret, std::string s, const bool is_h){ // for flow style notation
     ret = false;
     std::string ret_s;
+    if(is_h){ s = _extract_hash_value(s); }
+    
     if(!sstd::extract_unquoted(ret_s, s)){ sstd::pdbg_err("quate is not closed\n"); return false; }
     for(uint i=0; i<ret_s.size(); ++i){
         if(ret_s[i]==' ' || ret_s[i]=='-' || ret_s[i]==' '){ continue; }
         
         if(ret_s[i]=='{' || ret_s[i]=='['){
-            ret=true; return true;
+            ret = true;  return true;
         }else{
-            return true;
+            ret = false; return true;
         }
     }
     return true;
@@ -216,9 +225,9 @@ void _print(const std::vector<struct command>& v_cmd){ // for debug
 //---
 
 bool _data_type_and_format(uint& type, uint& format, uint& num, std::string s){
-    bool is_h; if(!_is_hash(is_h,      s)){ return false; }
-    bool is_l; if(!_is_list(is_l, num, s)){ return false; }
-    bool is_f; if(!_is_flow(is_f,      s)){ return false; }
+    bool is_h; if(!_is_hash(is_h,      s      )){ return false; }
+    bool is_l; if(!_is_list(is_l, num, s      )){ return false; }
+    bool is_f; if(!_is_flow(is_f,      s, is_h)){ return false; }
 
     if(is_h && is_l){ type = NUM_LIST_AND_HASH;
     }else if( is_h ){ type = NUM_HASH;
@@ -566,16 +575,18 @@ bool _get_hash_value(bool& is_null, std::string& ret_value, const std::vector<st
     return false;
 }
 bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
-    //sstd::printn(s_in);
+    sstd::printn(var_out.typeStr());
+    sstd::printn(s_in);
     std::vector<std::string> v_cs; // vector of commands and string
     if(!sstd_yaml::_split_quotes_by_control_chars(v_cs, s_in.c_str(), s_in.size())){ sstd::pdbg_err("_split_quotes_by_control_chars() is failed. Un-cloused quate.\n"); return false; }
-    //sstd::printn(v_cs);
+    sstd::printn(v_cs);
     
     std::vector<sstd::terp::var*> v_dst;
     v_dst.push_back( &var_out );
     
     for(uint i=0; i<v_cs.size(); ++i){
-        //sstd::printn(v_cs[i]);
+        printf("\n\n");
+        sstd::printn(v_cs[i]);
         //sstd::printn(v_dst.size());
         if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
         sstd::terp::var* pVar = v_dst[v_dst.size()-1];
@@ -607,6 +618,10 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
             //sstd::printn(v_cs[i]);
             //sstd::printn(var.typeNum());
             switch(var.typeNum()){
+            case sstd::num_str: {
+                sstd::printn(var.typeStr());
+                var.push_back(v_cs[i]);
+            } break;
             case sstd::num_vec_terp_var: {
                 // list
                 var.push_back(v_cs[i]);
@@ -624,7 +639,7 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
                 }
             } break;
             case sstd::num_null: {} break;
-            default: { sstd::pdbg_err("Unexpected data type\n"); } break;
+            default: { sstd::pdbg_err("Unexpected data type. Type: %s\n", sstd::typeNum2str(var.typeNum()).c_str()); sstd::printn(var); } break;
             }
         }
     }
@@ -717,12 +732,15 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
             if(v_cmd[i].format==NUM_BLOCK_STYLE_BASE){ continue; }
         }
         bool needs_to_set_dst_hash = !(v_cmd[i].val2.size()>=1 || v_cmd[i].val2_use_quotes);
-        if(v_cmd[i].type==NUM_HASH && needs_to_set_dst_hash){
+        if((v_cmd[i].format + v_cmd[i].type)==NUM_BLOCK_STYLE_BASE + NUM_HASH && needs_to_set_dst_hash){
             v_dst.push_back( &(var[v_cmd[i].val1.c_str()]) );
             if(v_cmd[i].format==NUM_BLOCK_STYLE_BASE){ continue; }
         }
 
         // set value
+        sstd::printn(var);
+        sstd::printn(v_cmd[i].format);
+        sstd::printn(v_cmd[i].type);
         switch(v_cmd[i].format + v_cmd[i].type){
         case NUM_BLOCK_STYLE_BASE + NUM_STR: {
             if(var.typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data. (String data type can only take one data.)\n"); break; }
@@ -738,9 +756,6 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
         case NUM_BLOCK_STYLE_BASE + NUM_HASH: {
             printf("in 737\n");
             var[ v_cmd[i].val1.c_str() ] = v_cmd[i].val2.c_str();
-            // 下のコンパイルを通すと良さそう
-            // -> 先に operator[] の改修
-            // -> sstd::terp::var コンテナを調整する
             //std::string tmp = v_cmd[i].val2.c_str();
             //if(!_flow_style_str_to_obj(var[ v_cmd[i].val1.c_str() ], tmp)){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
         } break;
@@ -758,6 +773,8 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
             //              sstd::terp::var var_tmp;
             //              if(!_flow_style_str_to_obj(var, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
             //              var[var.size()-1]
+            std::string tmp = v_cmd[i].val2.c_str();
+            if(!_flow_style_str_to_obj(var[ v_cmd[i].val1.c_str() ], tmp)){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
         } break;
         case NUM_FLOW_STYLE_BASE + NUM_HASH: {
             printf("in 756\n");

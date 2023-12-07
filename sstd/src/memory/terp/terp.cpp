@@ -483,17 +483,17 @@ void sstd::terp::var::pop_back(){
 
 void sstd::terp::var::push_back(const char* pRhs){
     NULL_CHECK(_p);
-    if(_type!=sstd::num_vec_terp_var){ sstd::pdbg_err("push_back(char*) is failed. Unexpedted data type. This function requires sstd::num_vec_void_ptr type, but takes %s type.\n", sstd::typeNum2str(this->_type).c_str()); return; }
+    if(_type!=sstd::num_vec_terp_var){ sstd::pdbg_err("push_back(char*) is failed. Unexpedted data type. This function requires sstd::num_vec_terp_var type, but takes %s type.\n", sstd::typeNum2str(this->_type).c_str()); return; }
     _CAST2VEC(_p).push_back(sstd::terp::var(pRhs));
 }
 void sstd::terp::var::push_back(const sstd::terp::var& rhs){
     NULL_CHECK(_p);
-    if(_type!=sstd::num_vec_terp_var){ sstd::pdbg_err("push_back(var&) is failed. Unexpedted data type. This function requires sstd::num_vec_void_ptr type, but takes %s type.\n", sstd::typeNum2str(this->_type).c_str()); return; }
+    if(_type!=sstd::num_vec_terp_var){ sstd::pdbg_err("push_back(var&) is failed. Unexpedted data type. This function requires sstd::num_vec_terp_var type, but takes %s type.\n", sstd::typeNum2str(this->_type).c_str()); return; }
     _CAST2VEC(_p).push_back(rhs);
 }
 void sstd::terp::var::push_back(      sstd::terp::var&& rhs){
     NULL_CHECK(_p);
-    if(_type!=sstd::num_vec_terp_var){ sstd::pdbg_err("push_back(var&) is failed. Unexpedted data type. This function requires sstd::num_vec_void_ptr type, but takes %s type.\n", sstd::typeNum2str(this->_type).c_str()); return; }
+    if(_type!=sstd::num_vec_terp_var){ sstd::pdbg_err("push_back(var&) is failed. Unexpedted data type. This function requires sstd::num_vec_terp_var type, but takes %s type.\n", sstd::typeNum2str(this->_type).c_str()); return; }
     _CAST2VEC(_p).push_back(std::move(rhs)); // call move constructor of "sstd::void_ptr::void_ptr()"
 }
 
