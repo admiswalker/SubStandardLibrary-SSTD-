@@ -20,9 +20,9 @@ void _print_terp_str(const sstd::terp::var& rhs){
 }
 void _print_terp_list_internal(const sstd::terp::var& rhs){
     switch(rhs.typeNum()){
-    case sstd::num_str              : { _print_terp_str (rhs); } break;
-    case sstd::num_vec_void_ptr     : { _print_terp_list(rhs); } break;
-    case sstd::num_hash_str_void_ptr: { _print_terp_hash(rhs); } break;
+    case sstd::num_str          : { _print_terp_str (rhs); } break;
+    case sstd::num_vec_terp_var : { _print_terp_list(rhs); } break;
+    case sstd::num_hash_terp_var: { _print_terp_hash(rhs); } break;
     case sstd::num_null: {} break;
     default: { sstd::pdbg("ERROR"); } break;
     }
@@ -47,9 +47,9 @@ void _print_terp_hash(const sstd::terp::var& rhs){
 
 #define sstd_print_terp_var_base(rhs)                                   \
     switch(rhs.typeNum()){                                              \
-    case sstd::num_str              : { _print_terp_str (rhs); } break; \
-    case sstd::num_vec_void_ptr     : { _print_terp_list(rhs); } break; \
-    case sstd::num_hash_str_void_ptr: { _print_terp_hash(rhs); } break; \
+    case sstd::num_str          : { _print_terp_str (rhs); } break; \
+    case sstd::num_vec_terp_var : { _print_terp_list(rhs); } break; \
+    case sstd::num_hash_terp_var: { _print_terp_hash(rhs); } break; \
     case sstd::num_null: {} break;                                      \
     default: { sstd::pdbg("ERROR"); } break;                            \
     }

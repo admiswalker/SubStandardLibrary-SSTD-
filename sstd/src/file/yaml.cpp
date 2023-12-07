@@ -571,14 +571,15 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
     if(!sstd_yaml::_split_quotes_by_control_chars(v_cs, s_in.c_str(), s_in.size())){ sstd::pdbg_err("_split_quotes_by_control_chars() is failed. Un-cloused quate.\n"); return false; }
     //sstd::printn(v_cs);
     
-    std::vector<sstd::void_ptr*> v_dst;
-    v_dst.push_back(var_out.p());
+    std::vector<sstd::terp::var*> v_dst;
+    v_dst.push_back( &var_out );
     
     for(uint i=0; i<v_cs.size(); ++i){
         //sstd::printn(v_cs[i]);
         //sstd::printn(v_dst.size());
         if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
-        sstd::terp::var var = sstd::terp::var( v_dst[v_dst.size()-1] );
+        sstd::terp::var* pVar = v_dst[v_dst.size()-1];
+        sstd::terp::var& var = *pVar;
         //if(v_hsc_lx.size()==0){ sstd::pdbg_err("v_hsc_lx is out of range\n"); return false; }
         //if(v_hsc_hx.size()==0){ sstd::pdbg_err("v_hsc_hx is out of range\n"); return false; }
         
@@ -589,7 +590,7 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
                     var = sstd::terp::list();
                 }else{
                     var.push_back( sstd::terp::list() );
-                    v_dst.push_back( var[var.size()-1].p() );
+                    v_dst.push_back( &(var[var.size()-1]) );
                     continue;
                 }
             } break;
@@ -606,11 +607,11 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
             //sstd::printn(v_cs[i]);
             //sstd::printn(var.typeNum());
             switch(var.typeNum()){
-            case sstd::num_vec_void_ptr: {
+            case sstd::num_vec_terp_var: {
                 // list
                 var.push_back(v_cs[i]);
             } break;
-            case sstd::num_hash_str_void_ptr: {
+            case sstd::num_hash_terp_var: {
                 // hash
                 bool is_null;
                 std::string key = v_cs[i];
@@ -619,7 +620,7 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
                     if(!is_null){ var[ key.c_str() ] = val.c_str();
                     }   else    { var[ key.c_str() ]; }
                 }else{
-                    v_dst.push_back( var[key.c_str()].p() );
+                    v_dst.push_back( &(var[key.c_str()]) );
                 }
             } break;
             case sstd::num_null: {} break;
@@ -641,10 +642,10 @@ bool _assignment_value(sstd::terp::var& ret_yml, const std::stirng& s_in, const 
     return;
 }*/
 bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>& v_cmd){
-    std::vector<sstd::void_ptr*> v_dst;
+    std::vector<sstd::terp::var*> v_dst;
     std::vector<uint> v_hsc_lx; // v: vector, hsc: head space count, _lx: list-index.
     std::vector<uint> v_hsc_hx; // v: vector, hsc: head space count. _hx: hash-index.
-    v_dst.push_back(ret_yml.p());
+    v_dst.push_back(&ret_yml);
     v_hsc_lx.push_back(0);
     v_hsc_hx.push_back(0);
     
@@ -652,7 +653,8 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
         printf("\n\n--- begin cmd ---\n"); // for debug
         _print(v_cmd[i]);                  // for debug
         if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
-        sstd::terp::var var = sstd::terp::var( v_dst[v_dst.size()-1] );
+        sstd::terp::var* pVar = v_dst[v_dst.size()-1];
+        sstd::terp::var& var = *pVar;
         if(v_hsc_lx.size()==0){ sstd::pdbg_err("v_hsc_lx is out of range\n"); return false; }
         if(v_hsc_hx.size()==0){ sstd::pdbg_err("v_hsc_hx is out of range\n"); return false; }
         uint hsc_base_lx = v_hsc_lx[v_hsc_lx.size()-1];
@@ -660,7 +662,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
         
         // check indent
         switch(var.typeNum()){
-        case sstd::num_vec_void_ptr: {
+        case sstd::num_vec_terp_var: {
             // list
             if(v_cmd[i].hsc_lx > hsc_base_lx){
                 v_hsc_lx.push_back(v_cmd[i].hsc_lx);
@@ -673,7 +675,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
                 continue;
             }
         } break;
-        case sstd::num_hash_str_void_ptr: {
+        case sstd::num_hash_terp_var: {
             // hash
             if(v_cmd[i].hsc_hx > hsc_base_hx){
                 v_hsc_hx.push_back(v_cmd[i].hsc_hx);
@@ -711,12 +713,12 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
         bool needs_to_set_dst_list = !(v_cmd[i].val1.size()>=1 || v_cmd[i].val1_use_quotes);
         if(v_cmd[i].type==NUM_LIST && needs_to_set_dst_list){
             var.push_back( sstd::terp::list() );
-            v_dst.push_back( var[var.size()-1].p() );
+            v_dst.push_back( &(var[var.size()-1]) );
             if(v_cmd[i].format==NUM_BLOCK_STYLE_BASE){ continue; }
         }
         bool needs_to_set_dst_hash = !(v_cmd[i].val2.size()>=1 || v_cmd[i].val2_use_quotes);
         if(v_cmd[i].type==NUM_HASH && needs_to_set_dst_hash){
-            v_dst.push_back( var[v_cmd[i].val1.c_str()].p() );
+            v_dst.push_back( &(var[v_cmd[i].val1.c_str()]) );
             if(v_cmd[i].format==NUM_BLOCK_STYLE_BASE){ continue; }
         }
 
@@ -731,7 +733,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
         } break;
         case NUM_BLOCK_STYLE_BASE + NUM_LIST_AND_HASH: {
             var.push_back( sstd::terp::hash() );
-            v_dst.push_back( var[var.size()-1].p() );
+            v_dst.push_back( &(var[var.size()-1]) );
         } break;
         case NUM_BLOCK_STYLE_BASE + NUM_HASH: {
             printf("in 737\n");

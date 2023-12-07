@@ -237,6 +237,9 @@ std::string sstd::typeNum2str(uchar rhs){
     case sstd::num_hash_str_void_ptr:      return std::string("hash_str_void_ptr"     );
     //case sstd::num_hash_void_ptr_void_ptr: return std::string("hash_void_ptr_void_ptr");
         
+    case sstd::num_vec_terp_var:  return std::string("vec_terp_var" );
+    case sstd::num_hash_terp_var: return std::string("hash_terp_var");
+        
     default: return std::string("err");
     }
     

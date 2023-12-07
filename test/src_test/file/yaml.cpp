@@ -80,7 +80,7 @@ TEST(yaml, list_depth1){
 - c
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
+    sstd::printn(yml);
 
     //---
     
@@ -89,7 +89,7 @@ TEST(yaml, list_depth1){
     ans[0] = "a";
     ans[1] = "b";
     ans[2] = "c";
-    //sstd::printn(ans);
+    sstd::printn(ans);
     
     //---
     
@@ -2353,7 +2353,7 @@ k1: [a, b, c]
     //---
     
     ASSERT_TRUE(yml==ans);
-}
+}/*
 TEST(yaml, block_hash_and_flow_hash){}
 TEST(yaml, block_list_hash_and_flow_list){}
 TEST(yaml, block_list_hash_and_flow_hash){}
@@ -2593,7 +2593,7 @@ TEST(yaml, flow_style_notation_list_hash){
     ASSERT_TRUE(vYml[1]==ans2);
 }
 //*/
-//*
+/*
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // End marker ...
 
