@@ -77,9 +77,9 @@ TEST(yaml, _split_quotes_by_control_chars_02){
     bool ret = sstd_yaml::_data_type_and_format(type, format, list_type_cnt, s); \
     ASSERT_TRUE(ret);                                                   \
                                                                         \
-    uint ans_type=sstd_yaml::num_str;                                              \
-    if(IS_LIST){ ans_type += sstd_yaml::num_list; }                             \
-    if(IS_HASH){ ans_type += sstd_yaml::num_hash; }                                \
+    uint ans_type=sstd_yaml::num_str;                                   \
+    if(IS_LIST){ ans_type += sstd_yaml::num_list; }                     \
+    if(IS_HASH){ ans_type += sstd_yaml::num_hash; }                     \
     ASSERT_TRUE(type==ans_type);                                        \
                                                                         \
     uint ans_flow = IS_FLOW ? sstd_yaml::num_flow_style_base : sstd_yaml::num_block_style_base; \
