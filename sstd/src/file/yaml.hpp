@@ -22,6 +22,18 @@ namespace sstd{
 // internal functions for unit test
 
 namespace sstd_yaml{
+    const static uchar num_null = 255;
+    const static uchar num_block_style_base = 0;
+    const static uchar num_str           = 0; // for BLOCK_STYLE
+    const static uchar num_list          = 1; // for BLOCK_STYLE
+    const static uchar num_hash          = 2; // for BLOCK_STYLE
+    const static uchar num_list_and_hash = 3; // for BLOCK_STYLE
+    const static uchar num_flow_style_base = 4;
+    // sstd_yaml::num_flow_style_base + sstd_yaml::num_str           4 // reserved number for FLOW_STYLE
+    // sstd_yaml::num_flow_style_base + sstd_yaml::num_list          5 // reserved number for FLOW_STYLE
+    // sstd_yaml::num_flow_style_base + sstd_yaml::num_hash          6 // reserved number for FLOW_STYLE
+    // sstd_yaml::num_flow_style_base + sstd_yaml::num_list_and_hash 7 // reserved number for FLOW_STYLE
+
     bool _split_quotes_by_control_chars(std::vector<std::string>& ret, const char* str, const uint str_len);
     bool _data_type_and_format(uint& type, uint& format, uint& num, std::string s);
 }

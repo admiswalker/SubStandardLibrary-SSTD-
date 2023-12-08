@@ -19,22 +19,6 @@
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-#define NUM_NULL 255
-
-#define NUM_BLOCK_STYLE_BASE 0
-#define NUM_STR  0          // for BLOCK_STYLE
-#define NUM_LIST 1          // for BLOCK_STYLE
-#define NUM_HASH 2          // for BLOCK_STYLE
-#define NUM_LIST_AND_HASH 3 // for BLOCK_STYLE
-
-#define NUM_FLOW_STYLE_BASE 4
-// NUM_STR + NUM_FLOW_STYLE_BASE 4           // reserved number for FLOW_STYLE
-// NUM_LIST + NUM_FLOW_STYLE_BASE 5          // reserved number for FLOW_STYLE
-// NUM_HASH + NUM_FLOW_STYLE_BASE 6          // reserved number for FLOW_STYLE
-// NUM_LIST_AND_HASH + NUM_FLOW_STYLE_BASE 7 // reserved number for FLOW_STYLE
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
-
 std::string _extract_quotes_value(const std::string& str){
     std::string tmp;
     std::string ret;
@@ -197,8 +181,8 @@ void _print(const std::vector<struct command>& v_cmd){ // for debug
 //---
 
 bool sstd_yaml::_data_type_and_format(uint& type, uint& format, uint& list_type_cnt, std::string s){
-    type = NUM_STR;
-    format = NUM_BLOCK_STYLE_BASE;
+    type = sstd_yaml::num_str;
+    format = sstd_yaml::num_block_style_base;
     list_type_cnt = 0;
 
     std::vector<std::string> v;
@@ -212,11 +196,11 @@ bool sstd_yaml::_data_type_and_format(uint& type, uint& format, uint& list_type_
         
         if(size==1 && v[i][   0  ]=='-'){ is_list=true; ++list_type_cnt; }
         if(size>=1 && v[i][size-1]==':'){ is_hash=true;                  }
-        if(size>=1 && v[i][   0  ]=='['){ format=NUM_FLOW_STYLE_BASE;    }
-        if(size>=1 && v[i][   0  ]=='{'){ format=NUM_FLOW_STYLE_BASE;    }
+        if(size>=1 && v[i][   0  ]=='['){ format=sstd_yaml::num_flow_style_base;    }
+        if(size>=1 && v[i][   0  ]=='{'){ format=sstd_yaml::num_flow_style_base;    }
     }
-    if(is_list){ type += NUM_LIST; }
-    if(is_hash){ type += NUM_HASH; }
+    if(is_list){ type += sstd_yaml::num_list; }
+    if(is_hash){ type += sstd_yaml::num_hash; }
     
     return true;
 }
@@ -232,18 +216,18 @@ bool _get_value(bool& ret_val1_use_quotes, bool& ret_val2_use_quotes, std::strin
     bool dq, sq;
 
     // switch(v_cmd[i].format + v_cmd[i].type){ // 730 行目的なかんじ (<-) に修正したい
-    if(format==NUM_BLOCK_STYLE_BASE){
+    if(format==sstd_yaml::num_block_style_base){
         switch(typeNum){
-        case NUM_STR:  {
+        case sstd_yaml::num_str:  {
             ret_val1 = _extract_quotes_value(sstd::strip_quotes(sq, dq, s));
             ret_val1_use_quotes = ( dq || sq );
         } break;
-        case NUM_LIST: {
+        case sstd_yaml::num_list: {
             ret_val1 = _extract_quotes_value(sstd::strip_quotes(sq, dq, _rm_hyphen(s)));
             ret_val1_use_quotes = ( dq || sq );
         } break;
-        case NUM_HASH:
-        case NUM_LIST_AND_HASH: {
+        case sstd_yaml::num_hash:
+        case sstd_yaml::num_list_and_hash: {
             std::vector<std::string> v;
             if(!_split_hash(v, s)){ sstd::pdbg_err("single quatation or double quatation is not closed\n"); return false; }
             //if(v.size()==0){ sstd::pdbg_err("Unexpected data size.\n"); return false; }
@@ -254,15 +238,15 @@ bool _get_value(bool& ret_val1_use_quotes, bool& ret_val2_use_quotes, std::strin
         default: { sstd::pdbg_err("Unexpected typeNum\n"); return false; } break;
         }
         
-    }else if(format==NUM_FLOW_STYLE_BASE){
+    }else if(format==sstd_yaml::num_flow_style_base){
         switch(typeNum){
-        case NUM_STR:  {
+        case sstd_yaml::num_str:  {
             ret_val1 = _extract_quotes_value(sstd::strip_quotes(sq, dq, s));
             ret_val1_use_quotes = ( dq || sq );
         } break;
-        case NUM_LIST:
-        case NUM_HASH:
-        case NUM_LIST_AND_HASH: {
+        case sstd_yaml::num_list:
+        case sstd_yaml::num_hash:
+        case sstd_yaml::num_list_and_hash: {
             ret_val1 = _extract_quotes_value(sstd::strip_quotes(sq, dq, _rm_hyphen(s)));
             ret_val1_use_quotes = ( dq || sq );
         } break;
@@ -290,8 +274,8 @@ bool _get_multi_line_str(std::string& ret, const uint hsc_prev, const std::strin
         s = _rm_comment(s); // s = _rm_comment_quotes(s); に置き換える
         if(s=="..."){ --i; return true; } // detect end marker
         
-        uint type=NUM_NULL, format=NUM_BLOCK_STYLE_BASE, type_cnt=0; if(!sstd_yaml::_data_type_and_format(type, format, type_cnt, s)){ return false; }
-        if(type==NUM_STR){
+        uint type=sstd_yaml::num_null, format=sstd_yaml::num_block_style_base, type_cnt=0; if(!sstd_yaml::_data_type_and_format(type, format, type_cnt, s)){ return false; }
+        if(type==sstd_yaml::num_str){
             if(indent_width>=0 && s.size()>0){
                 uint hsc = _head_space_count(s);
                 
@@ -371,15 +355,15 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
         s = _rm_comment(raw); // s = _rm_comment_quotes(s); に置き換える
         if(s.size()==0){ continue; }
         if(s=="..."){ return true; } // detect end marker
-        uint type=NUM_NULL, format=NUM_BLOCK_STYLE_BASE, type_cnt=0; if(!sstd_yaml::_data_type_and_format(type, format, type_cnt, s)){ return false; }
+        uint type=sstd_yaml::num_null, format=sstd_yaml::num_block_style_base, type_cnt=0; if(!sstd_yaml::_data_type_and_format(type, format, type_cnt, s)){ return false; }
         uint hsc_lx=0;     _hsc_lx(hsc_lx, s);
         uint hsc_hx=0; if(!_hsc_hx(hsc_hx, s)){ sstd::pdbg_err("quate is not closed\n"); return false; }
         
         bool val1_use_quotes, val2_use_quotes;
         std::string val1, val2;
         if(!_get_value(val1_use_quotes, val2_use_quotes, val1, val2, s, type, format)){ return false; }
-        //if      (format==NUM_BLOCK_STYLE_BASE){ if(!_get_value(val1_use_quotes, val2_use_quotes, val1, val2, s, type)){ return false; }
-        //}else if(format==NUM_FLOW_STYLE_BASE ){ val1 = s;
+        //if      (format==sstd_yaml::num_block_style_base){ if(!_get_value(val1_use_quotes, val2_use_quotes, val1, val2, s, type)){ return false; }
+        //}else if(format==sstd_yaml::num_flow_style_base ){ val1 = s;
         //}else                            { sstd::pdbg_err("Unexpected data type\n"); return false; }
         
         // for multiple line string
@@ -388,10 +372,10 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
 
         struct command c;
         switch(type){
-        case NUM_STR: {
+        case sstd_yaml::num_str: {
             c.hsc_lx          = hsc_lx;
             c.hsc_hx          = hsc_hx;
-            c.type            = NUM_STR;
+            c.type            = sstd_yaml::num_str;
             c.format          = format;
             c.val1_use_quotes = val1_use_quotes;
             c.val2_use_quotes = val2_use_quotes;
@@ -402,11 +386,11 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             
             ret_vCmd.push_back(c);
         } break;
-        case NUM_LIST: {
+        case sstd_yaml::num_list: {
             for(uint ti=0; ti<type_cnt-1; ++ti){ // for multiple list. ex: "- - a".
                 c.hsc_lx          = hsc_lx + 2*ti;
                 c.hsc_hx          = hsc_hx + 2*ti;
-                c.type            = NUM_LIST;
+                c.type            = sstd_yaml::num_list;
                 c.format          = format;
                 c.val1_use_quotes = false;
                 c.val2_use_quotes = false;
@@ -420,7 +404,7 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             
             c.hsc_lx          = hsc_lx + 2*(type_cnt-1);
             c.hsc_hx          = hsc_hx + 2*(type_cnt-1);
-            c.type            = NUM_LIST;
+            c.type            = sstd_yaml::num_list;
             c.format          = format;
             c.val1_use_quotes = val1_use_quotes;
             c.val2_use_quotes = val2_use_quotes;
@@ -431,10 +415,10 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             
             ret_vCmd.push_back(c);
         } break;
-        case NUM_HASH: {
+        case sstd_yaml::num_hash: {
             c.hsc_lx          = hsc_lx;
             c.hsc_hx          = hsc_hx;
-            c.type            = NUM_HASH;
+            c.type            = sstd_yaml::num_hash;
             c.format          = format;
             c.val1_use_quotes = val1_use_quotes;
             c.val2_use_quotes = val2_use_quotes;
@@ -445,11 +429,11 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             
             ret_vCmd.push_back(c);
         } break;
-        case NUM_LIST_AND_HASH:{
+        case sstd_yaml::num_list_and_hash:{
             for(uint ti=0; ti<type_cnt-1; ++ti){ // for multiple list-hash. ex: "- - k1: v1".
                 c.hsc_lx          = hsc_lx + 2*ti;
                 c.hsc_hx          = hsc_hx + 2*ti;
-                c.type            = NUM_LIST;
+                c.type            = sstd_yaml::num_list;
                 c.format          = format;
                 c.val1_use_quotes = false;
                 c.val2_use_quotes = false;
@@ -463,7 +447,7 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             
             c.hsc_lx          = hsc_lx + 2*(type_cnt-1);
             c.hsc_hx          = hsc_hx + 2*(type_cnt-1);
-            c.type            = NUM_LIST_AND_HASH;
+            c.type            = sstd_yaml::num_list_and_hash;
             c.format          = format;
             c.val1_use_quotes = false;
             c.val2_use_quotes = false;
@@ -476,7 +460,7 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
             
             c.hsc_lx          = hsc_lx + 2*(type_cnt-1);
             c.hsc_hx          = hsc_hx + 2*(type_cnt-1);
-            c.type            = NUM_HASH;
+            c.type            = sstd_yaml::num_hash;
             c.format          = format;
             c.val1_use_quotes = val1_use_quotes;
             c.val2_use_quotes = val2_use_quotes;
@@ -626,8 +610,8 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
     return true;
 }/*
 bool _assignment_value(sstd::terp::var& ret_yml, const std::stirng& s_in, const uint format){
-    if(v_cmd[i].format==NUM_BLOCK_STYLE_BASE){
-    }else if(v_cmd[i].format==NUM_FLOW_STYLE_BASE){
+    if(v_cmd[i].format==sstd_yaml::num_block_style_base){
+    }else if(v_cmd[i].format==sstd_yaml::num_flow_style_base){
         printf("in 720\n");
         if(!_flow_style_str_to_obj(var, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
     }else{
@@ -680,7 +664,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
                 v_hsc_hx.pop_back();
                 --i;
                 continue;
-            }else if(v_cmd[i].type==NUM_LIST_AND_HASH){
+            }else if(v_cmd[i].type==sstd_yaml::num_list_and_hash){
                 v_dst.pop_back();
                 v_hsc_hx.pop_back();
                 --i;
@@ -694,10 +678,10 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
         // set dst type (if dst is sstd::num_null)
         if(var.typeNum()==sstd::num_null){
             switch(v_cmd[i].type){
-            case NUM_STR:           {                           } break;
-            case NUM_LIST:          { var = sstd::terp::list(); } break;
-            case NUM_LIST_AND_HASH: { var = sstd::terp::list(); } break;
-            case NUM_HASH:          { var = sstd::terp::hash(); } break;
+            case sstd_yaml::num_str:           {                           } break;
+            case sstd_yaml::num_list:          { var = sstd::terp::list(); } break;
+            case sstd_yaml::num_list_and_hash: { var = sstd::terp::list(); } break;
+            case sstd_yaml::num_hash:          { var = sstd::terp::hash(); } break;
 //            case NUM_FORMAT:        { sstd::pdbg_err("in NUM_FORMAT\n");                          } break;
             default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
             }
@@ -705,15 +689,15 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
 
         // set dst
         bool needs_to_set_dst_list = !(v_cmd[i].val1.size()>=1 || v_cmd[i].val1_use_quotes);
-        if(v_cmd[i].type==NUM_LIST && needs_to_set_dst_list){
+        if(v_cmd[i].type==sstd_yaml::num_list && needs_to_set_dst_list){
             var.push_back( sstd::terp::list() );
             v_dst.push_back( &(var[var.size()-1]) );
-            if(v_cmd[i].format==NUM_BLOCK_STYLE_BASE){ continue; }
+            if(v_cmd[i].format==sstd_yaml::num_block_style_base){ continue; }
         }
         bool needs_to_set_dst_hash = !(v_cmd[i].val2.size()>=1 || v_cmd[i].val2_use_quotes);
-        if((v_cmd[i].format + v_cmd[i].type)==NUM_BLOCK_STYLE_BASE + NUM_HASH && needs_to_set_dst_hash){
+        if((v_cmd[i].format + v_cmd[i].type)==sstd_yaml::num_block_style_base + sstd_yaml::num_hash && needs_to_set_dst_hash){
             v_dst.push_back( &(var[v_cmd[i].val1.c_str()]) );
-            if(v_cmd[i].format==NUM_BLOCK_STYLE_BASE){ continue; }
+            if(v_cmd[i].format==sstd_yaml::num_block_style_base){ continue; }
         }
 
         // set value
@@ -721,33 +705,33 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
         sstd::printn(v_cmd[i].format);
         sstd::printn(v_cmd[i].type);
         switch(v_cmd[i].format + v_cmd[i].type){
-        case NUM_BLOCK_STYLE_BASE + NUM_STR: {
+        case sstd_yaml::num_block_style_base + sstd_yaml::num_str: {
             if(var.typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data. (String data type can only take one data.)\n"); break; }
             var = v_cmd[i].val1.c_str();
         } break;
-        case NUM_BLOCK_STYLE_BASE + NUM_LIST: {
+        case sstd_yaml::num_block_style_base + sstd_yaml::num_list: {
             var.push_back( v_cmd[i].val1.c_str() );
         } break;
-        case NUM_BLOCK_STYLE_BASE + NUM_LIST_AND_HASH: {
+        case sstd_yaml::num_block_style_base + sstd_yaml::num_list_and_hash: {
             var.push_back( sstd::terp::hash() );
             v_dst.push_back( &(var[var.size()-1]) );
         } break;
-        case NUM_BLOCK_STYLE_BASE + NUM_HASH: {
+        case sstd_yaml::num_block_style_base + sstd_yaml::num_hash: {
             printf("in 737\n");
             var[ v_cmd[i].val1.c_str() ] = v_cmd[i].val2.c_str();
             //std::string tmp = v_cmd[i].val2.c_str();
             //if(!_flow_style_str_to_obj(var[ v_cmd[i].val1.c_str() ], tmp)){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
         } break;
-        case NUM_FLOW_STYLE_BASE + NUM_STR: {
+        case sstd_yaml::num_flow_style_base + sstd_yaml::num_str: {
             if(!_flow_style_str_to_obj(var, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
         } break;
-        case NUM_FLOW_STYLE_BASE + NUM_LIST: {
+        case sstd_yaml::num_flow_style_base + sstd_yaml::num_list: {
             printf("in 744\n");
             sstd::terp::var var_tmp;
             if(!_flow_style_str_to_obj(var_tmp, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
             var.push_back(std::move( var_tmp ));
         } break;
-        case NUM_FLOW_STYLE_BASE + NUM_LIST_AND_HASH: {
+        case sstd_yaml::num_flow_style_base + sstd_yaml::num_list_and_hash: {
             printf("in 750\n");
             //              sstd::terp::var var_tmp;
             //              if(!_flow_style_str_to_obj(var, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
@@ -755,7 +739,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
             std::string tmp = v_cmd[i].val2.c_str();
             if(!_flow_style_str_to_obj(var[ v_cmd[i].val1.c_str() ], tmp)){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
         } break;
-        case NUM_FLOW_STYLE_BASE + NUM_HASH: {
+        case sstd_yaml::num_flow_style_base + sstd_yaml::num_hash: {
             printf("in 756\n");
             if(!_flow_style_str_to_obj(var, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
         } break;
