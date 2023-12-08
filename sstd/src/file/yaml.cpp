@@ -120,40 +120,12 @@ bool _is_hash(bool& ret, const std::string& s){
     ret = sstd::strIn(": ", ret_s) || (s.size()>=1 && s[s.size()-1]==':');
     return true;
 }
-bool _is_list(bool& ret, uint& cnt, const std::string& s){
-    std::vector<std::string> v;
-    if(!sstd::split_quotes(v, s)){ sstd::pdbg_err("quate is not closed\n"); return false; }
-    
-    for(uint i=0; i<v.size(); ++i){
-        if(v[i].size()==1 && v[i]=="-"){ ++cnt; }
-    }
-    ret = ( cnt >= 1 );
-    
-    return true;
-}
 std::string _extract_hash_value(const std::string& s){
     for(uint i=0; i<s.size()-1; ++i){
         if(s[i]==':' && s[i+1]==' ' && i+2<s.size()){ return std::string(&s[i+2]); }
     }
     
     return "";
-}
-bool _is_flow(bool& ret, std::string s, const bool is_h){ // for flow style notation
-    ret = false;
-    std::string ret_s;
-    if(is_h){ s = _extract_hash_value(s); }
-    
-    if(!sstd::extract_unquoted(ret_s, s)){ sstd::pdbg_err("quate is not closed\n"); return false; }
-    for(uint i=0; i<ret_s.size(); ++i){
-        if(ret_s[i]==' ' || ret_s[i]=='-' || ret_s[i]==' '){ continue; }
-        
-        if(ret_s[i]=='{' || ret_s[i]=='['){
-            ret = true;  return true;
-        }else{
-            ret = false; return true;
-        }
-    }
-    return true;
 }
 
 //---
@@ -223,25 +195,8 @@ void _print(const std::vector<struct command>& v_cmd){ // for debug
 }
 
 //---
-/*
-bool _data_type_and_format(uint& type, uint& format, uint& num, std::string s){
-    bool is_h; if(!_is_hash(is_h,      s      )){ return false; }
-    bool is_l; if(!_is_list(is_l, num, s      )){ return false; }
-    bool is_f; if(!_is_flow(is_f,      s, is_h)){ return false; }
 
-    if(is_h && is_l){ type = NUM_LIST_AND_HASH;
-    }else if( is_h ){ type = NUM_HASH;
-    }else if( is_l ){ type = NUM_LIST;
-    }else           { type = NUM_STR;
-    }
-
-    if(!is_f){ format = NUM_BLOCK_STYLE_BASE;
-    }  else  { format = NUM_FLOW_STYLE_BASE;
-    }
-    
-    return true;
-}*/
-bool sstd_yaml::_data_type_and_format_v2(uint& type, uint& format, uint& list_type_cnt, std::string s){
+bool sstd_yaml::_data_type_and_format(uint& type, uint& format, uint& list_type_cnt, std::string s){
     type = NUM_STR;
     format = NUM_BLOCK_STYLE_BASE;
     list_type_cnt = 0;
@@ -249,7 +204,6 @@ bool sstd_yaml::_data_type_and_format_v2(uint& type, uint& format, uint& list_ty
     std::vector<std::string> v;
     if(!sstd::split_quotes(v, s)){ sstd::pdbg_err("quate is not closed\n"); return false; }
     
-    sstd::printn(v);
     bool is_list = false;
     bool is_hash = false;
     
@@ -265,9 +219,6 @@ bool sstd_yaml::_data_type_and_format_v2(uint& type, uint& format, uint& list_ty
     if(is_hash){ type += NUM_HASH; }
     
     return true;
-}
-bool _data_type_and_format(uint& type, uint& format, uint& num, std::string s){
-    return sstd_yaml::_data_type_and_format_v2(type, format, num, s);
 }
 bool _split_hash(std::vector<std::string>& ret_v, std::string s){
     if(s.size()>=1 && s[s.size()-1]==':'){ s.pop_back(); ret_v.push_back(s); return true; }
@@ -339,7 +290,7 @@ bool _get_multi_line_str(std::string& ret, const uint hsc_prev, const std::strin
         s = _rm_comment(s); // s = _rm_comment_quotes(s); に置き換える
         if(s=="..."){ --i; return true; } // detect end marker
         
-        uint type=NUM_NULL, format=NUM_BLOCK_STYLE_BASE, type_cnt=0; if(!_data_type_and_format(type, format, type_cnt, s)){ return false; }
+        uint type=NUM_NULL, format=NUM_BLOCK_STYLE_BASE, type_cnt=0; if(!sstd_yaml::_data_type_and_format(type, format, type_cnt, s)){ return false; }
         if(type==NUM_STR){
             if(indent_width>=0 && s.size()>0){
                 uint hsc = _head_space_count(s);
@@ -420,7 +371,7 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
         s = _rm_comment(raw); // s = _rm_comment_quotes(s); に置き換える
         if(s.size()==0){ continue; }
         if(s=="..."){ return true; } // detect end marker
-        uint type=NUM_NULL, format=NUM_BLOCK_STYLE_BASE, type_cnt=0; if(!_data_type_and_format(type, format, type_cnt, s)){ return false; }
+        uint type=NUM_NULL, format=NUM_BLOCK_STYLE_BASE, type_cnt=0; if(!sstd_yaml::_data_type_and_format(type, format, type_cnt, s)){ return false; }
         uint hsc_lx=0;     _hsc_lx(hsc_lx, s);
         uint hsc_hx=0; if(!_hsc_hx(hsc_hx, s)){ sstd::pdbg_err("quate is not closed\n"); return false; }
         
