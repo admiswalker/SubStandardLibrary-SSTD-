@@ -223,7 +223,7 @@ void _print(const std::vector<struct command>& v_cmd){ // for debug
 }
 
 //---
-
+/*
 bool _data_type_and_format(uint& type, uint& format, uint& num, std::string s){
     bool is_h; if(!_is_hash(is_h,      s      )){ return false; }
     bool is_l; if(!_is_list(is_l, num, s      )){ return false; }
@@ -240,9 +240,34 @@ bool _data_type_and_format(uint& type, uint& format, uint& num, std::string s){
     }
     
     return true;
-}
-bool sstd_yaml::_data_type_and_format_v2(uint& type, uint& format, uint& num, std::string s){
+}*/
+bool sstd_yaml::_data_type_and_format_v2(uint& type, uint& format, uint& list_type_cnt, std::string s){
+    type = NUM_STR;
+    format = NUM_BLOCK_STYLE_BASE;
+    list_type_cnt = 0;
+
+    std::vector<std::string> v;
+    if(!sstd::split_quotes(v, s)){ sstd::pdbg_err("quate is not closed\n"); return false; }
+    
+    sstd::printn(v);
+    bool is_list = false;
+    bool is_hash = false;
+    
+    for(uint i=0; i<v.size(); ++i){
+        uint size = v[i].size();
+        
+        if(size==1 && v[i][   0  ]=='-'){ is_list=true; ++list_type_cnt; }
+        if(size>=1 && v[i][size-1]==':'){ is_hash=true;                  }
+        if(size>=1 && v[i][   0  ]=='['){ format=NUM_FLOW_STYLE_BASE;    }
+        if(size>=1 && v[i][   0  ]=='{'){ format=NUM_FLOW_STYLE_BASE;    }
+    }
+    if(is_list){ type += NUM_LIST; }
+    if(is_hash){ type += NUM_HASH; }
+    
     return true;
+}
+bool _data_type_and_format(uint& type, uint& format, uint& num, std::string s){
+    return sstd_yaml::_data_type_and_format_v2(type, format, num, s);
 }
 bool _split_hash(std::vector<std::string>& ret_v, std::string s){
     if(s.size()>=1 && s[s.size()-1]==':'){ s.pop_back(); ret_v.push_back(s); return true; }
