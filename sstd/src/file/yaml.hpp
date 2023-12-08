@@ -23,6 +23,7 @@ namespace sstd{
 
 namespace sstd_yaml{
     bool _split_quotes_by_control_chars(std::vector<std::string>& ret, const char* str, const uint str_len);
+    bool _data_type_and_format_v2(uint& type, uint& format, uint& num, std::string s);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

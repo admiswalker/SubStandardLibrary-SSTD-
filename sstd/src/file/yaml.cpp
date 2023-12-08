@@ -241,6 +241,9 @@ bool _data_type_and_format(uint& type, uint& format, uint& num, std::string s){
     
     return true;
 }
+bool sstd_yaml::_data_type_and_format_v2(uint& type, uint& format, uint& num, std::string s){
+    return true;
+}
 bool _split_hash(std::vector<std::string>& ret_v, std::string s){
     if(s.size()>=1 && s[s.size()-1]==':'){ s.pop_back(); ret_v.push_back(s); return true; }
     return sstd::split_quotes(ret_v, s, ": ");
