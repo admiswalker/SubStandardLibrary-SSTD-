@@ -317,6 +317,29 @@ bool _get_multi_line_str(std::string& ret, const uint hsc_prev, const std::strin
 
     return true;
 }
+bool _get_multi_line_str_of_flow_style(std::string& ret, const uint hsc_prev, const std::string& opt, int indent_width, const std::vector<std::string>& ls, uint& i){
+    int num_square_brackets = 0; // []
+    int num_curly_brackets  = 0; // {}
+    
+    for(; i<ls.size(); ++i){
+        std::string s;
+        s = ls[i];
+        s = _rm_comment(s); // s = _rm_comment_quotes(s); に置き換える
+        if(s=="..."){ --i; return true; } // detect end marker
+
+        for(){
+        }
+        
+        if(type==sstd_yaml::num_str){
+            
+        }else{
+            --i;
+            break;
+        }
+    }
+
+    return true;
+}
 bool _check_val_and_overwrite_multi_line_str(std::string& val_rw, const uint hsc_prev, const std::vector<std::string>& ls, uint& i){
     int indent_width = -1;
 
@@ -342,6 +365,11 @@ bool _check_val_and_overwrite_multi_line_str(std::string& val_rw, const uint hsc
         }
         
         if(!_get_multi_line_str(val_rw, hsc_prev, opt, indent_width, ls, i)){ return false; }
+        
+    }else if(val_rw.starts_with("[" ) || val_rw.starts_with("{" )){ // case: "[a,\nb,\nc]", "{a,\nb,\nc}"
+        ++i;
+        sstd::printn(val_rw);
+        if(!_get_multi_line_str_of_flow_style(val_rw, hsc_prev, opt, indent_width, ls, i)){ return false; }
     }
 
     return true;
@@ -367,8 +395,8 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
         //}else                            { sstd::pdbg_err("Unexpected data type\n"); return false; }
         
         // for multiple line string
-        _check_val_and_overwrite_multi_line_str(val1, hsc_lx, ls, i); // for list (val1=="|0123" or val1=="|-0123" val1=="|+0123")
-        _check_val_and_overwrite_multi_line_str(val2, hsc_hx, ls, i); // for hash (val2=="|0123" or val2=="|-0123" val2=="|+0123")
+        if(!_check_val_and_overwrite_multi_line_str(val1, hsc_lx, ls, i)){ sstd::pdbg_err("reading multiline is failed.\n"); return false; } // for list (val1=="|0123" or val1=="|-0123" val1=="|+0123")
+        if(!_check_val_and_overwrite_multi_line_str(val2, hsc_hx, ls, i)){ sstd::pdbg_err("reading multiline is failed.\n"); return false; } // for hash (val2=="|0123" or val2=="|-0123" val2=="|+0123")
 
         struct command c;
         switch(type){

@@ -32,7 +32,7 @@ TEST(yaml, _split_quotes_by_control_chars_02){
 //---
 
 
-// All the Test Cases of "sstd_yaml::_data_type_and_format_v2()"
+// All the Test Cases of "sstd_yaml::_data_type_and_format()"
 //
 // ┌───────────┬────────────┬────────┬────────────────────┬────────────────────┬─────────┬────────────────────────────────────────┬────────────────────────────────────────────────┐
 // │           │            │        │ (Black Style Side) │ (Black Style Side) │         │ Concrete Example                       │                                                │
@@ -107,7 +107,7 @@ TEST(yaml, _data_type_and_format_case02_02){ TEST_DATA_TYPE_AND_FORMAT(false,  t
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // var
-/*
+
 TEST(yaml, var_str_1_line){
     std::string s=R"(
 a # comment
@@ -2519,7 +2519,7 @@ TEST(yaml, flow_style_notation_hash_02){
     //---
     
     ASSERT_TRUE(yml==ans);
-}/*
+}
 TEST(yaml, flow_style_notation_hash_03){
     std::string s=R"(
 {k1: {k11: v11}}
@@ -2591,8 +2591,7 @@ TEST(yaml, flow_style_notation_hash_without_value_01){
     
     ASSERT_TRUE(yml==ans);
 }
-//*/
-/*
+//*
 TEST(yaml, flow_style_notation_list){
     std::string s=R"(
 [a, 
@@ -2606,9 +2605,10 @@ b
     
     sstd::terp::var ans;
     ans = sstd::terp::list(3);
-    ans[0] = "a1";
-    ans[1] = "b1";
-    ans[2] = "c1";
+    ans[0] = "a";
+    ans[1] = "b";
+    ans[2] = "c";
+    sstd::printn(ans);
 
     //---
     
