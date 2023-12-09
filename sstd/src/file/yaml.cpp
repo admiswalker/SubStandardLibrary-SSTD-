@@ -596,7 +596,7 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
     for(uint i=0; i<v_cs.size(); ++i){
         //sstd::printn(var_out);
         //printf("\n\n");
-        //sstd::printn(v_cs[i]);
+        sstd::printn(v_cs[i]);
         //sstd::printn(v_dst.size());
         if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
         sstd::terp::var* pVar = v_dst[v_dst.size()-1];

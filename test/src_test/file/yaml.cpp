@@ -2655,6 +2655,43 @@ TEST(yaml, flow_style_notation_hash_04){
     
     ASSERT_TRUE(yml==ans);
 }
+TEST(yaml, flow_style_notation_hash_null_01){
+    std::string s=R"(
+{k1}
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["k1"];
+    sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, flow_style_notation_hash_null_02){
+    std::string s=R"(
+{k1:, k2}
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["k1"];
+    ans["k2"];
+    sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
 TEST(yaml, flow_style_notation_hash_without_value_01){
     std::string s=R"(
 - {k1}
@@ -2812,21 +2849,52 @@ TEST(yaml, flow_style_notation_hash_multiline_str){
     ASSERT_TRUE(yml==ans);
 }
 
-
-/*
-
-*/
-/*
+//---
 
 // following 2 notations are same meaning
-[k: v]
-[{k: v}]
+//
+// [k: v]
+// [{k: v}]
+TEST(yaml, flow_style_notation_list_hash_type1){
+    std::string s=R"([{k: v}])";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
 
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = sstd::terp::hash();
+    ans[0]["k"] = "v";
+    sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}/*
+TEST(yaml, flow_style_notation_list_hash_type2_Abbreviated){ // NOT SUPPORTED YET
+    std::string s=R"([k: v])";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = sstd::terp::hash();
+    ans[0]["k"] = "v";
+    sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
 */
+//---
 
 //---
 // Tests for sstd::yaml_load_all()
-/*
+//*
 TEST(yaml, flow_style_notation_hash__for__yaml_load_all){
     std::string s=R"(
 {k1: v1}
@@ -2885,9 +2953,8 @@ TEST(yaml, flow_style_notation_list_hash__for__yaml_load_all){
     ASSERT_TRUE(vYml[0]==ans1);
     ASSERT_TRUE(vYml[1]==ans2);
 }
-
 //*/
-/*
+//*
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // End marker ...
 
