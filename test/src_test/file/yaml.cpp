@@ -95,7 +95,7 @@ R"()"}) );
 }
 
 //---
-/*
+
 TEST(yaml, _split_quotes_by_control_chars_01){
     std::vector<std::string> ret;
     const char* str = " [ a, b , c , { k1:v1, k 2 : v 2 , k3:}] ";
