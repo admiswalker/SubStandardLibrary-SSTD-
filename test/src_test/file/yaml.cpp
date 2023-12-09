@@ -2871,7 +2871,7 @@ TEST(yaml, flow_style_notation_list_hash_type1){
     //---
     
     ASSERT_TRUE(yml==ans);
-}//*
+}
 TEST(yaml, flow_style_notation_list_hash_type2_Abbreviated){ // NOT SUPPORTED YET
     std::string s=R"([k: v])";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
@@ -2889,12 +2889,12 @@ TEST(yaml, flow_style_notation_list_hash_type2_Abbreviated){ // NOT SUPPORTED YE
     
     ASSERT_TRUE(yml==ans);
 }
-//*/
+
 //---
 
 //---
 // Tests for sstd::yaml_load_all()
-/*
+//*
 TEST(yaml, flow_style_notation_hash__for__yaml_load_all){
     std::string s=R"(
 {k1: v1}
