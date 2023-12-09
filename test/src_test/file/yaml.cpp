@@ -2682,8 +2682,10 @@ TEST(yaml, flow_style_notation_hash_without_value_01){
     
     ASSERT_TRUE(yml==ans);
 }
-//*
-TEST(yaml, flow_style_notation_list){
+
+//---
+
+TEST(yaml, flow_style_notation_list_multiline){
     std::string s=R"(
 [a, 
 b
@@ -2705,13 +2707,76 @@ b
     
     ASSERT_TRUE(yml==ans);
 }
+TEST(yaml, flow_style_notation_hash_multiline){
+    std::string s=R"(
+{k:
+v}
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["k"] = "v";
+    sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+
+//---
+
+TEST(yaml, flow_style_notation_list_hash){
+    std::string s=R"([a, {k:v}])";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(2);
+    ans[0] = "a";
+    ans[1] = sstd::terp::hash();
+    ans[1]["k"] = "v";
+    sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+
+TEST(yaml, flow_style_notation_hash_list){
+    std::string s=R"({k:[a,b,c]})";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["k"] = sstd::terp::list(3);
+    ans["k"][0] = "a";
+    ans["k"][1] = "b";
+    ans["k"][2] = "c";
+    sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+
+//---
+
 /*
 TEST(yaml, flow_style_notation_hash){
     std::string s=R"(
 {k1: v1}
 )";
     std::vector<sstd::terp::var> vYml; ASSERT_TRUE(sstd::yaml_load_all(vYml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
+    sstd::printn(vYml);
 
     //---
     
@@ -2738,7 +2803,7 @@ TEST(yaml, flow_style_notation_list_hash){
 [a, b, c, {k1: v1}]
 )";
     std::vector<sstd::terp::var> vYml; ASSERT_TRUE(sstd::yaml_load_all(vYml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
+    sstd::printn(vYml);
 
     //---
     
