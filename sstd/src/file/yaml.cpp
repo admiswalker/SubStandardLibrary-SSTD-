@@ -561,19 +561,22 @@ bool sstd_yaml::_split_quotes_by_control_chars(std::vector<std::string>& ret, co
     return true;
 }
 bool _get_hash_value(bool& is_null, std::string& ret_value, const std::vector<std::string>& v_cs, uint& i){
-    if(i+3<v_cs.size() && v_cs[i+1][0]==':' && (v_cs[i+3][0]==',' || v_cs[i+3][0]=='}')){
+    if(i+3<v_cs.size() && v_cs[i+1][0]==':' && (v_cs[i+3][0]==',' || v_cs[i+3][0]=='}' || v_cs[i+3][0]==']')){
         // { "k1": "v1" } or { "k1": "v1", "k2": "v2" }
+        // [ "k1": "v1" ] <- Abbreviated of "[{ "k1": "v1" }]"
         ret_value = v_cs[i+2];
         is_null = false;
         i += 2;
         return true; // get value
-    }else if(i+2<v_cs.size() && v_cs[i+1][0]==':' && (v_cs[i+2][0]=='}' || v_cs[i+2][0]==',')){
+    }else if(i+2<v_cs.size() && v_cs[i+1][0]==':' && (v_cs[i+2][0]=='}' || v_cs[i+2][0]==']' || v_cs[i+2][0]==',')){
         // { "k1": } or { "k1":, "k2" }
+        // [ "k1": "v1" ] <- Abbreviated of "[{ "k1": "v1" }]"
         is_null = true;
         i += 2;
         return true; // get null value
-    }else if(i+1<v_cs.size() && (v_cs[i+1][0]=='}' || v_cs[i+1][0]==',')){
+    }else if(i+1<v_cs.size() && (v_cs[i+1][0]=='}' || v_cs[i+1][0]==']' || v_cs[i+1][0]==',')){
         // { "k1" }, { "k1", "k2" }
+        // [ "k1": "v1" ] <- Abbreviated of "[{ "k1": "v1" }]"
         is_null = true;
         i += 1;
         return true; // get null value
@@ -596,7 +599,7 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
     for(uint i=0; i<v_cs.size(); ++i){
         //sstd::printn(var_out);
         //printf("\n\n");
-        sstd::printn(v_cs[i]);
+        //sstd::printn(v_cs[i]);
         //sstd::printn(v_dst.size());
         if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
         sstd::terp::var* pVar = v_dst[v_dst.size()-1];
@@ -614,7 +617,10 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
                     v_dst.push_back( &(var[var.size()-1]) );
                 }
             } break;
-            case ']': { v_dst.pop_back(); } break;
+            case ']': {
+                if(var.typeNum()==sstd::num_hash_terp_var){ v_dst.pop_back(); } // for [k: v] which is an abbreviated notation of [{k: v}]
+                v_dst.pop_back();
+            } break;
             case '{': {
                 if(var.typeNum()==sstd::num_null){
                     var = sstd::terp::hash();
@@ -632,15 +638,29 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
             //sstd::printn(v_cs[i]);
             //sstd::printn(var.typeNum());
             switch(var.typeNum()){
-            case sstd::num_str: {
-                sstd::printn(var.typeStr());
-                var.push_back(v_cs[i]);
-            } break;
+//            case sstd::num_str: {
+//                sstd::printn(v_cs[i+1]);
+//                if(i+1<v_cs.size() && v_cs[i+1].size()==1 && v_cs[i+1][0]==':'){ // for [k: v] which is an abbreviated notation of [{k: v}]
+//                  printf("in 640 ----------------\n");
+//                    var.push_back( sstd::terp::hash() );
+//                    v_dst.push_back( &(var[var.size()-1]) );
+//                    continue;
+//                }
+//                sstd::printn(var.typeStr());
+//                var.push_back(v_cs[i]);
+//            } break;
             case sstd::num_vec_terp_var: {
                 // list
+                if(i+1<v_cs.size() && v_cs[i+1].size()==1 && v_cs[i+1][0]==':'){ // for [k: v] which is an abbreviated notation of [{k: v}]
+                    printf("in 640 ----------------\n");
+                    var.push_back( sstd::terp::hash() );
+                    v_dst.push_back( &(var[var.size()-1]) );
+                    --i; continue;
+                }
                 var.push_back(v_cs[i]);
             } break;
             case sstd::num_hash_terp_var: {
+                printf("in 660 ----------------\n");
                 // hash
                 bool is_null;
                 std::string key = v_cs[i];
