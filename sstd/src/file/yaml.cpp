@@ -762,17 +762,13 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
         case sstd_yaml::num_block_style_base + sstd_yaml::num_hash: {
             var[ v_cmd[i].val1.c_str() ] = v_cmd[i].val2.c_str();
         } break;
-        case sstd_yaml::num_flow_style_base + sstd_yaml::num_str: {
-            if(!_flow_style_str_to_obj(var, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
-        } break;
-        case sstd_yaml::num_flow_style_base + sstd_yaml::num_list: {
+        case sstd_yaml::num_flow_style_base + sstd_yaml::num_str:
+        case sstd_yaml::num_flow_style_base + sstd_yaml::num_list:
+        case sstd_yaml::num_flow_style_base + sstd_yaml::num_hash: {
             if(!_flow_style_str_to_obj(var, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
         } break;
         case sstd_yaml::num_flow_style_base + sstd_yaml::num_list_and_hash: {
             if(!_flow_style_str_to_obj(var[ v_cmd[i].val1.c_str() ], v_cmd[i].val2.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
-        } break;
-        case sstd_yaml::num_flow_style_base + sstd_yaml::num_hash: {
-            if(!_flow_style_str_to_obj(var, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
         } break;
         default: { sstd::pdbg_err("ERROR\n"); } break;
         }
