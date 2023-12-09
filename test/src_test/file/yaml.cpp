@@ -195,7 +195,12 @@ TEST(yaml, _data_type_and_format_case15_01){ TEST_DATA_TYPE_AND_FORMAT( false, t
 TEST(yaml, _data_type_and_format_case16_01){ TEST_DATA_TYPE_AND_FORMAT( false, true,  true,  true, 1, "- k: {}"   ); }
 
 TEST(yaml, _data_type_and_format_case02_02){ TEST_DATA_TYPE_AND_FORMAT(false,  true, false, false, 3, "- - - v"   ); }
+TEST(yaml, _data_type_and_format_case03_02){ TEST_DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k : v"     ); }
+TEST(yaml, _data_type_and_format_case04_02){ TEST_DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k[: v["    ); }
+TEST(yaml, _data_type_and_format_case05_02){ TEST_DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k{: v{"    ); }
+TEST(yaml, _data_type_and_format_case06_02){ TEST_DATA_TYPE_AND_FORMAT( true, false, false,  true, 0, "[{: }]"    ); } // Ex: [a, b, c, {k: v}]
 
+/*
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // var
 
@@ -2747,6 +2752,27 @@ TEST(yaml, flow_style_notation_list_hash){
     
     ASSERT_TRUE(yml==ans);
 }
+TEST(yaml, flow_style_notation_list_hash_02){
+std::string s=R"([a, b, c, {k: v}])";
+//std::string s=R"([a, b, c, [k]])";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(4);
+    ans[0] = "a";
+    ans[1] = "b";
+    ans[2] = "c";
+    ans[3] = sstd::terp::hash();
+    ans[3]["k"] = "v";
+    sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
 /*
 TEST(yaml, flow_style_notation_hash_list){
     std::string s=R"({k:[a,b,c]})";
@@ -2769,11 +2795,13 @@ TEST(yaml, flow_style_notation_hash_list){
 }
 
 //---
-
-/*
-TEST(yaml, flow_style_notation_hash){
+// Tests for sstd::yaml_load_all()
+//*
+TEST(yaml, flow_style_notation_hash__for__yaml_load_all){
     std::string s=R"(
 {k1: v1}
+---
+{k2: v2}
 )";
     std::vector<sstd::terp::var> vYml; ASSERT_TRUE(sstd::yaml_load_all(vYml, s)); // TEST THIS LINE
     sstd::printn(vYml);
@@ -2781,26 +2809,24 @@ TEST(yaml, flow_style_notation_hash){
     //---
     
     sstd::terp::var ans1;
-    ans1 = sstd::terp::list(3);
-    ans1[0] = "a1";
-    ans1[1] = "b1";
-    ans1[2] = "c1";
+    ans1 = sstd::terp::hash();
+    ans1["k1"] = "v1";
 
     sstd::terp::var ans2;
-    ans2 = sstd::terp::list(3);
-    ans2[0] = "a2";
-    ans2[1] = "b2";
-    ans2[2] = "c2";
+    ans2 = sstd::terp::hash();
+    ans2["k2"] = "v2";
 
     //---
     
     ASSERT_EQ(vYml.size(), (uint)2);
     ASSERT_TRUE(vYml[0]==ans1);
     ASSERT_TRUE(vYml[1]==ans2);
-}
-TEST(yaml, flow_style_notation_list_hash){
+}/*
+TEST(yaml, flow_style_notation_list_hash__for__yaml_load_all){
     std::string s=R"(
-[a, b, c, {k1: v1}]
+[a1, b1, c1, {k1: v1}]
+---
+[a2, b2, c2, {k2: v2}]
 )";
     std::vector<sstd::terp::var> vYml; ASSERT_TRUE(sstd::yaml_load_all(vYml, s)); // TEST THIS LINE
     sstd::printn(vYml);
@@ -2808,16 +2834,20 @@ TEST(yaml, flow_style_notation_list_hash){
     //---
     
     sstd::terp::var ans1;
-    ans1 = sstd::terp::list(3);
+    ans1 = sstd::terp::list(4);
     ans1[0] = "a1";
     ans1[1] = "b1";
     ans1[2] = "c1";
+    ans1[3] = sstd::terp::hash();
+    ans1[3]["k1"] = "v1";
 
     sstd::terp::var ans2;
-    ans2 = sstd::terp::list(3);
+    ans2 = sstd::terp::list(4);
     ans2[0] = "a2";
     ans2[1] = "b2";
     ans2[2] = "c2";
+    ans2[3] = sstd::terp::hash();
+    ans2[3]["k2"] = "v2";
 
     //---
     

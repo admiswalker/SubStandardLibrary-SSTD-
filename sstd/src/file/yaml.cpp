@@ -223,7 +223,7 @@ void _print(const std::vector<struct command>& v_cmd){ // for debug
 }
 
 //---
-
+//*
 bool sstd_yaml::_data_type_and_format(uint& type, uint& format, uint& list_type_cnt, std::string s){
     type   = sstd_yaml::num_str;
     format = sstd_yaml::num_block_style_base;
@@ -231,23 +231,130 @@ bool sstd_yaml::_data_type_and_format(uint& type, uint& format, uint& list_type_
 
     std::vector<std::string> v;
     if(!sstd::split_quotes(v, s)){ sstd::pdbg_err("quate is not closed\n"); return false; }
+//    sstd::printn(v);
     
     bool is_list = false;
     bool is_hash = false;
+
+    for(uint i=0; i<v.size(); ++i){
+        uint size = v[i].size();
+        
+        if(size>=1 && v[i][   0  ]=='['){ format=sstd_yaml::num_flow_style_base; }
+        if(size>=1 && v[i][   0  ]=='{'){ format=sstd_yaml::num_flow_style_base; }
+        if(size==1 && v[i][   0  ]=='-'){ is_list=true; ++list_type_cnt; }
+        if(size>=1 && v[i][size-1]==':'){ if(format!=sstd_yaml::num_flow_style_base){ is_hash=true; } }
+    }
+    if(is_list){ type += sstd_yaml::num_list; }
+    if(is_hash){ type += sstd_yaml::num_hash; }
+    
+    sstd::printn(type);
+    sstd::printn(format);
+    return true;
+}
+//*/
+/*
+bool sstd_yaml::_data_type_and_format(uint& type, uint& format, uint& list_type_cnt, std::string s){
+    type   = sstd_yaml::num_str;
+    format = sstd_yaml::num_block_style_base;
+    list_type_cnt = 0;
+    
+    bool is_list = false;
+    bool is_hash = false;
+
+    int num_of_square_brackets=0; // []
+    int num_of_curly_brackets=0;  // {}
+
+    if(s.size()<2){ return true; }
+    
+    for(uint i=0; i<s.size()-1; ++i){
+        if(s[i]=='-' && s[i+1]==' '){ is_list=true; ++list_type_cnt; }
+        if(s[i]==':' && s[i+1]==' '){ if(num_of_square_brackets==0 && num_of_curly_brackets==0){ is_hash=true; } }
+        if((s[i]==' '||s[i]==',') && s[i+1]=='['){ format=sstd_yaml::num_flow_style_base; ++num_of_square_brackets; }
+        if((s[i]==' '||s[i]==',') && s[i+1]=='{'){ format=sstd_yaml::num_flow_style_base; ++num_of_curly_brackets;  }
+        if(i==0 && s[i]=='['){ format=sstd_yaml::num_flow_style_base; ++num_of_square_brackets; }
+        if(i==0 && s[i]=='{'){ format=sstd_yaml::num_flow_style_base; ++num_of_curly_brackets;  }
+        if(s[i]==']'){ --num_of_square_brackets; }
+        if(s[i]=='}'){ --num_of_curly_brackets;  }
+    }
+    
+    if(is_list){ type += sstd_yaml::num_list; }
+    if(is_hash){ type += sstd_yaml::num_hash; }
+
+    sstd::printn(type);
+    sstd::printn(format);
+    
+    return true;
+    
+    //---
+    /*
+    type   = sstd_yaml::num_str;
+    format = sstd_yaml::num_block_style_base;
+    list_type_cnt = 0;
+
+    std::vector<std::string> v;
+    if(!sstd::split_quotes(v, s)){ sstd::pdbg_err("quate is not closed\n"); return false; }
+    sstd::printn(v);
+    
+    bool is_list = false;
+    bool is_hash = false;
+
+    int num_of_square_brackets=0; // []
+    int num_of_curly_brackets=0;  // {}
     
     for(uint i=0; i<v.size(); ++i){
         uint size = v[i].size();
         
         if(size==1 && v[i][   0  ]=='-'){ is_list=true; ++list_type_cnt; }
-        if(size>=1 && v[i][size-1]==':'){ is_hash=true;                  }
-        if(size>=1 && v[i][   0  ]=='['){ format=sstd_yaml::num_flow_style_base;    }
-        if(size>=1 && v[i][   0  ]=='{'){ format=sstd_yaml::num_flow_style_base;    }
+        if(size>=1 && v[i][size-1]==':'){ if(num_of_square_brackets==0 && num_of_curly_brackets==0){ is_hash=true; } }
+        if(size>=1 && v[i][   0  ]=='['){ format=sstd_yaml::num_flow_style_base; ++num_of_square_brackets; }
+        if(size>=1 && v[i][   0  ]==']'){ format=sstd_yaml::num_flow_style_base; --num_of_square_brackets; }
+        if(size>=1 && v[i][   0  ]=='{'){ format=sstd_yaml::num_flow_style_base; ++num_of_curly_brackets; }
+        if(size>=1 && v[i][   0  ]=='}'){ format=sstd_yaml::num_flow_style_base; --num_of_curly_brackets; }
     }
     if(is_list){ type += sstd_yaml::num_list; }
     if(is_hash){ type += sstd_yaml::num_hash; }
     
     return true;
+
+    //---
+
+    bool is_escaped=false;
+    bool in_d_quate=false; // double quate
+    bool in_s_quate=false; // single quate
+    std::string buf;
+    
+    int num_of_square_brackets=0; // []
+    int num_of_curly_brackets=0;  // {}
+    for(uint r=0; str[r]!=0;){ // r: read place
+        buf.clear();
+        for(; str[r]!='\0'; ++r){
+            if(str[r]=='\\'){ is_escaped=true; buf+=str[r]; ++r; if(str[r]=='\0'){break;} }
+            
+            if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
+            if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
+            
+            if(!in_d_quate && !in_s_quate && str[r]=='['){ ++num_of_square_brackets; }
+            if(!in_d_quate && !in_s_quate && str[r]==']'){ --num_of_square_brackets; }
+            
+            if(!in_d_quate && !in_s_quate && str[r]=='{'){ ++num_of_curly_brackets; }
+            if(!in_d_quate && !in_s_quate && str[r]=='}'){ --num_of_curly_brackets; }
+            
+            if(!in_d_quate && !in_s_quate && num_of_square_brackets==0 && num_of_curly_brackets==0 && str[r]==0x0A                  ){ r+=1; break; } // Uinx ("\n")
+            if(!in_d_quate && !in_s_quate && num_of_square_brackets==0 && num_of_curly_brackets==0 && str[r]==0x0D && str[r+1]==0x0A){ r+=2; break; } // Windows ("\r\n")
+            buf += str[r];
+            
+            is_escaped=false;
+        }
+        ret.push_back(std::move(buf));
+    }
+    if(in_d_quate){ ret.clear(); return false; }
+    if(in_s_quate){ ret.clear(); return false; }
+    if(num_of_square_brackets){ ret.clear(); return false; }
+    if(num_of_curly_brackets ){ ret.clear(); return false; }
+    
+    return true;
 }
+    //*/
 bool _split_hash(std::vector<std::string>& ret_v, std::string s){
     if(s.size()>=1 && s[s.size()-1]==':'){ s.pop_back(); ret_v.push_back(s); return true; }
     return sstd::split_quotes(ret_v, s, ": ");
@@ -593,6 +700,7 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
     v_dst.push_back( &var_out );
     
     for(uint i=0; i<v_cs.size(); ++i){
+        sstd::printn(var_out);
         //printf("\n\n");
         //sstd::printn(v_cs[i]);
         //sstd::printn(v_dst.size());
@@ -607,10 +715,9 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
             case '[': {
                 if(var.typeNum()==sstd::num_null){
                     var = sstd::terp::list();
-                }else{
+                }else if(var.typeNum()==sstd::num_vec_terp_var){
                     var.push_back( sstd::terp::list() );
                     v_dst.push_back( &(var[var.size()-1]) );
-                    continue;
                 }
             } break;
             case ']': { v_dst.pop_back(); } break;
@@ -620,7 +727,6 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
                 }else if(var.typeNum()==sstd::num_vec_terp_var){
                     var.push_back( sstd::terp::hash() );
                     v_dst.push_back( &(var[var.size()-1]) );
-                    continue;
                 }
             } break;
             case '}': { v_dst.pop_back(); } break;
