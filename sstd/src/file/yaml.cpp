@@ -19,6 +19,50 @@
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+bool sstd_yaml::_splitByLine_quotes_brackets(std::vector<std::string>& ret, const char* str){
+    
+    bool is_escaped=false;
+    bool in_d_quate=false; // double quate
+    bool in_s_quate=false; // single quate
+    std::string buf;
+    
+    int num_of_square_brackets=0; // []
+    int num_of_curly_brackets=0;  // {}
+    for(uint r=0; str[r]!=0;){ // r: read place
+        buf.clear();
+        for(; str[r]!='\0'; ++r){
+            if(str[r]=='\\'){ is_escaped=true; buf+=str[r]; ++r; if(str[r]=='\0'){break;} }
+            
+            if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
+            if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
+            
+            if(!in_d_quate && !in_s_quate && str[r]=='['){ ++num_of_square_brackets; }
+            if(!in_d_quate && !in_s_quate && str[r]==']'){ --num_of_square_brackets; }
+            
+            if(!in_d_quate && !in_s_quate && str[r]=='{'){ ++num_of_curly_brackets; }
+            if(!in_d_quate && !in_s_quate && str[r]=='}'){ --num_of_curly_brackets; }
+            
+            if(!in_d_quate && !in_s_quate && num_of_square_brackets==0 && num_of_curly_brackets==0 && str[r]==0x0A                  ){ r+=1; break; } // Uinx ("\n")
+            if(!in_d_quate && !in_s_quate && num_of_square_brackets==0 && num_of_curly_brackets==0 && str[r]==0x0D && str[r+1]==0x0A){ r+=2; break; } // Windows ("\r\n")
+            buf += str[r];
+            
+            is_escaped=false;
+        }
+        ret.push_back(std::move(buf));
+    }
+    if(in_d_quate){ ret.clear(); return false; }
+    if(in_s_quate){ ret.clear(); return false; }
+    if(num_of_square_brackets){ ret.clear(); return false; }
+    if(num_of_curly_brackets ){ ret.clear(); return false; }
+    
+    return true;
+}
+bool sstd_yaml::_splitByLine_quotes_brackets(std::vector<std::string>& ret, const std::string& str){
+    return sstd_yaml::_splitByLine_quotes_brackets(ret, str.c_str());
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
 std::string _extract_quotes_value(const std::string& str){
     std::string tmp;
     std::string ret;
@@ -181,7 +225,7 @@ void _print(const std::vector<struct command>& v_cmd){ // for debug
 //---
 
 bool sstd_yaml::_data_type_and_format(uint& type, uint& format, uint& list_type_cnt, std::string s){
-    type = sstd_yaml::num_str;
+    type   = sstd_yaml::num_str;
     format = sstd_yaml::num_block_style_base;
     list_type_cnt = 0;
 
@@ -317,29 +361,6 @@ bool _get_multi_line_str(std::string& ret, const uint hsc_prev, const std::strin
 
     return true;
 }
-bool _get_multi_line_str_of_flow_style(std::string& ret, const uint hsc_prev, const std::string& opt, int indent_width, const std::vector<std::string>& ls, uint& i){
-    int num_square_brackets = 0; // []
-    int num_curly_brackets  = 0; // {}
-    
-    for(; i<ls.size(); ++i){
-        std::string s;
-        s = ls[i];
-        s = _rm_comment(s); // s = _rm_comment_quotes(s); に置き換える
-        if(s=="..."){ --i; return true; } // detect end marker
-
-        for(){
-        }
-        
-        if(type==sstd_yaml::num_str){
-            
-        }else{
-            --i;
-            break;
-        }
-    }
-
-    return true;
-}
 bool _check_val_and_overwrite_multi_line_str(std::string& val_rw, const uint hsc_prev, const std::vector<std::string>& ls, uint& i){
     int indent_width = -1;
 
@@ -366,10 +387,6 @@ bool _check_val_and_overwrite_multi_line_str(std::string& val_rw, const uint hsc
         
         if(!_get_multi_line_str(val_rw, hsc_prev, opt, indent_width, ls, i)){ return false; }
         
-    }else if(val_rw.starts_with("[" ) || val_rw.starts_with("{" )){ // case: "[a,\nb,\nc]", "{a,\nb,\nc}"
-        ++i;
-        sstd::printn(val_rw);
-        if(!_get_multi_line_str_of_flow_style(val_rw, hsc_prev, opt, indent_width, ls, i)){ return false; }
     }
 
     return true;

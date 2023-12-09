@@ -4,6 +4,98 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // tests of sub-functions
 
+//---
+
+TEST(yaml, _splitByLine_quotes_brackets_case01){
+    
+    std::vector<std::string> ret_v;
+    std::string s = R"(
+"abc
+def"
+
+"ghi"
+
+)";
+    bool ret_tf = sstd_yaml::_splitByLine_quotes_brackets(ret_v, s); // TEST THIS LINE
+    //sstd::printn(ret_v);
+
+    ASSERT_TRUE( ret_tf );
+    ASSERT_TRUE( ret_v == std::vector<std::string>({
+R"()",
+R"("abc
+def")",
+R"()",
+R"("ghi")",
+R"()"}) );
+}
+
+TEST(yaml, _splitByLine_quotes_brackets_case02){
+    
+    std::vector<std::string> ret_v;
+    std::string s = R"(
+[a,
+b,
+c]
+
+)";
+    bool ret_tf = sstd_yaml::_splitByLine_quotes_brackets(ret_v, s); // TEST THIS LINE
+    //sstd::printn(ret_v);
+
+    ASSERT_TRUE( ret_tf );
+    ASSERT_TRUE( ret_v == std::vector<std::string>({
+R"()",
+R"([a,
+b,
+c])",
+R"()"}) );
+}
+
+TEST(yaml, _splitByLine_quotes_brackets_case03){
+    
+    std::vector<std::string> ret_v;
+    std::string s = R"(
+{
+k:v
+}
+
+)";
+    bool ret_tf = sstd_yaml::_splitByLine_quotes_brackets(ret_v, s); // TEST THIS LINE
+    //sstd::printn(ret_v);
+
+    ASSERT_TRUE( ret_tf );
+    ASSERT_TRUE( ret_v == std::vector<std::string>({
+R"()",
+R"({
+k:v
+})",
+R"()"}) );
+}
+
+TEST(yaml, _splitByLine_quotes_brackets_case04){
+    
+    std::vector<std::string> ret_v;
+    std::string s = R"(
+[[a,
+b,
+c,{k:
+v}]]
+
+)";
+    bool ret_tf = sstd_yaml::_splitByLine_quotes_brackets(ret_v, s); // TEST THIS LINE
+    //sstd::printn(ret_v);
+
+    ASSERT_TRUE( ret_tf );
+    ASSERT_TRUE( ret_v == std::vector<std::string>({
+R"()",
+R"([[a,
+b,
+c,{k:
+v}]])",
+R"()"}) );
+}
+
+//---
+/*
 TEST(yaml, _split_quotes_by_control_chars_01){
     std::vector<std::string> ret;
     const char* str = " [ a, b , c , { k1:v1, k 2 : v 2 , k3:}] ";
@@ -30,7 +122,6 @@ TEST(yaml, _split_quotes_by_control_chars_02){
 }
 
 //---
-
 
 // All the Test Cases of "sstd_yaml::_data_type_and_format()"
 //
@@ -2670,6 +2761,18 @@ TEST(yaml, flow_style_notation_list_hash){
     ASSERT_TRUE(vYml[1]==ans2);
 }
 //*/
+/*
+{k: "a  
+  b  
+  c  "}
+*/
+/*
+
+// following 2 notations are same meaning
+[k: v]
+[{k: v}]
+
+*/
 /*
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // End marker ...

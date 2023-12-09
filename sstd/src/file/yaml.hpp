@@ -34,6 +34,9 @@ namespace sstd_yaml{
     // sstd_yaml::num_flow_style_base + sstd_yaml::num_hash          6 // reserved number for FLOW_STYLE
     // sstd_yaml::num_flow_style_base + sstd_yaml::num_list_and_hash 7 // reserved number for FLOW_STYLE
 
+    bool _splitByLine_quotes_brackets(std::vector<std::string>& ret, const        char* str);
+    bool _splitByLine_quotes_brackets(std::vector<std::string>& ret, const std::string& str);
+    
     bool _split_quotes_by_control_chars(std::vector<std::string>& ret, const char* str, const uint str_len);
     bool _data_type_and_format(uint& type, uint& format, uint& num, std::string s);
 }
