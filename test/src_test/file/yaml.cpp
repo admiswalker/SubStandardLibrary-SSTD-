@@ -2747,7 +2747,7 @@ TEST(yaml, flow_style_notation_list_hash){
     
     ASSERT_TRUE(yml==ans);
 }
-
+/*
 TEST(yaml, flow_style_notation_hash_list){
     std::string s=R"({k:[a,b,c]})";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE

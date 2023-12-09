@@ -593,8 +593,8 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
     v_dst.push_back( &var_out );
     
     for(uint i=0; i<v_cs.size(); ++i){
-        printf("\n\n");
-        sstd::printn(v_cs[i]);
+        //printf("\n\n");
+        //sstd::printn(v_cs[i]);
         //sstd::printn(v_dst.size());
         if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
         sstd::terp::var* pVar = v_dst[v_dst.size()-1];
@@ -615,7 +615,13 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
             } break;
             case ']': { v_dst.pop_back(); } break;
             case '{': {
-                var = sstd::terp::hash();
+                if(var.typeNum()==sstd::num_null){
+                    var = sstd::terp::hash();
+                }else if(var.typeNum()==sstd::num_vec_terp_var){
+                    var.push_back( sstd::terp::hash() );
+                    v_dst.push_back( &(var[var.size()-1]) );
+                    continue;
+                }
             } break;
             case '}': { v_dst.pop_back(); } break;
             case ':': {} break;
