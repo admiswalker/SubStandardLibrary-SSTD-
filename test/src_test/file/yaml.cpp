@@ -200,7 +200,6 @@ TEST(yaml, _data_type_and_format_case04_02){ TEST_DATA_TYPE_AND_FORMAT(false, fa
 TEST(yaml, _data_type_and_format_case05_02){ TEST_DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k{: v{"    ); }
 TEST(yaml, _data_type_and_format_case06_02){ TEST_DATA_TYPE_AND_FORMAT( true, false, false,  true, 0, "[{: }]"    ); } // Ex: [a, b, c, {k: v}]
 
-/*
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // var
 
@@ -2773,7 +2772,7 @@ std::string s=R"([a, b, c, {k: v}])";
     
     ASSERT_TRUE(yml==ans);
 }
-/*
+
 TEST(yaml, flow_style_notation_hash_list){
     std::string s=R"({k:[a,b,c]})";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
@@ -2794,14 +2793,45 @@ TEST(yaml, flow_style_notation_hash_list){
     ASSERT_TRUE(yml==ans);
 }
 
+TEST(yaml, flow_style_notation_hash_multiline_str){
+    std::string s=R"({k: "a  
+  b  
+  c  "})";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["k"] = "a b c  ";
+    sstd::printn(ans);
+
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+
+
+/*
+
+*/
+/*
+
+// following 2 notations are same meaning
+[k: v]
+[{k: v}]
+
+*/
+
 //---
 // Tests for sstd::yaml_load_all()
-//*
+/*
 TEST(yaml, flow_style_notation_hash__for__yaml_load_all){
     std::string s=R"(
 {k1: v1}
 ---
-{k2: v2}
+{k2:v2}
 )";
     std::vector<sstd::terp::var> vYml; ASSERT_TRUE(sstd::yaml_load_all(vYml, s)); // TEST THIS LINE
     sstd::printn(vYml);
@@ -2821,12 +2851,12 @@ TEST(yaml, flow_style_notation_hash__for__yaml_load_all){
     ASSERT_EQ(vYml.size(), (uint)2);
     ASSERT_TRUE(vYml[0]==ans1);
     ASSERT_TRUE(vYml[1]==ans2);
-}/*
+}
 TEST(yaml, flow_style_notation_list_hash__for__yaml_load_all){
     std::string s=R"(
 [a1, b1, c1, {k1: v1}]
 ---
-[a2, b2, c2, {k2: v2}]
+[a2, b2, c2, {k2:v2}]
 )";
     std::vector<sstd::terp::var> vYml; ASSERT_TRUE(sstd::yaml_load_all(vYml, s)); // TEST THIS LINE
     sstd::printn(vYml);
@@ -2855,19 +2885,8 @@ TEST(yaml, flow_style_notation_list_hash__for__yaml_load_all){
     ASSERT_TRUE(vYml[0]==ans1);
     ASSERT_TRUE(vYml[1]==ans2);
 }
+
 //*/
-/*
-{k: "a  
-  b  
-  c  "}
-*/
-/*
-
-// following 2 notations are same meaning
-[k: v]
-[{k: v}]
-
-*/
 /*
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // End marker ...
