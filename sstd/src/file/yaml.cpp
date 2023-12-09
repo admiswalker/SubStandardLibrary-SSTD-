@@ -562,21 +562,18 @@ bool sstd_yaml::_split_quotes_by_control_chars(std::vector<std::string>& ret, co
 }
 bool _get_hash_value(bool& is_null, std::string& ret_value, const std::vector<std::string>& v_cs, uint& i){
     if(i+3<v_cs.size() && v_cs[i+1][0]==':' && (v_cs[i+3][0]==',' || v_cs[i+3][0]=='}' || v_cs[i+3][0]==']')){
-        // { "k1": "v1" } or { "k1": "v1", "k2": "v2" }
-        // [ "k1": "v1" ] <- Abbreviated of "[{ "k1": "v1" }]"
+        // { "k1": "v1" }, { "k1": "v1", "k2": "v2" } or [ "k1": "v1" ] (<- Abbreviated of "[{ "k1": "v1" }]")
         ret_value = v_cs[i+2];
         is_null = false;
         i += 2;
         return true; // get value
     }else if(i+2<v_cs.size() && v_cs[i+1][0]==':' && (v_cs[i+2][0]=='}' || v_cs[i+2][0]==']' || v_cs[i+2][0]==',')){
-        // { "k1": } or { "k1":, "k2" }
-        // [ "k1": "v1" ] <- Abbreviated of "[{ "k1": "v1" }]"
+        // { "k1": }, { "k1":, "k2" } or [ "k1": "v1" ] (<- Abbreviated of "[{ "k1": "v1" }]")
         is_null = true;
         i += 2;
         return true; // get null value
     }else if(i+1<v_cs.size() && (v_cs[i+1][0]=='}' || v_cs[i+1][0]==']' || v_cs[i+1][0]==',')){
-        // { "k1" }, { "k1", "k2" }
-        // [ "k1": "v1" ] <- Abbreviated of "[{ "k1": "v1" }]"
+        // { "k1" }, { "k1", "k2" } or [ "k1": "v1" ] (<- Abbreviated of "[{ "k1": "v1" }]")
         is_null = true;
         i += 1;
         return true; // get null value
@@ -587,18 +584,18 @@ bool _get_hash_value(bool& is_null, std::string& ret_value, const std::vector<st
     return false;
 }
 bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
-    sstd::printn(var_out.typeStr());
-    sstd::printn(s_in);
+    //sstd::printn(var_out.typeStr());
+    //sstd::printn(s_in);
     std::vector<std::string> v_cs; // vector of commands and string
     if(!sstd_yaml::_split_quotes_by_control_chars(v_cs, s_in.c_str(), s_in.size())){ sstd::pdbg_err("_split_quotes_by_control_chars() is failed. Un-cloused quate.\n"); return false; }
-    sstd::printn(v_cs);
+    //sstd::printn(v_cs);
     
     std::vector<sstd::terp::var*> v_dst;
     v_dst.push_back( &var_out );
     
     for(uint i=0; i<v_cs.size(); ++i){
-        //sstd::printn(var_out);
         //printf("\n\n");
+        //sstd::printn(var_out);
         //sstd::printn(v_cs[i]);
         //sstd::printn(v_dst.size());
         if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
@@ -635,24 +632,10 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
             default: { sstd::pdbg_err("Unexpected char\n"); return false; } break;
             }
         }else{
-            //sstd::printn(v_cs[i]);
-            //sstd::printn(var.typeNum());
             switch(var.typeNum()){
-//            case sstd::num_str: {
-//                sstd::printn(v_cs[i+1]);
-//                if(i+1<v_cs.size() && v_cs[i+1].size()==1 && v_cs[i+1][0]==':'){ // for [k: v] which is an abbreviated notation of [{k: v}]
-//                  printf("in 640 ----------------\n");
-//                    var.push_back( sstd::terp::hash() );
-//                    v_dst.push_back( &(var[var.size()-1]) );
-//                    continue;
-//                }
-//                sstd::printn(var.typeStr());
-//                var.push_back(v_cs[i]);
-//            } break;
             case sstd::num_vec_terp_var: {
                 // list
                 if(i+1<v_cs.size() && v_cs[i+1].size()==1 && v_cs[i+1][0]==':'){ // for [k: v] which is an abbreviated notation of [{k: v}]
-                    printf("in 640 ----------------\n");
                     var.push_back( sstd::terp::hash() );
                     v_dst.push_back( &(var[var.size()-1]) );
                     --i; continue;
@@ -660,7 +643,6 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
                 var.push_back(v_cs[i]);
             } break;
             case sstd::num_hash_terp_var: {
-                printf("in 660 ----------------\n");
                 // hash
                 bool is_null;
                 std::string key = v_cs[i];
@@ -679,17 +661,7 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
     }
     
     return true;
-}/*
-bool _assignment_value(sstd::terp::var& ret_yml, const std::stirng& s_in, const uint format){
-    if(v_cmd[i].format==sstd_yaml::num_block_style_base){
-    }else if(v_cmd[i].format==sstd_yaml::num_flow_style_base){
-        printf("in 720\n");
-        if(!_flow_style_str_to_obj(var, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
-    }else{
-        sstd::pdbg_err("Unexpected data fromat.");
-    }
-    return;
-}*/
+}
 bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>& v_cmd){
     std::vector<sstd::terp::var*> v_dst;
     std::vector<uint> v_hsc_lx; // v: vector, hsc: head space count, _lx: list-index.
@@ -699,8 +671,8 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
     v_hsc_hx.push_back(0);
     
     for(uint i=0; i<v_cmd.size(); ++i){
-        printf("\n\n--- begin cmd ---\n"); // for debug
-        _print(v_cmd[i]);                  // for debug
+        //printf("\n\n--- begin cmd ---\n"); // for debug
+        //_print(v_cmd[i]);                  // for debug
         if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
         sstd::terp::var* pVar = v_dst[v_dst.size()-1];
         sstd::terp::var& var = *pVar;
@@ -772,9 +744,9 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
         }
 
         // set value
-        sstd::printn(var);
-        sstd::printn(v_cmd[i].format);
-        sstd::printn(v_cmd[i].type);
+        //sstd::printn(var);
+        //sstd::printn(v_cmd[i].format);
+        //sstd::printn(v_cmd[i].type);
         switch(v_cmd[i].format + v_cmd[i].type){
         case sstd_yaml::num_block_style_base + sstd_yaml::num_str: {
             if(var.typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data. (String data type can only take one data.)\n"); break; }
@@ -788,30 +760,18 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
             v_dst.push_back( &(var[var.size()-1]) );
         } break;
         case sstd_yaml::num_block_style_base + sstd_yaml::num_hash: {
-            printf("in 737\n");
             var[ v_cmd[i].val1.c_str() ] = v_cmd[i].val2.c_str();
-            //std::string tmp = v_cmd[i].val2.c_str();
-            //if(!_flow_style_str_to_obj(var[ v_cmd[i].val1.c_str() ], tmp)){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
         } break;
         case sstd_yaml::num_flow_style_base + sstd_yaml::num_str: {
             if(!_flow_style_str_to_obj(var, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
         } break;
         case sstd_yaml::num_flow_style_base + sstd_yaml::num_list: {
-            printf("in 744\n");
-            sstd::terp::var var_tmp;
-            if(!_flow_style_str_to_obj(var_tmp, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
-            var.push_back(std::move( var_tmp ));
+            if(!_flow_style_str_to_obj(var, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
         } break;
         case sstd_yaml::num_flow_style_base + sstd_yaml::num_list_and_hash: {
-            printf("in 750\n");
-            //              sstd::terp::var var_tmp;
-            //              if(!_flow_style_str_to_obj(var, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
-            //              var[var.size()-1]
-            std::string tmp = v_cmd[i].val2.c_str();
-            if(!_flow_style_str_to_obj(var[ v_cmd[i].val1.c_str() ], tmp)){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
+            if(!_flow_style_str_to_obj(var[ v_cmd[i].val1.c_str() ], v_cmd[i].val2.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
         } break;
         case sstd_yaml::num_flow_style_base + sstd_yaml::num_hash: {
-            printf("in 756\n");
             if(!_flow_style_str_to_obj(var, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
         } break;
         default: { sstd::pdbg_err("ERROR\n"); } break;
