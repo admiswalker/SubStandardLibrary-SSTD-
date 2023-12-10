@@ -38,7 +38,30 @@ namespace sstd_yaml{
     bool _splitByLine_quotes_brackets(std::vector<std::string>& ret, const std::string& str);
     
     bool _split_quotes_by_control_chars(std::vector<std::string>& ret, const char* str, const uint str_len);
-    bool _data_type_and_format(uint& type, uint& format, uint& num, std::string s);
+    bool _data_type_and_format(uint& type, uint& format, uint& list_type_cnt, std::string s);
+
+    //---
+
+    // token for proceed YAML parsing
+    struct token {
+        // Data for Debug YAML parsing
+        uint line_num_being; // beginning line number
+        uint line_num_end;   // endding line number (for multipleline)
+        std::string rawStr;
+        
+        // Data for load YAML
+        std::string s;               // A string removed comments
+        std::vector<std::string> vs; // A string removed comments and split by ' ' (space)
+        uint type;                   // A destination type number of this line
+        uint format;                 // If containing flow style notation
+        uint list_type_cnt;          // Number of list type. (`- - - v`)
+        uint hsc_hx;                 // head space counts for hash type
+        uint hsc_lx;                 // head space counts for list type
+    };
+
+    bool _str2token(std::vector<sstd_yaml::token>& ret, const std::string& str);
+    
+    //---
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

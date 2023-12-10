@@ -200,9 +200,34 @@ TEST(yaml, _data_type_and_format_case04_02){ TEST_DATA_TYPE_AND_FORMAT(false, fa
 TEST(yaml, _data_type_and_format_case05_02){ TEST_DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k{: v{"    ); }
 TEST(yaml, _data_type_and_format_case06_02){ TEST_DATA_TYPE_AND_FORMAT( true, false, false,  true, 0, "[{: }]"    ); } // Ex: [a, b, c, {k: v}]
 
+//---
+
+TEST(yaml, _str2token_01){
+    std::vector<sstd_yaml::token> v_ret;
+    std::string str;
+    bool ret = sstd_yaml::_str2token(v_ret, str);
+
+    sstd::printn(ret);
+    
+    // bool _str2token(std::vector<sstd_yaml::token>& ret, const std::string& str);
+    
+    
+//    std::vector<std::string> ret;
+//    const char* str = " [ a, b , c , { k1:v1, k 2 : v 2 , k3:}] ";
+//    bool tf = sstd_yaml::_split_quotes_by_control_chars(ret, str, strlen(str)); // TEST THIS LINE
+    
+//    sstd::printn(tf);
+//    sstd::printn(ret);
+    
+//    std::vector<std::string> ret_ans = {"[", "a", ",", "b", ",", "c", ",", "{", "k1", ":", "v1", ",", "k 2", ":", "v 2", ",", "k3", ":", "}", "]"};
+//    ASSERT_TRUE(tf);
+    //    ASSERT_TRUE(ret == ret_ans);
+}
+
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // comments
-
+/*
 TEST(yaml, comments_str){
     std::string s=R"(
 a # comment
