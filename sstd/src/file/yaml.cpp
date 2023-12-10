@@ -18,6 +18,36 @@
 // - sq: single quatation
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// Overall View of YAML Data Processing
+
+// 1. The user side
+//
+//    1-1. A user calles sstd::yaml_load() or sstd::yaml_load_all()
+//
+// 2. The SSTD side
+//
+//    2-1. Splitting the input string by line concering the YAML processing units.
+//
+//         YAML processing units examples:
+//           ex1) Line breaks enclosed in quotation marks
+//             - "a\nb\nc"
+//             - 'a\nb\nc'
+//           ex2) Line breaks enclosed in brackets
+//             - [a,\nb,\nc]
+//             - {k:\nv}
+// 
+//         Following ones are processed later:
+//           ex1) Line breaks by YAML multiline notations ('|', '|+', '|-', '>', '>+', '>-')
+//             - "k: |\n  line1\n  line2\n  line3\n"
+//
+//    2-2. Counting up all the required parametars to parse YAML
+// 
+// 3. The user side
+//
+//    3-1. The user get the parsed results of YAML.
+// 
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 bool sstd_yaml::_splitByLine_quotes_brackets(std::vector<std::string>& ret, const char* str){
     
