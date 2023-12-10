@@ -201,6 +201,110 @@ TEST(yaml, _data_type_and_format_case05_02){ TEST_DATA_TYPE_AND_FORMAT(false, fa
 TEST(yaml, _data_type_and_format_case06_02){ TEST_DATA_TYPE_AND_FORMAT( true, false, false,  true, 0, "[{: }]"    ); } // Ex: [a, b, c, {k: v}]
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// comments
+
+TEST(yaml, comments_str){
+    std::string s=R"(
+a # comment
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = "a";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, comments_str_quotes){
+    std::string s=R"(
+"a # not-comment" # comment
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = "a # not-comment";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, comments_list){
+    std::string s=R"(
+- a # comment
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = "a";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, comments_list_quotes){
+    std::string s=R"(
+- "a # not-comment" # comment
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = "a # not-comment";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, comments_hash){
+    std::string s=R"(
+k: v # comment
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["k"] = "v";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, comments_hash_quotes){
+    std::string s=R"(
+"k # not-comment": "v # not-comment" # comment
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["k"] = "v";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 // var
 
 TEST(yaml, var_str_1_line){
