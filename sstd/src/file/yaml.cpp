@@ -26,7 +26,7 @@
 //
 // 2. The SSTD side
 //
-//    2-1. Splitting the input string by line concering the YAML processing units.
+//    2-1. Splitting the input string splitted by line concering the YAML processing units.
 //
 //         YAML processing units examples:
 //           ex1) Line breaks enclosed in quotation marks
@@ -50,65 +50,42 @@
 // 
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// print
 
-bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string& str){
-    // STEP1
-    //   sstd_yaml::_splitByLine_quotes_brackets_v2(std::vector<std::string>& ret, const char* str);
-    //   1-1 sstd_yaml::_splitByLine_quotes_brackets() に行数の情報を付与して出力する
-    //   1-2 _hsc_hx(), _hsc_lx() の処理を一緒にやってしまう．（処理単位が同じため）
-    
-    // STEP2
-    //   コメントの除去
-    
-    // STEP3
-    //   split_quotes() の結果を保存する（あとで何度か使っているため，処理をまとめる）
+#define sstd_print_token_base(rhs)                      \
+    printf("line_num_being: %d\n", rhs.line_num_being); \
+    printf("line_num_end: %d\n", rhs.line_num_end);     \
+    printf("rawStr: %s\n", rhs.rawStr.c_str());         \
+    printf("s: %s\n", rhs.s.c_str());                   \
+    printf("vs: [ ");                                   \
+    for(uint i=0; i<rhs.vs.size(); ++i){                \
+        printf("\"%s\" ", rhs.vs[i].c_str());           \
+    }                                                   \
+    printf("]\n");                                      \
+    printf("type: %d\n", rhs.type);                     \
+    printf("format: %d\n", rhs.format);                 \
+    printf("list_type_cnt: %d\n", rhs.list_type_cnt);   \
+    printf("hsc_hx: %d\n", rhs.hsc_hx);                 \
+    printf("hsc_lx: %d\n", rhs.hsc_lx);
 
-    return true;
+//---
+
+void sstd::print(const sstd_yaml::token& rhs){
+    sstd_print_token_base(rhs);
+    printf("\n");
 }
 
-//-----------------------------------------------------------------------------------------------------------------------------------------------
+//---
 
-bool sstd_yaml::_splitByLine_quotes_brackets(std::vector<std::string>& ret, const char* str){
-    
-    bool is_escaped=false;
-    bool in_d_quate=false; // double quate
-    bool in_s_quate=false; // single quate
-    std::string buf;
-    
-    int num_of_square_brackets=0; // []
-    int num_of_curly_brackets=0;  // {}
-    for(uint r=0; str[r]!=0;){ // r: read place
-        buf.clear();
-        for(; str[r]!='\0'; ++r){
-            if(str[r]=='\\'){ is_escaped=true; buf+=str[r]; ++r; if(str[r]=='\0'){break;} }
-            
-            if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
-            if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
-            
-            if(!in_d_quate && !in_s_quate && str[r]=='['){ ++num_of_square_brackets; }
-            if(!in_d_quate && !in_s_quate && str[r]==']'){ --num_of_square_brackets; }
-            
-            if(!in_d_quate && !in_s_quate && str[r]=='{'){ ++num_of_curly_brackets; }
-            if(!in_d_quate && !in_s_quate && str[r]=='}'){ --num_of_curly_brackets; }
-            
-            if(!in_d_quate && !in_s_quate && num_of_square_brackets==0 && num_of_curly_brackets==0 && str[r]==0x0A                  ){ r+=1; break; } // Uinx ("\n")
-            if(!in_d_quate && !in_s_quate && num_of_square_brackets==0 && num_of_curly_brackets==0 && str[r]==0x0D && str[r+1]==0x0A){ r+=2; break; } // Windows ("\r\n")
-            buf += str[r];
-            
-            is_escaped=false;
-        }
-        ret.push_back(std::move(buf));
-    }
-    if(in_d_quate){ ret.clear(); return false; }
-    if(in_s_quate){ ret.clear(); return false; }
-    if(num_of_square_brackets){ ret.clear(); return false; }
-    if(num_of_curly_brackets ){ ret.clear(); return false; }
-    
-    return true;
+void sstd::for_printn(const sstd_yaml::token& rhs){ printf(" = "); sstd::print(rhs); }
+
+//---
+
+void sstd::print_for_vT(const sstd_yaml::token& rhs){
+    sstd_print_token_base(rhs);
 }
-bool sstd_yaml::_splitByLine_quotes_brackets(std::vector<std::string>& ret, const std::string& str){
-    return sstd_yaml::_splitByLine_quotes_brackets(ret, str.c_str());
-}
+
+#undef sstd_print_token_base
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -829,7 +806,117 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
     return true;
 }
 
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// str2token section
+
+bool sstd_yaml::_splitByLine_quotes_brackets(std::vector<std::string>& ret, const char* str){
+    
+    bool is_escaped=false;
+    bool in_d_quate=false; // double quate
+    bool in_s_quate=false; // single quate
+    std::string buf;
+    
+    int num_of_square_brackets=0; // []
+    int num_of_curly_brackets=0;  // {}
+    for(uint r=0; str[r]!=0;){ // r: read place
+        buf.clear();
+        for(; str[r]!='\0'; ++r){
+            if(str[r]=='\\'){ is_escaped=true; buf+=str[r]; ++r; if(str[r]=='\0'){break;} }
+            
+            if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
+            if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
+            
+            if(!in_d_quate && !in_s_quate && str[r]=='['){ ++num_of_square_brackets; }
+            if(!in_d_quate && !in_s_quate && str[r]==']'){ --num_of_square_brackets; }
+            
+            if(!in_d_quate && !in_s_quate && str[r]=='{'){ ++num_of_curly_brackets; }
+            if(!in_d_quate && !in_s_quate && str[r]=='}'){ --num_of_curly_brackets; }
+            
+            if(!in_d_quate && !in_s_quate && num_of_square_brackets==0 && num_of_curly_brackets==0 && str[r]==0x0A                  ){ r+=1; break; } // Uinx ("\n")
+            if(!in_d_quate && !in_s_quate && num_of_square_brackets==0 && num_of_curly_brackets==0 && str[r]==0x0D && str[r+1]==0x0A){ r+=2; break; } // Windows ("\r\n")
+            buf += str[r];
+            
+            is_escaped=false;
+        }
+        ret.push_back(std::move(buf));
+    }
+    if(in_d_quate){ ret.clear(); return false; }
+    if(in_s_quate){ ret.clear(); return false; }
+    if(num_of_square_brackets){ ret.clear(); return false; }
+    if(num_of_curly_brackets ){ ret.clear(); return false; }
+    
+    return true;
+}
+bool sstd_yaml::_splitByLine_quotes_brackets(std::vector<std::string>& ret, const std::string& str){
+    return sstd_yaml::_splitByLine_quotes_brackets(ret, str.c_str());
+}
+
 //---
+
+bool sstd_yaml::_splitByLine_quotes_brackets_v2(std::vector<sstd_yaml::token>& ret, const std::string& str){
+    
+    bool is_escaped=false;
+    bool in_d_quate=false; // double quate
+    bool in_s_quate=false; // single quate
+    std::string buf;
+    
+    int num_of_square_brackets=0; // []
+    int num_of_curly_brackets=0;  // {}
+    for(uint r=0; str[r]!=0;){ // r: read place
+        buf.clear();
+        for(; str[r]!='\0'; ++r){
+            if(str[r]=='\\'){ is_escaped=true; buf+=str[r]; ++r; if(str[r]=='\0'){break;} }
+            
+            if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
+            if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
+            
+            if(!in_d_quate && !in_s_quate && str[r]=='['){ ++num_of_square_brackets; }
+            if(!in_d_quate && !in_s_quate && str[r]==']'){ --num_of_square_brackets; }
+            
+            if(!in_d_quate && !in_s_quate && str[r]=='{'){ ++num_of_curly_brackets; }
+            if(!in_d_quate && !in_s_quate && str[r]=='}'){ --num_of_curly_brackets; }
+            
+            if(!in_d_quate && !in_s_quate && num_of_square_brackets==0 && num_of_curly_brackets==0 && str[r]==0x0A                  ){ r+=1; break; } // Uinx ("\n")
+            if(!in_d_quate && !in_s_quate && num_of_square_brackets==0 && num_of_curly_brackets==0 && str[r]==0x0D && str[r+1]==0x0A){ r+=2; break; } // Windows ("\r\n")
+            buf += str[r];
+            
+            is_escaped=false;
+        }
+        sstd_yaml::token tmp;
+        tmp.rawStr = std::move(buf);
+        
+        ret.push_back(std::move(tmp));
+    }
+    if(in_d_quate){ ret.clear(); return false; }
+    if(in_s_quate){ ret.clear(); return false; }
+    if(num_of_square_brackets){ ret.clear(); return false; }
+    if(num_of_curly_brackets ){ ret.clear(); return false; }
+    
+    return true;
+}
+
+//---
+
+bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string& str){
+    // STEP1
+    //   sstd_yaml::_splitByLine_quotes_brackets_v2(std::vector<std::string>& ret, const char* str);
+    //   1-1 sstd_yaml::_splitByLine_quotes_brackets() に行数の情報を付与して出力する
+    //   1-2 _hsc_hx(), _hsc_lx() の処理を一緒にやってしまう．（処理単位が同じため）
+    
+    // STEP2
+    //   コメントの除去
+    
+    // STEP3
+    //   split_quotes() の結果を保存する（あとで何度か使っているため，処理をまとめる）
+
+
+    
+
+    return true;
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// YAML load section
 
 bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     bool tf = true;
@@ -883,7 +970,7 @@ bool sstd::yaml_load_all(std::vector<sstd::terp::var>& ret_vYml, const        ch
 }
 bool sstd::yaml_load_all(std::vector<sstd::terp::var>& ret_vYml, const std::string& s){ return sstd::yaml_load_all(ret_vYml, s.c_str()); }
 
-//-----------------------------------------------------------------------------------------------------------------------------------------------
+//---
 
 bool sstd::yaml_load(sstd::terp::var& ret_yml, sstd::file& fp){
     size_t size = fp.fsize();
