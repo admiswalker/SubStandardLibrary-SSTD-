@@ -67,7 +67,10 @@
     printf("format: %d\n", rhs.format);                 \
     printf("list_type_cnt: %d\n", rhs.list_type_cnt);   \
     printf("hsc_hx: %d\n", rhs.hsc_hx);                 \
-    printf("hsc_lx: %d,\n", rhs.hsc_lx);
+    printf("hsc_lx: %d\n", rhs.hsc_lx);                 \
+    printf("val1: %s\n", rhs.val1.c_str());             \
+    printf("val2: %s\n", rhs.val2.c_str());             \
+    printf(",\n");
 
 //---
 
@@ -978,28 +981,33 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
             
             if(!in_d_quate && !in_s_quate){
                 if(subt.size()>=1 && (subt[0]=='[' || subt[0]=='{')){ is_flow=true; }
-                if(            str[r]=='-' && str[r+1]==' '){ sstd::printn(subt); subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
-                if(!is_flow && str[r]==':' && str[r+1]==' '){ sstd::printn(subt); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
                 
-                if(str[r]=='['){ ++num_of_square_brackets; }
-                if(str[r]==']'){ --num_of_square_brackets; }
-                if(str[r]=='{'){ ++num_of_curly_brackets; }
-                if(str[r]=='}'){ --num_of_curly_brackets; }
+                if(!is_flow){
+                    if(str[r]=='-' && str[r+1]==' '){                           subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
+                    if(str[r]==':' && str[r+1]==' '){ tmp.val1=std::move(subt); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
+                }else{
+                    if(str[r]=='['){ ++num_of_square_brackets; }
+                    if(str[r]==']'){ --num_of_square_brackets; }
+                    if(str[r]=='{'){ ++num_of_curly_brackets; }
+                    if(str[r]=='}'){ --num_of_curly_brackets; }
+                }
             }
-            
+            /*
             if(str[r]==0x0A){ // Uinx ("\n")
                 ++line_num;
                 if(!in_d_quate && !in_s_quate && num_of_square_brackets==0 && num_of_curly_brackets==0){ r+=1; break; }
             }else if(str[r]==0x0D && str[r+1]==0x0A){ // Windows ("\r\n")
                 ++line_num;
                 if(!in_d_quate && !in_s_quate && num_of_square_brackets==0 && num_of_curly_brackets==0){ r+=2; break; }
-            }
+            }*/
             tmp.rawStr += str[r];
             subt       += str[r];
             is_escaped=false;
         }
         tmp.line_num_end = std::max((int)tmp.line_num_begin, ((int)line_num)-1);
-
+        if(!is_hash && (is_list || is_flow)){ tmp.val1=std::move(subt); }
+        if(                        is_hash ){ tmp.val2=std::move(subt); }
+        
         if(is_list){ tmp.type += sstd_yaml::num_list; }
         if(is_hash){ tmp.type += sstd_yaml::num_hash; }
         if(is_flow){ tmp.format = sstd_yaml::num_flow_style_base; }

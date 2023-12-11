@@ -149,9 +149,9 @@ TEST(yaml, _split_quotes_by_control_chars_02){
 // ├───────────┼────────────┼────────┼────────────────────┼────────────────────┼─────────┼────────────┼───────────────────────────┼────────────────────────────────────────────────┤
 // │ Case10    │ - k: v     │        │         T          │          T         │         │ - k: v     │ - "k[]{: }": "v[]{: }"    │                                                │
 // ├───────────┼────────────┼────────┼────────────────────┼────────────────────┼─────────┼────────────┼───────────────────────────┼────────────────────────────────────────────────┤
-// │ Case11    │ - k[]: v[] │        │         T          │          T         │         │ - k[]: v[] │ - k[:]: v[:]              │                                                │
+// │ Case11    │ - k[]: v[] │        │         T          │          T         │         │ - k[]: v[] │ - k [:]: v[:]             │                                                │
 // ├───────────┼────────────┼────────┼────────────────────┼────────────────────┼─────────┼────────────┼───────────────────────────┼────────────────────────────────────────────────┤
-// │ Case12    │ - k{}: v{} │        │         T          │          T         │         │ - k{}: v{} │ - k{:}: v{:}              │                                                │
+// │ Case12    │ - k{}: v{} │        │         T          │          T         │         │ - k{}: v{} │ - k {:}: v{:}             │                                                │
 // ├───────────┼────────────┼────────┼────────────────────┼────────────────────┼─────────┼────────────┼───────────────────────────┼────────────────────────────────────────────────┤
 // │ Case13    │ k: []      │        │                    │          T         │    T    │ k: []      │ k: ["[]{}: "]             │                                                │
 // ├───────────┼────────────┼────────┼────────────────────┼────────────────────┼─────────┼────────────┼───────────────────────────┼────────────────────────────────────────────────┤
@@ -203,7 +203,7 @@ TEST(yaml, _data_type_and_format_case05_02){ TEST_DATA_TYPE_AND_FORMAT(false, fa
 TEST(yaml, _data_type_and_format_case06_02){ TEST_DATA_TYPE_AND_FORMAT( true, false, false,  true, 0, "[{: }]"    ); } // Ex: [a, b, c, {k: v}]
 
 //---
-// Test line number of sstd_yaml::_splitByLine_quotes_brackets()
+// Test _str2token() of data type and format
 
 #define TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(IS_STR, IS_LIST, IS_HASH, IS_FLOW, LIST_TYPE_COUNT, S_IN) \
     std::string s = S_IN;                                               \
@@ -241,13 +241,73 @@ TEST(yaml, _str2token__data_type_and_format_case16_01){ TEST_STR2TOKEN__DATA_TYP
 TEST(yaml, _str2token__data_type_and_format_case02_02){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false,  true, false, false, 3, "- - - v"   ); }
 TEST(yaml, _str2token__data_type_and_format_case03_02){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k : v"     ); }
 TEST(yaml, _str2token__data_type_and_format_case04_02){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k[: v["    ); }
-TEST(yaml, _str2token__data_type_and_format_case04_03){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k [: v ["    ); }
+TEST(yaml, _str2token__data_type_and_format_case04_03){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k [: v ["  ); }
 TEST(yaml, _str2token__data_type_and_format_case05_02){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k{: v{"    ); }
-TEST(yaml, _str2token__data_type_and_format_case05_03){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k {: v {"    ); }
+TEST(yaml, _str2token__data_type_and_format_case05_03){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k {: v {"  ); }
 TEST(yaml, _str2token__data_type_and_format_case06_02){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT( true, false, false,  true, 0, "[{: }]"    ); } // Ex: [a, b, c, {k: v}]
 
+//---
+// Test _str2token() of val1 and val2
+
+TEST(yaml, _str2token_val1_val2_list){
+    std::vector<sstd_yaml::token> v_ret;
+    std::string str="- a";
+    bool ret = sstd_yaml::_str2token(v_ret, str);
+    ASSERT_TRUE(ret);
+
+    sstd::printn(ret);
+    sstd::printn(v_ret);
+}
+TEST(yaml, _str2token_val1_val2_hash){
+    std::vector<sstd_yaml::token> v_ret;
+    std::string str="- k: v";
+    bool ret = sstd_yaml::_str2token(v_ret, str);
+    ASSERT_TRUE(ret);
+
+    sstd::printn(ret);
+    sstd::printn(v_ret);
+}
+TEST(yaml, _str2token_val1_val2_multiline_flow){
+    std::vector<sstd_yaml::token> v_ret;
+    std::string str="[\na,\nb,\nc\n]";
+    bool ret = sstd_yaml::_str2token(v_ret, str);
+    ASSERT_TRUE(ret);
+
+    sstd::printn(ret);
+    sstd::printn(v_ret);
+}
+TEST(yaml, _str2token_val1_val2_multiline_list_flow){
+    std::vector<sstd_yaml::token> v_ret;
+    std::string str="- [\na,\nb,\nc\n]";
+    bool ret = sstd_yaml::_str2token(v_ret, str);
+    ASSERT_TRUE(ret);
+
+    sstd::printn(ret);
+    sstd::printn(v_ret);
+}
+TEST(yaml, _str2token_val1_val2_multiline_hash_flow){
+    std::vector<sstd_yaml::token> v_ret;
+    std::string str="k: [\na,\nb,\nc\n]";
+    bool ret = sstd_yaml::_str2token(v_ret, str);
+    ASSERT_TRUE(ret);
+
+    sstd::printn(ret);
+    sstd::printn(v_ret);
+}
+TEST(yaml, _str2token_val1_val2_multiline_list_hash_flow){
+    std::vector<sstd_yaml::token> v_ret;
+    std::string str="- k: [\na,\nb,\nc\n]";
+    bool ret = sstd_yaml::_str2token(v_ret, str);
+    ASSERT_TRUE(ret);
+
+    sstd::printn(ret);
+    sstd::printn(v_ret);
+}
+
+//---
+// Test _str2token() of line number
+/*
 TEST(yaml, _splitByLine_quotes_brackets_v2__line_num_01){
-    //std::vector<sstd_yaml::token> v_ret;
     std::vector<sstd_yaml::token> v_ret;
     std::string str=R"(a
 b
@@ -267,7 +327,6 @@ c)";
     ASSERT_EQ(v_ret[2].line_num_end,   3);
 }
 TEST(yaml, _splitByLine_quotes_brackets_v2__line_num_02){
-    //std::vector<sstd_yaml::token> v_ret;
     std::vector<sstd_yaml::token> v_ret;
     std::string str=R"([a,
 b,
@@ -283,144 +342,8 @@ c])";
     ASSERT_EQ(v_ret[0].line_num_begin, 1);
     ASSERT_EQ(v_ret[0].line_num_end,   4);
 }
-
-//---
-
-TEST(yaml, _str2token_list){
-    std::vector<sstd_yaml::token> v_ret;
-    std::string str=R"(- a)";
-    bool ret = sstd_yaml::_str2token(v_ret, str);
-
-    sstd::printn(v_ret);
-
-    
-    /*
-    ASSERT_TRUE(ret);
-
-    //sstd::printn(ret);
-    //sstd::printn(v_ret);
-
-    ASSERT_EQ(v_ret.size(), 3);
-    ASSERT_EQ(v_ret[0].line_num_begin, 1);
-    ASSERT_EQ(v_ret[0].line_num_end,   1);
-    ASSERT_EQ(v_ret[1].line_num_begin, 2);
-    ASSERT_EQ(v_ret[1].line_num_end,   2);
-    ASSERT_EQ(v_ret[2].line_num_begin, 3);
-    ASSERT_EQ(v_ret[2].line_num_end,   3);
-    */
-}
-TEST(yaml, _str2token_hash){
-    std::vector<sstd_yaml::token> v_ret;
-    std::string str=R"(k: v)";
-    bool ret = sstd_yaml::_str2token(v_ret, str);
-
-    sstd::printn(v_ret);
-    
-    /*
-    ASSERT_TRUE(ret);
-
-    //sstd::printn(ret);
-    //sstd::printn(v_ret);
-
-    ASSERT_EQ(v_ret.size(), 3);
-    ASSERT_EQ(v_ret[0].line_num_begin, 1);
-    ASSERT_EQ(v_ret[0].line_num_end,   1);
-    ASSERT_EQ(v_ret[1].line_num_begin, 2);
-    ASSERT_EQ(v_ret[1].line_num_end,   2);
-    ASSERT_EQ(v_ret[2].line_num_begin, 3);
-    ASSERT_EQ(v_ret[2].line_num_end,   3);
-    */
-}
-TEST(yaml, _str2token_list_hash){
-    std::vector<sstd_yaml::token> v_ret;
-    std::string str=R"(- k: v)";
-    bool ret = sstd_yaml::_str2token(v_ret, str);
-
-    sstd::printn(v_ret);
-    
-    /*
-    ASSERT_TRUE(ret);
-
-    //sstd::printn(ret);
-    //sstd::printn(v_ret);
-
-    ASSERT_EQ(v_ret.size(), 3);
-    ASSERT_EQ(v_ret[0].line_num_begin, 1);
-    ASSERT_EQ(v_ret[0].line_num_end,   1);
-    ASSERT_EQ(v_ret[1].line_num_begin, 2);
-    ASSERT_EQ(v_ret[1].line_num_end,   2);
-    ASSERT_EQ(v_ret[2].line_num_begin, 3);
-    ASSERT_EQ(v_ret[2].line_num_end,   3);
-    */
-}
-TEST(yaml, _str2token_list_hash_flow){
-    std::vector<sstd_yaml::token> v_ret;
-    std::string str=R"(- k: [{k: v}])";
-    bool ret = sstd_yaml::_str2token(v_ret, str);
-
-    sstd::printn(v_ret);
-    
-    /*
-    ASSERT_TRUE(ret);
-
-    //sstd::printn(ret);
-    //sstd::printn(v_ret);
-
-    ASSERT_EQ(v_ret.size(), 3);
-    ASSERT_EQ(v_ret[0].line_num_begin, 1);
-    ASSERT_EQ(v_ret[0].line_num_end,   1);
-    ASSERT_EQ(v_ret[1].line_num_begin, 2);
-    ASSERT_EQ(v_ret[1].line_num_end,   2);
-    ASSERT_EQ(v_ret[2].line_num_begin, 3);
-    ASSERT_EQ(v_ret[2].line_num_end,   3);
-    */
-}
-TEST(yaml, _str2token_flow){
-    std::vector<sstd_yaml::token> v_ret;
-    std::string str=R"([{k: v}])";
-    bool ret = sstd_yaml::_str2token(v_ret, str);
-
-    sstd::printn(v_ret);
-    
-    /*
-    ASSERT_TRUE(ret);
-
-    //sstd::printn(ret);
-    //sstd::printn(v_ret);
-
-    ASSERT_EQ(v_ret.size(), 3);
-    ASSERT_EQ(v_ret[0].line_num_begin, 1);
-    ASSERT_EQ(v_ret[0].line_num_end,   1);
-    ASSERT_EQ(v_ret[1].line_num_begin, 2);
-    ASSERT_EQ(v_ret[1].line_num_end,   2);
-    ASSERT_EQ(v_ret[2].line_num_begin, 3);
-    ASSERT_EQ(v_ret[2].line_num_end,   3);
-    */
-}
-
-/*
-TEST(yaml, _str2token_01){
-    std::vector<sstd_yaml::token> v_ret;
-    std::string str;
-    bool ret = sstd_yaml::_str2token(v_ret, str);
-
-    sstd::printn(ret);
-    
-    // bool _str2token(std::vector<sstd_yaml::token>& ret, const std::string& str);
-    
-    
-//    std::vector<std::string> ret;
-//    const char* str = " [ a, b , c , { k1:v1, k 2 : v 2 , k3:}] ";
-//    bool tf = sstd_yaml::_split_quotes_by_control_chars(ret, str, strlen(str)); // TEST THIS LINE
-    
-//    sstd::printn(tf);
-//    sstd::printn(ret);
-    
-//    std::vector<std::string> ret_ans = {"[", "a", ",", "b", ",", "c", ",", "{", "k1", ":", "v1", ",", "k 2", ":", "v 2", ",", "k3", ":", "}", "]"};
-//    ASSERT_TRUE(tf);
-    //    ASSERT_TRUE(ret == ret_ans);
-}
 */
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // comments
 /*

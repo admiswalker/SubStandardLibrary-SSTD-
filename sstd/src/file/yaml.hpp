@@ -44,8 +44,8 @@ namespace sstd_yaml{
         uint hsc_hx = 0;                               // head space counts for hash type
         uint hsc_lx = 0;                               // head space counts for list type
 
-//        std::string val1;
-//        std::string val2;
+        std::string val1;
+        std::string val2;
     };
 
     //---
