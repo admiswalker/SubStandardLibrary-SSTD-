@@ -931,9 +931,6 @@ bool sstd_yaml::_token_rawStr2vs(std::vector<sstd_yaml::token>& v_ret_io){
 
 //---
 
-bool _is_flow(const std::string& s){
-    return s.size()>=1 && (s[0]=='[' || s[0]=='{');
-}
 bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string& str){
     // STEP1
     //   sstd_yaml::_splitByLine_quotes_brackets_v2(std::vector<std::string>& ret, const char* str);
@@ -1012,8 +1009,8 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
     }
     if(in_d_quate){ ret.clear(); return false; }
     if(in_s_quate){ ret.clear(); return false; }
-    if(num_of_square_brackets){ ret.clear(); return false; }
-    if(num_of_curly_brackets ){ ret.clear(); return false; }
+//    if(num_of_square_brackets){ ret.clear(); return false; }
+//    if(num_of_curly_brackets ){ ret.clear(); return false; }
     
     return true;
 }

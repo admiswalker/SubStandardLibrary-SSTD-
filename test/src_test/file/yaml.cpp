@@ -205,6 +205,47 @@ TEST(yaml, _data_type_and_format_case06_02){ TEST_DATA_TYPE_AND_FORMAT( true, fa
 //---
 // Test line number of sstd_yaml::_splitByLine_quotes_brackets()
 
+#define TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(IS_STR, IS_LIST, IS_HASH, IS_FLOW, LIST_TYPE_COUNT, S_IN) \
+    std::string s = S_IN;                                               \
+    std::vector<sstd_yaml::token> v_ret;                                \
+    bool ret = sstd_yaml::_str2token(v_ret, s);                         \
+    ASSERT_TRUE(ret);                                                   \
+    ASSERT_EQ(v_ret.size(), 1);                                         \
+                                                                        \
+    uint ans_type=sstd_yaml::num_str;                                   \
+    if(IS_LIST){ ans_type += sstd_yaml::num_list; }                     \
+    if(IS_HASH){ ans_type += sstd_yaml::num_hash; }                     \
+    ASSERT_EQ(v_ret[0].type, ans_type);                                 \
+                                                                        \
+    uint ans_flow = IS_FLOW ? sstd_yaml::num_flow_style_base : sstd_yaml::num_block_style_base; \
+    ASSERT_EQ(v_ret[0].format, ans_flow);                               \
+    ASSERT_EQ(v_ret[0].list_type_cnt, LIST_TYPE_COUNT);
+
+TEST(yaml, _str2token__data_type_and_format_case01_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT( true, false, false, false, 0, "v"         ); }
+TEST(yaml, _str2token__data_type_and_format_case02_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false,  true, false, false, 1, "- v"       ); }
+TEST(yaml, _str2token__data_type_and_format_case03_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k: v"      ); }
+TEST(yaml, _str2token__data_type_and_format_case04_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k[]: v[]"  ); }
+TEST(yaml, _str2token__data_type_and_format_case05_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k{}: v{}"  ); }
+TEST(yaml, _str2token__data_type_and_format_case06_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT( true, false, false,  true, 0, "[]"        ); }
+TEST(yaml, _str2token__data_type_and_format_case07_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT( true, false, false,  true, 0, "{}"        ); }
+TEST(yaml, _str2token__data_type_and_format_case08_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false,  true, false,  true, 1, "- []"      ); }
+TEST(yaml, _str2token__data_type_and_format_case09_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false,  true, false,  true, 1, "- {}"      ); }
+TEST(yaml, _str2token__data_type_and_format_case10_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false,  true,  true, false, 1, "- k: v"    ); }
+TEST(yaml, _str2token__data_type_and_format_case11_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false,  true,  true, false, 1, "- k[]: v[]"); }
+TEST(yaml, _str2token__data_type_and_format_case12_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false,  true,  true, false, 1, "- k{}: v{}"); }
+TEST(yaml, _str2token__data_type_and_format_case13_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true,  true, 0, "k: []"     ); }
+TEST(yaml, _str2token__data_type_and_format_case14_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true,  true, 0, "k: {}"     ); }
+TEST(yaml, _str2token__data_type_and_format_case15_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT( false, true,  true,  true, 1, "- k: []"   ); }
+TEST(yaml, _str2token__data_type_and_format_case16_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT( false, true,  true,  true, 1, "- k: {}"   ); }
+
+TEST(yaml, _str2token__data_type_and_format_case02_02){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false,  true, false, false, 3, "- - - v"   ); }
+TEST(yaml, _str2token__data_type_and_format_case03_02){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k : v"     ); }
+TEST(yaml, _str2token__data_type_and_format_case04_02){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k[: v["    ); }
+TEST(yaml, _str2token__data_type_and_format_case04_03){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k [: v ["    ); }
+TEST(yaml, _str2token__data_type_and_format_case05_02){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k{: v{"    ); }
+TEST(yaml, _str2token__data_type_and_format_case05_03){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k {: v {"    ); }
+TEST(yaml, _str2token__data_type_and_format_case06_02){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT( true, false, false,  true, 0, "[{: }]"    ); } // Ex: [a, b, c, {k: v}]
+
 TEST(yaml, _splitByLine_quotes_brackets_v2__line_num_01){
     //std::vector<sstd_yaml::token> v_ret;
     std::vector<sstd_yaml::token> v_ret;
