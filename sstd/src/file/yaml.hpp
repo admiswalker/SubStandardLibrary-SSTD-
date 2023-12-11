@@ -36,8 +36,8 @@ namespace sstd_yaml{
         
         // Data for load YAML
         std::string rawStr;                            // A raw string splitted by line concering the YAML processing units.
-        std::string s;                                 // A string removed comments
-        std::vector<std::string> vs;                   // A string removed comments and split by ' ' (space)
+//        std::string s;                                 // A string removed comments
+//        std::vector<std::string> vs;                   // A string removed comments and split by ' ' (space)
         uint type = sstd_yaml::num_str;                // A destination type number of this line
         uint format = sstd_yaml::num_block_style_base; // If containing flow style notation
         uint list_type_cnt = 0;                        // Number of list type. (`- - - v`)
@@ -52,8 +52,6 @@ namespace sstd_yaml{
 
     bool _splitByLine_quotes_brackets(std::vector<std::string>& ret, const        char* str);
     bool _splitByLine_quotes_brackets(std::vector<std::string>& ret, const std::string& str);
-    bool _splitByLine_quotes_brackets_v2(std::vector<sstd_yaml::token>& ret, const std::string& str);
-    bool _token_rawStr2vs(std::vector<sstd_yaml::token>& v_ret_io);
     
     bool _split_quotes_by_control_chars(std::vector<std::string>& ret, const char* str, const uint str_len);
     bool _data_type_and_format(uint& type, uint& format, uint& list_type_cnt, std::string s);

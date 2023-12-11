@@ -282,44 +282,6 @@ TEST(yaml, _str2token_rm_comment_case02){ TEST_STR2TOKEN__VAL1_VAL2("\"a # comme
 TEST(yaml, _str2token_rm_comment_case03){ TEST_STR2TOKEN__VAL1_VAL2("|a\nb\nc", "", "- |a # comment\nb # comment\nc # comment"); }
 
 //---
-// Test _str2token() of line number
-/*
-TEST(yaml, _splitByLine_quotes_brackets_v2__line_num_01){
-    std::vector<sstd_yaml::token> v_ret;
-    std::string str=R"(a
-b
-c)";
-    bool ret = sstd_yaml::_splitByLine_quotes_brackets_v2(v_ret, str);
-    ASSERT_TRUE(ret);
-
-    //sstd::printn(ret);
-    //sstd::printn(v_ret);
-
-    ASSERT_EQ(v_ret.size(), 3);
-    ASSERT_EQ(v_ret[0].line_num_begin, 1);
-    ASSERT_EQ(v_ret[0].line_num_end,   1);
-    ASSERT_EQ(v_ret[1].line_num_begin, 2);
-    ASSERT_EQ(v_ret[1].line_num_end,   2);
-    ASSERT_EQ(v_ret[2].line_num_begin, 3);
-    ASSERT_EQ(v_ret[2].line_num_end,   3);
-}
-TEST(yaml, _splitByLine_quotes_brackets_v2__line_num_02){
-    std::vector<sstd_yaml::token> v_ret;
-    std::string str=R"([a,
-b,
-
-c])";
-    bool ret = sstd_yaml::_splitByLine_quotes_brackets_v2(v_ret, str);
-    ASSERT_TRUE(ret);
-
-    //sstd::printn(ret);
-    //sstd::printn(v_ret);
-    
-    ASSERT_EQ(v_ret.size(), 1);
-    ASSERT_EQ(v_ret[0].line_num_begin, 1);
-    ASSERT_EQ(v_ret[0].line_num_end,   4);
-}
-*/
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // comments
