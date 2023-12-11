@@ -875,10 +875,9 @@ bool sstd_yaml::_splitByLine_quotes_brackets_v2(std::vector<sstd_yaml::token>& r
         sstd_yaml::token tmp;
         tmp.line_num_begin = line_num;
         
-        tmp_rawStr.clear();
         tmp_s.clear();
         for(;;++r){
-            if(str[r]=='\\'){ is_escaped=true; tmp_rawStr+=str[r]; ++r; }
+            if(str[r]=='\\'){ is_escaped=true; tmp.rawStr+=str[r]; ++r; }
             if(str[r]=='\0'){++line_num;break;}
             
             if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
@@ -897,12 +896,11 @@ bool sstd_yaml::_splitByLine_quotes_brackets_v2(std::vector<sstd_yaml::token>& r
                 ++line_num;
                 if(!in_d_quate && !in_s_quate && num_of_square_brackets==0 && num_of_curly_brackets==0){ r+=2; break; }
             }
-            tmp_rawStr += str[r];
+            tmp.rawStr += str[r];
             
             is_escaped=false;
         }
         tmp.line_num_end = std::max((int)tmp.line_num_begin, ((int)line_num)-1);
-        tmp.rawStr = std::move(tmp_rawStr);
         tmp.s      = std::move(tmp_s     );
         
         ret.push_back(std::move(tmp));
@@ -933,6 +931,9 @@ bool sstd_yaml::_token_rawStr2vs(std::vector<sstd_yaml::token>& v_ret_io){
 
 //---
 
+bool _is_flow(const std::string& s){
+    return s.size()>=1 && (s[0]=='[' || s[0]=='{');
+}
 bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string& str){
     // STEP1
     //   sstd_yaml::_splitByLine_quotes_brackets_v2(std::vector<std::string>& ret, const char* str);
@@ -949,7 +950,71 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
 
 
     
+    uint line_num = 1; // line number is 1 indexed
 
+    // for quotes ("", '')
+    bool is_escaped=false; // \", \'
+    bool in_d_quate=false; // double quate ("")
+    bool in_s_quate=false; // single quate ('')
+    
+    // for brackets ([], {})
+    int num_of_square_brackets=0; // []. To check if the char is in brackets
+    int num_of_curly_brackets=0;  // {}. To check if the char is in brackets
+
+    for(uint r=0; str[r]!=0;){ // r: read place
+        sstd_yaml::token tmp;
+        tmp.line_num_begin = line_num;
+        
+        std::string subt; // subtoken
+        
+        // for type
+        bool is_list=false; // is list type "- "
+        bool is_hash=false; // is hash type "k: v"
+        bool is_flow=false; // is flow style "[{k: v}]"
+
+        for(;;++r){
+            if(str[r]=='\\'){ is_escaped=true; tmp.rawStr+=str[r]; ++r; }
+            if(str[r]=='\0'){ ++line_num; break; }
+            
+            if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
+            if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
+            
+            if(!in_d_quate && !in_s_quate){
+                if(subt.size()>=1 && (subt[0]=='[' || subt[0]=='{')){ is_flow=true; }
+                if(            str[r]=='-' && str[r+1]==' '){ sstd::printn(subt); subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
+                if(!is_flow && str[r]==':' && str[r+1]==' '){ sstd::printn(subt); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
+                
+                if(str[r]=='['){ ++num_of_square_brackets; }
+                if(str[r]==']'){ --num_of_square_brackets; }
+                if(str[r]=='{'){ ++num_of_curly_brackets; }
+                if(str[r]=='}'){ --num_of_curly_brackets; }
+            }
+            
+            if(str[r]==0x0A){ // Uinx ("\n")
+                ++line_num;
+                if(!in_d_quate && !in_s_quate && num_of_square_brackets==0 && num_of_curly_brackets==0){ r+=1; break; }
+            }else if(str[r]==0x0D && str[r+1]==0x0A){ // Windows ("\r\n")
+                ++line_num;
+                if(!in_d_quate && !in_s_quate && num_of_square_brackets==0 && num_of_curly_brackets==0){ r+=2; break; }
+            }
+            tmp.rawStr += str[r];
+            subt       += str[r];
+            is_escaped=false;
+        }
+        tmp.line_num_end = std::max((int)tmp.line_num_begin, ((int)line_num)-1);
+
+        if(is_list){ tmp.type += sstd_yaml::num_list; }
+        if(is_hash){ tmp.type += sstd_yaml::num_hash; }
+        if(is_flow){ tmp.format = sstd_yaml::num_flow_style_base; }
+        
+        ret.push_back(std::move(tmp));
+//        sstd::printn(subt);
+    }
+    if(in_d_quate){ ret.clear(); return false; }
+    if(in_s_quate){ ret.clear(); return false; }
+    if(num_of_square_brackets){ ret.clear(); return false; }
+    if(num_of_curly_brackets ){ ret.clear(); return false; }
+    
     return true;
 }
 

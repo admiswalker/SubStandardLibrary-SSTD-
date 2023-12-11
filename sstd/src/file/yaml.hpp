@@ -38,11 +38,14 @@ namespace sstd_yaml{
         std::string rawStr;                            // A raw string splitted by line concering the YAML processing units.
         std::string s;                                 // A string removed comments
         std::vector<std::string> vs;                   // A string removed comments and split by ' ' (space)
-        uint type = sstd_yaml::num_null;               // A destination type number of this line
+        uint type = sstd_yaml::num_str;                // A destination type number of this line
         uint format = sstd_yaml::num_block_style_base; // If containing flow style notation
         uint list_type_cnt = 0;                        // Number of list type. (`- - - v`)
         uint hsc_hx = 0;                               // head space counts for hash type
         uint hsc_lx = 0;                               // head space counts for list type
+
+//        std::string val1;
+//        std::string val2;
     };
 
     //---
