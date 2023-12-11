@@ -260,13 +260,15 @@ TEST(yaml, _str2token__data_type_and_format_case06_02){ TEST_STR2TOKEN__DATA_TYP
 
 TEST(yaml, _str2token_val1_val2_list                    ){ TEST_STR2TOKEN__VAL1_VAL2("a", "", "- a"); }
 TEST(yaml, _str2token_val1_val2_hash                    ){ TEST_STR2TOKEN__VAL1_VAL2("k", "v", "- k: v"); }
+TEST(yaml, _str2token_val1_val2_list_hash_space         ){ TEST_STR2TOKEN__VAL1_VAL2("k {", "v {", "-  k { :  v { "); }
+
+// mutliline flow stype notation
 TEST(yaml, _str2token_val1_val2_multiline_flow          ){ TEST_STR2TOKEN__VAL1_VAL2("[\na,\nb,\nc\n]", "",   "[\na,\nb,\nc\n]"); }
 TEST(yaml, _str2token_val1_val2_multiline_flow_list     ){ TEST_STR2TOKEN__VAL1_VAL2("[\na,\nb,\nc\n]", "", "- [\na,\nb,\nc\n]"); }
 TEST(yaml, _str2token_val1_val2_multiline_flow_hash     ){ TEST_STR2TOKEN__VAL1_VAL2("k", "[\na,\nb,\nc\n]",   "k: [\na,\nb,\nc\n]"); }
 TEST(yaml, _str2token_val1_val2_multiline_flow_list_hash){ TEST_STR2TOKEN__VAL1_VAL2("k", "[\na,\nb,\nc\n]", "- k: [\na,\nb,\nc\n]"); }
 
-TEST(yaml, _str2token_val1_val2_multiline_flow_list_hash_space){ TEST_STR2TOKEN__VAL1_VAL2("k {", "v {", "-  k { :  v { "); }
-
+// mutliline YAML notation
 TEST(yaml, _str2token_val1_val2_multiline_list     ){ TEST_STR2TOKEN__VAL1_VAL2("|+123\na\nb\nc",  "", "- |+123\na\nb\nc"); }
 TEST(yaml, _str2token_val1_val2_multiline_hash     ){ TEST_STR2TOKEN__VAL1_VAL2("k", "|+123\na\nb\nc",   "k: |+123\na\nb\nc"); }
 TEST(yaml, _str2token_val1_val2_multiline_list_hash){ TEST_STR2TOKEN__VAL1_VAL2("k", "|+123\na\nb\nc", "- k: |+123\na\nb\nc"); }
@@ -274,11 +276,10 @@ TEST(yaml, _str2token_val1_val2_multiline_list_hash){ TEST_STR2TOKEN__VAL1_VAL2(
 //---
 // Test _str2token() of remove comments
 
-TEST(yaml, _str2token_rm_comment_case01){
-    std::string s = "a # comment";
-    std::vector<sstd_yaml::token> v_ret;
-    bool ret = sstd_yaml::_str2token(v_ret, s);
-}
+// remove comments
+TEST(yaml, _str2token_rm_comment_case01){ TEST_STR2TOKEN__VAL1_VAL2("a", "", "a # comment"); }
+TEST(yaml, _str2token_rm_comment_case02){ TEST_STR2TOKEN__VAL1_VAL2("\"a # comment\"", "", "\"a # comment\""); }
+TEST(yaml, _str2token_rm_comment_case03){ TEST_STR2TOKEN__VAL1_VAL2("|a\nb\nc", "", "- |a # comment\nb # comment\nc # comment"); }
 
 //---
 // Test _str2token() of line number

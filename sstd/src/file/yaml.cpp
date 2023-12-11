@@ -982,6 +982,11 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
             if(!in_d_quate && !in_s_quate){
                 if(subt.size()>=1 && (subt[0]=='[' || subt[0]=='{')){ is_flow=true; }
                 
+                if(str[r]==' ' && str[r+1]=='#'){
+                    tmp.rawStr+=str[r]; ++r;
+                    while(str[r]!='\0' && str[r]!=0x0A && str[r]!=0x0D){ tmp.rawStr+=str[r]; ++r; } // skip comments
+                }
+                
                 if(!is_flow){
                     if(str[r]=='-' && str[r+1]==' '){                                        subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
                     if(str[r]==':' && str[r+1]==' '){ tmp.val1=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
@@ -1001,8 +1006,10 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
             is_escaped = false;
         }
         tmp.line_num_end = std::max((int)tmp.line_num_begin, ((int)line_num)-1);
-        if(!is_hash && (is_list || is_flow)){ tmp.val1=std::move(sstd::strip(subt)); }
-        if(                        is_hash ){ tmp.val2=std::move(sstd::strip(subt)); }
+
+        bool is_str = !is_list && !is_hash;
+        if(!is_hash && (is_str || is_list || is_flow)){ tmp.val1=std::move(sstd::strip(subt)); }
+        if(                                  is_hash ){ tmp.val2=std::move(sstd::strip(subt)); }
         
         if(is_list){ tmp.type += sstd_yaml::num_list; }
         if(is_hash){ tmp.type += sstd_yaml::num_hash; }
