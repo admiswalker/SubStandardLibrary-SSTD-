@@ -856,7 +856,7 @@ bool sstd_yaml::_splitByLine_quotes_brackets(std::vector<std::string>& ret, cons
 
 bool sstd_yaml::_splitByLine_quotes_brackets_v2(std::vector<sstd_yaml::token>& ret, const std::string& str){
     
-    uint line_num       = 1; // line number is 1 indexed
+    uint line_num = 1; // line number is 1 indexed
     
     bool is_escaped=false;
     bool in_d_quate=false; // double quate
