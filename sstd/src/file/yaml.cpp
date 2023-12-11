@@ -992,14 +992,10 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
                     if(str[r]=='}'){ --num_of_curly_brackets; }
                 }
             }
-            /*
-            if(str[r]==0x0A){ // Uinx ("\n")
-                ++line_num;
-                if(!in_d_quate && !in_s_quate && num_of_square_brackets==0 && num_of_curly_brackets==0){ r+=1; break; }
-            }else if(str[r]==0x0D && str[r+1]==0x0A){ // Windows ("\r\n")
-                ++line_num;
-                if(!in_d_quate && !in_s_quate && num_of_square_brackets==0 && num_of_curly_brackets==0){ r+=2; break; }
-            }*/
+            
+            if      (                str[r  ]==0x0A){      ++line_num;   // Uinx ("\n")
+            }else if(str[r]==0x0D && str[r+1]==0x0A){ ++r; ++line_num; } // Windows ("\r\n")
+            
             tmp.rawStr += str[r];
             subt       += str[r];
             is_escaped=false;
