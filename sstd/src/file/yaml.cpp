@@ -983,8 +983,8 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
                 if(subt.size()>=1 && (subt[0]=='[' || subt[0]=='{')){ is_flow=true; }
                 
                 if(!is_flow){
-                    if(str[r]=='-' && str[r+1]==' '){                           subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
-                    if(str[r]==':' && str[r+1]==' '){ tmp.val1=std::move(subt); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
+                    if(str[r]=='-' && str[r+1]==' '){                                        subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
+                    if(str[r]==':' && str[r+1]==' '){ tmp.val1=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
                 }else{
                     if(str[r]=='['){ ++num_of_square_brackets; }
                     if(str[r]==']'){ --num_of_square_brackets; }
@@ -1001,15 +1001,14 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
             is_escaped = false;
         }
         tmp.line_num_end = std::max((int)tmp.line_num_begin, ((int)line_num)-1);
-        if(!is_hash && (is_list || is_flow)){ tmp.val1=std::move(subt); }
-        if(                        is_hash ){ tmp.val2=std::move(subt); }
+        if(!is_hash && (is_list || is_flow)){ tmp.val1=std::move(sstd::strip(subt)); }
+        if(                        is_hash ){ tmp.val2=std::move(sstd::strip(subt)); }
         
         if(is_list){ tmp.type += sstd_yaml::num_list; }
         if(is_hash){ tmp.type += sstd_yaml::num_hash; }
         if(is_flow){ tmp.format = sstd_yaml::num_flow_style_base; }
         
         ret.push_back(std::move(tmp));
-//        sstd::printn(subt);
     }
     if(in_d_quate){ ret.clear(); return false; }
     if(in_s_quate){ ret.clear(); return false; }
