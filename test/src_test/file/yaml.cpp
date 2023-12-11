@@ -249,60 +249,26 @@ TEST(yaml, _str2token__data_type_and_format_case06_02){ TEST_STR2TOKEN__DATA_TYP
 //---
 // Test _str2token() of val1 and val2
 
-TEST(yaml, _str2token_val1_val2_list){
-    std::vector<sstd_yaml::token> v_ret;
-    std::string str="- a";
-    bool ret = sstd_yaml::_str2token(v_ret, str);
-    ASSERT_TRUE(ret);
+#define TEST_STR2TOKEN__VAL1_VAL2(VAL1, VAL2, S_IN)     \
+    std::string s = S_IN;                               \
+    std::vector<sstd_yaml::token> v_ret;                \
+    bool ret = sstd_yaml::_str2token(v_ret, s);         \
+    ASSERT_TRUE(ret);                                   \
+    ASSERT_EQ(v_ret.size(), 1);                         \
+    ASSERT_STREQ(v_ret[0].val1.c_str(), VAL1);          \
+    ASSERT_STREQ(v_ret[0].val2.c_str(), VAL2);
 
-    sstd::printn(ret);
-    sstd::printn(v_ret);
-}
-TEST(yaml, _str2token_val1_val2_hash){
-    std::vector<sstd_yaml::token> v_ret;
-    std::string str="- k: v";
-    bool ret = sstd_yaml::_str2token(v_ret, str);
-    ASSERT_TRUE(ret);
+TEST(yaml, _str2token_val1_val2_list                    ){ TEST_STR2TOKEN__VAL1_VAL2("a", "", "- a"); }
+TEST(yaml, _str2token_val1_val2_hash                    ){ TEST_STR2TOKEN__VAL1_VAL2("k", "v", "- k: v"); }
+TEST(yaml, _str2token_val1_val2_multiline_flow          ){ TEST_STR2TOKEN__VAL1_VAL2("[\na,\nb,\nc\n]", "",   "[\na,\nb,\nc\n]"); }
+TEST(yaml, _str2token_val1_val2_multiline_flow_list     ){ TEST_STR2TOKEN__VAL1_VAL2("[\na,\nb,\nc\n]", "", "- [\na,\nb,\nc\n]"); }
+TEST(yaml, _str2token_val1_val2_multiline_flow_hash     ){ TEST_STR2TOKEN__VAL1_VAL2("k", "[\na,\nb,\nc\n]",   "k: [\na,\nb,\nc\n]"); }
+TEST(yaml, _str2token_val1_val2_multiline_flow_list_hash){ TEST_STR2TOKEN__VAL1_VAL2("k", "[\na,\nb,\nc\n]", "- k: [\na,\nb,\nc\n]"); }
 
-    sstd::printn(ret);
-    sstd::printn(v_ret);
-}
-TEST(yaml, _str2token_val1_val2_multiline_flow){
-    std::vector<sstd_yaml::token> v_ret;
-    std::string str="[\na,\nb,\nc\n]";
-    bool ret = sstd_yaml::_str2token(v_ret, str);
-    ASSERT_TRUE(ret);
+TEST(yaml, _str2token_val1_val2_multiline_list     ){ TEST_STR2TOKEN__VAL1_VAL2("|+123\na\nb\nc",  "", "- |+123\na\nb\nc"); }
+TEST(yaml, _str2token_val1_val2_multiline_hash     ){ TEST_STR2TOKEN__VAL1_VAL2("k", "|+123\na\nb\nc",   "k: |+123\na\nb\nc"); }
+TEST(yaml, _str2token_val1_val2_multiline_list_hash){ TEST_STR2TOKEN__VAL1_VAL2("k", "|+123\na\nb\nc", "- k: |+123\na\nb\nc"); }
 
-    sstd::printn(ret);
-    sstd::printn(v_ret);
-}
-TEST(yaml, _str2token_val1_val2_multiline_list_flow){
-    std::vector<sstd_yaml::token> v_ret;
-    std::string str="- [\na,\nb,\nc\n]";
-    bool ret = sstd_yaml::_str2token(v_ret, str);
-    ASSERT_TRUE(ret);
-
-    sstd::printn(ret);
-    sstd::printn(v_ret);
-}
-TEST(yaml, _str2token_val1_val2_multiline_hash_flow){
-    std::vector<sstd_yaml::token> v_ret;
-    std::string str="k: [\na,\nb,\nc\n]";
-    bool ret = sstd_yaml::_str2token(v_ret, str);
-    ASSERT_TRUE(ret);
-
-    sstd::printn(ret);
-    sstd::printn(v_ret);
-}
-TEST(yaml, _str2token_val1_val2_multiline_list_hash_flow){
-    std::vector<sstd_yaml::token> v_ret;
-    std::string str="- k: [\na,\nb,\nc\n]";
-    bool ret = sstd_yaml::_str2token(v_ret, str);
-    ASSERT_TRUE(ret);
-
-    sstd::printn(ret);
-    sstd::printn(v_ret);
-}
 
 //---
 // Test _str2token() of line number

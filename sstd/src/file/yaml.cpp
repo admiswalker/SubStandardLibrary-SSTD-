@@ -998,7 +998,7 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
             
             tmp.rawStr += str[r];
             subt       += str[r];
-            is_escaped=false;
+            is_escaped = false;
         }
         tmp.line_num_end = std::max((int)tmp.line_num_begin, ((int)line_num)-1);
         if(!is_hash && (is_list || is_flow)){ tmp.val1=std::move(subt); }
