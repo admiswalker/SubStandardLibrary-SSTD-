@@ -202,28 +202,42 @@ TEST(yaml, _data_type_and_format_case06_02){ TEST_DATA_TYPE_AND_FORMAT( true, fa
 
 //---
 
-TEST(yaml, _str2token_01){
+TEST(yaml, _splitByLine_quotes_brackets_v2_line_num_01){
     //std::vector<sstd_yaml::token> v_ret;
     std::vector<sstd_yaml::token> v_ret;
-    std::string str;
+    std::string str=R"(a
+b
+c)";
     bool ret = sstd_yaml::_splitByLine_quotes_brackets_v2(v_ret, str);
+    ASSERT_TRUE(ret);
 
-    sstd::printn(v_ret);
-    sstd::printn(ret);
+    //sstd::printn(ret);
+    //sstd::printn(v_ret);
+
+    ASSERT_EQ(v_ret.size(), 3);
+    ASSERT_EQ(v_ret[0].line_num_begin, 1);
+    ASSERT_EQ(v_ret[0].line_num_end,   1);
+    ASSERT_EQ(v_ret[1].line_num_begin, 2);
+    ASSERT_EQ(v_ret[1].line_num_end,   2);
+    ASSERT_EQ(v_ret[2].line_num_begin, 3);
+    ASSERT_EQ(v_ret[2].line_num_end,   3);
+}
+TEST(yaml, _splitByLine_quotes_brackets_v2_line_num_02){
+    //std::vector<sstd_yaml::token> v_ret;
+    std::vector<sstd_yaml::token> v_ret;
+    std::string str=R"([a,
+b,
+
+c])";
+    bool ret = sstd_yaml::_splitByLine_quotes_brackets_v2(v_ret, str);
+    ASSERT_TRUE(ret);
+
+    //sstd::printn(ret);
+    //sstd::printn(v_ret);
     
-    // bool _str2token(std::vector<sstd_yaml::token>& ret, const std::string& str);
-    
-    
-//    std::vector<std::string> ret;
-//    const char* str = " [ a, b , c , { k1:v1, k 2 : v 2 , k3:}] ";
-//    bool tf = sstd_yaml::_split_quotes_by_control_chars(ret, str, strlen(str)); // TEST THIS LINE
-    
-//    sstd::printn(tf);
-//    sstd::printn(ret);
-    
-//    std::vector<std::string> ret_ans = {"[", "a", ",", "b", ",", "c", ",", "{", "k1", ":", "v1", ",", "k 2", ":", "v 2", ",", "k3", ":", "}", "]"};
-//    ASSERT_TRUE(tf);
-    //    ASSERT_TRUE(ret == ret_ans);
+    ASSERT_EQ(v_ret.size(), 1);
+    ASSERT_EQ(v_ret[0].line_num_begin, 1);
+    ASSERT_EQ(v_ret[0].line_num_end,   4);
 }
 
 /*

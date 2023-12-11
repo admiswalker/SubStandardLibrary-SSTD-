@@ -53,7 +53,8 @@
 // print
 
 #define sstd_print_token_base(rhs)                      \
-    printf("line_num_being: %d\n", rhs.line_num_being); \
+    printf("\n");                                       \
+    printf("line_num_begin: %d\n", rhs.line_num_begin); \
     printf("line_num_end: %d\n", rhs.line_num_end);     \
     printf("rawStr: %s\n", rhs.rawStr.c_str());         \
     printf("s: %s\n", rhs.s.c_str());                   \
@@ -66,7 +67,7 @@
     printf("format: %d\n", rhs.format);                 \
     printf("list_type_cnt: %d\n", rhs.list_type_cnt);   \
     printf("hsc_hx: %d\n", rhs.hsc_hx);                 \
-    printf("hsc_lx: %d\n", rhs.hsc_lx);
+    printf("hsc_lx: %d,\n", rhs.hsc_lx);
 
 //---
 
@@ -855,6 +856,8 @@ bool sstd_yaml::_splitByLine_quotes_brackets(std::vector<std::string>& ret, cons
 
 bool sstd_yaml::_splitByLine_quotes_brackets_v2(std::vector<sstd_yaml::token>& ret, const std::string& str){
     
+    uint line_num       = 1; // line number is 1 indexed
+    
     bool is_escaped=false;
     bool in_d_quate=false; // double quate
     bool in_s_quate=false; // single quate
@@ -863,9 +866,13 @@ bool sstd_yaml::_splitByLine_quotes_brackets_v2(std::vector<sstd_yaml::token>& r
     int num_of_square_brackets=0; // []
     int num_of_curly_brackets=0;  // {}
     for(uint r=0; str[r]!=0;){ // r: read place
+        sstd_yaml::token tmp;
+        tmp.line_num_begin = line_num;
+        
         buf.clear();
-        for(; str[r]!='\0'; ++r){
-            if(str[r]=='\\'){ is_escaped=true; buf+=str[r]; ++r; if(str[r]=='\0'){break;} }
+        for(;;++r){
+            if(str[r]=='\\'){ is_escaped=true; buf+=str[r]; ++r; }
+            if(str[r]=='\0'){++line_num;break;}
             
             if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
             if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
@@ -875,14 +882,19 @@ bool sstd_yaml::_splitByLine_quotes_brackets_v2(std::vector<sstd_yaml::token>& r
             
             if(!in_d_quate && !in_s_quate && str[r]=='{'){ ++num_of_curly_brackets; }
             if(!in_d_quate && !in_s_quate && str[r]=='}'){ --num_of_curly_brackets; }
-            
-            if(!in_d_quate && !in_s_quate && num_of_square_brackets==0 && num_of_curly_brackets==0 && str[r]==0x0A                  ){ r+=1; break; } // Uinx ("\n")
-            if(!in_d_quate && !in_s_quate && num_of_square_brackets==0 && num_of_curly_brackets==0 && str[r]==0x0D && str[r+1]==0x0A){ r+=2; break; } // Windows ("\r\n")
+
+            if(str[r]==0x0A){ // Uinx ("\n")
+                ++line_num;
+                if(!in_d_quate && !in_s_quate && num_of_square_brackets==0 && num_of_curly_brackets==0){ r+=1; break; }
+            }else if(str[r]==0x0D && str[r+1]==0x0A){ // Windows ("\r\n")
+                ++line_num;
+                if(!in_d_quate && !in_s_quate && num_of_square_brackets==0 && num_of_curly_brackets==0){ r+=2; break; }
+            }
             buf += str[r];
             
             is_escaped=false;
         }
-        sstd_yaml::token tmp;
+        tmp.line_num_end = std::max((int)tmp.line_num_begin, ((int)line_num)-1);
         tmp.rawStr = std::move(buf);
         
         ret.push_back(std::move(tmp));

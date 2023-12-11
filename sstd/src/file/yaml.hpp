@@ -12,25 +12,6 @@
 namespace sstd_yaml{
 
     //---
-    // token for proceed YAML parsing
-    
-    struct token {
-        // Data for Debug YAML parsing
-        uint line_num_being; // beginning line number
-        uint line_num_end;   // endding line number (for multipleline)
-        
-        // Data for load YAML
-        std::string rawStr;          // A raw string splitted by line concering the YAML processing units.
-        std::string s;               // A string removed comments
-        std::vector<std::string> vs; // A string removed comments and split by ' ' (space)
-        uint type;                   // A destination type number of this line
-        uint format;                 // If containing flow style notation
-        uint list_type_cnt;          // Number of list type. (`- - - v`)
-        uint hsc_hx;                 // head space counts for hash type
-        uint hsc_lx;                 // head space counts for list type
-    };
-
-    //---
     // type definition
     
     const static uchar num_null = 255;
@@ -44,6 +25,25 @@ namespace sstd_yaml{
     // sstd_yaml::num_flow_style_base + sstd_yaml::num_list          5 // reserved number for FLOW_STYLE
     // sstd_yaml::num_flow_style_base + sstd_yaml::num_hash          6 // reserved number for FLOW_STYLE
     // sstd_yaml::num_flow_style_base + sstd_yaml::num_list_and_hash 7 // reserved number for FLOW_STYLE
+
+    //---
+    // token for proceed YAML parsing
+    
+    struct token {
+        // Data for Debug YAML parsing
+        uint line_num_begin = 1;                       // beginning line number
+        uint line_num_end   = 1;                       // endding line number (for multipleline)
+        
+        // Data for load YAML
+        std::string rawStr;                            // A raw string splitted by line concering the YAML processing units.
+        std::string s;                                 // A string removed comments
+        std::vector<std::string> vs;                   // A string removed comments and split by ' ' (space)
+        uint type = sstd_yaml::num_null;               // A destination type number of this line
+        uint format = sstd_yaml::num_block_style_base; // If containing flow style notation
+        uint list_type_cnt = 0;                        // Number of list type. (`- - - v`)
+        uint hsc_hx = 0;                               // head space counts for hash type
+        uint hsc_lx = 0;                               // head space counts for list type
+    };
 
     //---
 
