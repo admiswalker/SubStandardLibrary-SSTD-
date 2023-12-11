@@ -201,8 +201,9 @@ TEST(yaml, _data_type_and_format_case05_02){ TEST_DATA_TYPE_AND_FORMAT(false, fa
 TEST(yaml, _data_type_and_format_case06_02){ TEST_DATA_TYPE_AND_FORMAT( true, false, false,  true, 0, "[{: }]"    ); } // Ex: [a, b, c, {k: v}]
 
 //---
+// Test line number of sstd_yaml::_splitByLine_quotes_brackets()
 
-TEST(yaml, _splitByLine_quotes_brackets_v2_line_num_01){
+TEST(yaml, _splitByLine_quotes_brackets_v2__line_num_01){
     //std::vector<sstd_yaml::token> v_ret;
     std::vector<sstd_yaml::token> v_ret;
     std::string str=R"(a
@@ -222,7 +223,7 @@ c)";
     ASSERT_EQ(v_ret[2].line_num_begin, 3);
     ASSERT_EQ(v_ret[2].line_num_end,   3);
 }
-TEST(yaml, _splitByLine_quotes_brackets_v2_line_num_02){
+TEST(yaml, _splitByLine_quotes_brackets_v2__line_num_02){
     //std::vector<sstd_yaml::token> v_ret;
     std::vector<sstd_yaml::token> v_ret;
     std::string str=R"([a,
@@ -238,6 +239,33 @@ c])";
     ASSERT_EQ(v_ret.size(), 1);
     ASSERT_EQ(v_ret[0].line_num_begin, 1);
     ASSERT_EQ(v_ret[0].line_num_end,   4);
+}
+
+//---
+
+TEST(yaml, _splitByLine_quotes_brackets_v2__xxxxx){
+    //std::vector<sstd_yaml::token> v_ret;
+    sstd_yaml::token ret_io;
+    std::string str=R"(a
+b
+c)";
+    bool ret = sstd_yaml::_split_rawStr2s(ret_io);
+
+    
+    /*
+    ASSERT_TRUE(ret);
+
+    //sstd::printn(ret);
+    //sstd::printn(v_ret);
+
+    ASSERT_EQ(v_ret.size(), 3);
+    ASSERT_EQ(v_ret[0].line_num_begin, 1);
+    ASSERT_EQ(v_ret[0].line_num_end,   1);
+    ASSERT_EQ(v_ret[1].line_num_begin, 2);
+    ASSERT_EQ(v_ret[1].line_num_end,   2);
+    ASSERT_EQ(v_ret[2].line_num_begin, 3);
+    ASSERT_EQ(v_ret[2].line_num_end,   3);
+    */
 }
 
 /*

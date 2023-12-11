@@ -656,6 +656,7 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
             case '}': { v_dst.pop_back(); } break;
             case ':': {} break;
             case ',': {} break;
+                //case ',': { if(var.typeNum()==sstd::num_vec_terp_var){v_dst.pop_back();} } break; // たぶんこれにしないと "[a,b,{k:v},c]" が落ちる
             default: { sstd::pdbg_err("Unexpected char\n"); return false; } break;
             }
         }else{
@@ -857,21 +858,27 @@ bool sstd_yaml::_splitByLine_quotes_brackets(std::vector<std::string>& ret, cons
 bool sstd_yaml::_splitByLine_quotes_brackets_v2(std::vector<sstd_yaml::token>& ret, const std::string& str){
     
     uint line_num = 1; // line number is 1 indexed
+
+    // for quotes ("", '')
+    bool is_escaped=false; // \", \'
+    bool in_d_quate=false; // double quate ("")
+    bool in_s_quate=false; // single quate ('')
     
-    bool is_escaped=false;
-    bool in_d_quate=false; // double quate
-    bool in_s_quate=false; // single quate
-    std::string buf;
-    
-    int num_of_square_brackets=0; // []
-    int num_of_curly_brackets=0;  // {}
+    // for brackets ([], {})
+    int num_of_square_brackets=0; // []. To check if the char is in brackets
+    int num_of_curly_brackets=0;  // {}. To check if the char is in brackets
+
+    // for sstd_yaml::token input
+    std::string tmp_rawStr;
+    std::string tmp_s;
     for(uint r=0; str[r]!=0;){ // r: read place
         sstd_yaml::token tmp;
         tmp.line_num_begin = line_num;
         
-        buf.clear();
+        tmp_rawStr.clear();
+        tmp_s.clear();
         for(;;++r){
-            if(str[r]=='\\'){ is_escaped=true; buf+=str[r]; ++r; }
+            if(str[r]=='\\'){ is_escaped=true; tmp_rawStr+=str[r]; ++r; }
             if(str[r]=='\0'){++line_num;break;}
             
             if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
@@ -890,12 +897,13 @@ bool sstd_yaml::_splitByLine_quotes_brackets_v2(std::vector<sstd_yaml::token>& r
                 ++line_num;
                 if(!in_d_quate && !in_s_quate && num_of_square_brackets==0 && num_of_curly_brackets==0){ r+=2; break; }
             }
-            buf += str[r];
+            tmp_rawStr += str[r];
             
             is_escaped=false;
         }
         tmp.line_num_end = std::max((int)tmp.line_num_begin, ((int)line_num)-1);
-        tmp.rawStr = std::move(buf);
+        tmp.rawStr = std::move(tmp_rawStr);
+        tmp.s      = std::move(tmp_s     );
         
         ret.push_back(std::move(tmp));
     }
@@ -908,15 +916,33 @@ bool sstd_yaml::_splitByLine_quotes_brackets_v2(std::vector<sstd_yaml::token>& r
 }
 
 //---
+/*
+bool _rm_comment(sstd_yaml::token>& ret_io){
+}
+bool _rm_comment(std::vector<sstd_yaml::token>& ret_io){
+    std::vector<std::string> v = sstd::split(s, '#');
+    if(v.size()==0){ return std::string(); }
+    return sstd::rstrip(v[0]);
+}
+*/
+bool sstd_yaml::_token_rawStr2vs(std::vector<sstd_yaml::token>& v_ret_io){
+    for(uint i=0; i<v_ret_io.size(); ++i){
+        if(!sstd::split_quotes(v_ret_io[i].vs, v_ret_io[i].rawStr)){ sstd::pdbg_err("quate is not closed\n"); return false; }
+    }
+}
+
+//---
 
 bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string& str){
     // STEP1
     //   sstd_yaml::_splitByLine_quotes_brackets_v2(std::vector<std::string>& ret, const char* str);
     //   1-1 sstd_yaml::_splitByLine_quotes_brackets() に行数の情報を付与して出力する
     //   1-2 _hsc_hx(), _hsc_lx() の処理を一緒にやってしまう．（処理単位が同じため）
+    //bool _splitByLine_quotes_brackets_v2(std::vector<sstd_yaml::token>& ret, const std::string& str);
     
     // STEP2
-    //   コメントの除去
+    //   コメントの除去 <- ' ' で split した後に先頭が # の物以降をコメント扱いする (でないと，# のエスケープが狂う)
+    //sstd_yaml::_token_rawStr2vs(std::vector<sstd_yaml::token>& v_ret_io);
     
     // STEP3
     //   split_quotes() の結果を保存する（あとで何度か使っているため，処理をまとめる）
