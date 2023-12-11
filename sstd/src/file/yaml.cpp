@@ -853,6 +853,19 @@ bool sstd_yaml::_splitByLine_quotes_brackets(std::vector<std::string>& ret, cons
 //---
 
 bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string& str){
+    // Parse rule of YAML string
+    // 
+    // Rule1. Splitting string by Block-Style-Control-String ("- ", ": ")
+    //        if the target string is out of quates ("", '') and brackets ([], {}) ranges.
+    //
+    // Rule2. Skipping the splitting process if the string in quates range.
+    // 
+    // Rule3. Skipping the splitting process after detecting the beginning of brackets (flow-style-notation).
+    // 
+    // Rule4. Detecting comments by " #" notation
+    // 
+    // Note. Line Break "\n" is Not a control charactor.
+    //       This function treats the line break code ("\n") as same as the terminating character "\0".
     
     uint line_num = 1; // line number is 1 indexed
 
@@ -902,9 +915,8 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
         }
         tmp.line_num_end = std::max((int)tmp.line_num_begin, ((int)line_num)-1);
 
-        bool is_str = !is_list && !is_hash;
-        if(!is_hash && (is_str || is_list || is_flow)){ tmp.val1=std::move(sstd::strip(subt)); }
-        if(                                  is_hash ){ tmp.val2=std::move(sstd::strip(subt)); }
+        if(!is_hash){ tmp.val1=std::move(sstd::strip(subt));
+        }    else   { tmp.val2=std::move(sstd::strip(subt)); }
         
         if(is_list){ tmp.type += sstd_yaml::num_list; }
         if(is_hash){ tmp.type += sstd_yaml::num_hash; }

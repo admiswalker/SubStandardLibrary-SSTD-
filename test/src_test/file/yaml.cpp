@@ -259,8 +259,11 @@ TEST(yaml, _str2token__data_type_and_format_case06_02){ TEST_STR2TOKEN__DATA_TYP
     ASSERT_STREQ(v_ret[0].val2.c_str(), VAL2);
 
 TEST(yaml, _str2token_val1_val2_list                    ){ TEST_STR2TOKEN__VAL1_VAL2("a", "", "- a"); }
-TEST(yaml, _str2token_val1_val2_hash                    ){ TEST_STR2TOKEN__VAL1_VAL2("k", "v", "- k: v"); }
+TEST(yaml, _str2token_val1_val2_list_02                 ){ TEST_STR2TOKEN__VAL1_VAL2("a   ,", "", "- a   ,"); }
+TEST(yaml, _str2token_val1_val2_list_hash               ){ TEST_STR2TOKEN__VAL1_VAL2("k", "v", "k: v"); }
+TEST(yaml, _str2token_val1_val2_list_hash_02            ){ TEST_STR2TOKEN__VAL1_VAL2("k ,", "v   ,", "- k , : v   ,"); }
 TEST(yaml, _str2token_val1_val2_list_hash_space         ){ TEST_STR2TOKEN__VAL1_VAL2("k {", "v {", "-  k { :  v { "); }
+TEST(yaml, _str2token_val1_val2_flow                    ){ TEST_STR2TOKEN__VAL1_VAL2("[{k: v}]", "",   "[{k: v}]"); }
 
 // mutliline flow stype notation
 TEST(yaml, _str2token_val1_val2_multiline_flow          ){ TEST_STR2TOKEN__VAL1_VAL2("[\na,\nb,\nc\n]", "",   "[\na,\nb,\nc\n]"); }
