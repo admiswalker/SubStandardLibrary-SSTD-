@@ -253,6 +253,7 @@ TEST(yaml, _str2token__data_type_and_format_case06_02){ TEST_STR2TOKEN__DATA_TYP
     std::string s = S_IN;                               \
     std::vector<sstd_yaml::token> v_ret;                \
     bool ret = sstd_yaml::_str2token(v_ret, s);         \
+    sstd::printn(v_ret);                                \
     ASSERT_TRUE(ret);                                   \
     ASSERT_EQ(v_ret.size(), 1);                         \
     ASSERT_STREQ(v_ret[0].val1.c_str(), VAL1);          \
@@ -282,9 +283,35 @@ TEST(yaml, _str2token_val1_val2_multiline_list_hash){ TEST_STR2TOKEN__VAL1_VAL2(
 // remove comments
 TEST(yaml, _str2token_rm_comment_case01){ TEST_STR2TOKEN__VAL1_VAL2("a", "", "a # comment"); }
 TEST(yaml, _str2token_rm_comment_case02){ TEST_STR2TOKEN__VAL1_VAL2("\"a # comment\"", "", "\"a # comment\""); }
-TEST(yaml, _str2token_rm_comment_case03){ TEST_STR2TOKEN__VAL1_VAL2("|a\nb\nc", "", "- |a # comment\nb # comment\nc # comment"); }
+TEST(yaml, _str2token_rm_comment_case03){ TEST_STR2TOKEN__VAL1_VAL2("|\na\nb\nc", "", "- |\na # comment\nb # comment\nc # comment"); }
 
 //---
+
+TEST(yaml, _str2token_multi_list_case01){
+    std::string s = "- a\n- b\n- c";
+    std::vector<sstd_yaml::token> v_ret;
+    bool ret = sstd_yaml::_str2token(v_ret, s);
+    sstd::printn(v_ret);
+}/*
+TEST(yaml, _str2token_multi_list_case02){
+    std::string s = "- \"\"\n- \"\"\n- \"\"";
+    std::vector<sstd_yaml::token> v_ret;
+    bool ret = sstd_yaml::_str2token(v_ret, s);
+    sstd::printn(v_ret);
+}
+TEST(yaml, _str2token_multi_list_case03){
+    std::string s = "-\n  - a";
+    std::vector<sstd_yaml::token> v_ret;
+    bool ret = sstd_yaml::_str2token(v_ret, s);
+    sstd::printn(v_ret);
+}
+TEST(yaml, _str2token_multi_list_case04){
+    std::string s = "- \n  - a";
+    std::vector<sstd_yaml::token> v_ret;
+    bool ret = sstd_yaml::_str2token(v_ret, s);
+    sstd::printn(v_ret);
+}
+//*/
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // comments

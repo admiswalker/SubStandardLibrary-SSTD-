@@ -60,8 +60,8 @@
     printf("type: %d\n", rhs.type);                     \
     printf("format: %d\n", rhs.format);                 \
     printf("list_type_cnt: %d\n", rhs.list_type_cnt);   \
-    printf("hsc_hx: %d\n", rhs.hsc_hx);                 \
     printf("hsc_lx: %d\n", rhs.hsc_lx);                 \
+    printf("hsc_hx: %d\n", rhs.hsc_hx);                 \
     printf("val1: %s\n", rhs.val1.c_str());             \
     printf("val2: %s\n", rhs.val2.c_str());             \
     printf(",\n");
@@ -852,6 +852,10 @@ bool sstd_yaml::_splitByLine_quotes_brackets(std::vector<std::string>& ret, cons
 
 //---
 
+bool _is_flow(const std::string& subt){
+    return subt.size()>=1 && (subt[0]=='[' || subt[0]=='{');
+}
+
 bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string& str){
     // Parse rule of YAML string
     // 
@@ -873,6 +877,8 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
     bool is_escaped=false; // \", \'
     bool in_d_quate=false; // double quate ("")
     bool in_s_quate=false; // single quate ('')
+
+    int cnt=0; // for debug
     
     for(uint r=0; str[r]!=0;){ // r: read place
         sstd_yaml::token tmp;
@@ -886,28 +892,42 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
         bool is_flow=false; // is flow style "[{k: v}]"
 
         for(;;++r){
+//            ++cnt;
+//            sstd::printn(str[r]);
+//            if(cnt > 100){ return false; }
             if(str[r]=='\\'){ is_escaped=true; tmp.rawStr+=str[r]; ++r; }
+//            if(str[r]=='\n'){ ++line_num; break; }
             if(str[r]=='\0'){ ++line_num; break; }
+            if(str[r]==' '){ ++tmp.hsc_hx; ++tmp.hsc_lx; }
             
             if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
             if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
             
             if(!in_d_quate && !in_s_quate){
-                if(subt.size()>=1 && (subt[0]=='[' || subt[0]=='{')){ is_flow=true; }
-                
                 if(str[r]==' ' && str[r+1]=='#'){
                     tmp.rawStr+=str[r]; ++r;
-                    while(str[r]!='\0' && str[r]!=0x0A && str[r]!=0x0D){ tmp.rawStr+=str[r]; ++r; } // skip comments
+                    while(str[r]!='\0' && str[r]!='\n' && str[r]!='\r'){ tmp.rawStr+=str[r]; ++r; } // skip comments
                 }
                 
+                is_flow = _is_flow(subt);
                 if(!is_flow){
+                    // for Windows
+                    if(str[r]=='-' && str[r+1]=='\r'){                                        subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; continue; }
+                    if(str[r]==':' && str[r+1]=='\r'){ tmp.val1=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; continue; }
+
+                    // for Unix
+                    if(str[r]=='-' && str[r+1]=='\n'){                                        subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; continue; }
+                    if(str[r]==':' && str[r+1]=='\n'){ tmp.val1=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; continue; }
+
+                    // the other case
                     if(str[r]=='-' && str[r+1]==' '){                                        subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
                     if(str[r]==':' && str[r+1]==' '){ tmp.val1=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
                 }
             }
             
-            if      (                str[r  ]==0x0A){      ++line_num;   // Uinx ("\n")
-            }else if(str[r]==0x0D && str[r+1]==0x0A){ ++r; ++line_num; } // Windows ("\r\n")
+            if      (                str[r  ]=='\n'){      ++line_num; // ++r; break;  // Uinx ("\n")
+                if(!is_escaped && !in_d_quate && !_is_flow(subt)){ ++r; break; }
+            }else if(str[r]=='\r' && str[r+1]=='\n'){ ++r; ++line_num; } // Windows ("\r\n")
             
             tmp.rawStr += str[r];
             subt       += str[r];
