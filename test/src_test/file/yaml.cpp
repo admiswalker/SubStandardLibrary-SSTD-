@@ -292,7 +292,7 @@ TEST(yaml, _str2token_multi_list_case01){
     std::vector<sstd_yaml::token> v_ret;
     bool ret = sstd_yaml::_str2token(v_ret, s);
     sstd::printn(v_ret);
-}/*
+}
 TEST(yaml, _str2token_multi_list_case02){
     std::string s = "- \"\"\n- \"\"\n- \"\"";
     std::vector<sstd_yaml::token> v_ret;
@@ -311,6 +311,16 @@ TEST(yaml, _str2token_multi_list_case04){
     bool ret = sstd_yaml::_str2token(v_ret, s);
     sstd::printn(v_ret);
 }
+
+//---
+
+TEST(yaml, _str2token_multi_list_case05){
+    std::string s = "- [{\nk11: v11,\nk12:v12,\nk13:v13\n}]\n- [{\nk21: v21,\nk22:v22,\nk23:v23\n}]";
+    std::vector<sstd_yaml::token> v_ret;
+    bool ret = sstd_yaml::_str2token(v_ret, s);
+    sstd::printn(v_ret);
+}
+
 //*/
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
