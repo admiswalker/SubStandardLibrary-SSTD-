@@ -859,17 +859,30 @@ bool _is_flow(const std::string& subt){
 bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string& str){
     // Parse rule of YAML string
     // 
-    // Rule1. Splitting string by Block-Style-Control-String ("- ", ": ")
+    // Rule1. For default, Block-Style-String ("- ", ": ") and Line-Break-Codes ('\n', "\r\n") are
+    //        treated as controle-charactors ("- ", ": ", '\n', "\r\n").
+    //        String are splitted by the controle-characotrs
     //        if the target string is out of quates ("", '') and brackets ([], {}) ranges.
+    //        / デフォルトでは，Block-Style の文字列 ("- ", ": ") と改行コード ('\n', "\r\n") を制御文字列として扱います．
+    //          引用符 ("", '') と括弧 ([], {}) の範囲外では，文字列は制御文字列で分割されます．
     //
-    // Rule2. Skipping the splitting process if the string in quates range.
+    // Rule2. Skipping the splitting process using controle-charactors ("- ", ": ", '\n', "\r\n")
+    //        if the string in quates range.
+    //        / 文字列がクォーテーションで括られている場合は，
+    //          制御文字 ("- ", ": ", '\n', "\r\n") での文字列の分割を停止します．
     // 
-    // Rule3. Skipping the splitting process after detecting the beginning of brackets (flow-style-notation).
+    // Rule3. Skipping the splitting process using controle-charactors ("- ", ": ", '\n', "\r\n")
+    //        after detecting the subtoken is beginning from the beginning of brackets ([, {) for flow-style-notation.
+    //        / Subtoken が Flow-Style 表記の開始を示す括弧 ([, {) で開始される場合は，
+    //          制御文字 ("- ", ": ", '\n', "\r\n") での文字列の分割を停止します．
     // 
     // Rule4. Detecting comments by " #" notation
+    //        / コメントは " #" 表記で判定します
     // 
-    // Note. Line Break "\n" is Not a control charactor.
-    //       This function treats the line break code ("\n") as same as the terminating character "\0".
+    // Rule5. Using line break code ('\n', "\r\n") as a control charactor
+    //        excepting the case of subtoken begin from multi-line notation charactor ('|').
+    //        / 改行コード ('\n', "\r\n") は，制御文字として扱います．
+    //          ただし，subtoken がマルチライン表記を示す文字 ('|') から始まる場合を除きます．
     
     uint line_num = 1; // line number is 1 indexed
 
@@ -885,6 +898,8 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
         tmp.line_num_begin = line_num;
         
         std::string subt; // subtoken
+
+        bool is_mult=false; // is multi line type "|"
         
         // for type
         bool is_list=false; // is list type "- "
@@ -911,6 +926,8 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
                 
                 is_flow = _is_flow(subt);
                 if(!is_flow){
+                    if(str[r]=='|'){ is_mult=true; }
+                    
                     // for Windows
                     if(str[r]=='-' && str[r+1]=='\r'){                                        subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; continue; }
                     if(str[r]==':' && str[r+1]=='\r'){ tmp.val1=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; continue; }
@@ -926,7 +943,7 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
             }
             
             if      (                str[r  ]=='\n'){      ++line_num; // ++r; break;  // Uinx ("\n")
-                if(!is_escaped && !in_d_quate && !_is_flow(subt)){ ++r; break; }
+                if(!is_escaped && !in_d_quate && !_is_flow(subt) && !is_mult){ ++r; break; }
             }else if(str[r]=='\r' && str[r+1]=='\n'){ ++r; ++line_num; } // Windows ("\r\n")
             
             tmp.rawStr += str[r];
