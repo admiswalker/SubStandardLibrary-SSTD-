@@ -319,6 +319,8 @@ TEST(yaml, _str2token_multi_list_case05){
     std::vector<sstd_yaml::token> v_ret;
     bool ret = sstd_yaml::_str2token(v_ret, s);
     sstd::printn(v_ret);
+
+    ASSERT_EQ(v_ret.size(), 2);
 }
 
 //*/

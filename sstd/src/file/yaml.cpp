@@ -906,6 +906,9 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
         bool is_hash=false; // is hash type "k: v"
         bool is_flow=false; // is flow style "[{k: v}]"
 
+        int num_of_square_brackets=0; // []
+        int num_of_curly_brackets=0;  // {}
+        
         for(;;++r){
 //            ++cnt;
 //            sstd::printn(str[r]);
@@ -939,6 +942,11 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
                     // the other case
                     if(str[r]=='-' && str[r+1]==' '){                                        subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
                     if(str[r]==':' && str[r+1]==' '){ tmp.val1=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
+                }else{
+                    if(str[r]=='['){ ++num_of_square_brackets; }
+                    if(str[r]==']'){ --num_of_square_brackets; }
+                    if(str[r]=='{'){ ++num_of_curly_brackets; }
+                    if(str[r]=='}'){ --num_of_curly_brackets; }
                 }
             }
             
@@ -949,6 +957,8 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
             tmp.rawStr += str[r];
             subt       += str[r];
             is_escaped = false;
+
+//            if(is_flow && num_of_square_brackets==0 && num_of_curly_brackets==0){ break; }
         }
         tmp.line_num_end = std::max((int)tmp.line_num_begin, ((int)line_num)-1);
 
