@@ -371,7 +371,7 @@ TEST(yaml, _str2token_multi_list_case06){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // comments
-/*
+
 TEST(yaml, comments_str){
     std::string s=R"(
 a # comment
@@ -387,7 +387,7 @@ a # comment
     //---
     
     ASSERT_TRUE(yml==ans);
-}
+}/*
 TEST(yaml, comments_str_quotes){
     std::string s=R"(
 "a # not-comment" # comment

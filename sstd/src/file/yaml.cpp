@@ -213,21 +213,7 @@ void _hsc_lx(uint& ret, const std::string& s){
 
 //---
 
-struct command{
-    uint hsc_lx; // hsc: head space count, _lx: list-index.
-    uint hsc_hx; // hsc: head space count, _hx: hash-index.
-    uint8 type;
-    uint8 format;
-    bool val1_use_quotes;
-    bool val2_use_quotes;
-    std::string val1; // "list value" or "hash key"
-    std::string val2; // "hash value" if Not required "sstd::terp::var"
-
-    // debug info
-    uint lineNum;
-    std::string rawStr;
-};
-void _print(const struct command& cmd){ // for debug
+void _print(const struct sstd_yaml::command& cmd){ // for debug
     printf("hsc_lx: %d\n",           cmd.hsc_lx                            );
     printf("hsc_hx: %d\n",           cmd.hsc_hx                            );
     printf("type: %d\n",             cmd.type                              );
@@ -240,7 +226,7 @@ void _print(const struct command& cmd){ // for debug
     printf("rawStr: %s\n",           cmd.rawStr.c_str()                    );
     printf("\n");
 }
-void _print(const std::vector<struct command>& v_cmd){ // for debug
+void _print(const std::vector<struct sstd_yaml::command>& v_cmd){ // for debug
     for(uint i=0; i<v_cmd.size(); ++i){
         _print(v_cmd[i]);
     }
@@ -417,7 +403,7 @@ bool _check_val_and_overwrite_multi_line_str(std::string& val_rw, const uint hsc
     return true;
 }
 
-bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::string>& ls, const uint base_idx){
+bool _parse_yaml(std::vector<struct sstd_yaml::command>& ret_vCmd, const std::vector<std::string>& ls, const uint base_idx){ // token ベースに書き換えたら消す
     
     for(uint i=0; i<ls.size(); ++i){
         std::string raw, s;
@@ -440,7 +426,7 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
         if(!_check_val_and_overwrite_multi_line_str(val1, hsc_lx, ls, i)){ sstd::pdbg_err("reading multiline is failed.\n"); return false; } // for list (val1=="|0123" or val1=="|-0123" val1=="|+0123")
         if(!_check_val_and_overwrite_multi_line_str(val2, hsc_hx, ls, i)){ sstd::pdbg_err("reading multiline is failed.\n"); return false; } // for hash (val2=="|0123" or val2=="|-0123" val2=="|+0123")
 
-        struct command c;
+        struct sstd_yaml::command c;
         switch(type){
         case sstd_yaml::num_str: {
             c.hsc_lx          = hsc_lx;
@@ -547,6 +533,11 @@ bool _parse_yaml(std::vector<struct command>& ret_vCmd, const std::vector<std::s
     
     return true;
 }
+bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, const std::vector<sstd_yaml::token>& v_token, const uint base_idx){
+    ;
+    return true;
+}
+
 bool _is_control_chars(const char c){
     return (c=='[' || c==']' || c=='{' || c=='}' || c==':' || c==',');
 }
@@ -687,7 +678,7 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
     
     return true;
 }
-bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>& v_cmd){
+bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::command>& v_cmd){
     std::vector<sstd::terp::var*> v_dst;
     std::vector<uint> v_hsc_lx; // v: vector, hsc: head space count, _lx: list-index.
     std::vector<uint> v_hsc_hx; // v: vector, hsc: head space count. _hx: hash-index.
@@ -808,7 +799,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct command>&
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // str2token section
 
-bool sstd_yaml::_splitByLine_quotes_brackets(std::vector<std::string>& ret, const char* str){
+bool sstd_yaml::_splitByLine_quotes_brackets(std::vector<std::string>& ret, const char* str){ // token ベースに書き換えたら消す
     
     bool is_escaped=false;
     bool in_d_quate=false; // double quate
@@ -846,7 +837,7 @@ bool sstd_yaml::_splitByLine_quotes_brackets(std::vector<std::string>& ret, cons
     
     return true;
 }
-bool sstd_yaml::_splitByLine_quotes_brackets(std::vector<std::string>& ret, const std::string& str){
+bool sstd_yaml::_splitByLine_quotes_brackets(std::vector<std::string>& ret, const std::string& str){ // token ベースに書き換えたら消す
     return sstd_yaml::_splitByLine_quotes_brackets(ret, str.c_str());
 }
 
@@ -856,7 +847,7 @@ bool _is_flow(const std::string& subt){
     return subt.size()>=1 && (subt[0]=='[' || subt[0]=='{');
 }
 
-bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string& str){
+bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
     // Parse rule of YAML string
     // 
     // Rule1. For default, Block-Style-String ("- ", ": ") and Line-Break-Codes ('\n', "\r\n") are
@@ -980,16 +971,28 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
     
     return true;
 }
+bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string& str){
+    return sstd_yaml::_str2token(ret, str.c_str());
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // YAML load section
 
 bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     bool tf = true;
+    /*
+    // Old implimentation
     
     std::vector<std::string> ls; if(!sstd_yaml::_splitByLine_quotes_brackets(ls, s)){ sstd::pdbg_err("single or double quatation is not closed\n"); return false; } // v: vector, ls: line string
     //sstd::printn(ls);
-    std::vector<struct command> v_cmd; if(!_parse_yaml(v_cmd, ls, 0)){ return false; }
+    std::vector<struct sstd_yaml::command> v_cmd; if(!_parse_yaml(v_cmd, ls, 0)){ return false; }
+    //_print(v_cmd);
+    if(!_construct_var(ret_yml, v_cmd)){ return false; }
+    */
+    
+    std::vector<sstd_yaml::token> v_token; if(!sstd_yaml::_str2token(v_token, s)){ sstd::pdbg_err("single or double quatation is not closed\n"); return false; } // v: vector, ls: line string
+    //sstd::printn(v_token);
+    std::vector<struct sstd_yaml::command> v_cmd; if(!sstd_yaml::_token2cmd(v_cmd, v_token, 0)){ return false; } // NOTE: 最終的に token == cmd になるように調整するが，一旦 cmd を経由して yaml を生成できるようにする
     //_print(v_cmd);
     if(!_construct_var(ret_yml, v_cmd)){ return false; }
     
@@ -1025,7 +1028,7 @@ bool sstd::yaml_load_all(std::vector<sstd::terp::var>& ret_vYml, const        ch
     uint base_idx=0;
     for(uint i=0; i<v_ls.size(); ++i){
         sstd::terp::var ret_yml;
-        std::vector<struct command> v_cmd; if(!_parse_yaml(v_cmd, v_ls[i], base_idx)){ return false; }
+        std::vector<struct sstd_yaml::command> v_cmd; if(!_parse_yaml(v_cmd, v_ls[i], base_idx)){ return false; }
         if(!_construct_var(ret_yml, v_cmd)){ return false; }
         
         ret_vYml.push_back(std::move(ret_yml));

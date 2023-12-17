@@ -45,6 +45,20 @@ namespace sstd_yaml{
         std::string val1;
         std::string val2;
     };
+    struct command{
+        uint hsc_lx; // hsc: head space count, _lx: list-index.
+        uint hsc_hx; // hsc: head space count, _hx: hash-index.
+        uint8 type;
+        uint8 format;
+        bool val1_use_quotes;
+        bool val2_use_quotes;
+        std::string val1; // "list value" or "hash key"
+        std::string val2; // "hash value" if Not required "sstd::terp::var"
+
+        // debug info
+        uint lineNum;
+        std::string rawStr;
+    };
 
     //---
 
@@ -56,7 +70,9 @@ namespace sstd_yaml{
 
     //---
 
+    bool _str2token(std::vector<sstd_yaml::token>& ret, const char* str);
     bool _str2token(std::vector<sstd_yaml::token>& ret, const std::string& str);
+    bool _token2cmd(std::vector<sstd_yaml::command>& ret_vCmd, const std::vector<sstd_yaml::token>& v_token, const uint base_idx);
     
     //---
 }
