@@ -951,7 +951,7 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
             tmp.rawStr += str[r];
             subt       += str[r];
             
-            if      (                str[r  ]=='\n'){ // Uinx ("\n")
+            if(str[r]=='\n'){ // Uinx ("\n")
                 ++line_num;
                 if(!is_flow && !is_escaped && !in_d_quate && !is_mult){ ++r; break; } 
                 if( is_flow && num_of_square_brackets==0 && num_of_curly_brackets==0){ ++r; break; }
