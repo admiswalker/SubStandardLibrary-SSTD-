@@ -292,12 +292,14 @@ TEST(yaml, _str2token_multi_list_case01){
     std::vector<sstd_yaml::token> v_ret;
     bool ret = sstd_yaml::_str2token(v_ret, s);
     sstd::printn(v_ret);
+    ASSERT_EQ(v_ret.size(), 3);
 }
 TEST(yaml, _str2token_multi_list_case02){
     std::string s = "- \"\"\n- \"\"\n- \"\"";
     std::vector<sstd_yaml::token> v_ret;
     bool ret = sstd_yaml::_str2token(v_ret, s);
     sstd::printn(v_ret);
+    ASSERT_EQ(v_ret.size(), 3);
 }
 TEST(yaml, _str2token_multi_list_case03){
     std::string s = "-\n  - a";
