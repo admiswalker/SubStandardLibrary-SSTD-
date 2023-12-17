@@ -355,6 +355,20 @@ TEST(yaml, _str2token_multi_list_case05){
     ASSERT_STREQ(v_ret[1].val1.c_str(),     "[{\nk21: v21,\nk22:v22,\nk23:v23\n}]");
 }
 
+//---
+
+TEST(yaml, _str2token_multi_list_case06){
+    std::string s = "- - - a";
+    std::vector<sstd_yaml::token> v_ret;
+    bool ret = sstd_yaml::_str2token(v_ret, s);
+//    sstd::printn(v_ret);
+    
+    ASSERT_EQ(v_ret.size(), 1);
+    ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- - - a");
+    ASSERT_STREQ(v_ret[0].val1.c_str(),         "a");
+    ASSERT_EQ(v_ret[0].list_type_cnt, 3);
+}
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // comments
 /*
