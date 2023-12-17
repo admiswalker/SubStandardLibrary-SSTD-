@@ -910,6 +910,9 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
         int num_of_curly_brackets=0;  // {}
         
         for(;;++r){
+//            printf("---\n");
+//            sstd::printn(str[r]);
+            
 //            ++cnt;
 //            sstd::printn(str[r]);
 //            if(cnt > 100){ return false; }
@@ -927,7 +930,8 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
                     while(str[r]!='\0' && str[r]!='\n' && str[r]!='\r'){ tmp.rawStr+=str[r]; ++r; } // skip comments
                 }
                 
-                is_flow = _is_flow(subt);
+                is_flow = _is_flow(subt+str[r]);
+//                sstd::printn(is_flow);
                 if(!is_flow){
                     if(str[r]=='|'){ is_mult=true; }
                     
@@ -949,16 +953,19 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
                     if(str[r]=='}'){ --num_of_curly_brackets; }
                 }
             }
-            
-            if      (                str[r  ]=='\n'){      ++line_num; // ++r; break;  // Uinx ("\n")
-                if(!is_escaped && !in_d_quate && !_is_flow(subt) && !is_mult){ ++r; break; }
-            }else if(str[r]=='\r' && str[r+1]=='\n'){ ++r; ++line_num; } // Windows ("\r\n")
-            
             tmp.rawStr += str[r];
             subt       += str[r];
+            
+            if      (                str[r  ]=='\n'){      ++line_num; // ++r; break;  // Uinx ("\n")
+                if(!is_escaped && !in_d_quate && !_is_flow && !is_mult){ ++r; break; }
+//                if(subt.size()>=1 && is_flow && num_of_square_brackets==0 && num_of_curly_brackets==0){ break; }
+                if(is_flow && num_of_square_brackets==0 && num_of_curly_brackets==0){ break; }
+            }else if(str[r]=='\r' && str[r+1]=='\n'){ ++r; ++line_num; } // Windows ("\r\n")
+            
             is_escaped = false;
-
-//            if(is_flow && num_of_square_brackets==0 && num_of_curly_brackets==0){ break; }
+//            sstd::printn(subt);
+//            sstd::printn(num_of_square_brackets);
+//            sstd::printn(num_of_curly_brackets);
         }
         tmp.line_num_end = std::max((int)tmp.line_num_begin, ((int)line_num)-1);
 
