@@ -543,25 +543,18 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
         bool v1_dq, v1_sq, v2_dq, v2_sq;
         
         struct sstd_yaml::command c;
-        switch(t.type){
-        case sstd_yaml::num_str: {
-            c.hsc_lx          = t.hsc_lx;
-            c.hsc_hx          = t.hsc_hx;
-            c.type            = t.type; // sstd_yaml::num_str;
-            c.format          = t.format;
-            c.val1            = t.val1;
-            c.val2            = t.val2;
-            c.val1_use_quotes = t.val1_use_quotes;
-            c.val2_use_quotes = t.val2_use_quotes;
-            c.lineNum         = base_idx + i; // debug info
-            c.rawStr          = t.rawStr;     // debug info
+        c.hsc_lx          = t.hsc_lx;
+        c.hsc_hx          = t.hsc_hx;
+        c.type            = t.type; // sstd_yaml::num_str;
+        c.format          = t.format;
+        c.val1            = t.val1;
+        c.val2            = t.val2;
+        c.val1_use_quotes = t.val1_use_quotes;
+        c.val2_use_quotes = t.val2_use_quotes;
+        c.lineNum         = base_idx + i; // debug info
+        c.rawStr          = t.rawStr;     // debug info
             
-            ret_vCmd.push_back(c);
-        } break;
-//        case sstd_yaml::num_list: {
-//        } break;
-        default: { sstd::pdbg_err("Unexpected data type\n"); } break;
-        }
+        ret_vCmd.push_back(c);
     }
     
     return true;
@@ -1042,6 +1035,7 @@ bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     printf("--- print v_cmd ---\n");
     sstd::printn(v_cmd.size());
     _print(v_cmd);
+    printf("--- begin: _construct_var() ---\n");
     if(!_construct_var(ret_yml, v_cmd)){ return false; }
     
     return tf;
