@@ -993,50 +993,21 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
         if(is_hash){ tmp.type += sstd_yaml::num_hash; }
         if(is_flow){ tmp.format = sstd_yaml::num_flow_style_base; }
 
-        //*
-        bool v1_dq, v1_sq, v2_dq, v2_sq;
-        sstd::printn(tmp.val1);
-        sstd::printn(tmp.val2);
+        // remove line break codes ('\n', "\r\n") at the tail of token
         if(!is_mult){
-            // remove line break codes at the tail of token
-            tmp.val1 = sstd::rstrip(tmp.val1, '\n'); // NOTE: "\r\n" is no supported
-            tmp.val2 = sstd::rstrip(tmp.val2, '\n'); // NOTE: "\r\n" is no supported
+            tmp.val1 = sstd::rstrip(tmp.val1, '\n'); // NOTE: "\r\n" is not supported yet
+            tmp.val2 = sstd::rstrip(tmp.val2, '\n'); // NOTE: "\r\n" is not supported yet
         }
+
+        // remove Quates ('', "")
+        bool v1_dq, v1_sq, v2_dq, v2_sq;
         tmp.val1            = _extract_quotes_value(sstd::strip_quotes(v1_sq, v1_dq, tmp.val1));
         tmp.val2            = _extract_quotes_value(sstd::strip_quotes(v2_sq, v2_dq, tmp.val2));
         tmp.val1_use_quotes = ( v1_dq || v1_sq );
         tmp.val2_use_quotes = ( v2_dq || v2_sq );
-        sstd::printn(tmp.val1);
-        sstd::printn(tmp.val2);
-        sstd::printn(tmp.val1.size());
-        sstd::printn(tmp.val2.size());
-        sstd::printn(tmp.val1_use_quotes);
-        sstd::printn(tmp.val2_use_quotes);
-        sstd::printn(tmp.type);
-        sstd::printn(tmp.format);
         if(tmp.val1.size()==0 && !tmp.val1_use_quotes &&
-           tmp.val2.size()==0 && !tmp.val2_use_quotes && tmp.type==sstd_yaml::num_str){ printf("imh1002\n");continue; }
-        //*/
-        /*
-        bool v1_dq, v1_sq, v2_dq, v2_sq;
-        
-        struct sstd_yaml::command c;
-        switch(t.type){
-        case sstd_yaml::num_str: {
-            c.hsc_lx          = t.hsc_lx;
-            c.hsc_hx          = t.hsc_hx;
-            c.type            = t.type; // sstd_yaml::num_str;
-            c.format          = t.format;
-            c.val1            = _extract_quotes_value(sstd::strip_quotes(v1_sq, v1_dq, t.val1));
-            c.val2            = _extract_quotes_value(sstd::strip_quotes(v2_sq, v2_dq, t.val2));
-            c.val1_use_quotes = ( v1_dq || v1_sq );
-            c.val2_use_quotes = ( v2_dq || v2_sq );
-            c.lineNum         = base_idx + i; // debug info
-            c.rawStr          = t.rawStr;     // debug info
-            
-            ret_vCmd.push_back(c);
-        } break;
-        */
+           tmp.val2.size()==0 && !tmp.val2_use_quotes &&
+           tmp.type==sstd_yaml::num_str                  ){ continue; }
         
         ret.push_back(std::move(tmp));
     }
