@@ -266,23 +266,23 @@ TEST(yaml, _str2token_val1_val2_list_hash_space         ){ TEST_STR2TOKEN__VAL1_
 TEST(yaml, _str2token_val1_val2_flow                    ){ TEST_STR2TOKEN__VAL1_VAL2("[{k: v}]", "",   "[{k: v}]"); }
 
 // mutliline flow stype notation
-TEST(yaml, _str2token_val1_val2_multiline_flow          ){ TEST_STR2TOKEN__VAL1_VAL2("[\na,\nb,\nc\n]", "",   "[\na,\nb,\nc\n]"); }
-TEST(yaml, _str2token_val1_val2_multiline_flow_list     ){ TEST_STR2TOKEN__VAL1_VAL2("[\na,\nb,\nc\n]", "", "- [\na,\nb,\nc\n]"); }
-TEST(yaml, _str2token_val1_val2_multiline_flow_hash     ){ TEST_STR2TOKEN__VAL1_VAL2("k", "[\na,\nb,\nc\n]",   "k: [\na,\nb,\nc\n]"); }
-TEST(yaml, _str2token_val1_val2_multiline_flow_list_hash){ TEST_STR2TOKEN__VAL1_VAL2("k", "[\na,\nb,\nc\n]", "- k: [\na,\nb,\nc\n]"); }
+TEST(yaml, _str2token_val1_val2_multiline_flow          ){ TEST_STR2TOKEN__VAL1_VAL2("[ a, b, c ]", "",   "[\na,\nb,\nc\n]"); }
+TEST(yaml, _str2token_val1_val2_multiline_flow_list     ){ TEST_STR2TOKEN__VAL1_VAL2("[ a, b, c ]", "", "- [\na,\nb,\nc\n]"); }
+TEST(yaml, _str2token_val1_val2_multiline_flow_hash     ){ TEST_STR2TOKEN__VAL1_VAL2("k", "[ a, b, c ]",   "k: [\na,\nb,\nc\n]"); }
+TEST(yaml, _str2token_val1_val2_multiline_flow_list_hash){ TEST_STR2TOKEN__VAL1_VAL2("k", "[ a, b, c ]", "- k: [\na,\nb,\nc\n]"); }
 
 // mutliline YAML notation
-TEST(yaml, _str2token_val1_val2_multiline_list     ){ TEST_STR2TOKEN__VAL1_VAL2("|+123\na\nb\nc",  "", "- |+123\na\nb\nc"); }
-TEST(yaml, _str2token_val1_val2_multiline_hash     ){ TEST_STR2TOKEN__VAL1_VAL2("k", "|+123\na\nb\nc",   "k: |+123\na\nb\nc"); }
-TEST(yaml, _str2token_val1_val2_multiline_list_hash){ TEST_STR2TOKEN__VAL1_VAL2("k", "|+123\na\nb\nc", "- k: |+123\na\nb\nc"); }
+TEST(yaml, _str2token_val1_val2_multiline_list     ){ TEST_STR2TOKEN__VAL1_VAL2("|+123 a b c",  "", "- |+123\na\nb\nc"); }
+TEST(yaml, _str2token_val1_val2_multiline_hash     ){ TEST_STR2TOKEN__VAL1_VAL2("k", "|+123 a b c",   "k: |+123\na\nb\nc"); }
+TEST(yaml, _str2token_val1_val2_multiline_list_hash){ TEST_STR2TOKEN__VAL1_VAL2("k", "|+123 a b c", "- k: |+123\na\nb\nc"); }
 
 //---
 // Test _str2token() of remove comments
 
 // remove comments
 TEST(yaml, _str2token_rm_comment_case01){ TEST_STR2TOKEN__VAL1_VAL2("a", "", "a # comment"); }
-TEST(yaml, _str2token_rm_comment_case02){ TEST_STR2TOKEN__VAL1_VAL2("\"a # comment\"", "", "\"a # comment\""); }
-TEST(yaml, _str2token_rm_comment_case03){ TEST_STR2TOKEN__VAL1_VAL2("|\na\nb\nc", "", "- |\na # comment\nb # comment\nc # comment"); }
+TEST(yaml, _str2token_rm_comment_case02){ TEST_STR2TOKEN__VAL1_VAL2("a # comment", "", "\"a # comment\""); }
+TEST(yaml, _str2token_rm_comment_case03){ TEST_STR2TOKEN__VAL1_VAL2("| a b c", "", "- |\na # comment\nb # comment\nc # comment"); }
 
 //---
 
@@ -294,9 +294,9 @@ TEST(yaml, _str2token_multi_list_case01){
     
     ASSERT_EQ(v_ret.size(), 3);
     ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- a\n");
-    ASSERT_STREQ(v_ret[0].val1.c_str(),     "a\n");
+    ASSERT_STREQ(v_ret[0].val1.c_str(),     "a"  );
     ASSERT_STREQ(v_ret[1].rawStr.c_str(), "- b\n");
-    ASSERT_STREQ(v_ret[1].val1.c_str(),     "b\n");
+    ASSERT_STREQ(v_ret[1].val1.c_str(),     "b"  );
     ASSERT_STREQ(v_ret[2].rawStr.c_str(), "- c");
     ASSERT_STREQ(v_ret[2].val1.c_str(),     "c");
 }
@@ -308,11 +308,11 @@ TEST(yaml, _str2token_multi_list_case02){
     
     ASSERT_EQ(v_ret.size(), 3);
     ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- \"\"\n");
-    ASSERT_STREQ(v_ret[0].val1.c_str(),     "\"\"\n");
+    ASSERT_STREQ(v_ret[0].val1.c_str(),           "");
     ASSERT_STREQ(v_ret[1].rawStr.c_str(), "- \"\"\n");
-    ASSERT_STREQ(v_ret[1].val1.c_str(),     "\"\"\n");
+    ASSERT_STREQ(v_ret[1].val1.c_str(),           "");
     ASSERT_STREQ(v_ret[2].rawStr.c_str(), "- \"\"");
-    ASSERT_STREQ(v_ret[2].val1.c_str(),     "\"\"");
+    ASSERT_STREQ(v_ret[2].val1.c_str(),         "");
 }
 TEST(yaml, _str2token_multi_list_case03){
     std::string s = "-\n  - a";
@@ -322,7 +322,7 @@ TEST(yaml, _str2token_multi_list_case03){
     
     ASSERT_EQ(v_ret.size(), 2);
     ASSERT_STREQ(v_ret[0].rawStr.c_str(),   "-\n");
-    ASSERT_STREQ(v_ret[0].val1.c_str(),      "\n");
+    ASSERT_STREQ(v_ret[0].val1.c_str(),        "");
     ASSERT_STREQ(v_ret[1].rawStr.c_str(), "  - a");
     ASSERT_STREQ(v_ret[1].val1.c_str(),       "a");
 }
@@ -334,7 +334,7 @@ TEST(yaml, _str2token_multi_list_case04){
     
     ASSERT_EQ(v_ret.size(), 2);
     ASSERT_STREQ(v_ret[0].rawStr.c_str(),  "- \n");
-    ASSERT_STREQ(v_ret[0].val1.c_str(),      "\n");
+    ASSERT_STREQ(v_ret[0].val1.c_str(),        "");
     ASSERT_STREQ(v_ret[1].rawStr.c_str(), "  - a");
     ASSERT_STREQ(v_ret[1].val1.c_str(),       "a");
 }
@@ -350,9 +350,9 @@ TEST(yaml, _str2token_multi_list_case05){
     
     ASSERT_EQ(v_ret.size(), 2);
     ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- [{\nk11: v11,\nk12:v12,\nk13:v13\n}]\n");
-    ASSERT_STREQ(v_ret[0].val1.c_str(),     "[{\nk11: v11,\nk12:v12,\nk13:v13\n}]\n");
+    ASSERT_STREQ(v_ret[0].val1.c_str(),     "[{ k11: v11, k12:v12, k13:v13 }]");
     ASSERT_STREQ(v_ret[1].rawStr.c_str(), "- [{\nk21: v21,\nk22:v22,\nk23:v23\n}]");
-    ASSERT_STREQ(v_ret[1].val1.c_str(),     "[{\nk21: v21,\nk22:v22,\nk23:v23\n}]");
+    ASSERT_STREQ(v_ret[1].val1.c_str(),     "[{ k21: v21, k22:v22, k23:v23 }]");
 }
 
 //---
@@ -377,12 +377,13 @@ TEST(yaml, comments_str){
 a # comment
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
+    sstd::printn(yml);
 
     //---
     
     sstd::terp::var ans;
     ans = "a";
+    sstd::printn(ans);
     
     //---
     

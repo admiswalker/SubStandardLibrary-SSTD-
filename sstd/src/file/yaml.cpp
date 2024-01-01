@@ -534,7 +534,36 @@ bool _parse_yaml(std::vector<struct sstd_yaml::command>& ret_vCmd, const std::ve
     return true;
 }
 bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, const std::vector<sstd_yaml::token>& v_token, const uint base_idx){
-    ;
+    
+    for(uint i=0; i<v_token.size(); ++i){
+        sstd::printn(i);
+        sstd::printn(v_token[i]);
+        const sstd_yaml::token& t = v_token[i];
+        
+        bool v1_dq, v1_sq, v2_dq, v2_sq;
+        
+        struct sstd_yaml::command c;
+        switch(t.type){
+        case sstd_yaml::num_str: {
+            c.hsc_lx          = t.hsc_lx;
+            c.hsc_hx          = t.hsc_hx;
+            c.type            = t.type; // sstd_yaml::num_str;
+            c.format          = t.format;
+            c.val1            = t.val1;
+            c.val2            = t.val2;
+            c.val1_use_quotes = t.val1_use_quotes;
+            c.val2_use_quotes = t.val2_use_quotes;
+            c.lineNum         = base_idx + i; // debug info
+            c.rawStr          = t.rawStr;     // debug info
+            
+            ret_vCmd.push_back(c);
+        } break;
+//        case sstd_yaml::num_list: {
+//        } break;
+        default: { sstd::pdbg_err("Unexpected data type\n"); } break;
+        }
+    }
+    
     return true;
 }
 
@@ -963,6 +992,51 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
         if(is_list){ tmp.type += sstd_yaml::num_list; }
         if(is_hash){ tmp.type += sstd_yaml::num_hash; }
         if(is_flow){ tmp.format = sstd_yaml::num_flow_style_base; }
+
+        //*
+        bool v1_dq, v1_sq, v2_dq, v2_sq;
+        sstd::printn(tmp.val1);
+        sstd::printn(tmp.val2);
+        if(!is_mult){
+            // remove line break codes at the tail of token
+            tmp.val1 = sstd::rstrip(tmp.val1, '\n'); // NOTE: "\r\n" is no supported
+            tmp.val2 = sstd::rstrip(tmp.val2, '\n'); // NOTE: "\r\n" is no supported
+        }
+        tmp.val1            = _extract_quotes_value(sstd::strip_quotes(v1_sq, v1_dq, tmp.val1));
+        tmp.val2            = _extract_quotes_value(sstd::strip_quotes(v2_sq, v2_dq, tmp.val2));
+        tmp.val1_use_quotes = ( v1_dq || v1_sq );
+        tmp.val2_use_quotes = ( v2_dq || v2_sq );
+        sstd::printn(tmp.val1);
+        sstd::printn(tmp.val2);
+        sstd::printn(tmp.val1.size());
+        sstd::printn(tmp.val2.size());
+        sstd::printn(tmp.val1_use_quotes);
+        sstd::printn(tmp.val2_use_quotes);
+        sstd::printn(tmp.type);
+        sstd::printn(tmp.format);
+        if(tmp.val1.size()==0 && !tmp.val1_use_quotes &&
+           tmp.val2.size()==0 && !tmp.val2_use_quotes && tmp.type==sstd_yaml::num_str){ printf("imh1002\n");continue; }
+        //*/
+        /*
+        bool v1_dq, v1_sq, v2_dq, v2_sq;
+        
+        struct sstd_yaml::command c;
+        switch(t.type){
+        case sstd_yaml::num_str: {
+            c.hsc_lx          = t.hsc_lx;
+            c.hsc_hx          = t.hsc_hx;
+            c.type            = t.type; // sstd_yaml::num_str;
+            c.format          = t.format;
+            c.val1            = _extract_quotes_value(sstd::strip_quotes(v1_sq, v1_dq, t.val1));
+            c.val2            = _extract_quotes_value(sstd::strip_quotes(v2_sq, v2_dq, t.val2));
+            c.val1_use_quotes = ( v1_dq || v1_sq );
+            c.val2_use_quotes = ( v2_dq || v2_sq );
+            c.lineNum         = base_idx + i; // debug info
+            c.rawStr          = t.rawStr;     // debug info
+            
+            ret_vCmd.push_back(c);
+        } break;
+        */
         
         ret.push_back(std::move(tmp));
     }
@@ -991,9 +1065,12 @@ bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     */
     
     std::vector<sstd_yaml::token> v_token; if(!sstd_yaml::_str2token(v_token, s)){ sstd::pdbg_err("single or double quatation is not closed\n"); return false; } // v: vector, ls: line string
-    //sstd::printn(v_token);
+    printf("--- print v_token ---\n");
+    sstd::printn(v_token);
     std::vector<struct sstd_yaml::command> v_cmd; if(!sstd_yaml::_token2cmd(v_cmd, v_token, 0)){ return false; } // NOTE: 最終的に token == cmd になるように調整するが，一旦 cmd を経由して yaml を生成できるようにする
-    //_print(v_cmd);
+    printf("--- print v_cmd ---\n");
+    sstd::printn(v_cmd.size());
+    _print(v_cmd);
     if(!_construct_var(ret_yml, v_cmd)){ return false; }
     
     return tf;
