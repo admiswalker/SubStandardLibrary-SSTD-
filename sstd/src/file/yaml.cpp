@@ -536,8 +536,8 @@ bool _parse_yaml(std::vector<struct sstd_yaml::command>& ret_vCmd, const std::ve
 bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, const std::vector<sstd_yaml::token>& v_token, const uint base_idx){
     
     for(uint i=0; i<v_token.size(); ++i){
-        sstd::printn(i);
-        sstd::printn(v_token[i]);
+//        sstd::printn(i);
+//        sstd::printn(v_token[i]);
         const sstd_yaml::token& t = v_token[i];
         
         bool v1_dq, v1_sq, v2_dq, v2_sq;
@@ -889,8 +889,8 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
     //        / Subtoken が Flow-Style 表記の開始を示す括弧 ([, {) で開始される場合は，
     //          制御文字 ("- ", ": ", '\n', "\r\n") での文字列の分割を停止します．
     // 
-    // Rule4. Detecting comments by " #" notation
-    //        / コメントは " #" 表記で判定します
+    // Rule4. Detecting comments by "#" (in head of the line) or " #" notation
+    //        / コメントは "#" (行の先頭) または " #" 表記で判定します
     // 
     // Rule5. Using line break code ('\n', "\r\n") as a control charactor
     //        excepting the case of subtoken begin from multi-line notation charactor ('|').
@@ -934,7 +934,7 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
             if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
             
             if(!in_d_quate && !in_s_quate){
-                if(str[r]==' ' && str[r+1]=='#'){
+                if((subt.size()==0 && str[r]=='#') || (str[r]==' ' && str[r+1]=='#')){
                     tmp.rawStr+=str[r]; ++r;
                     while(str[r]!='\0' && str[r]!='\n' && str[r]!='\r'){ tmp.rawStr+=str[r]; ++r; } // skip comments
                 }

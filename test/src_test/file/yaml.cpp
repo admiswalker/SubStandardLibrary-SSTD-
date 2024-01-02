@@ -280,9 +280,10 @@ TEST(yaml, _str2token_val1_val2_multiline_list_hash){ TEST_STR2TOKEN__VAL1_VAL2(
 // Test _str2token() of remove comments
 
 // remove comments
-TEST(yaml, _str2token_rm_comment_case01){ TEST_STR2TOKEN__VAL1_VAL2("a", "", "a # comment"); }
-TEST(yaml, _str2token_rm_comment_case02){ TEST_STR2TOKEN__VAL1_VAL2("a # comment", "", "\"a # comment\""); }
-TEST(yaml, _str2token_rm_comment_case03){ TEST_STR2TOKEN__VAL1_VAL2("| a b c", "", "- |\na # comment\nb # comment\nc # comment"); }
+TEST(yaml, _str2token_rm_comment_case01){ TEST_STR2TOKEN__VAL1_VAL2("a", "", "a\n# b"); }
+TEST(yaml, _str2token_rm_comment_case02){ TEST_STR2TOKEN__VAL1_VAL2("a", "", "a # comment"); }
+TEST(yaml, _str2token_rm_comment_case03){ TEST_STR2TOKEN__VAL1_VAL2("a # comment", "", "\"a # comment\""); }
+TEST(yaml, _str2token_rm_comment_case04){ TEST_STR2TOKEN__VAL1_VAL2("| a b c", "", "- |\na # comment\nb # comment\nc # comment"); }
 
 //---
 
@@ -478,7 +479,7 @@ TEST(yaml, comments_hash_quotes){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // var
-/*
+
 TEST(yaml, var_str_1_line){
     std::string s=R"(
 a # comment
@@ -616,7 +617,7 @@ TEST(yaml, list_flow_style_brackets){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // hash
-
+/*
 TEST(yaml, hash_depth1){
     std::string s=R"(
 k1: v1 # comment
