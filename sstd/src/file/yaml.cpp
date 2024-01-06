@@ -890,8 +890,8 @@ bool _construct_var_V2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
     v_hsc_hx.push_back(0);
     
     for(uint i=0; i<v_token.size(); ++i){
-        printf("\n\n--- begin token ---\n"); // for debug
-        sstd::printn(v_token[i]);                  // for debug
+        //printf("\n\n--- begin token ---\n"); // for debug
+        //sstd::printn(v_token[i]);                  // for debug
         if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
         sstd::terp::var* pVar = v_dst[v_dst.size()-1];
         sstd::terp::var& var = *pVar;
@@ -1104,6 +1104,146 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
     return sstd_yaml::_str2token(ret, str.c_str());
 }
 
+//---
+
+bool sstd_yaml::_token2json(std::string& s_json, const std::vector<sstd_yaml::token>& v_token){
+    std::vector<uint> v_hsc_lx; // v: vector, hsc: head space count, _lx: list-index.
+    std::vector<uint> v_hsc_hx; // v: vector, hsc: head space count. _hx: hash-index.
+    v_hsc_lx.push_back(0);
+    v_hsc_hx.push_back(0);
+    
+    for(uint i=0; i<v_token.size(); ++i){
+        printf("\n\n--- v_token[i] ---\n"); // for debug
+        const sstd_yaml::token& token = v_token[i];
+        sstd::printn(i);
+        sstd::printn(token);
+        
+        if(v_hsc_lx.size()==0){ sstd::pdbg_err("v_hsc_lx is out of range\n"); return false; }
+        if(v_hsc_hx.size()==0){ sstd::pdbg_err("v_hsc_hx is out of range\n"); return false; }
+        uint hsc_base_lx = v_hsc_lx[v_hsc_lx.size()-1];
+        uint hsc_base_hx = v_hsc_hx[v_hsc_hx.size()-1];
+        
+        // check indent
+        switch(token.type){
+        case sstd_yaml::num_str: {
+            // set value
+            s_json += '"'+token.val1+'"';
+        } break;
+        case sstd_yaml::num_list: {
+            // set control marker of json string
+            if      (token.hsc_lx >= hsc_base_lx){ s_json += '['; v_hsc_lx.push_back(token.hsc_lx);
+            }else if(token.hsc_lx <= hsc_base_lx){ s_json += ']'; v_hsc_lx.pop_back();
+            }
+            
+            // set value
+            s_json += '"'+token.val1+"\",";
+        } break;
+        case sstd_yaml::num_hash: {
+            // set control marker of json string
+            if      (token.hsc_hx >= hsc_base_hx){ s_json += '{'; v_hsc_hx.push_back(token.hsc_hx); 
+            }else if(token.hsc_hx <= hsc_base_hx){ s_json += '}'; v_hsc_hx.pop_back();
+            }
+            
+            // set value
+            if(token.val2.size()==0 && !token.val2_use_quotes){
+                s_json += '"'+token.val1+"\": ,";
+            }else{
+                s_json += '"'+token.val1+"\": " + '"'+token.val2+"\",";
+            }
+        } break;
+        case sstd_yaml::num_list_and_hash: {
+        } break;
+        default: { sstd::pdbg_err("Unexpected data type\n"); } break;
+        }
+
+        /*
+        switch(token.type){
+        case sstd::num_str: {
+            // list
+            if(v_cmd[i].hsc_lx > hsc_base_lx){
+                v_hsc_lx.push_back(v_cmd[i].hsc_lx);
+                --i;
+                continue;
+            }else if(v_cmd[i].hsc_lx < hsc_base_lx){
+                v_dst.pop_back();
+                v_hsc_lx.pop_back();
+                --i;
+                continue;
+            }
+        } break;
+        case sstd::num_hash_terp_var: {
+            // hash
+            if(v_cmd[i].hsc_hx > hsc_base_hx){
+                v_hsc_hx.push_back(v_cmd[i].hsc_hx); 
+                --i;
+                continue;
+            }else if(v_cmd[i].hsc_hx < hsc_base_hx){
+                v_dst.pop_back();
+                v_hsc_hx.pop_back();
+                --i;
+                continue;
+            }else if(v_cmd[i].type==sstd_yaml::num_list_and_hash){
+                v_dst.pop_back();
+                v_hsc_hx.pop_back();
+                --i;
+                continue;
+            }
+        } break;
+            */
+    }
+    /*
+    for(uint i=0; i<v_cmd.size(); ++i){
+        printf("\n\n--- begin cmd ---\n"); // for debug
+        _print(v_cmd[i]);                  // for debug
+        if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
+        sstd::terp::var* pVar = v_dst[v_dst.size()-1];
+        sstd::terp::var& var = *pVar;
+        if(v_hsc_lx.size()==0){ sstd::pdbg_err("v_hsc_lx is out of range\n"); return false; }
+        if(v_hsc_hx.size()==0){ sstd::pdbg_err("v_hsc_hx is out of range\n"); return false; }
+        uint hsc_base_lx = v_hsc_lx[v_hsc_lx.size()-1];
+        uint hsc_base_hx = v_hsc_hx[v_hsc_hx.size()-1];
+        
+        // check indent
+        switch(var.typeNum()){
+        case sstd::num_vec_terp_var: {
+            // list
+            if(v_cmd[i].hsc_lx > hsc_base_lx){
+                v_hsc_lx.push_back(v_cmd[i].hsc_lx);
+                --i;
+                continue;
+            }else if(v_cmd[i].hsc_lx < hsc_base_lx){
+                v_dst.pop_back();
+                v_hsc_lx.pop_back();
+                --i;
+                continue;
+            }
+        } break;
+        case sstd::num_hash_terp_var: {
+            // hash
+            if(v_cmd[i].hsc_hx > hsc_base_hx){
+                v_hsc_hx.push_back(v_cmd[i].hsc_hx); 
+                --i;
+                continue;
+            }else if(v_cmd[i].hsc_hx < hsc_base_hx){
+                v_dst.pop_back();
+                v_hsc_hx.pop_back();
+                --i;
+                continue;
+            }else if(v_cmd[i].type==sstd_yaml::num_list_and_hash){
+                v_dst.pop_back();
+                v_hsc_hx.pop_back();
+                --i;
+                continue;
+            }
+        } break;
+        case sstd::num_null: {} break;
+        default: { sstd::pdbg_err("Unexpected data type\n"); } break;
+        }
+    }
+    */
+    return true;
+}
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // YAML load section
 
@@ -1120,15 +1260,20 @@ bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     */
     
     std::vector<sstd_yaml::token> v_token; if(!sstd_yaml::_str2token(v_token, s)){ sstd::pdbg_err("single or double quatation is not closed\n"); return false; } // v: vector, ls: line string
-    printf("--- print v_token ---\n");
-    sstd::printn(v_token);
-    std::vector<struct sstd_yaml::command> v_cmd; if(!sstd_yaml::_token2cmd(v_cmd, v_token, 0)){ return false; } // NOTE: 最終的に token == cmd になるように調整するが，一旦 cmd を経由して yaml を生成できるようにする
-    printf("--- print v_cmd ---\n");
-    sstd::printn(v_cmd.size());
-    _print(v_cmd);
-    printf("--- begin: _construct_var() ---\n");
-    if(!_construct_var(ret_yml, v_cmd)){ return false; }
-    //if(!_construct_var_V2(ret_yml, v_token)){ return false; }
+    //printf("--- print v_token ---\n");
+    //sstd::printn(v_token);
+    //std::vector<struct sstd_yaml::command> v_cmd; if(!sstd_yaml::_token2cmd(v_cmd, v_token, 0)){ return false; } // NOTE: 最終的に token == cmd になるように調整するが，一旦 cmd を経由して yaml を生成できるようにする
+    //printf("--- print v_cmd ---\n");
+    //sstd::printn(v_cmd.size());
+    //_print(v_cmd);
+    //printf("--- begin: _construct_var() ---\n");
+    //if(!_construct_var(ret_yml, v_cmd)){ return false; }
+
+    printf("--- begin _token2json() ---\n");
+    std::string s_json; if(!sstd_yaml::_token2json(s_json, v_token)){ return false; }
+    
+    printf("--- begin _flow_style_str_to_obj() ---\n");
+    if(!_flow_style_str_to_obj(ret_yml, s_json)){ sstd::pdbg_err("_flow_style_str_to_obj() is failed\n"); return false; }
     
     return tf;
 }

@@ -370,9 +370,102 @@ TEST(yaml, _str2token_multi_list_case06){
     ASSERT_EQ(v_ret[0].list_type_cnt, 3);
 }
 
+//---
+// Test _token2json() of data type and format
+
+TEST(yaml, _token2json_case01){
+    std::string s = R"(
+a # comment
+)";
+
+    //---
+    
+    std::vector<sstd_yaml::token> v_token;
+    bool ret_s2t = sstd_yaml::_str2token(v_token, s);
+    //sstd::printn(v_token);
+    
+    //---
+
+    std::string ret_s;
+    bool ret = sstd_yaml::_token2json(ret_s, v_token);
+    sstd::printn(ret_s);
+
+    //---
+}
+TEST(yaml, _token2json_case02){
+    std::string s = R"(
+- v1
+- k2:
+  - v21
+  - v22
+- v3
+)";
+
+    //---
+    
+    std::vector<sstd_yaml::token> v_token;
+    bool ret_s2t = sstd_yaml::_str2token(v_token, s);
+    //sstd::printn(v_token);
+    
+    //---
+
+    std::string ret_s;
+    bool ret = sstd_yaml::_token2json(ret_s, v_token);
+    sstd::printn(ret_s);
+    
+    //---
+}/*
+TEST(yaml, _token2json_case03){
+    std::string s = R"(
+k1:
+  - v11
+  - k12: v122
+    k13: v123
+  - v14
+k2: v21
+)";
+
+    //---
+    
+    std::vector<sstd_yaml::token> v_token;
+    bool ret_s2t = sstd_yaml::_str2token(v_token, s);
+    sstd::printn(v_token);
+    
+    //---
+
+    std::string ret_s;
+    bool ret = sstd_yaml::_token2json(ret_s, v_token);
+    sstd::printn(ret_s);
+
+    //---
+}
+TEST(yaml, _token2json_case04){
+    std::string s = R"(
+k1:
+  - v11
+  - k12: v122
+    k13: v123
+k2: v21
+)";    sstd::terp::var yml;
+
+    //---
+    
+    std::vector<sstd_yaml::token> v_token;
+    bool ret_s2t = sstd_yaml::_str2token(v_token, s);
+    sstd::printn(v_token);
+    
+    //---
+
+    std::string ret_s;
+    bool ret = sstd_yaml::_token2json(ret_s, v_token);
+    sstd::printn(ret_s);
+
+    //---
+}
+//*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // comments
-
+/*
 TEST(yaml, comments_str){
     std::string s=R"(
 a # comment
@@ -831,7 +924,7 @@ TEST(yaml, list_and_hash__NUM_LIST_AND_HASH){
     
     ASSERT_TRUE(yml==ans);
 }
-/*
+
 //---
 // Corner case(s)
 

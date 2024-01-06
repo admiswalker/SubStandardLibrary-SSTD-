@@ -70,12 +70,13 @@ namespace sstd_yaml{
     
     bool _split_quotes_by_control_chars(std::vector<std::string>& ret, const char* str, const uint str_len);
     bool _data_type_and_format(uint& type, uint& format, uint& list_type_cnt, std::string s);
-
+    
     //---
-
+    
     bool _str2token(std::vector<sstd_yaml::token>& ret, const char* str);
     bool _str2token(std::vector<sstd_yaml::token>& ret, const std::string& str);
     bool _token2cmd(std::vector<sstd_yaml::command>& ret_vCmd, const std::vector<sstd_yaml::token>& v_token, const uint base_idx);
+    bool _token2json(std::string& s_json, const std::vector<sstd_yaml::token>& v_token);
     
     //---
 }
