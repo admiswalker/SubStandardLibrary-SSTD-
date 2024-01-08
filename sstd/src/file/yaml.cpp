@@ -1118,7 +1118,9 @@ bool sstd_yaml::_token2json(std::string& s_json, const std::vector<sstd_yaml::to
     case sstd_yaml::num_list_and_hash: {} break;
     default: { sstd::pdbg_err("Unexpected data type\n"); } break;
     }
-    
+
+    std::vector<uint> v_dst_type;
+    v_dst_type.push_back(sstd_yaml::num_null);
     std::vector<uint> v_hsc_lx; // v: vector, hsc: head space count, _lx: list-index.
     std::vector<uint> v_hsc_hx; // v: vector, hsc: head space count. _hx: hash-index.
     v_hsc_lx.push_back(0);
@@ -1130,7 +1132,9 @@ bool sstd_yaml::_token2json(std::string& s_json, const std::vector<sstd_yaml::to
         const sstd_yaml::token& token = v_token[i];
         sstd::printn(i);
         sstd::printn(token);
-        
+
+        if(v_dst_type.size()==0){ sstd::pdbg_err("v_dst_type is out of range\n"); return false; }
+        uint dst_type = v_dst_type[v_dst_type.size()-1];
         if(v_hsc_lx.size()==0){ sstd::pdbg_err("v_hsc_lx is out of range\n"); return false; }
         if(v_hsc_hx.size()==0){ sstd::pdbg_err("v_hsc_hx is out of range\n"); return false; }
         uint hsc_base_lx = v_hsc_lx[v_hsc_lx.size()-1];
@@ -1138,11 +1142,25 @@ bool sstd_yaml::_token2json(std::string& s_json, const std::vector<sstd_yaml::to
         sstd::printn(hsc_base_lx);
         sstd::printn(hsc_base_hx);
 
-        bool needs_comma=true;
-        if(token.hsc_lx < hsc_base_lx){ s_json += "]"; v_hsc_lx.pop_back(); }
-        if(token.hsc_hx < hsc_base_hx){ s_json += "}"; v_hsc_hx.pop_back(); }
-        if(token.type==sstd_yaml::num_list_and_hash && prev_type==sstd_yaml::num_list_and_hash){ s_json += "}"; v_hsc_hx.pop_back(); }
-        if(i!=0 && needs_comma){ s_json += ','; }
+        // check dst_type
+        sstd::printn(dst_type);
+        switch(dst_type){
+        case sstd_yaml::num_list: {
+            if(token.hsc_lx < hsc_base_lx){ s_json += "]"; v_hsc_lx.pop_back(); --i; continue; }
+        } break;
+        case sstd_yaml::num_hash: {
+            // hash
+            if(token.hsc_hx < hsc_base_hx){ s_json += "}"; v_hsc_hx.pop_back(); --i; continue; }
+        } break;
+        case sstd_yaml::num_null: {} break;
+        default: { sstd::pdbg_err("Unexpected data type\n"); } break;
+        }
+        
+        if(prev_type==sstd_yaml::num_list_and_hash && token.type==sstd_yaml::num_list_and_hash &&
+           token.hsc_lx==hsc_base_lx && token.hsc_hx==hsc_base_hx){
+            s_json += "},{";
+        }
+        //if(i!=0 && needs_comma){ s_json += ','; }
         
         hsc_base_lx = v_hsc_lx[v_hsc_lx.size()-1];
         hsc_base_hx = v_hsc_hx[v_hsc_hx.size()-1];
@@ -1157,7 +1175,7 @@ bool sstd_yaml::_token2json(std::string& s_json, const std::vector<sstd_yaml::to
         } break;
         case sstd_yaml::num_list: {
             // set control marker of json string
-            if      (token.hsc_lx > hsc_base_lx){ s_json += '['; v_hsc_lx.push_back(token.hsc_lx);
+            if      (token.hsc_lx > hsc_base_lx){ s_json += '['; v_hsc_lx.push_back(token.hsc_lx); v_dst_type.push_back(sstd_yaml::num_list);
 //            }else if(token.hsc_lx < hsc_base_lx){ s_json += ']'; v_hsc_lx.pop_back();
             }
             
@@ -1168,7 +1186,7 @@ bool sstd_yaml::_token2json(std::string& s_json, const std::vector<sstd_yaml::to
         } break;
         case sstd_yaml::num_hash: {
             // set control marker of json string
-            if      (token.hsc_hx > hsc_base_hx){ s_json += '{'; v_hsc_hx.push_back(token.hsc_hx); 
+            if      (token.hsc_hx > hsc_base_hx){ s_json += '{'; v_hsc_hx.push_back(token.hsc_hx); v_dst_type.push_back(sstd_yaml::num_hash);
 //            }else if(token.hsc_hx < hsc_base_hx){ s_json += '}'; v_hsc_hx.pop_back();
             }
             
@@ -1181,11 +1199,11 @@ bool sstd_yaml::_token2json(std::string& s_json, const std::vector<sstd_yaml::to
         } break;
         case sstd_yaml::num_list_and_hash: {
             // set control marker of json string
-            if      (token.hsc_lx > hsc_base_lx){ s_json += '['; v_hsc_lx.push_back(token.hsc_lx);
+            if      (token.hsc_lx > hsc_base_lx){ s_json += '['; v_hsc_lx.push_back(token.hsc_lx); v_dst_type.push_back(sstd_yaml::num_list);
 //            }else if(token.hsc_lx < hsc_base_lx){ s_json += ']'; v_hsc_lx.pop_back();
             }
             
-            if      (token.hsc_hx > hsc_base_hx){ s_json += '{'; v_hsc_hx.push_back(token.hsc_hx);
+            if      (token.hsc_hx > hsc_base_hx){ s_json += '{'; v_hsc_hx.push_back(token.hsc_hx); v_dst_type.push_back(sstd_yaml::num_hash);
 //            }else if(token.hsc_hx < hsc_base_hx){ s_json += '}'; v_hsc_hx.pop_back();
             }
             
@@ -1209,6 +1227,7 @@ bool sstd_yaml::_token2json(std::string& s_json, const std::vector<sstd_yaml::to
     case sstd_yaml::num_list_and_hash: {} break;
     default: { sstd::pdbg_err("Unexpected data type\n"); } break;
     }
+
     /*
     for(uint i=0; i<v_cmd.size(); ++i){
         printf("\n\n--- begin cmd ---\n"); // for debug

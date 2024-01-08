@@ -415,7 +415,7 @@ TEST(yaml, _token2json_list_case01){
     sstd::printn(ret_s);
     
     //---
-}/*
+}
 TEST(yaml, _token2json_hash_case01){
     std::string s = R"(
 - k1:
