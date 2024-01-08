@@ -392,13 +392,14 @@ a # comment
 
     //---
 }
-TEST(yaml, _token2json_case02){
+TEST(yaml, _token2json_list_case01){
     std::string s = R"(
 - v1
-- k2:
-  - v21
-  - v22
-- v3
+-
+  -
+    -
+      - v12
+- v2
 )";
 
     //---
@@ -415,7 +416,29 @@ TEST(yaml, _token2json_case02){
     
     //---
 }/*
-TEST(yaml, _token2json_case03){
+TEST(yaml, _token2json_hash_case01){
+    std::string s = R"(
+- k1:
+  - v11
+  - v12
+- v2
+)";
+
+    //---
+    
+    std::vector<sstd_yaml::token> v_token;
+    bool ret_s2t = sstd_yaml::_str2token(v_token, s);
+    //sstd::printn(v_token);
+    
+    //---
+
+    std::string ret_s;
+    bool ret = sstd_yaml::_token2json(ret_s, v_token);
+    sstd::printn(ret_s);
+    
+    //---
+}
+TEST(yaml, _token2json_list_and_hash_case01){
     std::string s = R"(
 k1:
   - v11
@@ -439,6 +462,30 @@ k2: v21
 
     //---
 }
+TEST(yaml, _token2json_list_and_hash_case02){
+    std::string s = R"(
+k1:
+  - k11: v111
+  - k12: v122
+    k13: v123
+k2: v21
+)";
+
+    //---
+    
+    std::vector<sstd_yaml::token> v_token;
+    bool ret_s2t = sstd_yaml::_str2token(v_token, s);
+    sstd::printn(v_token);
+    
+    //---
+
+    std::string ret_s;
+    bool ret = sstd_yaml::_token2json(ret_s, v_token);
+    sstd::printn(ret_s);
+
+    //---
+}
+/*
 TEST(yaml, _token2json_case04){
     std::string s = R"(
 k1:
