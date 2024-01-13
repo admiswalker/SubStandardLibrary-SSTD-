@@ -1110,17 +1110,7 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
 //---
 
 bool sstd_yaml::_token2json(std::string& s_json, const std::vector<sstd_yaml::token>& v_token){
-    /*
-    if(v_token.size()==0){ return true; }
-    const sstd_yaml::token& token_first = v_token[0];
-
-    switch(token_first.type){
-    case sstd_yaml::num_str: {} break; // pass
-    case sstd_yaml::num_list: { s_json += '['; } break;
-    case sstd_yaml::num_hash: { s_json += '{'; } break;
-    case sstd_yaml::num_list_and_hash: {} break;
-    default: { sstd::pdbg_err("Unexpected data type\n"); } break;
-    }*/
+    //if(v_token.size()==0){ return true; }
 
     std::vector<uint> v_dst_type;
     v_dst_type.push_back(sstd_yaml::num_null);
@@ -1218,7 +1208,6 @@ bool sstd_yaml::_token2json(std::string& s_json, const std::vector<sstd_yaml::to
         sstd::printn(s_json);
     }
     
-    //switch(token_first.type){
     for(int i=v_dst_type.size()-1; i>=1; --i){
         switch(v_dst_type[i]){
         case sstd_yaml::num_str: {} break; // pass
