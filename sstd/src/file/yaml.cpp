@@ -1110,16 +1110,17 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
 //---
 
 bool sstd_yaml::_token2json(std::string& s_json, const std::vector<sstd_yaml::token>& v_token){
+    /*
     if(v_token.size()==0){ return true; }
     const sstd_yaml::token& token_first = v_token[0];
-    
+
     switch(token_first.type){
     case sstd_yaml::num_str: {} break; // pass
     case sstd_yaml::num_list: { s_json += '['; } break;
     case sstd_yaml::num_hash: { s_json += '{'; } break;
     case sstd_yaml::num_list_and_hash: {} break;
     default: { sstd::pdbg_err("Unexpected data type\n"); } break;
-    }
+    }*/
 
     std::vector<uint> v_dst_type;
     v_dst_type.push_back(sstd_yaml::num_null);
@@ -1180,9 +1181,7 @@ bool sstd_yaml::_token2json(std::string& s_json, const std::vector<sstd_yaml::to
         } break;
         case sstd_yaml::num_list: {
             // set control marker of json string
-            if      (token.hsc_lx > hsc_base_lx){ s_json += '['; v_hsc_lx.push_back(token.hsc_lx); v_dst_type.push_back(sstd_yaml::num_list);
-//            }else if(token.hsc_lx < hsc_base_lx){ s_json += ']'; v_hsc_lx.pop_back();
-            }
+            if(token.hsc_lx > hsc_base_lx || i==0){ s_json += '['; v_hsc_lx.push_back(token.hsc_lx); v_dst_type.push_back(sstd_yaml::num_list); }
             
             // set value
             if(token.val1.size()!=0 || token.val1_use_quotes){
@@ -1191,9 +1190,7 @@ bool sstd_yaml::_token2json(std::string& s_json, const std::vector<sstd_yaml::to
         } break;
         case sstd_yaml::num_hash: {
             // set control marker of json string
-            if      (token.hsc_hx > hsc_base_hx){ s_json += '{'; v_hsc_hx.push_back(token.hsc_hx); v_dst_type.push_back(sstd_yaml::num_hash);
-//            }else if(token.hsc_hx < hsc_base_hx){ s_json += '}'; v_hsc_hx.pop_back();
-            }
+            if(token.hsc_hx > hsc_base_hx || i==0){ s_json += '{'; v_hsc_hx.push_back(token.hsc_hx); v_dst_type.push_back(sstd_yaml::num_hash); }
             
             // set value
             if(token.val2.size()==0 && !token.val2_use_quotes){
@@ -1204,13 +1201,8 @@ bool sstd_yaml::_token2json(std::string& s_json, const std::vector<sstd_yaml::to
         } break;
         case sstd_yaml::num_list_and_hash: {
             // set control marker of json string
-            if      (token.hsc_lx > hsc_base_lx){ s_json += '['; v_hsc_lx.push_back(token.hsc_lx); v_dst_type.push_back(sstd_yaml::num_list);
-//            }else if(token.hsc_lx < hsc_base_lx){ s_json += ']'; v_hsc_lx.pop_back();
-            }
-            
-            if      (token.hsc_hx > hsc_base_hx){ s_json += '{'; v_hsc_hx.push_back(token.hsc_hx); v_dst_type.push_back(sstd_yaml::num_hash);
-//            }else if(token.hsc_hx < hsc_base_hx){ s_json += '}'; v_hsc_hx.pop_back();
-            }
+            if(token.hsc_lx > hsc_base_lx || i==0){ s_json += '['; v_hsc_lx.push_back(token.hsc_lx); v_dst_type.push_back(sstd_yaml::num_list); }
+            if(token.hsc_hx > hsc_base_hx || i==0){ s_json += '{'; v_hsc_hx.push_back(token.hsc_hx); v_dst_type.push_back(sstd_yaml::num_hash); }
             
             // set value
             if(token.val2.size()==0 && !token.val2_use_quotes){
@@ -1223,66 +1215,20 @@ bool sstd_yaml::_token2json(std::string& s_json, const std::vector<sstd_yaml::to
         }
         
         prev_type = token.type;
+        sstd::printn(s_json);
     }
     
-    switch(token_first.type){
-    case sstd_yaml::num_str: {} break; // pass
-    case sstd_yaml::num_list: { s_json += ']'; } break;
-    case sstd_yaml::num_hash: { s_json += '}'; } break;
-    case sstd_yaml::num_list_and_hash: {} break;
-    default: { sstd::pdbg_err("Unexpected data type\n"); } break;
-    }
-
-    /*
-    for(uint i=0; i<v_cmd.size(); ++i){
-        printf("\n\n--- begin cmd ---\n"); // for debug
-        _print(v_cmd[i]);                  // for debug
-        if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
-        sstd::terp::var* pVar = v_dst[v_dst.size()-1];
-        sstd::terp::var& var = *pVar;
-        if(v_hsc_lx.size()==0){ sstd::pdbg_err("v_hsc_lx is out of range\n"); return false; }
-        if(v_hsc_hx.size()==0){ sstd::pdbg_err("v_hsc_hx is out of range\n"); return false; }
-        uint hsc_base_lx = v_hsc_lx[v_hsc_lx.size()-1];
-        uint hsc_base_hx = v_hsc_hx[v_hsc_hx.size()-1];
-        
-        // check indent
-        switch(var.typeNum()){
-        case sstd::num_vec_terp_var: {
-            // list
-            if(v_cmd[i].hsc_lx > hsc_base_lx){
-                v_hsc_lx.push_back(v_cmd[i].hsc_lx);
-                --i;
-                continue;
-            }else if(v_cmd[i].hsc_lx < hsc_base_lx){
-                v_dst.pop_back();
-                v_hsc_lx.pop_back();
-                --i;
-                continue;
-            }
-        } break;
-        case sstd::num_hash_terp_var: {
-            // hash
-            if(v_cmd[i].hsc_hx > hsc_base_hx){
-                v_hsc_hx.push_back(v_cmd[i].hsc_hx); 
-                --i;
-                continue;
-            }else if(v_cmd[i].hsc_hx < hsc_base_hx){
-                v_dst.pop_back();
-                v_hsc_hx.pop_back();
-                --i;
-                continue;
-            }else if(v_cmd[i].type==sstd_yaml::num_list_and_hash){
-                v_dst.pop_back();
-                v_hsc_hx.pop_back();
-                --i;
-                continue;
-            }
-        } break;
-        case sstd::num_null: {} break;
+    //switch(token_first.type){
+    for(int i=v_dst_type.size()-1; i>=1; --i){
+        switch(v_dst_type[i]){
+        case sstd_yaml::num_str: {} break; // pass
+        case sstd_yaml::num_list: { s_json += ']'; } break;
+        case sstd_yaml::num_hash: { s_json += '}'; } break;
+        case sstd_yaml::num_list_and_hash: {} break;
         default: { sstd::pdbg_err("Unexpected data type\n"); } break;
         }
     }
-    */
+
     return true;
 }
 
