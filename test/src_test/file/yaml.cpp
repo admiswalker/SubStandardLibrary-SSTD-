@@ -464,13 +464,14 @@ k2: v21
 }
 TEST(yaml, _token2json_list_and_hash_case02){
     std::string s = R"(
-k1:
-  - k11: v111
-  - k12: v122
-    k13: v123
-k2: v21
+              # hsc_lx, hsc_hx
+k1:           #      0, 0
+  - k11: v111 #      2, 4
+  - k12: v122 #      2, 4
+    k13: v123 #      4, 4
+k2: v21       #      0, 0
 )";
-
+    
     //---
     
     std::vector<sstd_yaml::token> v_token;

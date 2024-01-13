@@ -1009,6 +1009,7 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
         bool is_list=false; // is list type "- "
         bool is_hash=false; // is hash type "k: v"
         bool is_flow=false; // is flow style "[{k: v}]"
+        bool is_in_token=false;
 
         int num_of_square_brackets=0; // []
         int num_of_curly_brackets=0;  // {}
@@ -1019,7 +1020,8 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
             if(str[r]=='\\'){ is_escaped=true; tmp.rawStr+=str[r]; ++r; }
 //            if(str[r]=='\n'){ ++line_num; break; }
             if(str[r]=='\0'){ ++line_num; break; }
-            if(str[r]==' '){ ++tmp.hsc_hx; ++tmp.hsc_lx; }
+            if(str[r]!=' '){ is_in_token=true; }
+            if(str[r]==' ' && !is_in_token){ ++tmp.hsc_hx; ++tmp.hsc_lx; }
             
             if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
             if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
@@ -1139,18 +1141,21 @@ bool sstd_yaml::_token2json(std::string& s_json, const std::vector<sstd_yaml::to
         if(v_hsc_hx.size()==0){ sstd::pdbg_err("v_hsc_hx is out of range\n"); return false; }
         uint hsc_base_lx = v_hsc_lx[v_hsc_lx.size()-1];
         uint hsc_base_hx = v_hsc_hx[v_hsc_hx.size()-1];
+        sstd::printn(v_dst_type);
+        sstd::printn(v_hsc_lx);
+        sstd::printn(v_hsc_hx);
+        sstd::printn(dst_type);
         sstd::printn(hsc_base_lx);
         sstd::printn(hsc_base_hx);
-
+        
         // check dst_type
-        sstd::printn(dst_type);
         switch(dst_type){
         case sstd_yaml::num_list: {
-            if(token.hsc_lx < hsc_base_lx){ s_json += "]"; v_hsc_lx.pop_back(); --i; continue; }
+            if(token.hsc_lx < hsc_base_lx){ s_json += "]"; v_hsc_lx.pop_back(); v_dst_type.pop_back(); --i; continue; }
         } break;
         case sstd_yaml::num_hash: {
             // hash
-            if(token.hsc_hx < hsc_base_hx){ s_json += "}"; v_hsc_hx.pop_back(); --i; continue; }
+            if(token.hsc_hx < hsc_base_hx){ s_json += "}"; v_hsc_hx.pop_back(); v_dst_type.pop_back(); --i; continue; }
         } break;
         case sstd_yaml::num_null: {} break;
         default: { sstd::pdbg_err("Unexpected data type\n"); } break;
