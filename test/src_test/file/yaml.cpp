@@ -571,7 +571,7 @@ TEST(yaml, list_depth2){
     
     ASSERT_TRUE(yml==ans);
 }
-/*
+
 //---
 // Corner case(s)
 
@@ -714,7 +714,7 @@ k2:
     
     ASSERT_TRUE(yml==ans);
 }
-
+/*
 TEST(yaml, hash_with_colon_01){
     std::string s=R"(
 k:1: v:1

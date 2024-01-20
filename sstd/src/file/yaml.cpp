@@ -940,6 +940,29 @@ bool _token2var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::to
             }
         }
 
+        // list
+        if(v_token[i].hsc_lx > hsc_base_lx){
+            v_hsc_lx.push_back(v_token[i].hsc_lx);
+            --i;
+            continue;
+        }else if(v_token[i].hsc_lx < hsc_base_lx){
+            v_dst.pop_back();
+            v_hsc_lx.pop_back();
+            --i;
+            continue; // continue for multiple escape
+        }/*
+        // hash
+        if(v_token[i].hsc_hx > hsc_base_hx){
+            v_hsc_hx.push_back(v_token[i].hsc_hx);
+            --i;
+            continue;
+        }else if(v_token[i].hsc_hx < hsc_base_hx){
+            v_dst.pop_back();
+            v_hsc_hx.pop_back();
+            --i;
+            continue; // continue for multiple escape
+        }
+        */
         switch(v_token[i].format + v_token[i].type){
         case sstd_yaml::num_block_style_base + sstd_yaml::num_str: {
             if((*pVar).typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data. (String data type can only take one data.)\n"); break; }
@@ -955,11 +978,21 @@ bool _token2var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::to
             }
         } break;
         case sstd_yaml::num_block_style_base + sstd_yaml::num_hash: {
-            (*pVar)[ v_token[i].val1.c_str() ] = v_token[i].val2.c_str();
+            bool is_token_val2_null = !(v_token[i].val2.size()>=1 || v_token[i].val2_use_quotes);
+            bool is_dst_address_required = i+1<v_token.size() && v_token[i+1].hsc_hx > hsc_base_hx;
+            if(!is_token_val2_null){
+                (*pVar)[ v_token[i].val1.c_str() ] = v_token[i].val2.c_str();
+            }else if(is_dst_address_required){
+                v_dst.push_back( &((*pVar)[ v_token[i].val1.c_str() ]) );
+            }else{
+                (*pVar)[ v_token[i].val1.c_str() ];
+            }
         } break;
         default: { sstd::pdbg_err("ERROR\n"); } break;
         }
         
+        sstd::printn((*pVar)); // for debug
+        sstd::printn(ret_yml); // for debug
     }
     
     return true;
