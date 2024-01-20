@@ -528,7 +528,7 @@ TEST(yaml, list_depth1){
 - c
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
+    sstd::printn(yml);
 
     //---
     
@@ -537,7 +537,7 @@ TEST(yaml, list_depth1){
     ans[0] = "a";
     ans[1] = "b";
     ans[2] = "c";
-    //sstd::printn(ans);
+    sstd::printn(ans);
     
     //---
     
@@ -570,7 +570,7 @@ TEST(yaml, list_depth2){
     
     ASSERT_TRUE(yml==ans);
 }
-
+/*
 //---
 // Corner case(s)
 
@@ -1145,7 +1145,7 @@ k4: v4
     
     ASSERT_TRUE(yml==ans);
 }
-/*
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // ignore ! option
 

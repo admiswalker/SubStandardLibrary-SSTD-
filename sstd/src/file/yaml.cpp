@@ -927,6 +927,56 @@ bool _token2var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::to
         if(v_hsc_hx.size()==0){ sstd::pdbg_err("v_hsc_hx is out of range\n"); return false; }
         uint hsc_base_lx = v_hsc_lx[v_hsc_lx.size()-1];
         uint hsc_base_hx = v_hsc_hx[v_hsc_hx.size()-1];
+
+        // set dst type (if dst is sstd::num_null)
+        if((*pVar).typeNum()==sstd::num_null){
+            switch(v_token[i].type){
+            case sstd_yaml::num_str:           {                               } break;
+            case sstd_yaml::num_list:          { (*pVar) = sstd::terp::list(); printf("977\n"); } break;
+            case sstd_yaml::num_list_and_hash: { (*pVar) = sstd::terp::list(); printf("978\n"); } break;
+            case sstd_yaml::num_hash:          { (*pVar) = sstd::terp::hash(); printf("979\n"); } break;
+//            case NUM_FORMAT:        { sstd::pdbg_err("in NUM_FORMAT\n");                          } break;
+            default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
+            }
+        }
+
+        switch(v_token[i].format + v_token[i].type){
+        case sstd_yaml::num_block_style_base + sstd_yaml::num_str: {
+            if((*pVar).typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data. (String data type can only take one data.)\n"); break; }
+            (*pVar) = v_token[i].val1.c_str();
+        } break;
+        case sstd_yaml::num_block_style_base + sstd_yaml::num_list: {
+            (*pVar).push_back( v_token[i].val1.c_str() );
+        } break;
+        case sstd_yaml::num_block_style_base + sstd_yaml::num_hash: {
+            (*pVar)[ v_token[i].val1.c_str() ] = v_token[i].val2.c_str();
+        } break;
+        default: { sstd::pdbg_err("ERROR\n"); } break;
+        }
+        
+    }
+    
+    return true;
+}
+/*
+bool _token2var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::token>& v_token){
+    std::vector<sstd::terp::var*> v_dst;
+    std::vector<uint> v_hsc_lx; // v: vector, hsc: head space count, _lx: list-index.
+    std::vector<uint> v_hsc_hx; // v: vector, hsc: head space count. _hx: hash-index.
+    v_dst.push_back(&ret_yml);
+    v_hsc_lx.push_back(0);
+    v_hsc_hx.push_back(0);
+    
+    for(uint i=0; i<v_token.size(); ++i){
+        printf("\n\n--- begin token ---\n"); // for debug
+        sstd::printn(i);            // for debug
+        sstd::printn(v_token[i]);            // for debug
+        if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
+        sstd::terp::var* pVar = v_dst[v_dst.size()-1];
+        if(v_hsc_lx.size()==0){ sstd::pdbg_err("v_hsc_lx is out of range\n"); return false; }
+        if(v_hsc_hx.size()==0){ sstd::pdbg_err("v_hsc_hx is out of range\n"); return false; }
+        uint hsc_base_lx = v_hsc_lx[v_hsc_lx.size()-1];
+        uint hsc_base_hx = v_hsc_hx[v_hsc_hx.size()-1];
         
         // check indent
         switch((*pVar).typeNum()){
@@ -1052,7 +1102,7 @@ bool _token2var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::to
 
     return true;
 }
-
+*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // str2token section
 
