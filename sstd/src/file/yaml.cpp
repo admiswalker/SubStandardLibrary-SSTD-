@@ -737,7 +737,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml
         case sstd::num_hash_terp_var: {
             // hash
             if(v_cmd[i].hsc_hx > hsc_base_hx){
-                v_hsc_hx.push_back(v_cmd[i].hsc_hx); 
+                v_hsc_hx.push_back(v_cmd[i].hsc_hx);
                 --i;
                 continue;
             }else if(v_cmd[i].hsc_hx < hsc_base_hx){
@@ -919,6 +919,7 @@ bool _token2var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::to
     
     for(uint i=0; i<v_token.size(); ++i){
         printf("\n\n--- begin token ---\n"); // for debug
+        sstd::printn(i);            // for debug
         sstd::printn(v_token[i]);            // for debug
         if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
         sstd::terp::var* pVar = v_dst[v_dst.size()-1];
@@ -930,30 +931,38 @@ bool _token2var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::to
         // check indent
         switch((*pVar).typeNum()){
         case sstd::num_vec_terp_var: {
+            sstd::printn(v_hsc_lx);
+            sstd::printn(v_token[i].hsc_lx);
+            sstd::printn(hsc_base_lx);
             // list
             if(v_token[i].hsc_lx > hsc_base_lx){
                 v_hsc_lx.push_back(v_token[i].hsc_lx);
                 --i;
-                continue;
+                printf("938\n"); continue;
             }else if(v_token[i].hsc_lx < hsc_base_lx){
                 v_dst.pop_back();
                 v_hsc_lx.pop_back();
                 --i;
-                continue;
+                printf("943\n"); continue;
             }
         } break;
         case sstd::num_hash_terp_var: {
             // hash
+            sstd::printn(v_hsc_hx);
+            sstd::printn(v_token[i].hsc_hx);
+            sstd::printn(hsc_base_hx);
             if(v_token[i].hsc_hx > hsc_base_hx){
                 v_hsc_hx.push_back(v_token[i].hsc_hx); 
                 --i;
-                continue;
+                printf("951\n"); continue;
             }else if(v_token[i].hsc_hx < hsc_base_hx){
                 v_dst.pop_back();
                 v_hsc_hx.pop_back();
                 --i;
-                continue;
-            }else if(v_token[i].type==sstd_yaml::num_list_and_hash){
+                printf("956\n"); continue;
+            }else if((i>=1 && v_token[i-1].type==sstd_yaml::num_list_and_hash && v_token[i].type==sstd_yaml::num_list)
+                     || v_token[i].type==sstd_yaml::num_list_and_hash){
+//            }else if(v_token[i].type==sstd_yaml::num_list_and_hash){
                 v_dst.pop_back();
                 v_hsc_hx.pop_back();
                 --i;
@@ -967,18 +976,18 @@ bool _token2var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::to
         // set dst type (if dst is sstd::num_null)
         if((*pVar).typeNum()==sstd::num_null){
             switch(v_token[i].type){
-            case sstd_yaml::num_str:           {                           } break;
-            case sstd_yaml::num_list:          { (*pVar) = sstd::terp::list(); } break;
-            case sstd_yaml::num_list_and_hash: { (*pVar) = sstd::terp::list(); } break;
-            case sstd_yaml::num_hash:          { (*pVar) = sstd::terp::hash(); } break;
+            case sstd_yaml::num_str:           {                               } break;
+            case sstd_yaml::num_list:          { (*pVar) = sstd::terp::list(); printf("977\n"); } break;
+            case sstd_yaml::num_list_and_hash: { (*pVar) = sstd::terp::list(); printf("978\n"); } break;
+            case sstd_yaml::num_hash:          { (*pVar) = sstd::terp::hash(); printf("979\n"); } break;
 //            case NUM_FORMAT:        { sstd::pdbg_err("in NUM_FORMAT\n");                          } break;
             default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
             }
         }
 
         // set dst
-        bool needs_to_set_dst_list = !(v_token[i].val1.size()>=1 || v_token[i].val1_use_quotes);
-        if(v_token[i].type==sstd_yaml::num_list && needs_to_set_dst_list){
+        bool is_token_val1_null = !(v_token[i].val1.size()>=1 || v_token[i].val1_use_quotes);
+        if(v_token[i].type==sstd_yaml::num_list && is_token_val1_null){
             (*pVar).push_back( sstd::terp::list() );
             v_dst.push_back( &((*pVar)[(*pVar).size()-1]) );
             if(v_token[i].format==sstd_yaml::num_block_style_base){ continue; }
@@ -1007,15 +1016,21 @@ bool _token2var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::to
             (*pVar) = v_token[i].val1.c_str();
         } break;
         case sstd_yaml::num_block_style_base + sstd_yaml::num_list: {
+            printf("1016\n");
+            sstd::printn((uchar)sstd::num_null);
+            sstd::printn((uchar)(*pVar).typeNum());
             (*pVar).push_back( v_token[i].val1.c_str() );
+            printf("1018\n");
         } break;
-        case sstd_yaml::num_block_style_base + sstd_yaml::num_list_and_hash: {
+        case sstd_yaml::num_block_style_base + sstd_yaml::num_list_and_hash:
+            // set dst
             (*pVar).push_back( sstd::terp::hash() );
             v_dst.push_back( &((*pVar)[(*pVar).size()-1]) );
-        } break;
+            pVar = v_dst[v_dst.size()-1]; // update dst address
+            // Do NOT break and continue to the hash section
         case sstd_yaml::num_block_style_base + sstd_yaml::num_hash: {
             if(is_token_val2_null){
-                (*pVar)[ v_token[i].val1.c_str() ];
+                v_dst.push_back( &((*pVar)[ v_token[i].val1.c_str() ]) );
             }else{
                 (*pVar)[ v_token[i].val1.c_str() ] = v_token[i].val2.c_str();
             }

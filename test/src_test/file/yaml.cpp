@@ -713,7 +713,7 @@ k2:
     
     ASSERT_TRUE(yml==ans);
 }
-/*
+
 TEST(yaml, hash_with_colon_01){
     std::string s=R"(
 k:1: v:1
@@ -1046,7 +1046,7 @@ TEST(yaml, list_hash_list){ // depth3
 - c
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
+    sstd::printn(yml);
     
     //---
     
@@ -1062,7 +1062,7 @@ TEST(yaml, list_hash_list){ // depth3
     ans[2]["k2"][2] = "v23";
     ans[2]["k3"] = "v3";
     ans[3] = "c";
-    //sstd::printn(ans);
+    sstd::printn(ans);
     
     //---
     
@@ -1094,7 +1094,7 @@ k4: v4
     ans["k3"][1]["k32"] = "v321";
     ans["k3"][2] = "v33";
     ans["k4"] = "v4";
-    //sstd::printn(ans);
+    sstd::printn(ans);
     
     //---
     
@@ -1122,7 +1122,7 @@ k3:
 k4: v4
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
+    sstd::printn(yml);
 
     //---
     
@@ -1139,13 +1139,13 @@ k4: v4
     ans["k3"][1]["k32"][2] = "v323";
     ans["k3"][2] = "v33";
     ans["k4"] = "v4";
-    //sstd::printn(ans);
+    sstd::printn(ans);
     
     //---
     
     ASSERT_TRUE(yml==ans);
 }
-
+/*
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // ignore ! option
 
