@@ -416,6 +416,28 @@ TEST(yaml, _token2json_list_case01){
     
     //---
 }
+TEST(yaml, _token2json_list_case02){ // <- なんかうごいてしまう
+    std::string s = R"(
+- v1
+  - v2
+    - v3
+- v4
+)";
+
+    //---
+    
+    std::vector<sstd_yaml::token> v_token;
+    bool ret_s2t = sstd_yaml::_str2token(v_token, s);
+    //sstd::printn(v_token);
+    
+    //---
+
+    std::string ret_s;
+    bool ret = sstd_yaml::_token2json(ret_s, v_token);
+    sstd::printn(ret_s);
+    
+    //---
+}
 TEST(yaml, _token2json_hash_case01){
     std::string s = R"(
 - k1:
