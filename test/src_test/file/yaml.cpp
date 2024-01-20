@@ -714,7 +714,7 @@ k2:
     
     ASSERT_TRUE(yml==ans);
 }
-/*
+
 TEST(yaml, hash_with_colon_01){
     std::string s=R"(
 k:1: v:1
@@ -982,27 +982,33 @@ TEST(yaml, list_hash_case02){ // depth2
 
 - k1: v1
   k2: v2
+- k3:
+  k4: v4
 - c
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
+    sstd::printn(yml);
     
     //---
     
     sstd::terp::var ans;
-    ans = sstd::terp::list(4);
+    ans = sstd::terp::list(5);
     ans[0] = "a";
     ans[1] = "b";
     ans[2] = sstd::terp::hash();
     ans[2]["k1"] = "v1";
     ans[2]["k2"] = "v2";
-    ans[3] = "c";
+    ans[3] = sstd::terp::hash();
+    ans[3]["k3"];
+    ans[3]["k4"] = "v4";
+    ans[4] = "c";
+    sstd::printn(ans);
     
     //---
     
     ASSERT_TRUE(yml==ans);
 }
-
+/*
 TEST(yaml, hash_list){ // depth2
     std::string s=R"(
 k1: v1 # comment
@@ -1033,7 +1039,7 @@ k4: v4
 
 //---
 
-TEST(yaml, list_hash_list){ // depth3
+TEST(yaml, list_hash_list_case01){ // depth3
     std::string s=R"(
 - a # comment
 - b
@@ -1069,7 +1075,48 @@ TEST(yaml, list_hash_list){ // depth3
     
     ASSERT_TRUE(yml==ans);
 }
+TEST(yaml, list_hash_list_case02){ // depth3
+    std::string s=R"(
+- a # comment
+- b
 
+- k1:
+    - v11
+    - v12
+    - v13
+  k2:
+    - v21
+    - v22
+    - v23
+  k3: v3
+- c
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+    
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(4);
+    ans[0] = "a";
+    ans[1] = "b";
+    ans[2] = sstd::terp::hash();
+    ans[2]["k1"] = sstd::terp::list(3);
+    ans[2]["k1"][0] = "v11";
+    ans[2]["k1"][1] = "v12";
+    ans[2]["k2"][2] = "v13";
+    ans[2]["k2"][0] = "v21";
+    ans[2]["k2"][1] = "v22";
+    ans[2]["k2"][2] = "v23";
+    ans[2]["k3"] = "v3";
+    ans[3] = "c";
+    sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+/*
 TEST(yaml, hash_list_hash){ // depth3
     std::string s=R"(
 k1: v1 # comment
@@ -1150,7 +1197,7 @@ k4: v4
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // ignore ! option
 
-
+/*
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // TypeConversion
 
