@@ -909,6 +909,10 @@ bool _construct_var_V2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
     return true;
 }
 
+bool _token2var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::token>& v_token){
+    return true;
+}
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // str2token section
 
@@ -1107,120 +1111,6 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
     return sstd_yaml::_str2token(ret, str.c_str());
 }
 
-//---
-
-bool sstd_yaml::_token2json(std::string& s_json, const std::vector<sstd_yaml::token>& v_token){
-    //if(v_token.size()==0){ return true; }
-
-    std::vector<uint> v_dst_type;
-    v_dst_type.push_back(sstd_yaml::num_null);
-    std::vector<uint> v_hsc_lx; // v: vector, hsc: head space count, _lx: list-index.
-    std::vector<uint> v_hsc_hx; // v: vector, hsc: head space count. _hx: hash-index.
-    v_hsc_lx.push_back(0);
-    v_hsc_hx.push_back(0);
-    uint prev_type = sstd_yaml::num_null;
-    
-    for(uint i=0; i<v_token.size(); ++i){
-        printf("\n\n--- v_token[i] ---\n"); // for debug
-        const sstd_yaml::token& token = v_token[i];
-        sstd::printn(i);
-        sstd::printn(token);
-
-        if(v_dst_type.size()==0){ sstd::pdbg_err("v_dst_type is out of range\n"); return false; }
-        uint dst_type = v_dst_type[v_dst_type.size()-1];
-        if(v_hsc_lx.size()==0){ sstd::pdbg_err("v_hsc_lx is out of range\n"); return false; }
-        if(v_hsc_hx.size()==0){ sstd::pdbg_err("v_hsc_hx is out of range\n"); return false; }
-        uint hsc_base_lx = v_hsc_lx[v_hsc_lx.size()-1];
-        uint hsc_base_hx = v_hsc_hx[v_hsc_hx.size()-1];
-        sstd::printn(v_dst_type);
-        sstd::printn(v_hsc_lx);
-        sstd::printn(v_hsc_hx);
-        sstd::printn(dst_type);
-        sstd::printn(hsc_base_lx);
-        sstd::printn(hsc_base_hx);
-        
-        // check dst_type
-        switch(dst_type){
-        case sstd_yaml::num_list: {
-            if(token.hsc_lx < hsc_base_lx){ s_json += "]"; v_hsc_lx.pop_back(); v_dst_type.pop_back(); --i; continue; }
-        } break;
-        case sstd_yaml::num_hash: {
-            // hash
-            if(token.hsc_hx < hsc_base_hx){ s_json += "}"; v_hsc_hx.pop_back(); v_dst_type.pop_back(); --i; continue; }
-        } break;
-        case sstd_yaml::num_null: {} break;
-        default: { sstd::pdbg_err("Unexpected data type\n"); } break;
-        }
-        
-        if(prev_type==sstd_yaml::num_list_and_hash && token.type==sstd_yaml::num_list_and_hash &&
-           token.hsc_lx==hsc_base_lx && token.hsc_hx==hsc_base_hx){
-            s_json += "},{";
-        }
-        //if(i!=0 && needs_comma){ s_json += ','; }
-        
-        hsc_base_lx = v_hsc_lx[v_hsc_lx.size()-1];
-        hsc_base_hx = v_hsc_hx[v_hsc_hx.size()-1];
-        sstd::printn(hsc_base_lx);
-        sstd::printn(hsc_base_hx);
-        
-        // check indent
-        switch(token.type){
-        case sstd_yaml::num_str: {
-            // set value
-            s_json += '"'+token.val1+'"';
-        } break;
-        case sstd_yaml::num_list: {
-            // set control marker of json string
-            if(token.hsc_lx > hsc_base_lx || i==0){ s_json += '['; v_hsc_lx.push_back(token.hsc_lx); v_dst_type.push_back(sstd_yaml::num_list); }
-            
-            // set value
-            if(token.val1.size()!=0 || token.val1_use_quotes){
-                s_json += '"'+token.val1+"\"";
-            }
-        } break;
-        case sstd_yaml::num_hash: {
-            // set control marker of json string
-            if(token.hsc_hx > hsc_base_hx || i==0){ s_json += '{'; v_hsc_hx.push_back(token.hsc_hx); v_dst_type.push_back(sstd_yaml::num_hash); }
-            
-            // set value
-            if(token.val2.size()==0 && !token.val2_use_quotes){
-                s_json += '"'+token.val1+"\":";
-            }else{
-                s_json += '"'+token.val1+"\":" + '"'+token.val2+"\"";
-            }
-        } break;
-        case sstd_yaml::num_list_and_hash: {
-            // set control marker of json string
-            if(token.hsc_lx > hsc_base_lx || i==0){ s_json += '['; v_hsc_lx.push_back(token.hsc_lx); v_dst_type.push_back(sstd_yaml::num_list); }
-            if(token.hsc_hx > hsc_base_hx || i==0){ s_json += '{'; v_hsc_hx.push_back(token.hsc_hx); v_dst_type.push_back(sstd_yaml::num_hash); }
-            
-            // set value
-            if(token.val2.size()==0 && !token.val2_use_quotes){
-                s_json += '"'+token.val1+"\":";
-            }else{
-                s_json += '"'+token.val1+"\":" + '"'+token.val2+"\"";
-            }
-        } break;
-        default: { sstd::pdbg_err("Unexpected data type\n"); } break;
-        }
-        
-        prev_type = token.type;
-        sstd::printn(s_json);
-    }
-    
-    for(int i=v_dst_type.size()-1; i>=1; --i){
-        switch(v_dst_type[i]){
-        case sstd_yaml::num_str: {} break; // pass
-        case sstd_yaml::num_list: { s_json += ']'; } break;
-        case sstd_yaml::num_hash: { s_json += '}'; } break;
-        case sstd_yaml::num_list_and_hash: {} break;
-        default: { sstd::pdbg_err("Unexpected data type\n"); } break;
-        }
-    }
-
-    return true;
-}
-
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // YAML load section
 
@@ -1246,11 +1136,13 @@ bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     //printf("--- begin: _construct_var() ---\n");
     //if(!_construct_var(ret_yml, v_cmd)){ return false; }
 
-    printf("--- begin _token2json() ---\n");
-    std::string s_json; if(!sstd_yaml::_token2json(s_json, v_token)){ return false; }
-    
-    printf("--- begin _flow_style_str_to_obj() ---\n");
-    if(!_flow_style_str_to_obj(ret_yml, s_json)){ sstd::pdbg_err("_flow_style_str_to_obj() is failed\n"); return false; }
+    //printf("--- begin _token2json() ---\n");
+    //std::string s_json; if(!sstd_yaml::_token2json(s_json, v_token)){ return false; }
+    //
+    //printf("--- begin _flow_style_str_to_obj() ---\n");
+    //if(!_flow_style_str_to_obj(ret_yml, s_json)){ sstd::pdbg_err("_flow_style_str_to_obj() is failed\n"); return false; }
+
+    if(!_token2var(ret_yml, v_token)){ return false; }
     
     return tf;
 }
