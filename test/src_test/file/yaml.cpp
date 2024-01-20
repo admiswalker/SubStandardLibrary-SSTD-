@@ -553,7 +553,7 @@ TEST(yaml, list_depth2){
 - e
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
+    sstd::printn(yml);
 
     //---
     
@@ -565,6 +565,7 @@ TEST(yaml, list_depth2){
     ans[2][0] = "c";
     ans[2][1] = "d";
     ans[3] = "e";
+    sstd::printn(ans);
     
     //---
     

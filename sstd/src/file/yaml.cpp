@@ -946,7 +946,13 @@ bool _token2var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::to
             (*pVar) = v_token[i].val1.c_str();
         } break;
         case sstd_yaml::num_block_style_base + sstd_yaml::num_list: {
-            (*pVar).push_back( v_token[i].val1.c_str() );
+            bool is_token_val1_null = !(v_token[i].val1.size()>=1 || v_token[i].val1_use_quotes);
+            if(!is_token_val1_null){
+                (*pVar).push_back( v_token[i].val1.c_str() );
+            }else{
+                (*pVar).push_back( sstd::terp::list() );
+                v_dst.push_back( &((*pVar)[(*pVar).size()-1]) );
+            }
         } break;
         case sstd_yaml::num_block_style_base + sstd_yaml::num_hash: {
             (*pVar)[ v_token[i].val1.c_str() ] = v_token[i].val2.c_str();
