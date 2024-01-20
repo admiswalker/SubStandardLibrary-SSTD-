@@ -910,6 +910,131 @@ bool _construct_var_V2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
 }
 
 bool _token2var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::token>& v_token){
+    std::vector<sstd::terp::var*> v_dst;
+    std::vector<uint> v_hsc_lx; // v: vector, hsc: head space count, _lx: list-index.
+    std::vector<uint> v_hsc_hx; // v: vector, hsc: head space count. _hx: hash-index.
+    v_dst.push_back(&ret_yml);
+    v_hsc_lx.push_back(0);
+    v_hsc_hx.push_back(0);
+    
+    for(uint i=0; i<v_token.size(); ++i){
+        printf("\n\n--- begin token ---\n"); // for debug
+        sstd::printn(v_token[i]);            // for debug
+        if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
+        sstd::terp::var* pVar = v_dst[v_dst.size()-1];
+        if(v_hsc_lx.size()==0){ sstd::pdbg_err("v_hsc_lx is out of range\n"); return false; }
+        if(v_hsc_hx.size()==0){ sstd::pdbg_err("v_hsc_hx is out of range\n"); return false; }
+        uint hsc_base_lx = v_hsc_lx[v_hsc_lx.size()-1];
+        uint hsc_base_hx = v_hsc_hx[v_hsc_hx.size()-1];
+        
+        // check indent
+        switch((*pVar).typeNum()){
+        case sstd::num_vec_terp_var: {
+            // list
+            if(v_token[i].hsc_lx > hsc_base_lx){
+                v_hsc_lx.push_back(v_token[i].hsc_lx);
+                --i;
+                continue;
+            }else if(v_token[i].hsc_lx < hsc_base_lx){
+                v_dst.pop_back();
+                v_hsc_lx.pop_back();
+                --i;
+                continue;
+            }
+        } break;
+        case sstd::num_hash_terp_var: {
+            // hash
+            if(v_token[i].hsc_hx > hsc_base_hx){
+                v_hsc_hx.push_back(v_token[i].hsc_hx); 
+                --i;
+                continue;
+            }else if(v_token[i].hsc_hx < hsc_base_hx){
+                v_dst.pop_back();
+                v_hsc_hx.pop_back();
+                --i;
+                continue;
+            }else if(v_token[i].type==sstd_yaml::num_list_and_hash){
+                v_dst.pop_back();
+                v_hsc_hx.pop_back();
+                --i;
+                continue;
+            }
+        } break;
+        case sstd::num_null: {} break;
+        default: { sstd::pdbg_err("Unexpected data type\n"); } break;
+        }
+
+        // set dst type (if dst is sstd::num_null)
+        if((*pVar).typeNum()==sstd::num_null){
+            switch(v_token[i].type){
+            case sstd_yaml::num_str:           {                           } break;
+            case sstd_yaml::num_list:          { (*pVar) = sstd::terp::list(); } break;
+            case sstd_yaml::num_list_and_hash: { (*pVar) = sstd::terp::list(); } break;
+            case sstd_yaml::num_hash:          { (*pVar) = sstd::terp::hash(); } break;
+//            case NUM_FORMAT:        { sstd::pdbg_err("in NUM_FORMAT\n");                          } break;
+            default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
+            }
+        }
+
+        // set dst
+        bool needs_to_set_dst_list = !(v_token[i].val1.size()>=1 || v_token[i].val1_use_quotes);
+        if(v_token[i].type==sstd_yaml::num_list && needs_to_set_dst_list){
+            (*pVar).push_back( sstd::terp::list() );
+            v_dst.push_back( &((*pVar)[(*pVar).size()-1]) );
+            if(v_token[i].format==sstd_yaml::num_block_style_base){ continue; }
+        }
+        bool is_token_val2_null = !(v_token[i].val2.size()>=1 || v_token[i].val2_use_quotes);
+        bool is_next_token_required_dst_address = ((i+1)<v_token.size()) && (v_token[i+1].hsc_hx > v_token[i].hsc_hx);
+        bool needs_to_set_dst_hash = is_token_val2_null && is_next_token_required_dst_address;
+        //sstd::printn(v_token[i].val2.size());
+        //sstd::printn(v_token[i].val2_use_quotes);
+        //sstd::printn(is_token_val2_valid);
+        //sstd::printn(is_next_token_required_dst_address);
+        //sstd::printn(needs_to_set_dst_hash);
+        if((v_token[i].format + v_token[i].type)==sstd_yaml::num_block_style_base + sstd_yaml::num_hash && needs_to_set_dst_hash){
+            v_dst.push_back( &((*pVar)[v_token[i].val1.c_str()]) );
+            //pVar = v_dst[v_dst.size()-1]; // update dst address
+            if(v_token[i].format==sstd_yaml::num_block_style_base){ continue; }
+        }
+        
+        // set value
+        //sstd::printn((*pVar));
+        //sstd::printn(v_token[i].format);
+        //sstd::printn(v_token[i].type);
+        switch(v_token[i].format + v_token[i].type){
+        case sstd_yaml::num_block_style_base + sstd_yaml::num_str: {
+            if((*pVar).typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data. (String data type can only take one data.)\n"); break; }
+            (*pVar) = v_token[i].val1.c_str();
+        } break;
+        case sstd_yaml::num_block_style_base + sstd_yaml::num_list: {
+            (*pVar).push_back( v_token[i].val1.c_str() );
+        } break;
+        case sstd_yaml::num_block_style_base + sstd_yaml::num_list_and_hash: {
+            (*pVar).push_back( sstd::terp::hash() );
+            v_dst.push_back( &((*pVar)[(*pVar).size()-1]) );
+        } break;
+        case sstd_yaml::num_block_style_base + sstd_yaml::num_hash: {
+            if(is_token_val2_null){
+                (*pVar)[ v_token[i].val1.c_str() ];
+            }else{
+                (*pVar)[ v_token[i].val1.c_str() ] = v_token[i].val2.c_str();
+            }
+        } break;
+        case sstd_yaml::num_flow_style_base + sstd_yaml::num_str:
+        case sstd_yaml::num_flow_style_base + sstd_yaml::num_list:
+        case sstd_yaml::num_flow_style_base + sstd_yaml::num_hash: {
+            if(!_flow_style_str_to_obj((*pVar), v_token[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
+        } break;
+        case sstd_yaml::num_flow_style_base + sstd_yaml::num_list_and_hash: {
+            if(!_flow_style_str_to_obj((*pVar)[ v_token[i].val1.c_str() ], v_token[i].val2.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
+        } break;
+        default: { sstd::pdbg_err("ERROR\n"); } break;
+        }
+        
+        sstd::printn((*pVar)); // for debug
+        sstd::printn(ret_yml); // for debug
+    }
+
     return true;
 }
 

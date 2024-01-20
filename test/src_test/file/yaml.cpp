@@ -372,7 +372,7 @@ TEST(yaml, _str2token_multi_list_case06){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // comments
-/*
+
 TEST(yaml, comments_str){
     std::string s=R"(
 a # comment
@@ -713,6 +713,7 @@ k2:
     
     ASSERT_TRUE(yml==ans);
 }
+/*
 TEST(yaml, hash_with_colon_01){
     std::string s=R"(
 k:1: v:1
@@ -3380,4 +3381,31 @@ TEST(yaml, yaml_load_all_fp){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 //*/
+
+/*
+// 下記失敗する．
+
+TEST(yaml, list_tmp________case01){
+    std::string s=R"(
+- v1
+  - v2
+    - v3
+)";
+    sstd::terp::var yml; bool ret_tf = sstd::yaml_load(yml, s); // TEST THIS LINE
+    sstd::printn(yml);
+    ASSERT_TRUE(ret_tf);
+
+    //---
+    
+//    sstd::terp::var ans;
+//    ans = sstd::terp::hash();
+//    ans["k1"];
+//    ans["k2"];
+//    sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+*/
 EXECUTE_TESTS();
