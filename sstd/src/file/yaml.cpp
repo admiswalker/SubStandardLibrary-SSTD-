@@ -927,40 +927,64 @@ bool _token2var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::to
         if(v_hsc_hx.size()==0){ sstd::pdbg_err("v_hsc_hx is out of range\n"); return false; }
         uint hsc_base_lx = v_hsc_lx[v_hsc_lx.size()-1];
         uint hsc_base_hx = v_hsc_hx[v_hsc_hx.size()-1];
+        sstd::printn(v_hsc_lx);
+        sstd::printn(v_hsc_hx);
 
         // set dst type (if dst is sstd::num_null)
         if((*pVar).typeNum()==sstd::num_null){
             switch(v_token[i].type){
             case sstd_yaml::num_str:           {                               } break;
-            case sstd_yaml::num_list:          { (*pVar) = sstd::terp::list(); printf("977\n"); } break;
-            case sstd_yaml::num_list_and_hash: { (*pVar) = sstd::terp::list(); printf("978\n"); } break;
-            case sstd_yaml::num_hash:          { (*pVar) = sstd::terp::hash(); printf("979\n"); } break;
+            case sstd_yaml::num_list:          { (*pVar) = sstd::terp::list(); } break;
+            case sstd_yaml::num_list_and_hash: { (*pVar) = sstd::terp::list(); } break;
+            case sstd_yaml::num_hash:          { (*pVar) = sstd::terp::hash(); } break;
 //            case NUM_FORMAT:        { sstd::pdbg_err("in NUM_FORMAT\n");                          } break;
             default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
             }
         }
+        sstd::printn(v_dst.size());
+        sstd::printn((*pVar).typeNum());
 
-        // list
-        if(v_token[i].hsc_lx > hsc_base_lx){
-            v_hsc_lx.push_back(v_token[i].hsc_lx);
-            --i;
-            continue;
-        }else if(v_token[i].hsc_lx < hsc_base_lx){
-            v_dst.pop_back();
-            v_hsc_lx.pop_back();
-            --i;
-            continue; // continue for multiple escape
-        }
-        // hash
-        if(v_token[i].hsc_hx > hsc_base_hx){
-            v_hsc_hx.push_back(v_token[i].hsc_hx);
-            --i;
-            continue;
-        }else if(v_token[i].hsc_hx < hsc_base_hx){
-            //v_dst.pop_back();
-            v_hsc_hx.pop_back();
-            --i;
-            continue; // continue for multiple escape
+        // check indent
+        switch((*pVar).typeNum()){
+        case sstd::num_vec_terp_var: {
+            // list
+            if(v_token[i].hsc_lx > hsc_base_lx){
+                v_hsc_lx.push_back(v_token[i].hsc_lx);
+                --i;
+                printf("947\n"); continue;
+            }else if(v_token[i].hsc_lx < hsc_base_lx){
+                v_dst.pop_back();
+                v_hsc_lx.pop_back();
+                --i;
+                printf("952\n"); continue; // continue for multiple escape
+            }
+        } break;
+        case sstd::num_hash_terp_var: {
+            // hash
+            if(v_token[i].hsc_hx > hsc_base_hx){
+                v_hsc_hx.push_back(v_token[i].hsc_hx);
+                --i;
+                printf("958\n"); continue;
+            }else if(v_token[i].hsc_hx < hsc_base_hx){
+                v_dst.pop_back();
+                v_hsc_hx.pop_back();
+                --i;
+                printf("964\n"); continue; // continue for multiple escape
+            }else{
+                bool is_list_and_hashdst_required_pop_back =
+                    i>=1
+                    &&  v_token[i-1].type == sstd_yaml::num_list_and_hash
+                    &&( v_token[i].hsc_hx <= hsc_base_hx ||  v_token[i].hsc_lx <= hsc_base_lx );
+                if(is_list_and_hashdst_required_pop_back){
+                    v_dst.pop_back();
+                    v_hsc_hx.pop_back();
+                    --i;
+                    printf("983\n"); continue; // continue for multiple escape
+                }
+            }
+        } break;
+        case sstd::num_null: {} break;
+        default: { sstd::pdbg_err("Unexpected data type\n"); } break;
         }
         
         switch(v_token[i].format + v_token[i].type){
@@ -1006,11 +1030,15 @@ bool _token2var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::to
                 (*pVar)[(*pVar).size()-1][ v_token[i].val1.c_str() ];
             }
             
+            v_dst.push_back( &((*pVar)[(*pVar).size()-1]) );
+            /*
             if(!is_dst_address_required){
-                sstd::pdbg_err("not implimented yet");
+                //sstd::pdbg_err("not implimented yet");
+                v_dst.push_back( &((*pVar)[(*pVar).size()-1][ v_token[i].val1.c_str() ]) );
             }else{
                 v_dst.push_back( &((*pVar)[(*pVar).size()-1]) );
             }
+            */
             /*
             bool is_token_val2_null = !(v_token[i].val2.size()>=1 || v_token[i].val2_use_quotes);
             bool is_dst_hash_address_required = i+1<v_token.size() &&

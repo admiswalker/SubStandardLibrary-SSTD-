@@ -910,7 +910,7 @@ TEST(yaml, list_hash_case01_02){ // depth2
 - k2: v2
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
+    sstd::printn(yml);
     
     //---
     
@@ -920,11 +920,12 @@ TEST(yaml, list_hash_case01_02){ // depth2
     ans[0]["k1"] = "v1";
     ans[1] = sstd::terp::hash();
     ans[1]["k2"] = "v2";
+    sstd::printn(ans);
     
     //---
     
     ASSERT_TRUE(yml==ans);
-}
+}/*
 TEST(yaml, list_hash_case01_03){ // depth2
     std::string s=R"(
 - k1: v1
@@ -1008,7 +1009,7 @@ TEST(yaml, list_hash_case02){ // depth2
     
     ASSERT_TRUE(yml==ans);
 }
-/*
+
 TEST(yaml, hash_list){ // depth2
     std::string s=R"(
 k1: v1 # comment
@@ -1019,7 +1020,7 @@ k3:
 k4: v4
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
+    sstd::printn(yml);
 
     //---
     
@@ -1031,6 +1032,7 @@ k4: v4
     ans["k3"][0] = "v31";
     ans["k3"][1] = "v32";
     ans["k4"] = "v4";
+    sstd::printn(ans);
     
     //---
     
@@ -1077,19 +1079,20 @@ TEST(yaml, list_hash_list_case01){ // depth3
 }
 TEST(yaml, list_hash_list_case02){ // depth3
     std::string s=R"(
-- a # comment
-- b
+          # hsc_lx, hsc_hx
+- a       #      0, 2
+- b       #      0, 2
 
-- k1:
-    - v11
-    - v12
-    - v13
-  k2:
-    - v21
-    - v22
-    - v23
-  k3: v3
-- c
+- k1:     #      0, 2
+    - v11 #      4, 4
+    - v12 #      4, 4
+    - v13 #      4, 4
+  k2:     #      2, 2
+    - v21 #      4, 4
+    - v22 #      4, 4
+    - v23 #      4, 4
+  k3: v3  #      2, 2
+- c       #      0, 2
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     sstd::printn(yml);
