@@ -970,18 +970,19 @@ bool _token2var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::to
                 v_hsc_hx.pop_back();
                 --i;
                 printf("964\n"); continue; // continue for multiple escape
-            }else{
+            }/*else{
                 bool is_list_and_hashdst_required_pop_back =
                     i>=1
                     &&  v_token[i-1].type == sstd_yaml::num_list_and_hash
                     &&( v_token[i].hsc_hx <= hsc_base_hx ||  v_token[i].hsc_lx <= hsc_base_lx );
+                sstd::printn(is_list_and_hashdst_required_pop_back);
                 if(is_list_and_hashdst_required_pop_back){
                     v_dst.pop_back();
                     v_hsc_hx.pop_back();
                     --i;
                     printf("983\n"); continue; // continue for multiple escape
                 }
-            }
+            }*/
         } break;
         case sstd::num_null: {} break;
         default: { sstd::pdbg_err("Unexpected data type\n"); } break;

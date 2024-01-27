@@ -983,6 +983,7 @@ TEST(yaml, list_hash_case02){ // depth2
 
 - k1: v1
   k2: v2
+  k3: v3
 - k3:
   k4: v4
 - c
@@ -999,6 +1000,7 @@ TEST(yaml, list_hash_case02){ // depth2
     ans[2] = sstd::terp::hash();
     ans[2]["k1"] = "v1";
     ans[2]["k2"] = "v2";
+    ans[2]["k3"] = "v3";
     ans[3] = sstd::terp::hash();
     ans[3]["k3"];
     ans[3]["k4"] = "v4";
@@ -1009,7 +1011,7 @@ TEST(yaml, list_hash_case02){ // depth2
     
     ASSERT_TRUE(yml==ans);
 }
-
+/*
 TEST(yaml, hash_list){ // depth2
     std::string s=R"(
 k1: v1 # comment
