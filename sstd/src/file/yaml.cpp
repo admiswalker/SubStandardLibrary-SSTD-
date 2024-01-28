@@ -88,6 +88,7 @@ void sstd::print_for_vT(const sstd_yaml::token& rhs){
     printf("    line_num_end: %d\n", rhs.line_num_end);         \
     printf("    rawStr: %s", rhs.rawStr.c_str());               \
     printf("command:\n");                                       \
+    printf("    ope: %d\n", rhs.ope);                           \
     printf("    hsc: %d\n", rhs.hsc);                           \
     printf("    type: %d\n", rhs.type);                         \
     printf("    format: %d\n", rhs.format);                     \
@@ -558,9 +559,9 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
     for(uint i=0; i<v_token.size(); ++i){
         const sstd_yaml::token& t = v_token[i];
         
-        printf("------\n");
-        sstd::printn(i);
-        sstd::printn(t);
+//        printf("------\n");
+//        sstd::printn(i);
+//        sstd::printn(t);
         
         struct sstd_yaml::command_v2 c;
         switch(t.type){
@@ -578,7 +579,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
             ret_vCmd.push_back(c);
         } break;
         case sstd_yaml::num_list: {
-            for(uint ti=0; ti<t.list_type_cnt-1; ++ti){ // for multiple list. ex: "- - a".
+            for(uint ti=0; ti<t.list_type_cnt; ++ti){ // for multiple list. ex: "- - a".
                 // --- debug info ---
                 c.line_num_begin  = t.line_num_begin;
                 c.line_num_end    = t.line_num_end;
@@ -634,7 +635,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
             }
         } break;
         case sstd_yaml::num_list_and_hash:{
-            for(uint ti=0; ti<t.list_type_cnt-1; ++ti){ // for multiple list-hash. ex: "- - k1: v1".
+            for(uint ti=0; ti<t.list_type_cnt; ++ti){ // for multiple list-hash. ex: "- - k1: v1".
                 // --- debug info ---
                 c.line_num_begin  = t.line_num_begin;
                 c.line_num_end    = t.line_num_end;

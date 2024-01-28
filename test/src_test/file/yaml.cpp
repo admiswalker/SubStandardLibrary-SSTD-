@@ -395,15 +395,33 @@ TEST(yaml, _token2cmd_usual_cases){
     std::vector<sstd_yaml::command_v2> ret_v_cmd;
     bool ret = false;
     ret = sstd_yaml::_str2token(ret_v_token, s);
+    printf("------------------------------------------------------\n");
+    sstd::printn(ret_v_token);
     ret = sstd_yaml::_token2cmd(ret_v_cmd, ret_v_token);
+    printf("------------------------------------------------------\n");
     sstd::printn(ret_v_cmd);
+    printf("------------------------------------------------------\n");
+
+    //- k1: v11
+    //-
+    ASSERT_EQ(ret_v_cmd[0].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[0].hsc, 0);
+    ASSERT_EQ(ret_v_cmd[0].type, sstd_yaml::num_list);
+    ASSERT_EQ(ret_v_cmd[0].format, sstd_yaml::num_block_style_base);
+    // k1:
+    ASSERT_EQ(ret_v_cmd[1].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[1].hsc, 2);
+    ASSERT_EQ(ret_v_cmd[1].type, sstd_yaml::num_hash);
+    ASSERT_EQ(ret_v_cmd[1].format, sstd_yaml::num_block_style_base);
+    ASSERT_STREQ(ret_v_cmd[1].val.c_str(), "k1");
+
     
 //    ASSERT_EQ(v_ret.size(), 1);
 //    ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- - - a");
 //    ASSERT_STREQ(v_ret[0].val1.c_str(),         "a");
 //    ASSERT_EQ(v_ret[0].list_type_cnt, 3);
 
-    ASSERT_TRUE(false);
+//    ASSERT_TRUE(false);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
