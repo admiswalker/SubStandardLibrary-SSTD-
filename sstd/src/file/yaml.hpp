@@ -12,7 +12,16 @@
 namespace sstd_yaml{
 
     //---
+    // operation definition
+    
+    const static uchar ope_null   = 255;
+    const static uchar ope_alloc  = 0; // allocate
+    const static uchar ope_assign = 0; // assignemnt
+
+    //---
     // type definition
+
+    // TODO: num_ -> type_ に名前を置換する
     
     const static uchar num_null = 255;
     const static uchar num_block_style_base = 0;
@@ -35,7 +44,7 @@ namespace sstd_yaml{
         uint line_num_end   = 1;                       // endding line number (for multipleline)
         std::string rawStr;                            // A raw string splitted by line concering the YAML processing units.
         
-        // Data for load YAML
+        // Data structure to load YAML
         //uint type = sstd_yaml::num_null; // sstd_yaml::num_str;                // A destination type number of this line
         uint type = sstd_yaml::num_str;                // A destination type number of this line
         uint format = sstd_yaml::num_block_style_base; // If containing flow style notation
@@ -62,6 +71,19 @@ namespace sstd_yaml{
         uint lineNum;
         std::string rawStr;
     };
+    struct command_v2{
+        // Data for Debug YAML parsing
+        uint line_num_begin = 1;                       // beginning line number
+        uint line_num_end   = 1;                       // endding line number (for multipleline)
+        std::string rawStr;                            // A raw string splitted by line concering the YAML processing units.
+
+        // Data structure to construct YAML
+        uint ope; // operation
+        uint hsc; // hsc: head space count
+        uint8 type; // data type
+        uint8 format; // data format
+        std::string val; // value
+    };
 
     //---
 
@@ -75,7 +97,7 @@ namespace sstd_yaml{
     
     bool _str2token(std::vector<sstd_yaml::token>& ret, const char* str);
     bool _str2token(std::vector<sstd_yaml::token>& ret, const std::string& str);
-    bool _token2cmd(std::vector<sstd_yaml::command>& ret_vCmd, const std::vector<sstd_yaml::token>& v_token, const uint base_idx);
+    bool _token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, const std::vector<sstd_yaml::token>& v_token);
     bool _token2json(std::string& s_json, const std::vector<sstd_yaml::token>& v_token);
     
     //---
@@ -87,6 +109,10 @@ namespace sstd{
     void print(const sstd_yaml::token& rhs);
     void for_printn(const sstd_yaml::token& rhs);
     void print_for_vT(const sstd_yaml::token& rhs);
+    
+    void print(const sstd_yaml::command_v2& rhs);
+    void for_printn(const sstd_yaml::command_v2& rhs);
+    void print_for_vT(const sstd_yaml::command_v2& rhs);
     
     bool yaml_load     (           sstd::terp::var & ret_yml,  const        char* s);
     bool yaml_load     (           sstd::terp::var & ret_yml,  const std::string& s);

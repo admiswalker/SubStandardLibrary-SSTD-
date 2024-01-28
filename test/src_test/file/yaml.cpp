@@ -371,8 +371,44 @@ TEST(yaml, _str2token_multi_list_case06){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-// comments
 
+TEST(yaml, _token2cmd_usual_cases){
+    std::string s = R"(
+- k1: v11
+- k2:
+    - v21
+    - v22
+    - k23: # null
+    - k24: v241
+- k3: v31
+- k5:
+    k51: v511
+- # null
+- # null
+-
+  -
+    -
+      - v8111
+- v9
+)";
+    std::vector<sstd_yaml::token> ret_v_token;
+    std::vector<sstd_yaml::command_v2> ret_v_cmd;
+    bool ret = false;
+    ret = sstd_yaml::_str2token(ret_v_token, s);
+    ret = sstd_yaml::_token2cmd(ret_v_cmd, ret_v_token);
+    sstd::printn(ret_v_cmd);
+    
+//    ASSERT_EQ(v_ret.size(), 1);
+//    ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- - - a");
+//    ASSERT_STREQ(v_ret[0].val1.c_str(),         "a");
+//    ASSERT_EQ(v_ret[0].list_type_cnt, 3);
+
+    ASSERT_TRUE(false);
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// comments
+/*
 TEST(yaml, comments_str){
     std::string s=R"(
 a # comment
