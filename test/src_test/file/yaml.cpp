@@ -454,10 +454,33 @@ TEST(yaml, _token2cmd_usual_cases){
     ASSERT_EQ(ret_v_cmd[8].type, sstd_yaml::num_str);
     ASSERT_EQ(ret_v_cmd[8].format, sstd_yaml::num_block_style_base);
     ASSERT_STREQ(ret_v_cmd[8].val.c_str(), "v22");
+    // -
+    ASSERT_EQ(ret_v_cmd[9].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[9].hsc, 2);
+    ASSERT_EQ(ret_v_cmd[9].type, sstd_yaml::num_list);
+    // k23:
+    ASSERT_EQ(ret_v_cmd[10].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[10].hsc, 4);
+    ASSERT_EQ(ret_v_cmd[10].type, sstd_yaml::num_hash);
+    ASSERT_STREQ(ret_v_cmd[10].val.c_str(), "k23");
+    // -
+    ASSERT_EQ(ret_v_cmd[11].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[11].hsc, 2);
+    ASSERT_EQ(ret_v_cmd[11].type, sstd_yaml::num_list);
+    // k24:
+    ASSERT_EQ(ret_v_cmd[12].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[12].hsc, 4);
+    ASSERT_EQ(ret_v_cmd[12].type, sstd_yaml::num_hash);
+    ASSERT_STREQ(ret_v_cmd[12].val.c_str(), "k24");
+    // v241
+    ASSERT_EQ(ret_v_cmd[13].ope, sstd_yaml::ope_assign);
+    ASSERT_EQ(ret_v_cmd[13].type, sstd_yaml::num_str);
+    ASSERT_EQ(ret_v_cmd[13].format, sstd_yaml::num_block_style_base);
+    ASSERT_STREQ(ret_v_cmd[13].val.c_str(), "v241");
     
     //---
     
-//    ASSERT_TRUE(false);
+    ASSERT_TRUE(false);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
