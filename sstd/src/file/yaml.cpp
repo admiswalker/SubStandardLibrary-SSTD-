@@ -939,98 +939,50 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml
 
     return true;
 }
-bool _update_dst(sstd::terp::var*& pVar, std::vector<sstd::terp::var*>& v_dst, const struct sstd_yaml::token& token){
-    sstd::terp::var& var = *pVar;
-    
-    // set dst type (if dst is sstd::num_null)
-    if(var.typeNum()==sstd::num_null){
-        switch(token.type){
-        case sstd_yaml::num_str:           {                               } break;
-        case sstd_yaml::num_list:          { (*pVar) = sstd::terp::list(); } break;
-        case sstd_yaml::num_list_and_hash: { (*pVar) = sstd::terp::list(); } break;
-        case sstd_yaml::num_hash:          { (*pVar) = sstd::terp::hash(); } break;
-            //            case NUM_FORMAT:        { sstd::pdbg_err("in NUM_FORMAT\n");                          } break;
-        default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
-        }
-    }
-
-    // set dst
-    switch(token.format + token.type){
-//    case sstd_yaml::num_block_style_base + sstd_yaml::num_str: {
-//        if(var.typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data. (String data type can only take one data.)\n"); break; }
-//        var = v_cmd[i].val1.c_str();
-//    } break;
-    case sstd_yaml::num_block_style_base + sstd_yaml::num_list: {
-        var.push_back( token.val1.c_str() );
-        pVar = v_dst[v_dst.size()-1]; // update dst
-    } break;
-    case sstd_yaml::num_block_style_base + sstd_yaml::num_list_and_hash: {
-        var.push_back( sstd::terp::hash() );
-        v_dst.push_back( &var[var.size()-1] );
-        pVar = v_dst[v_dst.size()-1]; // update dst
-    } break;
-//    case sstd_yaml::num_block_style_base + sstd_yaml::num_hash: {
-//        var[ v_cmd[i].val1.c_str() ] = v_cmd[i].val2.c_str();
-//    } break;
-    case sstd_yaml::num_flow_style_base + sstd_yaml::num_str:
-    case sstd_yaml::num_flow_style_base + sstd_yaml::num_list:
-//    case sstd_yaml::num_flow_style_base + sstd_yaml::num_hash: {
-//        if(!_flow_style_str_to_obj(var_io, v_cmd[i].val1.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
-//    } break;
-//    case sstd_yaml::num_flow_style_base + sstd_yaml::num_list_and_hash: {
-//        if(!_flow_style_str_to_obj(var_io[ v_cmd[i].val1.c_str() ], v_cmd[i].val2.c_str())){ sstd::pdbg_err("Converting flow style string to object is failed."); return false; }
-//    } break;
-    default: {} break;
-    }
-
-    return true;
-}
-void _update_val(sstd::terp::var*& pVar, std::vector<sstd::terp::var*>& v_dst, const struct sstd_yaml::token& token){
-    sstd::terp::var& var = *pVar;
-    
-    switch(token.format + token.type){
-    case sstd_yaml::num_block_style_base + sstd_yaml::num_str: {
-        if(var.typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data. (String data type can only take one data.)\n"); break; }
-        var = token.val1.c_str();
-    } break;
-    case sstd_yaml::num_block_style_base + sstd_yaml::num_hash:
-    case sstd_yaml::num_block_style_base + sstd_yaml::num_list_and_hash: {
-        if(token.val2.size()==0 && !token.val2_use_quotes){
-            var[ token.val1.c_str() ];
-        }else{
-            var[ token.val1.c_str() ] = token.val2.c_str();
-        }
-    } break;
-    }
-}/*
 bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::command_v2>& v_cmd){
-    std::vector<sstd::terp::var*> v_dst;
-    std::vector<uint> v_hsc_lx; // v: vector, hsc: head space count, _lx: list-index.
-    std::vector<uint> v_hsc_hx; // v: vector, hsc: head space count. _hx: hash-index.
+    std::vector<sstd::terp::var*> v_dst; // v: vector, dst: destination address
+    std::vector<uint> v_hsc; // v: vector, hsc: head space count
     v_dst.push_back(&ret_yml);
-    v_hsc_lx.push_back(0);
-    v_hsc_hx.push_back(0);
+    v_hsc.push_back(0);
     
     for(uint i=0; i<v_cmd.size(); ++i){
-        //printf("\n\n--- begin token ---\n"); // for debug
-        //sstd::printn(v_token[i]);                  // for debug
+        printf("\n\n--- begin token ---\n"); // for debug
+        sstd::printn(v_cmd[i]);              // for debug
         if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
+        const struct sstd_yaml::command_v2& cmd = v_cmd[i];
         sstd::terp::var* pVar = v_dst[v_dst.size()-1];
         sstd::terp::var& var = *pVar;
-        if(v_hsc_lx.size()==0){ sstd::pdbg_err("v_hsc_lx is out of range\n"); return false; }
-        if(v_hsc_hx.size()==0){ sstd::pdbg_err("v_hsc_hx is out of range\n"); return false; }
-        uint hsc_base_lx = v_hsc_lx[v_hsc_lx.size()-1];
-        uint hsc_base_hx = v_hsc_hx[v_hsc_hx.size()-1];
+        //if(v_hsc_lx.size()==0){ sstd::pdbg_err("v_hsc_lx is out of range\n"); return false; }
+        //if(v_hsc_hx.size()==0){ sstd::pdbg_err("v_hsc_hx is out of range\n"); return false; }
+        //uint hsc_base_lx = v_hsc_lx[v_hsc_lx.size()-1];
+        //uint hsc_base_hx = v_hsc_hx[v_hsc_hx.size()-1];
         
-        _update_dst(pVar, v_dst, v_token[i]);
-        _update_val(pVar, v_dst, v_token[i]);
+        if(cmd.ope==sstd_yaml::ope_assign){
+            var = cmd.val;
+        }else if(cmd.ope==sstd_yaml::ope_alloc){
+            if(var.typeNum()==sstd::num_null){
+                switch(cmd.type){
+//                case sstd_yaml::num_str:           {                           } break;
+                case sstd_yaml::num_list:          { var = sstd::terp::list(); } break;
+                case sstd_yaml::num_hash:          { var = sstd::terp::hash(); } break;
+                default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
+                }
+            }
+            switch(cmd.type){
+//            case sstd_yaml::num_str:           {                           } break;
+            case sstd_yaml::num_list:          { var.push_back(); v_dst.push_back(&var[var.size()-1]); } break;
+            case sstd_yaml::num_hash:          { v_dst.push_back(&var[cmd.val]); } break;
+            default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
+            }
+        }else{
+            
+        }
         
         sstd::printn(var); // for debug
         sstd::printn(ret_yml); // for debug
     }
     return true;
 }
-*/
 bool _token2var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::token>& v_token){
     std::vector<sstd::terp::var*> v_dst;
     std::vector<uint> v_hsc_lx; // v: vector, hsc: head space count, _lx: list-index.
@@ -1546,8 +1498,7 @@ bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     
     std::vector<sstd_yaml::token> v_token; if(!sstd_yaml::_str2token(v_token, s)){ sstd::pdbg_err("single or double quatation is not closed\n"); return false; } // v: vector, ls: line string
     std::vector<struct sstd_yaml::command_v2> v_cmd; if(!sstd_yaml::_token2cmd(v_cmd, v_token)){ return false; }
-    //sstd::printn(v_cmd);
-    //if(!_construct_var_v2(ret_yml, v_cmd)){ return false; }
+    if(!_construct_var_v2(ret_yml, v_cmd)){ return false; }
     
     return tf;
 }

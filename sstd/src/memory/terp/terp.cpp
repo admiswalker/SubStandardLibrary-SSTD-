@@ -126,6 +126,11 @@ sstd::terp::var sstd::terp::list(){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// sstd::terp::null
+
+sstd::terp::var sstd::terp::null(){ return sstd::terp::var(); }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 // type check
 
 bool sstd::terp::isHash (const sstd::terp::var& rhs){
@@ -378,7 +383,7 @@ bool sstd::terp::var::operator!=(const sstd::terp::var& rhs){ return !_is_equal(
     default: { sstd::pdbg_err("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var takes \"sstd::terp::hash()\" type, but treat as a \"sstd::terp::list()\".\n"); } break; \
     }                                                                   \
     return *this;
-#define _OPE_SUBSCRIPT_KEY_BASE()                                       \
+#define _OPE_SUBSCRIPT_KEY_BASE(pKey)                                   \
     switch(_type){                                                      \
     case sstd::num_hash_terp_var: { return _CAST2HASH(_p)[pKey]; } break; \
     default: { sstd::pdbg_err("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var takes \"sstd::terp::list()\" type, but treat as a \"sstd::terp::hash()\".\n"); } break; \
@@ -386,8 +391,10 @@ bool sstd::terp::var::operator!=(const sstd::terp::var& rhs){ return !_is_equal(
     return *this;
       sstd::terp::var& sstd::terp::var::operator[](const   int  idx)       { _OPE_SUBSCRIPT_IDX_BASE(); }
 const sstd::terp::var& sstd::terp::var::operator[](const   int  idx) const { _OPE_SUBSCRIPT_IDX_BASE(); }
-      sstd::terp::var& sstd::terp::var::operator[](const char* pKey)       { _OPE_SUBSCRIPT_KEY_BASE(); }
-const sstd::terp::var& sstd::terp::var::operator[](const char* pKey) const { _OPE_SUBSCRIPT_KEY_BASE(); }
+      sstd::terp::var& sstd::terp::var::operator[](const       char* pKey)       { _OPE_SUBSCRIPT_KEY_BASE(pKey); }
+const sstd::terp::var& sstd::terp::var::operator[](const       char* pKey) const { _OPE_SUBSCRIPT_KEY_BASE(pKey); }
+      sstd::terp::var& sstd::terp::var::operator[](const std::string  key)       { _OPE_SUBSCRIPT_KEY_BASE(key.c_str()); }
+const sstd::terp::var& sstd::terp::var::operator[](const std::string  key) const { _OPE_SUBSCRIPT_KEY_BASE(key.c_str()); }
 
 //---
 
@@ -481,6 +488,11 @@ void sstd::terp::var::pop_back(){
     return;
 }
 
+void sstd::terp::var::push_back(){ // push_back null
+    NULL_CHECK(_p);
+    if(_type!=sstd::num_vec_terp_var){ sstd::pdbg_err("push_back(char*) is failed. Unexpedted data type. This function requires sstd::num_vec_terp_var type, but takes %s type.\n", sstd::typeNum2str(this->_type).c_str()); return; }
+    _CAST2VEC(_p).push_back(sstd::terp::null());
+}
 void sstd::terp::var::push_back(const char* pRhs){
     NULL_CHECK(_p);
     if(_type!=sstd::num_vec_terp_var){ sstd::pdbg_err("push_back(char*) is failed. Unexpedted data type. This function requires sstd::num_vec_terp_var type, but takes %s type.\n", sstd::typeNum2str(this->_type).c_str()); return; }

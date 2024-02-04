@@ -25,6 +25,9 @@ namespace sstd::terp{
     // list
     var list(uint allocate_size);
     var list();
+
+    // null
+    var null();
     
     // type check
     bool isHash (const sstd::terp::var& rhs);
@@ -111,8 +114,10 @@ public:
 
           var& operator[](const int idx);
     const var& operator[](const int idx) const;
-          var& operator[](const char* pKey);
-    const var& operator[](const char* pKey) const;
+          var& operator[](const       char* pKey);
+    const var& operator[](const       char* pKey) const;
+          var& operator[](const std::string  key);
+    const var& operator[](const std::string  key) const;
     
     sstd::terp::iterator begin() const;
     sstd::terp::iterator end  () const;
@@ -149,6 +154,7 @@ public:
 
     void pop_back();
 
+    void push_back(); // push_back null
     void push_back(const char* pRhs);
     void push_back(const sstd::terp::var&  rhs);
     void push_back(      sstd::terp::var&& rhs);

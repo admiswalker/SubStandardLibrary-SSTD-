@@ -395,12 +395,12 @@ TEST(yaml, _token2cmd_usual_cases){
     std::vector<sstd_yaml::command_v2> ret_v_cmd;
     bool ret = false;
     ret = sstd_yaml::_str2token(ret_v_token, s);
-    printf("------------------------------------------------------\n");
-    sstd::printn(ret_v_token);
+    //printf("------------------------------------------------------\n");
+    //sstd::printn(ret_v_token);
     ret = sstd_yaml::_token2cmd(ret_v_cmd, ret_v_token);
-    printf("------------------------------------------------------\n");
-    sstd::printn(ret_v_cmd);
-    printf("------------------------------------------------------\n");
+    //printf("------------------------------------------------------\n");
+    //sstd::printn(ret_v_cmd);
+    //printf("------------------------------------------------------\n");
 
     // -
     ASSERT_EQ(ret_v_cmd[0].ope, sstd_yaml::ope_alloc);
@@ -551,7 +551,7 @@ TEST(yaml, _token2cmd_usual_cases){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // comments
-/*
+
 TEST(yaml, comments_str){
     std::string s=R"(
 a # comment
@@ -658,7 +658,7 @@ TEST(yaml, comments_hash_quotes){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // var
-
+/*
 TEST(yaml, var_str_1_line){
     std::string s=R"(
 a # comment
