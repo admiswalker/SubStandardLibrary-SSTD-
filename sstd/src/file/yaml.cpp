@@ -952,30 +952,53 @@ bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
         const struct sstd_yaml::command_v2& cmd = v_cmd[i];
         sstd::terp::var* pVar = v_dst[v_dst.size()-1];
         sstd::terp::var& var = *pVar;
-        //if(v_hsc_lx.size()==0){ sstd::pdbg_err("v_hsc_lx is out of range\n"); return false; }
-        //if(v_hsc_hx.size()==0){ sstd::pdbg_err("v_hsc_hx is out of range\n"); return false; }
-        //uint hsc_base_lx = v_hsc_lx[v_hsc_lx.size()-1];
-        //uint hsc_base_hx = v_hsc_hx[v_hsc_hx.size()-1];
+        if(v_hsc.size()==0){ sstd::pdbg_err("v_hsc is out of range\n"); return false; }
+        uint hsc_base = v_hsc[v_hsc.size()-1];
+        sstd::printn(v_dst);              // for debug
+        sstd::printn(v_hsc);              // for debug
         
+        // check indent
+        //if(cmd.hsc > hsc_base){
+            //v_hsc.push_back(cmd.hsc);
+            //--i;
+            //printf("947\n"); continue;
+        //}else if(cmd.hsc < hsc_base){
+        //if(cmd.hsc < hsc_base){
+        //    v_dst.pop_back();
+        //    v_hsc.pop_back();
+        //    --i;
+        //    printf("952\n"); continue; // continue for multiple escape
+        //}
+        
+        // set value or allocate dst
         if(cmd.ope==sstd_yaml::ope_assign){
+            if(var.typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data.\n"); return false; }
             var = cmd.val;
+            if(v_dst.size()>=2){ v_dst.pop_back(); }
         }else if(cmd.ope==sstd_yaml::ope_alloc){
             if(var.typeNum()==sstd::num_null){
                 switch(cmd.type){
-//                case sstd_yaml::num_str:           {                           } break;
-                case sstd_yaml::num_list:          { var = sstd::terp::list(); } break;
-                case sstd_yaml::num_hash:          { var = sstd::terp::hash(); } break;
+                case sstd_yaml::num_list: { var = sstd::terp::list(); } break;
+                case sstd_yaml::num_hash: { var = sstd::terp::hash(); } break;
                 default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
                 }
             }
             switch(cmd.type){
-//            case sstd_yaml::num_str:           {                           } break;
-            case sstd_yaml::num_list:          { var.push_back(); v_dst.push_back(&var[var.size()-1]); } break;
-            case sstd_yaml::num_hash:          { v_dst.push_back(&var[cmd.val]); } break;
+            case sstd_yaml::num_list: {
+                var.push_back();
+                v_dst.push_back(&var[var.size()-1]);
+                //v_hsc.push_back(cmd.hsc);
+            } break;
+            case sstd_yaml::num_hash: {
+                auto itr = var.find(cmd.val);
+                if(itr!=var.end()){ sstd::pdbg_err("Detecting the duplicated hash key.\n"); return false; }
+                v_dst.push_back(&var[cmd.val]);
+                //v_hsc.push_back(cmd.hsc);
+            } break;
             default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
             }
         }else{
-            
+            sstd::pdbg_err("Unexpected data type\n"); return false;
         }
         
         sstd::printn(var); // for debug

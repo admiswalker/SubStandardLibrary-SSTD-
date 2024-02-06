@@ -474,6 +474,9 @@ sstd::terp::iterator sstd::terp::var::find(const char* pKey) const {
     }
     return sstd::terp::iterator();
 }
+sstd::terp::iterator sstd::terp::var::find(const std::string  key) const {
+    return sstd::terp::var::find(key.c_str());
+}
 
 //---
 // for list type

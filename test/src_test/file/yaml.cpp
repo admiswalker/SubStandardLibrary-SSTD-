@@ -681,9 +681,10 @@ a # comment
 b
 )";
     testing::internal::CaptureStdout();
-    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::terp::var yml; ASSERT_FALSE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     std::string ret = testing::internal::GetCapturedStdout().c_str();
-    ASSERT_TRUE(sstd::strIn("OverWritting the existing data. (String data type can only take one data.)", ret.c_str()));
+    ASSERT_TRUE(sstd::strIn("OverWritting the existing data.", ret.c_str()));
+    //sstd::printn(ret);
     //sstd::printn(yml);
 
     //---
@@ -695,7 +696,7 @@ b
     
     ASSERT_TRUE(yml==ans);
 }
-/*
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // list
 
@@ -721,7 +722,7 @@ TEST(yaml, list_depth1){
     //---
     
     ASSERT_TRUE(yml==ans);
-}
+}/*
 TEST(yaml, list_depth2){
     std::string s=R"(
 - a # comment
@@ -794,10 +795,10 @@ TEST(yaml, list_flow_style_brackets){
     
     ASSERT_TRUE(yml==ans);
 }
-
+*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // hash
-
+/*
 TEST(yaml, hash_depth1){
     std::string s=R"(
 k1: v1 # comment
@@ -983,6 +984,30 @@ k[]{}: v[]{} # OK
     sstd::terp::var ans;
     ans = sstd::terp::hash();
     ans["k[]{}"] = "v[]{}";
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+
+//---
+
+TEST(yaml, hash_duplicated_err){
+    std::string s=R"(
+k1: val1
+k1: valX
+)";
+    testing::internal::CaptureStdout();
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    std::string ret = testing::internal::GetCapturedStdout().c_str();
+    ASSERT_TRUE(sstd::strIn("Detecting the duplicated hash key.", ret.c_str()));
+    //sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["k1"] = "valX";
     
     //---
     

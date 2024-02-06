@@ -144,7 +144,8 @@ public:
     sstd::terp::iterator erase(const sstd::terp::iterator& rhs);
     uint erase(const char* pKey);
     
-    sstd::terp::iterator find(const char* pKey) const;
+    sstd::terp::iterator find(const       char* pKey) const;
+    sstd::terp::iterator find(const std::string  key) const;
     
     //---
     // for list type
