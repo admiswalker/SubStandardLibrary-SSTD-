@@ -958,17 +958,16 @@ bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
         sstd::printn(v_hsc);              // for debug
         
         // check indent
-        //if(cmd.hsc > hsc_base){
-            //v_hsc.push_back(cmd.hsc);
-            //--i;
-            //printf("947\n"); continue;
-        //}else if(cmd.hsc < hsc_base){
-        //if(cmd.hsc < hsc_base){
-        //    v_dst.pop_back();
-        //    v_hsc.pop_back();
-        //    --i;
-        //    printf("952\n"); continue; // continue for multiple escape
-        //}
+        if(cmd.hsc > hsc_base){
+            v_hsc.push_back(cmd.hsc);
+            --i;
+            printf("947\n"); continue;
+        }else if(cmd.hsc < hsc_base){
+            v_dst.pop_back();
+            v_hsc.pop_back();
+            --i;
+            printf("952\n"); continue; // continue for multiple escape
+        }
         
         // set value or allocate dst
         if(cmd.ope==sstd_yaml::ope_assign){

@@ -722,7 +722,7 @@ TEST(yaml, list_depth1){
     //---
     
     ASSERT_TRUE(yml==ans);
-}/*
+}
 TEST(yaml, list_depth2){
     std::string s=R"(
 - a # comment
@@ -751,7 +751,7 @@ TEST(yaml, list_depth2){
     
     ASSERT_TRUE(yml==ans);
 }
-
+/*
 //---
 // Corner case(s)
 
