@@ -968,7 +968,7 @@ bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
             --i;
             printf("952\n"); continue; // continue for multiple escape
         }
-        
+
         // set value or allocate dst
         if(cmd.ope==sstd_yaml::ope_assign){
             if(var.typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data.\n"); return false; }

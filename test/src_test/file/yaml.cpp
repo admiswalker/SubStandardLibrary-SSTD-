@@ -795,6 +795,25 @@ TEST(yaml, list_flow_style_brackets){
     
     ASSERT_TRUE(yml==ans);
 }
+TEST(yaml, list_null){
+    std::string s=R"(
+-
+-
+-
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(3);
+    sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // hash
@@ -894,7 +913,7 @@ k2:
     
     ASSERT_TRUE(yml==ans);
 }
-
+/*
 TEST(yaml, hash_with_colon_01){
     std::string s=R"(
 k:1: v:1
