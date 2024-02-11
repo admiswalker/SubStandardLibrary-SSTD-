@@ -961,12 +961,11 @@ bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
         sstd::printn(i);                     // for debug
         sstd::printn(v_cmd[i]);              // for debug
         // check indent
-//        if(cmd.hsc > hsc_base){
-//            v_hsc.push_back(cmd.hsc);
-//            --i;
-//            printf("947\n"); continue;
-//        }else
-            if(cmd.hsc < hsc_base){
+        if(cmd.hsc > hsc_base){
+            v_hsc.push_back(cmd.hsc);
+            --i;
+            printf("947\n"); continue;
+        }else if(cmd.hsc < hsc_base){
             v_dst.pop_back();
             v_hsc.pop_back();
             --i;
@@ -999,6 +998,15 @@ bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
                 v_hsc.push_back(cmd.hsc+2);
             } break;
             default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
+            }
+            
+            if(i+1<v_cmd.size()){
+                if(v_cmd[i+1].hsc<=cmd.hsc && v_cmd[i+1].type!=sstd_yaml::num_list){
+                    sstd::pdbg_err("IN 1005\n");
+                    sstd::printn(v_cmd[i+1].type);
+                    v_dst.pop_back();
+                    v_hsc.pop_back();
+                }
             }
         }else{
             sstd::pdbg_err("Unexpected data type\n"); return false;

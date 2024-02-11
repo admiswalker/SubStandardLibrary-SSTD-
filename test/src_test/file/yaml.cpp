@@ -1360,8 +1360,9 @@ k3:
   - v33
 k4: v4
 )";
-    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
+    sstd::terp::var yml; bool ret_tf = sstd::yaml_load(yml, s); // TEST THIS LINE
+    sstd::printn(yml);
+    ASSERT_TRUE(ret_tf);
 
     //---
     
