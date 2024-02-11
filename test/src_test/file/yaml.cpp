@@ -625,13 +625,14 @@ TEST(yaml, comments_hash){
 k: v # comment
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
+    sstd::printn(yml);
 
     //---
     
     sstd::terp::var ans;
     ans = sstd::terp::hash();
     ans["k"] = "v";
+    sstd::printn(ans);
     
     //---
     
@@ -814,7 +815,7 @@ TEST(yaml, list_null){
     
     ASSERT_TRUE(yml==ans);
 }
-
+//*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // hash
 /*
