@@ -1012,7 +1012,7 @@ k[]{}: v[]{} # OK
 
 //---
 
-TEST(yaml, hash_duplicated_err){
+TEST(yaml, hash_duplicated_err){ // TODO: ここの仕様を直す
     std::string s=R"(
 k1: val1
 k1: valX
@@ -1152,7 +1152,7 @@ TEST(yaml, list_hash_case01_02){ // depth2
     //---
     
     ASSERT_TRUE(yml==ans);
-}/*
+}
 TEST(yaml, list_hash_case01_03){ // depth2
     std::string s=R"(
 - k1: v1
@@ -1238,7 +1238,7 @@ TEST(yaml, list_hash_case02){ // depth2
     
     ASSERT_TRUE(yml==ans);
 }
-/*
+
 TEST(yaml, hash_list){ // depth2
     std::string s=R"(
 k1: v1 # comment
@@ -1336,7 +1336,8 @@ TEST(yaml, list_hash_list_case02){ // depth3
     ans[2]["k1"] = sstd::terp::list(3);
     ans[2]["k1"][0] = "v11";
     ans[2]["k1"][1] = "v12";
-    ans[2]["k2"][2] = "v13";
+    ans[2]["k1"][2] = "v13";
+    ans[2]["k2"] = sstd::terp::list(3);
     ans[2]["k2"][0] = "v21";
     ans[2]["k2"][1] = "v22";
     ans[2]["k2"][2] = "v23";
@@ -1348,7 +1349,7 @@ TEST(yaml, list_hash_list_case02){ // depth3
     
     ASSERT_TRUE(yml==ans);
 }
-/*
+
 TEST(yaml, hash_list_hash){ // depth3
     std::string s=R"(
 k1: v1 # comment
@@ -1401,8 +1402,9 @@ k3:
   - v33
 k4: v4
 )";
-    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::terp::var yml; bool ret_tf = sstd::yaml_load(yml, s); // TEST THIS LINE
     sstd::printn(yml);
+    ASSERT_TRUE(ret_tf);
 
     //---
     
