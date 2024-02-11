@@ -990,14 +990,12 @@ bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
             case sstd_yaml::num_list: {
                 var.push_back();
                 v_dst.push_back(&var[var.size()-1]);
-//                v_hsc.push_back(cmd.hsc);
                 v_hsc.push_back(cmd.hsc+2);
             } break;
             case sstd_yaml::num_hash: {
                 auto itr = var.find(cmd.val);
                 if(itr!=var.end()){ sstd::pdbg_err("Detecting the duplicated hash key.\n"); return false; }
                 v_dst.push_back(&var[cmd.val]);
-//                v_hsc.push_back(cmd.hsc);
                 v_hsc.push_back(cmd.hsc+2);
             } break;
             default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;

@@ -914,7 +914,7 @@ k2:
     
     ASSERT_TRUE(yml==ans);
 }
-/*
+
 TEST(yaml, hash_with_colon_01){
     std::string s=R"(
 k:1: v:1
@@ -1018,16 +1018,19 @@ k1: val1
 k1: valX
 )";
     testing::internal::CaptureStdout();
-    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::terp::var yml; bool ret_tf = sstd::yaml_load(yml, s); // TEST THIS LINE
+    ASSERT_TRUE(ret_tf==false);
     std::string ret = testing::internal::GetCapturedStdout().c_str();
-    ASSERT_TRUE(sstd::strIn("Detecting the duplicated hash key.", ret.c_str()));
-    //sstd::printn(yml);
+    ASSERT_TRUE(sstd::strIn("Detecting the duplicated hash key.", ret.c_str())); // Do NOT check
+    sstd::printn(yml);
 
     //---
     
     sstd::terp::var ans;
     ans = sstd::terp::hash();
-    ans["k1"] = "valX";
+    ans["k1"] = "val1";
+    //ans["k1"] = "valX";
+    sstd::printn(ans);
     
     //---
     
