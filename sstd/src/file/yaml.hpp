@@ -79,7 +79,9 @@ namespace sstd_yaml{
 
         // Data structure to construct YAML
         uint ope; // operation
-        uint hsc; // hsc: head space count
+        //uint hsc; // hsc: head space count
+        uint hsc_lx; // hsc: head space count, _lx: list-index.
+        uint hsc_hx; // hsc: head space count, _hx: hash-index.
         uint8 type; // data type
         uint8 format; // data format
         std::string val; // value

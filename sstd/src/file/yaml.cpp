@@ -89,7 +89,8 @@ void sstd::print_for_vT(const sstd_yaml::token& rhs){
     printf("    rawStr: %s", rhs.rawStr.c_str());               \
     printf("command:\n");                                       \
     printf("    ope: %d\n", rhs.ope);                           \
-    printf("    hsc: %d\n", rhs.hsc);                           \
+    printf("    hsc_lx: %d\n", rhs.hsc_lx);                     \
+    printf("    hsc_hx: %d\n", rhs.hsc_hx);                     \
     printf("    type: %d\n", rhs.type);                         \
     printf("    format: %d\n", rhs.format);                     \
     printf("    val: %s\n", rhs.val.c_str());                   \
@@ -572,7 +573,8 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
             c.rawStr          = t.rawStr;
             // --- construct info ---
             c.ope             = sstd_yaml::ope_assign;
-            c.hsc             = t.hsc_hx; // t.hsc_lx
+            c.hsc_lx          = t.hsc_lx;
+            c.hsc_hx          = t.hsc_hx;
             c.type            = sstd_yaml::num_str;
             c.format          = t.format;
             c.val             = t.val1; // t.val2;
@@ -586,7 +588,8 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
                 c.rawStr          = t.rawStr;
                 // --- construct info ---
                 c.ope             = sstd_yaml::ope_alloc;
-                c.hsc             = t.hsc_lx + 2*ti; // t.hsc_hx
+                c.hsc_lx          = t.hsc_lx + 2*ti;
+                c.hsc_hx          = t.hsc_hx + 2*ti;
                 c.type            = sstd_yaml::num_list;
                 //c.format          = t.format;
                 //c.val             = t.val1; // t.val2;
@@ -600,7 +603,8 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
                 c.rawStr          = t.rawStr;
                 // --- construct info ---
                 c.ope             = sstd_yaml::ope_assign;
-                c.hsc             = t.hsc_hx + 2*(t.list_type_cnt-1); // t.hsc_lx + 2*(t.list_type_cnt-1);
+                c.hsc_lx          = t.hsc_lx + 2*(t.list_type_cnt-1) + 2;
+                c.hsc_hx          = t.hsc_hx + 2*(t.list_type_cnt-1) + 2;
                 c.type            = sstd_yaml::num_str;
                 c.format          = t.format;
                 c.val             = t.val1; // t.val2;
@@ -614,7 +618,8 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
             c.rawStr          = t.rawStr;
             // --- construct info ---
             c.ope             = sstd_yaml::ope_alloc;
-            c.hsc             = t.hsc_hx; // t.hsc_lx
+            c.hsc_lx          = t.hsc_lx;
+            c.hsc_hx          = t.hsc_hx;
             c.type            = sstd_yaml::num_hash;
             //c.format          = t.format;
             c.val             = t.val1; // t.val2; // key
@@ -627,7 +632,8 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
                 c.rawStr          = t.rawStr;
                 // --- construct info ---
                 c.ope             = sstd_yaml::ope_assign;
-                c.hsc             = t.hsc_hx + 2; // t.hsc_lx;
+                c.hsc_lx          = t.hsc_lx + 2;
+                c.hsc_hx          = t.hsc_hx + 2;
                 c.type            = sstd_yaml::num_str;
                 c.format          = t.format;
                 c.val             = t.val2; // t.val1; // value
@@ -642,7 +648,8 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
                 c.rawStr          = t.rawStr;
                 // --- construct info ---
                 c.ope             = sstd_yaml::ope_alloc;
-                c.hsc             = t.hsc_lx + 2*ti; // t.hsc_hx + 2*ti
+                c.hsc_lx          = t.hsc_lx + 2*ti; // t.hsc_hx + 2*ti
+                c.hsc_hx          = t.hsc_hx + 2*ti; // t.hsc_hx + 2*ti
                 c.type            = sstd_yaml::num_list;
                 //c.format          = t.format;
                 //c.val             = t.val1; // t.val2;
@@ -655,7 +662,8 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
             c.rawStr          = t.rawStr;
             // --- construct info ---
             c.ope             = sstd_yaml::ope_alloc;
-            c.hsc             = t.hsc_hx + 2*(t.list_type_cnt-1); // hsc_lx + 2*(type_cnt-1)
+            c.hsc_hx          = t.hsc_hx + 2*(t.list_type_cnt-1);
+            c.hsc_lx          = t.hsc_lx + 2*(t.list_type_cnt-1);
             c.type            = sstd_yaml::num_hash;
             //c.format          = t.format;
             c.val             = t.val1; // t.val2; // key
@@ -668,7 +676,8 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
                 c.rawStr          = t.rawStr;
                 // --- construct info ---
                 c.ope             = sstd_yaml::ope_assign;
-                c.hsc             = t.hsc_hx + 2; // t.hsc_lx;
+                c.hsc_lx          = t.hsc_lx + 2; // t.hsc_lx;
+                c.hsc_hx          = t.hsc_hx + 2; // t.hsc_lx;
                 c.type            = sstd_yaml::num_str;
                 c.format          = t.format;
                 c.val             = t.val2; // t.val1; // value
@@ -941,25 +950,35 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml
 }
 bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::command_v2>& v_cmd){
     std::vector<sstd::terp::var*> v_dst; // v: vector, dst: destination address
-    std::vector<uint> v_hsc; // v: vector, hsc: head space count
+    std::vector<uint> v_hsc_lx; // v: vector, hsc: head space count, _lx: list-index.
+    std::vector<uint> v_hsc_hx; // v: vector, hsc: head space count, _hx: hash-index.
     v_dst.push_back(&ret_yml);
-    v_hsc.push_back(0);
+    v_hsc_lx.push_back(0);
+    v_hsc_hx.push_back(0);
     
     for(uint i=0; i<v_cmd.size(); ++i){
         printf("\n\n--- begin token ---\n"); // for debug
+        sstd::printn(i);
         if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
         const struct sstd_yaml::command_v2& cmd = v_cmd[i];
         sstd::terp::var* pVar = v_dst[v_dst.size()-1];
         sstd::terp::var& var = *pVar;
-        if(v_hsc.size()==0){ sstd::pdbg_err("v_hsc is out of range\n"); return false; }
-        uint hsc_base = v_hsc[v_hsc.size()-1];
+        if(v_hsc_lx.size()==0){ sstd::pdbg_err("v_hsc_lx is out of range\n"); return false; }
+        if(v_hsc_hx.size()==0){ sstd::pdbg_err("v_hsc_hx is out of range\n"); return false; }
+        uint hsc_base_lx = v_hsc_lx[v_hsc_lx.size()-1];
+        uint hsc_base_hx = v_hsc_hx[v_hsc_hx.size()-1];
         sstd::printn(v_dst);              // for debug
-        sstd::printn(v_hsc);              // for debug
-        sstd::printn(cmd.hsc);              // for debug
-        sstd::printn(hsc_base);              // for debug
+        sstd::printn(v_hsc_lx);              // for debug
+        sstd::printn(v_hsc_hx);              // for debug
+        sstd::printn(cmd.hsc_lx);              // for debug
+        sstd::printn(cmd.hsc_hx);              // for debug
+        sstd::printn(hsc_base_lx);              // for debug
+        sstd::printn(hsc_base_hx);              // for debug
         
         sstd::printn(i);                     // for debug
         sstd::printn(v_cmd[i]);              // for debug
+
+        /*
         // check indent
         if(cmd.hsc > hsc_base){
             v_hsc.push_back(cmd.hsc);
@@ -970,7 +989,83 @@ bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
             v_hsc.pop_back();
             --i;
             printf("952\n"); continue; // continue for multiple escape
+        }*/
+        // check indent
+        printf("check indent: start\n");
+        sstd::printn(var.typeNum());
+        switch(var.typeNum()){
+        case sstd::num_vec_terp_var: {
+            printf("in list check\n");
+            // list
+//            if(cmd.hsc_lx > hsc_base_lx){
+//                v_hsc_lx.push_back(cmd.hsc_lx);
+//                --i;
+//                printf("947\n"); continue;
+//            }else
+                if(cmd.hsc_lx < hsc_base_lx){
+                v_dst.pop_back();
+                v_hsc_lx.pop_back();
+                //v_hsc_hx.pop_back();
+                --i;
+                printf("952\n"); continue; // continue for multiple escape
+            }
+        } break;
+        case sstd::num_hash_terp_var: {
+            printf("in hash check\n");
+            // hash
+//            if(cmd.hsc_hx > hsc_base_hx){
+//                v_hsc_hx.push_back(cmd.hsc_hx);
+//                --i;
+//                printf("958\n"); continue;
+//            }else
+                if(cmd.hsc_hx < hsc_base_hx){
+                v_dst.pop_back();
+                //v_hsc_lx.pop_back();
+                v_hsc_hx.pop_back();
+                --i;
+                printf("964\n"); continue; // continue for multiple escape
+            }
+        } break;
+        case sstd::num_str: {
+            v_dst.pop_back();
+            v_hsc_lx.pop_back();
+            v_hsc_hx.pop_back();
+            --i;
+            continue;
+        } break;
+        case sstd::num_null: {
+            // prev の cmd と比較する
+            if(v_dst.size()>=2){
+                sstd::terp::var* pVar_prev = v_dst[v_dst.size()-2];
+                sstd::terp::var& var_prev = *pVar_prev;
+                switch(var_prev.typeNum()){
+                case sstd::num_vec_terp_var: {
+                    if(cmd.hsc_lx < hsc_base_lx){
+                        v_dst.pop_back();
+                        v_hsc_lx.pop_back();
+                        //v_hsc_hx.pop_back();
+                        --i;
+                        printf("1047\n");
+                        continue; // continue for multiple escape
+                    }
+                } break;
+                case sstd::num_hash_terp_var: {
+                    if(cmd.hsc_hx < hsc_base_hx){
+                        v_dst.pop_back();
+                        //v_hsc_lx.pop_back();
+                        v_hsc_hx.pop_back();
+                        --i;
+                        printf("1057\n");
+                        continue; // continue for multiple escape
+                    }
+                } break;
+                default: { sstd::pdbg_err("Unexpected data type: %d\n", var.typeNum()); } break;
+                }
+            }
+        } break;
+        default: { sstd::pdbg_err("Unexpected data type: %d\n", var.typeNum()); } break;
         }
+        printf("check indent: end\n");
         
         // set value or allocate dst
         if(cmd.ope==sstd_yaml::ope_assign){
@@ -978,6 +1073,9 @@ bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
             var = cmd.val;
             //if(v_dst.size()>=2){ v_dst.pop_back(); }
         }else if(cmd.ope==sstd_yaml::ope_alloc){
+            if(var.typeNum()==sstd::num_str){
+                sstd::pdbg_err("Unexpected data type\n"); return false;
+            }
             if(var.typeNum()==sstd::num_null){
                 switch(cmd.type){
                 case sstd_yaml::num_list: { var = sstd::terp::list(); } break;
@@ -985,29 +1083,33 @@ bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
                 default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
                 }
             }
+            
             switch(cmd.type){
             case sstd_yaml::num_list: {
                 var.push_back();
                 v_dst.push_back(&var[var.size()-1]);
-                v_hsc.push_back(cmd.hsc+2);
+                v_hsc_lx.push_back(cmd.hsc_lx+2);
+                v_hsc_hx.push_back(cmd.hsc_hx+2);
             } break;
             case sstd_yaml::num_hash: {
                 auto itr = var.find(cmd.val);
                 if(itr!=var.end()){ sstd::pdbg_err("Detecting the duplicated hash key.\n"); return false; }
                 v_dst.push_back(&var[cmd.val]);
-                v_hsc.push_back(cmd.hsc+2);
+                v_hsc_lx.push_back(cmd.hsc_lx+2);
+                v_hsc_hx.push_back(cmd.hsc_hx+2);
             } break;
             default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
             }
             
-            if(i+1<v_cmd.size()){
-                if(v_cmd[i+1].hsc<=cmd.hsc && v_cmd[i+1].type!=sstd_yaml::num_list){
-                    sstd::pdbg_err("IN 1005\n");
-                    sstd::printn(v_cmd[i+1].type);
-                    v_dst.pop_back();
-                    v_hsc.pop_back();
-                }
-            }
+//            if(i+1<v_cmd.size()){
+//                if(v_cmd[i+1].hsc_lx<=cmd.hsc && v_cmd[i+1].type!=sstd_yaml::num_list){
+//                    sstd::pdbg_err("IN 1005\n");
+//                    sstd::printn(v_cmd[i+1].type);
+//                    v_dst.pop_back();
+//                    v_hsc_lx.pop_back();
+//                    v_hsc_hx.pop_back();
+//                }
+//            }
         }else{
             sstd::pdbg_err("Unexpected data type\n"); return false;
         }
