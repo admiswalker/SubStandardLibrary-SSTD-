@@ -563,8 +563,11 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
 //        printf("------\n");
 //        sstd::printn(i);
 //        sstd::printn(t);
-        
+
+        bool isNullValue = true;
         struct sstd_yaml::command_v2 c;
+        
+        // Generate token of allocate or assignemnt
         switch(t.type){
         case sstd_yaml::num_str: {
             // --- debug info ---
@@ -579,6 +582,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
             c.format          = t.format;
             c.val             = t.val1; // t.val2;
             ret_vCmd.push_back(c);
+            isNullValue = false;
         } break;
         case sstd_yaml::num_list: {
             for(uint ti=0; ti<t.list_type_cnt; ++ti){ // for multiple list. ex: "- - a".
@@ -609,6 +613,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
                 c.format          = t.format;
                 c.val             = t.val1; // t.val2;
                 ret_vCmd.push_back(c);
+                isNullValue = false;
             }
         } break;
         case sstd_yaml::num_hash: {
@@ -638,6 +643,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
                 c.format          = t.format;
                 c.val             = t.val2; // t.val1; // value
                 ret_vCmd.push_back(c);
+                isNullValue = false;
             }
         } break;
         case sstd_yaml::num_list_and_hash:{
@@ -682,10 +688,45 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
                 c.format          = t.format;
                 c.val             = t.val2; // t.val1; // value
                 ret_vCmd.push_back(c);
+                isNullValue = false;
             }
         } break;
         default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
         };
+
+        // Generate token of free
+        //for(uint i=0; i<v_token.size(); ++i){
+        //const sstd_yaml::token& t = v_token[i];
+        if(isNullValue){
+            if(i==v_token.size()-1){
+                // If in the end of token
+                
+                // --- debug info ---
+                c.line_num_begin  = t.line_num_begin;
+                c.line_num_end    = t.line_num_end;
+                c.rawStr          = t.rawStr;
+                // --- construct info ---
+                c.ope             = sstd_yaml::ope_free;
+                //c.hsc_lx          = t.hsc_lx + 2; // t.hsc_lx;
+                //c.hsc_hx          = t.hsc_hx + 2; // t.hsc_lx;
+                //c.type            = sstd_yaml::num_str;
+                //c.format          = t.format;
+                //c.val             = t.val2; // t.val1; // value
+                ret_vCmd.push_back(c);
+            }else{
+                const sstd_yaml::token& t_next = v_token[i+1];
+                
+                switch(t_next.type){
+                case sstd_yaml::num_str: {} break;
+                case sstd_yaml::num_list: {} break;
+                case sstd_yaml::num_hash: {
+                } break;
+                case sstd_yaml::num_list_and_hash:{
+                } break;
+                default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
+                };
+            }
+        }
     }
     
     return true;
@@ -1043,7 +1084,7 @@ bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
                     if(cmd.hsc_lx < hsc_base_lx){
                         v_dst.pop_back();
                         v_hsc_lx.pop_back();
-                        //v_hsc_hx.pop_back();
+                        v_hsc_hx.pop_back();
                         --i;
                         printf("1047\n");
                         continue; // continue for multiple escape
@@ -1052,7 +1093,7 @@ bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
                 case sstd::num_hash_terp_var: {
                     if(cmd.hsc_hx < hsc_base_hx){
                         v_dst.pop_back();
-                        //v_hsc_lx.pop_back();
+                        v_hsc_lx.pop_back();
                         v_hsc_hx.pop_back();
                         --i;
                         printf("1057\n");
