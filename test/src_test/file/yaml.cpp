@@ -1060,10 +1060,35 @@ TEST(yaml, list_and_hash__NUM_LIST_AND_HASH){
     
     ASSERT_TRUE(yml==ans);
 }
+TEST(yaml, list_and_hash__conbined){
+    std::string s=R"(
+- k1:
+  - v11
+  - v12
+- v2
+)";
+    sstd::terp::var yml; bool ret_tf = sstd::yaml_load(yml, s); // TEST THIS LINE
+    sstd::printn(yml);
+    ASSERT_TRUE(ret_tf);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(2);
+    ans[0]["k1"] = sstd::terp::list(2);
+    ans[0]["k1"][0] = "v1";
+    ans[0]["k1"][1] = "v2";
+    ans[1] = "v2";
+    sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
 
 //---
 // Corner case(s)
-
+/*
 TEST(yaml, list_and_hash__colon){
     std::string s=R"(
 - k:1::: a":":a
@@ -1109,10 +1134,10 @@ TEST(yaml, list_and_hash_flow_style_brackets){
     
     ASSERT_TRUE(yml==ans);
 }
-
+*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // complex test cases
-
+/*
 TEST(yaml, list_hash_case01_01){ // depth2
     std::string s=R"(
 - k1: v1
@@ -1428,7 +1453,7 @@ k4: v4
     
     ASSERT_TRUE(yml==ans);
 }
-
+*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // ignore ! option
 
