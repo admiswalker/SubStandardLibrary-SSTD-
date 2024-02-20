@@ -549,6 +549,32 @@ TEST(yaml, _token2cmd_usual_cases){
     ASSERT_STREQ(ret_v_cmd[29].val.c_str(), "v9");
 }
 
+//---
+
+TEST(yaml, _token2cmd_null_values_case01){
+    std::string s = R"(
+- 
+- 
+)";
+    std::vector<sstd_yaml::token> ret_v_token;
+    std::vector<sstd_yaml::command_v2> ret_v_cmd;
+    bool ret = false;
+    ret = sstd_yaml::_str2token(ret_v_token, s);
+    ret = sstd_yaml::_token2cmd(ret_v_cmd, ret_v_token);
+    sstd::printn(ret_v_cmd);
+
+    // -
+    ASSERT_EQ(ret_v_cmd[0].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[0].type, sstd_yaml::num_list);
+    // free()
+    ASSERT_EQ(ret_v_cmd[1].ope, sstd_yaml::ope_free);
+    // -
+    ASSERT_EQ(ret_v_cmd[2].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[2].type, sstd_yaml::num_list);
+    // free()
+    //ASSERT_EQ(ret_v_cmd[3].ope, sstd_yaml::ope_free); // NOT specified
+}
+/*
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // comments
 

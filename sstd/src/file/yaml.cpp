@@ -562,7 +562,8 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
 //        printf("------\n");
 //        sstd::printn(i);
 //        sstd::printn(t);
-        
+
+        // Construct alloc() or assign() command
         struct sstd_yaml::command_v2 c;
         switch(t.type){
         case sstd_yaml::num_str: {
@@ -619,7 +620,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
             //c.format          = t.format;
             c.val             = t.val1; // t.val2; // key
             ret_vCmd.push_back(c);
-
+            
             if(t.val2_use_quotes || t.val2.size()>=1){ // check the value is NOT NULL
                 // --- debug info ---
                 c.line_num_begin  = t.line_num_begin;
@@ -660,7 +661,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
             //c.format          = t.format;
             c.val             = t.val1; // t.val2; // key
             ret_vCmd.push_back(c);
-
+            
             if(t.val2_use_quotes || t.val2.size()>=1){ // check the value is NOT NULL
                 // --- debug info ---
                 c.line_num_begin  = t.line_num_begin;
@@ -677,6 +678,42 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
         } break;
         default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
         };
+
+        
+        // Construct free() command
+        if( t.type==sstd_yaml::num_list || t.type==sstd_yaml::num_hash || t.type==sstd_yaml::num_list_and_hash ){
+            uint hsc_curr = c.hsc;
+            uint hsc_next = 0;
+            if(i+1<v_token.size()){ // Checking the Next if is Not end of the v_token. (Checking the v_token[i+1] is NOT Null).
+                const sstd_yaml::token& t_nx = v_token[i+1]; // _nx: next
+            
+                switch(t_nx.type){
+                case sstd_yaml::num_str:           { hsc_next = t_nx.hsc_hx;                            } break;
+                case sstd_yaml::num_list:          { hsc_next = t_nx.hsc_lx + 2*(t_nx.list_type_cnt-1); } break;
+                case sstd_yaml::num_hash:          { hsc_next = t_nx.hsc_hx + 2;                        } break;
+                case sstd_yaml::num_list_and_hash: { hsc_next = t_nx.hsc_hx + 2*(t_nx.list_type_cnt-1); } break;
+                default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
+                };
+            }else{
+                // Case of "i" is the last token
+            
+                // If sstd_yaml::_token2cmd() did NOT append the free() command,
+                // anaway all the cmd2yaml() process is already finished.
+                continue;
+            }
+            sstd::printn(hsc_next);
+            sstd::printn(hsc_curr);
+            if(hsc_next<=hsc_curr){
+                // --- debug info ---
+                c.line_num_begin  = t.line_num_begin;
+                c.line_num_end    = t.line_num_end;
+                c.rawStr          = t.rawStr;
+                // --- construct info ---
+                c.ope             = sstd_yaml::ope_free;
+            
+                ret_vCmd.push_back(c);
+            }
+        }
     }
     
     return true;
@@ -1008,6 +1045,8 @@ bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
                     v_hsc.pop_back();
                 }
             }
+        }else if(cmd.ope==sstd_yaml::ope_free){
+            sstd::pdbg_err("In free()\n"); return false;
         }else{
             sstd::pdbg_err("Unexpected data type\n"); return false;
         }

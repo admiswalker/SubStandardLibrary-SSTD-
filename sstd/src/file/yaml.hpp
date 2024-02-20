@@ -16,7 +16,8 @@ namespace sstd_yaml{
     
     const static uchar ope_null   = 255;
     const static uchar ope_alloc  = 0; // allocate
-    const static uchar ope_assign = 1; // assignemnt
+    const static uchar ope_free   = 1; // free allocated v_dst
+    const static uchar ope_assign = 2; // assignemnt
 
     //---
     // type definition
