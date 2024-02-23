@@ -683,13 +683,9 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
         
         // Construct free() command
         if( !t.hasValue && (t.type==sstd_yaml::num_list || t.type==sstd_yaml::num_hash || t.type==sstd_yaml::num_list_and_hash )){
-            //switch(t.type){
-            //case sstd_yaml::num_str: {} break;
-        //case sstd_yaml::num_list:
-        //case sstd_yaml::num_hash:
-        //case sstd_yaml::num_list_and_hash: {
             uint hsc_curr = c.hsc;
             uint hsc_next = 0;
+            
             if(i+1<v_token.size()){ // Checking the Next if is Not end of the v_token. (Checking the v_token[i+1] is NOT Null).
                 const sstd_yaml::token& t_nx = v_token[i+1]; // _nx: next
                 
@@ -712,7 +708,11 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
             sstd::printn(t.rawStr);
             sstd::printn(hsc_next);
             sstd::printn(hsc_curr);
-            if(hsc_next<=hsc_curr){
+
+            if((t.type==sstd_yaml::num_list          && hsc_next<=hsc_curr) ||
+               (t.type==sstd_yaml::num_hash          && hsc_next< hsc_curr) ||
+               (t.type==sstd_yaml::num_list_and_hash && hsc_next< hsc_curr)    )
+            {
                 printf("pop_back()\n");
                 // --- debug info ---
                 c.line_num_begin  = t.line_num_begin;
@@ -723,8 +723,6 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
             
                 ret_vCmd.push_back(c);
             }
-        //} break;
-        //default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
         }
     }
     
