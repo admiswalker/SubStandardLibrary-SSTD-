@@ -685,48 +685,48 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
         if( !t.hasValue && (t.type==sstd_yaml::num_list || t.type==sstd_yaml::num_hash || t.type==sstd_yaml::num_list_and_hash )){
             uint hsc_curr = c.hsc;
             uint hsc_next = 0;
-            
-            if(i+1<v_token.size()){ // Checking the Next if is Not end of the v_token. (Checking the v_token[i+1] is NOT Null).
-                const sstd_yaml::token& t_nx = v_token[i+1]; // _nx: next
-                
-                switch(t_nx.type){
-                //case sstd_yaml::num_str:           { hsc_next = t_nx.hsc_hx;                            } break;
-                case sstd_yaml::num_str:           { continue; } break;
-                case sstd_yaml::num_list:          { hsc_next = t_nx.hsc_lx + 2*(t_nx.list_type_cnt-1); } break;
-                case sstd_yaml::num_hash:          { hsc_next = t_nx.hsc_hx + 2;                        } break;
-                case sstd_yaml::num_list_and_hash: { hsc_next = t_nx.hsc_hx + 2*(t_nx.list_type_cnt-1); } break;
-                default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
-                };
-            }else{
+
+            // Checking the Next if is Not end of the v_token. (Checking the v_token[i+1] is NOT Null).
+            if( !(i+1<v_token.size()) ){
                 // Case of "i" is the last token
                 
                 // If sstd_yaml::_token2cmd() did NOT append the pop() command,
                 // anaway all the cmd2yaml() process is already finished.
                 continue;
             }
+            const sstd_yaml::token& t_nx = v_token[i+1]; // _nx: next
+            
+            switch(t_nx.type){
+                //case sstd_yaml::num_str:           { hsc_next = t_nx.hsc_hx;                            } break;
+            case sstd_yaml::num_str:           { continue; } break;
+            case sstd_yaml::num_list:          { hsc_next = t_nx.hsc_lx + 2*(t_nx.list_type_cnt-1); } break;
+            case sstd_yaml::num_hash:          { hsc_next = t_nx.hsc_hx + 2;                        } break;
+            case sstd_yaml::num_list_and_hash: { hsc_next = t_nx.hsc_hx + 2*(t_nx.list_type_cnt-1); } break;
+            default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
+            };
 
             // Table. pop() conditions
             //
             // ┌───┬───────────────────┬───────────────────────────────────────────────────────────┐
-            // │   │                   │ current token type                                        │
+            // │   │                   │ hsc_current                                               │
             // ├───┼───────────────────┼───────────────────┬───────────────────┬───────────────────┤
             // │   │                   │                   │                   │ list_and_hash     │
             // │   │                   │ list              │ hash              │ (works as a hash) │
             // ├───┼───────────────────┼───────────────────┼───────────────────┼───────────────────┤
-            // │ n │ list              │ <=                │ <                 │ <                 │
-            // │ e │                   │                   │                   │                   │
-            // │ x ├───────────────────┼───────────────────┼───────────────────┼───────────────────┤
-            // │ t │ list_and_hash     │ <=                │ <                 │ <                 │
-            // │   │ (works as a list) │                   │                   │                   │
-            // │   ├───────────────────┼───────────────────┼───────────────────┼───────────────────┤
-            // │   │ hash              │ <=                │ <=                │ <=                │
-            // │   │                   │                   │                   │                   │
+            // │ h │ list              │ <=                │ <                 │ <                 │
+            // │ s │                   │                   │                   │                   │
+            // │ c ├───────────────────┼───────────────────┼───────────────────┼───────────────────┤
+            // │ _ │ list_and_hash     │ <=                │ <                 │ <                 │
+            // │ n │ (works as a list) │                   │                   │                   │
+            // │ e ├───────────────────┼───────────────────┼───────────────────┼───────────────────┤
+            // │ x │ hash              │ <=                │ <=                │ <=                │
+            // │ t │                   │                   │                   │                   │
             // └───┴───────────────────┴───────────────────┴───────────────────┴───────────────────┘
             //
-            
-            if((t.type==sstd_yaml::num_list          && hsc_next<=hsc_curr) ||
-               (t.type==sstd_yaml::num_hash          && hsc_next< hsc_curr) ||
-               (t.type==sstd_yaml::num_list_and_hash && hsc_next< hsc_curr)    )
+            bool isLessOrEqual = t.type==sstd_yaml::num_list || t_nx.type==sstd_yaml::num_hash; // check '<=' case
+            bool isLess        = !isLessOrEqual;                                                // check '<' case
+            if((isLessOrEqual && hsc_next<=hsc_curr) ||
+               (isLess        && hsc_next< hsc_curr)    )
             {
                 printf("pop_back()\n");
                 // --- debug info ---
