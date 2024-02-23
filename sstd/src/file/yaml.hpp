@@ -16,7 +16,7 @@ namespace sstd_yaml{
     
     const static uchar ope_null   = 255;
     const static uchar ope_alloc  = 0; // allocate
-    const static uchar ope_free   = 1; // free allocated v_dst
+    const static uchar ope_pop    = 1; // pop stacked value from v_dst
     const static uchar ope_assign = 2; // assignemnt
 
     //---

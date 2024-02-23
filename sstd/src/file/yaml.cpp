@@ -681,7 +681,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
         };
 
         
-        // Construct free() command
+        // Construct pop() command
         if( !t.hasValue && (t.type==sstd_yaml::num_list || t.type==sstd_yaml::num_hash || t.type==sstd_yaml::num_list_and_hash )){
             uint hsc_curr = c.hsc;
             uint hsc_next = 0;
@@ -700,14 +700,10 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
             }else{
                 // Case of "i" is the last token
                 
-                // If sstd_yaml::_token2cmd() did NOT append the free() command,
+                // If sstd_yaml::_token2cmd() did NOT append the pop() command,
                 // anaway all the cmd2yaml() process is already finished.
                 continue;
             }
-            printf("--\n");
-            sstd::printn(t.rawStr);
-            sstd::printn(hsc_next);
-            sstd::printn(hsc_curr);
 
             if((t.type==sstd_yaml::num_list          && hsc_next<=hsc_curr) ||
                (t.type==sstd_yaml::num_hash          && hsc_next< hsc_curr) ||
@@ -719,7 +715,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
                 c.line_num_end    = t.line_num_end;
                 c.rawStr          = t.rawStr;
                 // --- construct info ---
-                c.ope             = sstd_yaml::ope_free;
+                c.ope             = sstd_yaml::ope_pop;
             
                 ret_vCmd.push_back(c);
             }
@@ -1055,8 +1051,8 @@ bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
                     v_hsc.pop_back();
                 }
             }
-        }else if(cmd.ope==sstd_yaml::ope_free){
-            sstd::pdbg_err("In free()\n"); return false;
+        }else if(cmd.ope==sstd_yaml::ope_pop){
+            sstd::pdbg_err("In pop()\n"); return false;
         }else{
             sstd::pdbg_err("Unexpected data type\n"); return false;
         }

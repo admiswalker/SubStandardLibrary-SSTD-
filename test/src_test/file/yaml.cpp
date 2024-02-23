@@ -512,14 +512,14 @@ TEST(yaml, _token2cmd_usual_cases){
     ASSERT_EQ(ret_v_cmd[21].hsc, 0);
     ASSERT_EQ(ret_v_cmd[21].type, sstd_yaml::num_list);
     
-    ASSERT_EQ(ret_v_cmd[22].ope, sstd_yaml::ope_free); // free()
+    ASSERT_EQ(ret_v_cmd[22].ope, sstd_yaml::ope_pop); // pop()
     
     // - # null
     ASSERT_EQ(ret_v_cmd[23].ope, sstd_yaml::ope_alloc);
     ASSERT_EQ(ret_v_cmd[23].hsc, 0);
     ASSERT_EQ(ret_v_cmd[23].type, sstd_yaml::num_list);
     
-    ASSERT_EQ(ret_v_cmd[24].ope, sstd_yaml::ope_free); // free()
+    ASSERT_EQ(ret_v_cmd[24].ope, sstd_yaml::ope_pop); // pop()
     
     // -
     ASSERT_EQ(ret_v_cmd[25].ope, sstd_yaml::ope_alloc);
@@ -570,13 +570,13 @@ TEST(yaml, _token2cmd_null_values_case01){
     // -
     ASSERT_EQ(ret_v_cmd[0].ope, sstd_yaml::ope_alloc);
     ASSERT_EQ(ret_v_cmd[0].type, sstd_yaml::num_list);
-    // free()
-    ASSERT_EQ(ret_v_cmd[1].ope, sstd_yaml::ope_free);
+    // pop()
+    ASSERT_EQ(ret_v_cmd[1].ope, sstd_yaml::ope_pop);
     // -
     ASSERT_EQ(ret_v_cmd[2].ope, sstd_yaml::ope_alloc);
     ASSERT_EQ(ret_v_cmd[2].type, sstd_yaml::num_list);
-    // free()
-    //ASSERT_EQ(ret_v_cmd[3].ope, sstd_yaml::ope_free); // NOT specified
+    // pop()
+    //ASSERT_EQ(ret_v_cmd[3].ope, sstd_yaml::ope_pop); // NOT specified
 }
 /*
 //-----------------------------------------------------------------------------------------------------------------------------------------------
