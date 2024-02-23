@@ -457,102 +457,104 @@ TEST(yaml, _token2cmd_usual_cases){
     ASSERT_EQ(ret_v_cmd[10].type, sstd_yaml::num_hash);
     ASSERT_STREQ(ret_v_cmd[10].val.c_str(), "k23");
     
+    ASSERT_EQ(ret_v_cmd[11].ope, sstd_yaml::ope_pop); // pop()
+    
     //   -
-    ASSERT_EQ(ret_v_cmd[11].ope, sstd_yaml::ope_alloc);
-    ASSERT_EQ(ret_v_cmd[11].hsc, 2);
-    ASSERT_EQ(ret_v_cmd[11].type, sstd_yaml::num_list);
-    //     k24:
     ASSERT_EQ(ret_v_cmd[12].ope, sstd_yaml::ope_alloc);
-    ASSERT_EQ(ret_v_cmd[12].hsc, 4);
-    ASSERT_EQ(ret_v_cmd[12].type, sstd_yaml::num_hash);
-    ASSERT_STREQ(ret_v_cmd[12].val.c_str(), "k24");
+    ASSERT_EQ(ret_v_cmd[12].hsc, 2);
+    ASSERT_EQ(ret_v_cmd[12].type, sstd_yaml::num_list);
+    //     k24:
+    ASSERT_EQ(ret_v_cmd[13].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[13].hsc, 4);
+    ASSERT_EQ(ret_v_cmd[13].type, sstd_yaml::num_hash);
+    ASSERT_STREQ(ret_v_cmd[13].val.c_str(), "k24");
     //          v241
-    ASSERT_EQ(ret_v_cmd[13].ope, sstd_yaml::ope_assign);
-    ASSERT_EQ(ret_v_cmd[13].type, sstd_yaml::num_str);
-    ASSERT_EQ(ret_v_cmd[13].format, sstd_yaml::num_block_style_base);
-    ASSERT_STREQ(ret_v_cmd[13].val.c_str(), "v241");
+    ASSERT_EQ(ret_v_cmd[14].ope, sstd_yaml::ope_assign);
+    ASSERT_EQ(ret_v_cmd[14].type, sstd_yaml::num_str);
+    ASSERT_EQ(ret_v_cmd[14].format, sstd_yaml::num_block_style_base);
+    ASSERT_STREQ(ret_v_cmd[14].val.c_str(), "v241");
     
     // -
-    ASSERT_EQ(ret_v_cmd[14].ope, sstd_yaml::ope_alloc);
-    ASSERT_EQ(ret_v_cmd[14].hsc, 0);
-    ASSERT_EQ(ret_v_cmd[14].type, sstd_yaml::num_list);
-    //   k3:
     ASSERT_EQ(ret_v_cmd[15].ope, sstd_yaml::ope_alloc);
-    ASSERT_EQ(ret_v_cmd[15].hsc, 2);
-    ASSERT_EQ(ret_v_cmd[15].type, sstd_yaml::num_hash);
-    ASSERT_STREQ(ret_v_cmd[15].val.c_str(), "k3");
+    ASSERT_EQ(ret_v_cmd[15].hsc, 0);
+    ASSERT_EQ(ret_v_cmd[15].type, sstd_yaml::num_list);
+    //   k3:
+    ASSERT_EQ(ret_v_cmd[16].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[16].hsc, 2);
+    ASSERT_EQ(ret_v_cmd[16].type, sstd_yaml::num_hash);
+    ASSERT_STREQ(ret_v_cmd[16].val.c_str(), "k3");
     //       v31
-    ASSERT_EQ(ret_v_cmd[16].ope, sstd_yaml::ope_assign);
-    ASSERT_EQ(ret_v_cmd[16].type, sstd_yaml::num_str);
-    ASSERT_EQ(ret_v_cmd[16].format, sstd_yaml::num_block_style_base);
-    ASSERT_STREQ(ret_v_cmd[16].val.c_str(), "v31");
+    ASSERT_EQ(ret_v_cmd[17].ope, sstd_yaml::ope_assign);
+    ASSERT_EQ(ret_v_cmd[17].type, sstd_yaml::num_str);
+    ASSERT_EQ(ret_v_cmd[17].format, sstd_yaml::num_block_style_base);
+    ASSERT_STREQ(ret_v_cmd[17].val.c_str(), "v31");
     
     // -
-    ASSERT_EQ(ret_v_cmd[17].ope, sstd_yaml::ope_alloc);
-    ASSERT_EQ(ret_v_cmd[17].hsc, 0);
-    ASSERT_EQ(ret_v_cmd[17].type, sstd_yaml::num_list);
-    //   k5: #null
     ASSERT_EQ(ret_v_cmd[18].ope, sstd_yaml::ope_alloc);
-    ASSERT_EQ(ret_v_cmd[18].hsc, 2);
-    ASSERT_EQ(ret_v_cmd[18].type, sstd_yaml::num_hash);
-    ASSERT_STREQ(ret_v_cmd[18].val.c_str(), "k5");
+    ASSERT_EQ(ret_v_cmd[18].hsc, 0);
+    ASSERT_EQ(ret_v_cmd[18].type, sstd_yaml::num_list);
+    //   k5: #null
+    ASSERT_EQ(ret_v_cmd[19].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[19].hsc, 2);
+    ASSERT_EQ(ret_v_cmd[19].type, sstd_yaml::num_hash);
+    ASSERT_STREQ(ret_v_cmd[19].val.c_str(), "k5");
     
-    ASSERT_EQ(ret_v_cmd[19].ope, sstd_yaml::ope_pop); // pop()
+    ASSERT_EQ(ret_v_cmd[20].ope, sstd_yaml::ope_pop); // pop()
     //   k51:
-    ASSERT_EQ(ret_v_cmd[20].ope, sstd_yaml::ope_alloc);
-    ASSERT_EQ(ret_v_cmd[20].hsc, 2);
-    ASSERT_EQ(ret_v_cmd[20].type, sstd_yaml::num_hash);
-    ASSERT_STREQ(ret_v_cmd[20].val.c_str(), "k51");
+    ASSERT_EQ(ret_v_cmd[21].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[21].hsc, 2);
+    ASSERT_EQ(ret_v_cmd[21].type, sstd_yaml::num_hash);
+    ASSERT_STREQ(ret_v_cmd[21].val.c_str(), "k51");
     //        v511
-    ASSERT_EQ(ret_v_cmd[21].ope, sstd_yaml::ope_assign);
-    ASSERT_EQ(ret_v_cmd[21].type, sstd_yaml::num_str);
-    ASSERT_EQ(ret_v_cmd[21].format, sstd_yaml::num_block_style_base);
-    ASSERT_STREQ(ret_v_cmd[21].val.c_str(), "v511");
+    ASSERT_EQ(ret_v_cmd[22].ope, sstd_yaml::ope_assign);
+    ASSERT_EQ(ret_v_cmd[22].type, sstd_yaml::num_str);
+    ASSERT_EQ(ret_v_cmd[22].format, sstd_yaml::num_block_style_base);
+    ASSERT_STREQ(ret_v_cmd[22].val.c_str(), "v511");
     
     // - # null
-    ASSERT_EQ(ret_v_cmd[22].ope, sstd_yaml::ope_alloc);
-    ASSERT_EQ(ret_v_cmd[22].hsc, 0);
-    ASSERT_EQ(ret_v_cmd[22].type, sstd_yaml::num_list);
+    ASSERT_EQ(ret_v_cmd[23].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[23].hsc, 0);
+    ASSERT_EQ(ret_v_cmd[23].type, sstd_yaml::num_list);
     
-    ASSERT_EQ(ret_v_cmd[23].ope, sstd_yaml::ope_pop); // pop()
+    ASSERT_EQ(ret_v_cmd[24].ope, sstd_yaml::ope_pop); // pop()
     
     // - # null
-    ASSERT_EQ(ret_v_cmd[24].ope, sstd_yaml::ope_alloc);
-    ASSERT_EQ(ret_v_cmd[24].hsc, 0);
-    ASSERT_EQ(ret_v_cmd[24].type, sstd_yaml::num_list);
+    ASSERT_EQ(ret_v_cmd[25].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[25].hsc, 0);
+    ASSERT_EQ(ret_v_cmd[25].type, sstd_yaml::num_list);
     
-    ASSERT_EQ(ret_v_cmd[25].ope, sstd_yaml::ope_pop); // pop()
+    ASSERT_EQ(ret_v_cmd[26].ope, sstd_yaml::ope_pop); // pop()
     
     // -
-    ASSERT_EQ(ret_v_cmd[26].ope, sstd_yaml::ope_alloc);
-    ASSERT_EQ(ret_v_cmd[26].hsc, 0);
-    ASSERT_EQ(ret_v_cmd[26].type, sstd_yaml::num_list);
-    //   -
     ASSERT_EQ(ret_v_cmd[27].ope, sstd_yaml::ope_alloc);
-    ASSERT_EQ(ret_v_cmd[27].hsc, 2);
+    ASSERT_EQ(ret_v_cmd[27].hsc, 0);
     ASSERT_EQ(ret_v_cmd[27].type, sstd_yaml::num_list);
-    //     -
+    //   -
     ASSERT_EQ(ret_v_cmd[28].ope, sstd_yaml::ope_alloc);
-    ASSERT_EQ(ret_v_cmd[28].hsc, 4);
+    ASSERT_EQ(ret_v_cmd[28].hsc, 2);
     ASSERT_EQ(ret_v_cmd[28].type, sstd_yaml::num_list);
-    //       -
+    //     -
     ASSERT_EQ(ret_v_cmd[29].ope, sstd_yaml::ope_alloc);
-    ASSERT_EQ(ret_v_cmd[29].hsc, 6);
+    ASSERT_EQ(ret_v_cmd[29].hsc, 4);
     ASSERT_EQ(ret_v_cmd[29].type, sstd_yaml::num_list);
+    //       -
+    ASSERT_EQ(ret_v_cmd[30].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[30].hsc, 6);
+    ASSERT_EQ(ret_v_cmd[30].type, sstd_yaml::num_list);
     //         v8111
-    ASSERT_EQ(ret_v_cmd[30].ope, sstd_yaml::ope_assign);
-    ASSERT_EQ(ret_v_cmd[30].type, sstd_yaml::num_str);
-    ASSERT_EQ(ret_v_cmd[30].format, sstd_yaml::num_block_style_base);
-    ASSERT_STREQ(ret_v_cmd[30].val.c_str(), "v8111");
+    ASSERT_EQ(ret_v_cmd[31].ope, sstd_yaml::ope_assign);
+    ASSERT_EQ(ret_v_cmd[31].type, sstd_yaml::num_str);
+    ASSERT_EQ(ret_v_cmd[31].format, sstd_yaml::num_block_style_base);
+    ASSERT_STREQ(ret_v_cmd[31].val.c_str(), "v8111");
     // -
-    ASSERT_EQ(ret_v_cmd[31].ope, sstd_yaml::ope_alloc);
-    ASSERT_EQ(ret_v_cmd[31].hsc, 0);
-    ASSERT_EQ(ret_v_cmd[31].type, sstd_yaml::num_list);
+    ASSERT_EQ(ret_v_cmd[32].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[32].hsc, 0);
+    ASSERT_EQ(ret_v_cmd[32].type, sstd_yaml::num_list);
     //   v9
-    ASSERT_EQ(ret_v_cmd[32].ope, sstd_yaml::ope_assign);
-    ASSERT_EQ(ret_v_cmd[32].type, sstd_yaml::num_str);
-    ASSERT_EQ(ret_v_cmd[32].format, sstd_yaml::num_block_style_base);
-    ASSERT_STREQ(ret_v_cmd[32].val.c_str(), "v9");
+    ASSERT_EQ(ret_v_cmd[33].ope, sstd_yaml::ope_assign);
+    ASSERT_EQ(ret_v_cmd[33].type, sstd_yaml::num_str);
+    ASSERT_EQ(ret_v_cmd[33].format, sstd_yaml::num_block_style_base);
+    ASSERT_STREQ(ret_v_cmd[33].val.c_str(), "v9");
 }
 
 //---
@@ -592,16 +594,45 @@ k2:
     ret = sstd_yaml::_token2cmd(ret_v_cmd, ret_v_token);
     sstd::printn(ret_v_cmd);
 
-    // -
+    // k1:
     ASSERT_EQ(ret_v_cmd[0].ope, sstd_yaml::ope_alloc);
     ASSERT_EQ(ret_v_cmd[0].type, sstd_yaml::num_hash);
     // pop()
     ASSERT_EQ(ret_v_cmd[1].ope, sstd_yaml::ope_pop);
-    // -
+    // k2:
     ASSERT_EQ(ret_v_cmd[2].ope, sstd_yaml::ope_alloc);
     ASSERT_EQ(ret_v_cmd[2].type, sstd_yaml::num_hash);
     // pop()
     //ASSERT_EQ(ret_v_cmd[3].ope, sstd_yaml::ope_pop); // NOT specified
+}
+TEST(yaml, _token2cmd_null_values_case03){
+    std::string s = R"(
+- k1:
+- k2:
+)";
+    std::vector<sstd_yaml::token> ret_v_token;
+    std::vector<sstd_yaml::command_v2> ret_v_cmd;
+    bool ret = false;
+    ret = sstd_yaml::_str2token(ret_v_token, s);
+    ret = sstd_yaml::_token2cmd(ret_v_cmd, ret_v_token);
+    sstd::printn(ret_v_cmd);
+
+    // -
+    ASSERT_EQ(ret_v_cmd[0].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[0].type, sstd_yaml::num_list);
+    // k1:
+    ASSERT_EQ(ret_v_cmd[1].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[1].type, sstd_yaml::num_hash);
+    // pop()
+    ASSERT_EQ(ret_v_cmd[2].ope, sstd_yaml::ope_pop);
+    // -
+    ASSERT_EQ(ret_v_cmd[3].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[3].type, sstd_yaml::num_list);
+    // k2:
+    ASSERT_EQ(ret_v_cmd[4].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[4].type, sstd_yaml::num_hash);
+    // pop()
+    //ASSERT_EQ(ret_v_cmd[5].ope, sstd_yaml::ope_pop); // NOT specified
 }
 /*
 //-----------------------------------------------------------------------------------------------------------------------------------------------
