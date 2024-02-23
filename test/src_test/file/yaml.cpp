@@ -634,7 +634,7 @@ TEST(yaml, _token2cmd_null_values_case03){
     // pop()
     //ASSERT_EQ(ret_v_cmd[5].ope, sstd_yaml::ope_pop); // NOT specified
 }
-/*
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // comments
 
@@ -809,7 +809,7 @@ TEST(yaml, list_depth1){
     //---
     
     ASSERT_TRUE(yml==ans);
-}
+}/*
 TEST(yaml, list_depth2){
     std::string s=R"(
 - a # comment
@@ -901,7 +901,7 @@ TEST(yaml, list_null){
     
     ASSERT_TRUE(yml==ans);
 }
-
+/*
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // hash
 
