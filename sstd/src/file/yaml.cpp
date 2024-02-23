@@ -52,20 +52,21 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // print
 
-#define sstd_print_token_base(rhs)                              \
-    printf("\n");                                               \
-    printf("    debug info:\n");                                \
-    printf("    line_num_begin: %d\n", rhs.line_num_begin);     \
-    printf("    line_num_end: %d\n", rhs.line_num_end);         \
-    printf("    rawStr: %s\n", rhs.rawStr.c_str());             \
-    printf("command:\n");                                       \
-    printf("    type: %d\n", rhs.type);                         \
-    printf("    format: %d\n", rhs.format);                     \
-    printf("    list_type_cnt: %d\n", rhs.list_type_cnt);       \
-    printf("    hsc_lx: %d\n", rhs.hsc_lx);                     \
-    printf("    hsc_hx: %d\n", rhs.hsc_hx);                     \
-    printf("    val1: %s\n", rhs.val1.c_str());                 \
-    printf("    val2: %s\n", rhs.val2.c_str());                 \
+#define sstd_print_token_base(rhs)                                      \
+    printf("\n");                                                       \
+    printf("    debug info:\n");                                        \
+    printf("    line_num_begin: %d\n", rhs.line_num_begin);             \
+    printf("    line_num_end: %d\n", rhs.line_num_end);                 \
+    printf("    rawStr: %s\n", rhs.rawStr.c_str());                     \
+    printf("command:\n");                                               \
+    printf("    type: %d\n", rhs.type);                                 \
+    printf("    format: %d\n", rhs.format);                             \
+    printf("    list_type_cnt: %d\n", rhs.list_type_cnt);               \
+    printf("    hasValue: %s\n", (rhs.hasValue?"ture":"false"));        \
+    printf("    hsc_lx: %d\n", rhs.hsc_lx);                             \
+    printf("    hsc_hx: %d\n", rhs.hsc_hx);                             \
+    printf("    val1: %s\n", rhs.val1.c_str());                         \
+    printf("    val2: %s\n", rhs.val2.c_str());                         \
     printf(",\n");
 
 void sstd::print(const sstd_yaml::token& rhs){
@@ -413,7 +414,7 @@ bool _check_val_and_overwrite_multi_line_str(std::string& val_rw, const uint hsc
         std::string opt; opt += val_rw[0];
         if(val_rw.size()>=2){
             indent_width = std::stoi(&val_rw[1]);
-        }else{
+       }else{
             indent_width = _head_space_count(ls[i]);
         }
         
@@ -594,7 +595,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
                 ret_vCmd.push_back(c);
             }
 
-            if(t.val1_use_quotes || t.val1.size()>=1){ // check the value is NOT NULL
+            if(t.hasValue){ // check the value is NOT NULL
                 // --- debug info ---
                 c.line_num_begin  = t.line_num_begin;
                 c.line_num_end    = t.line_num_end;
@@ -621,7 +622,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
             c.val             = t.val1; // t.val2; // key
             ret_vCmd.push_back(c);
             
-            if(t.val2_use_quotes || t.val2.size()>=1){ // check the value is NOT NULL
+            if(t.hasValue){ // check the value is NOT NULL
                 // --- debug info ---
                 c.line_num_begin  = t.line_num_begin;
                 c.line_num_end    = t.line_num_end;
@@ -662,7 +663,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
             c.val             = t.val1; // t.val2; // key
             ret_vCmd.push_back(c);
             
-            if(t.val2_use_quotes || t.val2.size()>=1){ // check the value is NOT NULL
+            if(t.hasValue){ // check the value is NOT NULL
                 // --- debug info ---
                 c.line_num_begin  = t.line_num_begin;
                 c.line_num_end    = t.line_num_end;
@@ -681,14 +682,20 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
 
         
         // Construct free() command
-        if( t.type==sstd_yaml::num_list || t.type==sstd_yaml::num_hash || t.type==sstd_yaml::num_list_and_hash ){
+        if( !t.hasValue && (t.type==sstd_yaml::num_list || t.type==sstd_yaml::num_hash || t.type==sstd_yaml::num_list_and_hash )){
+            //switch(t.type){
+            //case sstd_yaml::num_str: {} break;
+        //case sstd_yaml::num_list:
+        //case sstd_yaml::num_hash:
+        //case sstd_yaml::num_list_and_hash: {
             uint hsc_curr = c.hsc;
             uint hsc_next = 0;
             if(i+1<v_token.size()){ // Checking the Next if is Not end of the v_token. (Checking the v_token[i+1] is NOT Null).
                 const sstd_yaml::token& t_nx = v_token[i+1]; // _nx: next
-            
+                
                 switch(t_nx.type){
-                case sstd_yaml::num_str:           { hsc_next = t_nx.hsc_hx;                            } break;
+                //case sstd_yaml::num_str:           { hsc_next = t_nx.hsc_hx;                            } break;
+                case sstd_yaml::num_str:           { continue; } break;
                 case sstd_yaml::num_list:          { hsc_next = t_nx.hsc_lx + 2*(t_nx.list_type_cnt-1); } break;
                 case sstd_yaml::num_hash:          { hsc_next = t_nx.hsc_hx + 2;                        } break;
                 case sstd_yaml::num_list_and_hash: { hsc_next = t_nx.hsc_hx + 2*(t_nx.list_type_cnt-1); } break;
@@ -696,14 +703,17 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
                 };
             }else{
                 // Case of "i" is the last token
-            
+                
                 // If sstd_yaml::_token2cmd() did NOT append the free() command,
                 // anaway all the cmd2yaml() process is already finished.
                 continue;
             }
+            printf("--\n");
+            sstd::printn(t.rawStr);
             sstd::printn(hsc_next);
             sstd::printn(hsc_curr);
             if(hsc_next<=hsc_curr){
+                printf("pop_back()\n");
                 // --- debug info ---
                 c.line_num_begin  = t.line_num_begin;
                 c.line_num_end    = t.line_num_end;
@@ -713,6 +723,8 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
             
                 ret_vCmd.push_back(c);
             }
+        //} break;
+        //default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
         }
     }
     
@@ -1550,6 +1562,16 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
         if(tmp.val1.size()==0 && !tmp.val1_use_quotes &&
            tmp.val2.size()==0 && !tmp.val2_use_quotes &&
            tmp.type==sstd_yaml::num_str                  ){ continue; }
+
+        // set hasValue
+        tmp.hasValue=false;
+        switch(tmp.type){
+        case sstd_yaml::num_str:           { tmp.hasValue=true; } break;
+        case sstd_yaml::num_list:          { if(tmp.val1_use_quotes||tmp.val1.size()>=1){tmp.hasValue=true;} } break; // check the value is NOT NULL
+        case sstd_yaml::num_list_and_hash:
+        case sstd_yaml::num_hash:          { if(tmp.val2_use_quotes||tmp.val2.size()>=1){tmp.hasValue=true;} } break; // check the value is NOT NULL
+        default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
+        }
         
         ret.push_back(std::move(tmp));
     }

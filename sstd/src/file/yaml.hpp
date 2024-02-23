@@ -53,6 +53,7 @@ namespace sstd_yaml{
         uint hsc_lx = 0;                               // head space counts for list type
         uint hsc_hx = 0;                               // head space counts for hash type
         
+        bool hasValue; // If the value (val1 or val2) is vaild for each data type (list or hash).
         bool val1_use_quotes;
         bool val2_use_quotes;
         std::string val1;
