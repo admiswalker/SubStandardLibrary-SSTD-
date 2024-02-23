@@ -578,6 +578,29 @@ TEST(yaml, _token2cmd_null_values_case01){
     // pop()
     //ASSERT_EQ(ret_v_cmd[3].ope, sstd_yaml::ope_pop); // NOT specified
 }
+TEST(yaml, _token2cmd_null_values_case02){
+    std::string s = R"(
+k1:
+k2:
+)";
+    std::vector<sstd_yaml::token> ret_v_token;
+    std::vector<sstd_yaml::command_v2> ret_v_cmd;
+    bool ret = false;
+    ret = sstd_yaml::_str2token(ret_v_token, s);
+    ret = sstd_yaml::_token2cmd(ret_v_cmd, ret_v_token);
+    sstd::printn(ret_v_cmd);
+
+    // -
+    ASSERT_EQ(ret_v_cmd[0].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[0].type, sstd_yaml::num_hash);
+    // pop()
+    ASSERT_EQ(ret_v_cmd[1].ope, sstd_yaml::ope_pop);
+    // -
+    ASSERT_EQ(ret_v_cmd[2].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[2].type, sstd_yaml::num_hash);
+    // pop()
+    //ASSERT_EQ(ret_v_cmd[3].ope, sstd_yaml::ope_pop); // NOT specified
+}
 /*
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // comments
