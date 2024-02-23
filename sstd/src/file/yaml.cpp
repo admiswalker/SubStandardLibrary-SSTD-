@@ -700,7 +700,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
                 //case sstd_yaml::num_str:           { hsc_next = t_nx.hsc_hx;                            } break;
             case sstd_yaml::num_str:           { continue; } break;
             case sstd_yaml::num_list:          { hsc_next = t_nx.hsc_lx + 2*(t_nx.list_type_cnt-1); } break;
-            case sstd_yaml::num_hash:          { hsc_next = t_nx.hsc_hx + 2;                        } break;
+            case sstd_yaml::num_hash:          { hsc_next = t_nx.hsc_hx;                            } break;
             case sstd_yaml::num_list_and_hash: { hsc_next = t_nx.hsc_hx + 2*(t_nx.list_type_cnt-1); } break;
             default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
             };
@@ -725,6 +725,9 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
             //
             bool isLessOrEqual = t.type==sstd_yaml::num_list || t_nx.type==sstd_yaml::num_hash; // check '<=' case
             bool isLess        = !isLessOrEqual;                                                // check '<' case
+            sstd::printn(isLessOrEqual);
+            sstd::printn(hsc_next);
+            sstd::printn(hsc_curr);
             if((isLessOrEqual && hsc_next<=hsc_curr) ||
                (isLess        && hsc_next< hsc_curr)    )
             {
