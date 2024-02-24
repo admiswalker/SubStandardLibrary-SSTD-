@@ -1090,28 +1090,17 @@ bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
             v_hsc.push_back(cmd.hsc);
             printf("1069\n"); continue;
         }
-//        if(cmd.hsc > hsc_base){
-//            v_hsc.push_back(cmd.hsc);
-//            --i;
-//            printf("947\n"); continue;
-//        }else
         if(cmd.hsc < hsc_base){
             v_dst.pop_back();
             v_hsc.pop_back();
             --i;
             printf("952\n"); continue; // continue for multiple escape
         }
-//        if(cmd.ope==sstd_yaml::ope_pop){ // pop for NULL value
-//            v_dst.pop_back();
-//            v_hsc.pop_back();
-//            printf("1042\n"); continue;
-//        }
         
         // set value or allocate dst
         if(cmd.ope==sstd_yaml::ope_assign){
             if(var.typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data.\n"); return false; }
             var = cmd.val;
-//            if(v_dst.size()>=2){ v_dst.pop_back(); v_hsc.pop_back(); }
         }else if(cmd.ope==sstd_yaml::ope_alloc){
             if(var.typeNum()==sstd::num_null){
                 switch(cmd.type){
@@ -1124,26 +1113,14 @@ bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
             case sstd_yaml::num_list: {
                 var.push_back();
                 v_dst_cr.push_back(&var[var.size()-1]);
-                //v_hsc.push_back(cmd.hsc);
             } break;
             case sstd_yaml::num_hash: {
                 auto itr = var.find(cmd.val);
                 if(itr!=var.end()){ sstd::pdbg_err("Detecting the duplicated hash key.\n"); return false; }
                 v_dst_cr.push_back(&var[cmd.val]);
-                //v_hsc.push_back(cmd.hsc);
             } break;
             default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
             }
-            /*
-            if(i+1<v_cmd.size()){
-                if(v_cmd[i+1].hsc<=cmd.hsc && v_cmd[i+1].type!=sstd_yaml::num_list){
-                    sstd::pdbg_err("IN 1005\n");
-                    sstd::printn(v_cmd[i+1].type);
-                    v_dst.pop_back();
-                    v_hsc.pop_back();
-                }
-            }
-            */
         }else if(cmd.ope==sstd_yaml::ope_pop){
             sstd::pdbg_err("In pop()\n"); //return false;
         }else{
