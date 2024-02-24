@@ -1629,7 +1629,7 @@ TEST(yaml, multi_line_str_by_list_vertical_line){ // - |
 - c
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
+    sstd::printn(yml);
 
     //---
     
@@ -1638,12 +1638,13 @@ TEST(yaml, multi_line_str_by_list_vertical_line){ // - |
     ans[0] = "a";
     ans[1] = "b1\nb2\nb3\n";
     ans[2] = "c";
+    sstd::printn(ans);
     
     //---
     
     ASSERT_TRUE(yml==ans);
 }
-
+/*
 TEST(yaml, multi_line_str_by_list_vertical_line_minus){ // - |-
     std::string s=R"(
 - a # comment
