@@ -699,7 +699,7 @@ TEST(yaml, _token2cmd_null_values_case03){
     // pop()
     //ASSERT_EQ(ret_v_cmd[5].ope, sstd_yaml::ope_pop); // NOT specified
 }
-/*
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // comments
 
@@ -1240,7 +1240,7 @@ TEST(yaml, list_and_hash__conbined){
 
 //---
 // Corner case(s)
-/*
+
 TEST(yaml, list_and_hash__colon){
     std::string s=R"(
 - k:1::: a":":a
@@ -1286,10 +1286,10 @@ TEST(yaml, list_and_hash_flow_style_brackets){
     
     ASSERT_TRUE(yml==ans);
 }
-*/
+//*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // complex test cases
-/*
+//*
 TEST(yaml, list_hash_case01_01){ // depth2
     std::string s=R"(
 - k1: v1
@@ -1605,11 +1605,11 @@ k4: v4
     
     ASSERT_TRUE(yml==ans);
 }
-*/
+//*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // ignore ! option
 
-/*
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // TypeConversion
 
@@ -1634,7 +1634,7 @@ k4: v4
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Multi line string for list
-
+/*
 TEST(yaml, multi_line_str_by_list_vertical_line){ // - |
     std::string s=R"(
 - a # comment
@@ -2139,7 +2139,7 @@ TEST(yaml, multi_line_str_by_list_greater_minus_num_1){ // - >-1
 - c
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
+    sstd::printn(yml);
 
     //---
     
@@ -2148,6 +2148,7 @@ TEST(yaml, multi_line_str_by_list_greater_minus_num_1){ // - >-1
     ans[0] = "a";
     ans[1] = " b1\n b2\n b3";
     ans[2] = "c";
+    sstd::printn(ans);
     
     //---
     
@@ -2162,10 +2163,10 @@ TEST(yaml, multi_line_str_by_list_greater_minus_num_1){ // - >-1
 
 // TEST(yaml, multi_line_str_by_list_greater_plus_num_2){ // - >-2
 // }
-
+//*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Multi line string for hash
-
+/*
 TEST(yaml, multi_line_str_by_hash_vertical_line){ // : |
     std::string s=R"(
 k1: a # comment
