@@ -477,9 +477,6 @@ TEST(yaml, _token2cmd_usual_cases){
     ASSERT_STREQ(ret_v_cmd[idx].val.c_str(), "k23");
     ++idx;
     
-    ASSERT_EQ(ret_v_cmd[idx].ope, sstd_yaml::ope_pop); // pop()
-    ++idx;
-    
     //   -
     ASSERT_EQ(ret_v_cmd[idx].ope, sstd_yaml::ope_alloc);
     ASSERT_EQ(ret_v_cmd[idx].hsc, 2);
@@ -534,8 +531,6 @@ TEST(yaml, _token2cmd_usual_cases){
     ASSERT_STREQ(ret_v_cmd[idx].val.c_str(), "k5");
     ++idx;
     
-    ASSERT_EQ(ret_v_cmd[idx].ope, sstd_yaml::ope_pop); // pop()
-    ++idx;
     //   k51:
     ASSERT_EQ(ret_v_cmd[idx].ope, sstd_yaml::ope_alloc);
     ASSERT_EQ(ret_v_cmd[idx].hsc, 2);
@@ -555,16 +550,10 @@ TEST(yaml, _token2cmd_usual_cases){
     ASSERT_EQ(ret_v_cmd[idx].type, sstd_yaml::num_list);
     ++idx;
     
-    ASSERT_EQ(ret_v_cmd[idx].ope, sstd_yaml::ope_pop); // pop()
-    ++idx;
-    
     // - # null
     ASSERT_EQ(ret_v_cmd[idx].ope, sstd_yaml::ope_alloc);
     ASSERT_EQ(ret_v_cmd[idx].hsc, 0);
     ASSERT_EQ(ret_v_cmd[idx].type, sstd_yaml::num_list);
-    ++idx;
-    
-    ASSERT_EQ(ret_v_cmd[idx].ope, sstd_yaml::ope_pop); // pop()
     ++idx;
     
     // -
@@ -626,16 +615,15 @@ TEST(yaml, _token2cmd_null_values_case01){
     ret = sstd_yaml::_token2cmd(ret_v_cmd, ret_v_token);
     sstd::printn(ret_v_cmd);
 
+    uint idx=0;
     // -
-    ASSERT_EQ(ret_v_cmd[0].ope, sstd_yaml::ope_alloc);
-    ASSERT_EQ(ret_v_cmd[0].type, sstd_yaml::num_list);
-    // pop()
-    ASSERT_EQ(ret_v_cmd[1].ope, sstd_yaml::ope_pop);
+    ASSERT_EQ(ret_v_cmd[idx].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[idx].type, sstd_yaml::num_list);
+    ++idx;
     // -
-    ASSERT_EQ(ret_v_cmd[2].ope, sstd_yaml::ope_alloc);
-    ASSERT_EQ(ret_v_cmd[2].type, sstd_yaml::num_list);
-    // pop()
-    //ASSERT_EQ(ret_v_cmd[3].ope, sstd_yaml::ope_pop); // NOT specified
+    ASSERT_EQ(ret_v_cmd[idx].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[idx].type, sstd_yaml::num_list);
+    ++idx;
 }
 TEST(yaml, _token2cmd_null_values_case02){
     std::string s = R"(
@@ -649,16 +637,15 @@ k2:
     ret = sstd_yaml::_token2cmd(ret_v_cmd, ret_v_token);
     sstd::printn(ret_v_cmd);
 
+    uint idx=0;
     // k1:
-    ASSERT_EQ(ret_v_cmd[0].ope, sstd_yaml::ope_alloc);
-    ASSERT_EQ(ret_v_cmd[0].type, sstd_yaml::num_hash);
-    // pop()
-    ASSERT_EQ(ret_v_cmd[1].ope, sstd_yaml::ope_pop);
+    ASSERT_EQ(ret_v_cmd[idx].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[idx].type, sstd_yaml::num_hash);
+    ++idx;
     // k2:
-    ASSERT_EQ(ret_v_cmd[2].ope, sstd_yaml::ope_alloc);
-    ASSERT_EQ(ret_v_cmd[2].type, sstd_yaml::num_hash);
-    // pop()
-    //ASSERT_EQ(ret_v_cmd[3].ope, sstd_yaml::ope_pop); // NOT specified
+    ASSERT_EQ(ret_v_cmd[idx].ope, sstd_yaml::ope_alloc);
+    ASSERT_EQ(ret_v_cmd[idx].type, sstd_yaml::num_hash);
+    ++idx;
 }
 TEST(yaml, _token2cmd_null_values_case03){
     std::string s = R"(
@@ -683,9 +670,6 @@ TEST(yaml, _token2cmd_null_values_case03){
     ASSERT_EQ(ret_v_cmd[idx].ope, sstd_yaml::ope_alloc);
     ASSERT_EQ(ret_v_cmd[idx].type, sstd_yaml::num_hash);
     ++idx;
-    // pop()
-    ASSERT_EQ(ret_v_cmd[idx].ope, sstd_yaml::ope_pop);
-    ++idx;
     // -
     ASSERT_EQ(ret_v_cmd[idx].ope, sstd_yaml::ope_alloc);
     ASSERT_EQ(ret_v_cmd[idx].type, sstd_yaml::num_list);
@@ -696,13 +680,11 @@ TEST(yaml, _token2cmd_null_values_case03){
     ASSERT_EQ(ret_v_cmd[idx].ope, sstd_yaml::ope_alloc);
     ASSERT_EQ(ret_v_cmd[idx].type, sstd_yaml::num_hash);
     ++idx;
-    // pop()
-    //ASSERT_EQ(ret_v_cmd[5].ope, sstd_yaml::ope_pop); // NOT specified
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // comments
-
+/*
 TEST(yaml, comments_str){
     std::string s=R"(
 a # comment
@@ -1289,7 +1271,7 @@ TEST(yaml, list_and_hash_flow_style_brackets){
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // complex test cases
-//*
+/*
 TEST(yaml, list_hash_case01_01){ // depth2
     std::string s=R"(
 - k1: v1

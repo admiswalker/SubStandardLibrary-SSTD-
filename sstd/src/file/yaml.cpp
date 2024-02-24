@@ -693,7 +693,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
         };
 
         
-        // Construct pop() command
+        // Construct stack() command
         if( !t.hasValue && (t.type==sstd_yaml::num_list || t.type==sstd_yaml::num_hash || t.type==sstd_yaml::num_list_and_hash )){
             uint hsc_curr = c.hsc;
             uint hsc_next = 0;
@@ -716,42 +716,6 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
             case sstd_yaml::num_list_and_hash: { hsc_next = t_nx.hsc_lx + 2*(t_nx.list_type_cnt-1); } break; // works as a list
             default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
             };
-            
-            // Table. pop() conditions
-            //
-            // ┌───┬───────────────────┬───────────────────────────────────────────────────────────┐
-            // │   │                   │ hsc_current                                               │
-            // ├───┼───────────────────┼───────────────────┬───────────────────┬───────────────────┤
-            // │   │                   │                   │                   │ list_and_hash     │
-            // │   │                   │ list              │ hash              │ (works as a hash) │
-            // ├───┼───────────────────┼───────────────────┼───────────────────┼───────────────────┤
-            // │ h │ list              │ <=                │ <                 │ <                 │
-            // │ s │                   │                   │                   │                   │
-            // │ c ├───────────────────┼───────────────────┼───────────────────┼───────────────────┤
-            // │ _ │ list_and_hash     │ <=                │ <                 │ <                 │
-            // │ n │ (works as a list) │                   │                   │                   │
-            // │ e ├───────────────────┼───────────────────┼───────────────────┼───────────────────┤
-            // │ x │ hash              │ <=                │ <=                │ <=                │
-            // │ t │                   │                   │                   │                   │
-            // └───┴───────────────────┴───────────────────┴───────────────────┴───────────────────┘
-            //
-            bool isLessOrEqual = t.type==sstd_yaml::num_list || t_nx.type==sstd_yaml::num_hash; // check '<=' case
-            bool isLess        = !isLessOrEqual;                                                // check '<' case
-            sstd::printn(isLessOrEqual);
-            sstd::printn(hsc_next);
-            sstd::printn(hsc_curr);
-            if((isLessOrEqual && hsc_next<=hsc_curr) ||
-               (isLess        && hsc_next< hsc_curr)    )
-            {
-                // --- debug info ---
-                c.line_num_begin  = t.line_num_begin;
-                c.line_num_end    = t.line_num_end;
-                c.rawStr          = t.rawStr;
-                // --- construct info ---
-                c.ope             = sstd_yaml::ope_pop;
-            
-                ret_vCmd.push_back(c);
-            }
 
             // Table. stack() conditions
             //
@@ -772,10 +736,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
             // └───┴───────────────────┴───────────────────┴───────────────────┴───────────────────┘
             //
             bool isGr     = t.type==sstd_yaml::num_list || t_nx.type==sstd_yaml::num_hash; // check '>' case
-            bool isGrOrEq = !isLessOrEqual;                                                // check '>=' case
-            sstd::printn(isLessOrEqual);
-            sstd::printn(hsc_next);
-            sstd::printn(hsc_curr);
+            bool isGrOrEq = !isGr;                                                         // check '>=' case
             if((isGr     && hsc_next> hsc_curr) ||
                (isGrOrEq && hsc_next>=hsc_curr)    )
             {
@@ -1070,7 +1031,6 @@ bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
             if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
             v_dst_cr.push_back(v_dst[v_dst.size()-1]);
         }
-        //sstd::terp::var* pVar = v_dst[v_dst.size()-1];
         sstd::terp::var* pVar = v_dst_cr[v_dst_cr.size()-1];
         sstd::terp::var& var = *pVar;
         if(v_hsc.size()==0){ sstd::pdbg_err("v_hsc is out of range\n"); return false; }
@@ -1088,13 +1048,13 @@ bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
             if(v_dst_cr.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
             v_dst.push_back(v_dst_cr[v_dst_cr.size()-1]);
             v_hsc.push_back(cmd.hsc);
-            printf("1069\n"); continue;
+            continue;
         }
         if(cmd.hsc < hsc_base){
             v_dst.pop_back();
             v_hsc.pop_back();
             --i;
-            printf("952\n"); continue; // continue for multiple escape
+            continue; // continue for multiple escape
         }
         
         // set value or allocate dst
@@ -1121,8 +1081,6 @@ bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
             } break;
             default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
             }
-        }else if(cmd.ope==sstd_yaml::ope_pop){
-            sstd::pdbg_err("In pop()\n"); //return false;
         }else{
             sstd::pdbg_err("Unexpected data type\n"); return false;
         }
