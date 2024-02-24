@@ -652,6 +652,8 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
             }
 
             {
+                // construction of stack() command
+                
                 // --- debug info ---
                 c.line_num_begin  = t.line_num_begin;
                 c.line_num_end    = t.line_num_end;
@@ -693,7 +695,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
         };
 
         
-        // Construct stack() command
+        // construction of stack() command
         if( !t.hasValue && (t.type==sstd_yaml::num_list || t.type==sstd_yaml::num_hash || t.type==sstd_yaml::num_list_and_hash )){
             uint hsc_curr = c.hsc;
             uint hsc_next = 0;
@@ -1027,6 +1029,7 @@ bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
         const struct sstd_yaml::command_v2& cmd = v_cmd[i];
 
         if(cmd.ope==sstd_yaml::ope_alloc){
+            // Inits v_dst_cr if the v_cmd is the beginning of the `sstd_yaml::ope_alloc` operation.
             v_dst_cr.clear();
             if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
             v_dst_cr.push_back(v_dst[v_dst.size()-1]);
@@ -1043,13 +1046,16 @@ bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
         
         sstd::printn(i);                     // for debug
         sstd::printn(v_cmd[i]);              // for debug
-        // check indent
+
+        // checking the stack command
         if(cmd.ope==sstd_yaml::ope_stack){
             if(v_dst_cr.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
             v_dst.push_back(v_dst_cr[v_dst_cr.size()-1]);
             v_hsc.push_back(cmd.hsc);
             continue;
         }
+        
+        // checking the YAML indent
         if(cmd.hsc < hsc_base){
             v_dst.pop_back();
             v_hsc.pop_back();
@@ -1057,7 +1063,7 @@ bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
             continue; // continue for multiple escape
         }
         
-        // set value or allocate dst
+        // setting the value or allocate dst address
         if(cmd.ope==sstd_yaml::ope_assign){
             if(var.typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data.\n"); return false; }
             var = cmd.val;
@@ -1069,6 +1075,7 @@ bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
                 default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
                 }
             }
+            
             switch(cmd.type){
             case sstd_yaml::num_list: {
                 var.push_back();
