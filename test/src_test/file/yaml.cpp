@@ -809,7 +809,7 @@ TEST(yaml, list_depth1){
     //---
     
     ASSERT_TRUE(yml==ans);
-}/*
+}
 TEST(yaml, list_depth2){
     std::string s=R"(
 - a # comment
@@ -901,7 +901,7 @@ TEST(yaml, list_null){
     
     ASSERT_TRUE(yml==ans);
 }
-/*
+//*
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // hash
 
@@ -1161,9 +1161,10 @@ TEST(yaml, list_and_hash__conbined){
     
     sstd::terp::var ans;
     ans = sstd::terp::list(2);
+    ans[0] = sstd::terp::hash();
     ans[0]["k1"] = sstd::terp::list(2);
-    ans[0]["k1"][0] = "v1";
-    ans[0]["k1"][1] = "v2";
+    ans[0]["k1"][0] = "v11";
+    ans[0]["k1"][1] = "v12";
     ans[1] = "v2";
     sstd::printn(ans);
     
