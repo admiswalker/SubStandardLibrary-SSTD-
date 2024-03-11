@@ -1240,7 +1240,7 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
                 is_flow = _is_flow(subt+str[r]);
                 if(!is_flow && !is_mult){
                     // Block Style
-                    if(str[r]=='|'){ is_mult=true; hsc_lx_mult=tmp.hsc_lx; tmp.rawStr+=str[r]; continue; }
+                    if(str[r]=='|'){ is_mult=true; subt+=str[r]; hsc_lx_mult=tmp.hsc_lx; tmp.rawStr+=str[r]; continue; }
                     
                     // for Windows
                     if(str[r]=='-' && str[r+1]=='\r'){                                        subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; continue; }
