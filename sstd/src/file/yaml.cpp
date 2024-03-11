@@ -1279,14 +1279,6 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
                     if(str[r]=='-' && str[r+1]==' ' ){ is_break=true; }
                     if(is_break && tmp.hsc_lx <= hsc_lx_mult){
                         is_mult_end=true;
-                        tmp.rawStr.erase(tmp.rawStr.size()-(r-r_prev_line_end));
-                        r = r_prev_line_end;
-                        // revert "rawStr" and "subt".
-                        //std::copy(str.begin()+r_prev_line_end+1, str.begin()+r+1, tmp_prev.rawStr.begin());
-                        //std::copy(,, subt_prev.begin());
-                        
-                        //tmp.rawStr.erase();
-                        //subt = ;
                     }
                 }
             }
@@ -1294,7 +1286,19 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
             subt       += str[r];
             
             // Checking the token break
-            if(is_mult_end){ ++r; break; }
+            if(is_mult_end){
+                tmp.rawStr.erase(tmp.rawStr.size()-(r-r_prev_line_end));
+                subt.erase(subt.size()-(r-r_prev_line_end));
+                r = r_prev_line_end;
+                // revert "rawStr" and "subt".
+                //std::copy(str.begin()+r_prev_line_end+1, str.begin()+r+1, tmp_prev.rawStr.begin());
+                //std::copy(,, subt_prev.begin());
+                        
+                //tmp.rawStr.erase();
+                //subt = ;
+                ++r;
+                break;
+            }
             if(str[r]=='\n'){ // Uinx ("\n")
                 ++line_num;
                 if(!is_flow && !is_mult && !is_escaped && !in_d_quate){ ++r; break; } 

@@ -388,11 +388,64 @@ TEST(yaml, _str2token_multi_list_case07){
     sstd::printn(v_ret);
     
     ASSERT_EQ(v_ret.size(), 4);
+    ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- a # comment\n");
+    ASSERT_STREQ(v_ret[0].val1.c_str(),   "a");
+    sstd::printn(v_ret[1].rawStr.c_str());
+    ASSERT_STREQ(v_ret[1].rawStr.c_str(), R"(- |
+  b1
+  b2
+  b3
+
+)");
+    sstd::printn(v_ret[1].val1.c_str());
+    ASSERT_STREQ(v_ret[1].val1.c_str(), R"(|
+  b1
+  b2
+  b3
+
+)");
+}/*
+TEST(yaml, _str2token_multi_list_case08){
+    std::string s=R"(
+- a # comment
+- k: |
+  b1
+  b2
+  b3
+
+- c
+- d
+)";
+    std::vector<sstd_yaml::token> v_ret;
+    bool ret = sstd_yaml::_str2token(v_ret, s);
+    sstd::printn(v_ret);
+    
+    ASSERT_EQ(v_ret.size(), 4);
 //    ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- - - a");
 //    ASSERT_STREQ(v_ret[0].val1.c_str(),         "a");
 //    ASSERT_EQ(v_ret[0].list_type_cnt, 3);
 }
+TEST(yaml, _str2token_multi_list_case09){
+    std::string s=R"(
+- a # comment
+- k:|
+  b1
+  b2
+  b3
 
+- c
+- d
+)";
+    std::vector<sstd_yaml::token> v_ret;
+    bool ret = sstd_yaml::_str2token(v_ret, s);
+    sstd::printn(v_ret);
+    
+    ASSERT_EQ(v_ret.size(), 4);
+//    ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- - - a");
+//    ASSERT_STREQ(v_ret[0].val1.c_str(),         "a");
+//    ASSERT_EQ(v_ret[0].list_type_cnt, 3);
+}
+*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 /*
 TEST(yaml, _token2cmd_usual_cases){
