@@ -97,6 +97,10 @@ namespace sstd_yaml{
     
     //---
     
+    bool _format_mult_line_str(std::string& ret, const std::string& str);
+    
+    //---
+    
     bool _str2token(std::vector<sstd_yaml::token>& ret, const char* str);
     bool _str2token(std::vector<sstd_yaml::token>& ret, const std::string& str);
     bool _token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, const std::vector<sstd_yaml::token>& v_token);

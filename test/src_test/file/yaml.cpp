@@ -472,6 +472,27 @@ TEST(yaml, _str2token_multi_list_case09){
 )");
 }
 
+//---
+// Test _format_mult_line_str()
+
+TEST(yaml, _format_mult_line_str__PipeSymbol__case01){ // '|'
+    std::string s=R"(|
+  b1
+  b2
+  b3
+
+)";
+    std::string ret;
+    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s);
+    sstd::printn(ret_TF);
+    sstd::printn(ret);
+    
+    //ASSERT_EQ(ret_TF);
+}
+
+//TEST(yaml, _format_mult_line_str__GreaterThanSymbol__case01){ // '>'
+//}
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 /*
 TEST(yaml, _token2cmd_usual_cases){

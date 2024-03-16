@@ -154,7 +154,7 @@ std::string _extract_quotes_value(const std::string& str){
         }
         
         ret += tmp[i];
-            
+        
         new_line_cnt=0;
         escape = false;
     }
@@ -344,7 +344,7 @@ bool _get_multi_line_str(std::string& ret, const uint hsc_prev, const std::strin
     //if(sstd::charIn('|', opt)){ separator = '\n'; }
     if(sstd::charIn('>', opt)){ separator =  ' '; }
 //    if(indent_width == hsc_prev){ separator = '\n'; }
-
+    
     for(; i<ls.size(); ++i){
         std::string s;
         s = ls[i];
@@ -422,6 +422,41 @@ bool _check_val_and_overwrite_multi_line_str(std::string& val_rw, const uint hsc
         
     }
 
+    return true;
+}
+
+//---
+
+uint sstd_lcount(const char* str, char X){
+    uint ret_cnt=0;
+    for(uint i=0; str[i]!='\0'; ++i){
+        if(str[i]!=X){ break; }
+        ++ret_cnt;
+    }
+    return ret_cnt;
+}
+uint sstd_lcount(const std::string& str, char X){ return sstd_lcount(str.c_str(), X); }
+
+//---
+
+bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str){
+    ret.clear();
+    std::vector<std::string> vStr = sstd::splitByLine(str);
+    
+    if(vStr.size()<2){ return true; }
+    std::string opt=vStr[0];
+    uint hsc_bash=sstd_lcount(vStr[1], ' '); // hsc: head space count
+    
+    for(uint i=1; i<vStr.size(); ++i){
+        uint hsc = sstd_lcount(vStr[i], ' '); // hsc: head space count
+        uint non_space_count = vStr[i].size() - hsc;
+        if(non_space_count!=0 && hsc < hsc_bash){ return false; }
+
+        ret += (char*)&vStr[i][hsc];
+        ret += "\n";
+    }
+    
+    sstd::printn(vStr);
     return true;
 }
 
