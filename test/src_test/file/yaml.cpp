@@ -483,13 +483,43 @@ TEST(yaml, _format_mult_line_str__PipeSymbol__case01){ // '|'
 
 )";
     std::string ret;
+    const uint hsc_base=0;
+    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base);
+    sstd::printn(ret_TF);
+    sstd::printn(ret);
+    
+    //ASSERT_EQ(ret_TF);
+}
+TEST(yaml, _format_mult_line_str__PipeSymbol__case02){ // '|+'
+    std::string s=R"(|+123
+  b1
+  b2
+  b3
+
+)";
+    std::string ret;
+    const uint hsc_base=0;
+    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base);
+    sstd::printn(ret_TF);
+    sstd::printn(ret);
+    
+    //ASSERT_EQ(ret_TF);
+}/*
+TEST(yaml, _format_mult_line_str__PipeSymbol__case01){ // '|-'
+    std::string s=R"(|
+  b1
+  b2
+  b3
+
+)";
+    std::string ret;
     bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s);
     sstd::printn(ret_TF);
     sstd::printn(ret);
     
     //ASSERT_EQ(ret_TF);
 }
-
+//*/
 //TEST(yaml, _format_mult_line_str__GreaterThanSymbol__case01){ // '>'
 //}
 

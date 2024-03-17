@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include <cassert>
 #include <string>
 #include <vector>
@@ -439,24 +441,121 @@ uint sstd_lcount(const std::string& str, char X){ return sstd_lcount(str.c_str()
 
 //---
 
-bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str){
+std::string               sstd_lstrip_base   (const uchar* str, const uint len, const uchar* stripList, const uint sLen){
+    uint r=0;
+    if(len * sLen <= 256){
+        for(; r<len; ++r){
+            bool TF_continue=false;
+            for(uint si=0; si<sLen; ++si){
+                if(str[r]==stripList[si]){ TF_continue=true; break; }
+            }
+            if(!TF_continue){ break; }
+        }
+    }else{
+        bool sTbl[256]={false};
+        for(uint si=0; si<sLen; ++si){ sTbl[ (uchar)stripList[si] ] = true; }
+        
+        for(; r<len; ++r){
+            if(!sTbl[ (uchar)str[r] ]){ break; }
+        }
+    }
+    return std::string((const char*)&str[r]);
+}
+std::string               sstd_rstrip_base   (const uchar* str, const uint len, const uchar* stripList, const uint sLen){
+    int r=len-1;
+    if(len * sLen <= 256){
+        for(; r>=0; --r){
+            bool TF_continue=false;
+            for(uint si=0; si<sLen; ++si){
+                if(str[r]==stripList[si]){ TF_continue=true; break; }
+            }
+            if(!TF_continue){ break; }
+        }
+    }else{
+        bool sTbl[256]={false};
+        for(uint si=0; si<sLen; ++si){ sTbl[ (uchar)stripList[si] ] = true; }
+        
+        for(; r>=0; --r){
+            if(!sTbl[ (uchar)str[r] ]){ break; }
+        }
+    }
+    return std::string((const char*)str, r+1);
+}
+std::string               sstd_strip   (const std::string& str, const char* pStripList){
+    std::string ret = sstd_lstrip_base((const uchar*)str.c_str(), str.size(), (const uchar*)pStripList, strlen(pStripList));
+    return            sstd_rstrip_base((const uchar*)ret.c_str(), ret.size(), (const uchar*)pStripList, strlen(pStripList));
+}
+std::string               sstd_strip   (const std::string& str, const std::string& stripList){
+    std::string ret = sstd_lstrip_base((const uchar*)str.c_str(), str.size(), (const uchar*)stripList.c_str(), stripList.size());
+    return            sstd_rstrip_base((const uchar*)ret.c_str(), ret.size(), (const uchar*)stripList.c_str(), stripList.size());
+}
+
+//std::string               sstd_stripAll   (const        char* str, const        char* stripList);
+//std::string               sstd_stripAll   (const std::string& str, const        char* stripList);
+//std::string               sstd_stripAll   (const        char* str, const std::string& stripList);
+//std::string               sstd_stripAll   (const std::string& str, const std::string& stripList);
+
+//void                      sstd_stripAll_ow(      std::string& str, const        char* stripList);
+//void                      sstd_stripAll_ow(      std::string& str, const std::string& stripList);
+
+//---
+
+bool _parse_mult_line_opt(bool& ret_pipeSymbol, bool& ret_greaterThanSymbol, bool& ret_plusSymbol, bool& ret_minusSymbol, uint& ret_hsc, const std::string& opt){
+    // input examples:
+    //     "|+123", "|-123", "|123+", "|123-",
+    //     ">+123", ">-123", ">123+", ">123-".
+    
+    ret_pipeSymbol=false;
+    ret_greaterThanSymbol=false;
+    ret_plusSymbol=false;
+    ret_minusSymbol=false;
+    ret_hsc=0;
+    for(uint i=0; i<opt.size(); ++i){
+        if(opt[i]=='|'){ if(ret_pipeSymbol       ){sstd::pdbg_err("Duplicated '|'.\n");return false;} ret_pipeSymbol       =true; continue; }
+        if(opt[i]=='>'){ if(ret_greaterThanSymbol){sstd::pdbg_err("Duplicated '>'.\n");return false;} ret_greaterThanSymbol=true; continue; }
+        if(opt[i]=='+'){ if(ret_plusSymbol       ){sstd::pdbg_err("Duplicated '+'.\n");return false;} ret_plusSymbol       =true; continue; }
+        if(opt[i]=='-'){ if(ret_minusSymbol      ){sstd::pdbg_err("Duplicated '-'.\n");return false;} ret_minusSymbol      =true; continue; }
+    }
+    std::string sNum = sstd_strip(opt, "|>+-");
+    if(sNum.size()==0){ return true; }
+    if(!sstd::isNum(sNum)){ sstd::pdbg_err("Not numer.\n"); return false; }
+    ret_hsc = std::stoul(sNum);
+    
+    return true;
+}
+
+//---
+
+bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, const uint hsc_base_yaml){
     ret.clear();
     std::vector<std::string> vStr = sstd::splitByLine(str);
     
     if(vStr.size()<2){ return true; }
+    bool ret_pipeSymbol=false, ret_greaterThanSymbol=false, ret_plusSymbol=false, ret_minusSymbol=false;
+    uint ret_user_requested_hsc=0;
     std::string opt=vStr[0];
-    uint hsc_bash=sstd_lcount(vStr[1], ' '); // hsc: head space count
+    if(!_parse_mult_line_opt(ret_pipeSymbol, ret_greaterThanSymbol, ret_plusSymbol, ret_minusSymbol, ret_user_requested_hsc, opt)){ sstd::pdbg_err("_parse_mult_line_opt() is failed.\n"); return false; }
+    
+    const uint hsc_bash_1st_line=sstd_lcount(vStr[1], ' '); // hsc: head space count
+    if(hsc_bash_1st_line<=hsc_base_yaml){ sstd::pdbg_err("The space count of multiple line indent is invalid.\n"); return false; }
+
+    uint hsc_bash=hsc_bash_1st_line;
+    if(ret_user_requested_hsc!=0){
+        if(ret_user_requested_hsc>=hsc_bash_1st_line){ sstd::pdbg_err("The user requested indent size is too large.\n"); return false; }
+        hsc_bash=ret_user_requested_hsc;
+    }
     
     for(uint i=1; i<vStr.size(); ++i){
         uint hsc = sstd_lcount(vStr[i], ' '); // hsc: head space count
         uint non_space_count = vStr[i].size() - hsc;
         if(non_space_count!=0 && hsc < hsc_bash){ return false; }
-
-        ret += (char*)&vStr[i][hsc];
+        
+        ret += (char*)&vStr[i][hsc_bash];
         ret += "\n";
     }
     
     sstd::printn(vStr);
+
     return true;
 }
 

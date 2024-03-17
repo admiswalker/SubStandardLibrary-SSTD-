@@ -97,7 +97,7 @@ namespace sstd_yaml{
     
     //---
     
-    bool _format_mult_line_str(std::string& ret, const std::string& str);
+    bool _format_mult_line_str(std::string& ret, const std::string& str, const uint hsc_base_yaml);
     
     //---
     
