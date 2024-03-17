@@ -491,14 +491,14 @@ TEST(yaml, _format_mult_line_str__PipeSymbol__case01){ // '|'
     //ASSERT_EQ(ret_TF);
 }
 TEST(yaml, _format_mult_line_str__PipeSymbol__case02){ // '|+'
-    std::string s=R"(|+123
+    std::string s=R"(|+1
   b1
-  b2
-  b3
+ b2
+ b3
 
 )";
     std::string ret;
-    const uint hsc_base=0;
+    const uint hsc_base=1;
     bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base);
     sstd::printn(ret_TF);
     sstd::printn(ret);
