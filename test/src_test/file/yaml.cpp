@@ -472,29 +472,16 @@ TEST(yaml, _str2token_multi_list_case09){
 )");
 }
 
-//---
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 // Test _format_mult_line_str()
 
-TEST(yaml, _format_mult_line_str__PipeSymbol__case01){ // '|'
-    std::string s=R"(|
-  b1
-  b2
-  b3
-
-)";
-    std::string ret;
-    const uint hsc_base=0;
-    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base);
-    sstd::printn(ret_TF);
-    sstd::printn(ret);
-    
-    //ASSERT_EQ(ret_TF);
-}
-TEST(yaml, _format_mult_line_str__PipeSymbol__case02){ // '|+'
-    std::string s=R"(|+1
+TEST(yaml, _format_mult_line_str__pipeSymbol__NoPlusOrMinus__case01){ // '|1'
+    std::string s=R"(|1
   b1
  b2
  b3
+  
+ b4
 
 )";
     std::string ret;
@@ -503,25 +490,127 @@ TEST(yaml, _format_mult_line_str__PipeSymbol__case02){ // '|+'
     sstd::printn(ret_TF);
     sstd::printn(ret);
     
-    //ASSERT_EQ(ret_TF);
-}/*
-TEST(yaml, _format_mult_line_str__PipeSymbol__case01){ // '|-'
-    std::string s=R"(|
+    ASSERT_TRUE(ret_TF);
+    ASSERT_STREQ(ret.c_str(), R"( b1
+b2
+b3
+ 
+b4
+)");
+}
+TEST(yaml, _format_mult_line_str__pipeSymbol__PipeSymbol__case01){ // '|+1'
+    std::string s=R"(|+1
   b1
-  b2
-  b3
+ b2
+ b3
+  
+ b4
 
 )";
     std::string ret;
-    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s);
+    const uint hsc_base=1;
+    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base);
     sstd::printn(ret_TF);
     sstd::printn(ret);
     
-    //ASSERT_EQ(ret_TF);
+    ASSERT_TRUE(ret_TF);
+    ASSERT_STREQ(ret.c_str(), R"( b1
+b2
+b3
+ 
+b4
+
+)");
 }
-//*/
-//TEST(yaml, _format_mult_line_str__GreaterThanSymbol__case01){ // '>'
-//}
+TEST(yaml, _format_mult_line_str__pipeSymbol__MinusSymbol__case01){ // '|-1'
+    std::string s=R"(|-1
+  b1
+ b2
+ b3
+  
+ b4
+
+)";
+    std::string ret;
+    const uint hsc_base=1;
+    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base);
+    sstd::printn(ret_TF);
+    sstd::printn(ret);
+    
+    ASSERT_TRUE(ret_TF);
+    ASSERT_STREQ(ret.c_str(), R"( b1
+b2
+b3
+ 
+b4)");
+}
+
+//---
+
+TEST(yaml, _format_mult_line_str__GreaterThanSymbol__NoPlusOrMinus__case01){ // '>1'
+    std::string s=R"(>1
+  b1
+ b2
+ b3
+  
+ b4
+
+)";
+    std::string ret;
+    const uint hsc_base=1;
+    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base);
+    sstd::printn(ret_TF);
+    sstd::printn(ret);
+    
+    ASSERT_TRUE(ret_TF);
+    ASSERT_STREQ(ret.c_str(), " b1\nb2 b3\n \nb4\n");
+}
+TEST(yaml, _format_mult_line_str__GreaterThanSymbol__PipeSymbol__case01){ // '>+1'
+    std::string s=R"(|+1
+  b1
+ b2
+ b3
+  
+ b4
+
+)";
+    std::string ret;
+    const uint hsc_base=1;
+    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base);
+    sstd::printn(ret_TF);
+    sstd::printn(ret);
+    
+    ASSERT_TRUE(ret_TF);
+    ASSERT_STREQ(ret.c_str(), R"( b1
+b2
+b3
+ 
+b4
+
+)");
+}
+TEST(yaml, _format_mult_line_str__GreaterThanSymbol__MinusSymbol__case01){ // '>-1'
+    std::string s=R"(|-1
+  b1
+ b2
+ b3
+  
+ b4
+
+)";
+    std::string ret;
+    const uint hsc_base=1;
+    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base);
+    sstd::printn(ret_TF);
+    sstd::printn(ret);
+    
+    ASSERT_TRUE(ret_TF);
+    ASSERT_STREQ(ret.c_str(), R"( b1
+b2
+b3
+ 
+b4)");
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 /*

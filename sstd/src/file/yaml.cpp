@@ -531,7 +531,8 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, 
     std::vector<std::string> vStr = sstd::splitByLine(str);
     
     if(vStr.size()<2){ return true; }
-    bool ret_pipeSymbol=false, ret_greaterThanSymbol=false, ret_plusSymbol=false, ret_minusSymbol=false;
+    bool ret_pipeSymbol=false, ret_greaterThanSymbol=false;
+    bool ret_plusSymbol=false, ret_minusSymbol=false;
     uint ret_user_requested_hsc=0;
     std::string opt=vStr[0];
     if(!_parse_mult_line_opt(ret_pipeSymbol, ret_greaterThanSymbol, ret_plusSymbol, ret_minusSymbol, ret_user_requested_hsc, opt)){ sstd::pdbg_err("_parse_mult_line_opt() is failed.\n"); return false; }
@@ -547,15 +548,31 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, 
     
     for(uint i=1; i<vStr.size(); ++i){
         uint hsc = sstd_lcount(vStr[i], ' '); // hsc: head space count
-        uint non_space_count = vStr[i].size() - hsc;
-        if(non_space_count!=0 && hsc < hsc_bash){ return false; }
+
+        if(vStr[i].size()>=hsc_bash){
+            if(hsc < hsc_bash){ sstd::pdbg_err("The space count of multiple line indent is invalid.\n"); return false; }
+            ret += (char*)&vStr[i][hsc_bash];
+        }
         
-        ret += (char*)&vStr[i][hsc_bash];
-        ret += "\n";
+//        if(ret_greaterThanSymbol && ret_user_requested_hsc!=0){ ret += "\n"; }
+//        
+//        if      (ret_pipeSymbol       ){ ret += "\n";
+//        }else if(ret_greaterThanSymbol){ ret += " ";
+//        }else{ sstd::pdbg_err("Multi-line instructions must be specified using the '|' or '>' symbol.\n"); return false; }
+        
+        if(ret_pipeSymbol || ret_user_requested_hsc!=0){ ret += "\n"; }
+        if(ret_greaterThanSymbol){
+            if(vStr[i].size()!=hsc){ // Checkint that Not all the vStr[i] string is space ' '
+                ret += " ";
+            }
+        }
     }
     
-    sstd::printn(vStr);
-
+    // for '+', '-' or '(defalut)'
+    if      (ret_plusSymbol ){ // Do Nothing
+    }else if(ret_minusSymbol){ ret=sstd::rstrip(sstd::rstrip(ret, '\n'), ' ');        // TODO: sstd::rstrip(std::string&, const char*) を作って，'\r' と '\n' の両方を除去できるようにする
+    }else                    { ret=sstd::rstrip(sstd::rstrip(ret, '\n'), ' ')+"\n"; }
+    
     return true;
 }
 
