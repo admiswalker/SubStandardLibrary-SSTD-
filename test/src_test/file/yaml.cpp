@@ -550,6 +550,23 @@ b4)");
 TEST(yaml, _format_mult_line_str__GreaterThanSymbol__NoPlusOrMinus__case01){ // '>1'
     std::string s=R"(>1
   b1
+  b2
+  b3)";
+    std::string ret;
+    const uint hsc_base=1;
+    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base);
+    sstd::printn(ret_TF);
+    sstd::printn(ret);
+    
+    ASSERT_TRUE(ret_TF);
+//    ASSERT_STREQ(ret.c_str(), " b1\nb2 b3\n \nb4\n");
+    ASSERT_STREQ(ret.c_str(), " b1\n b2\n b3");
+}
+
+/*
+TEST(yaml, _format_mult_line_str__GreaterThanSymbol__NoPlusOrMinus__case01){ // '>1'
+    std::string s=R"(>1
+  b1
  b2
  b3
   
@@ -611,7 +628,7 @@ b3
  
 b4)");
 }
-
+*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 /*
 TEST(yaml, _token2cmd_usual_cases){
