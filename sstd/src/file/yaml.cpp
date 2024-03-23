@@ -503,22 +503,15 @@ std::string               sstd_strip   (const std::string& str, const std::strin
 std::string _join_mult_line(const std::vector<std::string>& v, const bool ret_pipeSymbol, const bool ret_greaterThanSymbol){
     std::string ret;
     if(v.size()==0){ return ret; }
-    sstd::printn(v);
     
     std::vector<std::string> v_delimiter;
     if(ret_pipeSymbol){
         // '|'
-        printf("in |\n");
-        sstd::printn(v.size()-1);
         v_delimiter = std::vector<std::string>(v.size()-1, std::string("\n"));
-        sstd::printn(v_delimiter);
         
     }else if(ret_greaterThanSymbol){
         // '>'
-        printf("in >\n");
-        sstd::printn(v.size()-1);
         v_delimiter = std::vector<std::string>(v.size()-1, std::string(" "));
-        sstd::printn(v_delimiter);
         
         uint i = 0;
         uint hsc = sstd_lcount(v[i], ' '); // hsc: head space count
@@ -546,7 +539,7 @@ std::string _join_mult_line(const std::vector<std::string>& v, const bool ret_pi
 
 //---
 
-bool _parse_mult_line_opt(bool& ret_pipeSymbol, bool& ret_greaterThanSymbol, bool& ret_plusSymbol, bool& ret_minusSymbol, uint& ret_hsc, const std::string& opt){
+bool _parse_mult_line_opt(bool& ret_pipeSymbol, bool& ret_greaterThanSymbol, bool& ret_plusSymbol, bool& ret_minusSymbol, bool& ret_hasHsc, uint& ret_hsc, const std::string& opt){
     // input examples:
     //     "|+123", "|-123", "|123+", "|123-",
     //     ">+123", ">-123", ">123+", ">123-".
@@ -555,6 +548,7 @@ bool _parse_mult_line_opt(bool& ret_pipeSymbol, bool& ret_greaterThanSymbol, boo
     ret_greaterThanSymbol=false;
     ret_plusSymbol=false;
     ret_minusSymbol=false;
+    ret_hasHsc=false;
     ret_hsc=0;
     for(uint i=0; i<opt.size(); ++i){
         if(opt[i]=='|'){ if(ret_pipeSymbol       ){sstd::pdbg_err("Duplicated '|'.\n");return false;} ret_pipeSymbol       =true; continue; }
@@ -565,6 +559,7 @@ bool _parse_mult_line_opt(bool& ret_pipeSymbol, bool& ret_greaterThanSymbol, boo
     std::string sNum = sstd_strip(opt, "|>+-");
     if(sNum.size()==0){ return true; }
     if(!sstd::isNum(sNum)){ sstd::pdbg_err("Not numer.\n"); return false; }
+    ret_hasHsc=true;
     ret_hsc = std::stoul(sNum);
     
     return true;
@@ -580,14 +575,10 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, 
     if(v_str.size()<2){ return true; }
     bool ret_pipeSymbol=false, ret_greaterThanSymbol=false;
     bool ret_plusSymbol=false, ret_minusSymbol=false;
-    uint ret_user_requested_hsc=0;
+    bool ret_hasHsc=false; uint ret_user_requested_hsc=0;
     std::string opt=v_str[0];
-    if(!_parse_mult_line_opt(ret_pipeSymbol, ret_greaterThanSymbol, ret_plusSymbol, ret_minusSymbol, ret_user_requested_hsc, opt)){ sstd::pdbg_err("_parse_mult_line_opt() is failed.\n"); return false; }
+    if(!_parse_mult_line_opt(ret_pipeSymbol, ret_greaterThanSymbol, ret_plusSymbol, ret_minusSymbol, ret_hasHsc, ret_user_requested_hsc, opt)){ sstd::pdbg_err("_parse_mult_line_opt() is failed.\n"); return false; }
     if((!ret_pipeSymbol) && (!ret_greaterThanSymbol)){ sstd::pdbg_err("The multiple line needs to denoted by '|' or '>'.\n"); return false; }
-    sstd::printn(ret_pipeSymbol);
-    sstd::printn(ret_greaterThanSymbol);
-    sstd::printn(ret_plusSymbol);
-    sstd::printn(ret_minusSymbol);
     
     const uint hsc_bash_1st_line=sstd_lcount(v_str[1], ' '); // hsc: head space count
     if(hsc_bash_1st_line<=hsc_base_yaml){
@@ -599,8 +590,9 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, 
     }
 
     uint hsc_bash=hsc_bash_1st_line;
-    if(ret_user_requested_hsc!=0){
-        if(ret_user_requested_hsc>=hsc_bash_1st_line){
+    if(ret_hasHsc){
+        if(ret_user_requested_hsc==0){ sstd::pdbg_err("The user requested indent can not be 0.\n"); return false; }
+        if(ret_user_requested_hsc>hsc_bash_1st_line){
             // Error case.
             // - |9
             //   a  <- error (Required more than 10 hsc)
