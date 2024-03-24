@@ -568,9 +568,9 @@ bool _parse_mult_line_opt(bool& ret_pipeSymbol, bool& ret_greaterThanSymbol, boo
 //---
 
 bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, const uint hsc_base_yaml){
-    ret.clear();
     std::vector<std::string> v_str = sstd::splitByLine(str+"\n"); // "\n" modify the num of split sections
     std::vector<std::string> v_tmp;
+    ret.clear(); // Needs to clear after init v_str if `ret` and `str` address is same.
     
     if(v_str.size()<2){ return true; }
     bool ret_pipeSymbol=false, ret_greaterThanSymbol=false;
@@ -1468,6 +1468,7 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
                 if(!is_flow && !is_mult){
                     // Block Style
                     if(str[r]=='|'){ is_mult=true; subt+=str[r]; hsc_lx_mult=tmp.hsc_lx; tmp.rawStr+=str[r]; continue; }
+                    //if(str[r]==' ' && str[r+1]=='|'){ is_mult=true; subt+=str[r]; hsc_lx_mult=tmp.hsc_lx; tmp.rawStr+=str[r]; continue; }
                     
                     // for Windows
                     if(str[r]=='-' && str[r+1]=='\r'){                                        subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; continue; }
@@ -1566,7 +1567,15 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
         //if(tmp.val1_use_quotes || is_flow){ tmp.val1 = _extract_quotes_value(tmp.val1); }
         if(tmp.val1_use_quotes){ tmp.val1 = _extract_quotes_value(tmp.val1); }
         if(tmp.val2_use_quotes){ tmp.val2 = _extract_quotes_value(tmp.val2); }
-        //if(is_mult){ tmp.val1 = _normalize_the_mult_value(hsc_lx_mult, tmp.val1); }
+        if(is_mult){
+            if(!is_hash){
+                sstd::printn(tmp.val1);
+                if(!sstd_yaml::_format_mult_line_str(tmp.val1, tmp.val1, hsc_lx_mult)){ sstd::pdbg_err("sstd_yaml::_format_mult_line_str() is failed.\n"); return false; }
+                sstd::printn(tmp.val1);
+            }else{
+                if(!sstd_yaml::_format_mult_line_str(tmp.val2, tmp.val2, hsc_lx_mult)){ sstd::pdbg_err("sstd_yaml::_format_mult_line_str() is failed.\n"); return false; }
+            }
+        }
         
         if(tmp.val1.size()==0 && !tmp.val1_use_quotes &&
            tmp.val2.size()==0 && !tmp.val2_use_quotes &&

@@ -453,10 +453,10 @@ TEST(yaml, _str2token_multi_list_case09){
 )";
     std::vector<sstd_yaml::token> v_ret;
     bool ret = sstd_yaml::_str2token(v_ret, s);
-//    sstd::printn(v_ret);
+    sstd::printn(v_ret);
     
     ASSERT_EQ(v_ret.size(), 4);
-//    sstd::printn(v_ret[1].rawStr.c_str());
+    sstd::printn(v_ret[1].rawStr.c_str());
     ASSERT_STREQ(v_ret[1].rawStr.c_str(), R"(- k:|
    b1
    b2
@@ -471,7 +471,7 @@ TEST(yaml, _str2token_multi_list_case09){
 
 )");
 }
-
+/*
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Test _format_mult_line_str()
 
@@ -673,7 +673,7 @@ TEST(yaml, _format_mult_line_str__GreaterThanSymbol__NoPlusOrMinus__case03){ // 
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-/*
+//*
 TEST(yaml, _token2cmd_usual_cases){
     std::string s = R"(
 - k1: v11
@@ -1918,7 +1918,7 @@ k4: v4
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Multi line string for list
-/*
+//*
 TEST(yaml, multi_line_str_by_list_vertical_line){ // - |
     std::string s=R"(
 - a # comment
