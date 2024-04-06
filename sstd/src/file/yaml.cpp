@@ -1441,9 +1441,11 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
         uint r_prev_line_end=0;
         
         for(;;++r){
-            //printf("---\n");
-            //sstd::printn(r);
-            //sstd::printn(str[r]);
+            printf("---\n");
+            sstd::printn(r);
+            sstd::printn(str[r]);
+            sstd::printn(is_mult);
+            sstd::printn(is_mult_wos);
             if(str[r]=='\\'){ is_escaped=true; tmp.rawStr+=str[r]; ++r; }
 //            if(str[r]=='\n'){ ++line_num; break; }
             if(str[r]=='\0'){ ++line_num; break; }
@@ -1523,17 +1525,17 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
             }
             if(str[r]=='\n'){ // Uinx ("\n")
                 ++line_num;
+                if(!is_flow && !is_mult && is_list){ is_mult=true; is_mult_wos=true; }
                 if(!is_flow && !is_mult && !is_escaped && !in_d_quate){ ++r; break; } 
                 if( is_flow             && num_of_square_brackets==0 && num_of_curly_brackets==0){ ++r; break; }
                 if(             is_mult ){ tmp.hsc_hx=0; tmp.hsc_lx=0; r_prev_line_end=r; continue; }
-                is_mult=true; is_mult_wos=true;
                 
             }else if(str[r]=='\r' && str[r+1]=='\n'){ // Windows ("\r\n")
                 ++line_num; ++r;
+                if(!is_flow && !is_mult && is_list){ is_mult=true; is_mult_wos=true; }
                 if(!is_flow && !is_mult && !is_escaped && !in_d_quate){ r+=2; break; } 
                 if( is_flow             && num_of_square_brackets==0 && num_of_curly_brackets==0){ r+=2; break; }
                 if(             is_mult ){ tmp.hsc_hx=0; tmp.hsc_lx=0; r_prev_line_end=r; tmp.rawStr+=str[r]; continue; }
-                is_mult=true; is_mult_wos=true;
             }
             
             // init

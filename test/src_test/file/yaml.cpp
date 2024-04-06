@@ -408,7 +408,7 @@ TEST(yaml, _str2token_multi_list_case07){
 TEST(yaml, _str2token_multi_list_case08){
     std::string s=R"(
 - a # comment
-- k: |
+- k: |+
    b1
    b2
    b3
@@ -424,7 +424,7 @@ TEST(yaml, _str2token_multi_list_case08){
     ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- a # comment\n");
     ASSERT_STREQ(v_ret[0].val1.c_str(),   "a");
     sstd::printn(v_ret[1].rawStr.c_str());
-    ASSERT_STREQ(v_ret[1].rawStr.c_str(), R"(- k: |
+    ASSERT_STREQ(v_ret[1].rawStr.c_str(), R"(- k: |+
    b1
    b2
    b3
@@ -433,7 +433,7 @@ TEST(yaml, _str2token_multi_list_case08){
     sstd::printn(v_ret[1].val1.c_str());
     sstd::printn(v_ret[1].val2.c_str());
     ASSERT_STREQ(v_ret[1].val1.c_str(), "k");
-    ASSERT_STREQ(v_ret[1].val2.c_str(), R"(|
+    ASSERT_STREQ(v_ret[1].val2.c_str(), R"(|+
    b1
    b2
    b3
