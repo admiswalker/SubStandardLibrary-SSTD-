@@ -1465,15 +1465,15 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
                     if(str[r]==' ' && str[r+1]=='|'){ is_mult=true; subt+=str[r]; hsc_lx_mult=tmp.hsc_lx; tmp.rawStr+=str[r]; continue; }
                     
                     // for Windows
-                    if(str[r]=='-' && str[r+1]=='\r'){ is_mult=true; is_mult_wos=true;                                       subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; continue; }
+                    if(str[r]=='-' && str[r+1]=='\r'){ /* Set mutli-line mode after line break. */                            subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; continue; }
                     if(str[r]==':' && str[r+1]=='\r'){ is_mult=true; is_mult_wos=true; tmp.val1=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; continue; }
                     
                     // for Unix
-                    if(str[r]=='-' && str[r+1]=='\n'){ is_mult=true; is_mult_wos=true;                                        subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; continue; }
+                    if(str[r]=='-' && str[r+1]=='\n'){ /* Set mutli-line mode after line break. */                            subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; continue; }
                     if(str[r]==':' && str[r+1]=='\n'){ is_mult=true; is_mult_wos=true; tmp.val1=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; continue; }
                     
                     // the other case
-                    if(str[r]=='-' && str[r+1]==' '){ is_mult=true; is_mult_wos=true;                                        subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
+                    if(str[r]=='-' && str[r+1]==' '){ /* Set mutli-line mode after line break. */                            subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
                     if(str[r]==':' && str[r+1]==' '){ is_mult=true; is_mult_wos=true; tmp.val1=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
                 }else if(!is_mult){
                     // Flow Style
@@ -1494,9 +1494,9 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
                     // まずは簡易実装で済ます．効率はあとから．
                     bool is_break=false;
                     if(str[r]=='-' && str[r+1]=='\r'){ is_break=true; }
-                    if(str[r]==':' && str[r+1]=='\r' && !is_list){ is_break=true; }
+                    if(str[r]==':' && str[r+1]=='\r'){ is_break=true; }
                     if(str[r]=='-' && str[r+1]=='\n'){ is_break=true; }
-                    if(str[r]==':' && str[r+1]=='\n' && !is_list){ is_break=true; }
+                    if(str[r]==':' && str[r+1]=='\n'){ is_break=true; }
                     if(str[r]=='-' && str[r+1]==' ' ){ is_break=true; }
                     if(str[r]==':' && str[r+1]==' ' ){ is_mult=true; is_mult_wos=true; tmp.val1=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
                     if(is_break && tmp.hsc_lx <= hsc_lx_mult){
@@ -1526,12 +1526,14 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
                 if(!is_flow && !is_mult && !is_escaped && !in_d_quate){ ++r; break; } 
                 if( is_flow             && num_of_square_brackets==0 && num_of_curly_brackets==0){ ++r; break; }
                 if(             is_mult ){ tmp.hsc_hx=0; tmp.hsc_lx=0; r_prev_line_end=r; continue; }
+                is_mult=true; is_mult_wos=true;
                 
             }else if(str[r]=='\r' && str[r+1]=='\n'){ // Windows ("\r\n")
                 ++line_num; ++r;
                 if(!is_flow && !is_mult && !is_escaped && !in_d_quate){ r+=2; break; } 
                 if( is_flow             && num_of_square_brackets==0 && num_of_curly_brackets==0){ r+=2; break; }
                 if(             is_mult ){ tmp.hsc_hx=0; tmp.hsc_lx=0; r_prev_line_end=r; tmp.rawStr+=str[r]; continue; }
+                is_mult=true; is_mult_wos=true;
             }
             
             // init
