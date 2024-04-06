@@ -423,16 +423,16 @@ TEST(yaml, _str2token_multi_list_case08){
     ASSERT_EQ(v_ret.size(), 4);
     ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- a # comment\n");
     ASSERT_STREQ(v_ret[0].val1.c_str(),   "a");
-//    sstd::printn(v_ret[1].rawStr.c_str());
+    sstd::printn(v_ret[1].rawStr.c_str());
     ASSERT_STREQ(v_ret[1].rawStr.c_str(), R"(- k: |
    b1
    b2
    b3
 
 )");
-//    sstd::printn(v_ret[1].val1.c_str());
-//    sstd::printn(v_ret[1].val2.c_str());
-    ASSERT_STREQ(v_ret[1].val1.c_str(), R"(k)");
+    sstd::printn(v_ret[1].val1.c_str());
+    sstd::printn(v_ret[1].val2.c_str());
+    ASSERT_STREQ(v_ret[1].val1.c_str(), "k");
     ASSERT_STREQ(v_ret[1].val2.c_str(), R"(|
    b1
    b2
@@ -456,40 +456,8 @@ TEST(yaml, _str2token_multi_list_case09){
     sstd::printn(v_ret);
     
     ASSERT_EQ(v_ret.size(), 4);
-    sstd::printn(v_ret[1].rawStr.c_str());
-    ASSERT_STREQ(v_ret[1].rawStr.c_str(), R"(- k:|
-   b1
-   b2
-   b3
-
-)");
-//    sstd::printn(v_ret[1].val1.c_str());
-    ASSERT_STREQ(v_ret[1].val1.c_str(), R"(k:|
-   b1
-   b2
-   b3
-
-)");
-}
-
-//---
-
-TEST(yaml, _str2token_multi_list_except_pipe_or_inequality_sign_case01){
-    std::string s=R"(
-- a # comment
-- k:|
-   b1
-   b2
-   b3
-
-- c
-- d
-)";
-    std::vector<sstd_yaml::token> v_ret;
-    bool ret = sstd_yaml::_str2token(v_ret, s);
-    sstd::printn(v_ret);
-    
-    ASSERT_EQ(v_ret.size(), 4);
+    sstd::printn(v_ret[0].val1.c_str());
+    ASSERT_STREQ(v_ret[0].val1.c_str(), "a");
     sstd::printn(v_ret[1].rawStr.c_str());
     ASSERT_STREQ(v_ret[1].rawStr.c_str(), R"(- k:|
    b1
@@ -501,10 +469,15 @@ TEST(yaml, _str2token_multi_list_except_pipe_or_inequality_sign_case01){
     ASSERT_STREQ(v_ret[1].val1.c_str(), R"(k:|
    b1
    b2
-   b3
-
-)");
+   b3)");
+    ASSERT_STREQ(v_ret[2].val1.c_str(), "c");
+    ASSERT_STREQ(v_ret[3].val1.c_str(), "d");
 }
+
+//---
+
+//TEST(yaml, _str2token_multi_list_except_pipe_or_inequality_sign_case01){
+//}
 
 /*
 //-----------------------------------------------------------------------------------------------------------------------------------------------

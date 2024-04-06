@@ -1434,7 +1434,7 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
 
         // for multiple line
         bool is_mult=false; // is multi line type '|'
-        bool is_mult_wos=false; // is multi line type without '|' or '>' symbol
+        bool is_mult_wos=false; // is multi line type without '|' or '>' symbol, _wos: without symbol
         bool is_mult_end=false;
         uint hsc_lx_mult=0;
         //uint hsc_hx_mult=0;
@@ -1462,8 +1462,7 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
                 is_flow = _is_flow(subt+str[r]);
                 if(!is_flow && !is_mult){
                     // Block Style
-                    //if(str[r]=='|'){ is_mult=true; subt+=str[r]; hsc_lx_mult=tmp.hsc_lx; tmp.rawStr+=str[r]; continue; }
-                    if(str[r]==' ' && str[r+1]=='|'){ is_mult=true; is_mult_wos=true; subt+=str[r]; hsc_lx_mult=tmp.hsc_lx; tmp.rawStr+=str[r]; continue; }
+                    if(str[r]==' ' && str[r+1]=='|'){ is_mult=true; subt+=str[r]; hsc_lx_mult=tmp.hsc_lx; tmp.rawStr+=str[r]; continue; }
                     
                     // for Windows
                     if(str[r]=='-' && str[r+1]=='\r'){ is_mult=true; is_mult_wos=true;                                       subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; continue; }
@@ -1484,7 +1483,7 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
                     if(str[r]=='}'){ --num_of_curly_brackets; }
                 }else{
                     // multi line
-
+                    
                     // 処理のルール
                     // X 1. 行単位で処理する．(処理終了時に巻き戻せるように)
                     // 1. 処理終了時に巻き戻せるように，前行末尾の位置を r_prev_line_end に記録する．
@@ -1495,11 +1494,11 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
                     // まずは簡易実装で済ます．効率はあとから．
                     bool is_break=false;
                     if(str[r]=='-' && str[r+1]=='\r'){ is_break=true; }
-                    if(str[r]==':' && str[r+1]=='\r'){ is_break=true; }
+                    if(str[r]==':' && str[r+1]=='\r' && !is_list){ is_break=true; }
                     if(str[r]=='-' && str[r+1]=='\n'){ is_break=true; }
-                    if(str[r]==':' && str[r+1]=='\n'){ is_break=true; }
+                    if(str[r]==':' && str[r+1]=='\n' && !is_list){ is_break=true; }
                     if(str[r]=='-' && str[r+1]==' ' ){ is_break=true; }
-                    if(str[r]=='-' && str[r+1]==' ' ){ is_break=true; }
+                    if(str[r]==':' && str[r+1]==' ' ){ is_mult=true; is_mult_wos=true; tmp.val1=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
                     if(is_break && tmp.hsc_lx <= hsc_lx_mult){
                         is_mult_end=true;
                     }
@@ -1562,6 +1561,7 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
         //if(tmp.val1_use_quotes || is_flow){ tmp.val1 = _extract_quotes_value(tmp.val1); }
         if(tmp.val1_use_quotes){ tmp.val1 = _extract_quotes_value(tmp.val1); }
         if(tmp.val2_use_quotes){ tmp.val2 = _extract_quotes_value(tmp.val2); }
+        
         if(is_mult && !is_mult_wos){
             if(!is_hash){
                 sstd::printn(tmp.val1);
@@ -1570,6 +1570,11 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
             }else{
                 if(!sstd_yaml::_format_mult_line_str(tmp.val2, tmp.val2, hsc_lx_mult)){ sstd::pdbg_err("sstd_yaml::_format_mult_line_str() is failed.\n"); return false; }
             }
+        }
+        if(is_mult_wos){
+            // 仮実装．あとで sstd_yaml::_format_mult_line_str() 系の実装と統合する．あと，_extract_quotes_value() も同じ実装でよさそう？
+            tmp.val1 = sstd::strip(tmp.val1, '\n'); // NOTE: "\r\n" is not supported yet
+            tmp.val2 = sstd::strip(tmp.val2, '\n'); // NOTE: "\r\n" is not supported yet
         }
         
         if(tmp.val1.size()==0 && !tmp.val1_use_quotes &&
