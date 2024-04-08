@@ -625,6 +625,8 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, 
         v_tmp.push_back(tmp);
     }
     
+        sstd::printn_all(ret_plusSymbol);
+        sstd::printn_all(ret_minusSymbol);
     if((!ret_plusSymbol) && (!ret_minusSymbol)){
         // "|N" or ">N"
         
@@ -640,6 +642,7 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, 
         
     }else if(ret_plusSymbol){
         // "|+N" or ">+N"
+        sstd::printn_all("643\n");
         
         int cnt = (int)sstd::cntEmpty_r(v_tmp);
         sstd::rmEmpty_r_ow(v_tmp);
@@ -1441,11 +1444,11 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
         uint r_prev_line_end=0;
         
         for(;;++r){
-            printf("---\n");
-            sstd::printn(r);
-            sstd::printn(str[r]);
-            sstd::printn(is_mult);
-            sstd::printn(is_mult_wos);
+            //printf("---\n");
+            //sstd::printn(r);
+            //sstd::printn(str[r]);
+            //sstd::printn(is_mult);
+            //sstd::printn(is_mult_wos);
             if(str[r]=='\\'){ is_escaped=true; tmp.rawStr+=str[r]; ++r; }
 //            if(str[r]=='\n'){ ++line_num; break; }
             if(str[r]=='\0'){ ++line_num; break; }
@@ -1467,16 +1470,16 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
                     if(str[r]==' ' && str[r+1]=='|'){ is_mult=true; subt+=str[r]; hsc_lx_mult=tmp.hsc_lx; tmp.rawStr+=str[r]; continue; }
                     
                     // for Windows
-                    if(str[r]=='-' && str[r+1]=='\r'){ /* Set mutli-line mode after line break. */                            subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; continue; }
-                    if(str[r]==':' && str[r+1]=='\r'){ is_mult=true; is_mult_wos=true; tmp.val1=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; continue; }
+                    if(str[r]=='-' && str[r+1]=='\r'){                                        subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; continue; }
+                    if(str[r]==':' && str[r+1]=='\r'){ tmp.val1=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; continue; }
                     
                     // for Unix
-                    if(str[r]=='-' && str[r+1]=='\n'){ /* Set mutli-line mode after line break. */                            subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; continue; }
-                    if(str[r]==':' && str[r+1]=='\n'){ is_mult=true; is_mult_wos=true; tmp.val1=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; continue; }
+                    if(str[r]=='-' && str[r+1]=='\n'){                                        subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; continue; }
+                    if(str[r]==':' && str[r+1]=='\n'){ tmp.val1=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; continue; }
                     
                     // the other case
-                    if(str[r]=='-' && str[r+1]==' '){ /* Set mutli-line mode after line break. */                            subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
-                    if(str[r]==':' && str[r+1]==' '){ is_mult=true; is_mult_wos=true; tmp.val1=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
+                    if(str[r]=='-' && str[r+1]==' '){                                        subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
+                    if(str[r]==':' && str[r+1]==' '){ tmp.val1=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
                 }else if(!is_mult){
                     // Flow Style
                     if(str[r]=='['){ ++num_of_square_brackets; }
@@ -1500,7 +1503,7 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
                     if(str[r]=='-' && str[r+1]=='\n'){ is_break=true; }
                     if(str[r]==':' && str[r+1]=='\n'){ is_break=true; }
                     if(str[r]=='-' && str[r+1]==' ' ){ is_break=true; }
-                    if(str[r]==':' && str[r+1]==' ' ){ is_mult=true; is_mult_wos=true; tmp.val1=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
+                    if(str[r]==':' && str[r+1]==' ' ){ is_break=true; }
                     if(is_break && tmp.hsc_lx <= hsc_lx_mult){
                         is_mult_end=true;
                     }
@@ -1577,8 +1580,12 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
         }
         if(is_mult_wos){
             // 仮実装．あとで sstd_yaml::_format_mult_line_str() 系の実装と統合する．あと，_extract_quotes_value() も同じ実装でよさそう？
+                sstd::printn_all(tmp.val1);
+                sstd::printn_all(tmp.val2);
             tmp.val1 = sstd::strip(tmp.val1, '\n'); // NOTE: "\r\n" is not supported yet
             tmp.val2 = sstd::strip(tmp.val2, '\n'); // NOTE: "\r\n" is not supported yet
+                sstd::printn_all(tmp.val1);
+                sstd::printn_all(tmp.val2);
         }
         
         if(tmp.val1.size()==0 && !tmp.val1_use_quotes &&
