@@ -1444,11 +1444,10 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
         uint r_prev_line_end=0;
         
         for(;;++r){
-            //printf("---\n");
-            //sstd::printn(r);
-            //sstd::printn(str[r]);
-            //sstd::printn(is_mult);
-            //sstd::printn(is_mult_wos);
+            printf("---\n");
+            sstd::printn(r);
+            sstd::printn(str[r]);
+            sstd::printn(is_mult);
             if(str[r]=='\\'){ is_escaped=true; tmp.rawStr+=str[r]; ++r; }
 //            if(str[r]=='\n'){ ++line_num; break; }
             if(str[r]=='\0'){ ++line_num; break; }
@@ -1509,6 +1508,7 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
                     }
                 }
             }
+            sstd::printn_all(str[r]);
             tmp.rawStr += str[r];
             subt       += str[r];
             
@@ -1526,6 +1526,7 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
                 ++r;
                 break;
             }
+            sstd::printn_all(str[r]);
             if(str[r]=='\n'){ // Uinx ("\n")
                 ++line_num;
                 if(!is_flow && !is_mult && is_list){ is_mult=true; is_mult_wos=true; }
@@ -1536,7 +1537,7 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
             }else if(str[r]=='\r' && str[r+1]=='\n'){ // Windows ("\r\n")
                 ++line_num; ++r;
                 if(!is_flow && !is_mult && is_list){ is_mult=true; is_mult_wos=true; }
-                if(!is_flow && !is_mult && !is_escaped && !in_d_quate){ r+=2; break; } 
+                if(!is_flow && !is_mult && !is_escaped && !in_d_quate){ r+=2; break; }
                 if( is_flow             && num_of_square_brackets==0 && num_of_curly_brackets==0){ r+=2; break; }
                 if(             is_mult ){ tmp.hsc_hx=0; tmp.hsc_lx=0; r_prev_line_end=r; tmp.rawStr+=str[r]; continue; }
             }
@@ -1544,6 +1545,7 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
             // init
             is_escaped = false;
         }
+        sstd::printn_all("imh");
         tmp.line_num_end = std::max((int)tmp.line_num_begin, ((int)line_num)-1);
 
         if(!is_hash){ tmp.val1=std::move(sstd::strip(subt));
@@ -1568,7 +1570,9 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
         //if(tmp.val1_use_quotes || is_flow){ tmp.val1 = _extract_quotes_value(tmp.val1); }
         if(tmp.val1_use_quotes){ tmp.val1 = _extract_quotes_value(tmp.val1); }
         if(tmp.val2_use_quotes){ tmp.val2 = _extract_quotes_value(tmp.val2); }
-        
+
+        sstd::printn_all(is_mult);
+        sstd::printn_all(is_mult_wos);
         if(is_mult && !is_mult_wos){
             if(!is_hash){
                 sstd::printn(tmp.val1);
