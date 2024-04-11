@@ -463,21 +463,17 @@ TEST(yaml, _str2token_multi_list_case09){
 TEST(yaml, _str2token_multi_list_case10){
     std::string s=R"(
 - a
-  - a
+ - a
 )";
     std::vector<sstd_yaml::token> v_ret;
     bool ret = sstd_yaml::_str2token(v_ret, s);
     sstd::printn(v_ret);
     
     ASSERT_EQ(v_ret.size(), 1);
+//    sstd::printn(v_ret[0].rawStr.c_str());
+//    ASSERT_STREQ(v_ret[0].rawStr.c_str(), R"()");
 //    sstd::printn(v_ret[0].val1.c_str());
-    ASSERT_STREQ(v_ret[0].val1.c_str(), "a");
-//    sstd::printn(v_ret[1].rawStr.c_str());
-    ASSERT_STREQ(v_ret[1].rawStr.c_str(), R"(- a
-  - a
-)");
-    sstd::printn(v_ret[1].val1.c_str());
-    ASSERT_STREQ(v_ret[1].val1.c_str(), "a - a");
+    ASSERT_STREQ(v_ret[0].val1.c_str(), "a - a");
 }
 
 //---

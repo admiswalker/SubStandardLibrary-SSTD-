@@ -1449,7 +1449,6 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
         bool is_list=false; // is list type "- "
         bool is_hash=false; // is hash type "k: v"
         bool is_flow=false; // is flow style "[{k: v}]"
-        bool is_in_token=false;
 
         int num_of_square_brackets=0; // []
         int num_of_curly_brackets=0;  // {}
@@ -1463,15 +1462,14 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
         uint r_prev_line_end=0;
         
         for(;;++r){
-            //printf("---\n");
-            //sstd::printn(r);
-            //sstd::printn(str[r]);
-            //sstd::printn(is_mult);
+            printf("---\n");
+            sstd::printn(r);
+            sstd::printn(str[r]);
+            sstd::printn(is_mult);
             if(str[r]=='\\'){ is_escaped=true; tmp.rawStr+=str[r]; ++r; }
 //            if(str[r]=='\n'){ ++line_num; break; }
             if(str[r]=='\0'){ ++line_num; break; }
-            if(str[r]!=' '){ is_in_token=true; }
-            if(str[r]==' ' && !is_in_token){ ++tmp.hsc_lx; ++tmp.hsc_hx; }
+            if(str[r]==' '){ ++tmp.hsc_lx; ++tmp.hsc_hx; }
             
             if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
             if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
@@ -1527,7 +1525,6 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
                     }
                 }
             }
-            sstd::printn_all("imh");
             tmp.rawStr += str[r];
             subt       += str[r];
             
@@ -1563,6 +1560,7 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
             // init
             is_escaped = false;
         }
+        sstd::printn_all("imh");
         tmp.line_num_end = std::max((int)tmp.line_num_begin, ((int)line_num)-1);
 
         if(!is_hash){ tmp.val1=std::move(sstd::strip(subt));
@@ -1611,7 +1609,7 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
         case sstd_yaml::num_hash:          { if(tmp.val2_use_quotes||tmp.val2.size()>=1){tmp.hasValue=true;} } break; // check the value is NOT NULL
         default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
         }
-        
+
         ret.push_back(std::move(tmp));
     }
     if(in_d_quate){ ret.clear(); return false; }
