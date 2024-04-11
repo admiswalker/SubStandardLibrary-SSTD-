@@ -479,7 +479,7 @@ TEST(yaml, _str2token_multi_list_case09){
 //TEST(yaml, _str2token_multi_list_except_pipe_or_inequality_sign_case01){
 //}
 
-/*
+//*
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Test _format_mult_line_str()
 
@@ -680,8 +680,25 @@ TEST(yaml, _format_mult_line_str__GreaterThanSymbol__NoPlusOrMinus__case03){ // 
     ASSERT_STREQ(ret.c_str(), "b1\n b2\nb3 b4");
 }
 
+//---
+
+TEST(yaml, _format_mult_line_str__NoSymbol__case01){
+    std::string s=R"(k:|x
+  a
+ b
+)";
+    std::string ret;
+    const uint hsc_base=0;
+    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base);
+    sstd::printn(ret_TF);
+    sstd::printn(ret);
+    
+    ASSERT_TRUE(ret_TF);
+    ASSERT_STREQ(ret.c_str(), "k:|x a b");
+}
+//*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-//*
+/*
 TEST(yaml, _token2cmd_usual_cases){
     std::string s = R"(
 - k1: v11

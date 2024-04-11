@@ -539,28 +539,36 @@ std::string _join_mult_line(const std::vector<std::string>& v, const bool ret_pi
 
 //---
 
-bool _parse_mult_line_opt(bool& ret_pipeSymbol, bool& ret_greaterThanSymbol, bool& ret_plusSymbol, bool& ret_minusSymbol, bool& ret_hasHsc, uint& ret_hsc, const std::string& opt){
+bool _parse_mult_line_opt(bool& ret_noSymbol, bool& ret_pipeSymbol, bool& ret_greaterThanSymbol, bool& ret_plusSymbol, bool& ret_minusSymbol, bool& ret_hasHsc, uint& ret_hsc, const std::string& opt_in){
     // input examples:
     //     "|+123", "|-123", "|123+", "|123-",
     //     ">+123", ">-123", ">123+", ">123-".
-    
+
+    std::string opt = sstd::lstrip(opt_in);
+
+    ret_noSymbol=false;
     ret_pipeSymbol=false;
     ret_greaterThanSymbol=false;
     ret_plusSymbol=false;
     ret_minusSymbol=false;
     ret_hasHsc=false;
     ret_hsc=0;
-    for(uint i=0; i<opt.size(); ++i){
-        if(opt[i]=='|'){ if(ret_pipeSymbol       ){sstd::pdbg_err("Duplicated '|'.\n");return false;} ret_pipeSymbol       =true; continue; }
-        if(opt[i]=='>'){ if(ret_greaterThanSymbol){sstd::pdbg_err("Duplicated '>'.\n");return false;} ret_greaterThanSymbol=true; continue; }
-        if(opt[i]=='+'){ if(ret_plusSymbol       ){sstd::pdbg_err("Duplicated '+'.\n");return false;} ret_plusSymbol       =true; continue; }
-        if(opt[i]=='-'){ if(ret_minusSymbol      ){sstd::pdbg_err("Duplicated '-'.\n");return false;} ret_minusSymbol      =true; continue; }
+    
+    if(opt.size()>=1 && (opt[0]!='|' && opt[0]!='>')){
+        ret_noSymbol=true;
+    }else{
+        for(uint i=0; i<opt.size(); ++i){
+            if(opt[i]=='|'){ if(ret_pipeSymbol       ){sstd::pdbg_err("Duplicated '|'.\n");return false;} ret_pipeSymbol       =true; continue; }
+            if(opt[i]=='>'){ if(ret_greaterThanSymbol){sstd::pdbg_err("Duplicated '>'.\n");return false;} ret_greaterThanSymbol=true; continue; }
+            if(opt[i]=='+'){ if(ret_plusSymbol       ){sstd::pdbg_err("Duplicated '+'.\n");return false;} ret_plusSymbol       =true; continue; }
+            if(opt[i]=='-'){ if(ret_minusSymbol      ){sstd::pdbg_err("Duplicated '-'.\n");return false;} ret_minusSymbol      =true; continue; }
+        }
+        std::string sNum = sstd_strip(opt, "|>+-");
+        if(sNum.size()==0){ return true; }
+        if(!sstd::isNum(sNum)){ sstd::pdbg_err("Not numer.\n"); return false; }
+        ret_hasHsc=true;
+        ret_hsc = std::stoul(sNum);
     }
-    std::string sNum = sstd_strip(opt, "|>+-");
-    if(sNum.size()==0){ return true; }
-    if(!sstd::isNum(sNum)){ sstd::pdbg_err("Not numer.\n"); return false; }
-    ret_hasHsc=true;
-    ret_hsc = std::stoul(sNum);
     
     return true;
 }
@@ -573,83 +581,94 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, 
     ret.clear(); // Needs to clear after init v_str if `ret` and `str` address is same.
     
     if(v_str.size()<2){ return true; }
-    bool ret_pipeSymbol=false, ret_greaterThanSymbol=false;
+    bool ret_noSymbol=false, ret_pipeSymbol=false, ret_greaterThanSymbol=false;
     bool ret_plusSymbol=false, ret_minusSymbol=false;
     bool ret_hasHsc=false; uint ret_user_requested_hsc=0;
     std::string opt=v_str[0];
-    if(!_parse_mult_line_opt(ret_pipeSymbol, ret_greaterThanSymbol, ret_plusSymbol, ret_minusSymbol, ret_hasHsc, ret_user_requested_hsc, opt)){ sstd::pdbg_err("_parse_mult_line_opt() is failed.\n"); return false; }
-    if((!ret_pipeSymbol) && (!ret_greaterThanSymbol)){ sstd::pdbg_err("The multiple line needs to denoted by '|' or '>'.\n"); return false; }
-    
-    const uint hsc_bash_1st_line=sstd_lcount(v_str[1], ' '); // hsc: head space count
-    if(hsc_bash_1st_line<=hsc_base_yaml){
-        // Error case.
-        // - |
-        // a  <- error (Required more than 1 hsc)
-        sstd::pdbg_err("The space count of multiple line indent is invalid.\n");
-        return false;
-    }
+    if(!_parse_mult_line_opt(ret_noSymbol, ret_pipeSymbol, ret_greaterThanSymbol, ret_plusSymbol, ret_minusSymbol, ret_hasHsc, ret_user_requested_hsc, opt)){ sstd::pdbg_err("_parse_mult_line_opt() is failed.\n"); return false; }
 
-    uint hsc_bash=hsc_bash_1st_line;
-    if(ret_hasHsc){
-        if(ret_user_requested_hsc==0){ sstd::pdbg_err("The user requested indent can not be 0.\n"); return false; }
-        if(ret_user_requested_hsc>hsc_bash_1st_line){
-            // Error case.
-            // - |9
-            //   a  <- error (Required more than 10 hsc)
-            sstd::pdbg_err("The user requested indent size is too large.\n");
-            return false;
-        }
-        hsc_bash=ret_user_requested_hsc;
-    }
-    
-    for(uint i=1; i<v_str.size(); ++i){
-        std::string s=v_str[i];
+    if(ret_noSymbol){
+        // noSymbol
+
         std::string tmp;
-        uint hsc = sstd_lcount(s, ' '); // hsc: head space count
-        bool have_str_except_space = (hsc!=s.size());
-
-        if(have_str_except_space && hsc<hsc_bash){
+        for(uint i=0; i<v_str.size(); ++i){
+            tmp = sstd::strip(v_str[i]);
+            if(tmp.size()==0){ continue; }
+            ret += tmp + ' ';
+        }
+        sstd::rstrip_ow(ret);
+        
+    }else{
+        // "|+N", "|-N", ">+N" or ">-N"
+        
+        const uint hsc_bash_1st_line=sstd_lcount(v_str[1], ' '); // hsc: head space count
+        if(hsc_bash_1st_line<=hsc_base_yaml){
             // Error case.
             // - |
-            //   a
-            // b    <- error (Required more than 2 hsc)
-            //   c
+            // a  <- error (Required more than 1 hsc)
             sstd::pdbg_err("The space count of multiple line indent is invalid.\n");
             return false;
         }
-        
-        if(s.size()>=hsc_bash){
-            tmp += (char*)&v_str[i][hsc_bash];
-        }
 
-        v_tmp.push_back(tmp);
-    }
+        uint hsc_bash=hsc_bash_1st_line;
+        if(ret_hasHsc){
+            if(ret_user_requested_hsc==0){ sstd::pdbg_err("The user requested indent can not be 0.\n"); return false; }
+            if(ret_user_requested_hsc>hsc_bash_1st_line){
+                // Error case.
+                // - |9
+                //   a  <- error (Required more than 10 hsc)
+                sstd::pdbg_err("The user requested indent size is too large.\n");
+                return false;
+            }
+            hsc_bash=ret_user_requested_hsc;
+        }
+        
+        for(uint i=1; i<v_str.size(); ++i){
+            std::string s=v_str[i];
+            std::string tmp;
+            uint hsc = sstd_lcount(s, ' '); // hsc: head space count
+            bool have_str_except_space = (hsc!=s.size());
+
+            if(have_str_except_space && hsc<hsc_bash){
+                // Error case.
+                // - |
+                //   a
+                // b    <- error (Required more than 2 hsc)
+                //   c
+                sstd::pdbg_err("The space count of multiple line indent is invalid.\n");
+                return false;
+            }
+        
+            if(s.size()>=hsc_bash){
+                tmp += (char*)&v_str[i][hsc_bash];
+            }
+
+            v_tmp.push_back(tmp);
+        }
     
-        sstd::printn_all(ret_plusSymbol);
-        sstd::printn_all(ret_minusSymbol);
-    if((!ret_plusSymbol) && (!ret_minusSymbol)){
-        // "|N" or ">N"
+        if((!ret_plusSymbol) && (!ret_minusSymbol)){
+            // "|N" or ">N"
         
-        int cnt = (int)sstd::cntEmpty_r(v_tmp);
-        sstd::rmEmpty_r_ow(v_tmp);
-        ret = _join_mult_line(v_tmp, ret_pipeSymbol, ret_greaterThanSymbol) + std::string(std::min(1,cnt), '\n');
+            int cnt = (int)sstd::cntEmpty_r(v_tmp);
+            sstd::rmEmpty_r_ow(v_tmp);
+            ret = _join_mult_line(v_tmp, ret_pipeSymbol, ret_greaterThanSymbol) + std::string(std::min(1,cnt), '\n');
         
-    }else if(ret_minusSymbol){
-        // "|-N" or ">-N"
+        }else if(ret_minusSymbol){
+            // "|-N" or ">-N"
         
-        sstd::rmEmpty_r_ow(v_tmp);
-        ret = _join_mult_line(v_tmp, ret_pipeSymbol, ret_greaterThanSymbol);
+            sstd::rmEmpty_r_ow(v_tmp);
+            ret = _join_mult_line(v_tmp, ret_pipeSymbol, ret_greaterThanSymbol);
         
-    }else if(ret_plusSymbol){
-        // "|+N" or ">+N"
-        sstd::printn_all("643\n");
+        }else if(ret_plusSymbol){
+            // "|+N" or ">+N"
         
-        int cnt = (int)sstd::cntEmpty_r(v_tmp);
-        sstd::rmEmpty_r_ow(v_tmp);
-        ret = _join_mult_line(v_tmp, ret_pipeSymbol, ret_greaterThanSymbol) + std::string(cnt, '\n');
+            int cnt = (int)sstd::cntEmpty_r(v_tmp);
+            sstd::rmEmpty_r_ow(v_tmp);
+            ret = _join_mult_line(v_tmp, ret_pipeSymbol, ret_greaterThanSymbol) + std::string(cnt, '\n');
         
-    }else{
-        sstd::pdbg_err("Unexpected case\n"); return false;
+        }else{
+            sstd::pdbg_err("Unexpected case\n"); return false;
+        }
     }
     
     return true;
