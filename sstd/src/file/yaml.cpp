@@ -1445,11 +1445,14 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
         
         std::string subt; // subtoken
         
+        // for hsc
+        bool is_in_token=false; // To identify the spacs ' ' is hsc or charactor between the token.
+
         // for type
         bool is_list=false; // is list type "- "
         bool is_hash=false; // is hash type "k: v"
         bool is_flow=false; // is flow style "[{k: v}]"
-
+        
         int num_of_square_brackets=0; // []
         int num_of_curly_brackets=0;  // {}
 
@@ -1462,14 +1465,15 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
         uint r_prev_line_end=0;
         
         for(;;++r){
-            printf("---\n");
-            sstd::printn(r);
-            sstd::printn(str[r]);
-            sstd::printn(is_mult);
+            //printf("---\n");
+            //sstd::printn(r);
+            //sstd::printn(str[r]);
+            //sstd::printn(is_mult);
             if(str[r]=='\\'){ is_escaped=true; tmp.rawStr+=str[r]; ++r; }
 //            if(str[r]=='\n'){ ++line_num; break; }
             if(str[r]=='\0'){ ++line_num; break; }
-            if(str[r]==' '){ ++tmp.hsc_lx; ++tmp.hsc_hx; }
+            if(str[r]!=' '){ is_in_token=true; }
+            if(str[r]==' ' && !is_in_token){ ++tmp.hsc_lx; ++tmp.hsc_hx; }
             
             if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
             if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
@@ -1544,6 +1548,7 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
             }
             if(str[r]=='\n'){ // Uinx ("\n")
                 ++line_num;
+                is_in_token=false;
                 if(!is_flow && !is_mult && is_list){ is_mult=true; is_mult_wos=true; }
                 if(!is_flow && !is_mult && !is_escaped && !in_d_quate){ ++r; break; } 
                 if( is_flow             && num_of_square_brackets==0 && num_of_curly_brackets==0){ ++r; break; }
@@ -1551,6 +1556,7 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
                 
             }else if(str[r]=='\r' && str[r+1]=='\n'){ // Windows ("\r\n")
                 ++line_num; ++r;
+                is_in_token=false;
                 if(!is_flow && !is_mult && is_list){ is_mult=true; is_mult_wos=true; }
                 if(!is_flow && !is_mult && !is_escaped && !in_d_quate){ r+=2; break; }
                 if( is_flow             && num_of_square_brackets==0 && num_of_curly_brackets==0){ r+=2; break; }
@@ -1560,7 +1566,7 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
             // init
             is_escaped = false;
         }
-        sstd::printn_all("imh");
+//        sstd::printn_all("imh");
         tmp.line_num_end = std::max((int)tmp.line_num_begin, ((int)line_num)-1);
 
         if(!is_hash){ tmp.val1=std::move(sstd::strip(subt));
@@ -1588,9 +1594,7 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
 
         if(is_mult || is_mult_wos){
             if(!is_hash){
-                sstd::printn(tmp.val1);
                 if(!sstd_yaml::_format_mult_line_str(tmp.val1, tmp.val1, hsc_lx_mult)){ sstd::pdbg_err("sstd_yaml::_format_mult_line_str() is failed.\n"); return false; }
-                sstd::printn(tmp.val1);
             }else{
                 if(!sstd_yaml::_format_mult_line_str(tmp.val2, tmp.val2, hsc_lx_mult)){ sstd::pdbg_err("sstd_yaml::_format_mult_line_str() is failed.\n"); return false; }
             }
