@@ -287,7 +287,7 @@ TEST(yaml, _str2token_rm_comment_case03){ TEST_STR2TOKEN__KEY_VAL("", "a # comme
 
 //---
 
-TEST(yaml, _str2token_multi_list_case01){
+TEST(yaml, _str2token_multi_list_case00){
     std::string s = R"(
 k_X: 
   k1: |+
@@ -313,8 +313,6 @@ k_Y: v_Y
 }
 
 //---
-/*
-// multi-line 系は _str2token() の外に移すので，あとで削除する
 
 TEST(yaml, _str2token_multi_list_case01){
     std::string s = "- a\n- b\n- c";
@@ -323,12 +321,12 @@ TEST(yaml, _str2token_multi_list_case01){
 //    sstd::printn(v_ret);
     
     ASSERT_EQ(v_ret.size(), 3);
-    ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- a\n");
-    ASSERT_STREQ(v_ret[0].val1.c_str(),     "a"  );
-    ASSERT_STREQ(v_ret[1].rawStr.c_str(), "- b\n");
-    ASSERT_STREQ(v_ret[1].val1.c_str(),     "b"  );
+    ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- a");
+    ASSERT_STREQ(v_ret[0].val.c_str(),     "a" );
+    ASSERT_STREQ(v_ret[1].rawStr.c_str(), "- b");
+    ASSERT_STREQ(v_ret[1].val.c_str(),     "b" );
     ASSERT_STREQ(v_ret[2].rawStr.c_str(), "- c");
-    ASSERT_STREQ(v_ret[2].val1.c_str(),     "c");
+    ASSERT_STREQ(v_ret[2].val.c_str(),     "c");
 }
 TEST(yaml, _str2token_multi_list_case02){
     std::string s = "- \"\"\n- \"\"\n- \"\"";
@@ -337,25 +335,27 @@ TEST(yaml, _str2token_multi_list_case02){
 //    sstd::printn(v_ret);
     
     ASSERT_EQ(v_ret.size(), 3);
-    ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- \"\"\n");
-    ASSERT_STREQ(v_ret[0].val1.c_str(),           "");
-    ASSERT_STREQ(v_ret[1].rawStr.c_str(), "- \"\"\n");
-    ASSERT_STREQ(v_ret[1].val1.c_str(),           "");
+    ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- \"\"");
+    ASSERT_STREQ(v_ret[0].val.c_str(),          "");
+    ASSERT_STREQ(v_ret[1].rawStr.c_str(), "- \"\"");
+    ASSERT_STREQ(v_ret[1].val.c_str(),          "");
     ASSERT_STREQ(v_ret[2].rawStr.c_str(), "- \"\"");
-    ASSERT_STREQ(v_ret[2].val1.c_str(),         "");
+    ASSERT_STREQ(v_ret[2].val.c_str(),          "");
 }
 TEST(yaml, _str2token_multi_list_case03){
     std::string s = "-\n  - a";
     std::vector<sstd_yaml::token> v_ret;
     bool ret = sstd_yaml::_str2token(v_ret, s);
-//    sstd::printn(v_ret);
+    sstd::printn(v_ret);
+    printf("\n\n");
+    printf("---\n\n");
     
     ASSERT_EQ(v_ret.size(), 2);
     ASSERT_STREQ(v_ret[0].rawStr.c_str(),   "-\n");
     ASSERT_STREQ(v_ret[0].val1.c_str(),        "");
     ASSERT_STREQ(v_ret[1].rawStr.c_str(), "  - a");
     ASSERT_STREQ(v_ret[1].val1.c_str(),       "a");
-}
+}/*
 TEST(yaml, _str2token_multi_list_case04){
     std::string s = "- \n  - a";
     std::vector<sstd_yaml::token> v_ret;
