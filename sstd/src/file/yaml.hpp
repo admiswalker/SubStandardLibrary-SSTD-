@@ -53,11 +53,15 @@ namespace sstd_yaml{
         uint hsc_lx = 0;                               // head space counts for list type
         uint hsc_hx = 0;                               // head space counts for hash type
         
-        bool hasValue; // If the value (val1 or val2) is vaild for each data type (list or hash).
-        bool val1_use_quotes;
-        bool val2_use_quotes;
-        std::string val1;
-        std::string val2;
+        bool hasValue = false; // If the value (val1 or val2) is vaild for each data type (list or hash).
+        bool key_use_quotes = false;
+        bool val_use_quotes = false;
+        std::string key; // key for "hash"
+        std::string val; // value for "list" or "hash"
+//        bool val1_use_quotes = false;
+//        bool val2_use_quotes = false;
+//        std::string val1;
+//        std::string val2;
     };
     struct command{
         uint hsc_lx; // hsc: head space count, _lx: list-index.
@@ -68,6 +72,12 @@ namespace sstd_yaml{
         bool val2_use_quotes;
         std::string val1; // "list value" or "hash key"
         std::string val2; // "hash value" if Not required "sstd::terp::var"
+
+        // あとで下の命名規則に変える
+//        bool key_use_quotes;
+//        bool val_use_quotes;
+//        std::string key; // key for "hash"
+//        std::string val; // value for "list" or "hash"
 
         // debug info
         uint lineNum;
@@ -100,9 +110,12 @@ namespace sstd_yaml{
     bool _format_mult_line_str(std::string& ret, const std::string& str, const uint hsc_base_yaml);
     
     //---
-    
+
+    bool _str2token_except_multilines(std::vector<sstd_yaml::token>& ret, const char* str);
+    bool _token2token_merge_multilines(std::vector<sstd_yaml::token>& io);
     bool _str2token(std::vector<sstd_yaml::token>& ret, const char* str);
     bool _str2token(std::vector<sstd_yaml::token>& ret, const std::string& str);
+    
     bool _token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, const std::vector<sstd_yaml::token>& v_token);
     bool _token2json(std::string& s_json, const std::vector<sstd_yaml::token>& v_token);
     
