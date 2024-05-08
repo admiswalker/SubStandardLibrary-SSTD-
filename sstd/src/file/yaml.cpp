@@ -1640,7 +1640,7 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             ++i;
             if( i>=io.size() ){ break; }
             pT = &io[i];
-
+            
             if( merge_cnt==1 && !start_with_string && _is_control_types((*pT).type) ){ break; }
             
             // Check break
@@ -1653,7 +1653,13 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             sstd::printn((*pT).type!=sstd_yaml::num_str);
             sstd::printn(start_with_string);
             sstd::printn(curr_hsc<=criteria_hsc);
-            if( start_with_string && curr_hsc<=criteria_hsc ){ break; }
+            // Check the needs of breaking the merge process
+            // Under the following situation, the parser needs to break the process of multi-line merging.
+            //   - `start_with_string`: The string start with non-control charactor
+            //   - `(*pT).val.size()!=0`: The line is NOT Empty. (If the line is empty, the parser needs to treat as a line break of multi-line string).
+            //   - `curr_hsc<=criteria_hsc`: The line is out of scope.
+            if( start_with_string && ((*pT).val.size()!=0 && curr_hsc<=criteria_hsc) ){ break; }
+            printf("1657\n");
             
             // Copy values
             tmp.rawStr += '\n' + (*pT).rawStr;
