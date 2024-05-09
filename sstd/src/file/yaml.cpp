@@ -1600,7 +1600,7 @@ uint _get_criteria_hsc(const sstd_yaml::token& t){
     }
 }
 uint _get_current_hsc(const sstd_yaml::token& t){
-    if(t.type==sstd_yaml::num_hash || t.type==sstd_yaml::num_list_and_hash){
+    if(t.type==sstd_yaml::num_hash){
         return t.hsc_hx;
     }else{
         return t.hsc_lx; // for sstd_yaml::num_str or sstd_yaml::num_list

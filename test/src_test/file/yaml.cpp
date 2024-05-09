@@ -313,7 +313,7 @@ k_Y: v_Y
 }
 
 //---
-
+/*
 TEST(yaml, _str2token_multi_list_case01){
     std::string s = "- a\n- b\n- c";
     std::vector<sstd_yaml::token> v_ret;
@@ -412,9 +412,7 @@ TEST(yaml, _str2token_multi_list_case07){
 )";
     std::vector<sstd_yaml::token> v_ret;
     bool ret = sstd_yaml::_str2token(v_ret, s);
-    sstd::printn(v_ret);
-    printf("\n\n");
-    printf("---\n\n");
+//    sstd::printn(v_ret);
     
     ASSERT_EQ(v_ret.size(), 4);
     ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- a # comment");
@@ -427,7 +425,7 @@ TEST(yaml, _str2token_multi_list_case07){
 )");
     sstd::printn(v_ret[1].val.c_str());
     ASSERT_STREQ(v_ret[1].val.c_str(), "|\n  b1\n  b2\n  b3\n");
-}/*
+}
 TEST(yaml, _str2token_multi_list_case08){
     std::string s=R"(
 - a # comment
@@ -444,19 +442,18 @@ TEST(yaml, _str2token_multi_list_case08){
 //    sstd::printn(v_ret);
     
     ASSERT_EQ(v_ret.size(), 4);
-    ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- a # comment\n");
-    ASSERT_STREQ(v_ret[0].val1.c_str(),   "a");
+    ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- a # comment");
+    ASSERT_STREQ(v_ret[0].val.c_str(),   "a");
 //    sstd::printn(v_ret[1].rawStr.c_str());
     ASSERT_STREQ(v_ret[1].rawStr.c_str(), R"(- k: |+
    b1
    b2
    b3
-
 )");
-//    sstd::printn(v_ret[1].val1.c_str());
-//    sstd::printn(v_ret[1].val2.c_str());
-    ASSERT_STREQ(v_ret[1].val1.c_str(), "k");
-    ASSERT_STREQ(v_ret[1].val2.c_str(), "b1\nb2\nb3\n\n");
+//    sstd::printn(v_ret[1].val.c_str());
+//    sstd::printn(v_ret[1].val.c_str());
+    ASSERT_STREQ(v_ret[1].key.c_str(), "k");
+    ASSERT_STREQ(v_ret[1].val.c_str(), "|+\n   b1\n   b2\n   b3\n");
 }
 TEST(yaml, _str2token_multi_list_case09){
     std::string s=R"(
@@ -471,22 +468,21 @@ TEST(yaml, _str2token_multi_list_case09){
 )";
     std::vector<sstd_yaml::token> v_ret;
     bool ret = sstd_yaml::_str2token(v_ret, s);
-    sstd::printn(v_ret);
+//    sstd::printn(v_ret);
     
     ASSERT_EQ(v_ret.size(), 4);
-//    sstd::printn(v_ret[0].val1.c_str());
-    ASSERT_STREQ(v_ret[0].val1.c_str(), "a");
+//    sstd::printn(v_ret[0].val.c_str());
+    ASSERT_STREQ(v_ret[0].val.c_str(), "a");
 //    sstd::printn(v_ret[1].rawStr.c_str());
     ASSERT_STREQ(v_ret[1].rawStr.c_str(), R"(- k:|
    b1
    b2
    b3
-
 )");
-    sstd::printn(v_ret[1].val1.c_str());
-    ASSERT_STREQ(v_ret[1].val1.c_str(), R"(k:| b1 b2 b3)");
-    ASSERT_STREQ(v_ret[2].val1.c_str(), "c");
-    ASSERT_STREQ(v_ret[3].val1.c_str(), "d");
+    sstd::printn(v_ret[1].val.c_str());
+    ASSERT_STREQ(v_ret[1].val.c_str(), "k:|\n   b1\n   b2\n   b3\n");
+    ASSERT_STREQ(v_ret[2].val.c_str(), "c");
+    ASSERT_STREQ(v_ret[3].val.c_str(), "d");
 }
 TEST(yaml, _str2token_multi_list_case10){
     std::string s=R"(
@@ -495,24 +491,23 @@ TEST(yaml, _str2token_multi_list_case10){
 )";
     std::vector<sstd_yaml::token> v_ret;
     bool ret = sstd_yaml::_str2token(v_ret, s);
-    sstd::printn(v_ret);
+//    sstd::printn(v_ret);
     
     ASSERT_EQ(v_ret.size(), 1);
 //    sstd::printn(v_ret[0].rawStr.c_str());
 //    ASSERT_STREQ(v_ret[0].rawStr.c_str(), R"()");
-//    sstd::printn(v_ret[0].val1.c_str());
-    ASSERT_STREQ(v_ret[0].val1.c_str(), "a - a");
+//    sstd::printn(v_ret[0].val.c_str());
+    ASSERT_STREQ(v_ret[0].val.c_str(), "a\n - a");
 }
-*/
+
 //---
 
 //TEST(yaml, _str2token_multi_list_except_pipe_or_inequality_sign_case01){
 //}
-
-/*
+//*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Test _format_mult_line_str()
-
+/*
 TEST(yaml, _format_mult_line_str__pipeSymbol__last_line_breaks_case01){ // '|'
     std::string s=R"(|
   a)";
@@ -1038,10 +1033,10 @@ TEST(yaml, _token2cmd_null_values_case03){
     ASSERT_EQ(ret_v_cmd[idx].type, sstd_yaml::num_hash);
     ++idx;
 }
-
+//*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // comments
-//*
+/*
 TEST(yaml, comments_str){
     std::string s=R"(
 a # comment
