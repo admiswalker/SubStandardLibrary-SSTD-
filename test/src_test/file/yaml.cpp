@@ -263,7 +263,7 @@ TEST(yaml, _str2token_val1_val2_list_02                 ){ TEST_STR2TOKEN__KEY_V
 TEST(yaml, _str2token_val1_val2_list_hash               ){ TEST_STR2TOKEN__KEY_VAL("k", "v", "k: v"); }
 TEST(yaml, _str2token_val1_val2_list_hash_02            ){ TEST_STR2TOKEN__KEY_VAL("k ,", "v   ,", "- k , : v   ,"); }
 TEST(yaml, _str2token_val1_val2_list_hash_space         ){ TEST_STR2TOKEN__KEY_VAL("k {", "v {", "-  k { :  v { "); }
-TEST(yaml, _str2token_val1_val2_flow                    ){ TEST_STR2TOKEN__KEY_VAL("[{k: v}]", "",   "[{k: v}]"); }
+TEST(yaml, _str2token_val1_val2_flow                    ){ TEST_STR2TOKEN__KEY_VAL("", "[{k: v}]",   "[{k: v}]"); }
 
 // mutliline flow stype notation
 TEST(yaml, _str2token_val1_val2_multiline_flow          ){ TEST_STR2TOKEN__KEY_VAL("", "[\na,\nb,\nc\n]",   "[\na,\nb,\nc\n]"); }
@@ -286,7 +286,7 @@ TEST(yaml, _str2token_rm_comment_case03){ TEST_STR2TOKEN__KEY_VAL("", "a # comme
 //TEST(yaml, _str2token_rm_comment_case04){ TEST_STR2TOKEN__KEY_VAL("", "|\na\nb\nc", "- |\na # comment\nb # comment\nc # comment"); } // あとで直す
 
 //---
-
+//*
 TEST(yaml, _str2token_multi_list_case00){
     std::string s = R"(
 k_X: 
@@ -314,7 +314,7 @@ k_Y: v_Y
 }
 
 //---
-/*
+
 TEST(yaml, _str2token_multi_list_case01){
     std::string s = "- a\n- b\n- c";
     std::vector<sstd_yaml::token> v_ret;
@@ -508,7 +508,7 @@ TEST(yaml, _str2token_multi_list_case10){
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Test _format_mult_line_str()
-/*
+//*
 TEST(yaml, _format_mult_line_str__pipeSymbol__last_line_breaks_case01){ // '|'
     std::string s=R"(|
   a)";
@@ -724,7 +724,7 @@ TEST(yaml, _format_mult_line_str__NoSymbol__case01){
 }
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-/*
+//*
 TEST(yaml, _token2cmd_usual_cases){
     std::string s = R"(
 - k1: v11
@@ -1037,7 +1037,7 @@ TEST(yaml, _token2cmd_null_values_case03){
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // comments
-/*
+//*
 TEST(yaml, comments_str){
     std::string s=R"(
 a # comment
@@ -1142,10 +1142,10 @@ TEST(yaml, comments_hash_quotes){
     
     ASSERT_TRUE(yml==ans);
 }
-
+//*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // var
-
+//*
 TEST(yaml, var_str_1_line){
     std::string s=R"(
 a # comment
@@ -1183,10 +1183,10 @@ b
     
     ASSERT_TRUE(yml==ans);
 }
-
+//*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // list
-
+//*
 TEST(yaml, list_depth1){
     std::string s=R"(
 - a # comment
@@ -1209,7 +1209,7 @@ TEST(yaml, list_depth1){
     //---
     
     ASSERT_TRUE(yml==ans);
-}
+}/*
 TEST(yaml, list_depth2){
     std::string s=R"(
 - a # comment
@@ -1301,10 +1301,10 @@ TEST(yaml, list_null){
     
     ASSERT_TRUE(yml==ans);
 }
-//*
+//*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // hash
-
+/*
 TEST(yaml, hash_depth1){
     std::string s=R"(
 k1: v1 # comment

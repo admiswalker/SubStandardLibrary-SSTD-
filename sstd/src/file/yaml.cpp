@@ -1545,9 +1545,11 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
 //            }
 //        }
         
-//        if(tmp.val1.size()==0 && !tmp.val1_use_quotes &&
-//           tmp.val2.size()==0 && !tmp.val2_use_quotes &&
-//           tmp.type==sstd_yaml::num_str                  ){ continue; }
+        // Skip empty tokens until the first non-empty token occurs. (Empty token is treated as a line-break related with to other token in a context of multi-line YAML)
+        if(ret.size()==0 &&
+           tmp.key.size()==0 && !tmp.key_use_quotes &&
+           tmp.val.size()==0 && !tmp.val_use_quotes &&
+           tmp.type==sstd_yaml::num_str                  ){ continue; }
         
         // set hasValue
         tmp.hasValue=false;
@@ -1567,12 +1569,17 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
     
     return true;
 }
-bool _exists_list_hash_flowStyle(const std::vector<sstd_yaml::token>& v){
+bool _is_all_the_data_str_type(const std::vector<sstd_yaml::token>& v){
     for(uint i=0; i<v.size(); ++i){
-        if(v[i].type!=sstd_yaml::num_str){ return true; }
-        if(v[i].format!=sstd_yaml::num_block_style_base){ return true; }
+        if(v[i].type!=sstd_yaml::num_str){ return false; }
     }
-    return false;
+    return true;
+}
+bool _is_all_the_data_flowStyle(const std::vector<sstd_yaml::token>& v){
+    for(uint i=0; i<v.size(); ++i){
+        if(v[i].format!=sstd_yaml::num_flow_style_base){ return false; }
+    }
+    return true;
 }
 bool _merge_all_str(std::vector<sstd_yaml::token>& ret, const std::vector<sstd_yaml::token>& v){
     if(v.size()==0){ return true; }
@@ -1609,22 +1616,26 @@ uint _get_current_hsc(const sstd_yaml::token& t){
 bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io){
     std::vector<sstd_yaml::token> ret;
 
-    bool is_all_the_data_str_type = !_exists_list_hash_flowStyle(io);
+    bool is_all_the_data_str_type  = _is_all_the_data_str_type(io);
     if(is_all_the_data_str_type){
         if(!_merge_all_str(ret, io)){ sstd::pdbg_err("_merge_all_str() was failed.\n"); return false; }
         return true;
     }
-
+    bool is_all_the_data_flowStyle = _is_all_the_data_flowStyle(io);
+    if(is_all_the_data_flowStyle){
+        if(!_merge_all_str(ret, io)){ sstd::pdbg_err("_merge_all_str() was failed.\n"); return false; }
+        return true;
+    }
+    
     uint i=0;
 
     // Skip tokens until occurred the control type (==list, hash or list_and_hash).
-    for(; i<io.size();){
-        sstd_yaml::token* pT = &io[i];
-        if(_is_control_types((*pT).type)){ break; }
-        
-        if((*pT).hasValue){ sstd::pdbg_err("Unexpected data type.\n"); return false; }
-        ++i;
-    }
+//    for(; i<io.size();){
+//        sstd_yaml::token* pT = &io[i];
+//        if(_is_control_types((*pT).type)){ break; }
+//        if((*pT).hasValue){ sstd::pdbg_err("Unexpected data type.\n"); return false; }
+//        ++i;
+//    }
     
     // mearge all the separated multi-line tokens
     do{
@@ -1640,12 +1651,26 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             ++i;
             if( i>=io.size() ){ break; }
             pT = &io[i];
-            
-            if( merge_cnt==1 && !start_with_string && _is_control_types((*pT).type) ){ break; }
+
+            bool is_control_types = _is_control_types((*pT).type);
+//            if( merge_cnt==1 && is_control_types && !start_with_string ){ break; } 
             
             // Check break
             uint curr_hsc = _get_current_hsc((*pT));
+            if( merge_cnt==1 && is_control_types && (!start_with_string||(curr_hsc<=criteria_hsc)) ){ break; }
+            // - `!start_with_string` is for:
+            //   │ k0:
+            //   │   k1: v
+            // - `curr_hsc<=criteria_hsc` is for:
+            //   │ - k1: v1
+            //   │ - k2: v2
+            
             start_with_string |= (*pT).type==sstd_yaml::num_str;
+            // Check the needs of breaking the merge process
+            // Under the following situation, the parser needs to break the process of multi-line merging.
+            //   - `start_with_string`: The string start with non-control charactor
+            //   - `(*pT).val.size()!=0`: The line is NOT Empty. (If the line is empty, the parser needs to treat as a line break of multi-line string).
+            //   - `curr_hsc<=criteria_hsc`: The line is out of scope.
             sstd::printn( (*pT).key );
             sstd::printn( (*pT).val );
             sstd::printn( curr_hsc );
@@ -1653,11 +1678,6 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             sstd::printn((*pT).type!=sstd_yaml::num_str);
             sstd::printn(start_with_string);
             sstd::printn(curr_hsc<=criteria_hsc);
-            // Check the needs of breaking the merge process
-            // Under the following situation, the parser needs to break the process of multi-line merging.
-            //   - `start_with_string`: The string start with non-control charactor
-            //   - `(*pT).val.size()!=0`: The line is NOT Empty. (If the line is empty, the parser needs to treat as a line break of multi-line string).
-            //   - `curr_hsc<=criteria_hsc`: The line is out of scope.
             if( start_with_string && ((*pT).val.size()!=0 && curr_hsc<=criteria_hsc) ){ break; }
             printf("1657\n");
             
