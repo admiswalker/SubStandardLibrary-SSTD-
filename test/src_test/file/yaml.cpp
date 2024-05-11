@@ -302,14 +302,15 @@ k_Y: v_Y
     sstd::printn(v_ret.size());
     sstd::printn(v_ret);
     
-//    ASSERT_EQ(v_ret.size(), 3);
-//    ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- a\n");
-//    ASSERT_STREQ(v_ret[0].val1.c_str(),     "a"  );
-//    ASSERT_STREQ(v_ret[1].rawStr.c_str(), "- b\n");
-//    ASSERT_STREQ(v_ret[1].val1.c_str(),     "b"  );
-//    ASSERT_STREQ(v_ret[2].rawStr.c_str(), "- c");
-//    ASSERT_STREQ(v_ret[2].val1.c_str(),     "c");
-    ASSERT_TRUE(false);
+    ASSERT_EQ(v_ret.size(), 3);
+    ASSERT_STREQ(v_ret[0].rawStr.c_str(), "k_X: ");
+    ASSERT_STREQ(v_ret[0].val.c_str(),    ""     );
+    ASSERT_STREQ(v_ret[1].rawStr.c_str(), "  k1: |+\n     a\n     \n     c\n     ");
+    ASSERT_STREQ(v_ret[1].key.c_str(),      "k1" );
+    ASSERT_STREQ(v_ret[1].val.c_str(),          "|+\n     a\n     \n     c\n     ");
+    ASSERT_STREQ(v_ret[2].rawStr.c_str(), "k_Y: v_Y");
+    ASSERT_STREQ(v_ret[2].key.c_str(),    "k_Y");
+    ASSERT_STREQ(v_ret[2].val.c_str(),    "v_Y");
 }
 
 //---
