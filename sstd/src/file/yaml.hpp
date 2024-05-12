@@ -56,6 +56,7 @@ namespace sstd_yaml{
         bool hasValue = false; // If the value (val1 or val2) is vaild for each data type (list or hash).
         bool key_use_quotes = false;
         bool val_use_quotes = false;
+        bool mult_line_val = false;
         std::string key; // key for "hash"
         std::string val; // value for "list" or "hash"
 //        bool val1_use_quotes = false;
@@ -107,12 +108,13 @@ namespace sstd_yaml{
     
     //---
     
-    bool _format_mult_line_str(std::string& ret, const std::string& str, const uint hsc_base_yaml);
+    bool _format_mult_line_str(std::string& ret, const std::string& str, const uint hsc_base_yaml, const bool has_next_token);
     
     //---
 
     bool _str2token_except_multilines(std::vector<sstd_yaml::token>& ret, const char* str);
     bool _token2token_merge_multilines(std::vector<sstd_yaml::token>& io);
+    bool _token2token_postprocess(std::vector<sstd_yaml::token>& io);
     bool _str2token(std::vector<sstd_yaml::token>& ret, const char* str);
     bool _str2token(std::vector<sstd_yaml::token>& ret, const std::string& str);
     

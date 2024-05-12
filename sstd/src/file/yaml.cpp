@@ -575,7 +575,7 @@ bool _parse_mult_line_opt(bool& ret_noSymbol, bool& ret_pipeSymbol, bool& ret_gr
 
 //---
 
-bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, const uint hsc_base_yaml){
+bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, const uint hsc_base_yaml, const bool has_next_token){
     std::vector<std::string> v_str = sstd::splitByLine(str+"\n"); // "\n" modify the num of split sections
     std::vector<std::string> v_tmp;
     ret.clear(); // Needs to clear after init v_str if `ret` and `str` address is same.
@@ -662,7 +662,7 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, 
         }else if(ret_plusSymbol){
             // "|+N" or ">+N"
         
-            int cnt = (int)sstd::cntEmpty_r(v_tmp);
+            int cnt = (int)sstd::cntEmpty_r(v_tmp) + (int)(has_next_token?1:0);
             sstd::rmEmpty_r_ow(v_tmp);
             ret = _join_mult_line(v_tmp, ret_pipeSymbol, ret_greaterThanSymbol) + std::string(cnt, '\n');
         
@@ -1627,17 +1627,8 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
         return true;
     }
     
-    uint i=0;
-
-    // Skip tokens until occurred the control type (==list, hash or list_and_hash).
-//    for(; i<io.size();){
-//        sstd_yaml::token* pT = &io[i];
-//        if(_is_control_types((*pT).type)){ break; }
-//        if((*pT).hasValue){ sstd::pdbg_err("Unexpected data type.\n"); return false; }
-//        ++i;
-//    }
-    
     // mearge all the separated multi-line tokens
+    uint i=0;
     do{
         sstd_yaml::token* pT = &io[i];
         sstd_yaml::token tmp = (*pT);
@@ -1664,7 +1655,8 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             // - `curr_hsc<=criteria_hsc` is for:
             //   │ - k1: v1
             //   │ - k2: v2
-            
+
+            // Update `start_with_string` to the current token
             start_with_string |= (*pT).type==sstd_yaml::num_str;
             // Check the needs of breaking the merge process
             // Under the following situation, the parser needs to break the process of multi-line merging.
@@ -1685,6 +1677,7 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             tmp.rawStr += '\n' + (*pT).rawStr;
             tmp.val    += '\n' + (*pT).rawStr; // Needs to copy as row string in order to treat multi-line string as a raw data. Ex1: "k:\n x\n - a" is interpreted as `{k: "x - a"}`. Ex2: "k: |\n x # comment" is interpreted as `{k: "x # comment"}`.
             tmp.line_num_end = (*pT).line_num_end;
+            tmp.mult_line_val = true;
 
             printf("---\n");
         }
@@ -1695,9 +1688,34 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
     std::swap(ret, io);
     return true;
 }
+bool sstd_yaml::_token2token_postprocess(std::vector<sstd_yaml::token>& io){
+
+    uint i=0;
+    if(io.size()>=1){
+        sstd_yaml::token& t_curr = io[i  ];
+        
+        if(t_curr.mult_line_val){
+            uint hsc_base_yaml = 0;
+            bool has_next_token = (io.size()>(i+1));
+            if(!sstd_yaml::_format_mult_line_str(t_curr.val, t_curr.val, hsc_base_yaml, has_next_token)){ sstd::pdbg_err("sstd_yaml::_format_mult_line_str() is failed.\n"); return false; }
+        }
+    }
+    for(i=1; i<io.size(); ++i){
+        sstd_yaml::token& t_prev = io[i-1];
+        sstd_yaml::token& t_curr = io[i  ];
+        
+        if(t_curr.mult_line_val){
+            uint hsc_base_yaml = _get_criteria_hsc(t_prev);
+            bool has_next_token = (io.size()>(i+1));
+            if(!sstd_yaml::_format_mult_line_str(t_curr.val, t_curr.val, hsc_base_yaml, has_next_token)){ sstd::pdbg_err("sstd_yaml::_format_mult_line_str() is failed.\n"); return false; }
+        }
+    }
+    return true;
+}
 bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
     if(!sstd_yaml::_str2token_except_multilines(ret, str)){ sstd::pdbg_err("sstd_yaml::_str2token_except_multilines() was failed.\n"); return false; }
     if(!sstd_yaml::_token2token_merge_multilines(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_merge_multilines() was failed.\n"); return false; }
+    if(!sstd_yaml::_token2token_postprocess(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_postprocess() was failed.\n"); return false; }
     return true;
 }
 bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string& str){ return sstd_yaml::_str2token(ret, str.c_str()); }
