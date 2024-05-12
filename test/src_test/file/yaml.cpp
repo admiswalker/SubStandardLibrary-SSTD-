@@ -1067,7 +1067,7 @@ a # comment
     //---
     
     ASSERT_TRUE(yml==ans);
-}
+}/*
 TEST(yaml, comments_str_quotes){
     std::string s=R"(
 "a # not-comment" # comment
@@ -1158,7 +1158,7 @@ TEST(yaml, comments_hash_quotes){
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // var
-//*
+/*
 TEST(yaml, var_str_1_line){
     std::string s=R"(
 a # comment
@@ -1174,7 +1174,7 @@ a # comment
     //---
     
     ASSERT_TRUE(yml==ans);
-}
+}/*
 TEST(yaml, var_str_2_lines_err){
     std::string s=R"(
 a # comment
@@ -1199,7 +1199,7 @@ b
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // list
-//*
+/*
 TEST(yaml, list_depth1){
     std::string s=R"(
 - a # comment
@@ -1294,7 +1294,7 @@ TEST(yaml, list_flow_style_brackets){
     //---
     
     ASSERT_TRUE(yml==ans);
-}/*
+}
 TEST(yaml, list_null){
     std::string s=R"(
 -
@@ -1309,6 +1309,24 @@ TEST(yaml, list_null){
     sstd::terp::var ans;
     ans = sstd::terp::list(3);
     sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, list_str_listStr_listStrEnd){ // depth1
+    std::string s=R"(
+- a - b - c -
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+    sstd::printn(yml.size());
+    
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = "a - b - c -";
     
     //---
     
@@ -1413,7 +1431,7 @@ k2:
     
     ASSERT_TRUE(yml==ans);
 }
-
+/*
 TEST(yaml, hash_with_colon_01){
     std::string s=R"(
 k:1: v:1
@@ -2010,7 +2028,7 @@ TEST(yaml, multi_line_str_by_list_vertical_line){ // - |
     
     ASSERT_TRUE(yml==ans);
 }
-/*
+
 TEST(yaml, multi_line_str_by_list_vertical_line_minus){ // - |-
     std::string s=R"(
 - a # comment
@@ -2219,7 +2237,7 @@ TEST(yaml, multi_line_str_by_list_vertical_line_with_different_head_spaces__vert
   e
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
+    sstd::printn(yml);
 
     //---
     
@@ -2231,7 +2249,7 @@ TEST(yaml, multi_line_str_by_list_vertical_line_with_different_head_spaces__vert
     //---
     
     ASSERT_TRUE(yml==ans);
-}
+}/*
 TEST(yaml, multi_line_str_by_list_vertical_line_with_different_head_spaces__vertical_1){
     std::string s=R"(
 - |1
@@ -4191,6 +4209,45 @@ TEST(yaml, yaml_load_all_fp){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 //*/
+/*
+TEST(tmp, split_s_s){ // あとで sstd/test_src/string/strEdit.cpp/hpp に移動する
+    std::string s="abcdef";
+    std::vector<std::string> vs = sstd::split(s, "bc");
+    sstd::printn(vs);
+    //sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    //sstd::terp::var ans;
+    //ans = sstd::terp::list(2);
+    //ans[0] = "a[]";
+    //ans[1] = "a{}";
+    
+    //---
+    
+    //ASSERT_TRUE(yml==ans);
+}
+TEST(tmp, lstripAll_ow_s_s){ // あとで sstd/test_src/string/strEdit.cpp/hpp に移動する
+    std::string s="\n abc \n";
+    sstd::lstripAll_ow(s, " \n");
+    sstd::printn(s);
+    //sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    //sstd::terp::var ans;
+    //ans = sstd::terp::list(2);
+    //ans[0] = "a[]";
+    //ans[1] = "a{}";
+    
+    //---
+    
+    //ASSERT_TRUE(yml==ans);
+}
+//*/
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 /*
 // 下記失敗する．

@@ -67,6 +67,7 @@
     printf("    hasValue: %s\n", (rhs.hasValue?"ture":"false"));        \
     printf("    hsc_lx: %d\n", rhs.hsc_lx);                             \
     printf("    hsc_hx: %d\n", rhs.hsc_hx);                             \
+    printf("    mult_line_val: %s\n", (rhs.mult_line_val?"ture":"false")); \
     printf("    key: `%s`\n", rhs.key.c_str());                         \
     printf("    val: `%s`\n", rhs.val.c_str());                         \
     printf(",\n");
@@ -167,6 +168,40 @@ std::string _extract_quotes_value(const std::string& str){
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 std::string _rm_comment(const std::string& s){
+    std::vector<std::string> v = sstd::split(s, '#');
+    if(v.size()==0){ return std::string(); }
+    return sstd::rstrip(v[0]);
+}
+
+bool _str_eq(const std::string& str, uint is_begin, const std::string& X){
+    uint is=is_begin;
+    uint ix=0;
+    for(; ix<X.size(); ++ix, ++is){
+        if(!(is<str.size())){ return false; }
+        if(str[is]!=X[ix]){ return false; }
+    }
+    return true;
+}
+std::vector<std::string> sstd::split(const std::string& str, const std::string& X){
+    if(str.size()<=1){ return std::vector<std::string>({str}); }
+    if(X.size()  ==0){ return std::vector<std::string>({str}); }
+    if(X.size()  ==1){ return sstd::split(str.c_str(), X[0]); }
+    
+    std::vector<std::string> splitList;
+    std::string buf;
+    for(uint i=0; i<str.size(); ++i){
+        if(_str_eq(str, i, X)){
+            i += X.size()-1;
+            splitList.push_back(buf);
+            buf.clear();
+        }else{
+            buf += str[i];
+        }
+    }
+    if(buf.size()!=0){ splitList.push_back(buf); }
+    return splitList;
+}
+std::string _rm_comment_v2(const std::string& s){
     std::vector<std::string> v = sstd::split(s, '#');
     if(v.size()==0){ return std::string(); }
     return sstd::rstrip(v[0]);
@@ -553,8 +588,8 @@ bool _parse_mult_line_opt(bool& ret_noSymbol, bool& ret_pipeSymbol, bool& ret_gr
     ret_minusSymbol=false;
     ret_hasHsc=false;
     ret_hsc=0;
-    
-    if(opt.size()>=1 && (opt[0]!='|' && opt[0]!='>')){
+
+    if(opt.size()==0 || (opt.size()>=1 && (opt[0]!='|' && opt[0]!='>'))){
         ret_noSymbol=true;
     }else{
         for(uint i=0; i<opt.size(); ++i){
@@ -575,6 +610,23 @@ bool _parse_mult_line_opt(bool& ret_noSymbol, bool& ret_pipeSymbol, bool& ret_gr
 
 //---
 
+bool _is_contain(char c, const std::string& stripList){
+    for(uint i=0; i<stripList.size(); ++i){
+        if(c==stripList[i]){ return true; }
+    }
+    return false;
+}
+void sstd__lstripAll_ow(std::string& str, const std::string& stripList){
+    uint i=0;
+    for(; i<str.size();){
+        if(!_is_contain(str[i], stripList)){ break; }
+        ++i;
+    }
+    str = &str[i];
+    return;
+}
+void sstd::lstripAll_ow(std::string& str, const char* stripList){ std::string tmp=stripList; sstd__lstripAll_ow(str, tmp); }
+
 bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, const uint hsc_base_yaml, const bool has_next_token){
     std::vector<std::string> v_str = sstd::splitByLine(str+"\n"); // "\n" modify the num of split sections
     std::vector<std::string> v_tmp;
@@ -593,6 +645,7 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, 
         std::string tmp;
         for(uint i=0; i<v_str.size(); ++i){
             tmp = sstd::strip(v_str[i]);
+            if(tmp.starts_with("#")){ continue; }
             if(tmp.size()==0){ continue; }
             ret += tmp + ' ';
         }
@@ -1398,7 +1451,7 @@ bool _is_flow(const std::string& subt){
     return subt.size()>=1 && (subt[0]=='[' || subt[0]=='{');
 }
 
-bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret, const char* str){
+bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret, const std::string& str){
     // Parse rule of YAML string
     // 
     // Rule1. For default, Block-Style-String ("- ", ": ") and Line-Break-Codes ('\n', "\r\n") are
@@ -1435,7 +1488,7 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
 
     int cnt=0; // for debug
     
-    for(uint r=0; str[r]!=0;){ // r: read place
+    for(uint r=0; str[r]!='\0';){ // r: read place
         sstd_yaml::token tmp;
         tmp.line_num_begin = line_num;
         
@@ -1448,6 +1501,7 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
         bool is_list=false; // is list type "- "
         bool is_hash=false; // is hash type "k: v"
         bool is_flow=false; // is flow style "[{k: v}]"
+        bool subt_has_a_val=false; // for "- a - b - c -"
         
         int num_of_square_brackets=0; // []
         int num_of_curly_brackets=0;  // {}
@@ -1476,16 +1530,16 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
                     // Block Style
                     
                     // for Windows
-                    if(str[r]=='-' && str[r+1]=='\r'){                                       subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; continue; }
-                    if(str[r]==':' && str[r+1]=='\r'){ tmp.key=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; continue; }
+                    if(str[r]=='-' && str[r+1]=='\r' && !subt_has_a_val){                                       subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; continue; }
+                    if(str[r]==':' && str[r+1]=='\r'                   ){ tmp.key=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; continue; }
                     
                     // for Unix
-                    if(str[r]=='-' && str[r+1]=='\n'){                                       subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; continue; }
-                    if(str[r]==':' && str[r+1]=='\n'){ tmp.key=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; continue; }
+                    if(str[r]=='-' && str[r+1]=='\n' && !subt_has_a_val){                                       subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; continue; }
+                    if(str[r]==':' && str[r+1]=='\n'                   ){ tmp.key=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; continue; }
                     
                     // the other case
-                    if(str[r]=='-' && str[r+1]==' '){                                       subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
-                    if(str[r]==':' && str[r+1]==' '){ tmp.key=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
+                    if(str[r]=='-' && str[r+1]==' ' && !subt_has_a_val){                                       subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
+                    if(str[r]==':' && str[r+1]==' '                   ){ tmp.key=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
                 }else{
                     // Flow Style
                     if(str[r]=='['){ ++num_of_square_brackets; }
@@ -1512,6 +1566,7 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
             // save the input string to the buffers
             tmp.rawStr += str[r];
             subt       += str[r];
+            if(str[r]!='-' && str[r]!=' '){ subt_has_a_val=true; }
             
             // init
             is_escaped = false;
@@ -1567,6 +1622,10 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
     if(in_d_quate){ ret.clear(); return false; }
     if(in_s_quate){ ret.clear(); return false; }
     
+    if(str.size()>=1 && str[str.size()-1]=='\n'){
+        ret.push_back(sstd_yaml::token());
+    }
+    
     return true;
 }
 bool _is_all_the_data_str_type(const std::vector<sstd_yaml::token>& v){
@@ -1619,11 +1678,15 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
     bool is_all_the_data_str_type  = _is_all_the_data_str_type(io);
     if(is_all_the_data_str_type){
         if(!_merge_all_str(ret, io)){ sstd::pdbg_err("_merge_all_str() was failed.\n"); return false; }
+        
+        std::swap(ret, io);
         return true;
     }
     bool is_all_the_data_flowStyle = _is_all_the_data_flowStyle(io);
     if(is_all_the_data_flowStyle){
         if(!_merge_all_str(ret, io)){ sstd::pdbg_err("_merge_all_str() was failed.\n"); return false; }
+        
+        std::swap(ret, io);
         return true;
     }
     
@@ -1648,6 +1711,7 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             
             // Check break
             uint curr_hsc = _get_current_hsc((*pT));
+            sstd::printn(merge_cnt);
             if( merge_cnt==1 && is_control_types && (!start_with_string||(curr_hsc<=criteria_hsc)) ){ break; }
             // - `!start_with_string` is for:
             //   │ k0:
@@ -1657,11 +1721,11 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             //   │ - k2: v2
 
             // Update `start_with_string` to the current token
-            start_with_string |= (*pT).type==sstd_yaml::num_str;
+            start_with_string |= (*pT).type==sstd_yaml::num_str; // for "k:\n  l1\n  l2"
             // Check the needs of breaking the merge process
             // Under the following situation, the parser needs to break the process of multi-line merging.
             //   - `start_with_string`: The string start with non-control charactor
-            //   - `(*pT).val.size()!=0`: The line is NOT Empty. (If the line is empty, the parser needs to treat as a line break of multi-line string).
+            //   - `(*pT).key.size()!=0||(*pT).val.size()!=0`: The line is NOT Empty. (If the line is empty, the parser needs to treat as a line break of multi-line string).
             //   - `curr_hsc<=criteria_hsc`: The line is out of scope.
             sstd::printn( (*pT).key );
             sstd::printn( (*pT).val );
@@ -1670,7 +1734,7 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             sstd::printn((*pT).type!=sstd_yaml::num_str);
             sstd::printn(start_with_string);
             sstd::printn(curr_hsc<=criteria_hsc);
-            if( start_with_string && ((*pT).val.size()!=0 && curr_hsc<=criteria_hsc) ){ break; }
+            if( start_with_string && (((*pT).key.size()!=0||(*pT).val.size()!=0||(*pT).key_use_quotes||(*pT).val_use_quotes) && curr_hsc<=criteria_hsc) ){ break; }
             printf("1657\n");
             
             // Copy values
@@ -1714,7 +1778,9 @@ bool sstd_yaml::_token2token_postprocess(std::vector<sstd_yaml::token>& io){
 }
 bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
     if(!sstd_yaml::_str2token_except_multilines(ret, str)){ sstd::pdbg_err("sstd_yaml::_str2token_except_multilines() was failed.\n"); return false; }
+    sstd::printn(ret);
     if(!sstd_yaml::_token2token_merge_multilines(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_merge_multilines() was failed.\n"); return false; }
+    sstd::printn(ret);
     if(!sstd_yaml::_token2token_postprocess(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_postprocess() was failed.\n"); return false; }
     return true;
 }

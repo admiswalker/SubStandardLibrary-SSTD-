@@ -9,6 +9,10 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // internal functions for unit test
 
+namespace sstd{
+    std::vector<std::string> split(const std::string& str, const std::string& X); // あとで sstd/src/string/strEdit.cpp/hpp に移動する
+    void lstripAll_ow(std::string& str, const char* stripList);
+}
 namespace sstd_yaml{
 
     //---
@@ -112,7 +116,7 @@ namespace sstd_yaml{
     
     //---
 
-    bool _str2token_except_multilines(std::vector<sstd_yaml::token>& ret, const char* str);
+    bool _str2token_except_multilines(std::vector<sstd_yaml::token>& ret, const std::string& str);
     bool _token2token_merge_multilines(std::vector<sstd_yaml::token>& io);
     bool _token2token_postprocess(std::vector<sstd_yaml::token>& io);
     bool _str2token(std::vector<sstd_yaml::token>& ret, const char* str);
