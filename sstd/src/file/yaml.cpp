@@ -535,6 +535,43 @@ std::string               sstd_strip   (const std::string& str, const std::strin
 
 //---
 
+bool _is_contain(char c, const std::string& stripList){
+    for(uint i=0; i<stripList.size(); ++i){
+        if(c==stripList[i]){ return true; }
+    }
+    return false;
+}
+void sstd__lstripAll_ow(std::string& str, const std::string& stripList){
+    // 修正点
+    // - stripList が巨大な場合はハッシュテーブルにする
+    uint i=0;
+    for(; i<str.size();){
+        if(!_is_contain(str[i], stripList)){ break; }
+        ++i;
+    }
+    str = &str[i];
+    return;
+}
+void sstd::lstripAll_ow(std::string& str, const char* stripList){ std::string tmp=stripList; sstd__lstripAll_ow(str, tmp); }
+
+//---
+
+void sstd__rstripAll_ow(std::string& str, const std::string& stripList){
+    // 修正点
+    // - stripList が巨大な場合はハッシュテーブルにする
+    int i=(int)str.size()-1;
+    for(; i>=0;){
+        if(!_is_contain(str[i], stripList)){ break; }
+        --i;
+    }
+    str.resize(i+1); // 境界テストで落ちるかも・・・？（本実装で直す）
+    return;
+}
+void sstd::rstripAll_ow(std::string& str, const char* stripList){ std::string tmp=stripList; sstd__rstripAll_ow(str, tmp); }
+
+//---
+
+
 std::string _join_mult_line(const std::vector<std::string>& v, const bool ret_pipeSymbol, const bool ret_greaterThanSymbol){
     std::string ret;
     if(v.size()==0){ return ret; }
@@ -609,23 +646,6 @@ bool _parse_mult_line_opt(bool& ret_noSymbol, bool& ret_pipeSymbol, bool& ret_gr
 }
 
 //---
-
-bool _is_contain(char c, const std::string& stripList){
-    for(uint i=0; i<stripList.size(); ++i){
-        if(c==stripList[i]){ return true; }
-    }
-    return false;
-}
-void sstd__lstripAll_ow(std::string& str, const std::string& stripList){
-    uint i=0;
-    for(; i<str.size();){
-        if(!_is_contain(str[i], stripList)){ break; }
-        ++i;
-    }
-    str = &str[i];
-    return;
-}
-void sstd::lstripAll_ow(std::string& str, const char* stripList){ std::string tmp=stripList; sstd__lstripAll_ow(str, tmp); }
 
 bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, const uint hsc_base_yaml, const bool has_next_token){
     std::vector<std::string> v_str = sstd::splitByLine(str+"\n"); // "\n" modify the num of split sections
@@ -1651,6 +1671,9 @@ bool _merge_all_str(std::vector<sstd_yaml::token>& ret, const std::vector<sstd_y
         t.rawStr += v[i].rawStr + "\n";
         t.val    += v[i].val    + "\n";
     }
+
+    t.mult_line_val = true;
+    
     ret.push_back(t);
     
     return true;
@@ -1678,15 +1701,19 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
     bool is_all_the_data_str_type  = _is_all_the_data_str_type(io);
     if(is_all_the_data_str_type){
         if(!_merge_all_str(ret, io)){ sstd::pdbg_err("_merge_all_str() was failed.\n"); return false; }
-        
+
+        sstd::pdbg_err("imh\n");
+        sstd::printn(ret);
+        sstd::printn(io);
         std::swap(ret, io);
+        sstd::pdbg_err("imh\n");
         return true;
     }
     bool is_all_the_data_flowStyle = _is_all_the_data_flowStyle(io);
     if(is_all_the_data_flowStyle){
         if(!_merge_all_str(ret, io)){ sstd::pdbg_err("_merge_all_str() was failed.\n"); return false; }
         
-        std::swap(ret, io);
+        //std::swap(ret, io);
         return true;
     }
     
@@ -1772,16 +1799,19 @@ bool sstd_yaml::_token2token_postprocess(std::vector<sstd_yaml::token>& io){
             uint hsc_base_yaml = _get_criteria_hsc(t_prev);
             bool has_next_token = (io.size()>(i+1));
             if(!sstd_yaml::_format_mult_line_str(t_curr.val, t_curr.val, hsc_base_yaml, has_next_token)){ sstd::pdbg_err("sstd_yaml::_format_mult_line_str() is failed.\n"); return false; }
+            if(!has_next_token){ sstd::rstripAll_ow(t_curr.rawStr, " \n"); }
         }
     }
+    
     return true;
 }
 bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
     if(!sstd_yaml::_str2token_except_multilines(ret, str)){ sstd::pdbg_err("sstd_yaml::_str2token_except_multilines() was failed.\n"); return false; }
-    sstd::printn(ret);
+    sstd::printn_all(ret);
     if(!sstd_yaml::_token2token_merge_multilines(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_merge_multilines() was failed.\n"); return false; }
-    sstd::printn(ret);
+    sstd::printn_all(ret);
     if(!sstd_yaml::_token2token_postprocess(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_postprocess() was failed.\n"); return false; }
+    sstd::printn_all(ret);
     return true;
 }
 bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string& str){ return sstd_yaml::_str2token(ret, str.c_str()); }

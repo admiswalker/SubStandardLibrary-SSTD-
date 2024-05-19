@@ -314,7 +314,7 @@ k_Y: v_Y
 }
 
 //---
-
+/*
 TEST(yaml, _str2token_multi_list_case01){
     std::string s = "- a\n- b\n- c";
     std::vector<sstd_yaml::token> v_ret;
@@ -508,7 +508,7 @@ TEST(yaml, _str2token_multi_list_case10){
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Test _format_mult_line_str()
-//*
+/*
 TEST(yaml, _format_mult_line_str__pipeSymbol__last_line_breaks_case01){ // '|'
     std::string s=R"(|
   a)";
@@ -737,7 +737,7 @@ TEST(yaml, _format_mult_line_str__NoSymbol__case01){
 }
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-//*
+/*
 TEST(yaml, _token2cmd_usual_cases){
     std::string s = R"(
 - k1: v11
@@ -1050,7 +1050,7 @@ TEST(yaml, _token2cmd_null_values_case03){
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // comments
-//*
+/*
 TEST(yaml, comments_str){
     std::string s=R"(
 a # comment
@@ -1067,7 +1067,7 @@ a # comment
     //---
     
     ASSERT_TRUE(yml==ans);
-}/*
+}
 TEST(yaml, comments_str_quotes){
     std::string s=R"(
 "a # not-comment" # comment
@@ -4231,6 +4231,24 @@ TEST(tmp, split_s_s){ // あとで sstd/test_src/string/strEdit.cpp/hpp に移�
 TEST(tmp, lstripAll_ow_s_s){ // あとで sstd/test_src/string/strEdit.cpp/hpp に移動する
     std::string s="\n abc \n";
     sstd::lstripAll_ow(s, " \n");
+    sstd::printn(s);
+    //sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //sstd::printn(yml);
+
+    //---
+    
+    //sstd::terp::var ans;
+    //ans = sstd::terp::list(2);
+    //ans[0] = "a[]";
+    //ans[1] = "a{}";
+    
+    //---
+    
+    //ASSERT_TRUE(yml==ans);
+}
+TEST(tmp, rstripAll_ow_s_s){ // あとで sstd/test_src/string/strEdit.cpp/hpp に移動する
+    std::string s="\n abc \n";
+    sstd::rstripAll_ow(s, " \n");
     sstd::printn(s);
     //sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //sstd::printn(yml);

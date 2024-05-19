@@ -12,6 +12,7 @@
 namespace sstd{
     std::vector<std::string> split(const std::string& str, const std::string& X); // あとで sstd/src/string/strEdit.cpp/hpp に移動する
     void lstripAll_ow(std::string& str, const char* stripList);
+    void rstripAll_ow(std::string& str, const char* stripList);
 }
 namespace sstd_yaml{
 
