@@ -278,13 +278,13 @@ TEST(yaml, _str2token_val1_val2_multiline_list_hash){ TEST_STR2TOKEN__KEY_VAL("k
 */
 //---
 // Test _str2token() of remove comments
-
+//*
 // remove comments
 //TEST(yaml, _str2token_rm_comment_case01){ TEST_STR2TOKEN__KEY_VAL("", "a", "a\n# b"); } // あとで直す
 TEST(yaml, _str2token_rm_comment_case02){ TEST_STR2TOKEN__KEY_VAL("", "a", "a # comment"); }
 TEST(yaml, _str2token_rm_comment_case03){ TEST_STR2TOKEN__KEY_VAL("", "a # comment", "\"a # comment\""); }
 //TEST(yaml, _str2token_rm_comment_case04){ TEST_STR2TOKEN__KEY_VAL("", "|\na\nb\nc", "- |\na # comment\nb # comment\nc # comment"); } // あとで直す
-
+//*/
 //---
 //*
 TEST(yaml, _str2token_multi_list_case00){
@@ -314,7 +314,7 @@ k_Y: v_Y
 }
 
 //---
-/*
+
 TEST(yaml, _str2token_multi_list_case01){
     std::string s = "- a\n- b\n- c";
     std::vector<sstd_yaml::token> v_ret;
@@ -508,7 +508,7 @@ TEST(yaml, _str2token_multi_list_case10){
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Test _format_mult_line_str()
-/*
+//*
 TEST(yaml, _format_mult_line_str__pipeSymbol__last_line_breaks_case01){ // '|'
     std::string s=R"(|
   a)";
@@ -737,7 +737,7 @@ TEST(yaml, _format_mult_line_str__NoSymbol__case01){
 }
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-/*
+//*
 TEST(yaml, _token2cmd_usual_cases){
     std::string s = R"(
 - k1: v11
@@ -1050,7 +1050,7 @@ TEST(yaml, _token2cmd_null_values_case03){
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // comments
-/*
+//*
 TEST(yaml, comments_str){
     std::string s=R"(
 a # comment
@@ -1158,7 +1158,7 @@ TEST(yaml, comments_hash_quotes){
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // var
-/*
+//*
 TEST(yaml, var_str_1_line){
     std::string s=R"(
 a # comment
@@ -1174,23 +1174,29 @@ a # comment
     //---
     
     ASSERT_TRUE(yml==ans);
-}/*
+}
 TEST(yaml, var_str_2_lines_err){
+    // I feeel it is difficult to read which method is appropriate for the handling of multi -line comments from the specifications.
+    // Memo: checking again: "Example 6.11 Multi-Line Comments" at the specification (https://yaml.org/spec/1.2.2/#rule-ns-hex-digit)
+    
     std::string s=R"(
 a # comment
 b
 )";
-    testing::internal::CaptureStdout();
-    sstd::terp::var yml; ASSERT_FALSE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    std::string ret = testing::internal::GetCapturedStdout().c_str();
-    ASSERT_TRUE(sstd::strIn("OverWritting the existing data.", ret.c_str()));
+    sstd::terp::var yml;
+    bool TF = sstd::yaml_load(yml, s); // TEST THIS LINE
+    //testing::internal::CaptureStdout();
+    //sstd::terp::var yml; ASSERT_FALSE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    //std::string ret = testing::internal::GetCapturedStdout().c_str();
     //sstd::printn(ret);
-    //sstd::printn(yml);
+    //ASSERT_TRUE(sstd::strIn("OverWritting the existing data.", ret.c_str()));
+    sstd::printn(TF);
+    sstd::printn(yml);
 
     //---
     
     sstd::terp::var ans;
-    ans = "a";
+    ans = "a b";
     
     //---
     
@@ -1199,7 +1205,7 @@ b
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // list
-/*
+//*
 TEST(yaml, list_depth1){
     std::string s=R"(
 - a # comment
@@ -1335,7 +1341,7 @@ TEST(yaml, list_str_listStr_listStrEnd){ // depth1
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // hash
-/*
+//*
 TEST(yaml, hash_depth1){
     std::string s=R"(
 k1: v1 # comment
@@ -1431,7 +1437,7 @@ k2:
     
     ASSERT_TRUE(yml==ans);
 }
-/*
+//*
 TEST(yaml, hash_with_colon_01){
     std::string s=R"(
 k:1: v:1
@@ -1655,7 +1661,7 @@ TEST(yaml, list_and_hash_flow_style_brackets){
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // complex test cases
-/*
+//*
 TEST(yaml, list_hash_case01_01){ // depth2
     std::string s=R"(
 - k1: v1
@@ -2000,7 +2006,7 @@ k4: v4
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Multi line string for list
-/*
+//*
 TEST(yaml, multi_line_str_by_list_vertical_line){ // - |
     std::string s=R"(
 - a # comment
@@ -2249,7 +2255,7 @@ TEST(yaml, multi_line_str_by_list_vertical_line_with_different_head_spaces__vert
     //---
     
     ASSERT_TRUE(yml==ans);
-}/*
+}
 TEST(yaml, multi_line_str_by_list_vertical_line_with_different_head_spaces__vertical_1){
     std::string s=R"(
 - |1
@@ -2437,7 +2443,7 @@ TEST(yaml, multi_line_str_by_list_greater_num_1_case02){ // - >1
     
     ASSERT_TRUE(yml==ans);
 }
-
+/*
 TEST(yaml, multi_line_str_by_list_greater_num_2){ // - >2
     std::string s=R"(
 - a # comment

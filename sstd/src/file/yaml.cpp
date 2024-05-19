@@ -1698,22 +1698,19 @@ uint _get_current_hsc(const sstd_yaml::token& t){
 bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io){
     std::vector<sstd_yaml::token> ret;
 
-    bool is_all_the_data_str_type  = _is_all_the_data_str_type(io);
-    if(is_all_the_data_str_type){
-        if(!_merge_all_str(ret, io)){ sstd::pdbg_err("_merge_all_str() was failed.\n"); return false; }
-
-        sstd::pdbg_err("imh\n");
-        sstd::printn(ret);
-        sstd::printn(io);
-        std::swap(ret, io);
-        sstd::pdbg_err("imh\n");
-        return true;
-    }
     bool is_all_the_data_flowStyle = _is_all_the_data_flowStyle(io);
     if(is_all_the_data_flowStyle){
-        if(!_merge_all_str(ret, io)){ sstd::pdbg_err("_merge_all_str() was failed.\n"); return false; }
         
-        //std::swap(ret, io);
+        // Do notheing for the flowStyle
+        
+        return true;
+    }
+    bool is_all_the_data_str_type  = _is_all_the_data_str_type(io);
+    if(is_all_the_data_str_type){
+        
+        if(!_merge_all_str(ret, io)){ sstd::pdbg_err("_merge_all_str() was failed.\n"); return false; }
+
+        std::swap(ret, io);
         return true;
     }
     
