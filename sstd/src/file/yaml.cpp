@@ -674,8 +674,9 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, 
     }else{
         // "|+N", "|-N", ">+N" or ">-N"
         
-        const uint hsc_bash_1st_line=sstd_lcount(v_str[1], ' '); // hsc: head space count
-        if(hsc_bash_1st_line<=hsc_base_yaml){
+        const uint hsc_base_1st_line=sstd_lcount(v_str[1], ' '); // hsc: head space count
+//        sstd::printn(hsc_base_1st_line);
+        if(hsc_base_1st_line<=hsc_base_yaml){
             // Error case.
             // - |
             // a  <- error (Required more than 1 hsc)
@@ -683,26 +684,31 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, 
             return false;
         }
 
-        uint hsc_bash=hsc_bash_1st_line;
+        uint hsc_base=hsc_base_1st_line;
         if(ret_hasHsc){
             if(ret_user_requested_hsc==0){ sstd::pdbg_err("The user requested indent can not be 0.\n"); return false; }
-            if(ret_user_requested_hsc>hsc_bash_1st_line){
+            if(ret_user_requested_hsc>hsc_base_1st_line){
                 // Error case.
                 // - |9
                 //   a  <- error (Required more than 10 hsc)
                 sstd::pdbg_err("The user requested indent size is too large.\n");
                 return false;
             }
-            hsc_bash=ret_user_requested_hsc;
+            hsc_base=hsc_base_yaml+ret_user_requested_hsc;
         }
+//        sstd::printn_all(hsc_base_yaml);
+//        sstd::printn_all(ret_user_requested_hsc);
         
         for(uint i=1; i<v_str.size(); ++i){
             std::string s=v_str[i];
+//            sstd::printn(s);
             std::string tmp;
             uint hsc = sstd_lcount(s, ' '); // hsc: head space count
+//            sstd::printn(hsc);
+//            sstd::printn(hsc_base);
             bool have_str_except_space = (hsc!=s.size());
 
-            if(have_str_except_space && hsc<hsc_bash){
+            if(have_str_except_space && hsc<hsc_base){
                 // Error case.
                 // - |
                 //   a
@@ -712,8 +718,9 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, 
                 return false;
             }
         
-            if(s.size()>=hsc_bash){
-                tmp += (char*)&v_str[i][hsc_bash];
+            if(s.size()>=hsc_base){
+                sstd::printn(hsc_base);
+                tmp += (char*)&v_str[i][hsc_base];
             }
 
             v_tmp.push_back(tmp);
@@ -1735,7 +1742,7 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             
             // Check break
             uint curr_hsc = _get_current_hsc((*pT));
-            sstd::printn(merge_cnt);
+//            sstd::printn(merge_cnt);
             if( merge_cnt==1 && is_control_types && (!start_with_string||(curr_hsc<=criteria_hsc)) ){ break; }
             // - `!start_with_string` is for:
             //   │ k0:
@@ -1751,15 +1758,15 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             //   - `start_with_string`: The string start with non-control charactor
             //   - `(*pT).key.size()!=0||(*pT).val.size()!=0`: The line is NOT Empty. (If the line is empty, the parser needs to treat as a line break of multi-line string).
             //   - `curr_hsc<=criteria_hsc`: The line is out of scope.
-            sstd::printn( (*pT).key );
-            sstd::printn( (*pT).val );
-            sstd::printn( curr_hsc );
-            sstd::printn( criteria_hsc );
-            sstd::printn((*pT).type!=sstd_yaml::num_str);
-            sstd::printn(start_with_string);
-            sstd::printn(curr_hsc<=criteria_hsc);
+//            sstd::printn( (*pT).key );
+//            sstd::printn( (*pT).val );
+//            sstd::printn( curr_hsc );
+//            sstd::printn( criteria_hsc );
+//            sstd::printn((*pT).type!=sstd_yaml::num_str);
+//            sstd::printn(start_with_string);
+//            sstd::printn(curr_hsc<=criteria_hsc);
             if( start_with_string && (((*pT).key.size()!=0||(*pT).val.size()!=0||(*pT).key_use_quotes||(*pT).val_use_quotes) && curr_hsc<=criteria_hsc) ){ break; }
-            printf("1657\n");
+//            printf("1657\n");
             
             // Copy values
             tmp.rawStr += '\n' + (*pT).rawStr;
@@ -1767,7 +1774,7 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             tmp.line_num_end = (*pT).line_num_end;
             tmp.mult_line_val = true;
 
-            printf("---\n");
+//            printf("---\n");
         }
         
         ret.push_back(std::move(tmp));
@@ -1777,26 +1784,15 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
     return true;
 }
 bool sstd_yaml::_token2token_postprocess(std::vector<sstd_yaml::token>& io){
-
-    uint i=0;
-    if(io.size()>=1){
-        sstd_yaml::token& t_curr = io[i  ];
+    
+    for(uint i=0; i<io.size(); ++i){
+        sstd_yaml::token& t = io[i];
         
-        if(t_curr.mult_line_val){
-            uint hsc_base_yaml = 0;
+        if(t.mult_line_val){
+            uint hsc_base_yaml = _get_criteria_hsc(t);
             bool has_next_token = (io.size()>(i+1));
-            if(!sstd_yaml::_format_mult_line_str(t_curr.val, t_curr.val, hsc_base_yaml, has_next_token)){ sstd::pdbg_err("sstd_yaml::_format_mult_line_str() is failed.\n"); return false; }
-        }
-    }
-    for(i=1; i<io.size(); ++i){
-        sstd_yaml::token& t_prev = io[i-1];
-        sstd_yaml::token& t_curr = io[i  ];
-        
-        if(t_curr.mult_line_val){
-            uint hsc_base_yaml = _get_criteria_hsc(t_prev);
-            bool has_next_token = (io.size()>(i+1));
-            if(!sstd_yaml::_format_mult_line_str(t_curr.val, t_curr.val, hsc_base_yaml, has_next_token)){ sstd::pdbg_err("sstd_yaml::_format_mult_line_str() is failed.\n"); return false; }
-            if(!has_next_token){ sstd::rstripAll_ow(t_curr.rawStr, " \n"); }
+            if(!sstd_yaml::_format_mult_line_str(t.val, t.val, hsc_base_yaml, has_next_token)){ sstd::pdbg_err("sstd_yaml::_format_mult_line_str() is failed.\n"); return false; }
+            if(!has_next_token){ sstd::rstripAll_ow(t.rawStr, " \n"); }
         }
     }
     
@@ -1804,11 +1800,15 @@ bool sstd_yaml::_token2token_postprocess(std::vector<sstd_yaml::token>& io){
 }
 bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
     if(!sstd_yaml::_str2token_except_multilines(ret, str)){ sstd::pdbg_err("sstd_yaml::_str2token_except_multilines() was failed.\n"); return false; }
-    sstd::printn_all(ret);
+//    printf("\n-------------------\n\n");
+//    sstd::printn_all(ret);
     if(!sstd_yaml::_token2token_merge_multilines(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_merge_multilines() was failed.\n"); return false; }
-    sstd::printn_all(ret);
+//    printf("\n-------------------\n\n");
+//    sstd::printn_all(ret);
     if(!sstd_yaml::_token2token_postprocess(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_postprocess() was failed.\n"); return false; }
-    sstd::printn_all(ret);
+//    printf("\n-------------------\n\n");
+//    sstd::printn_all(ret);
+//    printf("\n-------------------\n\n");
     return true;
 }
 bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string& str){ return sstd_yaml::_str2token(ret, str.c_str()); }

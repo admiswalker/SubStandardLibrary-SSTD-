@@ -513,9 +513,9 @@ TEST(yaml, _format_mult_line_str__pipeSymbol__last_line_breaks_case01){ // '|'
     std::string s=R"(|
   a)";
     std::string ret;
-    const uint hsc_base=0;
+    const uint hsc_base_yaml=0;
     const bool has_next_token = false;
-    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base, has_next_token);
+    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base_yaml, has_next_token);
     //sstd::printn(ret_TF);
     //sstd::printn(ret);
     
@@ -527,9 +527,9 @@ TEST(yaml, _format_mult_line_str__pipeSymbol__last_line_breaks_case02){ // '|'
   a
 )";
     std::string ret;
-    const uint hsc_base=0;
+    const uint hsc_base_yaml=0;
     const bool has_next_token = false;
-    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base, has_next_token);
+    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base_yaml, has_next_token);
     //sstd::printn(ret_TF);
     //sstd::printn(ret);
     
@@ -542,9 +542,9 @@ TEST(yaml, _format_mult_line_str__pipeSymbol__last_line_breaks_case03){ // '|'
 
 )";
     std::string ret;
-    const uint hsc_base=0;
+    const uint hsc_base_yaml=0;
     const bool has_next_token = false;
-    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base, has_next_token);
+    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base_yaml, has_next_token);
     //sstd::printn(ret_TF);
     //sstd::printn(ret);
     
@@ -555,9 +555,9 @@ TEST(yaml, _format_mult_line_str__pipeSymbol__last_line_breaks_case04){ // '|+'
     std::string s=R"(|+
   a)";
     std::string ret;
-    const uint hsc_base=0;
+    const uint hsc_base_yaml=0;
     const bool has_next_token = false;
-    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base, has_next_token);
+    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base_yaml, has_next_token);
     //sstd::printn(ret_TF);
     //sstd::printn(ret);
     
@@ -569,9 +569,9 @@ TEST(yaml, _format_mult_line_str__pipeSymbol__last_line_breaks_case05){ // '|+'
   a
 )";
     std::string ret;
-    const uint hsc_base=0;
+    const uint hsc_base_yaml=0;
     const bool has_next_token = false;
-    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base, has_next_token);
+    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base_yaml, has_next_token);
     //sstd::printn(ret_TF);
     //sstd::printn(ret);
     
@@ -584,9 +584,9 @@ TEST(yaml, _format_mult_line_str__pipeSymbol__last_line_breaks_case06){ // '|+'
 
 )";
     std::string ret;
-    const uint hsc_base=0;
+    const uint hsc_base_yaml=0;
     const bool has_next_token = false;
-    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base, has_next_token);
+    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base_yaml, has_next_token);
     //sstd::printn(ret_TF);
     //sstd::printn(ret);
     
@@ -606,9 +606,9 @@ TEST(yaml, _format_mult_line_str__pipeSymbol__NoPlusOrMinus__case01){ // '|1'
 
 )";
     std::string ret;
-    const uint hsc_base=1;
+    const uint hsc_base_yaml=0;
     const bool has_next_token = false;
-    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base, has_next_token);
+    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base_yaml, has_next_token);
     sstd::printn(ret_TF);
     sstd::printn(ret);
     
@@ -630,9 +630,9 @@ TEST(yaml, _format_mult_line_str__pipeSymbol__PipeSymbol__case01){ // '|+1'
 
 )";
     std::string ret;
-    const uint hsc_base=1;
+    const uint hsc_base_yaml=0;
     const bool has_next_token = false;
-    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base, has_next_token);
+    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base_yaml, has_next_token);
     sstd::printn(ret_TF);
     sstd::printn(ret);
     
@@ -655,9 +655,9 @@ TEST(yaml, _format_mult_line_str__pipeSymbol__MinusSymbol__case01){ // '|-1'
 
 )";
     std::string ret;
-    const uint hsc_base=1;
+    const uint hsc_base_yaml=0;
     const bool has_next_token = false;
-    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base, has_next_token);
+    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base_yaml, has_next_token);
     sstd::printn(ret_TF);
     sstd::printn(ret);
     
@@ -677,9 +677,9 @@ TEST(yaml, _format_mult_line_str__GreaterThanSymbol__NoPlusOrMinus__case01){ // 
   b2
   b3)";
     std::string ret;
-    const uint hsc_base=1;
+    const uint hsc_base_yaml=0;
     const bool has_next_token = false;
-    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base, has_next_token);
+    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base_yaml, has_next_token);
     sstd::printn(ret_TF);
     sstd::printn(ret);
     
@@ -692,9 +692,9 @@ TEST(yaml, _format_mult_line_str__GreaterThanSymbol__NoPlusOrMinus__case02){ // 
  b2
  b3)";
     std::string ret;
-    const uint hsc_base=0;
+    const uint hsc_base_yaml=0;
     const bool has_next_token = false;
-    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base, has_next_token);
+    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base_yaml, has_next_token);
     sstd::printn(ret_TF);
     sstd::printn(ret);
     
@@ -708,14 +708,32 @@ TEST(yaml, _format_mult_line_str__GreaterThanSymbol__NoPlusOrMinus__case03){ // 
  b3
  b4)";
     std::string ret;
-    const uint hsc_base=0;
+    const uint hsc_base_yaml=0;
     const bool has_next_token = false;
-    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base, has_next_token);
+    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base_yaml, has_next_token);
     sstd::printn(ret_TF);
     sstd::printn(ret);
     
     ASSERT_TRUE(ret_TF);
+    //ASSERT_STREQ(ret.c_str(), "b1\n b2\nb3 b4");
     ASSERT_STREQ(ret.c_str(), "b1\n b2\nb3 b4");
+}
+TEST(yaml, _format_mult_line_str__GreaterThanSymbol__NoPlusOrMinus__case04){ // '>1'
+    std::string s=R"(>1
+    b1
+    b2
+    b3
+
+)";
+    std::string ret;
+    const uint hsc_base_yaml=2;
+    const bool has_next_token = false;
+    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base_yaml, has_next_token);
+    sstd::printn(ret_TF);
+    sstd::printn(ret);
+    
+    ASSERT_TRUE(ret_TF);
+    ASSERT_STREQ(ret.c_str(), " b1\n b2\n b3\n");
 }
 
 //---
@@ -726,9 +744,9 @@ TEST(yaml, _format_mult_line_str__NoSymbol__case01){
  b
 )";
     std::string ret;
-    const uint hsc_base=0;
+    const uint hsc_base_yaml=0;
     const bool has_next_token = false;
-    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base, has_next_token);
+    bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base_yaml, has_next_token);
     sstd::printn(ret_TF);
     sstd::printn(ret);
     
@@ -2428,7 +2446,7 @@ TEST(yaml, multi_line_str_by_list_greater_num_1_case02){ // - >1
 - c
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
+    sstd::printn(yml);
 
     //---
     
@@ -2443,7 +2461,7 @@ TEST(yaml, multi_line_str_by_list_greater_num_1_case02){ // - >1
     
     ASSERT_TRUE(yml==ans);
 }
-/*
+//*
 TEST(yaml, multi_line_str_by_list_greater_num_2){ // - >2
     std::string s=R"(
 - a # comment
