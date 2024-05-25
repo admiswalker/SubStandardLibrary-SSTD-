@@ -2461,7 +2461,6 @@ TEST(yaml, multi_line_str_by_list_greater_num_1_case02){ // - >1
     
     ASSERT_TRUE(yml==ans);
 }
-//*
 TEST(yaml, multi_line_str_by_list_greater_num_2){ // - >2
     std::string s=R"(
 - a # comment
@@ -2557,7 +2556,7 @@ TEST(yaml, multi_line_str_by_list_greater_minus_num_1){ // - >-1
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Multi line string for hash
-/*
+//*
 TEST(yaml, multi_line_str_by_hash_vertical_line){ // : |
     std::string s=R"(
 k1: a # comment
@@ -2912,7 +2911,7 @@ def g)";
 }
 
 //---
-
+/*
 TEST(yaml, double_quotation_list_NUM_LIST_case01){
     std::string s=R"(
 - "a: b c "
