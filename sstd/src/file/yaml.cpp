@@ -661,7 +661,7 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, 
 
     if(ret_noSymbol){
         // noSymbol
-
+        /*
         if(v_str.size()==0){ return true; }
         uint i=0;
         std::string tmp = sstd::strip(v_str[i]);
@@ -669,17 +669,43 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, 
             ret += tmp;
         }
         
+        bool appended_delimiter_on_prev=false;
         for(i=1; i<v_str.size(); ++i){
             tmp = sstd::strip(v_str[i]);
             if(tmp.starts_with("#")){ continue; }
             if(ret.size()==0 && tmp.size()==0){ continue; }
 
             if(tmp.size()==0){
-//                ret += '\n';
-            }else{
+                ret += '\n';
+                appended_delimiter_on_prev=true;
+            }else if(appended_delimiter_on_prev){
                 ret += ' ' + tmp;
+            }else{
+                ret += tmp;
             }
         }
+        */
+        sstd::printn_all(v_str);
+        
+        std::string tmp;
+        bool prev_is_line_break=true;
+        for(uint i=0; i<v_str.size(); ++i){
+            tmp = sstd::strip(v_str[i]);
+            if(tmp.starts_with("#")){ continue; }
+            if(ret.size()==0 && tmp.size()==0){ continue; }
+            
+            if(tmp.size()==0){
+                ret += '\n';
+                prev_is_line_break=true;
+            }else if(prev_is_line_break){
+                ret += tmp;
+                prev_is_line_break=false;
+            }else{
+                ret += ' ' + tmp;
+                prev_is_line_break=false;
+            }
+        }
+        sstd::rstripAll_ow(ret, " \n");
         
     }else{
         // "|+N", "|-N", ">+N" or ">-N"
