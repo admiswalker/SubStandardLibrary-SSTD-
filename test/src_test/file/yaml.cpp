@@ -2896,13 +2896,33 @@ def
 g"
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
+    sstd::printn(yml);
 
     //---
     
     sstd::terp::var ans;
     ans=R"(a: b c"
 def g)";
+    // "a: b c\"\ndef g"
+    //sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, double_quotation_NUM_STR_xx){
+    std::string s=R"(a
+
+b
+c)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans="a\nb c";
+    // "a: b c\"\ndef g"
     //sstd::printn(ans);
     
     //---

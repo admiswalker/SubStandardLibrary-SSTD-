@@ -662,14 +662,24 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, 
     if(ret_noSymbol){
         // noSymbol
 
-        std::string tmp;
-        for(uint i=0; i<v_str.size(); ++i){
+        if(v_str.size()==0){ return true; }
+        uint i=0;
+        std::string tmp = sstd::strip(v_str[i]);
+        if(tmp.size()!=0 && !tmp.starts_with("#")){
+            ret += tmp;
+        }
+        
+        for(i=1; i<v_str.size(); ++i){
             tmp = sstd::strip(v_str[i]);
             if(tmp.starts_with("#")){ continue; }
-            if(tmp.size()==0){ continue; }
-            ret += tmp + ' ';
+            if(ret.size()==0 && tmp.size()==0){ continue; }
+
+            if(tmp.size()==0){
+//                ret += '\n';
+            }else{
+                ret += ' ' + tmp;
+            }
         }
-        sstd::rstrip_ow(ret);
         
     }else{
         // "|+N", "|-N", ">+N" or ">-N"
@@ -732,7 +742,7 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, 
             int cnt = (int)sstd::cntEmpty_r(v_tmp);
             sstd::rmEmpty_r_ow(v_tmp);
             ret = _join_mult_line(v_tmp, ret_pipeSymbol, ret_greaterThanSymbol) + std::string(std::min(1,cnt), '\n');
-        
+            
         }else if(ret_minusSymbol){
             // "|-N" or ">-N"
         
@@ -1800,15 +1810,15 @@ bool sstd_yaml::_token2token_postprocess(std::vector<sstd_yaml::token>& io){
 }
 bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
     if(!sstd_yaml::_str2token_except_multilines(ret, str)){ sstd::pdbg_err("sstd_yaml::_str2token_except_multilines() was failed.\n"); return false; }
-//    printf("\n-------------------\n\n");
-//    sstd::printn_all(ret);
+    printf("\n-------------------\n\n");
+    sstd::printn_all(ret);
     if(!sstd_yaml::_token2token_merge_multilines(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_merge_multilines() was failed.\n"); return false; }
-//    printf("\n-------------------\n\n");
-//    sstd::printn_all(ret);
+    printf("\n-------------------\n\n");
+    sstd::printn_all(ret);
     if(!sstd_yaml::_token2token_postprocess(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_postprocess() was failed.\n"); return false; }
-//    printf("\n-------------------\n\n");
-//    sstd::printn_all(ret);
-//    printf("\n-------------------\n\n");
+    printf("\n-------------------\n\n");
+    sstd::printn_all(ret);
+    printf("\n-------------------\n\n");
     return true;
 }
 bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string& str){ return sstd_yaml::_str2token(ret, str.c_str()); }
