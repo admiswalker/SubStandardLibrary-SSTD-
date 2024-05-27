@@ -662,25 +662,32 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, 
     if(ret_noSymbol){
         // noSymbol
         
-        std::string tmp;
-        bool prev_is_line_break=true;
-        for(uint i=0; i<v_str.size(); ++i){
-            tmp = sstd::strip(v_str[i]);
-            if(tmp.starts_with("#")){ continue; }
-            if(ret.size()==0 && tmp.size()==0){ continue; }
+        if( str.starts_with("\"") || str.starts_with("\'") ){
+            // Quates ("" or '')
+            sstd::printn_all(str);
+            ret = _extract_quotes_value(str);
+            sstd::printn_all(ret);
+        }else{
+            std::string tmp;
+            bool prev_is_line_break=true;
+            for(uint i=0; i<v_str.size(); ++i){
+                tmp = sstd::strip(v_str[i]);
+                if(tmp.starts_with("#")){ continue; }
+                if(ret.size()==0 && tmp.size()==0){ continue; }
             
-            if(tmp.size()==0){
-                ret += '\n';
-                prev_is_line_break=true;
-            }else if(prev_is_line_break){
-                ret += tmp;
-                prev_is_line_break=false;
-            }else{
-                ret += ' ' + tmp;
-                prev_is_line_break=false;
+                if(tmp.size()==0){
+                    ret += '\n';
+                    prev_is_line_break=true;
+                }else if(prev_is_line_break){
+                    ret += tmp;
+                    prev_is_line_break=false;
+                }else{
+                    ret += ' ' + tmp;
+                    prev_is_line_break=false;
+                }
             }
+            sstd::rstripAll_ow(ret, " \n");
         }
-        sstd::rstripAll_ow(ret, " \n");
         
     }else{
         // "|+N", "|-N", ">+N" or ">-N"
@@ -1629,7 +1636,7 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
         tmp.val_use_quotes = ( val_dq || val_sq );
         //if(tmp.val1_use_quotes || is_flow){ tmp.val1 = _extract_quotes_value(tmp.val1); }
         if(tmp.key_use_quotes){ tmp.key = _extract_quotes_value(tmp.key); }
-        if(tmp.val_use_quotes){ tmp.val = _extract_quotes_value(tmp.val); }
+        //if(tmp.val_use_quotes){ tmp.val = _extract_quotes_value(tmp.val); } // Moving to the inside of `_format_mult_line_str()`
         
 //        if(is_mult || is_mult_wos){
 //            if(!is_hash){
