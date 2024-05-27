@@ -152,8 +152,8 @@ std::string _extract_quotes_value(const std::string& str){
                 ret += " ";
             }
         }else if(new_line_cnt>=2){
-//            for(uint i_t=0; i_t<new_line_cnt-1; ++i_t){ ret += "\\n"; } // when using a escaped notation rule
-            for(uint i_t=0; i_t<new_line_cnt-1; ++i_t){ ret += '\n'; }
+//            for(uint i_t=0; i_t<new_line_cnt; ++i_t){ ret += "\\n"; } // when using a escaped notation rule
+            for(uint i_t=0; i_t<new_line_cnt; ++i_t){ ret += '\n'; }
         }
         
         ret += tmp[i];
@@ -661,31 +661,6 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, 
 
     if(ret_noSymbol){
         // noSymbol
-        /*
-        if(v_str.size()==0){ return true; }
-        uint i=0;
-        std::string tmp = sstd::strip(v_str[i]);
-        if(tmp.size()!=0 && !tmp.starts_with("#")){
-            ret += tmp;
-        }
-        
-        bool appended_delimiter_on_prev=false;
-        for(i=1; i<v_str.size(); ++i){
-            tmp = sstd::strip(v_str[i]);
-            if(tmp.starts_with("#")){ continue; }
-            if(ret.size()==0 && tmp.size()==0){ continue; }
-
-            if(tmp.size()==0){
-                ret += '\n';
-                appended_delimiter_on_prev=true;
-            }else if(appended_delimiter_on_prev){
-                ret += ' ' + tmp;
-            }else{
-                ret += tmp;
-            }
-        }
-        */
-        sstd::printn_all(v_str);
         
         std::string tmp;
         bool prev_is_line_break=true;
@@ -1571,8 +1546,8 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
         
         for(;;++r){
             //printf("---\n");
-            //sstd::printn(r);
-            //sstd::printn(str[r]);
+            //sstd::printn_all(r);
+            //sstd::printn_all(str[r]);
             if(str[r]=='\\'){ is_escaped=true; tmp.rawStr+=str[r]; ++r; }
 //            if(str[r]=='\n'){ ++line_num; break; }
             if(str[r]=='\0'){ ++line_num; break; }
@@ -1611,7 +1586,7 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
                     if(str[r]=='}'){ --num_of_curly_brackets; }
                 }
             }
-            
+
             // Checking the line break
             if(str[r]=='\n'){ // Uinx ("\n")
                 ++line_num;
@@ -1640,6 +1615,7 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
 //        if(!is_hash){ tmp.key=std::move(sstd::strip(subt));
 //        }    else   { tmp.val=std::move(sstd::strip(subt)); }
         tmp.val=std::move(sstd::strip(subt));
+        sstd::printn_all(tmp.val);
         
         if(is_list){ tmp.type += sstd_yaml::num_list; tmp.hsc_hx+=2; }
         if(is_hash){ tmp.type += sstd_yaml::num_hash; }
@@ -1679,6 +1655,7 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
         case sstd_yaml::num_hash:          { if(tmp.val_use_quotes||tmp.val.size()>=1){tmp.hasValue=true;} } break; // check the value is NOT NULL
         default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
         }
+        sstd::printn_all(tmp.val);
 
         ret.push_back(std::move(tmp));
     }
@@ -1840,11 +1817,11 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
     sstd::printn_all(ret);
     if(!sstd_yaml::_token2token_merge_multilines(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_merge_multilines() was failed.\n"); return false; }
     printf("\n-------------------\n\n");
-    sstd::printn_all(ret);
+//    sstd::printn_all(ret);
     if(!sstd_yaml::_token2token_postprocess(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_postprocess() was failed.\n"); return false; }
-    printf("\n-------------------\n\n");
-    sstd::printn_all(ret);
-    printf("\n-------------------\n\n");
+//    printf("\n-------------------\n\n");
+//    sstd::printn_all(ret);
+//    printf("\n-------------------\n\n");
     return true;
 }
 bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string& str){ return sstd_yaml::_str2token(ret, str.c_str()); }

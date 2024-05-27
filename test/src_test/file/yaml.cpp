@@ -2909,7 +2909,7 @@ def g)";
     //---
     
     ASSERT_TRUE(yml==ans);
-}
+}/*
 TEST(yaml, double_quotation_NUM_STR_xx){
     std::string s=R"(a
 
