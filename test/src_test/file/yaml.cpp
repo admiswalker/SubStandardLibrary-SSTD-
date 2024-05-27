@@ -2909,7 +2909,7 @@ def g)";
     //---
     
     ASSERT_TRUE(yml==ans);
-}/*
+}
 TEST(yaml, double_quotation_NUM_STR_xx){
     std::string s=R"(a
 
@@ -2931,7 +2931,7 @@ c)";
 }
 
 //---
-/*
+
 TEST(yaml, double_quotation_list_NUM_LIST_case01){
     std::string s=R"(
 - "a: b c "
@@ -2949,7 +2949,7 @@ TEST(yaml, double_quotation_list_NUM_LIST_case01){
     //---
     
     ASSERT_TRUE(yml==ans);
-}
+}/*
 TEST(yaml, double_quotation_list_NUM_LIST_case02){ // WIP
     std::string s=R"(
 - "\
@@ -3219,12 +3219,12 @@ TEST(yaml, double_quotation_empty_hash_case01){
     
     ASSERT_TRUE(yml==ans);
 }
-
+//*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Complicated test
 
 // Double quotation "" and Single quotation ''
-
+/*
 TEST(yaml, double_quotation_complicated_multiline_test_case01){
     std::string s=R"(
 - "I am a cat.\

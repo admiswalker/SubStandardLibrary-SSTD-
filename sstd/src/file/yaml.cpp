@@ -1817,11 +1817,11 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
     sstd::printn_all(ret);
     if(!sstd_yaml::_token2token_merge_multilines(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_merge_multilines() was failed.\n"); return false; }
     printf("\n-------------------\n\n");
-//    sstd::printn_all(ret);
+    sstd::printn_all(ret);
     if(!sstd_yaml::_token2token_postprocess(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_postprocess() was failed.\n"); return false; }
-//    printf("\n-------------------\n\n");
-//    sstd::printn_all(ret);
-//    printf("\n-------------------\n\n");
+    printf("\n-------------------\n\n");
+    sstd::printn_all(ret);
+    printf("\n-------------------\n\n");
     return true;
 }
 bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string& str){ return sstd_yaml::_str2token(ret, str.c_str()); }
