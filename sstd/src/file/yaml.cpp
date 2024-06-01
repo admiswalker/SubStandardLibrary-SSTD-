@@ -651,12 +651,13 @@ bool _parse_mult_line_opt(bool& ret_noSymbol, bool& ret_pipeSymbol, bool& ret_gr
 
 //---
 
-bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, const uint hsc_base_yaml, const bool has_next_token){
+bool sstd_yaml::_format_mult_line_str(std::string& ret_str, const std::string& str, const uint hsc_base_yaml, const bool has_next_token){
+    std::string ret;
+    
     std::vector<std::string> v_str = sstd::splitByLine(str+"\n"); // "\n" modify the num of split sections
     std::vector<std::string> v_tmp;
-    ret.clear(); // Needs to clear after init v_str if `ret` and `str` address is same.
-    
     if(v_str.size()<2){ return true; }
+    
     bool ret_noSymbol=false, ret_pipeSymbol=false, ret_greaterThanSymbol=false;
     bool ret_plusSymbol=false, ret_minusSymbol=false;
     bool ret_hasHsc=false; uint ret_user_requested_hsc=0;
@@ -783,7 +784,8 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, 
             sstd::pdbg_err("Unexpected case\n"); return false;
         }
     }
-    
+
+    std::swap(ret_str, ret);
     return true;
 }
 
@@ -1713,13 +1715,13 @@ bool _is_all_the_data_flowStyle(const std::vector<sstd_yaml::token>& v){
 bool _merge_all_str(std::vector<sstd_yaml::token>& ret, const std::vector<sstd_yaml::token>& v){
     if(v.size()==0){ return true; }
     
-    sstd_yaml::token t;
-    t.line_num_begin = v[     0    ].line_num_begin;
+    sstd_yaml::token t = v[0];
+    //t.line_num_begin = v[     0    ].line_num_begin;
     t.line_num_end   = v[v.size()-1].line_num_end;
     
-    for(uint i=0; i<v.size(); ++i){
-        t.rawStr += v[i].rawStr + "\n";
-        t.val    += v[i].val    + "\n";
+    for(uint i=1; i<v.size(); ++i){
+        t.rawStr += "\n" + v[i].rawStr;
+        t.val    += "\n" + v[i].val;
     }
 
     t.mult_line_val = true;
@@ -1831,13 +1833,14 @@ bool sstd_yaml::_token2token_postprocess(std::vector<sstd_yaml::token>& io){
     for(uint i=0; i<io.size(); ++i){
         sstd_yaml::token& t = io[i];
         
+        sstd::printn_all(t);
         if(t.mult_line_val){
             uint hsc_base_yaml = _get_criteria_hsc(t);
             bool has_next_token = (io.size()>(i+1));
-            std::string tmp = t.val;
-            if(!sstd_yaml::_format_mult_line_str(t.val, tmp, hsc_base_yaml, has_next_token)){ sstd::pdbg_err("sstd_yaml::_format_mult_line_str() is failed.\n"); return false; }
+            if(!sstd_yaml::_format_mult_line_str(t.val, t.val, hsc_base_yaml, has_next_token)){ sstd::pdbg_err("sstd_yaml::_format_mult_line_str() is failed.\n"); return false; }
             if(!has_next_token){ sstd::rstripAll_ow(t.rawStr, " \n"); }
         }
+        sstd::printn_all(t);
 
         if(t.key_is_dqed||t.key_is_sqed||
            t.val_is_dqed||t.val_is_sqed){
