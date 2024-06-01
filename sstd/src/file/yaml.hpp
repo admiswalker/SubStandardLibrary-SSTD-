@@ -41,7 +41,7 @@ namespace sstd_yaml{
     // sstd_yaml::num_flow_style_base + sstd_yaml::num_hash          6 // reserved number for FLOW_STYLE
     // sstd_yaml::num_flow_style_base + sstd_yaml::num_list_and_hash 7 // reserved number for FLOW_STYLE
 
-    //---
+    //---q
     // token for proceed YAML parsing
     
     struct token {
@@ -59,8 +59,10 @@ namespace sstd_yaml{
         uint hsc_hx = 0;                               // head space counts for hash type
         
         bool hasValue = false; // If the value (val1 or val2) is vaild for each data type (list or hash).
-        bool key_use_quotes = false;
-        bool val_use_quotes = false;
+        bool key_is_dqed = false;
+        bool key_is_sqed = false;
+        bool val_is_dqed = false;
+        bool val_is_sqed = false;
         bool mult_line_val = false;
         std::string key; // key for "hash"
         std::string val; // value for "list" or "hash"

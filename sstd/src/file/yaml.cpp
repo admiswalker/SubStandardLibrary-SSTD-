@@ -64,9 +64,13 @@
     printf("    type: %d\n", rhs.type);                                 \
     printf("    format: %d\n", rhs.format);                             \
     printf("    list_type_cnt: %d\n", rhs.list_type_cnt);               \
-    printf("    hasValue: %s\n", (rhs.hasValue?"ture":"false"));        \
     printf("    hsc_lx: %d\n", rhs.hsc_lx);                             \
     printf("    hsc_hx: %d\n", rhs.hsc_hx);                             \
+    printf("    hasValue: %s\n", (rhs.hasValue?"ture":"false"));        \
+    printf("    key_is_dqed: %s\n", (rhs.key_is_dqed?"ture":"false"));  \
+    printf("    key_is_sqed: %s\n", (rhs.key_is_sqed?"ture":"false"));  \
+    printf("    val_is_dqed: %s\n", (rhs.val_is_dqed?"ture":"false"));  \
+    printf("    val_is_sqed: %s\n", (rhs.val_is_sqed?"ture":"false"));  \
     printf("    mult_line_val: %s\n", (rhs.mult_line_val?"ture":"false")); \
     printf("    key: `%s`\n", rhs.key.c_str());                         \
     printf("    val: `%s`\n", rhs.val.c_str());                         \
@@ -662,12 +666,9 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, 
     if(ret_noSymbol){
         // noSymbol
         
-        if( str.starts_with("\"") || str.starts_with("\'") ){
-            // Quates ("" or '')
-            sstd::printn_all(str);
-            ret = _extract_quotes_value(str);
-            sstd::printn_all(ret);
-        }else{
+//        bool val_dq = str.starts_with("\"");
+//        bool val_sq = str.starts_with("\'");
+        {
             std::string tmp;
             bool prev_is_line_break=true;
             for(uint i=0; i<v_str.size(); ++i){
@@ -688,6 +689,20 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret, const std::string& str, 
             }
             sstd::rstripAll_ow(ret, " \n");
         }
+        /*
+        if( val_dq || val_sq ){ // 文字列としてエスケープされた "" の取り扱いもあるので， Quates の判定結果をここまで伝搬させる必要がある
+            // Quates ("" or '')
+//            sstd::printn_all(str);
+//            std::string tmp = str;
+            std::string tmp=ret;
+            sstd::rstripAll_ow(tmp, " \n"); // Quates の後に multi line として追加された改行を除去する
+            ret = sstd::strip_quotes(val_sq, val_dq, tmp);
+            
+//            tmp = sstd::strip_quotes(val_sq, val_dq, tmp);
+//            ret = _extract_quotes_value(tmp);
+//            sstd::printn_all(ret);
+        }
+        */
         
     }else{
         // "|+N", "|-N", ">+N" or ">-N"
@@ -1550,6 +1565,10 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
         
         int num_of_square_brackets=0; // []
         int num_of_curly_brackets=0;  // {}
+
+        // for quates ("", '')
+        bool dqed=false; // double quated
+        bool sqed=false; // single quated
         
         for(;;++r){
             //printf("---\n");
@@ -1561,8 +1580,8 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
             if(str[r]!=' '){ is_hs=false; }
             if(str[r]==' ' && is_hs){ ++tmp.hsc_lx; ++tmp.hsc_hx; }
             
-            if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
-            if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
+            if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; dqed=true; }
+            if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; sqed=true; }
 
             if(!in_d_quate && !in_s_quate){
                 if((subt.size()==0 && str[r]=='#') || (str[r]==' ' && str[r+1]=='#')){
@@ -1576,15 +1595,15 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
                     
                     // for Windows
                     if(str[r]=='-' && str[r+1]=='\r' && !subt_has_a_val){                                       subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; continue; }
-                    if(str[r]==':' && str[r+1]=='\r'                   ){ tmp.key=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; continue; }
+                    if(str[r]==':' && str[r+1]=='\r'                   ){ tmp.key=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; tmp.key_is_dqed=dqed; tmp.key_is_sqed=sqed; continue; }
                     
                     // for Unix
                     if(str[r]=='-' && str[r+1]=='\n' && !subt_has_a_val){                                       subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; continue; }
-                    if(str[r]==':' && str[r+1]=='\n'                   ){ tmp.key=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; continue; }
+                    if(str[r]==':' && str[r+1]=='\n'                   ){ tmp.key=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; tmp.key_is_dqed=dqed; tmp.key_is_sqed=sqed; continue; }
                     
                     // the other case
-                    if(str[r]=='-' && str[r+1]==' ' && !subt_has_a_val){                                       subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
-                    if(str[r]==':' && str[r+1]==' '                   ){ tmp.key=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; ++r; tmp.rawStr+=str[r]; continue; }
+                    if(str[r]=='-' && str[r+1]==' ' && !subt_has_a_val){                                       subt.clear(); is_list=true; ++tmp.list_type_cnt; tmp.rawStr+=str[r];                                             ++r; tmp.rawStr+=str[r]; continue; }
+                    if(str[r]==':' && str[r+1]==' '                   ){ tmp.key=std::move(sstd::strip(subt)); subt.clear(); is_hash=true;                      tmp.rawStr+=str[r]; tmp.key_is_dqed=dqed; tmp.key_is_sqed=sqed; ++r; tmp.rawStr+=str[r]; continue; }
                 }else{
                     // Flow Style
                     if(str[r]=='['){ ++num_of_square_brackets; }
@@ -1622,7 +1641,8 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
 //        if(!is_hash){ tmp.key=std::move(sstd::strip(subt));
 //        }    else   { tmp.val=std::move(sstd::strip(subt)); }
         tmp.val=std::move(sstd::strip(subt));
-        sstd::printn_all(tmp.val);
+        tmp.val_is_dqed=dqed;
+        tmp.val_is_sqed=sqed;
         
         if(is_list){ tmp.type += sstd_yaml::num_list; tmp.hsc_hx+=2; }
         if(is_hash){ tmp.type += sstd_yaml::num_hash; }
@@ -1631,12 +1651,13 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
         // remove Quates ('', "")
         bool key_dq, key_sq, val_dq, val_sq;
         tmp.key            = sstd::strip_quotes(key_sq, key_dq, tmp.key);
-        tmp.val            = sstd::strip_quotes(val_sq, val_dq, tmp.val);
-        tmp.key_use_quotes = ( key_dq || key_sq );
-        tmp.val_use_quotes = ( val_dq || val_sq );
-        //if(tmp.val1_use_quotes || is_flow){ tmp.val1 = _extract_quotes_value(tmp.val1); }
-        if(tmp.key_use_quotes){ tmp.key = _extract_quotes_value(tmp.key); }
-        //if(tmp.val_use_quotes){ tmp.val = _extract_quotes_value(tmp.val); } // Moving to the inside of `_format_mult_line_str()`
+        //tmp.val            = sstd::strip_quotes(val_sq, val_dq, tmp.val); // `_format_mult_line_str()` に移動 (あとで整理する)
+        //tmp.key_use_quotes = ( key_dq || key_sq );
+        //tmp.val_use_quotes = ( val_dq || val_sq );
+        if(tmp.key_is_dqed || tmp.key_is_sqed){ tmp.key = _extract_quotes_value(tmp.key); }
+        //if(tmp.val_use_quotes){ tmp.val = _extract_quotes_value(tmp.val); } // `_format_mult_line_str()` に移動 (あとで整理する)
+//        sstd::printn_all(tmp.key_use_quotes);
+//        sstd::printn_all(tmp.val_use_quotes);
         
 //        if(is_mult || is_mult_wos){
 //            if(!is_hash){
@@ -1648,21 +1669,23 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
         
         // Skip empty tokens until the first non-empty token occurs. (Empty token is treated as a line-break related with to other token in a context of multi-line YAML)
         if(ret.size()==0 &&
-           tmp.key.size()==0 && !tmp.key_use_quotes &&
-           tmp.val.size()==0 && !tmp.val_use_quotes &&
+           //tmp.key.size()==0 && !tmp.key_use_quotes &&
+           //tmp.val.size()==0 && !tmp.val_use_quotes &&
+           tmp.key.size()==0 &&
+           tmp.val.size()==0 &&
            tmp.type==sstd_yaml::num_str                  ){ continue; }
         
         // set hasValue
         tmp.hasValue=false;
         switch(tmp.type){
         //case sstd_yaml::num_str:           { tmp.hasValue=true; } break;
-        case sstd_yaml::num_str:           { if(tmp.val_use_quotes||tmp.val.size()>=1){tmp.hasValue=true;} } break;
-        case sstd_yaml::num_list:          { if(tmp.val_use_quotes||tmp.val.size()>=1){tmp.hasValue=true;} } break; // check the value is NOT NULL
+        case sstd_yaml::num_str:           { if(tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1){tmp.hasValue=true;} } break;
+        case sstd_yaml::num_list:          { if(tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1){tmp.hasValue=true;} } break; // check the value is NOT NULL
         case sstd_yaml::num_list_and_hash:
-        case sstd_yaml::num_hash:          { if(tmp.val_use_quotes||tmp.val.size()>=1){tmp.hasValue=true;} } break; // check the value is NOT NULL
+        case sstd_yaml::num_hash:          { if(tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1){tmp.hasValue=true;} } break; // check the value is NOT NULL
         default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
         }
-        sstd::printn_all(tmp.val);
+//        sstd::printn_all(tmp.val);
 
         ret.push_back(std::move(tmp));
     }
@@ -1785,7 +1808,7 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
 //            sstd::printn((*pT).type!=sstd_yaml::num_str);
 //            sstd::printn(start_with_string);
 //            sstd::printn(curr_hsc<=criteria_hsc);
-            if( start_with_string && (((*pT).key.size()!=0||(*pT).val.size()!=0||(*pT).key_use_quotes||(*pT).val_use_quotes) && curr_hsc<=criteria_hsc) ){ break; }
+            if( start_with_string && (((*pT).key.size()!=0||(*pT).val.size()!=0||(*pT).key_is_dqed||(*pT).key_is_sqed||(*pT).val_is_dqed||(*pT).val_is_sqed) && curr_hsc<=criteria_hsc) ){ break; }
 //            printf("1657\n");
             
             // Copy values
@@ -1804,15 +1827,24 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
     return true;
 }
 bool sstd_yaml::_token2token_postprocess(std::vector<sstd_yaml::token>& io){
-    
+
     for(uint i=0; i<io.size(); ++i){
         sstd_yaml::token& t = io[i];
         
         if(t.mult_line_val){
             uint hsc_base_yaml = _get_criteria_hsc(t);
             bool has_next_token = (io.size()>(i+1));
-            if(!sstd_yaml::_format_mult_line_str(t.val, t.val, hsc_base_yaml, has_next_token)){ sstd::pdbg_err("sstd_yaml::_format_mult_line_str() is failed.\n"); return false; }
+            std::string tmp = t.val;
+            if(!sstd_yaml::_format_mult_line_str(t.val, tmp, hsc_base_yaml, has_next_token)){ sstd::pdbg_err("sstd_yaml::_format_mult_line_str() is failed.\n"); return false; }
             if(!has_next_token){ sstd::rstripAll_ow(t.rawStr, " \n"); }
+        }
+
+        if(t.key_is_dqed||t.key_is_sqed||
+           t.val_is_dqed||t.val_is_sqed){
+            
+            bool key_sq, key_dq, val_sq, val_dq;
+            t.key = sstd::strip_quotes(key_sq, key_dq, t.key);
+            t.val = sstd::strip_quotes(val_sq, val_dq, t.val);
         }
     }
     

@@ -2949,6 +2949,21 @@ TEST(yaml, double_quotation_list_NUM_LIST_case01){
     //---
     
     ASSERT_TRUE(yml==ans);
+}
+TEST(yaml, _str2token_multi_list_case02_COPPPPPPy){
+    std::string s = "- \"\"\n- \"\"\n- \"\"";
+    sstd::printn_all(s);
+    std::vector<sstd_yaml::token> v_ret;
+    bool ret = sstd_yaml::_str2token(v_ret, s);
+//    sstd::printn(v_ret);
+    
+    ASSERT_EQ(v_ret.size(), 3);
+    ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- \"\"");
+    ASSERT_STREQ(v_ret[0].val.c_str(),          "");
+    ASSERT_STREQ(v_ret[1].rawStr.c_str(), "- \"\"");
+    ASSERT_STREQ(v_ret[1].val.c_str(),          "");
+    ASSERT_STREQ(v_ret[2].rawStr.c_str(), "- \"\"");
+    ASSERT_STREQ(v_ret[2].val.c_str(),          "");
 }/*
 TEST(yaml, double_quotation_list_NUM_LIST_case02){ // WIP
     std::string s=R"(
