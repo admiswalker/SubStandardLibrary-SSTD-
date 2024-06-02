@@ -3518,8 +3518,36 @@ TEST(yaml, multipul_list_indication_case02){
     //---
     
     ASSERT_TRUE(yml==ans);
-}/*
+}
 TEST(yaml, multipul_list_indication_case03){
+    std::string s=R"(
+- - - k1: v1
+  - k2: v2
+#- 
+#  - 
+#    - k1: v1
+#  - k2: v2
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = sstd::terp::list(2);
+    ans[0][0] = sstd::terp::list(1);
+    ans[0][0][0] = sstd::terp::hash();
+    ans[0][0][0]["k1"] = "v1";
+    ans[0][1] = sstd::terp::hash();
+    ans[0][1]["k2"] = "v2";
+    sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}/*
+TEST(yaml, multipul_list_indication_case04){
     std::string s=R"(
 - 
   - a
@@ -3546,7 +3574,7 @@ TEST(yaml, multipul_list_indication_case03){
     
     ASSERT_TRUE(yml==ans);
 }
-TEST(yaml, multipul_list_indication_case04){
+TEST(yaml, multipul_list_indication_case05){
     std::string s=R"(
 - - - a
 #- 
@@ -3569,7 +3597,7 @@ TEST(yaml, multipul_list_indication_case04){
     
     ASSERT_TRUE(yml==ans);
 }
-TEST(yaml, multipul_list_indication_case05){
+TEST(yaml, multipul_list_indication_case06){
     std::string s=R"(
 - - a
   - - - - b
@@ -3599,7 +3627,7 @@ TEST(yaml, multipul_list_indication_case05){
     
     ASSERT_TRUE(yml==ans);
 }
-TEST(yaml, multipul_list_indication_case06){
+TEST(yaml, multipul_list_indication_case07){
     std::string s=R"(
 - - key1: val1
 )";
@@ -3619,7 +3647,7 @@ TEST(yaml, multipul_list_indication_case06){
     
     ASSERT_TRUE(yml==ans);
 }
-TEST(yaml, multipul_list_indication_case07){
+TEST(yaml, multipul_list_indication_case08){
     std::string s=R"(
 - a
 - b

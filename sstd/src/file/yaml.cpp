@@ -1027,6 +1027,20 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
                 //c.format          = t.format;
                 //c.val             = t.val; // t.key;
                 ret_vCmd.push_back(c);
+                
+                if(ti+1<t.list_type_cnt){
+                    // construction of stack() command
+                    
+                    // --- debug info ---
+                    c.line_num_begin  = t.line_num_begin;
+                    c.line_num_end    = t.line_num_end;
+                    c.rawStr          = t.rawStr;
+                    // --- construct info ---
+                    c.ope             = sstd_yaml::ope_stack;
+                    c.hsc             = t.hsc_lx + 2*(ti+1); // t.hsc_hx
+                    
+                    ret_vCmd.push_back(c);
+                }
             }
 
             {
