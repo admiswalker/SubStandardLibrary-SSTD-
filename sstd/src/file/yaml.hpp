@@ -41,7 +41,7 @@ namespace sstd_yaml{
     // sstd_yaml::num_flow_style_base + sstd_yaml::num_hash          6 // reserved number for FLOW_STYLE
     // sstd_yaml::num_flow_style_base + sstd_yaml::num_list_and_hash 7 // reserved number for FLOW_STYLE
 
-    //---q
+    //---
     // token for proceed YAML parsing
     
     struct token {

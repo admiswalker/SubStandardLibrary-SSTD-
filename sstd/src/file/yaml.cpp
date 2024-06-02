@@ -94,13 +94,13 @@ void sstd::print_for_vT(const sstd_yaml::token& rhs){
     printf("debug info:\n");                                    \
     printf("    line_num_begin: %d\n", rhs.line_num_begin);     \
     printf("    line_num_end: %d\n", rhs.line_num_end);         \
-    printf("    rawStr: %s", rhs.rawStr.c_str());               \
+    printf("    rawStr: `%s`\n", rhs.rawStr.c_str());           \
     printf("command:\n");                                       \
     printf("    ope: %d\n", rhs.ope);                           \
     printf("    hsc: %d\n", rhs.hsc);                           \
     printf("    type: %d\n", rhs.type);                         \
     printf("    format: %d\n", rhs.format);                     \
-    printf("    val: %s\n", rhs.val.c_str());                   \
+    printf("    val: `%s`\n", rhs.val.c_str());                 \
     printf(",\n");
 
 void sstd::print(const sstd_yaml::command_v2& rhs){
@@ -924,9 +924,9 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
     for(uint i=0; i<v_token.size(); ++i){
         const sstd_yaml::token& t = v_token[i];
         
-//        printf("------\n");
-//        sstd::printn(i);
-//        sstd::printn(t);
+        printf("------\n");
+        sstd::printn(i);
+        sstd::printn(t);
 
         // Construct alloc() or assign() command
         struct sstd_yaml::command_v2 c;
@@ -957,8 +957,22 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
                 //c.format          = t.format;
                 //c.val             = t.val; // t.key;
                 ret_vCmd.push_back(c);
+                
+                if(ti+1<t.list_type_cnt){
+                    // construction of stack() command
+                    
+                    // --- debug info ---
+                    c.line_num_begin  = t.line_num_begin;
+                    c.line_num_end    = t.line_num_end;
+                    c.rawStr          = t.rawStr;
+                    // --- construct info ---
+                    c.ope             = sstd_yaml::ope_stack;
+                    c.hsc             = t.hsc_lx + 2*(ti+1); // t.hsc_hx
+                    
+                    ret_vCmd.push_back(c);
+                }
             }
-
+            
             if(t.hasValue){ // check the value is NOT NULL
                 // --- debug info ---
                 c.line_num_begin  = t.line_num_begin;
@@ -1410,7 +1424,7 @@ bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
         
 //        sstd::printn(i);                     // for debug
 //        sstd::printn(v_cmd[i]);              // for debug
-
+        
         // checking the stack command
         if(cmd.ope==sstd_yaml::ope_stack){
             if(v_dst_cr.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
@@ -1833,14 +1847,12 @@ bool sstd_yaml::_token2token_postprocess(std::vector<sstd_yaml::token>& io){
     for(uint i=0; i<io.size(); ++i){
         sstd_yaml::token& t = io[i];
         
-        sstd::printn_all(t);
         if(t.mult_line_val){
             uint hsc_base_yaml = _get_criteria_hsc(t);
             bool has_next_token = (io.size()>(i+1));
             if(!sstd_yaml::_format_mult_line_str(t.val, t.val, hsc_base_yaml, has_next_token)){ sstd::pdbg_err("sstd_yaml::_format_mult_line_str() is failed.\n"); return false; }
             if(!has_next_token){ sstd::rstripAll_ow(t.rawStr, " \n"); }
         }
-        sstd::printn_all(t);
 
         if(t.key_is_dqed||t.key_is_sqed||
            t.val_is_dqed||t.val_is_sqed){
@@ -1855,15 +1867,15 @@ bool sstd_yaml::_token2token_postprocess(std::vector<sstd_yaml::token>& io){
 }
 bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
     if(!sstd_yaml::_str2token_except_multilines(ret, str)){ sstd::pdbg_err("sstd_yaml::_str2token_except_multilines() was failed.\n"); return false; }
-    printf("\n-------------------\n\n");
-    sstd::printn_all(ret);
+//    printf("\n-------------------\n\n");
+//    sstd::printn_all(ret);
     if(!sstd_yaml::_token2token_merge_multilines(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_merge_multilines() was failed.\n"); return false; }
-    printf("\n-------------------\n\n");
-    sstd::printn_all(ret);
+//    printf("\n-------------------\n\n");
+//    sstd::printn_all(ret);
     if(!sstd_yaml::_token2token_postprocess(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_postprocess() was failed.\n"); return false; }
-    printf("\n-------------------\n\n");
-    sstd::printn_all(ret);
-    printf("\n-------------------\n\n");
+//    printf("\n-------------------\n\n");
+//    sstd::printn_all(ret);
+//    printf("\n-------------------\n\n");
     return true;
 }
 bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string& str){ return sstd_yaml::_str2token(ret, str.c_str()); }
@@ -1875,8 +1887,9 @@ bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     bool tf = true;
     
     std::vector<sstd_yaml::token> v_token; if(!sstd_yaml::_str2token(v_token, s)){ sstd::pdbg_err("single or double quatation is not closed\n"); return false; } // v: vector, ls: line string
-    sstd::printn(v_token);
+    sstd::printn_all(v_token);
     std::vector<struct sstd_yaml::command_v2> v_cmd; if(!sstd_yaml::_token2cmd(v_cmd, v_token)){ return false; }
+    sstd::printn_all(v_cmd);
     if(!_construct_var_v2(ret_yml, v_cmd)){ return false; }
     
     return tf;

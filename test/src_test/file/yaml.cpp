@@ -2949,7 +2949,11 @@ TEST(yaml, double_quotation_list_NUM_LIST_case01){
     //---
     
     ASSERT_TRUE(yml==ans);
-}
+}/*
+
+// NOT IMPLIMENTED
+//   See "5.7. Escaped Characters" at https://yaml.org/spec/1.2.2/#57-escaped-characters
+
 TEST(yaml, double_quotation_list_NUM_LIST_case02){ // WIP
     std::string s=R"(
 - "\
@@ -2970,9 +2974,9 @@ TEST(yaml, double_quotation_list_NUM_LIST_case02){ // WIP
     
     ASSERT_TRUE(yml==ans);
 }
-
+ */
 //---
-/*
+
 TEST(yaml, double_quotation_list_NUM_HASH_dq_case01){
     std::string s=R"(
 "key1": "a: b c "
@@ -3222,9 +3226,9 @@ TEST(yaml, double_quotation_empty_hash_case01){
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Complicated test
-
-// Double quotation "" and Single quotation ''
 /*
+// Double quotation "" and Single quotation ''
+
 TEST(yaml, double_quotation_complicated_multiline_test_case01){
     std::string s=R"(
 - "I am a cat.\
@@ -3243,7 +3247,7 @@ TEST(yaml, double_quotation_complicated_multiline_test_case01){
     //---
     
     ASSERT_TRUE(yml==ans);
-}
+}/*
 TEST(yaml, double_quotation_complicated_multiline_test_case02){
     std::string s=R"(
 - "I am a cat. \
@@ -3464,10 +3468,10 @@ TEST(yaml, double_quotation_complicated_multiline_test_case12){
     
     ASSERT_TRUE(yml==ans);
 }
-
+//*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Multipul list indication
-
+//*
 TEST(yaml, multipul_list_indication_case01){
     std::string s=R"(
 - - a
@@ -3475,7 +3479,7 @@ TEST(yaml, multipul_list_indication_case01){
 #  - a
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
+    sstd::printn(yml);
 
     //---
     
@@ -3483,13 +3487,39 @@ TEST(yaml, multipul_list_indication_case01){
     ans = sstd::terp::list(1);
     ans[0] = sstd::terp::list(1);
     ans[0][0] = "a";
-    //sstd::printn(ans);
+    sstd::printn(ans);
     
     //---
     
     ASSERT_TRUE(yml==ans);
 }
 TEST(yaml, multipul_list_indication_case02){
+    std::string s=R"(
+- - - a
+  - b
+#- 
+#  - 
+#    - a
+#  - b
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = sstd::terp::list(2);
+    ans[0][0] = sstd::terp::list(1);
+    ans[0][0][0] = "a";
+    ans[0][1] = "b";
+    sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}/*
+TEST(yaml, multipul_list_indication_case03){
     std::string s=R"(
 - 
   - a
@@ -3516,7 +3546,7 @@ TEST(yaml, multipul_list_indication_case02){
     
     ASSERT_TRUE(yml==ans);
 }
-TEST(yaml, multipul_list_indication_case03){
+TEST(yaml, multipul_list_indication_case04){
     std::string s=R"(
 - - - a
 #- 
@@ -3539,7 +3569,7 @@ TEST(yaml, multipul_list_indication_case03){
     
     ASSERT_TRUE(yml==ans);
 }
-TEST(yaml, multipul_list_indication_case04){
+TEST(yaml, multipul_list_indication_case05){
     std::string s=R"(
 - - a
   - - - - b
@@ -3569,7 +3599,7 @@ TEST(yaml, multipul_list_indication_case04){
     
     ASSERT_TRUE(yml==ans);
 }
-TEST(yaml, multipul_list_indication_case05){
+TEST(yaml, multipul_list_indication_case06){
     std::string s=R"(
 - - key1: val1
 )";
@@ -3589,7 +3619,7 @@ TEST(yaml, multipul_list_indication_case05){
     
     ASSERT_TRUE(yml==ans);
 }
-TEST(yaml, multipul_list_indication_case06){
+TEST(yaml, multipul_list_indication_case07){
     std::string s=R"(
 - a
 - b
@@ -3629,12 +3659,12 @@ TEST(yaml, multipul_list_indication_case06){
     
     ASSERT_TRUE(yml==ans);
 }
-
+//*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // flow style notation
 
 //---
-
+/*
 TEST(yaml, block_list_and_flow_list){
     std::string s=R"(
 - [a, b, c]
