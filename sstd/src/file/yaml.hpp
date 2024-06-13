@@ -29,13 +29,13 @@ namespace sstd_yaml{
 
     // TODO: num_ -> type_ に名前を置換する
     
-    const static uchar num_null = 255;
+    const static uchar num_null             = 255;
     const static uchar num_block_style_base = 0;
-    const static uchar num_str           = 0; // for BLOCK_STYLE
-    const static uchar num_list          = 1; // for BLOCK_STYLE
-    const static uchar num_hash          = 2; // for BLOCK_STYLE
-    const static uchar num_list_and_hash = 3; // for BLOCK_STYLE
-    const static uchar num_flow_style_base = 4;
+    const static uchar num_str              = 0; // for BLOCK_STYLE
+    const static uchar num_list             = 1; // for BLOCK_STYLE
+    const static uchar num_hash             = 2; // for BLOCK_STYLE
+    const static uchar num_list_and_hash    = 3; // for BLOCK_STYLE
+    const static uchar num_flow_style_base  = 4;
     // sstd_yaml::num_flow_style_base + sstd_yaml::num_str           4 // reserved number for FLOW_STYLE
     // sstd_yaml::num_flow_style_base + sstd_yaml::num_list          5 // reserved number for FLOW_STYLE
     // sstd_yaml::num_flow_style_base + sstd_yaml::num_hash          6 // reserved number for FLOW_STYLE
@@ -120,6 +120,7 @@ namespace sstd_yaml{
     //---
 
     bool _str2token_except_multilines(std::vector<sstd_yaml::token>& ret, const std::string& str);
+    bool _token2token_split_bv_list_type_cnt(std::vector<sstd_yaml::token>& io);
     bool _token2token_merge_multilines(std::vector<sstd_yaml::token>& io);
     bool _token2token_postprocess(std::vector<sstd_yaml::token>& io);
     bool _str2token(std::vector<sstd_yaml::token>& ret, const char* str);

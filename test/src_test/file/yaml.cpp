@@ -162,7 +162,7 @@ TEST(yaml, _split_quotes_by_control_chars_02){
 // │ Case16    │ - k: {}    │        │         T          │          T         │    T    │ - k: {}    │ - k: {"[]{}: ": "[]{}: "} │                                                │
 // └───────────┴────────────┴────────┴────────────────────┴────────────────────┴─────────┴────────────┴───────────────────────────┴────────────────────────────────────────────────┘
 
-#define TEST_DATA_TYPE_AND_FORMAT(IS_STR, IS_LIST, IS_HASH, IS_FLOW, LIST_TYPE_COUNT, S_IN) \
+#define TEST_DATA_TYPE_AND_FORMAT(IS_LIST, IS_HASH, IS_FLOW, LIST_TYPE_COUNT, S_IN) \
     std::string s = S_IN;                                               \
     uint type=sstd_yaml::num_null, format=sstd_yaml::num_block_style_base, list_type_cnt=0; \
     bool ret = sstd_yaml::_data_type_and_format(type, format, list_type_cnt, s); \
@@ -177,35 +177,35 @@ TEST(yaml, _split_quotes_by_control_chars_02){
     ASSERT_TRUE(format==ans_flow);                                      \
     ASSERT_TRUE(list_type_cnt==LIST_TYPE_COUNT);
 
-TEST(yaml, _data_type_and_format_case01_01){ TEST_DATA_TYPE_AND_FORMAT( true, false, false, false, 0, "v"         ); }
-TEST(yaml, _data_type_and_format_case02_01){ TEST_DATA_TYPE_AND_FORMAT(false,  true, false, false, 1, "- v"       ); }
-TEST(yaml, _data_type_and_format_case03_01){ TEST_DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k: v"      ); }
-TEST(yaml, _data_type_and_format_case04_01){ TEST_DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k[]: v[]"  ); }
-TEST(yaml, _data_type_and_format_case05_01){ TEST_DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k{}: v{}"  ); }
-TEST(yaml, _data_type_and_format_case06_01){ TEST_DATA_TYPE_AND_FORMAT( true, false, false,  true, 0, "[]"        ); }
-TEST(yaml, _data_type_and_format_case07_01){ TEST_DATA_TYPE_AND_FORMAT( true, false, false,  true, 0, "{}"        ); }
-TEST(yaml, _data_type_and_format_case08_01){ TEST_DATA_TYPE_AND_FORMAT(false,  true, false,  true, 1, "- []"      ); }
-TEST(yaml, _data_type_and_format_case09_01){ TEST_DATA_TYPE_AND_FORMAT(false,  true, false,  true, 1, "- {}"      ); }
-TEST(yaml, _data_type_and_format_case10_01){ TEST_DATA_TYPE_AND_FORMAT(false,  true,  true, false, 1, "- k: v"    ); }
-TEST(yaml, _data_type_and_format_case11_01){ TEST_DATA_TYPE_AND_FORMAT(false,  true,  true, false, 1, "- k[]: v[]"); }
-TEST(yaml, _data_type_and_format_case12_01){ TEST_DATA_TYPE_AND_FORMAT(false,  true,  true, false, 1, "- k{}: v{}"); }
-TEST(yaml, _data_type_and_format_case13_01){ TEST_DATA_TYPE_AND_FORMAT(false, false,  true,  true, 0, "k: []"     ); }
-TEST(yaml, _data_type_and_format_case14_01){ TEST_DATA_TYPE_AND_FORMAT(false, false,  true,  true, 0, "k: {}"     ); }
-TEST(yaml, _data_type_and_format_case15_01){ TEST_DATA_TYPE_AND_FORMAT( false, true,  true,  true, 1, "- k: []"   ); }
-TEST(yaml, _data_type_and_format_case16_01){ TEST_DATA_TYPE_AND_FORMAT( false, true,  true,  true, 1, "- k: {}"   ); }
+TEST(yaml, _data_type_and_format_case01_01){ TEST_DATA_TYPE_AND_FORMAT(false, false, false, 0, "v"         ); }
+TEST(yaml, _data_type_and_format_case02_01){ TEST_DATA_TYPE_AND_FORMAT( true, false, false, 1, "- v"       ); }
+TEST(yaml, _data_type_and_format_case03_01){ TEST_DATA_TYPE_AND_FORMAT(false,  true, false, 0, "k: v"      ); }
+TEST(yaml, _data_type_and_format_case04_01){ TEST_DATA_TYPE_AND_FORMAT(false,  true, false, 0, "k[]: v[]"  ); }
+TEST(yaml, _data_type_and_format_case05_01){ TEST_DATA_TYPE_AND_FORMAT(false,  true, false, 0, "k{}: v{}"  ); }
+TEST(yaml, _data_type_and_format_case06_01){ TEST_DATA_TYPE_AND_FORMAT(false, false,  true, 0, "[]"        ); }
+TEST(yaml, _data_type_and_format_case07_01){ TEST_DATA_TYPE_AND_FORMAT(false, false,  true, 0, "{}"        ); }
+TEST(yaml, _data_type_and_format_case08_01){ TEST_DATA_TYPE_AND_FORMAT( true, false,  true, 1, "- []"      ); }
+TEST(yaml, _data_type_and_format_case09_01){ TEST_DATA_TYPE_AND_FORMAT( true, false,  true, 1, "- {}"      ); }
+TEST(yaml, _data_type_and_format_case10_01){ TEST_DATA_TYPE_AND_FORMAT( true,  true, false, 1, "- k: v"    ); }
+TEST(yaml, _data_type_and_format_case11_01){ TEST_DATA_TYPE_AND_FORMAT( true,  true, false, 1, "- k[]: v[]"); }
+TEST(yaml, _data_type_and_format_case12_01){ TEST_DATA_TYPE_AND_FORMAT( true,  true, false, 1, "- k{}: v{}"); }
+TEST(yaml, _data_type_and_format_case13_01){ TEST_DATA_TYPE_AND_FORMAT(false,  true,  true, 0, "k: []"     ); }
+TEST(yaml, _data_type_and_format_case14_01){ TEST_DATA_TYPE_AND_FORMAT(false,  true,  true, 0, "k: {}"     ); }
+TEST(yaml, _data_type_and_format_case15_01){ TEST_DATA_TYPE_AND_FORMAT( true,  true,  true, 1, "- k: []"   ); }
+TEST(yaml, _data_type_and_format_case16_01){ TEST_DATA_TYPE_AND_FORMAT( true,  true,  true, 1, "- k: {}"   ); }
 
-TEST(yaml, _data_type_and_format_case02_02){ TEST_DATA_TYPE_AND_FORMAT(false,  true, false, false, 3, "- - - v"   ); }
-TEST(yaml, _data_type_and_format_case03_02){ TEST_DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k : v"     ); }
-TEST(yaml, _data_type_and_format_case04_02){ TEST_DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k[: v["    ); }
-//TEST(yaml, _data_type_and_format_case04_03){ TEST_DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k [: v ["    ); }
-TEST(yaml, _data_type_and_format_case05_02){ TEST_DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k{: v{"    ); }
-//TEST(yaml, _data_type_and_format_case05_03){ TEST_DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k {: v {"    ); }
-TEST(yaml, _data_type_and_format_case06_02){ TEST_DATA_TYPE_AND_FORMAT( true, false, false,  true, 0, "[{: }]"    ); } // Ex: [a, b, c, {k: v}]
+//TEST(yaml, _data_type_and_format_case02_02){ TEST_DATA_TYPE_AND_FORMAT( true, false, false, 3, "- - - v"   ); } // 個別にテストケースを書く
+TEST(yaml, _data_type_and_format_case03_02){ TEST_DATA_TYPE_AND_FORMAT(false,  true, false, 0, "k : v"     ); }
+TEST(yaml, _data_type_and_format_case04_02){ TEST_DATA_TYPE_AND_FORMAT(false,  true, false, 0, "k[: v["    ); }
+//TEST(yaml, _data_type_and_format_case04_03){ TEST_DATA_TYPE_AND_FORMAT(false,  true, false, 0, "k [: v ["    ); }
+TEST(yaml, _data_type_and_format_case05_02){ TEST_DATA_TYPE_AND_FORMAT(false,  true, false, 0, "k{: v{"    ); }
+//TEST(yaml, _data_type_and_format_case05_03){ TEST_DATA_TYPE_AND_FORMAT(false,  true, false, 0, "k {: v {"    ); }
+TEST(yaml, _data_type_and_format_case06_02){ TEST_DATA_TYPE_AND_FORMAT(false, false,  true, 0, "[{: }]"    ); } // Ex: [a, b, c, {k: v}]
 
 //---
 // Test _str2token() of data type and format
 
-#define TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(IS_STR, IS_LIST, IS_HASH, IS_FLOW, LIST_TYPE_COUNT, S_IN) \
+#define TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(IS_LIST, IS_HASH, IS_FLOW, LIST_TYPE_COUNT, S_IN) \
     std::string s = S_IN;                                               \
     std::vector<sstd_yaml::token> v_ret;                                \
     bool ret = sstd_yaml::_str2token(v_ret, s);                         \
@@ -221,30 +221,30 @@ TEST(yaml, _data_type_and_format_case06_02){ TEST_DATA_TYPE_AND_FORMAT( true, fa
     ASSERT_EQ(v_ret[0].format, ans_flow);                               \
     ASSERT_EQ(v_ret[0].list_type_cnt, LIST_TYPE_COUNT);
 
-TEST(yaml, _str2token__data_type_and_format_case01_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT( true, false, false, false, 0, "v"         ); }
-TEST(yaml, _str2token__data_type_and_format_case02_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false,  true, false, false, 1, "- v"       ); }
-TEST(yaml, _str2token__data_type_and_format_case03_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k: v"      ); }
-TEST(yaml, _str2token__data_type_and_format_case04_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k[]: v[]"  ); }
-TEST(yaml, _str2token__data_type_and_format_case05_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k{}: v{}"  ); }
-TEST(yaml, _str2token__data_type_and_format_case06_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT( true, false, false,  true, 0, "[]"        ); }
-TEST(yaml, _str2token__data_type_and_format_case07_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT( true, false, false,  true, 0, "{}"        ); }
-TEST(yaml, _str2token__data_type_and_format_case08_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false,  true, false,  true, 1, "- []"      ); }
-TEST(yaml, _str2token__data_type_and_format_case09_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false,  true, false,  true, 1, "- {}"      ); }
-TEST(yaml, _str2token__data_type_and_format_case10_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false,  true,  true, false, 1, "- k: v"    ); }
-TEST(yaml, _str2token__data_type_and_format_case11_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false,  true,  true, false, 1, "- k[]: v[]"); }
-TEST(yaml, _str2token__data_type_and_format_case12_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false,  true,  true, false, 1, "- k{}: v{}"); }
-TEST(yaml, _str2token__data_type_and_format_case13_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true,  true, 0, "k: []"     ); }
-TEST(yaml, _str2token__data_type_and_format_case14_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true,  true, 0, "k: {}"     ); }
-TEST(yaml, _str2token__data_type_and_format_case15_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT( false, true,  true,  true, 1, "- k: []"   ); }
-TEST(yaml, _str2token__data_type_and_format_case16_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT( false, true,  true,  true, 1, "- k: {}"   ); }
+TEST(yaml, _str2token__data_type_and_format_case01_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false, false, 0, "v"         ); }
+TEST(yaml, _str2token__data_type_and_format_case02_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT( true, false, false, 1, "- v"       ); }
+TEST(yaml, _str2token__data_type_and_format_case03_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false,  true, false, 0, "k: v"      ); }
+TEST(yaml, _str2token__data_type_and_format_case04_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false,  true, false, 0, "k[]: v[]"  ); }
+TEST(yaml, _str2token__data_type_and_format_case05_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false,  true, false, 0, "k{}: v{}"  ); }
+TEST(yaml, _str2token__data_type_and_format_case06_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, 0, "[]"        ); }
+TEST(yaml, _str2token__data_type_and_format_case07_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, 0, "{}"        ); }
+TEST(yaml, _str2token__data_type_and_format_case08_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT( true, false,  true, 1, "- []"      ); }
+TEST(yaml, _str2token__data_type_and_format_case09_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT( true, false,  true, 1, "- {}"      ); }
+TEST(yaml, _str2token__data_type_and_format_case10_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT( true,  true, false, 1, "- k: v"    ); }
+TEST(yaml, _str2token__data_type_and_format_case11_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT( true,  true, false, 1, "- k[]: v[]"); }
+TEST(yaml, _str2token__data_type_and_format_case12_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT( true,  true, false, 1, "- k{}: v{}"); }
+TEST(yaml, _str2token__data_type_and_format_case13_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false,  true,  true, 0, "k: []"     ); }
+TEST(yaml, _str2token__data_type_and_format_case14_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false,  true,  true, 0, "k: {}"     ); }
+TEST(yaml, _str2token__data_type_and_format_case15_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT( true,  true,  true, 1, "- k: []"   ); }
+TEST(yaml, _str2token__data_type_and_format_case16_01){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT( true,  true,  true, 1, "- k: {}"   ); }
 
-TEST(yaml, _str2token__data_type_and_format_case02_02){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false,  true, false, false, 3, "- - - v"   ); }
-TEST(yaml, _str2token__data_type_and_format_case03_02){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k : v"     ); }
-TEST(yaml, _str2token__data_type_and_format_case04_02){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k[: v["    ); }
-TEST(yaml, _str2token__data_type_and_format_case04_03){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k [: v ["  ); }
-TEST(yaml, _str2token__data_type_and_format_case05_02){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k{: v{"    ); }
-TEST(yaml, _str2token__data_type_and_format_case05_03){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, false, 0, "k {: v {"  ); }
-TEST(yaml, _str2token__data_type_and_format_case06_02){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT( true, false, false,  true, 0, "[{: }]"    ); } // Ex: [a, b, c, {k: v}]
+//TEST(yaml, _str2token__data_type_and_format_case02_02){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT( true, false, false, 3, "- - - v"   ); } // 個別にテストケースを書く
+TEST(yaml, _str2token__data_type_and_format_case03_02){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false,  true, false, 0, "k : v"     ); }
+TEST(yaml, _str2token__data_type_and_format_case04_02){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false,  true, false, 0, "k[: v["    ); }
+TEST(yaml, _str2token__data_type_and_format_case04_03){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false,  true, false, 0, "k [: v ["  ); }
+TEST(yaml, _str2token__data_type_and_format_case05_02){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false,  true, false, 0, "k{: v{"    ); }
+TEST(yaml, _str2token__data_type_and_format_case05_03){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false,  true, false, 0, "k {: v {"  ); }
+TEST(yaml, _str2token__data_type_and_format_case06_02){ TEST_STR2TOKEN__DATA_TYPE_AND_FORMAT(false, false,  true, 0, "[{: }]"    ); } // Ex: [a, b, c, {k: v}]
 
 //---
 // Test _str2token() of val1 and val2
@@ -390,12 +390,16 @@ TEST(yaml, _str2token_multi_list_case06){
     std::string s = "- - - a";
     std::vector<sstd_yaml::token> v_ret;
     bool ret = sstd_yaml::_str2token(v_ret, s);
-//    sstd::printn(v_ret);
+    sstd::printn(v_ret);
     
-    ASSERT_EQ(v_ret.size(), 1);
+    ASSERT_EQ(v_ret.size(), 3);
     ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- - - a");
-    ASSERT_STREQ(v_ret[0].val.c_str(),          "a");
-    ASSERT_EQ(v_ret[0].list_type_cnt, 3);
+    ASSERT_STREQ(v_ret[0].val.c_str(),           "");
+    ASSERT_STREQ(v_ret[1].val.c_str(),           "");
+    ASSERT_STREQ(v_ret[2].val.c_str(),          "a");
+    ASSERT_EQ(v_ret[0].list_type_cnt, 1);
+    ASSERT_EQ(v_ret[1].list_type_cnt, 1);
+    ASSERT_EQ(v_ret[2].list_type_cnt, 1);
 }
 
 //---
@@ -3493,7 +3497,7 @@ TEST(yaml, multipul_list_indication_case01){
     
     ASSERT_TRUE(yml==ans);
 }
-TEST(yaml, multipul_list_indication_case02){
+TEST(yaml, multipul_list_indication_case02a){
     std::string s=R"(
 - - - a
   - b
@@ -3519,6 +3523,32 @@ TEST(yaml, multipul_list_indication_case02){
     
     ASSERT_TRUE(yml==ans);
 }
+TEST(yaml, multipul_list_indication_case02b){
+    std::string s=R"(
+#- - - a
+#  - b
+- 
+  - 
+    - a
+  - b
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(1);
+    ans[0] = sstd::terp::list(2);
+    ans[0][0] = sstd::terp::list(1);
+    ans[0][0][0] = "a";
+    ans[0][1] = "b";
+    sstd::printn(ans);
+    
+    //---
+    
+    ASSERT_TRUE(yml==ans);
+}/*
 TEST(yaml, multipul_list_indication_case03){
     std::string s=R"(
 - - - k1: v1
@@ -3546,7 +3576,7 @@ TEST(yaml, multipul_list_indication_case03){
     //---
     
     ASSERT_TRUE(yml==ans);
-}/*
+}
 TEST(yaml, multipul_list_indication_case04){
     std::string s=R"(
 - 

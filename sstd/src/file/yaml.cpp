@@ -666,44 +666,27 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret_str, const std::string& s
 
     if(ret_noSymbol){
         // noSymbol
-        
-//        bool val_dq = str.starts_with("\"");
-//        bool val_sq = str.starts_with("\'");
-        {
-            std::string tmp;
-            bool prev_is_line_break=true;
-            for(uint i=0; i<v_str.size(); ++i){
-                tmp = sstd::strip(v_str[i]);
-                if(tmp.starts_with("#")){ continue; }
-                if(ret.size()==0 && tmp.size()==0){ continue; }
+
+        // parse multi-line string to YAML style string
+        std::string tmp;
+        bool prev_is_line_break=true;
+        for(uint i=0; i<v_str.size(); ++i){
+            tmp = sstd::strip(v_str[i]);
+            if(tmp.starts_with("#")){ continue; }
+            if(ret.size()==0 && tmp.size()==0){ continue; }
             
-                if(tmp.size()==0){
-                    ret += '\n';
-                    prev_is_line_break=true;
-                }else if(prev_is_line_break){
-                    ret += tmp;
-                    prev_is_line_break=false;
-                }else{
-                    ret += ' ' + tmp;
-                    prev_is_line_break=false;
-                }
+            if(tmp.size()==0){
+                ret += '\n';
+                prev_is_line_break=true;
+            }else if(prev_is_line_break){
+                ret += tmp;
+                prev_is_line_break=false;
+            }else{
+                ret += ' ' + tmp;
+                prev_is_line_break=false;
             }
-            sstd::rstripAll_ow(ret, " \n");
         }
-        /*
-        if( val_dq || val_sq ){ // 文字列としてエスケープされた "" の取り扱いもあるので， Quates の判定結果をここまで伝搬させる必要がある
-            // Quates ("" or '')
-//            sstd::printn_all(str);
-//            std::string tmp = str;
-            std::string tmp=ret;
-            sstd::rstripAll_ow(tmp, " \n"); // Quates の後に multi line として追加された改行を除去する
-            ret = sstd::strip_quotes(val_sq, val_dq, tmp);
-            
-//            tmp = sstd::strip_quotes(val_sq, val_dq, tmp);
-//            ret = _extract_quotes_value(tmp);
-//            sstd::printn_all(ret);
-        }
-        */
+        sstd::rstripAll_ow(ret, " \n");
         
     }else{
         // "|+N", "|-N", ">+N" or ">-N"
@@ -1766,6 +1749,7 @@ uint _get_criteria_hsc(const sstd_yaml::token& t){
         return t.hsc_hx;
     }else{
         return t.hsc_lx;
+//        return t.hsc_lx + 2*t.list_type_cnt;
     }
 }
 uint _get_current_hsc(const sstd_yaml::token& t){
@@ -1774,6 +1758,57 @@ uint _get_current_hsc(const sstd_yaml::token& t){
     }else{
         return t.hsc_lx; // for sstd_yaml::num_str or sstd_yaml::num_list
     }
+}
+bool sstd_yaml::_token2token_split_bv_list_type_cnt(std::vector<sstd_yaml::token>& io){
+    std::vector<sstd_yaml::token> ret;
+    
+    for(uint i=0; i<io.size(); ++i){
+        sstd_yaml::token& t = io[i];
+        
+        if(t.list_type_cnt==0){
+            ret.push_back(t);
+        }else{
+            // For `0 <= ti < t.list_type_cnt`
+            uint ti=0;
+            for(; ti+1<t.list_type_cnt; ++ti){
+                sstd::printn(ti);
+                sstd_yaml::token tmp = t;
+                
+                tmp.type = sstd_yaml::num_list;
+                tmp.format = sstd_yaml::num_block_style_base;
+                tmp.list_type_cnt = 1;
+                tmp.hsc_lx = tmp.hsc_lx + 2 * ti;
+                tmp.hsc_hx = tmp.hsc_lx + 2;
+                
+                tmp.hasValue = false;
+                tmp.key_is_dqed = false;
+                tmp.key_is_sqed = false;
+                tmp.val_is_dqed = false;
+                tmp.val_is_sqed = false;
+                tmp.mult_line_val = false;
+
+                tmp.key.clear();
+                tmp.val.clear();
+                
+                ret.push_back(std::move(tmp));
+            }
+            
+            // For `ti == t.list_type_cnt`.
+            {
+                sstd_yaml::token tmp = t;
+                sstd::printn(ti);
+                
+                tmp.list_type_cnt = 1;
+                tmp.hsc_lx = tmp.hsc_lx + 2 * ti;
+                tmp.hsc_hx = tmp.hsc_lx + 2;
+                
+                ret.push_back(std::move(tmp));
+            }
+        }
+    }
+    
+    std::swap(ret, io);
+    return true;
 }
 bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io){
     std::vector<sstd_yaml::token> ret;
@@ -1815,7 +1850,8 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             
             // Check break
             uint curr_hsc = _get_current_hsc((*pT));
-//            sstd::printn(merge_cnt);
+            //            sstd::printn_all(curr_hsc);
+//            sstd::printn_all(merge_cnt);
             if( merge_cnt==1 && is_control_types && (!start_with_string||(curr_hsc<=criteria_hsc)) ){ break; }
             // - `!start_with_string` is for:
             //   │ k0:
@@ -1883,6 +1919,9 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
     if(!sstd_yaml::_str2token_except_multilines(ret, str)){ sstd::pdbg_err("sstd_yaml::_str2token_except_multilines() was failed.\n"); return false; }
 //    printf("\n-------------------\n\n");
 //    sstd::printn_all(ret);
+    if(!sstd_yaml::_token2token_split_bv_list_type_cnt(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_split_bv_list_type_cnt() was failed.\n"); return false; }
+//    printf("\n-------------------\n\n");
+//    sstd::printn_all(ret);
     if(!sstd_yaml::_token2token_merge_multilines(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_merge_multilines() was failed.\n"); return false; }
 //    printf("\n-------------------\n\n");
 //    sstd::printn_all(ret);
@@ -1901,9 +1940,9 @@ bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     bool tf = true;
     
     std::vector<sstd_yaml::token> v_token; if(!sstd_yaml::_str2token(v_token, s)){ sstd::pdbg_err("single or double quatation is not closed\n"); return false; } // v: vector, ls: line string
-    sstd::printn_all(v_token);
+//    sstd::printn_all(v_token);
     std::vector<struct sstd_yaml::command_v2> v_cmd; if(!sstd_yaml::_token2cmd(v_cmd, v_token)){ return false; }
-    sstd::printn_all(v_cmd);
+//    sstd::printn_all(v_cmd);
     if(!_construct_var_v2(ret_yml, v_cmd)){ return false; }
     
     return tf;
