@@ -3743,7 +3743,7 @@ TEST(yaml, block_list_and_flow_list){
     //---
     
     ASSERT_TRUE(yml==ans);
-}/*
+}
 TEST(yaml, block_list_and_flow_hash){
     std::string s=R"(
 - {k1:v1, k2:v2, k3:v3}
@@ -4154,7 +4154,7 @@ TEST(yaml, flow_style_notation_list_hash_type2_Abbreviated){ // NOT SUPPORTED YE
 
 //---
 // Tests for sstd::yaml_load_all()
-//*
+
 TEST(yaml, flow_style_notation_hash__for__yaml_load_all){
     std::string s=R"(
 {k1: v1}
@@ -4243,7 +4243,7 @@ TEST(yaml, end_marker){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Split file ---
-
+//*
 TEST(yaml, yaml_load_all){
     std::string s=R"(
 - a1 # comment

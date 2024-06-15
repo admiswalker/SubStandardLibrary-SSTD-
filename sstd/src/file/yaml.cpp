@@ -1527,6 +1527,9 @@ bool sstd_yaml::_splitByLine_quotes_brackets(std::vector<std::string>& ret, cons
 bool _is_flow(const std::string& subt){
     return subt.size()>=1 && (subt[0]=='[' || subt[0]=='{');
 }
+bool _is_end_marker(const std::string& subt){
+    return subt.starts_with("...");
+}
 
 bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret, const std::string& str){
     // Parse rule of YAML string
@@ -1578,6 +1581,7 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
         bool is_list=false; // is list type "- "
         bool is_hash=false; // is hash type "k: v"
         bool is_flow=false; // is flow style "[{k: v}]"
+        bool is_end_marker=false; // is "..."
         bool subt_has_a_val=false; // for "- a - b - c -"
         
         int num_of_square_brackets=0; // []
@@ -1606,6 +1610,9 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
                     while(str[r]!='\0' && str[r]!='\n' && str[r]!='\r'){ tmp.rawStr+=str[r]; ++r; } // skip comments
                     if(str[r]=='\0'){ ++line_num; break; }
                 }
+                
+                is_end_marker = _is_end_marker(subt);
+                if(is_end_marker){ break; }
                 
                 is_flow = _is_flow(subt+str[r]);
                 if(!is_flow){
@@ -1649,10 +1656,11 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
             tmp.rawStr += str[r];
             subt       += str[r];
             if(str[r]!='-' && str[r]!=' '){ subt_has_a_val=true; }
-            
+
             // init
             is_escaped = false;
         }
+        if(is_end_marker){ break; }
 //        sstd::printn_all("imh");
         tmp.line_num_end = std::max((int)tmp.line_num_begin, ((int)line_num)-1);
 
@@ -1776,7 +1784,6 @@ bool sstd_yaml::_token2token_split_bv_list_type_cnt(std::vector<sstd_yaml::token
             // For `0 <= ti < t.list_type_cnt`
             uint ti=0;
             for(; ti+1<t.list_type_cnt; ++ti){
-                sstd::printn(ti);
                 sstd_yaml::token tmp = t;
                 
                 tmp.type = sstd_yaml::num_list;
@@ -1801,7 +1808,6 @@ bool sstd_yaml::_token2token_split_bv_list_type_cnt(std::vector<sstd_yaml::token
             // For `ti == t.list_type_cnt`.
             {
                 sstd_yaml::token tmp = t;
-                sstd::printn(ti);
                 
                 tmp.list_type_cnt = 1;
                 tmp.hsc_lx = tmp.hsc_lx + 2 * ti;
