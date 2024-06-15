@@ -3548,7 +3548,7 @@ TEST(yaml, multipul_list_indication_case02b){
     //---
     
     ASSERT_TRUE(yml==ans);
-}/*
+}
 TEST(yaml, multipul_list_indication_case03){
     std::string s=R"(
 - - - k1: v1
@@ -3722,7 +3722,7 @@ TEST(yaml, multipul_list_indication_case08){
 // flow style notation
 
 //---
-/*
+//*
 TEST(yaml, block_list_and_flow_list){
     std::string s=R"(
 - [a, b, c]
@@ -3743,7 +3743,7 @@ TEST(yaml, block_list_and_flow_list){
     //---
     
     ASSERT_TRUE(yml==ans);
-}
+}/*
 TEST(yaml, block_list_and_flow_hash){
     std::string s=R"(
 - {k1:v1, k2:v2, k3:v3}

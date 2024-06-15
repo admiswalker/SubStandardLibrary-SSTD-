@@ -1441,7 +1441,11 @@ bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
         // setting the value or allocate dst address
         if(cmd.ope==sstd_yaml::ope_assign){
             if(var.typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data.\n"); return false; }
-            var = cmd.val;
+            if(cmd.format==sstd_yaml::num_flow_style_base){
+                if(!_flow_style_str_to_obj(var, cmd.val)){ sstd::pdbg_err("_flow_style_str_to_obj() is failed.\n"); return false; }
+            }else{
+                var = cmd.val;
+            }
         }else if(cmd.ope==sstd_yaml::ope_alloc){
             if(var.typeNum()==sstd::num_null){
                 switch(cmd.type){
@@ -1450,7 +1454,7 @@ bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_y
                 default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
                 }
             }
-            
+
             switch(cmd.type){
             case sstd_yaml::num_list: {
                 var.push_back();
@@ -1600,6 +1604,7 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
                 if((subt.size()==0 && str[r]=='#') || (str[r]==' ' && str[r+1]=='#')){
                     tmp.rawStr+=str[r]; ++r;
                     while(str[r]!='\0' && str[r]!='\n' && str[r]!='\r'){ tmp.rawStr+=str[r]; ++r; } // skip comments
+                    if(str[r]=='\0'){ ++line_num; break; }
                 }
                 
                 is_flow = _is_flow(subt+str[r]);
@@ -1702,8 +1707,8 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
 
         ret.push_back(std::move(tmp));
     }
-    if(in_d_quate){ ret.clear(); return false; }
-    if(in_s_quate){ ret.clear(); return false; }
+    if(in_d_quate){ ret.clear(); sstd::pdbg_err("The variable check of `in_d_quate` failed.\n"); return false; }
+    if(in_s_quate){ ret.clear(); sstd::pdbg_err("The variable check of `in_s_quate` failed.\n"); return false; }
     
     if(str.size()>=1 && str[str.size()-1]=='\n'){
         ret.push_back(sstd_yaml::token());
