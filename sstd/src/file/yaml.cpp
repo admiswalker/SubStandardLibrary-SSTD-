@@ -670,7 +670,7 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret_str, const std::string& s
         // parse multi-line string to YAML style string
         std::string tmp;
         bool prev_is_line_break=true;
-        bool prev_line_break_is_escaped=false; // Example of line break with escape: "a\\nb".
+        bool prev_line_break_is_escaped=false;
         for(uint i=0; i<v_str.size(); ++i){
             tmp = sstd::strip(v_str[i]);
             if(tmp.starts_with("#")){ continue; }
@@ -683,7 +683,7 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret_str, const std::string& s
                 ret += tmp;
                 prev_is_line_break=false;
             }else{
-                if(ret.ends_with('\\')){
+                if(ret.ends_with('\\')){ // For the line break with escape. Example: `- "a\\n   b"` -> `["ab"]`.
                     ret.pop_back();
                     ret += tmp;
                     prev_is_line_break=false;
@@ -699,7 +699,6 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret_str, const std::string& s
         // "|+N", "|-N", ">+N" or ">-N"
         
         const uint hsc_base_1st_line=sstd_lcount(v_str[1], ' '); // hsc: head space count
-//        sstd::printn(hsc_base_1st_line);
         if(hsc_base_1st_line<=hsc_base_yaml){
             // Error case.
             // - |
@@ -720,16 +719,11 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret_str, const std::string& s
             }
             hsc_base=hsc_base_yaml+ret_user_requested_hsc;
         }
-//        sstd::printn_all(hsc_base_yaml);
-//        sstd::printn_all(ret_user_requested_hsc);
         
         for(uint i=1; i<v_str.size(); ++i){
             std::string s=v_str[i];
-//            sstd::printn(s);
             std::string tmp;
             uint hsc = sstd_lcount(s, ' '); // hsc: head space count
-//            sstd::printn(hsc);
-//            sstd::printn(hsc_base);
             bool have_str_except_space = (hsc!=s.size());
 
             if(have_str_except_space && hsc<hsc_base){
@@ -914,10 +908,6 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
     for(uint i=0; i<v_token.size(); ++i){
         const sstd_yaml::token& t = v_token[i];
         
-        printf("------\n");
-        sstd::printn(i);
-        sstd::printn(t);
-
         // Construct alloc() or assign() command
         struct sstd_yaml::command_v2 c;
         switch(t.type){
@@ -1201,25 +1191,16 @@ bool _get_hash_value(bool& is_null, std::string& ret_value, const std::vector<st
     return false;
 }
 bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
-    //sstd::printn(var_out.typeStr());
-    //sstd::printn(s_in);
     std::vector<std::string> v_cs; // vector of commands and string
     if(!sstd_yaml::_split_quotes_by_control_chars(v_cs, s_in.c_str(), s_in.size())){ sstd::pdbg_err("_split_quotes_by_control_chars() is failed. Un-cloused quate.\n"); return false; }
-    //sstd::printn(v_cs);
     
     std::vector<sstd::terp::var*> v_dst;
     v_dst.push_back( &var_out );
     
     for(uint i=0; i<v_cs.size(); ++i){
-        //printf("\n\n");
-        //sstd::printn(var_out);
-        //sstd::printn(v_cs[i]);
-        //sstd::printn(v_dst.size());
         if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
         sstd::terp::var* pVar = v_dst[v_dst.size()-1];
         sstd::terp::var& var = *pVar;
-        //if(v_hsc_lx.size()==0){ sstd::pdbg_err("v_hsc_lx is out of range\n"); return false; }
-        //if(v_hsc_hx.size()==0){ sstd::pdbg_err("v_hsc_hx is out of range\n"); return false; }
         
         if(v_cs[i].size()==1 && _is_control_chars(v_cs[i][0])){
             switch(v_cs[i][0]){
@@ -1246,7 +1227,6 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
             case '}': { v_dst.pop_back(); } break;
             case ':': {} break;
             case ',': {} break;
-                //case ',': { if(var.typeNum()==sstd::num_vec_terp_var){v_dst.pop_back();} } break; // たぶんこれにしないと "[a,b,{k:v},c]" が落ちる
             default: { sstd::pdbg_err("Unexpected char\n"); return false; } break;
             }
         }else{
@@ -1289,8 +1269,8 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml
     v_hsc_hx.push_back(0);
     
     for(uint i=0; i<v_cmd.size(); ++i){
-        printf("\n\n--- begin cmd ---\n"); // for debug
-        _print(v_cmd[i]);                  // for debug
+        //printf("\n\n--- begin cmd ---\n"); // for debug
+        //_print(v_cmd[i]);                  // for debug
         if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
         sstd::terp::var* pVar = v_dst[v_dst.size()-1];
         sstd::terp::var& var = *pVar;
@@ -1603,8 +1583,6 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
             //sstd::printn_all(r);
             //sstd::printn_all(str[r]);
             if(str[r]=='\\'){ is_escaped=true; tmp.rawStr+=str[r]; subt+=str[r]; ++r; } // Escape for inside quates will be processed at xxx() functiuon.
-//            if(!in_s_quate && !in_d_quate && str[r]=='\\'){ is_escaped=true; tmp.rawStr+=str[r]; ++r; } // Escape for inside quates will be processed at xxx() functiuon.
-//            if(str[r]=='\n'){ ++line_num; break; }
             if(str[r]=='\0'){ ++line_num; break; }
             if(str[r]!=' '){ is_hs=false; }
             if(str[r]==' ' && is_hs){ ++tmp.hsc_lx; ++tmp.hsc_hx; }
@@ -1669,11 +1647,8 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
             is_escaped = false;
         }
         if(is_end_marker){ break; }
-//        sstd::printn_all("imh");
         tmp.line_num_end = std::max((int)tmp.line_num_begin, ((int)line_num)-1);
         
-//        if(!is_hash){ tmp.key=std::move(sstd::strip(subt));
-//        }    else   { tmp.val=std::move(sstd::strip(subt)); }
         tmp.val=std::move(sstd::strip(subt));
         tmp.val_is_dqed=dqed;
         tmp.val_is_sqed=sqed;
@@ -1682,44 +1657,21 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
         if(is_hash){ tmp.type += sstd_yaml::num_hash; }
         if(is_flow){ tmp.format = sstd_yaml::num_flow_style_base; }
         
-        // remove Quates ('', "")
-        bool key_dq, key_sq, val_dq, val_sq;
-        tmp.key            = sstd::strip_quotes(key_sq, key_dq, tmp.key);
-        //tmp.val            = sstd::strip_quotes(val_sq, val_dq, tmp.val); // `_format_mult_line_str()` に移動 (あとで整理する)
-        //tmp.key_use_quotes = ( key_dq || key_sq );
-        //tmp.val_use_quotes = ( val_dq || val_sq );
-        //if(tmp.key_is_dqed || tmp.key_is_sqed){ tmp.key = _extract_quotes_value(tmp.key); }
-        //if(tmp.val_use_quotes){ tmp.val = _extract_quotes_value(tmp.val); } // `_format_mult_line_str()` に移動 (あとで整理する)
-//        sstd::printn_all(tmp.key_use_quotes);
-//        sstd::printn_all(tmp.val_use_quotes);
-        
-//        if(is_mult || is_mult_wos){
-//            if(!is_hash){
-//                if(!sstd_yaml::_format_mult_line_str(tmp.val1, tmp.val1, hsc_lx_mult)){ sstd::pdbg_err("sstd_yaml::_format_mult_line_str() is failed.\n"); return false; }
-//            }else{
-//                if(!sstd_yaml::_format_mult_line_str(tmp.val2, tmp.val2, hsc_lx_mult)){ sstd::pdbg_err("sstd_yaml::_format_mult_line_str() is failed.\n"); return false; }
-//            }
-//        }
-        
         // Skip empty tokens until the first non-empty token occurs. (Empty token is treated as a line-break related with to other token in a context of multi-line YAML)
         if(ret.size()==0 &&
-           //tmp.key.size()==0 && !tmp.key_use_quotes &&
-           //tmp.val.size()==0 && !tmp.val_use_quotes &&
            tmp.key.size()==0 &&
            tmp.val.size()==0 &&
-           tmp.type==sstd_yaml::num_str                  ){ continue; }
+           tmp.type==sstd_yaml::num_str){ continue; }
         
         // set hasValue
         tmp.hasValue=false;
         switch(tmp.type){
-        //case sstd_yaml::num_str:           { tmp.hasValue=true; } break;
         case sstd_yaml::num_str:           { if(tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1){tmp.hasValue=true;} } break;
         case sstd_yaml::num_list:          { if(tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1){tmp.hasValue=true;} } break; // check the value is NOT NULL
         case sstd_yaml::num_list_and_hash:
         case sstd_yaml::num_hash:          { if(tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1){tmp.hasValue=true;} } break; // check the value is NOT NULL
         default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
         }
-//        sstd::printn_all(tmp.val);
 
         ret.push_back(std::move(tmp));
     }
@@ -1865,12 +1817,10 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             pT = &io[i];
 
             bool is_control_types = _is_control_types((*pT).type);
-//            if( merge_cnt==1 && is_control_types && !start_with_string ){ break; } 
             
             // Check break
             uint curr_hsc = _get_current_hsc((*pT));
             //            sstd::printn_all(curr_hsc);
-//            sstd::printn_all(merge_cnt);
             if( merge_cnt==1 && is_control_types && (!start_with_string||(curr_hsc<=criteria_hsc)) ){ break; }
             // - `!start_with_string` is for:
             //   │ k0:
@@ -1886,23 +1836,13 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             //   - `start_with_string`: The string start with non-control charactor
             //   - `(*pT).key.size()!=0||(*pT).val.size()!=0`: The line is NOT Empty. (If the line is empty, the parser needs to treat as a line break of multi-line string).
             //   - `curr_hsc<=criteria_hsc`: The line is out of scope.
-//            sstd::printn( (*pT).key );
-//            sstd::printn( (*pT).val );
-//            sstd::printn( curr_hsc );
-//            sstd::printn( criteria_hsc );
-//            sstd::printn((*pT).type!=sstd_yaml::num_str);
-//            sstd::printn(start_with_string);
-//            sstd::printn(curr_hsc<=criteria_hsc);
             if( start_with_string && (((*pT).key.size()!=0||(*pT).val.size()!=0||(*pT).key_is_dqed||(*pT).key_is_sqed||(*pT).val_is_dqed||(*pT).val_is_sqed) && curr_hsc<=criteria_hsc) ){ break; }
-//            printf("1657\n");
             
             // Copy values
             tmp.rawStr += '\n' + (*pT).rawStr;
             tmp.val    += '\n' + (*pT).rawStr; // Needs to copy as row string in order to treat multi-line string as a raw data. Ex1: "k:\n x\n - a" is interpreted as `{k: "x - a"}`. Ex2: "k: |\n x # comment" is interpreted as `{k: "x # comment"}`.
             tmp.line_num_end = (*pT).line_num_end;
             tmp.mult_line_val = true;
-
-//            printf("---\n");
         }
         
         ret.push_back(std::move(tmp));
@@ -2015,10 +1955,12 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
 bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     bool tf = true;
     
-    std::vector<sstd_yaml::token> v_token; if(!sstd_yaml::_str2token(v_token, s)){ sstd::pdbg_err("single or double quatation is not closed\n"); return false; } // v: vector, ls: line string
-//    sstd::printn_all(v_token);
-    std::vector<struct sstd_yaml::command_v2> v_cmd; if(!sstd_yaml::_token2cmd(v_cmd, v_token)){ return false; }
-//    sstd::printn_all(v_cmd);
+    std::vector<sstd_yaml::token> v_token;
+    if(!sstd_yaml::_str2token(v_token, s)){ sstd::pdbg_err("single or double quatation is not closed\n"); return false; } // v: vector, ls: line string
+    
+    std::vector<struct sstd_yaml::command_v2> v_cmd;
+    if(!sstd_yaml::_token2cmd(v_cmd, v_token)){ return false; }
+    
     if(!_construct_var_v2(ret_yml, v_cmd)){ return false; }
     
     return tf;
@@ -2052,6 +1994,8 @@ bool sstd::yaml_load_all(std::vector<sstd::terp::var>& ret_vYml, const        ch
 
     uint base_idx=0;
     for(uint i=0; i<v_ls.size(); ++i){
+        // TODO: ここを _construct_var_v2() 系に置き換える
+        
         sstd::terp::var ret_yml;
         std::vector<struct sstd_yaml::command> v_cmd; if(!_parse_yaml(v_cmd, v_ls[i], base_idx)){ return false; }
         if(!_construct_var(ret_yml, v_cmd)){ return false; }
