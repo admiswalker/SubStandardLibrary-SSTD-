@@ -3251,33 +3251,7 @@ TEST(yaml, double_quotation_complicated_multiline_test_case01){
     //---
     
     ASSERT_TRUE(yml==ans);
-}
-
-// double_quotation_NUM_STR
-// double_quotation_list_NUM_HASH_dq_case02
-// single_quotation_list_NUM_HASH_sq_case02
-//
-
-TEST(yaml, single_quotation_list_NUM_HASH_sq_case02__COPY){ // escape \' and non escape "
-    std::string s=R"(
-'key1 \'"': ' a: b c \'" '
-)";
-    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
-
-    //---
-
-    sstd::terp::var ans;
-    ans = sstd::terp::hash();
-    ans["key1 '\""] = " a: b c '\" ";
-    sstd::printn(ans);
-    
-    //---
-    
-    ASSERT_TRUE(yml==ans);
-}
-
-/*
+}/*
 TEST(yaml, double_quotation_complicated_multiline_test_case02){
     std::string s=R"(
 - "I am a cat. \

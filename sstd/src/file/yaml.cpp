@@ -670,6 +670,7 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret_str, const std::string& s
         // parse multi-line string to YAML style string
         std::string tmp;
         bool prev_is_line_break=true;
+        bool prev_line_break_is_escaped=false; // Example of line break with escape: "a\\nb".
         for(uint i=0; i<v_str.size(); ++i){
             tmp = sstd::strip(v_str[i]);
             if(tmp.starts_with("#")){ continue; }
@@ -682,8 +683,14 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret_str, const std::string& s
                 ret += tmp;
                 prev_is_line_break=false;
             }else{
-                ret += ' ' + tmp;
-                prev_is_line_break=false;
+                if(ret.ends_with('\\')){
+                    ret.pop_back();
+                    ret += tmp;
+                    prev_is_line_break=false;
+                }else{
+                    ret += ' ' + tmp;
+                    prev_is_line_break=false;
+                }
             }
         }
         sstd::rstripAll_ow(ret, " \n");
@@ -1912,6 +1919,7 @@ bool _escape_to_unicode_character(std::string& io){
             switch(io[i+1]){
             case '\0': { tmp += '\\'; break; }
             case '\'':  { tmp += '\''; break; }
+            case '\n':  { tmp += "\\\n"; break; } // Do Nothing in order NOT to avoid `_format_mult_line_str()` function's process.
                 
             case '\\': { tmp += '\\'; break; }
                 
