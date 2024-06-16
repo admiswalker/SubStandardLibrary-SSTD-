@@ -1525,7 +1525,7 @@ bool sstd_yaml::_splitByLine_quotes_brackets(std::vector<std::string>& ret, cons
 //---
 
 bool _is_flow(const std::string& subt){
-    return subt.size()>=1 && (subt[0]=='[' || subt[0]=='{');
+    return (subt.starts_with('[') || subt.starts_with('{'));
 }
 bool _is_end_marker(const std::string& subt){
     return subt.starts_with("...");
@@ -1595,7 +1595,8 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
             //printf("---\n");
             //sstd::printn_all(r);
             //sstd::printn_all(str[r]);
-            if(str[r]=='\\'){ is_escaped=true; tmp.rawStr+=str[r]; ++r; }
+            if(str[r]=='\\'){ is_escaped=true; tmp.rawStr+=str[r]; subt+=str[r]; ++r; } // Escape for inside quates will be processed at xxx() functiuon.
+//            if(!in_s_quate && !in_d_quate && str[r]=='\\'){ is_escaped=true; tmp.rawStr+=str[r]; ++r; } // Escape for inside quates will be processed at xxx() functiuon.
 //            if(str[r]=='\n'){ ++line_num; break; }
             if(str[r]=='\0'){ ++line_num; break; }
             if(str[r]!=' '){ is_hs=false; }
@@ -1663,7 +1664,7 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
         if(is_end_marker){ break; }
 //        sstd::printn_all("imh");
         tmp.line_num_end = std::max((int)tmp.line_num_begin, ((int)line_num)-1);
-
+        
 //        if(!is_hash){ tmp.key=std::move(sstd::strip(subt));
 //        }    else   { tmp.val=std::move(sstd::strip(subt)); }
         tmp.val=std::move(sstd::strip(subt));
@@ -1680,7 +1681,7 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
         //tmp.val            = sstd::strip_quotes(val_sq, val_dq, tmp.val); // `_format_mult_line_str()` に移動 (あとで整理する)
         //tmp.key_use_quotes = ( key_dq || key_sq );
         //tmp.val_use_quotes = ( val_dq || val_sq );
-        if(tmp.key_is_dqed || tmp.key_is_sqed){ tmp.key = _extract_quotes_value(tmp.key); }
+        //if(tmp.key_is_dqed || tmp.key_is_sqed){ tmp.key = _extract_quotes_value(tmp.key); }
         //if(tmp.val_use_quotes){ tmp.val = _extract_quotes_value(tmp.val); } // `_format_mult_line_str()` に移動 (あとで整理する)
 //        sstd::printn_all(tmp.key_use_quotes);
 //        sstd::printn_all(tmp.val_use_quotes);
@@ -1903,23 +1904,79 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
     std::swap(ret, io);
     return true;
 }
+bool _escape_to_unicode_character(std::string& io){
+    std::string tmp;
+    
+    for(uint i=0; i<io.size(); ++i){
+        if(io[i]=='\\'){
+            switch(io[i+1]){
+            case '\0': { tmp += '\\'; break; }
+            case '\'':  { tmp += '\''; break; }
+                
+            case '\\': { tmp += '\\'; break; }
+                
+            case '"':  { tmp += '\"'; break; }
+            case 'a':  { tmp += '\u0007'; break; }
+            case 'b':  { tmp += '\b'; break; }
+            case 'e':  { tmp += '\u001b'; break; }
+            case 'f':  { tmp += '\f'; break; }
+                
+            case 'n':  { tmp += '\n'; break; }
+            case 'r':  { tmp += '\r'; break; }
+            case 't':  { tmp += '\t'; break; }
+            case 'v':  { tmp += '\u000b'; break; }
+            case '0':  { tmp += '\u0000'; break; }
+                
+            //case ' ': { tmp += '\\'; break; }
+            case '_':  { tmp += '\u00a0'; break; }
+            case 'N':  { tmp += '\u0085'; break; }
+            case 'L':  { tmp += '\u2028'; break; }
+            case 'P':  { tmp += '\u2029'; break; }
+            default: {
+                if      (strncmp(&io[i+1], "x41"      , strlen("x41"      ))==0){ tmp += "A"; i+=strlen("x41"      ); break;
+                }else if(strncmp(&io[i+1], "u0041"    , strlen("u0041"    ))==0){ tmp += "A"; i+=strlen("u0041"    ); break;
+                }else if(strncmp(&io[i+1], "U00000041", strlen("U00000041"))==0){ tmp += "A"; i+=strlen("U00000041"); break; }
+                
+                sstd::pdbg_err("%c%c is not escapeable.\n", io[i], io[i+1]); return false; }
+            }
+            ++i;
+        }else{
+            tmp += io[i];
+        }
+    }
+    
+    std::swap(tmp, io);
+    return true;
+}
 bool sstd_yaml::_token2token_postprocess(std::vector<sstd_yaml::token>& io){
-
+    
     for(uint i=0; i<io.size(); ++i){
         sstd_yaml::token& t = io[i];
         
+        bool is_key_quated = t.key_is_dqed || t.key_is_sqed;
+        bool is_val_quated = t.val_is_dqed || t.val_is_sqed;
+        
+        if(is_key_quated){
+            if(!_escape_to_unicode_character(t.key)){ sstd::pdbg_err("_escape_to_unicode_character() is failed.\n"); return false; }
+        }
+        if(is_val_quated){
+            if(!_escape_to_unicode_character(t.val)){ sstd::pdbg_err("_escape_to_unicode_character() is failed.\n"); return false; }
+        }
+        
         if(t.mult_line_val){
+            // Needs to format with quates ("", '') for the YAML string of `- " a "`.
             uint hsc_base_yaml = _get_criteria_hsc(t);
             bool has_next_token = (io.size()>(i+1));
             if(!sstd_yaml::_format_mult_line_str(t.val, t.val, hsc_base_yaml, has_next_token)){ sstd::pdbg_err("sstd_yaml::_format_mult_line_str() is failed.\n"); return false; }
             if(!has_next_token){ sstd::rstripAll_ow(t.rawStr, " \n"); }
         }
 
-        if(t.key_is_dqed||t.key_is_sqed||
-           t.val_is_dqed||t.val_is_sqed){
-            
-            bool key_sq, key_dq, val_sq, val_dq;
+        if(is_key_quated){
+            bool key_sq, key_dq;
             t.key = sstd::strip_quotes(key_sq, key_dq, t.key);
+        }
+        if(is_val_quated){
+            bool val_sq, val_dq;
             t.val = sstd::strip_quotes(val_sq, val_dq, t.val);
         }
     }
