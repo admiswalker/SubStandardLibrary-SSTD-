@@ -206,25 +206,6 @@ std::vector<std::string> sstd::split(const std::string& str, const std::string& 
     return splitList;
 }
 
-void _print(const struct sstd_yaml::command& cmd){ // for debug
-    printf("hsc_lx: %d\n",           cmd.hsc_lx                            );
-    printf("hsc_hx: %d\n",           cmd.hsc_hx                            );
-    printf("type: %d\n",             cmd.type                              );
-    printf("format: %d\n",           cmd.format                            );
-    printf("val1_use_quotes: %s\n", (cmd.val1_use_quotes ? "true":"false") );
-    printf("val2_use_quotes: %s\n", (cmd.val2_use_quotes ? "true":"false") );
-    printf("val1: %s\n",             cmd.val1.c_str()                      );
-    printf("val2: %s\n",             cmd.val2.c_str()                      );
-    printf("lineNum: %d\n",          cmd.lineNum                           );
-    printf("rawStr: %s\n",           cmd.rawStr.c_str()                    );
-    printf("\n");
-}
-void _print(const std::vector<struct sstd_yaml::command>& v_cmd){ // for debug
-    for(uint i=0; i<v_cmd.size(); ++i){
-        _print(v_cmd[i]);
-    }
-}
-
 //---
 
 uint sstd_lcount(const char* str, char X){
@@ -496,7 +477,6 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret_str, const std::string& s
             }
         
             if(s.size()>=hsc_base){
-                sstd::printn(hsc_base);
                 tmp += (char*)&v_str[i][hsc_base];
             }
 
@@ -882,7 +862,7 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
                 }
             } break;
             case sstd::num_null: {} break;
-            default: { sstd::pdbg_err("Unexpected data type. Type: %s\n", sstd::typeNum2str(var.typeNum()).c_str()); sstd::printn(var); } break;
+            default: { sstd::pdbg_err("Unexpected data type. Type: %s\n", sstd::typeNum2str(var.typeNum()).c_str()); sstd::printn_all(var); } break;
             }
         }
     }
@@ -1318,7 +1298,6 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             
             // Check break
             uint curr_hsc = _get_current_hsc((*pT));
-            //            sstd::printn_all(curr_hsc);
             if( merge_cnt==1 && is_control_types && (!start_with_string||(curr_hsc<=criteria_hsc)) ){ break; }
             // - `!start_with_string` is for:
             //   │ k0:
@@ -1431,18 +1410,9 @@ bool sstd_yaml::_token2token_postprocess(std::vector<sstd_yaml::token>& io){
 }
 bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str){
     if(!sstd_yaml::_str2token_except_multilines(ret, str)){ sstd::pdbg_err("sstd_yaml::_str2token_except_multilines() was failed.\n"); return false; }
-//    printf("\n-------------------\n\n");
-//    sstd::printn_all(ret);
     if(!sstd_yaml::_token2token_split_bv_list_type_cnt(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_split_bv_list_type_cnt() was failed.\n"); return false; }
-//    printf("\n-------------------\n\n");
-//    sstd::printn_all(ret);
     if(!sstd_yaml::_token2token_merge_multilines(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_merge_multilines() was failed.\n"); return false; }
-//    printf("\n-------------------\n\n");
-//    sstd::printn_all(ret);
     if(!sstd_yaml::_token2token_postprocess(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_postprocess() was failed.\n"); return false; }
-//    printf("\n-------------------\n\n");
-//    sstd::printn_all(ret);
-//    printf("\n-------------------\n\n");
     return true;
 }
 bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string& str){ return sstd_yaml::_str2token(ret, str.c_str()); }

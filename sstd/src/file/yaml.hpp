@@ -71,26 +71,6 @@ namespace sstd_yaml{
 //        std::string val1;
 //        std::string val2;
     };
-    struct command{
-        uint hsc_lx; // hsc: head space count, _lx: list-index.
-        uint hsc_hx; // hsc: head space count, _hx: hash-index.
-        uint8 type;
-        uint8 format;
-        bool val1_use_quotes;
-        bool val2_use_quotes;
-        std::string val1; // "list value" or "hash key"
-        std::string val2; // "hash value" if Not required "sstd::terp::var"
-
-        // あとで下の命名規則に変える
-//        bool key_use_quotes;
-//        bool val_use_quotes;
-//        std::string key; // key for "hash"
-//        std::string val; // value for "list" or "hash"
-
-        // debug info
-        uint lineNum;
-        std::string rawStr;
-    };
     struct command_v2{
         // Data for Debug YAML parsing
         uint line_num_begin = 1;                       // beginning line number

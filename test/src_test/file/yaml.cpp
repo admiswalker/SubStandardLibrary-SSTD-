@@ -259,8 +259,8 @@ k_Y: v_Y
 )";
     std::vector<sstd_yaml::token> v_ret;
     bool ret = sstd_yaml::_str2token(v_ret, s);
-    sstd::printn(v_ret.size());
-    sstd::printn(v_ret);
+//    sstd::printn(v_ret.size());
+//    sstd::printn(v_ret);
     
     ASSERT_EQ(v_ret.size(), 3);
     ASSERT_STREQ(v_ret[0].rawStr.c_str(), "k_X: ");
@@ -350,7 +350,7 @@ TEST(yaml, _str2token_multi_list_case06){
     std::string s = "- - - a";
     std::vector<sstd_yaml::token> v_ret;
     bool ret = sstd_yaml::_str2token(v_ret, s);
-    sstd::printn(v_ret);
+//    sstd::printn(v_ret);
     
     ASSERT_EQ(v_ret.size(), 3);
     ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- - - a");
@@ -382,13 +382,13 @@ TEST(yaml, _str2token_multi_list_case07){
     ASSERT_EQ(v_ret.size(), 4);
     ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- a # comment");
     ASSERT_STREQ(v_ret[0].val.c_str(),   "a");
-    sstd::printn(v_ret[1].rawStr.c_str());
+//    sstd::printn(v_ret[1].rawStr.c_str());
     ASSERT_STREQ(v_ret[1].rawStr.c_str(), R"(- |
   b1
   b2
   b3
 )");
-    sstd::printn(v_ret[1].val.c_str());
+//    sstd::printn(v_ret[1].val.c_str());
     ASSERT_STREQ(v_ret[1].val.c_str(), "b1\nb2\nb3\n"); // "|\n  b1\n  b2\n  b3\n"
 }
 TEST(yaml, _str2token_multi_list_case08){
@@ -444,7 +444,7 @@ TEST(yaml, _str2token_multi_list_case09){
    b2
    b3
 )");
-    sstd::printn(v_ret[1].val.c_str());
+//    sstd::printn(v_ret[1].val.c_str());
     ASSERT_STREQ(v_ret[1].val.c_str(), "k:| b1 b2 b3"); // "k:|\n   b1\n   b2\n   b3\n"
     ASSERT_STREQ(v_ret[2].val.c_str(), "c");
     ASSERT_STREQ(v_ret[3].val.c_str(), "d");
@@ -573,8 +573,8 @@ TEST(yaml, _format_mult_line_str__pipeSymbol__NoPlusOrMinus__case01){ // '|1'
     const uint hsc_base_yaml=0;
     const bool has_next_token = false;
     bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base_yaml, has_next_token);
-    sstd::printn(ret_TF);
-    sstd::printn(ret);
+//    sstd::printn(ret_TF);
+//    sstd::printn(ret);
     
     ASSERT_TRUE(ret_TF);
     ASSERT_STREQ(ret.c_str(), R"( b1
@@ -597,8 +597,8 @@ TEST(yaml, _format_mult_line_str__pipeSymbol__PipeSymbol__case01){ // '|+1'
     const uint hsc_base_yaml=0;
     const bool has_next_token = false;
     bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base_yaml, has_next_token);
-    sstd::printn(ret_TF);
-    sstd::printn(ret);
+//    sstd::printn(ret_TF);
+//    sstd::printn(ret);
     
     ASSERT_TRUE(ret_TF);
     ASSERT_STREQ(ret.c_str(), R"( b1
@@ -622,8 +622,8 @@ TEST(yaml, _format_mult_line_str__pipeSymbol__MinusSymbol__case01){ // '|-1'
     const uint hsc_base_yaml=0;
     const bool has_next_token = false;
     bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base_yaml, has_next_token);
-    sstd::printn(ret_TF);
-    sstd::printn(ret);
+//    sstd::printn(ret_TF);
+//    sstd::printn(ret);
     
     ASSERT_TRUE(ret_TF);
     ASSERT_STREQ(ret.c_str(), R"( b1
@@ -644,8 +644,8 @@ TEST(yaml, _format_mult_line_str__GreaterThanSymbol__NoPlusOrMinus__case01){ // 
     const uint hsc_base_yaml=0;
     const bool has_next_token = false;
     bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base_yaml, has_next_token);
-    sstd::printn(ret_TF);
-    sstd::printn(ret);
+//    sstd::printn(ret_TF);
+//    sstd::printn(ret);
     
     ASSERT_TRUE(ret_TF);
     ASSERT_STREQ(ret.c_str(), " b1\n b2\n b3");
@@ -659,8 +659,8 @@ TEST(yaml, _format_mult_line_str__GreaterThanSymbol__NoPlusOrMinus__case02){ // 
     const uint hsc_base_yaml=0;
     const bool has_next_token = false;
     bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base_yaml, has_next_token);
-    sstd::printn(ret_TF);
-    sstd::printn(ret);
+//    sstd::printn(ret_TF);
+//    sstd::printn(ret);
     
     ASSERT_TRUE(ret_TF);
     ASSERT_STREQ(ret.c_str(), "b1 b2 b3");
@@ -675,8 +675,8 @@ TEST(yaml, _format_mult_line_str__GreaterThanSymbol__NoPlusOrMinus__case03){ // 
     const uint hsc_base_yaml=0;
     const bool has_next_token = false;
     bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base_yaml, has_next_token);
-    sstd::printn(ret_TF);
-    sstd::printn(ret);
+//    sstd::printn(ret_TF);
+//    sstd::printn(ret);
     
     ASSERT_TRUE(ret_TF);
     //ASSERT_STREQ(ret.c_str(), "b1\n b2\nb3 b4");
@@ -693,8 +693,8 @@ TEST(yaml, _format_mult_line_str__GreaterThanSymbol__NoPlusOrMinus__case04){ // 
     const uint hsc_base_yaml=2;
     const bool has_next_token = false;
     bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base_yaml, has_next_token);
-    sstd::printn(ret_TF);
-    sstd::printn(ret);
+//    sstd::printn(ret_TF);
+//    sstd::printn(ret);
     
     ASSERT_TRUE(ret_TF);
     ASSERT_STREQ(ret.c_str(), " b1\n b2\n b3\n");
@@ -711,8 +711,8 @@ TEST(yaml, _format_mult_line_str__NoSymbol__case01){
     const uint hsc_base_yaml=0;
     const bool has_next_token = false;
     bool ret_TF = sstd_yaml::_format_mult_line_str(ret, s, hsc_base_yaml, has_next_token);
-    sstd::printn(ret_TF);
-    sstd::printn(ret);
+//    sstd::printn(ret_TF);
+//    sstd::printn(ret);
     
     ASSERT_TRUE(ret_TF);
     ASSERT_STREQ(ret.c_str(), "k:|x a b");
@@ -961,7 +961,7 @@ TEST(yaml, _token2cmd_null_values_case01){
     bool ret = false;
     ret = sstd_yaml::_str2token(ret_v_token, s);
     ret = sstd_yaml::_token2cmd(ret_v_cmd, ret_v_token);
-    sstd::printn(ret_v_cmd);
+//    sstd::printn(ret_v_cmd);
 
     uint idx=0;
     // -
@@ -983,7 +983,7 @@ k2:
     bool ret = false;
     ret = sstd_yaml::_str2token(ret_v_token, s);
     ret = sstd_yaml::_token2cmd(ret_v_cmd, ret_v_token);
-    sstd::printn(ret_v_cmd);
+//    sstd::printn(ret_v_cmd);
 
     uint idx=0;
     // k1:
@@ -1005,7 +1005,7 @@ TEST(yaml, _token2cmd_null_values_case03){
     bool ret = false;
     ret = sstd_yaml::_str2token(ret_v_token, s);
     ret = sstd_yaml::_token2cmd(ret_v_cmd, ret_v_token);
-    sstd::printn(ret_v_cmd);
+//    sstd::printn(ret_v_cmd);
 
     uint idx=0;
     // -
@@ -1106,14 +1106,14 @@ TEST(yaml, comments_hash){
 k: v # comment
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
 
     //---
     
     sstd::terp::var ans;
     ans = sstd::terp::hash();
     ans["k"] = "v";
-    sstd::printn(ans);
+//    sstd::printn(ans);
     
     //---
     
@@ -1172,8 +1172,8 @@ b
     //std::string ret = testing::internal::GetCapturedStdout().c_str();
     //sstd::printn(ret);
     //ASSERT_TRUE(sstd::strIn("OverWritting the existing data.", ret.c_str()));
-    sstd::printn(TF);
-    sstd::printn(yml);
+//    sstd::printn(TF);
+//    sstd::printn(yml);
 
     //---
     
@@ -1196,7 +1196,7 @@ TEST(yaml, list_depth1){
 - c
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
 
     //---
     
@@ -1205,7 +1205,7 @@ TEST(yaml, list_depth1){
     ans[0] = "a";
     ans[1] = "b";
     ans[2] = "c";
-    sstd::printn(ans);
+//    sstd::printn(ans);
     
     //---
     
@@ -1221,7 +1221,7 @@ TEST(yaml, list_depth2){
 - e
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
 
     //---
     
@@ -1233,7 +1233,7 @@ TEST(yaml, list_depth2){
     ans[2][0] = "c";
     ans[2][1] = "d";
     ans[3] = "e";
-    sstd::printn(ans);
+//    sstd::printn(ans);
     
     //---
     
@@ -1290,13 +1290,13 @@ TEST(yaml, list_null){
 -
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
 
     //---
     
     sstd::terp::var ans;
     ans = sstd::terp::list(3);
-    sstd::printn(ans);
+//    sstd::printn(ans);
     
     //---
     
@@ -1307,8 +1307,8 @@ TEST(yaml, list_str_listStr_listStrEnd){ // depth1
 - a - b - c -
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
-    sstd::printn(yml.size());
+//    sstd::printn(yml);
+//    sstd::printn(yml.size());
     
     //---
     
@@ -1357,7 +1357,7 @@ k3:
 k4: v4
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
 
     //---
     
@@ -1369,7 +1369,7 @@ k4: v4
     ans["k3"]["k31"] = "v31";
     ans["k3"]["k32"] = "v32";
     ans["k4"] = "v4";
-    sstd::printn(ans);
+//    sstd::printn(ans);
     
     //---
     
@@ -1384,7 +1384,7 @@ TEST(yaml, hash_null_case01){
 k1:
 )";
     sstd::terp::var yml; bool ret_tf = sstd::yaml_load(yml, s); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
     ASSERT_TRUE(ret_tf);
 
     //---
@@ -1392,7 +1392,7 @@ k1:
     sstd::terp::var ans;
     ans = sstd::terp::hash();
     ans["k1"];
-    sstd::printn(ans);
+//    sstd::printn(ans);
     
     //---
     
@@ -1404,7 +1404,7 @@ k1:
 k2:
 )";
     sstd::terp::var yml; bool ret_tf = sstd::yaml_load(yml, s); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
     ASSERT_TRUE(ret_tf);
 
     //---
@@ -1413,7 +1413,7 @@ k2:
     ans = sstd::terp::hash();
     ans["k1"];
     ans["k2"];
-    sstd::printn(ans);
+//    sstd::printn(ans);
     
     //---
     
@@ -1527,7 +1527,7 @@ k1: valX
     ASSERT_TRUE(ret_tf==false);
     std::string ret = testing::internal::GetCapturedStdout().c_str();
     ASSERT_TRUE(sstd::strIn("Detecting the duplicated hash key.", ret.c_str())); // Do NOT check
-    sstd::printn(yml);
+//    sstd::printn(yml);
 
     //---
     
@@ -1535,7 +1535,7 @@ k1: valX
     ans = sstd::terp::hash();
     ans["k1"] = "val1";
     //ans["k1"] = "valX";
-    sstd::printn(ans);
+//    sstd::printn(ans);
     
     //---
     
@@ -1550,7 +1550,7 @@ TEST(yaml, list_and_hash__NUM_LIST_AND_HASH){
 - k1: v1
 )";
     sstd::terp::var yml; bool ret_tf = sstd::yaml_load(yml, s); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
     ASSERT_TRUE(ret_tf);
 
     //---
@@ -1559,7 +1559,7 @@ TEST(yaml, list_and_hash__NUM_LIST_AND_HASH){
     ans = sstd::terp::list(1);
     ans[0] = sstd::terp::hash();
     ans[0]["k1"] = "v1";
-    sstd::printn(ans);
+//    sstd::printn(ans);
     
     //---
     
@@ -1573,7 +1573,7 @@ TEST(yaml, list_and_hash__conbined){
 - v2
 )";
     sstd::terp::var yml; bool ret_tf = sstd::yaml_load(yml, s); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
     ASSERT_TRUE(ret_tf);
 
     //---
@@ -1585,7 +1585,7 @@ TEST(yaml, list_and_hash__conbined){
     ans[0]["k1"][0] = "v11";
     ans[0]["k1"][1] = "v12";
     ans[1] = "v2";
-    sstd::printn(ans);
+//    sstd::printn(ans);
     
     //---
     
@@ -1668,7 +1668,7 @@ TEST(yaml, list_hash_case01_02){ // depth2
 - k2: v2
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
     
     //---
     
@@ -1678,7 +1678,7 @@ TEST(yaml, list_hash_case01_02){ // depth2
     ans[0]["k1"] = "v1";
     ans[1] = sstd::terp::hash();
     ans[1]["k2"] = "v2";
-    sstd::printn(ans);
+//    sstd::printn(ans);
     
     //---
     
@@ -1747,7 +1747,7 @@ TEST(yaml, list_hash_case02){ // depth2
 - c
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
     
     //---
     
@@ -1763,7 +1763,7 @@ TEST(yaml, list_hash_case02){ // depth2
     ans[3]["k3"];
     ans[3]["k4"] = "v4";
     ans[4] = "c";
-    sstd::printn(ans);
+//    sstd::printn(ans);
     
     //---
     
@@ -1780,7 +1780,7 @@ k3:
 k4: v4
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
 
     //---
     
@@ -1792,7 +1792,7 @@ k4: v4
     ans["k3"][0] = "v31";
     ans["k3"][1] = "v32";
     ans["k4"] = "v4";
-    sstd::printn(ans);
+//    sstd::printn(ans);
     
     //---
     
@@ -1815,7 +1815,7 @@ TEST(yaml, list_hash_list_case01){ // depth3
 - c
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
     
     //---
     
@@ -1831,7 +1831,7 @@ TEST(yaml, list_hash_list_case01){ // depth3
     ans[2]["k2"][2] = "v23";
     ans[2]["k3"] = "v3";
     ans[3] = "c";
-    sstd::printn(ans);
+//    Sstd::printn(ans);
     
     //---
     
@@ -1855,7 +1855,7 @@ TEST(yaml, list_hash_list_case02){ // depth3
 - c       #      0, 2
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
     
     //---
     
@@ -1874,7 +1874,7 @@ TEST(yaml, list_hash_list_case02){ // depth3
     ans[2]["k2"][2] = "v23";
     ans[2]["k3"] = "v3";
     ans[3] = "c";
-    sstd::printn(ans);
+//    sstd::printn(ans);
     
     //---
     
@@ -1892,7 +1892,7 @@ k3:
 k4: v4
 )";
     sstd::terp::var yml; bool ret_tf = sstd::yaml_load(yml, s); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
     ASSERT_TRUE(ret_tf);
 
     //---
@@ -1907,7 +1907,7 @@ k4: v4
     ans["k3"][1]["k32"] = "v321";
     ans["k3"][2] = "v33";
     ans["k4"] = "v4";
-    sstd::printn(ans);
+//    sstd::printn(ans);
     
     //---
     
@@ -1935,7 +1935,7 @@ k3:
 k4: v4
 )";
     sstd::terp::var yml; bool ret_tf = sstd::yaml_load(yml, s); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
     ASSERT_TRUE(ret_tf);
 
     //---
@@ -1953,7 +1953,7 @@ k4: v4
     ans["k3"][1]["k32"][2] = "v323";
     ans["k3"][2] = "v33";
     ans["k4"] = "v4";
-    sstd::printn(ans);
+//    sstd::printn(ans);
     
     //---
     
@@ -2001,7 +2001,7 @@ TEST(yaml, multi_line_str_by_list_vertical_line){ // - |
 - c
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
 
     //---
     
@@ -2010,7 +2010,7 @@ TEST(yaml, multi_line_str_by_list_vertical_line){ // - |
     ans[0] = "a";
     ans[1] = "b1\nb2\nb3\n";
     ans[2] = "c";
-    sstd::printn(ans);
+//    sstd::printn(ans);
     
     //---
     
@@ -2225,7 +2225,7 @@ TEST(yaml, multi_line_str_by_list_vertical_line_with_different_head_spaces__vert
   e
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
 
     //---
     
@@ -2410,7 +2410,7 @@ TEST(yaml, multi_line_str_by_list_greater_num_1_case02){ // - >1
 - c
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
 
     //---
     
@@ -2493,7 +2493,7 @@ TEST(yaml, multi_line_str_by_list_greater_minus_num_1){ // - >-1
 - c
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
 
     //---
     
@@ -2502,7 +2502,7 @@ TEST(yaml, multi_line_str_by_list_greater_minus_num_1){ // - >-1
     ans[0] = "a";
     ans[1] = " b1\n b2\n b3";
     ans[2] = "c";
-    sstd::printn(ans);
+//    sstd::printn(ans);
     
     //---
     
@@ -2821,7 +2821,7 @@ k2: >2
 k3: c
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
 
     //---
     
@@ -2860,7 +2860,7 @@ def
 g"
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
 
     //---
     
@@ -2880,7 +2880,7 @@ TEST(yaml, double_quotation_NUM_STR_xx){
 b
 c)";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
 
     //---
     
@@ -3443,7 +3443,7 @@ TEST(yaml, multipul_list_indication_case01){
 #  - a
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
 
     //---
     
@@ -3451,7 +3451,7 @@ TEST(yaml, multipul_list_indication_case01){
     ans = sstd::terp::list(1);
     ans[0] = sstd::terp::list(1);
     ans[0][0] = "a";
-    sstd::printn(ans);
+//    sstd::printn(ans);
     
     //---
     
@@ -3467,7 +3467,7 @@ TEST(yaml, multipul_list_indication_case02a){
 #  - b
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
 
     //---
     
@@ -3477,7 +3477,7 @@ TEST(yaml, multipul_list_indication_case02a){
     ans[0][0] = sstd::terp::list(1);
     ans[0][0][0] = "a";
     ans[0][1] = "b";
-    sstd::printn(ans);
+//    sstd::printn(ans);
     
     //---
     
@@ -3493,7 +3493,7 @@ TEST(yaml, multipul_list_indication_case02b){
   - b
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
 
     //---
     
@@ -3503,7 +3503,7 @@ TEST(yaml, multipul_list_indication_case02b){
     ans[0][0] = sstd::terp::list(1);
     ans[0][0][0] = "a";
     ans[0][1] = "b";
-    sstd::printn(ans);
+//    sstd::printn(ans);
     
     //---
     
@@ -3519,7 +3519,7 @@ TEST(yaml, multipul_list_indication_case03){
 #  - k2: v2
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+//    sstd::printn(yml);
 
     //---
     
@@ -3531,7 +3531,7 @@ TEST(yaml, multipul_list_indication_case03){
     ans[0][0][0]["k1"] = "v1";
     ans[0][1] = sstd::terp::hash();
     ans[0][1]["k2"] = "v2";
-    sstd::printn(ans);
+//    sstd::printn(ans);
     
     //---
     
