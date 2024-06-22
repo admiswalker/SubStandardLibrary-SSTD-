@@ -870,7 +870,7 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
     
     return true;
 }
-bool _construct_var_v2(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::command_v2>& v_cmd){
+bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::command_v2>& v_cmd){
     std::vector<sstd::terp::var*> v_dst;    // v: vector, _dst: destination. An address stack for sstd_yaml::ope_alloc (follows the YAML indent)
     std::vector<sstd::terp::var*> v_dst_cr; // v: vector, _dst: destination address, _cr: current. An address stack for sstd_yaml::ope_stack or sstd_yaml::ope_assign.
     std::vector<uint> v_hsc; // v: vector, hsc: head space count
@@ -1429,7 +1429,7 @@ bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     std::vector<struct sstd_yaml::command_v2> v_cmd;
     if(!sstd_yaml::_token2cmd(v_cmd, v_token)){ return false; }
     
-    if(!_construct_var_v2(ret_yml, v_cmd)){ return false; }
+    if(!_construct_var(ret_yml, v_cmd)){ return false; }
     
     return tf;
 }
