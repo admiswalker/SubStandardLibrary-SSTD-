@@ -8,16 +8,13 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // startswith()
 
-bool sstd::startswith(const        char* str, const        char* searchString){
-    for(uint i=0; searchString[i]!='\0'; ++i){
-        if(str[i]=='\0'){ return false; }
-        if(str[i]!=searchString[i]){ return false; }
-    }
-    return true;
+bool _startswith_base(const        char* str, const        char* searchString, const uint len){
+    return ::strncmp(str, searchString, len)==0; // strncmp() is a standard function of the C Langage.
 }
-bool sstd::startswith(const        char* str, const std::string& searchString){ return sstd::startswith(str        , searchString.c_str()); }
-bool sstd::startswith(const std::string& str, const        char* searchString){ return sstd::startswith(str.c_str(), searchString        ); }
-bool sstd::startswith(const std::string& str, const std::string& searchString){ return sstd::startswith(str.c_str(), searchString.c_str()); }
+bool sstd::startswith(const        char* str, const        char* searchString){ return _startswith_base(str        , searchString        , ::strlen(searchString)); }
+bool sstd::startswith(const        char* str, const std::string& searchString){ return _startswith_base(str        , searchString.c_str(), searchString.size()   ); }
+bool sstd::startswith(const std::string& str, const        char* searchString){ return _startswith_base(str.c_str(), searchString        , ::strlen(searchString)); }
+bool sstd::startswith(const std::string& str, const std::string& searchString){ return _startswith_base(str.c_str(), searchString.c_str(), searchString.size()   ); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // strcmp()
@@ -144,6 +141,43 @@ bool sstd::strmatch_getWC(
 bool sstd::strmatch_getWC(const        char* str, const std::string& wildcard, std::string& retWC){ return sstd::strmatch_getWC(str        , wildcard.c_str(), retWC); }
 bool sstd::strmatch_getWC(const std::string& str, const        char* wildcard, std::string& retWC){ return sstd::strmatch_getWC(str.c_str(), wildcard        , retWC); }
 bool sstd::strmatch_getWC(const std::string& str, const std::string& wildcard, std::string& retWC){ return sstd::strmatch_getWC(str.c_str(), wildcard.c_str(), retWC); }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// rcount(), lcount(), count()
+
+uint _rcount_base(const        char* str, uint len, char X){
+    uint ret_cnt=0;
+    for(int i=len-1; i>=0; --i){
+        if(str[i]!=X){ break; }
+        ++ret_cnt;
+    }
+    return ret_cnt;
+}
+uint sstd::rcount(const        char* str, char X){ return _rcount_base(str        , ::strlen(str), X); }
+uint sstd::rcount(const std::string& str, char X){ return _rcount_base(str.c_str(), str.size()   , X); }
+
+//---
+
+uint sstd::lcount(const char* str, char X){
+    uint ret_cnt=0;
+    for(uint i=0; str[i]!='\0'; ++i){
+        if(str[i]!=X){ break; }
+        ++ret_cnt;
+    }
+    return ret_cnt;
+}
+uint sstd::lcount(const std::string& str, char X){ return sstd::lcount(str.c_str(), X); }
+
+//---
+
+uint  sstd::count(const        char* str, char X){
+    uint ret_cnt=0;
+    for(uint i=0; str[i]!='\0'; ++i){
+        if(str[i]==X){ ++ret_cnt; }
+    }
+    return ret_cnt;
+}
+uint  sstd::count(const std::string& str, char X){ return sstd::count(str.c_str(), X); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 

@@ -208,18 +208,6 @@ std::vector<std::string> sstd::split(const std::string& str, const std::string& 
 
 //---
 
-uint sstd_lcount(const char* str, char X){
-    uint ret_cnt=0;
-    for(uint i=0; str[i]!='\0'; ++i){
-        if(str[i]!=X){ break; }
-        ++ret_cnt;
-    }
-    return ret_cnt;
-}
-uint sstd_lcount(const std::string& str, char X){ return sstd_lcount(str.c_str(), X); }
-
-//---
-
 std::string               sstd_lstrip_base   (const uchar* str, const uint len, const uchar* stripList, const uint sLen){
     uint r=0;
     if(len * sLen <= 256){
@@ -330,11 +318,11 @@ std::string _join_mult_line(const std::vector<std::string>& v, const bool ret_pi
         v_delimiter = std::vector<std::string>(v.size()-1, std::string(" "));
         
         uint i = 0;
-        uint hsc = sstd_lcount(v[i], ' '); // hsc: head space count
+        uint hsc = sstd::lcount(v[i], ' '); // hsc: head space count
         if(hsc!=0){ v_delimiter[i] = "\n"; }
         ++i;
         for(; i<v.size()-1; ++i){
-            hsc = sstd_lcount(v[i], ' '); // hsc: head space count
+            hsc = sstd::lcount(v[i], ' '); // hsc: head space count
             if(hsc!=0){
                 v_delimiter[i-1] = "\n";
                 v_delimiter[i  ] = "\n";
@@ -438,7 +426,7 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret_str, const std::string& s
     }else{
         // "|+N", "|-N", ">+N" or ">-N"
         
-        const uint hsc_base_1st_line=sstd_lcount(v_str[1], ' '); // hsc: head space count
+        const uint hsc_base_1st_line=sstd::lcount(v_str[1], ' '); // hsc: head space count
         if(hsc_base_1st_line<=hsc_base_yaml){
             // Error case.
             // - |
@@ -463,7 +451,7 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret_str, const std::string& s
         for(uint i=1; i<v_str.size(); ++i){
             std::string s=v_str[i];
             std::string tmp;
-            uint hsc = sstd_lcount(s, ' '); // hsc: head space count
+            uint hsc = sstd::lcount(s, ' '); // hsc: head space count
             bool have_str_except_space = (hsc!=s.size());
 
             if(have_str_except_space && hsc<hsc_base){
@@ -1358,9 +1346,9 @@ bool _escape_to_unicode_character(std::string& io){
             case 'L':  { tmp += '\u2028'; break; }
             case 'P':  { tmp += '\u2029'; break; }
             default: {
-                if      (strncmp(&io[i+1], "x41"      , strlen("x41"      ))==0){ tmp += "A"; i+=strlen("x41"      ); break;
-                }else if(strncmp(&io[i+1], "u0041"    , strlen("u0041"    ))==0){ tmp += "A"; i+=strlen("u0041"    ); break;
-                }else if(strncmp(&io[i+1], "U00000041", strlen("U00000041"))==0){ tmp += "A"; i+=strlen("U00000041"); break; }
+                if      (sstd::startswith(&io[i+1], "x41"      )){ tmp += "A"; i+=strlen("x41"      ); break;
+                }else if(sstd::startswith(&io[i+1], "u0041"    )){ tmp += "A"; i+=strlen("u0041"    ); break;
+                }else if(sstd::startswith(&io[i+1], "U00000041")){ tmp += "A"; i+=strlen("U00000041"); break; }
                 
                 sstd::pdbg_err("%c%c is not escapeable.\n", io[i], io[i+1]); return false; }
             }

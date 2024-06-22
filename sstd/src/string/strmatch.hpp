@@ -31,6 +31,13 @@ namespace sstd{
     bool strmatch_getWC(const std::string& str, const        char* wildcard, std::string& retWC);
     bool strmatch_getWC(const std::string& str, const std::string& wildcard, std::string& retWC);
 
+    uint rcount(const        char* str, char X);
+    uint rcount(const std::string& str, char X);
+    uint lcount(const        char* str, char X);
+    uint lcount(const std::string& str, char X);
+    uint  count(const        char* str, char X);
+    uint  count(const std::string& str, char X);
+
     bool isNum             (const        char  rhs);
     bool isNum             (const        char* rhs);
     bool isNum             (const std::string& rhs);

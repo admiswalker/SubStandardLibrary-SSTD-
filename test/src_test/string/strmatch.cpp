@@ -85,6 +85,46 @@ TEST(strmatch, pathmatch){
     ASSERT_TRUE ( sstd::pathmatch(str, wildcard4) );
     ASSERT_TRUE ( sstd::pathmatch(str, wildcard5) );
 }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// rcount(), lcount(), count()
+
+TEST(strmatch, rcount_cc){
+    ASSERT_EQ(sstd::rcount("abcdef", 'x'), (uint)0);
+    ASSERT_EQ(sstd::rcount("abcdef", 'f'), (uint)1);
+    ASSERT_EQ(sstd::rcount("abcfff", 'f'), (uint)3);
+    ASSERT_EQ(sstd::rcount("", 'a'), (uint)0);
+}
+TEST(strmatch, rcount_sc){
+    ASSERT_EQ(sstd::rcount(std::string("abcdef"), 'x'), (uint)0);
+}
+
+//---
+
+TEST(strmatch, lcount_cc){
+    ASSERT_EQ(sstd::lcount("abcdef", 'x'), (uint)0);
+    ASSERT_EQ(sstd::lcount("abcdef", 'a'), (uint)1);
+    ASSERT_EQ(sstd::lcount("aaabcd", 'a'), (uint)3);
+    ASSERT_EQ(sstd::lcount("", 'a'), (uint)0);
+}
+TEST(strmatch, lcount_sc){
+    ASSERT_EQ(sstd::lcount(std::string("abcdef"), 'x'), (uint)0);
+}
+
+//---
+
+TEST(strmatch, count_cc){
+    ASSERT_EQ(sstd::count("abcdef", 'x'), (uint)0);
+    ASSERT_EQ(sstd::count("abcdef", 'a'), (uint)1);
+    ASSERT_EQ(sstd::count("xbxdex", 'x'), (uint)3);
+    ASSERT_EQ(sstd::count("", 'a'), (uint)0);
+}
+TEST(strmatch, count_sc){
+    ASSERT_EQ(sstd::count(std::string("abcdef"), 'x'), (uint)0);
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
 TEST(strmatch, isNum_char){
     ASSERT_TRUE ( sstd::isNum('0') );
     ASSERT_TRUE ( sstd::isNum('5') );

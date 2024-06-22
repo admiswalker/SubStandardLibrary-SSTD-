@@ -43,7 +43,7 @@
 #../test/src_test/python/c2py.cpp
 #../test/src_test/string/encode_decode.cpp
 #../test/src_test/string/strEdit.cpp
-#../test/src_test/string/strmatch.cpp
+../test/src_test/string/strmatch.cpp
 #../test/src_test/string/utf8.cpp
 #../test/src_test/sys/status.cpp
 #../test/src_test/sys/system.cpp
