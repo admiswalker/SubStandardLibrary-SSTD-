@@ -418,7 +418,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
                 c.rawStr          = t.rawStr;
                 // --- construct info ---
                 c.ope             = sstd_yaml::ope_assign;
-                c.hsc             = t.hsc_hx + 2*(t.list_type_cnt-1); // t.hsc_lx + 2*(t.list_type_cnt-1);
+                c.hsc             = t.hsc_hx; // t.hsc_lx;
                 c.type            = sstd_yaml::num_str;
                 c.format          = t.format;
                 c.val             = t.val; // t.key;
@@ -453,32 +453,18 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
             }
         } break;
         case sstd_yaml::num_list_and_hash:{
-            for(uint ti=0; ti<t.list_type_cnt; ++ti){ // for multiple list-hash. ex: "- - k1: v1".
+            {
                 // --- debug info ---
                 c.line_num_begin  = t.line_num_begin;
                 c.line_num_end    = t.line_num_end;
                 c.rawStr          = t.rawStr;
                 // --- construct info ---
                 c.ope             = sstd_yaml::ope_alloc;
-                c.hsc             = t.hsc_lx + 2*ti; // t.hsc_hx + 2*ti
+                c.hsc             = t.hsc_lx; // t.hsc_hx + 2*ti
                 c.type            = sstd_yaml::num_list;
                 //c.format          = t.format;
                 //c.val             = t.val; // t.key;
                 ret_vCmd.push_back(c);
-                
-                if(ti+1<t.list_type_cnt){
-                    // construction of stack() command
-                    
-                    // --- debug info ---
-                    c.line_num_begin  = t.line_num_begin;
-                    c.line_num_end    = t.line_num_end;
-                    c.rawStr          = t.rawStr;
-                    // --- construct info ---
-                    c.ope             = sstd_yaml::ope_stack;
-                    c.hsc             = t.hsc_lx + 2*(ti+1); // t.hsc_hx
-                    
-                    ret_vCmd.push_back(c);
-                }
             }
 
             {
@@ -490,7 +476,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
                 c.rawStr          = t.rawStr;
                 // --- construct info ---
                 c.ope             = sstd_yaml::ope_stack;
-                c.hsc             = t.hsc_hx + 2*(t.list_type_cnt-1); // hsc_lx + 2*(type_cnt-1)
+                c.hsc             = t.hsc_hx; // hsc_lx
                 
                 ret_vCmd.push_back(c);
             }
@@ -501,7 +487,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, 
             c.rawStr          = t.rawStr;
             // --- construct info ---
             c.ope             = sstd_yaml::ope_alloc;
-            c.hsc             = t.hsc_hx + 2*(t.list_type_cnt-1); // hsc_lx + 2*(type_cnt-1)
+            c.hsc             = t.hsc_hx; // hsc_lx
             c.type            = sstd_yaml::num_hash;
             //c.format          = t.format;
             c.val             = t.key; // t.val; // key
