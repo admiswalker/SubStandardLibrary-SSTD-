@@ -179,102 +179,6 @@ std::string _rm_comment(const std::string& s){
 
 //---
 
-std::string               sstd_lstrip_base   (const uchar* str, const uint len, const uchar* stripList, const uint sLen){
-    uint r=0;
-    if(len * sLen <= 256){
-        for(; r<len; ++r){
-            bool TF_continue=false;
-            for(uint si=0; si<sLen; ++si){
-                if(str[r]==stripList[si]){ TF_continue=true; break; }
-            }
-            if(!TF_continue){ break; }
-        }
-    }else{
-        bool sTbl[256]={false};
-        for(uint si=0; si<sLen; ++si){ sTbl[ (uchar)stripList[si] ] = true; }
-        
-        for(; r<len; ++r){
-            if(!sTbl[ (uchar)str[r] ]){ break; }
-        }
-    }
-    return std::string((const char*)&str[r]);
-}
-std::string               sstd_rstrip_base   (const uchar* str, const uint len, const uchar* stripList, const uint sLen){
-    int r=len-1;
-    if(len * sLen <= 256){
-        for(; r>=0; --r){
-            bool TF_continue=false;
-            for(uint si=0; si<sLen; ++si){
-                if(str[r]==stripList[si]){ TF_continue=true; break; }
-            }
-            if(!TF_continue){ break; }
-        }
-    }else{
-        bool sTbl[256]={false};
-        for(uint si=0; si<sLen; ++si){ sTbl[ (uchar)stripList[si] ] = true; }
-        
-        for(; r>=0; --r){
-            if(!sTbl[ (uchar)str[r] ]){ break; }
-        }
-    }
-    return std::string((const char*)str, r+1);
-}
-std::string               sstd_strip   (const std::string& str, const char* pStripList){
-    std::string ret = sstd_lstrip_base((const uchar*)str.c_str(), str.size(), (const uchar*)pStripList, strlen(pStripList));
-    return            sstd_rstrip_base((const uchar*)ret.c_str(), ret.size(), (const uchar*)pStripList, strlen(pStripList));
-}
-std::string               sstd_strip   (const std::string& str, const std::string& stripList){
-    std::string ret = sstd_lstrip_base((const uchar*)str.c_str(), str.size(), (const uchar*)stripList.c_str(), stripList.size());
-    return            sstd_rstrip_base((const uchar*)ret.c_str(), ret.size(), (const uchar*)stripList.c_str(), stripList.size());
-}
-
-//std::string               sstd_stripAll   (const        char* str, const        char* stripList);
-//std::string               sstd_stripAll   (const std::string& str, const        char* stripList);
-//std::string               sstd_stripAll   (const        char* str, const std::string& stripList);
-//std::string               sstd_stripAll   (const std::string& str, const std::string& stripList);
-
-//void                      sstd_stripAll_ow(      std::string& str, const        char* stripList);
-//void                      sstd_stripAll_ow(      std::string& str, const std::string& stripList);
-
-//---
-
-bool _is_contain(char c, const std::string& stripList){
-    for(uint i=0; i<stripList.size(); ++i){
-        if(c==stripList[i]){ return true; }
-    }
-    return false;
-}
-void sstd__lstripAll_ow(std::string& str, const std::string& stripList){
-    // 修正点
-    // - stripList が巨大な場合はハッシュテーブルにする
-    uint i=0;
-    for(; i<str.size();){
-        if(!_is_contain(str[i], stripList)){ break; }
-        ++i;
-    }
-    str = &str[i];
-    return;
-}
-void sstd::lstripAll_ow(std::string& str, const char* stripList){ std::string tmp=stripList; sstd__lstripAll_ow(str, tmp); }
-
-//---
-
-void sstd__rstripAll_ow(std::string& str, const std::string& stripList){
-    // 修正点
-    // - stripList が巨大な場合はハッシュテーブルにする
-    int i=(int)str.size()-1;
-    for(; i>=0;){
-        if(!_is_contain(str[i], stripList)){ break; }
-        --i;
-    }
-    str.resize(i+1); // 境界テストで落ちるかも・・・？（本実装で直す）
-    return;
-}
-void sstd::rstripAll_ow(std::string& str, const char* stripList){ std::string tmp=stripList; sstd__rstripAll_ow(str, tmp); }
-
-//---
-
-
 std::string _join_mult_line(const std::vector<std::string>& v, const bool ret_pipeSymbol, const bool ret_greaterThanSymbol){
     std::string ret;
     if(v.size()==0){ return ret; }
@@ -1159,7 +1063,6 @@ uint _get_criteria_hsc(const sstd_yaml::token& t){
         return t.hsc_hx;
     }else{
         return t.hsc_lx;
-//        return t.hsc_lx + 2*t.list_type_cnt;
     }
 }
 uint _get_current_hsc(const sstd_yaml::token& t){
@@ -1444,7 +1347,6 @@ bool sstd::yaml_load(sstd::terp::var& ret_yml, sstd::file& fp){
         sstd::pdbg_err("fread was failed.\n");
         return false;
     }
-    //printf("&raw[0] = %s\n", &raw[0]);
     
     if(!sstd::yaml_load(ret_yml, (const char*)&raw[0])){ return false; }
     
@@ -1457,7 +1359,6 @@ bool sstd::yaml_load_all(std::vector<sstd::terp::var>& ret_vYml, sstd::file& fp)
         sstd::pdbg_err("fread was failed.\n");
         return false;
     }
-    //printf("&raw[0] = %s\n", &raw[0]);
     
     if(!sstd::yaml_load_all(ret_vYml, (const char*)&raw[0])){ return false; }
     

@@ -9,10 +9,6 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // internal functions for unit test
 
-namespace sstd{
-    void lstripAll_ow(std::string& str, const char* stripList);
-//    void rstripAll_ow(std::string& str, const char* stripList);
-}
 namespace sstd_yaml{
 
     //---
@@ -65,10 +61,6 @@ namespace sstd_yaml{
         bool mult_line_val = false;
         std::string key; // key for "hash"
         std::string val; // value for "list" or "hash"
-//        bool val1_use_quotes = false;
-//        bool val2_use_quotes = false;
-//        std::string val1;
-//        std::string val2;
     };
     struct command_v2{
         // Data for Debug YAML parsing
