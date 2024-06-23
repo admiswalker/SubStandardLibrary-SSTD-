@@ -751,55 +751,14 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // str2token section
 
-bool sstd_yaml::_splitByLine_quotes_brackets(std::vector<std::string>& ret, const char* str){ // token ベースに書き換えたら消す
-    
-    bool is_escaped=false;
-    bool in_d_quate=false; // double quate
-    bool in_s_quate=false; // single quate
-    std::string buf;
-    
-    int num_of_square_brackets=0; // []
-    int num_of_curly_brackets=0;  // {}
-    for(uint r=0; str[r]!=0;){ // r: read place
-        buf.clear();
-        for(; str[r]!='\0'; ++r){
-            if(str[r]=='\\'){ is_escaped=true; buf+=str[r]; ++r; if(str[r]=='\0'){break;} }
-            
-            if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; }
-            if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; }
-            
-            if(!in_d_quate && !in_s_quate && str[r]=='['){ ++num_of_square_brackets; }
-            if(!in_d_quate && !in_s_quate && str[r]==']'){ --num_of_square_brackets; }
-            
-            if(!in_d_quate && !in_s_quate && str[r]=='{'){ ++num_of_curly_brackets; }
-            if(!in_d_quate && !in_s_quate && str[r]=='}'){ --num_of_curly_brackets; }
-            
-            if(!in_d_quate && !in_s_quate && num_of_square_brackets==0 && num_of_curly_brackets==0 && str[r]==0x0A                  ){ r+=1; break; } // Uinx ("\n")
-            if(!in_d_quate && !in_s_quate && num_of_square_brackets==0 && num_of_curly_brackets==0 && str[r]==0x0D && str[r+1]==0x0A){ r+=2; break; } // Windows ("\r\n")
-            buf += str[r];
-            
-            is_escaped=false;
-        }
-        ret.push_back(std::move(buf));
-    }
-    if(in_d_quate){ ret.clear(); return false; }
-    if(in_s_quate){ ret.clear(); return false; }
-    if(num_of_square_brackets){ ret.clear(); return false; }
-    if(num_of_curly_brackets ){ ret.clear(); return false; }
-    
-    return true;
-}
-bool sstd_yaml::_splitByLine_quotes_brackets(std::vector<std::string>& ret, const std::string& str){ // token ベースに書き換えたら消す
-    return sstd_yaml::_splitByLine_quotes_brackets(ret, str.c_str());
-}
-
-//---
-
 bool _is_flow(const std::string& subt){
     return (subt.starts_with('[') || subt.starts_with('{'));
 }
 bool _is_end_marker(const std::string& subt){
     return subt.starts_with("...");
+}
+bool _is_separator(const std::string& subt){
+    return subt.starts_with("---");
 }
 
 bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret, const std::string& str){
@@ -1116,6 +1075,8 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             //   - `(*pT).key.size()!=0||(*pT).val.size()!=0`: The line is NOT Empty. (If the line is empty, the parser needs to treat as a line break of multi-line string).
             //   - `curr_hsc<=criteria_hsc`: The line is out of scope.
             if( start_with_string && (((*pT).key.size()!=0||(*pT).val.size()!=0||(*pT).key_is_dqed||(*pT).key_is_sqed||(*pT).val_is_dqed||(*pT).val_is_sqed) && curr_hsc<=criteria_hsc) ){ break; }
+
+            if( _is_separator((*pT).rawStr) ){ break; }
             
             // Copy values
             tmp.rawStr += '\n' + (*pT).rawStr;
@@ -1222,18 +1183,23 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // YAML load section
 
-bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
-    bool tf = true;
-    
-    std::vector<sstd_yaml::token> v_token;
-    if(!sstd_yaml::_str2token(v_token, s)){ sstd::pdbg_err("single or double quatation is not closed\n"); return false; } // v: vector, ls: line string
+bool _yaml_load_base(sstd::terp::var& ret_yml, const std::vector<sstd_yaml::token>& v_token){
     
     std::vector<struct sstd_yaml::command> v_cmd;
     if(!sstd_yaml::_token2cmd(v_cmd, v_token)){ return false; }
     
     if(!_construct_var(ret_yml, v_cmd)){ return false; }
     
-    return tf;
+    return true;
+}
+bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
+    
+    std::vector<sstd_yaml::token> v_token;
+    if(!sstd_yaml::_str2token(v_token, s)){ sstd::pdbg_err("single or double quatation is not closed\n"); return false; } // v: vector, ls: line string
+    
+    if(!_yaml_load_base(ret_yml, v_token)){ sstd::pdbg_err("_yaml_load_base() is failed.\n"); return false; }
+    
+    return true;
 }
 bool sstd::yaml_load(sstd::terp::var& ret_yml, const std::string& s){ return sstd::yaml_load(ret_yml, s.c_str()); }
 
@@ -1258,20 +1224,36 @@ std::vector<std::vector<std::string>> _split_by_separator(const std::vector<std:
     
     return v_ls;
 }
+std::vector<std::vector<sstd_yaml::token>> _split_by_separator(std::vector<sstd_yaml::token>& vT){
+    std::vector<std::vector<sstd_yaml::token>> ret_vvT;
+    
+    std::vector<sstd_yaml::token> tmp_vT;
+    for(uint i=0; i<vT.size(); ++i){
+        if(vT[i].rawStr.starts_with("---")){ // detect the separator
+            ret_vvT.push_back(std::move(tmp_vT));
+            tmp_vT.clear();
+            continue;
+        }
+        
+        tmp_vT.push_back(std::move(vT[i]));
+    }
+    ret_vvT.push_back(std::move(tmp_vT));
+    
+    return ret_vvT;
+}
 bool sstd::yaml_load_all(std::vector<sstd::terp::var>& ret_vYml, const        char* s){
-    std::vector<std::string> ls; if(!sstd_yaml::_splitByLine_quotes_brackets(ls, s)){ sstd::pdbg_err("double quatation is not closed\n"); return false; } // v: vector, ls: line string
-    std::vector<std::vector<std::string>> v_ls = _split_by_separator(ls);
+    std::vector<sstd_yaml::token> v_token;
+    if(!sstd_yaml::_str2token(v_token, s)){ sstd::pdbg_err("single or double quatation is not closed\n"); return false; } // v: vector, ls: line string
+    
+    std::vector<std::vector<sstd_yaml::token>> vvT = _split_by_separator(v_token);
     
     uint base_idx=0;
-    for(uint i=0; i<v_ls.size(); ++i){
-
-        std::string s = sstd::join(v_ls[i], '\n');
-
+    for(uint i=0; i<vvT.size(); ++i){
         sstd::terp::var ret_yml;
-        sstd::yaml_load(ret_yml, s);
+        if(!_yaml_load_base(ret_yml, vvT[i])){ sstd::pdbg_err("_yaml_load_base() is failed.\n"); return false; }
         ret_vYml.push_back(std::move(ret_yml));
         
-        base_idx += 1 + v_ls[i].size();
+        base_idx += 1 + vvT[i].size();
     }
     
     return true;

@@ -78,9 +78,6 @@ namespace sstd_yaml{
 
     //---
 
-    bool _splitByLine_quotes_brackets(std::vector<std::string>& ret, const        char* str);
-    bool _splitByLine_quotes_brackets(std::vector<std::string>& ret, const std::string& str);
-    
     bool _split_quotes_by_control_chars(std::vector<std::string>& ret, const char* str, const uint str_len);
     
     //---
