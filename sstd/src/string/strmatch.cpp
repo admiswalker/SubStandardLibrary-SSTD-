@@ -250,8 +250,7 @@ bool sstd::charIn_all(const std::string& lhs, const std::string& rhs){ return ss
 bool sstd::strIn(const char* lhs, const char* rhs){ // Is lhs in rhs ?
     if(lhs[0]=='\0'){ return true; }
     
-    bool ret=true;
-    uint l=0, r=0;
+    uint r=0;
     for(; rhs[r]!='\0'; ++r){
         if(sstd::startswith(&rhs[r], lhs)){ return true; }
     }
