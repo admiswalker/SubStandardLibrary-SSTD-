@@ -241,7 +241,6 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret_str, const std::string& s
         // parse multi-line string to YAML style string
         std::string tmp;
         bool prev_is_line_break=true;
-        bool prev_line_break_is_escaped=false;
         for(uint i=0; i<v_str.size(); ++i){
             tmp = sstd::strip(v_str[i]);
             if(tmp.starts_with("#")){ continue; }
@@ -796,8 +795,6 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
     bool in_d_quate=false; // double quate ("")
     bool in_s_quate=false; // single quate ('')
 
-    int cnt=0; // for debug
-    
     for(uint r=0; str[r]!='\0';){ // r: read place
         sstd_yaml::token tmp;
         tmp.line_num_begin = line_num;
@@ -1104,26 +1101,26 @@ bool _escape_to_unicode_character(std::string& io){
             case '\\': { tmp += '\\'; break; }
                 
             case '"':  { tmp += '\"'; break; }
-            case 'a':  { tmp += '\u0007'; break; }
+            case 'a':  { tmp += (uchar)0x07; break; }
             case 'b':  { tmp += '\b'; break; }
-            case 'e':  { tmp += '\u001b'; break; }
+//            case 'e':  { tmp += '\u001b'; break; } // Needs to check "How UTF-8 encode" if we treats as UTF-8.
             case 'f':  { tmp += '\f'; break; }
                 
             case 'n':  { tmp += '\n'; break; }
             case 'r':  { tmp += '\r'; break; }
             case 't':  { tmp += '\t'; break; }
             case 'v':  { tmp += '\u000b'; break; }
-            case '0':  { tmp += '\u0000'; break; }
+            case '0':  { tmp += (uchar)0x00; break; }
                 
             //case ' ': { tmp += '\\'; break; }
-            case '_':  { tmp += '\u00a0'; break; }
-            case 'N':  { tmp += '\u0085'; break; }
-            case 'L':  { tmp += '\u2028'; break; }
-            case 'P':  { tmp += '\u2029'; break; }
+//            case '_':  { tmp += '\u00a0'; break; } // Needs to check "How UTF-8 encode" if we treats as UTF-8.
+//            case 'N':  { tmp += '\u0085'; break; } // Needs to check "How UTF-8 encode" if we treats as UTF-8.
+//            case 'L':  { tmp += '\u2028'; break; } // Needs to check "How UTF-8 encode" if we treats as UTF-8.
+//            case 'P':  { tmp += '\u2029'; break; } // Needs to check "How UTF-8 encode" if we treats as UTF-8.
             default: {
-                if      (sstd::startswith(&io[i+1], "x41"      )){ tmp += "A"; i+=strlen("x41"      ); break;
-                }else if(sstd::startswith(&io[i+1], "u0041"    )){ tmp += "A"; i+=strlen("u0041"    ); break;
-                }else if(sstd::startswith(&io[i+1], "U00000041")){ tmp += "A"; i+=strlen("U00000041"); break; }
+//                if      (sstd::startswith(&io[i+1], "x41"      )){ tmp += "A"; i+=strlen("x41"      ); break; // Needs to check "How UTF-8 encode" if we treats as UTF-8.
+//                }else if(sstd::startswith(&io[i+1], "u0041"    )){ tmp += "A"; i+=strlen("u0041"    ); break; // Needs to check "How UTF-8 encode" if we treats as UTF-8.
+//                }else if(sstd::startswith(&io[i+1], "U00000041")){ tmp += "A"; i+=strlen("U00000041"); break; } // Needs to check "How UTF-8 encode" if we treats as UTF-8.
                 
                 sstd::pdbg_err("%c%c is not escapeable.\n", io[i], io[i+1]); return false; }
             }
