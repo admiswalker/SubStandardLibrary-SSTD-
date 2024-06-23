@@ -138,12 +138,7 @@ TEST(yaml, _str2token_val1_val2_multiline_flow          ){ TEST_STR2TOKEN__KEY_V
 TEST(yaml, _str2token_val1_val2_multiline_flow_list     ){ TEST_STR2TOKEN__KEY_VAL("", "[\na,\nb,\nc\n]", "- [\na,\nb,\nc\n]"); }
 TEST(yaml, _str2token_val1_val2_multiline_flow_hash     ){ TEST_STR2TOKEN__KEY_VAL("k", "[\na,\nb,\nc\n]",   "k: [\na,\nb,\nc\n]"); }
 TEST(yaml, _str2token_val1_val2_multiline_flow_list_hash){ TEST_STR2TOKEN__KEY_VAL("k", "[\na,\nb,\nc\n]", "- k: [\na,\nb,\nc\n]"); }
-/*
-// mutliline YAML notation // multi-line 系は _str2token() の外に移すので，あとで削除する
-TEST(yaml, _str2token_val1_val2_multiline_list     ){ TEST_STR2TOKEN__KEY_VAL( "", "|+123\na\nb\nc",    "- |+123\na\nb\nc"); }
-TEST(yaml, _str2token_val1_val2_multiline_hash     ){ TEST_STR2TOKEN__KEY_VAL("k", "|+123\na\nb\nc",   "k: |+123\na\nb\nc"); }
-TEST(yaml, _str2token_val1_val2_multiline_list_hash){ TEST_STR2TOKEN__KEY_VAL("k", "|+123\na\nb\nc", "- k: |+123\na\nb\nc"); }
-*/
+
 //---
 // Test _str2token() of remove comments
 //*
@@ -170,6 +165,7 @@ k_Y: v_Y
 //    sstd::printn(v_ret.size());
 //    sstd::printn(v_ret);
     
+    ASSERT_TRUE(ret);
     ASSERT_EQ(v_ret.size(), 3);
     ASSERT_STREQ(v_ret[0].rawStr.c_str(), "k_X: ");
     ASSERT_STREQ(v_ret[0].val.c_str(),    ""     );
@@ -189,6 +185,7 @@ TEST(yaml, _str2token_multi_list_case01){
     bool ret = sstd_yaml::_str2token(v_ret, s);
 //    sstd::printn(v_ret);
     
+    ASSERT_TRUE(ret);
     ASSERT_EQ(v_ret.size(), 3);
     ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- a");
     ASSERT_STREQ(v_ret[0].val.c_str(),     "a" );
@@ -203,6 +200,7 @@ TEST(yaml, _str2token_multi_list_case02){
     bool ret = sstd_yaml::_str2token(v_ret, s);
 //    sstd::printn(v_ret);
     
+    ASSERT_TRUE(ret);
     ASSERT_EQ(v_ret.size(), 3);
     ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- \"\"");
     ASSERT_STREQ(v_ret[0].val.c_str(),          "");
@@ -217,6 +215,7 @@ TEST(yaml, _str2token_multi_list_case03){
     bool ret = sstd_yaml::_str2token(v_ret, s);
 //    sstd::printn(v_ret);
     
+    ASSERT_TRUE(ret);
     ASSERT_EQ(v_ret.size(), 2);
     ASSERT_STREQ(v_ret[0].rawStr.c_str(),     "-");
     ASSERT_STREQ(v_ret[0].val.c_str(),         "");
@@ -229,6 +228,7 @@ TEST(yaml, _str2token_multi_list_case04){
     bool ret = sstd_yaml::_str2token(v_ret, s);
 //    sstd::printn(v_ret);
     
+    ASSERT_TRUE(ret);
     ASSERT_EQ(v_ret.size(), 2);
     ASSERT_STREQ(v_ret[0].rawStr.c_str(),    "- ");
     ASSERT_STREQ(v_ret[0].val.c_str(),         "");
@@ -244,7 +244,7 @@ TEST(yaml, _str2token_multi_list_case05){
     bool ret = sstd_yaml::_str2token(v_ret, s);
 //    sstd::printn(v_ret);
 
-    
+    ASSERT_TRUE(ret);
     ASSERT_EQ(v_ret.size(), 2);
     ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- [{\nk11: v11,\nk12:v12,\nk13:v13\n}]");
     ASSERT_STREQ(v_ret[0].val.c_str(),      "[{\nk11: v11,\nk12:v12,\nk13:v13\n}]");
@@ -260,6 +260,7 @@ TEST(yaml, _str2token_multi_list_case06){
     bool ret = sstd_yaml::_str2token(v_ret, s);
 //    sstd::printn(v_ret);
     
+    ASSERT_TRUE(ret);
     ASSERT_EQ(v_ret.size(), 3);
     ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- - - a");
     ASSERT_STREQ(v_ret[0].val.c_str(),           "");
@@ -287,6 +288,7 @@ TEST(yaml, _str2token_multi_list_case07){
     bool ret = sstd_yaml::_str2token(v_ret, s);
 //    sstd::printn(v_ret);
     
+    ASSERT_TRUE(ret);
     ASSERT_EQ(v_ret.size(), 4);
     ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- a # comment");
     ASSERT_STREQ(v_ret[0].val.c_str(),   "a");
@@ -314,6 +316,7 @@ TEST(yaml, _str2token_multi_list_case08){
     bool ret = sstd_yaml::_str2token(v_ret, s);
 //    sstd::printn(v_ret);
     
+    ASSERT_TRUE(ret);
     ASSERT_EQ(v_ret.size(), 4);
     ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- a # comment");
     ASSERT_STREQ(v_ret[0].val.c_str(),   "a");
@@ -343,6 +346,7 @@ TEST(yaml, _str2token_multi_list_case09){
     bool ret = sstd_yaml::_str2token(v_ret, s);
 //    sstd::printn(v_ret);
     
+    ASSERT_TRUE(ret);
     ASSERT_EQ(v_ret.size(), 4);
 //    sstd::printn(v_ret[0].val.c_str());
     ASSERT_STREQ(v_ret[0].val.c_str(), "a");
@@ -366,6 +370,7 @@ TEST(yaml, _str2token_multi_list_case10){
     bool ret = sstd_yaml::_str2token(v_ret, s);
 //    sstd::printn(v_ret);
     
+    ASSERT_TRUE(ret);
     ASSERT_EQ(v_ret.size(), 1);
 //    sstd::printn(v_ret[0].rawStr.c_str());
 //    ASSERT_STREQ(v_ret[0].rawStr.c_str(), R"()");
@@ -657,6 +662,8 @@ TEST(yaml, _token2cmd_usual_cases){
     //printf("------------------------------------------------------\n");
     //sstd::printn(ret_v_cmd);
     //printf("------------------------------------------------------\n");
+    
+    ASSERT_TRUE(ret);
 
     uint idx=0;
     // -
@@ -870,7 +877,8 @@ TEST(yaml, _token2cmd_null_values_case01){
     ret = sstd_yaml::_str2token(ret_v_token, s);
     ret = sstd_yaml::_token2cmd(ret_v_cmd, ret_v_token);
 //    sstd::printn(ret_v_cmd);
-
+    ASSERT_TRUE(ret);
+    
     uint idx=0;
     // -
     ASSERT_EQ(ret_v_cmd[idx].ope, sstd_yaml::ope_alloc);
@@ -892,6 +900,7 @@ k2:
     ret = sstd_yaml::_str2token(ret_v_token, s);
     ret = sstd_yaml::_token2cmd(ret_v_cmd, ret_v_token);
 //    sstd::printn(ret_v_cmd);
+    ASSERT_TRUE(ret);
 
     uint idx=0;
     // k1:
@@ -914,6 +923,7 @@ TEST(yaml, _token2cmd_null_values_case03){
     ret = sstd_yaml::_str2token(ret_v_token, s);
     ret = sstd_yaml::_token2cmd(ret_v_cmd, ret_v_token);
 //    sstd::printn(ret_v_cmd);
+    ASSERT_TRUE(ret);
 
     uint idx=0;
     // -
@@ -1074,7 +1084,7 @@ a # comment
 b
 )";
     sstd::terp::var yml;
-    bool TF = sstd::yaml_load(yml, s); // TEST THIS LINE
+    bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
     //testing::internal::CaptureStdout();
     //sstd::terp::var yml; ASSERT_FALSE(sstd::yaml_load(yml, s)); // TEST THIS LINE
     //std::string ret = testing::internal::GetCapturedStdout().c_str();
@@ -1090,6 +1100,7 @@ b
     
     //---
     
+    ASSERT_TRUE(ret);
     ASSERT_TRUE(yml==ans);
 }
 //*/
@@ -4245,67 +4256,8 @@ TEST(yaml, yaml_load_all_fp){
     ASSERT_TRUE(vYml[0]==ans1);
     ASSERT_TRUE(vYml[1]==ans2);
 }
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
-//*/
-/*
-TEST(tmp, split_s_s){ // あとで sstd/test_src/string/strEdit.cpp/hpp に移動する
-    std::string s="abcdef";
-    std::vector<std::string> vs = sstd::split(s, "bc");
-    sstd::printn(vs);
-    //sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
-
-    //---
-    
-    //sstd::terp::var ans;
-    //ans = sstd::terp::list(2);
-    //ans[0] = "a[]";
-    //ans[1] = "a{}";
-    
-    //---
-    
-    //ASSERT_TRUE(yml==ans);
-}
-TEST(tmp, lstripAll_ow_s_s){ // あとで sstd/test_src/string/strEdit.cpp/hpp に移動する
-    std::string s="\n abc \n";
-    sstd::lstripAll_ow(s, " \n");
-    sstd::printn(s);
-    //sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
-
-    //---
-    
-    //sstd::terp::var ans;
-    //ans = sstd::terp::list(2);
-    //ans[0] = "a[]";
-    //ans[1] = "a{}";
-    
-    //---
-    
-    //ASSERT_TRUE(yml==ans);
-}
-TEST(tmp, rstripAll_ow_s_s){ // あとで sstd/test_src/string/strEdit.cpp/hpp に移動する
-    std::string s="\n abc \n";
-    sstd::rstripAll_ow(s, " \n");
-    sstd::printn(s);
-    //sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
-
-    //---
-    
-    //sstd::terp::var ans;
-    //ans = sstd::terp::list(2);
-    //ans[0] = "a[]";
-    //ans[1] = "a{}";
-    
-    //---
-    
-    //ASSERT_TRUE(yml==ans);
-}
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-
 /*
 // 下記失敗する．
 
