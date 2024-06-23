@@ -740,7 +740,7 @@ TEST(yaml, _token2cmd_usual_cases){
 - v9
 )";
     std::vector<sstd_yaml::token> ret_v_token;
-    std::vector<sstd_yaml::command_v2> ret_v_cmd;
+    std::vector<sstd_yaml::command> ret_v_cmd;
     bool ret = false;
     ret = sstd_yaml::_str2token(ret_v_token, s);
     //printf("------------------------------------------------------\n");
@@ -957,7 +957,7 @@ TEST(yaml, _token2cmd_null_values_case01){
 - 
 )";
     std::vector<sstd_yaml::token> ret_v_token;
-    std::vector<sstd_yaml::command_v2> ret_v_cmd;
+    std::vector<sstd_yaml::command> ret_v_cmd;
     bool ret = false;
     ret = sstd_yaml::_str2token(ret_v_token, s);
     ret = sstd_yaml::_token2cmd(ret_v_cmd, ret_v_token);
@@ -979,7 +979,7 @@ k1:
 k2:
 )";
     std::vector<sstd_yaml::token> ret_v_token;
-    std::vector<sstd_yaml::command_v2> ret_v_cmd;
+    std::vector<sstd_yaml::command> ret_v_cmd;
     bool ret = false;
     ret = sstd_yaml::_str2token(ret_v_token, s);
     ret = sstd_yaml::_token2cmd(ret_v_cmd, ret_v_token);
@@ -1001,7 +1001,7 @@ TEST(yaml, _token2cmd_null_values_case03){
 - k2:
 )";
     std::vector<sstd_yaml::token> ret_v_token;
-    std::vector<sstd_yaml::command_v2> ret_v_cmd;
+    std::vector<sstd_yaml::command> ret_v_cmd;
     bool ret = false;
     ret = sstd_yaml::_str2token(ret_v_token, s);
     ret = sstd_yaml::_token2cmd(ret_v_cmd, ret_v_token);

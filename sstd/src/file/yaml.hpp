@@ -62,7 +62,7 @@ namespace sstd_yaml{
         std::string key; // key for "hash"
         std::string val; // value for "list" or "hash"
     };
-    struct command_v2{
+    struct command{
         // Data for Debug YAML parsing
         uint line_num_begin = 1;                       // beginning line number
         uint line_num_end   = 1;                       // endding line number (for multipleline)
@@ -96,7 +96,7 @@ namespace sstd_yaml{
     bool _str2token(std::vector<sstd_yaml::token>& ret, const char* str);
     bool _str2token(std::vector<sstd_yaml::token>& ret, const std::string& str);
     
-    bool _token2cmd(std::vector<struct sstd_yaml::command_v2>& ret_vCmd, const std::vector<sstd_yaml::token>& v_token);
+    bool _token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, const std::vector<sstd_yaml::token>& v_token);
     bool _token2json(std::string& s_json, const std::vector<sstd_yaml::token>& v_token);
     
     //---
@@ -109,9 +109,9 @@ namespace sstd{
     void for_printn(const sstd_yaml::token& rhs);
     void print_for_vT(const sstd_yaml::token& rhs);
     
-    void print(const sstd_yaml::command_v2& rhs);
-    void for_printn(const sstd_yaml::command_v2& rhs);
-    void print_for_vT(const sstd_yaml::command_v2& rhs);
+    void print(const sstd_yaml::command& rhs);
+    void for_printn(const sstd_yaml::command& rhs);
+    void print_for_vT(const sstd_yaml::command& rhs);
     
     bool yaml_load     (           sstd::terp::var & ret_yml,  const        char* s);
     bool yaml_load     (           sstd::terp::var & ret_yml,  const std::string& s);
