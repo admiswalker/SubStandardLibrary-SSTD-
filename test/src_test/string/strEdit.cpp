@@ -217,6 +217,25 @@ TEST(strEdit, split_s_c){ TEST_SPLIT_CS_X(' ', std::string(" a  b, c"), "", "a",
 
 //---
 
+#define TEST_SPLIT_SS_X(X_IN, S_IN, ...)                                 \
+    std::vector<std::string> ret_v = sstd::split(S_IN, X_IN); /* TEST THIS LINE */ \
+    /* sstd::printn(ret_v); */                                          \
+    sstd::printn(ret_v);                                                \
+    ASSERT_TRUE(ret_v == std::vector<std::string>({__VA_ARGS__}) );
+
+TEST(strEdit, split_s_s_space_1_0){ TEST_SPLIT_SS_X(",", "a,b,c", "a", "b", "c"); }
+
+TEST(strEdit, split_s_s_space_m_0){ TEST_SPLIT_SS_X("xxx", "123abcabs456", "123abcabs456"); }
+TEST(strEdit, split_s_s_space_m_1){ TEST_SPLIT_SS_X("abc", "123abcabs456", "123", "abs456"); }
+TEST(strEdit, split_s_s_space_m_2a){ TEST_SPLIT_SS_X("abc", "123abc456abc789", "123", "456", "789"); }
+TEST(strEdit, split_s_s_space_m_2b){ TEST_SPLIT_SS_X("abc", "123abc456abc789abc", "123", "456", "789", ""); }
+
+TEST(strEdit, split_s_s){ TEST_SPLIT_SS_X(std::string("abc"), std::string("123abc456abc789"), std::string("123"), std::string("456"), std::string("789")); }
+
+#undef TEST_SPLIT_SS_X
+
+//---
+
 #define TEST_SPLIT_RMSPACE_CS(S_IN, ...)                                \
     std::vector<std::string> ret_v = sstd::split_rmSpace(S_IN); /* TEST THIS LINE */ \
     /* sstd::printn(ret_v); */                                          \

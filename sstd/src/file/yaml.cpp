@@ -177,35 +177,6 @@ std::string _rm_comment(const std::string& s){
     return sstd::rstrip(v[0]);
 }
 
-bool _str_eq(const std::string& str, uint is_begin, const std::string& X){
-    uint is=is_begin;
-    uint ix=0;
-    for(; ix<X.size(); ++ix, ++is){
-        if(!(is<str.size())){ return false; }
-        if(str[is]!=X[ix]){ return false; }
-    }
-    return true;
-}
-std::vector<std::string> sstd::split(const std::string& str, const std::string& X){
-    if(str.size()<=1){ return std::vector<std::string>({str}); }
-    if(X.size()  ==0){ return std::vector<std::string>({str}); }
-    if(X.size()  ==1){ return sstd::split(str.c_str(), X[0]); }
-    
-    std::vector<std::string> splitList;
-    std::string buf;
-    for(uint i=0; i<str.size(); ++i){
-        if(_str_eq(str, i, X)){
-            i += X.size()-1;
-            splitList.push_back(buf);
-            buf.clear();
-        }else{
-            buf += str[i];
-        }
-    }
-    if(buf.size()!=0){ splitList.push_back(buf); }
-    return splitList;
-}
-
 //---
 
 std::string               sstd_lstrip_base   (const uchar* str, const uint len, const uchar* stripList, const uint sLen){
