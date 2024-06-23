@@ -14,23 +14,23 @@ namespace sstd_yaml{
     //---
     // operation definition
     
-    const static uchar ope_null   = 255;
-    const static uchar ope_alloc  = 0; // allocate
-    const static uchar ope_stack  = 1; // stacking a value to v_dst
-    const static uchar ope_assign = 2; // assignemnt
+    const static uint8 ope_null   = 255;
+    const static uint8 ope_alloc  = 0; // allocate
+    const static uint8 ope_stack  = 1; // stacking a value to v_dst
+    const static uint8 ope_assign = 2; // assignemnt
 
     //---
     // type definition
 
     // TODO: num_ -> type_ に名前を置換する
     
-    const static uchar num_null             = 255;
-    const static uchar num_block_style_base = 0;
-    const static uchar num_str              = 0; // for BLOCK_STYLE
-    const static uchar num_list             = 1; // for BLOCK_STYLE
-    const static uchar num_hash             = 2; // for BLOCK_STYLE
-    const static uchar num_list_and_hash    = 3; // for BLOCK_STYLE
-    const static uchar num_flow_style_base  = 4;
+    const static uint8 num_null             = 255;
+    const static uint8 num_block_style_base = 0;
+    const static uint8 num_str              = 0; // for BLOCK_STYLE
+    const static uint8 num_list             = 1; // for BLOCK_STYLE
+    const static uint8 num_hash             = 2; // for BLOCK_STYLE
+    const static uint8 num_list_and_hash    = 3; // for BLOCK_STYLE
+    const static uint8 num_flow_style_base  = 4;
     // sstd_yaml::num_flow_style_base + sstd_yaml::num_str           4 // reserved number for FLOW_STYLE
     // sstd_yaml::num_flow_style_base + sstd_yaml::num_list          5 // reserved number for FLOW_STYLE
     // sstd_yaml::num_flow_style_base + sstd_yaml::num_hash          6 // reserved number for FLOW_STYLE
