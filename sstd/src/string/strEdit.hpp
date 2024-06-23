@@ -75,6 +75,10 @@ namespace sstd{
     std::string               stripAll   (const        char* str, const std::string& stripList);
     std::string               stripAll   (const std::string& str, const std::string& stripList);
 
+    void                     lstripAll_ow(      std::string& str, const        char* stripList);
+    void                     lstripAll_ow(      std::string& str, const std::string& stripList);
+    void                     rstripAll_ow(      std::string& str, const        char* stripList);
+    void                     rstripAll_ow(      std::string& str, const std::string& stripList);
     void                      stripAll_ow(      std::string& str, const        char* stripList);
     void                      stripAll_ow(      std::string& str, const std::string& stripList);
     // todo: rm '\t'

@@ -220,7 +220,6 @@ TEST(strEdit, split_s_c){ TEST_SPLIT_CS_X(' ', std::string(" a  b, c"), "", "a",
 #define TEST_SPLIT_SS_X(X_IN, S_IN, ...)                                 \
     std::vector<std::string> ret_v = sstd::split(S_IN, X_IN); /* TEST THIS LINE */ \
     /* sstd::printn(ret_v); */                                          \
-    sstd::printn(ret_v);                                                \
     ASSERT_TRUE(ret_v == std::vector<std::string>({__VA_ARGS__}) );
 
 TEST(strEdit, split_s_s_space_1_0){ TEST_SPLIT_SS_X(",", "a,b,c", "a", "b", "c"); }
@@ -594,6 +593,87 @@ TEST(strEdit, stripAll_ss){ strEdit_stripAll_check_io(str_in,         std::strin
 #undef strEdit_stripAll_check_io
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// rstripAll_ow(), lstripAll_ow(), stripAll_ow()
+
+TEST(strEdit, lstripAll_ow_sc_case01_01a){
+    std::string str_in  = "0a0b0cx0d0xe0f0g0";
+    std::string str_ans = "a0b0cx0d0xe0f0g0";
+    sstd::lstripAll_ow(str_in, "x0");
+    ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+TEST(strEdit, lstripAll_ow_sc__case01_01b){
+    std::string str_in  = "0a0b0cx0d0xe0f0g0";
+    std::string str_ans = "";
+    sstd::lstripAll_ow(str_in, "0a0b0cx0d0xe0f0g0");
+    ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+TEST(strEdit, lstripAll_ow_sc_case01_02){
+    std::string str_in  = "";
+    std::string str_ans = "";
+    sstd::lstripAll_ow(str_in, "x0");
+    ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+TEST(strEdit, lstripAll_ow_sc_case01_03){
+    std::string str_in  = "";
+    std::string str_ans = "";
+    sstd::lstripAll_ow(str_in, "");
+    ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+TEST(strEdit, lstripAll_ow_sc_case02){
+    std::string str_in  = "0000000000000000000000000000xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0000000x0x0x0x0x0x000x0x0xxx0000x0x0xx00000x00x0x0x00000000000000000000000000000xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0000000x0x0x0x0x0x000x0x0xxx0000x0x0xx00000x00x0x0x00000000000000000000000000000xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0000000x0x0x0x0x0x000x0x0xxx0000x0x0xx00000x00x0x0x0a0b0cx0d0xe0f0g0x";
+    std::string str_ans = "a0b0cx0d0xe0f0g0x";
+    sstd::lstripAll_ow(str_in, "x0");
+    ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+
+TEST(strEdit, lstripAll_ow_ss_case01_01){
+    std::string str_in  = "0a0b0cx0d0xe0f0g0";
+    std::string str_ans = "a0b0cx0d0xe0f0g0";
+    sstd::lstripAll_ow(str_in, std::string("x0"));
+    ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+
+//---
+
+TEST(strEdit, rstripAll_ow_sc_case01_01a){
+    std::string str_in  = "0a0b0cx0d0xe0f0g0";
+    std::string str_ans = "0a0b0cx0d0xe0f0g";
+    sstd::rstripAll_ow(str_in, "x0");
+    ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+TEST(strEdit, rstripAll_ow_sc__case01_01b){
+    std::string str_in  = "0a0b0cx0d0xe0f0g0";
+    std::string str_ans = "";
+    sstd::rstripAll_ow(str_in, "abcdefgx0");
+    ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+TEST(strEdit, rstripAll_ow_sc_case01_02){
+    std::string str_in  = "";
+    std::string str_ans = "";
+    sstd::rstripAll_ow(str_in, "x0");
+    ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+TEST(strEdit, rstripAll_ow_sc_case01_03){
+    std::string str_in  = "";
+    std::string str_ans = "";
+    sstd::rstripAll_ow(str_in, "");
+    ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+TEST(strEdit, rstripAll_ow_sc_case02){
+    std::string str_in  = "0a0b0cx0d0xe0f0g00000000000000000000000000000xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0000000x0x0x0x0x0x000x0x0xxx0000x0x0xx00000x00x0x0x00000000000000000000000000000xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0000000x0x0x0x0x0x000x0x0xxx0000x0x0xx00000x00x0x0x00000000000000000000000000000xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx0000000x0x0x0x0x0x000x0x0xxx0000x0x0xx00000x00x0x0x";
+    std::string str_ans = "0a0b0cx0d0xe0f0g";
+    sstd::rstripAll_ow(str_in, "x0");
+    ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+
+TEST(strEdit, rstripAll_ow_ss_case01_01){
+    std::string str_in  = "0a0b0cx0d0xe0f0g0";
+    std::string str_ans = "0a0b0cx0d0xe0f0g";
+    sstd::rstripAll_ow(str_in, std::string("x0"));
+    ASSERT_STREQ(str_in.c_str(), str_ans.c_str());
+}
+
+//---
 
 TEST(strEdit, stripAll_ow_case01_01){
     std::string str_in  = "0a0b0cx0d0xe0f0g0";

@@ -338,7 +338,7 @@ bool _parse_mult_line_opt(bool& ret_noSymbol, bool& ret_pipeSymbol, bool& ret_gr
             if(opt[i]=='+'){ if(ret_plusSymbol       ){sstd::pdbg_err("Duplicated '+'.\n");return false;} ret_plusSymbol       =true; continue; }
             if(opt[i]=='-'){ if(ret_minusSymbol      ){sstd::pdbg_err("Duplicated '-'.\n");return false;} ret_minusSymbol      =true; continue; }
         }
-        std::string sNum = sstd_strip(opt, "|>+-");
+        std::string sNum = sstd::stripAll(opt, "|>+-");
         if(sNum.size()==0){ return true; }
         if(!sstd::isNum(sNum)){ sstd::pdbg_err("Not numer.\n"); return false; }
         ret_hasHsc=true;

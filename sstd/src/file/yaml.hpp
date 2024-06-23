@@ -11,7 +11,7 @@
 
 namespace sstd{
     void lstripAll_ow(std::string& str, const char* stripList);
-    void rstripAll_ow(std::string& str, const char* stripList);
+//    void rstripAll_ow(std::string& str, const char* stripList);
 }
 namespace sstd_yaml{
 

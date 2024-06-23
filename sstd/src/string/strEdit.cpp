@@ -488,12 +488,7 @@ std::string stripAll_base(const char* str, const uint len, const char* stripList
     
     if(len * sLen <= 256){
         for(uint i=0; i<len; ++i){
-            bool TF_continue=false;
-            for(uint si=0; si<sLen; ++si){
-                if(str[i]==stripList[si]){ TF_continue=true; break; }
-            }
-            if(TF_continue){ continue; }
-            
+            if(sstd::charIn(str[i], stripList)){ continue; }
             ret += str[i];
         }
     }else{
@@ -513,18 +508,68 @@ std::string sstd::stripAll   (const std::string& str, const        char* stripLi
 std::string sstd::stripAll   (const        char* str, const std::string& stripList){ return stripAll_base(str,         strlen(str), stripList.c_str(),  stripList.size()); }
 std::string sstd::stripAll   (const std::string& str, const std::string& stripList){ return stripAll_base(str.c_str(),  str.size(), stripList.c_str(),  stripList.size()); }
 
+//---
+
+void lstripAll_ow_base(std::string& str, const char* stripList, const uint sLen){
+    const uint len = str.size();
+    uint r=0;
+    
+    if(len * sLen <= 256){
+        for(; r<len;){
+            if(!sstd::charIn(str[r], stripList)){ break; }
+            ++r;
+        }
+    }else{
+        bool sTbl[256]={false};
+        for(uint si=0; si<sLen; ++si){ sTbl[ (uchar)stripList[si] ] = true; }
+        
+        for(; r<len;){
+            if(! sTbl[ (uchar)str[r] ] ){ break; }
+            ++r;
+        }
+    }
+    
+    int r_len=(int)len-(int)r;
+    std::string tmp; tmp.resize(r_len);
+    ::memcpy(&tmp[0], &str[r], r_len);
+    std::swap(tmp, str);
+    return;
+}
+void sstd::lstripAll_ow(      std::string& str, const        char* stripList){ lstripAll_ow_base(str, stripList,         strlen(stripList)); return; }
+void sstd::lstripAll_ow(      std::string& str, const std::string& stripList){ lstripAll_ow_base(str, stripList.c_str(),  stripList.size()); return; }
+
+void rstripAll_ow_base(std::string& str, const char* stripList, const uint sLen){
+    const int len = str.size();
+    int r=len-1;
+    
+    if(len * sLen <= 256){
+        for(; r>=0;){
+            if(!sstd::charIn(str[r], stripList)){ break; }
+            --r;
+        }
+    }else{
+        bool sTbl[256]={false};
+        for(uint si=0; si<sLen; ++si){ sTbl[ (uchar)stripList[si] ] = true; }
+        
+        for(; r>=0;){
+            if(! sTbl[ (uchar)str[r] ] ){ break; }
+            --r;
+        }
+    }
+    
+    str.resize(r+1);
+    return;
+}
+void sstd::rstripAll_ow(      std::string& str, const        char* stripList){ rstripAll_ow_base(str, stripList,         strlen(stripList)); return; }
+void sstd::rstripAll_ow(      std::string& str, const std::string& stripList){ rstripAll_ow_base(str, stripList.c_str(),  stripList.size()); return; }
+
 void stripAll_ow_base(std::string& str, const char* stripList, const uint sLen){
     const uint len = str.size();
     uint r=0;
     
     if(len * sLen <= 256){
         for(uint i=0; i<len; ++i){
-            bool TF_continue=false;
-            for(uint si=0; si<sLen; ++si){
-                if(str[i]==stripList[si]){ TF_continue=true; break; }
-            }
-            if(TF_continue){ continue; }
-            
+            if(sstd::charIn(str[i], stripList)){ continue; }
             str[r] = str[i]; ++r;
         }
     }else{
