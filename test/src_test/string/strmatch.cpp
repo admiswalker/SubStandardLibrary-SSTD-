@@ -2,6 +2,28 @@
 #include "../../gtest_parallel/test_main.hpp"
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// startswith()
+
+TEST(strmatch, startswith_c_c){ sstd::startswith(            "" ,             "" ); }
+TEST(strmatch, startswith_c_s){ sstd::startswith(            "" , std::string("")); }
+TEST(strmatch, startswith_s_c){ sstd::startswith(std::string(""),             "" ); }
+TEST(strmatch, startswith_s_s){ sstd::startswith(std::string(""), std::string("")); }
+
+TEST(strmatch, startswith_null){ ASSERT_TRUE(sstd::startswith("", "")); }
+TEST(strmatch, startswith_01){ ASSERT_TRUE(sstd::startswith("abc", "")); }
+TEST(strmatch, startswith_02){ ASSERT_TRUE(!sstd::startswith("abc", "b")); }
+TEST(strmatch, startswith_03){ ASSERT_TRUE(sstd::startswith("abc", "abc")); }
+TEST(strmatch, startswith_04){ ASSERT_TRUE(sstd::startswith("abcdef", "abc")); }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// strcmp()
+
+TEST(strmatch, strcmp_c_c){ sstd::strcmp(            "" ,             "" ); }
+TEST(strmatch, strcmp_c_s){ sstd::strcmp(            "" , std::string("")); }
+TEST(strmatch, strcmp_s_c){ sstd::strcmp(std::string(""),             "" ); }
+TEST(strmatch, strcmp_s_s){ sstd::strcmp(std::string(""), std::string("")); }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 // strmatch() and strmatch_getWC()
 
 TEST(strmatch, strmatch){
@@ -63,6 +85,46 @@ TEST(strmatch, pathmatch){
     ASSERT_TRUE ( sstd::pathmatch(str, wildcard4) );
     ASSERT_TRUE ( sstd::pathmatch(str, wildcard5) );
 }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// rcount(), lcount(), count()
+
+TEST(strmatch, rcount_cc){
+    ASSERT_EQ(sstd::rcount("abcdef", 'x'), (uint)0);
+    ASSERT_EQ(sstd::rcount("abcdef", 'f'), (uint)1);
+    ASSERT_EQ(sstd::rcount("abcfff", 'f'), (uint)3);
+    ASSERT_EQ(sstd::rcount("", 'a'), (uint)0);
+}
+TEST(strmatch, rcount_sc){
+    ASSERT_EQ(sstd::rcount(std::string("abcdef"), 'x'), (uint)0);
+}
+
+//---
+
+TEST(strmatch, lcount_cc){
+    ASSERT_EQ(sstd::lcount("abcdef", 'x'), (uint)0);
+    ASSERT_EQ(sstd::lcount("abcdef", 'a'), (uint)1);
+    ASSERT_EQ(sstd::lcount("aaabcd", 'a'), (uint)3);
+    ASSERT_EQ(sstd::lcount("", 'a'), (uint)0);
+}
+TEST(strmatch, lcount_sc){
+    ASSERT_EQ(sstd::lcount(std::string("abcdef"), 'x'), (uint)0);
+}
+
+//---
+
+TEST(strmatch, count_cc){
+    ASSERT_EQ(sstd::count("abcdef", 'x'), (uint)0);
+    ASSERT_EQ(sstd::count("abcdef", 'a'), (uint)1);
+    ASSERT_EQ(sstd::count("xbxdex", 'x'), (uint)3);
+    ASSERT_EQ(sstd::count("", 'a'), (uint)0);
+}
+TEST(strmatch, count_sc){
+    ASSERT_EQ(sstd::count(std::string("abcdef"), 'x'), (uint)0);
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
 TEST(strmatch, isNum_char){
     ASSERT_TRUE ( sstd::isNum('0') );
     ASSERT_TRUE ( sstd::isNum('5') );
@@ -305,6 +367,9 @@ TEST(strmatch, strIn){
         std::string rhs = "AABCDEFG";
         bool ret=sstd::strIn(lhs, rhs); ASSERT_FALSE(ret);
     }
+}
+TEST(strmatch, strIn_02){
+    ASSERT_TRUE(sstd::strIn(": ", "k:1:: v:1"));
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

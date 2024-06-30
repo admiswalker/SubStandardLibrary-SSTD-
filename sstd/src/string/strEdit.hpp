@@ -22,14 +22,20 @@ namespace sstd{
     std::vector<std::string> split(const std::string& str);
     std::vector<std::string> split(const char*        str, const char X);
     std::vector<std::string> split(const std::string& str, const char X);
+    std::vector<std::string> split(const char*        str, const char*        X);
+    std::vector<std::string> split(const std::string& str, const std::string& X);
     
     std::vector<std::string> split_rmSpace(const char*        str);               // rm: remove
     std::vector<std::string> split_rmSpace(const std::string& str);               // rm: remove
     std::vector<std::string> split_rmSpace(const char*        str, const char X); // rm: remove
     std::vector<std::string> split_rmSpace(const std::string& str, const char X); // rm: remove
 
+    bool split_quotes(std::vector<std::string>& ret, const        char* str);
+    bool split_quotes(std::vector<std::string>& ret, const std::string& str);
     bool split_quotes(std::vector<std::string>& ret, const        char* str, const char X);
     bool split_quotes(std::vector<std::string>& ret, const std::string& str, const char X);
+    bool split_quotes(std::vector<std::string>& ret, const        char* str, const char*        X);
+    bool split_quotes(std::vector<std::string>& ret, const std::string& str, const std::string& X);
 
     //---
     
@@ -69,6 +75,10 @@ namespace sstd{
     std::string               stripAll   (const        char* str, const std::string& stripList);
     std::string               stripAll   (const std::string& str, const std::string& stripList);
 
+    void                     lstripAll_ow(      std::string& str, const        char* stripList);
+    void                     lstripAll_ow(      std::string& str, const std::string& stripList);
+    void                     rstripAll_ow(      std::string& str, const        char* stripList);
+    void                     rstripAll_ow(      std::string& str, const std::string& stripList);
     void                      stripAll_ow(      std::string& str, const        char* stripList);
     void                      stripAll_ow(      std::string& str, const std::string& stripList);
     // todo: rm '\t'

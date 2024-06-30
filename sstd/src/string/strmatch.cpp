@@ -3,10 +3,27 @@
 #include <vector>
 
 #include "./strmatch.hpp"
-#include "../definitions/typeDef.h"
 
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// startswith()
 
-//--------------------------------------------------------------------------------------------------------
+bool _startswith_base(const        char* str, const        char* searchString, const uint len){
+    return ::strncmp(str, searchString, len)==0; // strncmp() is a standard function of the C Langage.
+}
+bool sstd::startswith(const        char* str, const        char* searchString){ return _startswith_base(str        , searchString        , ::strlen(searchString)); }
+bool sstd::startswith(const        char* str, const std::string& searchString){ return _startswith_base(str        , searchString.c_str(), searchString.size()   ); }
+bool sstd::startswith(const std::string& str, const        char* searchString){ return _startswith_base(str.c_str(), searchString        , ::strlen(searchString)); }
+bool sstd::startswith(const std::string& str, const std::string& searchString){ return _startswith_base(str.c_str(), searchString.c_str(), searchString.size()   ); }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// strcmp()
+
+bool sstd::strcmp(const char*        str1, const char*        str2){ return (::strcmp(str1,         str2        )==0); }
+bool sstd::strcmp(const char*        str1, const std::string& str2){ return (::strcmp(str1,         str2.c_str())==0); }
+bool sstd::strcmp(const std::string& str1, const char*        str2){ return (::strcmp(str1.c_str(), str2        )==0); }
+bool sstd::strcmp(const std::string& str1, const std::string& str2){ return (::strcmp(str1.c_str(), str2.c_str())==0); }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 // strmatch()
 
 bool sstd::strmatch(
@@ -23,7 +40,7 @@ bool sstd::strmatch(const        char* str, const std::string& wildcard){ return
 bool sstd::strmatch(const std::string& str, const        char* wildcard){ return sstd::strmatch(str.c_str(), wildcard        ); }
 bool sstd::strmatch(const std::string& str, const std::string& wildcard){ return sstd::strmatch(str.c_str(), wildcard.c_str()); }
 
-//--------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 bool sstd::pathmatch(
                const char* str,     // target string to search
@@ -39,7 +56,7 @@ bool sstd::pathmatch(const        char* str, const std::string& wildcard){ retur
 bool sstd::pathmatch(const std::string& str, const        char* wildcard){ return sstd::pathmatch(str.c_str(), wildcard        ); }
 bool sstd::pathmatch(const std::string& str, const std::string& wildcard){ return sstd::pathmatch(str.c_str(), wildcard.c_str()); }
 
-//--------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 // strmatch_getWC()
 
 /*
@@ -124,15 +141,44 @@ bool sstd::strmatch_getWC(const        char* str, const std::string& wildcard, s
 bool sstd::strmatch_getWC(const std::string& str, const        char* wildcard, std::string& retWC){ return sstd::strmatch_getWC(str.c_str(), wildcard        , retWC); }
 bool sstd::strmatch_getWC(const std::string& str, const std::string& wildcard, std::string& retWC){ return sstd::strmatch_getWC(str.c_str(), wildcard.c_str(), retWC); }
 
-//--------------------------------------------------------------------------------------------------------
-// strcmp()
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// rcount(), lcount(), count()
 
-bool sstd::strcmp(const char*        str1, const char*        str2){ return (::strcmp(str1,         str2        )==0); }
-bool sstd::strcmp(const char*        str1, const std::string& str2){ return (::strcmp(str1,         str2.c_str())==0); }
-bool sstd::strcmp(const std::string& str1, const char*        str2){ return (::strcmp(str1.c_str(), str2        )==0); }
-bool sstd::strcmp(const std::string& str1, const std::string& str2){ return (::strcmp(str1.c_str(), str2.c_str())==0); }
+uint _rcount_base(const        char* str, uint len, char X){
+    uint ret_cnt=0;
+    for(int i=len-1; i>=0; --i){
+        if(str[i]!=X){ break; }
+        ++ret_cnt;
+    }
+    return ret_cnt;
+}
+uint sstd::rcount(const        char* str, char X){ return _rcount_base(str        , ::strlen(str), X); }
+uint sstd::rcount(const std::string& str, char X){ return _rcount_base(str.c_str(), str.size()   , X); }
 
-//--------------------------------------------------------------------------------------------------------
+//---
+
+uint sstd::lcount(const char* str, char X){
+    uint ret_cnt=0;
+    for(uint i=0; str[i]!='\0'; ++i){
+        if(str[i]!=X){ break; }
+        ++ret_cnt;
+    }
+    return ret_cnt;
+}
+uint sstd::lcount(const std::string& str, char X){ return sstd::lcount(str.c_str(), X); }
+
+//---
+
+uint  sstd::count(const        char* str, char X){
+    uint ret_cnt=0;
+    for(uint i=0; str[i]!='\0'; ++i){
+        if(str[i]==X){ ++ret_cnt; }
+    }
+    return ret_cnt;
+}
+uint  sstd::count(const std::string& str, char X){ return sstd::count(str.c_str(), X); }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 #define return_isX(X)                                   \
     for(uint i=0; rhs[i]!='\0'; ++i){                   \
@@ -155,7 +201,7 @@ bool sstd::isAlphabet_lower(const std::string& rhs){ return_isX( ('a'<=rhs[i] &&
 
 #undef return_isX
 
-//--------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 // charIn()
 
 bool sstd::charIn(const char lhs, const char* rhs){ // Is lhs in rhs ?
@@ -197,24 +243,20 @@ bool sstd::charIn_all(const        char* lhs, const std::string& rhs){ return ss
 bool sstd::charIn_all(const std::string& lhs, const        char* rhs){ return sstd::charIn_all(lhs.c_str(), rhs        ); }
 bool sstd::charIn_all(const std::string& lhs, const std::string& rhs){ return sstd::charIn_all(lhs.c_str(), rhs.c_str()); }
 
-//--------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 // strIn()
 
 bool sstd::strIn(const char* lhs, const char* rhs){ // Is lhs in rhs ?
-    bool ret=true;
-    uint l=0, r=0;
-    for(;;){
-        if(lhs[l]=='\0'){ return ret;   }
-        if(rhs[r]=='\0'){ return false; }
-        
-        if(lhs[l]==rhs[r]){ ++l; ret=true;
-        }       else      { l=0; ret=false; }
-        
-        ++r;
+    if(lhs[0]=='\0'){ return true; }
+    
+    uint r=0;
+    for(; rhs[r]!='\0'; ++r){
+        if(sstd::startswith(&rhs[r], lhs)){ return true; }
     }
+    return false;
 }
 bool sstd::strIn(const char*        lhs, const std::string& rhs){ return sstd::strIn(lhs        , rhs.c_str()); }
 bool sstd::strIn(const std::string& lhs, const char*        rhs){ return sstd::strIn(lhs.c_str(), rhs        ); }
 bool sstd::strIn(const std::string& lhs, const std::string& rhs){ return sstd::strIn(lhs.c_str(), rhs.c_str()); }
 
-//--------------------------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------------------------------------------------------

@@ -1,7 +1,13 @@
 ﻿#pragma once
 #include <string>
+#include "../definitions/typeDef.h"
 
 namespace sstd{
+    bool startswith(const        char* str, const        char* searchString);
+    bool startswith(const        char* str, const std::string& searchString);
+    bool startswith(const std::string& str, const        char* searchString);
+    bool startswith(const std::string& str, const std::string& searchString);
+    
     bool strcmp(const        char* str1, const        char* str2);
     bool strcmp(const        char* str1, const std::string& str2);
     bool strcmp(const std::string& str1, const        char* str2);
@@ -25,6 +31,13 @@ namespace sstd{
     bool strmatch_getWC(const        char* str, const std::string& wildcard, std::string& retWC);
     bool strmatch_getWC(const std::string& str, const        char* wildcard, std::string& retWC);
     bool strmatch_getWC(const std::string& str, const std::string& wildcard, std::string& retWC);
+
+    uint rcount(const        char* str, char X);
+    uint rcount(const std::string& str, char X);
+    uint lcount(const        char* str, char X);
+    uint lcount(const std::string& str, char X);
+    uint  count(const        char* str, char X);
+    uint  count(const std::string& str, char X);
 
     bool isNum             (const        char  rhs);
     bool isNum             (const        char* rhs);
