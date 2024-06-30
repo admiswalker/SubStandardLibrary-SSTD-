@@ -580,21 +580,21 @@ bool sstd_yaml::_split_quotes_by_control_chars(std::vector<std::string>& ret, co
     return true;
 }
 bool _get_hash_value(bool& is_null, std::string& ret_value, const std::vector<std::string>& v_cs, uint& i){
-    if(i+3<v_cs.size() && v_cs[i+1][0]==':' && (v_cs[i+3][0]==',' || v_cs[i+3][0]=='}' || v_cs[i+3][0]==']')){
+    
+    if(i+3<v_cs.size() && v_cs[i+1][0]==':' && (v_cs[i+2][0]!=',' && v_cs[i+2][0]!='}' && v_cs[i+2][0]!=']') && (v_cs[i+3][0]==',' || v_cs[i+3][0]=='}' || v_cs[i+3][0]==']')){
         // { "k1": "v1" }, { "k1": "v1", "k2": "v2" } or [ "k1": "v1" ] (<- Abbreviated of "[{ "k1": "v1" }]")
         ret_value = v_cs[i+2];
         is_null = false;
-        i += 2;
+        i+=2;
         return true; // get value
     }else if(i+2<v_cs.size() && v_cs[i+1][0]==':' && (v_cs[i+2][0]=='}' || v_cs[i+2][0]==']' || v_cs[i+2][0]==',')){
         // { "k1": }, { "k1":, "k2" } or [ "k1": "v1" ] (<- Abbreviated of "[{ "k1": "v1" }]")
         is_null = true;
-        i += 2;
+        ++i;
         return true; // get null value
     }else if(i+1<v_cs.size() && (v_cs[i+1][0]=='}' || v_cs[i+1][0]==']' || v_cs[i+1][0]==',')){
         // { "k1" }, { "k1", "k2" } or [ "k1": "v1" ] (<- Abbreviated of "[{ "k1": "v1" }]")
         is_null = true;
-        i += 1;
         return true; // get null value
     }
 
@@ -669,7 +669,7 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
             }
         }
     }
-//    if(v_dst.size()!=0){ sstd::pdbg_err("'[' or '{' is not closed.\n"); return false; }
+    if(v_dst.size()!=0){ sstd::pdbg_err("'[' or '{' is not closed.\n"); return false; }
     
     return true;
 }
