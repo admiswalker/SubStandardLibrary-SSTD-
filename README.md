@@ -62,6 +62,16 @@ updateLib:
    ./exe
    ```
 
+## Release
+### Tagging
+
+Tagging rule: sstd-[VersionWrittenBySemanticVersioning]
+
+```bash
+git tag -a sstd-X.X.X -m 'sstd-X.X.X' [CommitHash]
+git push origin sstd-X.X.X
+```
+
 ## File and Directory descriptions
 
 | File or directory name        | Description Origin |
