@@ -2832,32 +2832,30 @@ TEST(yaml, double_quotation_list_NUM_LIST_case01){
     //---
     
     ASSERT_TRUE(yml==ans);
-}/*
-
-// NOT IMPLIMENTED
-//   See "5.7. Escaped Characters" at https://yaml.org/spec/1.2.2/#57-escaped-characters
-
+}
 TEST(yaml, double_quotation_list_NUM_LIST_case02){ // WIP
+    // See "5.7. Escaped Characters" at https://yaml.org/spec/1.2.2/#57-escaped-characters
+    
     std::string s=R"(
 - "\
    abc\
    def"
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    //sstd::printn(yml);
+    sstd::printn(yml);
 
     //---
     
     sstd::terp::var ans;
     ans = sstd::terp::list(1);
     ans[0] = "abcdef";
-    //sstd::printn(ans);
+    sstd::printn(ans);
     
     //---
     
     ASSERT_TRUE(yml==ans);
 }
- */
+
 //---
 
 TEST(yaml, double_quotation_list_NUM_HASH_dq_case01){
