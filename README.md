@@ -53,6 +53,8 @@ updateLib:
 2. Edite under `sstd/src/` and `test/`
 3. Compile
    ```bash
+   # ./docker/alpine/build.sh # if you use alpine docker env (Only for the init)
+   # ./docker/alpine/run.sh   # if you use alpine docker env
    make
    ```
 4. Run tests

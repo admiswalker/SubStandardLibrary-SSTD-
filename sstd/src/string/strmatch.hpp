@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <string>
+#include "../definitions/typeDef.h"
 
 namespace sstd{
     bool startswith(const        char* str, const        char* searchString);
