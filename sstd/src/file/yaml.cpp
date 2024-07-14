@@ -351,7 +351,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
         // Construct alloc() or assign() command
         struct sstd_yaml::command c;
         switch(t.type){
-        case sstd_yaml::num_str: {
+        case sstd_yaml::type_str: {
             // --- debug info ---
             c.line_num_begin  = t.line_num_begin;
             c.line_num_end    = t.line_num_end;
@@ -359,12 +359,12 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
             // --- construct info ---
             c.ope             = sstd_yaml::ope_assign;
             c.hsc             = t.hsc_hx; // t.hsc_lx
-            c.type            = sstd_yaml::num_str;
+            c.type            = sstd_yaml::type_str;
             c.format          = t.format;
             c.val             = t.val; // t.key;
             ret_vCmd.push_back(c);
         } break;
-        case sstd_yaml::num_list: {
+        case sstd_yaml::type_list: {
             {
                 // --- debug info ---
                 c.line_num_begin  = t.line_num_begin;
@@ -373,7 +373,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
                 // --- construct info ---
                 c.ope             = sstd_yaml::ope_alloc;
                 c.hsc             = t.hsc_lx; // t.hsc_hx
-                c.type            = sstd_yaml::num_list;
+                c.type            = sstd_yaml::type_list;
                 //c.format          = t.format;
                 //c.val             = t.val; // t.key;
                 ret_vCmd.push_back(c);
@@ -387,13 +387,13 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
                 // --- construct info ---
                 c.ope             = sstd_yaml::ope_assign;
                 c.hsc             = t.hsc_hx; // t.hsc_lx;
-                c.type            = sstd_yaml::num_str;
+                c.type            = sstd_yaml::type_str;
                 c.format          = t.format;
                 c.val             = t.val; // t.key;
                 ret_vCmd.push_back(c);
             }
         } break;
-        case sstd_yaml::num_hash: {
+        case sstd_yaml::type_hash: {
             // --- debug info ---
             c.line_num_begin  = t.line_num_begin;
             c.line_num_end    = t.line_num_end;
@@ -401,7 +401,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
             // --- construct info ---
             c.ope             = sstd_yaml::ope_alloc;
             c.hsc             = t.hsc_hx; // t.hsc_lx
-            c.type            = sstd_yaml::num_hash;
+            c.type            = sstd_yaml::type_hash;
             //c.format          = t.format;
             c.val             = t.key; // t.val; // key
             ret_vCmd.push_back(c);
@@ -414,13 +414,13 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
                 // --- construct info ---
                 c.ope             = sstd_yaml::ope_assign;
                 c.hsc             = t.hsc_hx + 2; // t.hsc_lx;
-                c.type            = sstd_yaml::num_str;
+                c.type            = sstd_yaml::type_str;
                 c.format          = t.format;
                 c.val             = t.val; // t.key; // value
                 ret_vCmd.push_back(c);
             }
         } break;
-        case sstd_yaml::num_list_and_hash:{
+        case sstd_yaml::type_list_and_hash:{
             {
                 // --- debug info ---
                 c.line_num_begin  = t.line_num_begin;
@@ -429,7 +429,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
                 // --- construct info ---
                 c.ope             = sstd_yaml::ope_alloc;
                 c.hsc             = t.hsc_lx; // t.hsc_hx + 2*ti
-                c.type            = sstd_yaml::num_list;
+                c.type            = sstd_yaml::type_list;
                 //c.format          = t.format;
                 //c.val             = t.val; // t.key;
                 ret_vCmd.push_back(c);
@@ -456,7 +456,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
             // --- construct info ---
             c.ope             = sstd_yaml::ope_alloc;
             c.hsc             = t.hsc_hx; // hsc_lx
-            c.type            = sstd_yaml::num_hash;
+            c.type            = sstd_yaml::type_hash;
             //c.format          = t.format;
             c.val             = t.key; // t.val; // key
             ret_vCmd.push_back(c);
@@ -469,7 +469,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
                 // --- construct info ---
                 c.ope             = sstd_yaml::ope_assign;
                 c.hsc             = t.hsc_hx + 2; // t.hsc_lx;
-                c.type            = sstd_yaml::num_str;
+                c.type            = sstd_yaml::type_str;
                 c.format          = t.format;
                 c.val             = t.val; // t.key; // value
                 ret_vCmd.push_back(c);
@@ -480,7 +480,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
 
         
         // construction of stack() command
-        if( !t.hasValue && (t.type==sstd_yaml::num_list || t.type==sstd_yaml::num_hash || t.type==sstd_yaml::num_list_and_hash )){
+        if( !t.hasValue && (t.type==sstd_yaml::type_list || t.type==sstd_yaml::type_hash || t.type==sstd_yaml::type_list_and_hash )){
             uint hsc_curr = c.hsc;
             uint hsc_next = 0;
 
@@ -495,11 +495,11 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
             const sstd_yaml::token& t_nx = v_token[i+1]; // _nx: next
             
             switch(t_nx.type){
-                //case sstd_yaml::num_str:           { hsc_next = t_nx.hsc_hx;                            } break;
-            case sstd_yaml::num_str:           { continue; } break;
-            case sstd_yaml::num_list:          { hsc_next = t_nx.hsc_lx + 2*(t_nx.list_type_cnt-1); } break;
-            case sstd_yaml::num_hash:          { hsc_next = t_nx.hsc_hx;                            } break;
-            case sstd_yaml::num_list_and_hash: { hsc_next = t_nx.hsc_lx + 2*(t_nx.list_type_cnt-1); } break; // works as a list
+                //case sstd_yaml::type_str:           { hsc_next = t_nx.hsc_hx;                            } break;
+            case sstd_yaml::type_str:           { continue; } break;
+            case sstd_yaml::type_list:          { hsc_next = t_nx.hsc_lx + 2*(t_nx.list_type_cnt-1); } break;
+            case sstd_yaml::type_hash:          { hsc_next = t_nx.hsc_hx;                            } break;
+            case sstd_yaml::type_list_and_hash: { hsc_next = t_nx.hsc_lx + 2*(t_nx.list_type_cnt-1); } break; // works as a list
             default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
             };
 
@@ -521,7 +521,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
             // │ t │                   │                   │                   │                   │
             // └───┴───────────────────┴───────────────────┴───────────────────┴───────────────────┘
             //
-            bool isGr     = t.type==sstd_yaml::num_list || t_nx.type==sstd_yaml::num_hash; // check '>' case
+            bool isGr     = t.type==sstd_yaml::type_list || t_nx.type==sstd_yaml::type_hash; // check '>' case
             bool isGrOrEq = !isGr;                                                         // check '>=' case
             if((isGr     && hsc_next> hsc_curr) ||
                (isGrOrEq && hsc_next>=hsc_curr)    )
@@ -715,7 +715,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml
         // setting the value or allocate dst address
         if(cmd.ope==sstd_yaml::ope_assign){
             if(var.typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data.\n"); return false; }
-            if(cmd.format==sstd_yaml::num_flow_style_base){
+            if(cmd.format==sstd_yaml::type_flow_style_base){
                 if(!_flow_style_str_to_obj(var, cmd.val)){ sstd::pdbg_err("_flow_style_str_to_obj() is failed.\n"); return false; }
             }else{
                 var = cmd.val;
@@ -723,18 +723,18 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml
         }else if(cmd.ope==sstd_yaml::ope_alloc){
             if(var.typeNum()==sstd::num_null){
                 switch(cmd.type){
-                case sstd_yaml::num_list: { var = sstd::terp::list(); } break;
-                case sstd_yaml::num_hash: { var = sstd::terp::hash(); } break;
+                case sstd_yaml::type_list: { var = sstd::terp::list(); } break;
+                case sstd_yaml::type_hash: { var = sstd::terp::hash(); } break;
                 default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
                 }
             }
 
             switch(cmd.type){
-            case sstd_yaml::num_list: {
+            case sstd_yaml::type_list: {
                 var.push_back();
                 v_dst_cr.push_back(&var[var.size()-1]);
             } break;
-            case sstd_yaml::num_hash: {
+            case sstd_yaml::type_hash: {
                 auto itr = var.find(cmd.val);
                 if(itr!=var.end()){ sstd::pdbg_err("Detecting the duplicated hash key.\n"); return false; }
                 v_dst_cr.push_back(&var[cmd.val]);
@@ -881,23 +881,23 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
         tmp.val_is_dqed=dqed;
         tmp.val_is_sqed=sqed;
         
-        if(is_list){ tmp.type += sstd_yaml::num_list; tmp.hsc_hx+=2; }
-        if(is_hash){ tmp.type += sstd_yaml::num_hash; }
-        if(is_flow){ tmp.format = sstd_yaml::num_flow_style_base; }
+        if(is_list){ tmp.type += sstd_yaml::type_list; tmp.hsc_hx+=2; }
+        if(is_hash){ tmp.type += sstd_yaml::type_hash; }
+        if(is_flow){ tmp.format = sstd_yaml::type_flow_style_base; }
         
         // Skip empty tokens until the first non-empty token occurs. (Empty token is treated as a line-break related with to other token in a context of multi-line YAML)
         if(ret.size()==0 &&
            tmp.key.size()==0 &&
            tmp.val.size()==0 &&
-           tmp.type==sstd_yaml::num_str){ continue; }
+           tmp.type==sstd_yaml::type_str){ continue; }
         
         // set hasValue
         tmp.hasValue=false;
         switch(tmp.type){
-        case sstd_yaml::num_str:           { if(tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1){tmp.hasValue=true;} } break;
-        case sstd_yaml::num_list:          { if(tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1){tmp.hasValue=true;} } break; // check the value is NOT NULL
-        case sstd_yaml::num_list_and_hash:
-        case sstd_yaml::num_hash:          { if(tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1){tmp.hasValue=true;} } break; // check the value is NOT NULL
+        case sstd_yaml::type_str:           { if(tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1){tmp.hasValue=true;} } break;
+        case sstd_yaml::type_list:          { if(tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1){tmp.hasValue=true;} } break; // check the value is NOT NULL
+        case sstd_yaml::type_list_and_hash:
+        case sstd_yaml::type_hash:          { if(tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1){tmp.hasValue=true;} } break; // check the value is NOT NULL
         default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
         }
 
@@ -914,13 +914,13 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
 }
 bool _is_all_the_data_str_type(const std::vector<sstd_yaml::token>& v){
     for(uint i=0; i<v.size(); ++i){
-        if(v[i].type!=sstd_yaml::num_str){ return false; }
+        if(v[i].type!=sstd_yaml::type_str){ return false; }
     }
     return true;
 }
 bool _is_all_the_data_flowStyle(const std::vector<sstd_yaml::token>& v){
     for(uint i=0; i<v.size(); ++i){
-        if(v[i].format!=sstd_yaml::num_flow_style_base){ return false; }
+        if(v[i].format!=sstd_yaml::type_flow_style_base){ return false; }
     }
     return true;
 }
@@ -943,20 +943,20 @@ bool _merge_all_str(std::vector<sstd_yaml::token>& ret, const std::vector<sstd_y
     return true;
 }
 bool _is_control_types(uint type){
-    return (type==sstd_yaml::num_list || type==sstd_yaml::num_hash || type==sstd_yaml::num_list_and_hash);
+    return (type==sstd_yaml::type_list || type==sstd_yaml::type_hash || type==sstd_yaml::type_list_and_hash);
 }
 uint _get_criteria_hsc(const sstd_yaml::token& t){
-    if(t.type==sstd_yaml::num_hash || t.type==sstd_yaml::num_list_and_hash){
+    if(t.type==sstd_yaml::type_hash || t.type==sstd_yaml::type_list_and_hash){
         return t.hsc_hx;
     }else{
         return t.hsc_lx;
     }
 }
 uint _get_current_hsc(const sstd_yaml::token& t){
-    if(t.type==sstd_yaml::num_hash){
+    if(t.type==sstd_yaml::type_hash){
         return t.hsc_hx;
     }else{
-        return t.hsc_lx; // for sstd_yaml::num_str or sstd_yaml::num_list
+        return t.hsc_lx; // for sstd_yaml::type_str or sstd_yaml::type_list
     }
 }
 bool sstd_yaml::_token2token_split_bv_list_type_cnt(std::vector<sstd_yaml::token>& io){
@@ -973,8 +973,8 @@ bool sstd_yaml::_token2token_split_bv_list_type_cnt(std::vector<sstd_yaml::token
             for(; ti+1<t.list_type_cnt; ++ti){
                 sstd_yaml::token tmp = t;
                 
-                tmp.type = sstd_yaml::num_list;
-                tmp.format = sstd_yaml::num_block_style_base;
+                tmp.type = sstd_yaml::type_list;
+                tmp.format = sstd_yaml::type_block_style_base;
                 tmp.list_type_cnt = 1;
                 tmp.hsc_lx = tmp.hsc_lx + 2 * ti;
                 tmp.hsc_hx = tmp.hsc_lx + 2;
@@ -1056,7 +1056,7 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             //   │ - k2: v2
 
             // Update `start_with_string` to the current token
-            start_with_string |= (*pT).type==sstd_yaml::num_str; // for "k:\n  l1\n  l2"
+            start_with_string |= (*pT).type==sstd_yaml::type_str; // for "k:\n  l1\n  l2"
             // Check the needs of breaking the merge process
             // Under the following situation, the parser needs to break the process of multi-line merging.
             //   - `start_with_string`: The string start with non-control charactor
@@ -1104,10 +1104,10 @@ bool _escape_to_unicode_character(std::string& io){
             case '0':  { tmp += (uchar)0x00; break; }
                 
             //case ' ': { tmp += '\\'; break; }
-//            case '_':  { tmp += '\u00a0'; break; } // Needs to check "How UTF-8 encode" if we treats as UTF-8.
-//            case 'N':  { tmp += '\u0085'; break; } // Needs to check "How UTF-8 encode" if we treats as UTF-8.
-//            case 'L':  { tmp += '\u2028'; break; } // Needs to check "How UTF-8 encode" if we treats as UTF-8.
-//            case 'P':  { tmp += '\u2029'; break; } // Needs to check "How UTF-8 encode" if we treats as UTF-8.
+//            case '_':  { tmp += '\u00a0'; break; } // Needs to check "How UTF-8 encode" if we treats as UTF-8. (Byte order is the concern point)
+//            case 'N':  { tmp += '\u0085'; break; } // Needs to check "How UTF-8 encode" if we treats as UTF-8. (Byte order is the concern point)
+//            case 'L':  { tmp += '\u2028'; break; } // Needs to check "How UTF-8 encode" if we treats as UTF-8. (Byte order is the concern point)
+//            case 'P':  { tmp += '\u2029'; break; } // Needs to check "How UTF-8 encode" if we treats as UTF-8. (Byte order is the concern point)
             default: {
 //                if      (sstd::startswith(&io[i+1], "x41"      )){ tmp += "A"; i+=strlen("x41"      ); break; // Needs to check "How UTF-8 encode" if we treats as UTF-8.
 //                }else if(sstd::startswith(&io[i+1], "u0041"    )){ tmp += "A"; i+=strlen("u0041"    ); break; // Needs to check "How UTF-8 encode" if we treats as UTF-8.
