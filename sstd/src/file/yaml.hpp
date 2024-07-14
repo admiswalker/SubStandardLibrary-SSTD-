@@ -22,36 +22,34 @@ namespace sstd_yaml{
     //---
     // type definition
 
-    // TODO: num_ -> type_ に名前を置換する
-    
-    const static uint8 num_null             = 255;
-    const static uint8 num_block_style_base = 0;
-    const static uint8 num_str              = 0; // for BLOCK_STYLE
-    const static uint8 num_list             = 1; // for BLOCK_STYLE
-    const static uint8 num_hash             = 2; // for BLOCK_STYLE
-    const static uint8 num_list_and_hash    = 3; // for BLOCK_STYLE
-    const static uint8 num_flow_style_base  = 4;
-    // sstd_yaml::num_flow_style_base + sstd_yaml::num_str           4 // reserved number for FLOW_STYLE
-    // sstd_yaml::num_flow_style_base + sstd_yaml::num_list          5 // reserved number for FLOW_STYLE
-    // sstd_yaml::num_flow_style_base + sstd_yaml::num_hash          6 // reserved number for FLOW_STYLE
-    // sstd_yaml::num_flow_style_base + sstd_yaml::num_list_and_hash 7 // reserved number for FLOW_STYLE
+    const static uint8 type_null             = 255;
+    const static uint8 type_block_style_base = 0;
+    const static uint8 type_str              = 0; // for BLOCK_STYLE
+    const static uint8 type_list             = 1; // for BLOCK_STYLE
+    const static uint8 type_hash             = 2; // for BLOCK_STYLE
+    const static uint8 type_list_and_hash    = 3; // for BLOCK_STYLE
+    const static uint8 type_flow_style_base  = 4;
+    // sstd_yaml::type_flow_style_base + sstd_yaml::type_str           4 // reserved number for FLOW_STYLE
+    // sstd_yaml::type_flow_style_base + sstd_yaml::type_list          5 // reserved number for FLOW_STYLE
+    // sstd_yaml::type_flow_style_base + sstd_yaml::type_hash          6 // reserved number for FLOW_STYLE
+    // sstd_yaml::type_flow_style_base + sstd_yaml::type_list_and_hash 7 // reserved number for FLOW_STYLE
 
     //---
     // token for proceed YAML parsing
     
     struct token {
         // Data for Debug YAML parsing
-        uint line_num_begin = 1;                       // beginning line number
-        uint line_num_end   = 1;                       // endding line number (for multipleline)
-        std::string rawStr;                            // A raw string splitted by line concering the YAML processing units.
+        uint line_num_begin = 1;                        // beginning line number
+        uint line_num_end   = 1;                        // endding line number (for multipleline)
+        std::string rawStr;                             // A raw string splitted by line concering the YAML processing units.
         
         // Data structure to load YAML
-        //uint type = sstd_yaml::num_null; // sstd_yaml::num_str;                // A destination type number of this line
-        uint type = sstd_yaml::num_str;                // A destination type number of this line
-        uint format = sstd_yaml::num_block_style_base; // If containing flow style notation
-        uint list_type_cnt = 0;                        // Number of list type. (`- - - v`)
-        uint hsc_lx = 0;                               // head space counts for list type
-        uint hsc_hx = 0;                               // head space counts for hash type
+        //uint type = sstd_yaml::type_null; // sstd_yaml::type_str;                // A destination type number of this line
+        uint type = sstd_yaml::type_str;                // A destination type number of this line
+        uint format = sstd_yaml::type_block_style_base; // If containing flow style notation
+        uint list_type_cnt = 0;                         // Number of list type. (`- - - v`)
+        uint hsc_lx = 0;                                // head space counts for list type
+        uint hsc_hx = 0;                                // head space counts for hash type
         
         bool hasValue = false; // If the value (val1 or val2) is vaild for each data type (list or hash).
         bool key_is_dqed = false;
@@ -64,9 +62,9 @@ namespace sstd_yaml{
     };
     struct command{
         // Data for Debug YAML parsing
-        uint line_num_begin = 1;                       // beginning line number
-        uint line_num_end   = 1;                       // endding line number (for multipleline)
-        std::string rawStr;                            // A raw string splitted by line concering the YAML processing units.
+        uint line_num_begin = 1;                        // beginning line number
+        uint line_num_end   = 1;                        // endding line number (for multipleline)
+        std::string rawStr;                             // A raw string splitted by line concering the YAML processing units.
 
         // Data structure to construct YAML
         uint ope; // operation

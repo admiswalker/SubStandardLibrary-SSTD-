@@ -18,11 +18,6 @@ namespace sstd{
     bool strmatch(const std::string& str, const        char* wildcard);
     bool strmatch(const std::string& str, const std::string& wildcard);
     
-    bool pathmatch(const        char* str, const        char* wildcard);
-    bool pathmatch(const        char* str, const std::string& wildcard);
-    bool pathmatch(const std::string& str, const        char* wildcard);
-    bool pathmatch(const std::string& str, const std::string& wildcard);
-    
     bool strmatch_getWC(
         const char* str,      // target string to search
         const char* wildcard, // wild card ('*' and '?' are available.)
@@ -32,6 +27,11 @@ namespace sstd{
     bool strmatch_getWC(const std::string& str, const        char* wildcard, std::string& retWC);
     bool strmatch_getWC(const std::string& str, const std::string& wildcard, std::string& retWC);
 
+    bool pathmatch(const        char* str, const        char* wildcard);
+    bool pathmatch(const        char* str, const std::string& wildcard);
+    bool pathmatch(const std::string& str, const        char* wildcard);
+    bool pathmatch(const std::string& str, const std::string& wildcard);
+    
     uint rcount(const        char* str, char X);
     uint rcount(const std::string& str, char X);
     uint lcount(const        char* str, char X);
