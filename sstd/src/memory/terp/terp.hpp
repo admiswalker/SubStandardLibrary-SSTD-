@@ -62,6 +62,7 @@ namespace sstd::terp{
 
 class sstd::terp::var{
 private:
+    bool _is_reference;
     uint _type;
     void* _p;
     
@@ -108,6 +109,7 @@ public:
     //var operator=(      sstd::terp::var&& rhs);
     
     var& operator=(const char* rhs);
+    var& operator=(const  var* rhs); // for the reference of var address. // Note: sstd::terp did NOT mention the trouble with circular reference.
 
     bool operator==(const sstd::terp::var& rhs);
     bool operator!=(const sstd::terp::var& rhs);
