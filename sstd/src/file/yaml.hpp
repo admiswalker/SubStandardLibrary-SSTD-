@@ -22,15 +22,15 @@ namespace sstd_yaml{
     //---
     // type definition
 
-    const static uint8 type_null             = 255;
-    const static uint8 type_str              = 0; // for BLOCK_STYLE
-    const static uint8 type_list             = 1; // for BLOCK_STYLE
-    const static uint8 type_hash             = 2; // for BLOCK_STYLE
-    const static uint8 type_list_and_hash    = 3; // for BLOCK_STYLE
+    const static uint8 type_null          = 255;
+    const static uint8 type_str           = 0; // for BLOCK_STYLE
+    const static uint8 type_list          = 1; // for BLOCK_STYLE
+    const static uint8 type_hash          = 2; // for BLOCK_STYLE
+    const static uint8 type_list_and_hash = 3; // for BLOCK_STYLE
     
     const static uint8 format_null        = 255;
-    const static uint8 format_block_style = 0;
-    const static uint8 format_flow_style  = 1;
+    const static uint8 format_block_style = 0; // using indents to construct
+    const static uint8 format_flow_style  = 1; // list [] or {}
     const static uint8 format_anchor      = 2;
     const static uint8 format_alias       = 3;
 
@@ -71,8 +71,6 @@ namespace sstd_yaml{
         uint8 type; // data type
         uint8 format; // data format
         std::string val; // value
-//        std::string anchor; // anchor name
-//        std::string alias; // alias name
     };
 
     //---

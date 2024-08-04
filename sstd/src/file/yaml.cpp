@@ -751,14 +751,20 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // str2token section
 
-bool _is_flow(const std::string& subt){
-    return (subt.starts_with('[') || subt.starts_with('{'));
+bool _is_flow(const std::string& s){
+    return (s.starts_with('[') || s.starts_with('{'));
 }
-bool _is_end_marker(const std::string& subt){
-    return subt.starts_with("...");
+bool _is_end_marker(const std::string& s){
+    return s.starts_with("...");
 }
-bool _is_separator(const std::string& subt){
-    return subt.starts_with("---");
+bool _is_separator(const std::string& s){
+    return s.starts_with("---");
+}
+bool _is_anchor(const std::string& s){
+    return s.starts_with("&");
+}
+bool _is_alias(const std::string& s){
+    return s.starts_with("*");
 }
 
 bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret, const std::string& str){
@@ -827,7 +833,7 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
             
             if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; dqed=true; }
             if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; sqed=true; }
-
+            
             if(!in_d_quate && !in_s_quate){
                 if((subt.size()==0 && str[r]=='#') || (str[r]==' ' && str[r+1]=='#')){
                     tmp.rawStr+=str[r]; ++r;
@@ -880,10 +886,16 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
         tmp.val=std::move(sstd::strip(subt));
         tmp.val_is_dqed=dqed;
         tmp.val_is_sqed=sqed;
+        bool is_anchor = _is_anchor(tmp.val);
+        bool is_alias  = _is_alias (tmp.val);
         
         if(is_list){ tmp.type += sstd_yaml::type_list; tmp.hsc_hx+=2; }
         if(is_hash){ tmp.type += sstd_yaml::type_hash; }
-        if(is_flow){ tmp.format = sstd_yaml::format_flow_style; }
+
+        if( (is_flow&&is_anchor) || (is_anchor&&is_alias) || (is_alias&&is_flow) ){ sstd::pdbg_err("The flags of `is_flow`, `is_anchor` and `is_alias` are three-way choice. More than 2 flags can not have true value.\n  is_flow: %s\n  is_anchor: %s\n  is_alias: %s\n", (is_flow?"true":"false"), (is_anchor?"true":"false"), (is_alias?"true":"false")); return false; }
+        if(is_flow  ){ tmp.format = sstd_yaml::format_flow_style;                     }
+        if(is_anchor){ tmp.format = sstd_yaml::format_anchor;     tmp.val.erase(0,1); } // 1) set format type, 2) remove '&' in the head of the string
+        if(is_alias ){ tmp.format = sstd_yaml::format_alias;      tmp.val.erase(0,1); } // 1) set format type, 2) remove '*' in the head of the string
         
         // Skip empty tokens until the first non-empty token occurs. (Empty token is treated as a line-break related with to other token in a context of multi-line YAML)
         if(ret.size()==0 &&

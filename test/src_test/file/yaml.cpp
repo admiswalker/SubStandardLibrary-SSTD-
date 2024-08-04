@@ -4295,6 +4295,7 @@ TEST(yaml, _str2token_multi_list_case00_tmp){
   - a
   - b
   - c
+- *ll
 
 #hh: &hh
 #  k1: v1
