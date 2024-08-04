@@ -715,7 +715,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml
         // setting the value or allocate dst address
         if(cmd.ope==sstd_yaml::ope_assign){
             if(var.typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data.\n"); return false; }
-            if(cmd.format==sstd_yaml::type_flow_style_base){
+            if(cmd.format==sstd_yaml::format_flow_style){
                 if(!_flow_style_str_to_obj(var, cmd.val)){ sstd::pdbg_err("_flow_style_str_to_obj() is failed.\n"); return false; }
             }else{
                 var = cmd.val;
@@ -883,7 +883,7 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
         
         if(is_list){ tmp.type += sstd_yaml::type_list; tmp.hsc_hx+=2; }
         if(is_hash){ tmp.type += sstd_yaml::type_hash; }
-        if(is_flow){ tmp.format = sstd_yaml::type_flow_style_base; }
+        if(is_flow){ tmp.format = sstd_yaml::format_flow_style; }
         
         // Skip empty tokens until the first non-empty token occurs. (Empty token is treated as a line-break related with to other token in a context of multi-line YAML)
         if(ret.size()==0 &&
@@ -920,7 +920,7 @@ bool _is_all_the_data_str_type(const std::vector<sstd_yaml::token>& v){
 }
 bool _is_all_the_data_flowStyle(const std::vector<sstd_yaml::token>& v){
     for(uint i=0; i<v.size(); ++i){
-        if(v[i].format!=sstd_yaml::type_flow_style_base){ return false; }
+        if(v[i].format!=sstd_yaml::format_flow_style){ return false; }
     }
     return true;
 }
@@ -974,7 +974,7 @@ bool sstd_yaml::_token2token_split_bv_list_type_cnt(std::vector<sstd_yaml::token
                 sstd_yaml::token tmp = t;
                 
                 tmp.type = sstd_yaml::type_list;
-                tmp.format = sstd_yaml::type_block_style_base;
+                tmp.format = sstd_yaml::format_block_style;
                 tmp.list_type_cnt = 1;
                 tmp.hsc_lx = tmp.hsc_lx + 2 * ti;
                 tmp.hsc_hx = tmp.hsc_lx + 2;
@@ -1163,6 +1163,7 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str_i
     std::string str = std::regex_replace(str_in, std::regex("\r"), ""); // "\r\n" -> "\n"
     
     if(!sstd_yaml::_str2token_except_multilines(ret, str.c_str())){ sstd::pdbg_err("sstd_yaml::_str2token_except_multilines() was failed.\n"); return false; }
+    sstd::printn(ret);
     if(!sstd_yaml::_token2token_split_bv_list_type_cnt(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_split_bv_list_type_cnt() was failed.\n"); return false; }
     if(!sstd_yaml::_token2token_merge_multilines(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_merge_multilines() was failed.\n"); return false; }
     if(!sstd_yaml::_token2token_postprocess(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_postprocess() was failed.\n"); return false; }
