@@ -23,16 +23,16 @@ namespace sstd_yaml{
     // type definition
 
     const static uint8 type_null             = 255;
-    const static uint8 type_block_style_base = 0;
     const static uint8 type_str              = 0; // for BLOCK_STYLE
     const static uint8 type_list             = 1; // for BLOCK_STYLE
     const static uint8 type_hash             = 2; // for BLOCK_STYLE
     const static uint8 type_list_and_hash    = 3; // for BLOCK_STYLE
-    const static uint8 type_flow_style_base  = 4;
-    // sstd_yaml::type_flow_style_base + sstd_yaml::type_str           4 // reserved number for FLOW_STYLE
-    // sstd_yaml::type_flow_style_base + sstd_yaml::type_list          5 // reserved number for FLOW_STYLE
-    // sstd_yaml::type_flow_style_base + sstd_yaml::type_hash          6 // reserved number for FLOW_STYLE
-    // sstd_yaml::type_flow_style_base + sstd_yaml::type_list_and_hash 7 // reserved number for FLOW_STYLE
+    
+    const static uint8 format_null        = 255;
+    const static uint8 format_block_style = 0;
+    const static uint8 format_flow_style  = 1;
+    const static uint8 format_anchor      = 2;
+    const static uint8 format_alias       = 3;
 
     //---
     // token for proceed YAML parsing
@@ -44,18 +44,17 @@ namespace sstd_yaml{
         std::string rawStr;                             // A raw string splitted by line concering the YAML processing units.
         
         // Data structure to load YAML
-        //uint type = sstd_yaml::type_null; // sstd_yaml::type_str;                // A destination type number of this line
-        uint type = sstd_yaml::type_str;                // A destination type number of this line
-        uint format = sstd_yaml::type_block_style_base; // If containing flow style notation
-        uint list_type_cnt = 0;                         // Number of list type. (`- - - v`)
-        uint hsc_lx = 0;                                // head space counts for list type
-        uint hsc_hx = 0;                                // head space counts for hash type
+        uint8 type = sstd_yaml::type_str;             // A destination type number of this line
+        uint8 format = sstd_yaml::format_block_style; // If containing flow style notation
+        uint list_type_cnt = 0;                       // Number of list type. (`- - - v`)
+        uint hsc_lx = 0;                              // head space counts for list type
+        uint hsc_hx = 0;                              // head space counts for hash type
         
         bool hasValue = false; // If the value (val1 or val2) is vaild for each data type (list or hash).
-        bool key_is_dqed = false;
-        bool key_is_sqed = false;
-        bool val_is_dqed = false;
-        bool val_is_sqed = false;
+        bool key_is_dqed = false; // _dqed: double quated
+        bool key_is_sqed = false; // _sqed: single quated
+        bool val_is_dqed = false; // _dqed: double quated
+        bool val_is_sqed = false; // _sqed: single quated
         bool mult_line_val = false;
         std::string key; // key for "hash"
         std::string val; // value for "list" or "hash"
@@ -72,6 +71,8 @@ namespace sstd_yaml{
         uint8 type; // data type
         uint8 format; // data format
         std::string val; // value
+//        std::string anchor; // anchor name
+//        std::string alias; // alias name
     };
 
     //---
