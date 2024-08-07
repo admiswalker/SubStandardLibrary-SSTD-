@@ -800,5 +800,33 @@ TEST(memory_terp, isValue_false){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// referendce of the `sstd::terp::var` address
+
+TEST(memory_terp, reference_of_sstd_terp_var_01){
+    sstd::terp::var x;
+    x = sstd::terp::list(2);
+    x[0] = sstd::terp::list(3);
+    x[0][0] = "a";
+    x[0][1] = "b";
+    x[0][2] = "c";
+    x[1] = &x[0];
+    //sstd::printn(x);
+    
+    sstd::terp::var a; // ans
+    a = sstd::terp::list(2);
+    a[0] = sstd::terp::list(3);
+    a[0][0] = "a";
+    a[0][1] = "b";
+    a[0][2] = "c";
+    a[1] = sstd::terp::list(3);
+    a[1][0] = "a";
+    a[1][1] = "b";
+    a[1][2] = "c";
+    //sstd::printn(a);
+    
+    ASSERT_TRUE(x==a);
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 EXECUTE_TESTS();
