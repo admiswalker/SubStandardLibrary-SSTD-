@@ -2841,14 +2841,14 @@ TEST(yaml, double_quotation_list_NUM_LIST_case02){ // WIP
    def"
 )";
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+    //sstd::printn(yml);
 
     //---
     
     sstd::terp::var ans;
     ans = sstd::terp::list(1);
     ans[0] = "abcdef";
-    sstd::printn(ans);
+    //sstd::printn(ans);
     
     //---
     
