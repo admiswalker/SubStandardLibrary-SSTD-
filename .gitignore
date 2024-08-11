@@ -6,6 +6,7 @@ sstd/include/
 sstd/lib/
 sstd/tmpMake/
 backup/
+.*
 
 tmpDir/
 tmp*/
