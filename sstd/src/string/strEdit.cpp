@@ -591,7 +591,7 @@ void        sstd::stripAll_ow(      std::string& str, const std::string& stripLi
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 std::string sstd::strip_quotes(bool& ret_sq, bool& ret_dq, const        char* str){
-    return std::move(sstd::strip_quotes(ret_sq, ret_dq, std::string(str)));
+    return sstd::strip_quotes(ret_sq, ret_dq, std::string(str));
 }
 std::string sstd::strip_quotes(bool& ret_sq, bool& ret_dq, const std::string& str){
     ret_dq=false;
