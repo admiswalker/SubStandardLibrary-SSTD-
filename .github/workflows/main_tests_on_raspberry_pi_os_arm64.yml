@@ -1,0 +1,42 @@
+name: Tests on Raspberry Pi OS (Arm64)
+
+on:
+  push:
+    branches: [ main, dev, develop ]
+  pull_request:
+    branches: [ main, dev, develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        
+      - name: Install build tools
+        run: |
+          ./docker/raspberry_pi_64/build.sh
+          
+      - name: Build googletest
+        run: |
+          ./docker/raspberry_pi_64/run_args.sh make ./googletest-master/build/lib/libgtest.a
+          
+      - name: Build SSTD
+        run: |
+          ./docker/raspberry_pi_64/run_args.sh make FORCE_TO_MAKE_SSTD
+          
+      - name: Build SSTD TESTS
+        run: |
+          ./docker/raspberry_pi_64/run_args.sh make FORCE_TO_MAKE_TEST_EXE
+          
+      - name: Build the others
+        run: |
+          ./docker/raspberry_pi_64/run_args.sh make
+          
+      - name: Run tests
+        run: |
+          ./docker/raspberry_pi_64/run_args.sh ./exe
