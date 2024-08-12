@@ -14,8 +14,8 @@ jobs:
       uses: actions/checkout@v4
     - name: Install Python
       run: |
-        pip install numpy
-        pip install matplotlib
+        apt install -y python3-numpy
+        apt install -y python3-matplotlib
     - name: Build googletest
       run: |
         make ./googletest-master/build/lib/libgtest.a
