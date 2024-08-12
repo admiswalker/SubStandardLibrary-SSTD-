@@ -1,0 +1,37 @@
+name: Tests on Debian
+
+on:
+  push:
+    branches: [ main, dev, develop ]
+  pull_request:
+    branches: [ main, dev, develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    container:
+      image: debian:12
+    steps:
+    - name: checkout repository
+      uses: actions/checkout@v4
+    - name: Install build tools
+      run: |
+        apt-get update
+        apt-get install -y coreutils make gcc g++ cmake time
+        apt-get install -y python3-numpy python3-matplotlib
+        
+    - name: Build googletest
+      run: |
+        make ./googletest-master/build/lib/libgtest.a
+    - name: Build SSTD
+      run: |
+        make FORCE_TO_MAKE_SSTD
+    - name: Build SSTD TESTS
+      run: |
+        make FORCE_TO_MAKE_TEST_EXE
+    - name: Build the others
+      run: |
+        make
+    - name: Run tests
+      run: |
+        ./exe
