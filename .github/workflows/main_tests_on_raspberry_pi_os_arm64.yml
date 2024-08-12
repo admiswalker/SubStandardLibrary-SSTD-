@@ -10,6 +10,13 @@ jobs:
   build:
     runs-on: ubuntu-24.04
     
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - linux/arm64
+#          - linux/amd64
+    
     container:
       image: ghcr.io/admiswalker/raspios_full_arm64_2022-04-04_bullseye:2024-08-12-update
       
