@@ -8,12 +8,12 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     container:
       image: crystallang/crystal:latest-alpine
     steps:
     - name: checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
     - name: Install build tools
       run: |
         apk add coreutils make gcc g++ cmake
