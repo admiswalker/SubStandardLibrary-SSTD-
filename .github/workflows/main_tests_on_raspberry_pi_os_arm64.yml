@@ -1,0 +1,54 @@
+name: Tests on Raspberry Pi OS (Arm64)
+
+on:
+  push:
+    branches: [ main, dev, develop ]
+  pull_request:
+    branches: [ main, dev, develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    
+    container:
+      image: ghcr.io/admiswalker/raspios_full_arm64_2022-04-04_bullseye:2024-08-12-update
+      
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        
+      - name: Install build tools
+        run: |
+          apt install -y build-essential \
+          coreutils \
+          make \
+          gcc \
+          g++ \
+          cmake \
+          python3-pip \
+          python3-numpy \
+          python3-matplotlib \
+          time
+          
+      - name: Build googletest
+        run: |
+          make ./googletest-master/build/lib/libgtest.a
+          
+      - name: Build SSTD
+        run: |
+          make FORCE_TO_MAKE_SSTD
+          
+      - name: Build SSTD TESTS
+        run: |
+          make FORCE_TO_MAKE_TEST_EXE
+          
+      - name: Build the others
+        run: |
+          make
+          
+      - name: Run tests
+        run: |
+          ./exe
