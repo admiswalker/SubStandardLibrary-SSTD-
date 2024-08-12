@@ -5,13 +5,13 @@ docker run \
        -v /etc/passwd:/etc/passwd:ro \
        -v /etc/shadow:/etc/shadow:ro \
        -v /etc/sudoers.d:/etc/sudoers.d:ro \
-       --rm -it --name sstd_raspberry_pi_64 \
+       --rm --name sstd_raspberry_pi_64 \
        -v $PWD:/home -w /home \
        --user root \
        sstd_raspberry_pi_64 ${@}
-#       --rm -it --name sstd_raspberry_pi_64 \
-#       sstd_raspberry_pi_64 /bin/sh
-#       sstd_raspberry_pi_64/raspios_full_arm64:2022-04-04_bullseye /bin/sh
+
+# removes the `-it` to avoid the following error:
+# > the input device is not a TTY
 
 # `--user root` is to avoid the following error:
 # > $ apt install time
