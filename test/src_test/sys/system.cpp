@@ -22,12 +22,12 @@ TEST(system, system_char_err){
     testing::internal::CaptureStdout();
     ret = sstd::system("sh ./test/src_test/sys/stdlib_system_stdout.sh"); if(WIFEXITED(ret)<=0){ printf("ERROR:\n"); } // <- want to test this line
     std::string test = testing::internal::GetCapturedStdout();
-    ASSERT_TRUE(WEXITSTATUS(ret)==0);
+    ASSERT_EQ(WEXITSTATUS(ret), 0);
     
     testing::internal::CaptureStdout();
     ret = system("sh ./test/src_test/sys/stdlib_system_stdout.sh"); if(WIFEXITED(ret)<=0){ printf("ERROR:\n"); }
     std::string ans = testing::internal::GetCapturedStdout();
-    ASSERT_TRUE(WEXITSTATUS(ret)==0);
+    ASSERT_EQ(WEXITSTATUS(ret), 0);
     
     ASSERT_STREQ(test.c_str(), ans.c_str());
 }
@@ -51,12 +51,12 @@ TEST(system, system_string_case02){
     testing::internal::CaptureStderr();
     ret = sstd::system(std::string("sh ./test/src_test/sys/stdlib_system_stderr.sh")); if(WIFEXITED(ret)<=0){ printf("ERROR:\n"); }// <- want to test this line
     std::string test = testing::internal::GetCapturedStderr();
-    ASSERT_TRUE(WEXITSTATUS(ret)!=0);
+    ASSERT_EQ(WEXITSTATUS(ret), 255);
 
     testing::internal::CaptureStderr();
     ret = system("sh ./test/src_test/sys/stdlib_system_stderr.sh"); if(WIFEXITED(ret)<=0){ printf("ERROR:\n"); }
     std::string ans = testing::internal::GetCapturedStderr();
-    ASSERT_TRUE(WEXITSTATUS(ret)!=0);
+    ASSERT_EQ(WEXITSTATUS(ret), 255);
 
     ASSERT_STREQ(test.c_str(), ans.c_str());
 }
@@ -71,7 +71,7 @@ TEST(system, system_stdout_char){
     
     int ret02; std::string test02;
     ret02 = sstd::system_stdout(test02, R"(sh ./test/src_test/sys/stdlib_system_stderr.sh)");
-    ASSERT_TRUE(WEXITSTATUS(ret02)!=0);
+    ASSERT_EQ(WEXITSTATUS(ret02), 255);
     ASSERT_STREQ(test02.c_str(), "");
 }
 TEST(system, system_stdout_string){
@@ -82,7 +82,7 @@ TEST(system, system_stdout_string){
     
     int ret02; std::string test02;
     ret02 = sstd::system_stdout(test02, std::string(R"(sh ./test/src_test/sys/stdlib_system_stderr.sh)"));
-    ASSERT_TRUE(WEXITSTATUS(ret02)!=0);
+    ASSERT_EQ(WEXITSTATUS(ret02), 255);
     ASSERT_STREQ(test02.c_str(), "");
 }
 
@@ -96,7 +96,7 @@ TEST(system, system_stderr_char){
     
     int ret02; std::string test02;
     ret02 = sstd::system_stderr(test02, R"(sh ./test/src_test/sys/stdlib_system_stderr.sh)");
-    ASSERT_TRUE(WEXITSTATUS(ret02)!=0);
+    ASSERT_EQ(WEXITSTATUS(ret02), 255);
     ASSERT_STREQ(test02.c_str(), "hello-stderr\n");
 }
 TEST(system, system_stderr_string){
@@ -107,7 +107,7 @@ TEST(system, system_stderr_string){
     
     int ret02; std::string test02;
     ret02 = sstd::system_stderr(test02, std::string(R"(sh ./test/src_test/sys/stdlib_system_stderr.sh)"));
-    ASSERT_TRUE(WEXITSTATUS(ret02)!=0);
+    ASSERT_EQ(WEXITSTATUS(ret02), 255);
     ASSERT_STREQ(test02.c_str(), "hello-stderr\n");
 }
 
@@ -121,7 +121,7 @@ TEST(system, system_stdout_stderr_char){
     
     int ret02; std::string test02;
     ret02 = sstd::system_stdout_stderr(test02, R"(sh ./test/src_test/sys/stdlib_system_stderr.sh)");
-    ASSERT_TRUE(WEXITSTATUS(ret02)!=0);
+    ASSERT_EQ(WEXITSTATUS(ret02), 255);
     ASSERT_STREQ(test02.c_str(), "hello-stderr\n");
 }
 TEST(system, system_stdout_stderr_string){
@@ -132,7 +132,7 @@ TEST(system, system_stdout_stderr_string){
     
     int ret02; std::string test02;
     ret02 = sstd::system_stdout_stderr(test02, std::string(R"(sh ./test/src_test/sys/stdlib_system_stderr.sh)"));
-    ASSERT_TRUE(WEXITSTATUS(ret02)!=0);
+    ASSERT_EQ(WEXITSTATUS(ret02), 255);
     ASSERT_STREQ(test02.c_str(), "hello-stderr\n");
 }
 
