@@ -1,4 +1,4 @@
-name: Build and Test on Archlinux
+name: Archlinux Env
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main, dev, develop ]
 
 jobs:
-  Build-and-Test-on-Archlinux:
+  Build-and-Test:
     runs-on: ubuntu-24.04
     container:
       image: archlinux
