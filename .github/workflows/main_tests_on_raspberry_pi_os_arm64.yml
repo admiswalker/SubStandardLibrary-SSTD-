@@ -7,7 +7,7 @@ on:
     branches: [ main, dev, develop ]
 
 jobs:
-  build:
+  "Tests on Raspberry Pi OS (Arm64)":
     runs-on: ubuntu-24.04
     
     steps:

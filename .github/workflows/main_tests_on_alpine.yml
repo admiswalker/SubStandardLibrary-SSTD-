@@ -7,7 +7,7 @@ on:
     branches: [ main, dev, develop ]
 
 jobs:
-  build:
+  "Tests on Alpine":
     runs-on: ubuntu-24.04
     container:
       image: crystallang/crystal:latest-alpine
