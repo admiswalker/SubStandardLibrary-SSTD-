@@ -1,4 +1,4 @@
-name: Tests on Debian
+name: Build and Test on Debian
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main, dev, develop ]
 
 jobs:
-  "Tests on Debian":
+  Build-and-Test-on-Debian:
     runs-on: ubuntu-24.04
     container:
       image: debian:12

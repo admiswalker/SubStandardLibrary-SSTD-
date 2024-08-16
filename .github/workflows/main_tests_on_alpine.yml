@@ -1,4 +1,4 @@
-name: Tests on Alpine
+name: Build and Test on Alpine
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main, dev, develop ]
 
 jobs:
-  "Tests on Alpine":
+  Build-and-Test-on-Alpine:
     runs-on: ubuntu-24.04
     container:
       image: crystallang/crystal:latest-alpine

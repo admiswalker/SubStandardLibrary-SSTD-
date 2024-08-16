@@ -1,4 +1,4 @@
-name: Tests on Ubuntu
+name: Build and Test on Ubuntu
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main, dev, develop ]
 
 jobs:
-  "Tests on Ubuntu":
+  Build-and-Test-on-Ubuntu:
     runs-on: ubuntu-24.04
     steps:
     - name: checkout repository

@@ -1,4 +1,4 @@
-name: Tests on Raspberry Pi OS (Arm64)
+name: Build and Test on Raspberry Pi OS (Arm64)
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main, dev, develop ]
 
 jobs:
-  "Tests on Raspberry Pi OS (Arm64)":
+  Build-and-Test-on-Raspberry-Pi-OS-Arm64:
     runs-on: ubuntu-24.04
     
     steps:
