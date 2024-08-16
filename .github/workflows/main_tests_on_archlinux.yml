@@ -1,4 +1,4 @@
-name: Ubuntu Env
+name: Archlinux Env
 
 on:
   push:
@@ -9,13 +9,17 @@ on:
 jobs:
   Build-and-Test:
     runs-on: ubuntu-24.04
+    container:
+      image: archlinux
     steps:
     - name: checkout repository
       uses: actions/checkout@v4
-    - name: Install Python
+    - name: Install build tools
       run: |
-        sudo apt install -y python3-numpy
-        sudo apt install -y python3-matplotlib
+        pacman -Syy
+        pacman -S --noconfirm coreutils make gcc cmake time
+        pacman -S --noconfirm python-numpy python-matplotlib
+        
     - name: Build googletest
       run: |
         make ./googletest-master/build/lib/libgtest.a
