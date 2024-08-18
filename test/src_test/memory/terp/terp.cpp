@@ -53,6 +53,22 @@ TEST(memory_terp, var_typeStr_c){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// interface
+
+TEST(memory_terp, _is_reference){
+    sstd::terp::var a;
+    ASSERT_TRUE(a.is_reference() == false); // TEST THIS LINE
+}
+TEST(memory_terp, _p){
+    sstd::terp::var a;
+    ASSERT_TRUE(a.p() == NULL); // TEST THIS LINE
+}
+TEST(memory_terp, _type){
+    sstd::terp::var a;
+    ASSERT_TRUE(a.type() == sstd::num_null); // TEST THIS LINE
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 // common
 
 // to

@@ -207,6 +207,7 @@ void sstd::terp::var::list(){
 //---
 // internal
 
+bool sstd::terp::var::is_reference() const { return this->_is_reference; }
 void* sstd::terp::var::p() const { return this->_p; }
 uint sstd::terp::var::type() const { return this->_type; }
 void*& sstd::terp::var::p_RW(){ return this->_p; }
