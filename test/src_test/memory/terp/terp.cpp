@@ -53,7 +53,7 @@ TEST(memory_terp, var_typeStr_c){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-// interface
+// internal interface
 
 TEST(memory_terp, _is_reference){
     sstd::terp::var a;
@@ -84,7 +84,7 @@ TEST(memory_terp, to_SEGV_null_ptr){
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // sstd::terp::list
 
-// operator=
+// operator= (copy)
 TEST(memory_terp, list_ope_assign){ // Ope=
     sstd::terp::var a;
     a = sstd::terp::list(1); // TEST THIS LINE
@@ -95,6 +95,31 @@ TEST(memory_terp, list_ope_assign){ // Ope=
     
     ASSERT_STREQ(a[0][0].to<std::string>().c_str(), "v1");
     ASSERT_STREQ(a[0][1].to<std::string>().c_str(), "v2");
+}
+TEST(memory_terp, list_ope_assign_with_reference){ // Ope=
+    sstd::terp::var a;
+    a = sstd::terp::list(2);
+    a[0] = sstd::terp::list(3);
+    a[0][0] = "a";
+    a[0][1] = "b";
+    a[0][2] = "c";
+    a[1] = &a[0];
+
+    ASSERT_TRUE(a[0].is_reference() == false);
+    ASSERT_TRUE(a[1].is_reference() == true );
+
+    sstd::terp::var x = a; // TEST THIS LINE
+    
+    ASSERT_TRUE(x[0].is_reference() == false);
+    ASSERT_TRUE(x[1].is_reference() == false);
+
+    a[0][0]="x1";
+    ASSERT_TRUE(a[0][0].to<std::string>() == "x1");
+    ASSERT_TRUE(a[1][0].to<std::string>() == "x1");
+    
+    x[0][0]="x2";
+    ASSERT_TRUE(x[0][0].to<std::string>() == "x2");
+    ASSERT_TRUE(x[1][0].to<std::string>() == "a");
 }
 
 // operator==
