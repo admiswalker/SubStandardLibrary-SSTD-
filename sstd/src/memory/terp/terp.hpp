@@ -88,7 +88,8 @@ public:
     
     //---
     // internal
-    
+
+    bool is_reference() const;
     void* p() const;
     uint type() const;
     
