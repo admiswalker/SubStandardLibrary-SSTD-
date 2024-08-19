@@ -32,6 +32,7 @@
     printf("command:\n");                                               \
     printf("    type: %d\n", rhs.type);                                 \
     printf("    format: %d\n", rhs.format);                             \
+    printf("    ref_type: %d\n", rhs.ref_type);                         \
     printf("    list_type_cnt: %d\n", rhs.list_type_cnt);               \
     printf("    hsc_lx: %d\n", rhs.hsc_lx);                             \
     printf("    hsc_hx: %d\n", rhs.hsc_hx);                             \
@@ -886,16 +887,16 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
         tmp.val=std::move(sstd::strip(subt));
         tmp.val_is_dqed=dqed;
         tmp.val_is_sqed=sqed;
-        bool is_anchor = _is_anchor(tmp.val);
-        bool is_alias  = _is_alias (tmp.val);
+        bool is_anchor = _is_anchor(tmp.val); // for the '&' (anchor)
+        bool is_alias  = _is_alias (tmp.val); // for the '*' (alias)
         
         if(is_list){ tmp.type += sstd_yaml::type_list; tmp.hsc_hx+=2; }
         if(is_hash){ tmp.type += sstd_yaml::type_hash; }
 
         if( (is_flow&&is_anchor) || (is_anchor&&is_alias) || (is_alias&&is_flow) ){ sstd::pdbg_err("The flags of `is_flow`, `is_anchor` and `is_alias` are three-way choice. More than 2 flags can not have true value.\n  is_flow: %s\n  is_anchor: %s\n  is_alias: %s\n", (is_flow?"true":"false"), (is_anchor?"true":"false"), (is_alias?"true":"false")); return false; }
-        if(is_flow  ){ tmp.format = sstd_yaml::format_flow_style;                     }
-        if(is_anchor){ tmp.format = sstd_yaml::format_anchor;     tmp.val.erase(0,1); } // 1) set format type, 2) remove '&' in the head of the string
-        if(is_alias ){ tmp.format = sstd_yaml::format_alias;      tmp.val.erase(0,1); } // 1) set format type, 2) remove '*' in the head of the string
+        if(is_flow  ){ tmp.format   = sstd_yaml::format_flow_style;                     }
+        if(is_anchor){ tmp.ref_type = sstd_yaml::ref_type_anchor;   tmp.val.erase(0,1); } // 1) set format type, 2) remove '&' in the head of the string
+        if(is_alias ){ tmp.ref_type = sstd_yaml::ref_type_alias;    tmp.val.erase(0,1); } // 1) set format type, 2) remove '*' in the head of the string
         
         // Skip empty tokens until the first non-empty token occurs. (Empty token is treated as a line-break related with to other token in a context of multi-line YAML)
         if(ret.size()==0 &&
@@ -961,6 +962,7 @@ uint _get_criteria_hsc(const sstd_yaml::token& t){
     if(t.type==sstd_yaml::type_hash || t.type==sstd_yaml::type_list_and_hash){
         return t.hsc_hx;
     }else{
+        if(t.list_type_cnt!=1){ return t.hsc_lx + t.list_type_cnt * 2; }
         return t.hsc_lx;
     }
 }
@@ -972,6 +974,16 @@ uint _get_current_hsc(const sstd_yaml::token& t){
     }
 }
 bool sstd_yaml::_token2token_split_bv_list_type_cnt(std::vector<sstd_yaml::token>& io){
+    // Example:
+    //
+    // in:
+    // > - - - a
+    //
+    // out:
+    // > -
+    // >   -
+    // >     - a
+    
     std::vector<sstd_yaml::token> ret;
     
     for(uint i=0; i<io.size(); ++i){
@@ -1047,7 +1059,7 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
 
         // Check criteria values (Defining criteria value as a base token like list, hash or list_and_hash type to merge)
         bool start_with_string = (*pT).val.size()>=1;
-        uint criteria_hsc = _get_criteria_hsc((*pT));
+        uint criteria_hsc = _get_criteria_hsc((*pT)); // criteria_hsc: criteria head space count
         
         for(uint merge_cnt=1;; ++merge_cnt){
             // Update
@@ -1058,7 +1070,7 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             bool is_control_types = _is_control_types((*pT).type);
             
             // Check break
-            uint curr_hsc = _get_current_hsc((*pT));
+            uint curr_hsc = _get_current_hsc((*pT)); // curr_hsc: current head space count
             if( merge_cnt==1 && is_control_types && (!start_with_string||(curr_hsc<=criteria_hsc)) ){ break; }
             // - `!start_with_string` is for:
             //   │ k0:
@@ -1175,9 +1187,8 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str_i
     std::string str = std::regex_replace(str_in, std::regex("\r"), ""); // "\r\n" -> "\n"
     
     if(!sstd_yaml::_str2token_except_multilines(ret, str.c_str())){ sstd::pdbg_err("sstd_yaml::_str2token_except_multilines() was failed.\n"); return false; }
-    sstd::printn(ret);
-    if(!sstd_yaml::_token2token_split_bv_list_type_cnt(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_split_bv_list_type_cnt() was failed.\n"); return false; }
     if(!sstd_yaml::_token2token_merge_multilines(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_merge_multilines() was failed.\n"); return false; }
+    if(!sstd_yaml::_token2token_split_bv_list_type_cnt(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_split_bv_list_type_cnt() was failed.\n"); return false; }
     if(!sstd_yaml::_token2token_postprocess(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_postprocess() was failed.\n"); return false; }
     return true;
 }

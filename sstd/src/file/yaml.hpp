@@ -31,8 +31,10 @@ namespace sstd_yaml{
     const static uint8 format_null        = 255;
     const static uint8 format_block_style = 0; // using indents to construct
     const static uint8 format_flow_style  = 1; // list [] or {}
-    const static uint8 format_anchor      = 2;
-    const static uint8 format_alias       = 3;
+    
+    const static uint8 ref_type_null      = 255;
+    const static uint8 ref_type_anchor    = 0;
+    const static uint8 ref_type_alias     = 1;
 
     //---
     // token for proceed YAML parsing
@@ -46,6 +48,7 @@ namespace sstd_yaml{
         // Data structure to load YAML
         uint8 type = sstd_yaml::type_str;             // A destination type number of this line
         uint8 format = sstd_yaml::format_block_style; // If containing flow style notation
+        uint8 ref_type = sstd_yaml::ref_type_null;    // If containing anchor or alias
         uint list_type_cnt = 0;                       // Number of list type. (`- - - v`)
         uint hsc_lx = 0;                              // head space counts for list type
         uint hsc_hx = 0;                              // head space counts for hash type

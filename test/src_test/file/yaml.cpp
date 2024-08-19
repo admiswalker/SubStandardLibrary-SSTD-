@@ -377,6 +377,21 @@ TEST(yaml, _str2token_multi_list_case10){
 //    sstd::printn(v_ret[0].val.c_str());
     ASSERT_STREQ(v_ret[0].val.c_str(), "a - a"); // "a\n - a"
 }
+TEST(yaml, _str2token_multi_list_case11){
+    std::string s=R"(
+- x
+  - - a
+  - b
+  - c
+)";
+    std::vector<sstd_yaml::token> v_ret;
+    bool ret = sstd_yaml::_str2token(v_ret, s);
+    //sstd::printn(v_ret);
+    
+    ASSERT_TRUE(ret);
+    ASSERT_EQ(v_ret.size(), (uint)1);
+    ASSERT_STREQ(v_ret[0].val.c_str(), "x - - a - b - c"); // "a\n - a"
+}
 
 //---
 
@@ -4292,11 +4307,12 @@ TEST(yaml, _str2token_multi_list_case00_tmp){
     printf("#####################################################\n");
     std::string s = R"(
 - &ll
-  - a
+  - - a
   - b
   - c
 - *ll
-
+)";
+    /*
 #hh: &hh
 #  k1: v1
 #  k2: v2
@@ -4305,12 +4321,12 @@ TEST(yaml, _str2token_multi_list_case00_tmp){
 #- *l # alias
 #- [*l]
 #- {*l}
-)";
+*/
     std::vector<sstd_yaml::token> v_ret;
     bool ret = sstd_yaml::_str2token(v_ret, s);
-    sstd::printn(ret);
-    sstd::printn(v_ret.size());
-    sstd::printn(v_ret);
+    sstd::printn_all(ret);
+    sstd::printn_all(v_ret.size());
+    sstd::printn_all(v_ret);
     /*
     ASSERT_TRUE(ret);
     ASSERT_EQ(v_ret.size(), (uint)3);
@@ -4324,6 +4340,45 @@ TEST(yaml, _str2token_multi_list_case00_tmp){
     ASSERT_STREQ(v_ret[2].val.c_str(),    "v_Y");
     */
 }
+
+TEST(yaml, _str2token_multi_list_case00_tmp02){
+    printf("#####################################################\n");
+    std::string s = R"(
+- x
+  - - a
+  - b
+  - c
+)";
+    
+    std::vector<sstd_yaml::token> v_ret;
+    bool ret = sstd_yaml::_str2token(v_ret, s);
+    sstd::printn_all(ret);
+    sstd::printn_all(v_ret.size());
+    sstd::printn_all(v_ret);
+}
+
+TEST(yaml, _str2token_multi_list_case00_tmp03){
+    std::string s=R"(
+- x
+  - - a
+  - b
+  - c
+)";
+    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+    sstd::printn(yml);
+
+    //---
+    
+//    sstd::terp::var ans;
+//    ans = sstd::terp::list(2);
+//    ans[0] = "a";
+//    ans[1] = "b";
+    
+    //---
+    
+//    ASSERT_TRUE(yml==ans);
+}
+
 
 //--
 
