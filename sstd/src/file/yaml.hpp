@@ -14,10 +14,12 @@ namespace sstd_yaml{
     //---
     // operation definition
     
-    const static uint8 ope_null   = 255;
-    const static uint8 ope_alloc  = 0; // allocate
-    const static uint8 ope_stack  = 1; // stacking a value to v_dst
-    const static uint8 ope_assign = 2; // assignemnt
+    const static uint8 ope_null     = 255;
+    const static uint8 ope_alloc    = 0; // allocate
+    const static uint8 ope_stack    = 1; // stacking a value to v_dst
+    const static uint8 ope_assign   = 2; // assignemnt
+//    const static uint8 ope_push_ref = 3; // pushing a reference address to the hash table
+//    const static uint8 ope_pull_ref = 4; // pulling a reference address from the hash table
 
     //---
     // type definition
@@ -53,7 +55,7 @@ namespace sstd_yaml{
         uint hsc_lx = 0;                              // head space counts for list type
         uint hsc_hx = 0;                              // head space counts for hash type
         
-        bool hasValue = false; // If the value (val1 or val2) is vaild for each data type (list or hash).
+        bool hasValue = false; // If the value (val1 or val2) is vaild for each data type (list or hash)
         bool key_is_dqed = false; // _dqed: double quated
         bool key_is_sqed = false; // _sqed: single quated
         bool val_is_dqed = false; // _dqed: double quated
@@ -61,19 +63,24 @@ namespace sstd_yaml{
         bool mult_line_val = false;
         std::string key; // key for "hash"
         std::string val; // value for "list" or "hash"
+        std::string aa_val; // value for anchor and alias
     };
     struct command{
         // Data for Debug YAML parsing
         uint line_num_begin = 1;                        // beginning line number
         uint line_num_end   = 1;                        // endding line number (for multipleline)
         std::string rawStr;                             // A raw string splitted by line concering the YAML processing units.
-
+        
         // Data structure to construct YAML
         uint ope; // operation
         uint hsc; // hsc: head space count
         uint8 type; // data type
         uint8 format; // data format
         std::string val; // value
+        
+        // Anchor and Alias
+        uint8 ref_type = sstd_yaml::ref_type_null;    // If containing anchor or alias
+        std::string aa_val; // anchor and alias value
     };
 
     //---

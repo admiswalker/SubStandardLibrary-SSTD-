@@ -324,6 +324,7 @@ sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var& rhs){
     return *this;
 }
 sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var* rhs){
+    sstd::terp::var::free();
     this->_is_reference = true;
     this->_type         = rhs->type();
     this->_p            = rhs->p();

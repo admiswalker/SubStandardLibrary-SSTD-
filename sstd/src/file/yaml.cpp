@@ -44,6 +44,9 @@
     printf("    mult_line_val: %s\n", (rhs.mult_line_val?"ture":"false")); \
     printf("    key: `%s`\n", rhs.key.c_str());                         \
     printf("    val: `%s`\n", rhs.val.c_str());                         \
+    printf("anchor and alias:\n");                              \
+    printf("    ref_type: %d\n", rhs.ref_type);                 \
+    printf("    aa_val: `%s`\n", rhs.aa_val.c_str());           \
     printf(",\n");
 
 void sstd::print(const sstd_yaml::token& rhs){
@@ -71,6 +74,9 @@ void sstd::print_for_vT(const sstd_yaml::token& rhs){
     printf("    type: %d\n", rhs.type);                         \
     printf("    format: %d\n", rhs.format);                     \
     printf("    val: `%s`\n", rhs.val.c_str());                 \
+    printf("anchor and alias:\n");                              \
+    printf("    ref_type: %d\n", rhs.ref_type);                 \
+    printf("    aa_val: `%s`\n", rhs.aa_val.c_str());           \
     printf(",\n");
 
 void sstd::print(const sstd_yaml::command& rhs){
@@ -377,9 +383,17 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
                 c.type            = sstd_yaml::type_list;
                 //c.format          = t.format;
                 //c.val             = t.val; // t.key;
+                // --- anchor and alias ---
+                if(t.ref_type==sstd_yaml::ref_type_anchor){
+                    c.ref_type    = t.ref_type;
+                    c.aa_val      = t.val; // ここはあとで，c.aa_val = t.aa_val にする
+                }else if(t.ref_type==sstd_yaml::ref_type_alias){
+                    c.ref_type    = t.ref_type;
+                    c.aa_val      = t.val; // ここはあとで，c.aa_val = t.aa_val にする
+                }
                 ret_vCmd.push_back(c);
             }
-            
+
             if(t.hasValue){ // check the value is NOT NULL
                 // --- debug info ---
                 c.line_num_begin  = t.line_num_begin;
@@ -393,6 +407,24 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
                 c.val             = t.val; // t.key;
                 ret_vCmd.push_back(c);
             }
+            /*
+            if(t.ref_type==sstd_yaml::ref_type_anchor){
+                // --- debug info ---
+                c.line_num_begin  = t.line_num_begin;
+                c.line_num_end    = t.line_num_end;
+                c.rawStr          = t.rawStr;
+                // --- construct info ---
+                c.ope             = sstd_yaml::ope_push_ref;
+                c.hsc             = t.hsc_hx; // t.hsc_lx;
+                c.type            = sstd_yaml::type_null;
+                c.format          = t.format;
+                c.val             = t.val; // t.key;
+                // --- anchor and alias ---
+                c.ref_type        = t.ref_type;
+                c.aa_val          = t.val; // ここはあとで，c.aa_val = t.aa_val にする
+                ret_vCmd.push_back(c);
+            }*/
+            
         } break;
         case sstd_yaml::type_hash: {
             // --- debug info ---
@@ -482,6 +514,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
         
         // construction of stack() command
         if( !t.hasValue && (t.type==sstd_yaml::type_list || t.type==sstd_yaml::type_hash || t.type==sstd_yaml::type_list_and_hash )){
+            sstd::printn_all("in\n");
             uint hsc_curr = c.hsc;
             uint hsc_next = 0;
 
@@ -496,7 +529,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
             const sstd_yaml::token& t_nx = v_token[i+1]; // _nx: next
             
             switch(t_nx.type){
-                //case sstd_yaml::type_str:           { hsc_next = t_nx.hsc_hx;                            } break;
+          //case sstd_yaml::type_str:           { hsc_next = t_nx.hsc_hx;                            } break;
             case sstd_yaml::type_str:           { continue; } break;
             case sstd_yaml::type_list:          { hsc_next = t_nx.hsc_lx + 2*(t_nx.list_type_cnt-1); } break;
             case sstd_yaml::type_hash:          { hsc_next = t_nx.hsc_hx;                            } break;
@@ -522,11 +555,12 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
             // │ t │                   │                   │                   │                   │
             // └───┴───────────────────┴───────────────────┴───────────────────┴───────────────────┘
             //
-            bool isGr     = t.type==sstd_yaml::type_list || t_nx.type==sstd_yaml::type_hash; // check '>' case
-            bool isGrOrEq = !isGr;                                                         // check '>=' case
+            bool isGr     = t.type==sstd_yaml::type_list || t_nx.type==sstd_yaml::type_hash; // check '>'  case
+            bool isGrOrEq = !isGr;                                                           // check '>=' case
             if((isGr     && hsc_next> hsc_curr) ||
                (isGrOrEq && hsc_next>=hsc_curr)    )
             {
+                sstd::printn_all("in2\n");
                 // --- debug info ---
                 c.line_num_begin  = t.line_num_begin;
                 c.line_num_end    = t.line_num_end;
@@ -675,12 +709,14 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
     return true;
 }
 bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::command>& v_cmd){
-    std::vector<sstd::terp::var*> v_dst;    // v: vector, _dst: destination. An address stack for sstd_yaml::ope_alloc (follows the YAML indent)
+    std::vector<sstd::terp::var*> v_dst;    // v: vector, _dst: destination address. An address stack for sstd_yaml::ope_alloc (follows the YAML indent)
     std::vector<sstd::terp::var*> v_dst_cr; // v: vector, _dst: destination address, _cr: current. An address stack for sstd_yaml::ope_stack or sstd_yaml::ope_assign.
     std::vector<uint> v_hsc; // v: vector, hsc: head space count
     v_dst.push_back(&ret_yml);
     v_dst_cr.push_back(&ret_yml);
     v_hsc.push_back(0);
+
+    std::unordered_map<std::string, sstd::terp::var*> tbl_anchor_to_address;
     
     for(uint i=0; i<v_cmd.size(); ++i){
         if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
@@ -720,6 +756,17 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml
                 if(!_flow_style_str_to_obj(var, cmd.val)){ sstd::pdbg_err("_flow_style_str_to_obj() is failed.\n"); return false; }
             }else{
                 var = cmd.val;
+//                sstd::printn(var);
+//                sstd::printn(&var);
+//                if(cmd.ref_type==sstd_yaml::ref_type_alias){
+//                    sstd::printn(var);
+//                    sstd::printn(cmd.aa_val);
+//                    sstd::printn(tbl_anchor_to_address);
+//                    // tbl_anchor_to_address.find();
+//                    var = (sstd::terp::var*)tbl_anchor_to_address[ cmd.aa_val ];
+//                }else if(cmd.ref_type!=sstd_yaml::ref_type_anchor){
+//                    var = cmd.val;
+//                }
             }
         }else if(cmd.ope==sstd_yaml::ope_alloc){
             if(var.typeNum()==sstd::num_null){
@@ -729,11 +776,21 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml
                 default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
                 }
             }
-
+            
             switch(cmd.type){
             case sstd_yaml::type_list: {
+                sstd::printn_all(var.size());
+                sstd::printn_all(&ret_yml[0]);
                 var.push_back();
+                sstd::printn_all(&ret_yml[0]);
                 v_dst_cr.push_back(&var[var.size()-1]);
+                sstd::printn_all(&ret_yml[0]);
+                if(cmd.ref_type==sstd_yaml::ref_type_anchor){
+                    tbl_anchor_to_address[ cmd.aa_val ] = &var[ var.size()-1 ];
+                }else if(cmd.ref_type==sstd_yaml::ref_type_alias){
+                    var[ var.size()-1 ] = (sstd::terp::var*)tbl_anchor_to_address[ cmd.aa_val ];
+                }
+                sstd::printn_all(&ret_yml[0]);
             } break;
             case sstd_yaml::type_hash: {
                 auto itr = var.find(cmd.val);
@@ -742,10 +799,20 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml
             } break;
             default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
             }
+//        }else if(cmd.ope==sstd_yaml::ope_push_ref){
+//            tbl_anchor_to_address[ cmd.aa_val ] = &var;
         }else{
             sstd::pdbg_err("Unexpected data type\n"); return false;
         }
+        sstd::printn_all(&ret_yml[0]);
     }
+
+    sstd::printn(tbl_anchor_to_address);
+
+    sstd::printn(&ret_yml);
+    sstd::printn(&ret_yml[0]);
+//    ret_yml[1] = &ret_yml[0];
+    
     return true;
 }
 
@@ -892,8 +959,7 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
         
         if(is_list){ tmp.type += sstd_yaml::type_list; tmp.hsc_hx+=2; }
         if(is_hash){ tmp.type += sstd_yaml::type_hash; }
-
-        if( (is_flow&&is_anchor) || (is_anchor&&is_alias) || (is_alias&&is_flow) ){ sstd::pdbg_err("The flags of `is_flow`, `is_anchor` and `is_alias` are three-way choice. More than 2 flags can not have true value.\n  is_flow: %s\n  is_anchor: %s\n  is_alias: %s\n", (is_flow?"true":"false"), (is_anchor?"true":"false"), (is_alias?"true":"false")); return false; }
+        
         if(is_flow  ){ tmp.format   = sstd_yaml::format_flow_style;                     }
         if(is_anchor){ tmp.ref_type = sstd_yaml::ref_type_anchor;   tmp.val.erase(0,1); } // 1) set format type, 2) remove '&' in the head of the string
         if(is_alias ){ tmp.ref_type = sstd_yaml::ref_type_alias;    tmp.val.erase(0,1); } // 1) set format type, 2) remove '*' in the head of the string
@@ -907,10 +973,10 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
         // set hasValue
         tmp.hasValue=false;
         switch(tmp.type){
-        case sstd_yaml::type_str:           { if(tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1){tmp.hasValue=true;} } break;
-        case sstd_yaml::type_list:          { if(tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1){tmp.hasValue=true;} } break; // check the value is NOT NULL
+        case sstd_yaml::type_str:           { if((tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1) && (tmp.ref_type==sstd_yaml::ref_type_null)){tmp.hasValue=true;} } break;
+        case sstd_yaml::type_list:          { if((tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1) && (tmp.ref_type==sstd_yaml::ref_type_null)){tmp.hasValue=true;} } break; // check the value is NOT NULL
         case sstd_yaml::type_list_and_hash:
-        case sstd_yaml::type_hash:          { if(tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1){tmp.hasValue=true;} } break; // check the value is NOT NULL
+        case sstd_yaml::type_hash:          { if((tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1) && (tmp.ref_type==sstd_yaml::ref_type_null)){tmp.hasValue=true;} } break; // check the value is NOT NULL
         default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
         }
 
@@ -1058,7 +1124,7 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
         sstd_yaml::token tmp = (*pT);
 
         // Check criteria values (Defining criteria value as a base token like list, hash or list_and_hash type to merge)
-        bool start_with_string = (*pT).val.size()>=1;
+        bool start_with_string = (*pT).val.size()>=1 && (*pT).ref_type==sstd_yaml::ref_type_null;
         uint criteria_hsc = _get_criteria_hsc((*pT)); // criteria_hsc: criteria head space count
         
         for(uint merge_cnt=1;; ++merge_cnt){
@@ -1199,8 +1265,11 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
 
 bool _yaml_load_base(sstd::terp::var& ret_yml, const std::vector<sstd_yaml::token>& v_token){
     
+    sstd::printn(v_token);
     std::vector<struct sstd_yaml::command> v_cmd;
     if(!sstd_yaml::_token2cmd(v_cmd, v_token)){ return false; }
+    printf("\n\n");
+    sstd::printn(v_cmd);
     
     if(!_construct_var(ret_yml, v_cmd)){ return false; }
     
