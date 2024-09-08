@@ -4,6 +4,10 @@
 #include "../../print/pdbg.hpp"
 #include "../../string/ssprintf.hpp"
 
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+#define _CAST2VEC(_P) (*(std::vector<sstd::terp::var*>*)_P)
+#define _CAST2HASH(_P) (*(std::unordered_map<std::string,sstd::terp::var>*)_P)
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // for internal use
@@ -37,7 +41,7 @@ void sstd::terp::_to(     float & dst, const sstd::terp::var& src){ dst = strtof
 void sstd::terp::_to(    double & dst, const sstd::terp::var& src){ dst = strtod(STR.c_str(), NULL); }
 void sstd::terp::_to(const char*& dst, const sstd::terp::var& src){ dst = STR.c_str(); }
 void sstd::terp::_to(std::string& dst, const sstd::terp::var& src){ dst = STR; }
-void sstd::terp::_to(std::string& dst, const std::string       & src){ dst = src; }
+void sstd::terp::_to(std::string& dst, const std::string    & src){ dst = src; }
 #undef STR
 
 #define NULL_CHECK(p) if(p==NULL){ sstd::pdbg_err("NULL pointer is detected\n"); return; }
@@ -115,20 +119,21 @@ sstd::terp::var sstd::terp::hash(){ return sstd::terp::hash(0); }
 sstd::terp::var sstd::terp::list(uint allocate_size){
     sstd::terp::var r;
     r.type_RW() = num_vec_terp_var;
-    r.p_RW()    = new std::vector<sstd::terp::var>(allocate_size);
+    r.p_RW()    = new std::vector<sstd::terp::var*>(allocate_size);
+    
+    for(uint i=0; i<allocate_size; ++i){
+        // Allocate the outscope memory
+        _CAST2VEC(r.p_RW())[i] = new sstd::terp::var();
+    }
+    
     return r;
 }
 sstd::terp::var sstd::terp::list(){
     sstd::terp::var r;
     r.type_RW() = num_vec_terp_var;
-    r.p_RW()    = new std::vector<sstd::terp::var>();
+    r.p_RW()    = new std::vector<sstd::terp::var*>();
     return r;
 }
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
-// sstd::terp::null
-
-sstd::terp::var sstd::terp::null(){ return sstd::terp::var(); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // type check
@@ -258,7 +263,7 @@ void sstd::terp::var::copy(const class sstd::terp::var& rhs){
 //    case sstd::num_hash_str_void_ptr     : { this->_p = new std::unordered_map<std::string,   sstd::void_ptr>(*(std::unordered_map<std::string,   sstd::void_ptr>*)rhs.p()); } break;
 //    case sstd::num_hash_void_ptr_void_ptr: { this->_p = new std::unordered_map<sstd::void_ptr,sstd::void_ptr>(*(std::unordered_map<sstd::void_ptr,sstd::void_ptr>*)rhs.p()); } break;
         
-    case sstd::num_vec_terp_var:  { this->_p = new std::vector<sstd::terp::var>(*(std::vector<sstd::terp::var>*)rhs.p()); } break;
+    case sstd::num_vec_terp_var:  { this->_p = new std::vector<sstd::terp::var*>(*(std::vector<sstd::terp::var*>*)rhs.p()); } break;
     case sstd::num_hash_terp_var: { this->_p = new std::unordered_map<std::string,sstd::terp::var>(*(std::unordered_map<std::string,sstd::terp::var>*)rhs.p()); } break;
        
     default: { sstd::pdbg("ERROR: allocating memory is failed. typeNum '%d' is not defined.", this->_type); } break;
@@ -273,7 +278,7 @@ void sstd::terp::var::move(      class sstd::terp::var&& rhs){
 
 void sstd::terp::var::free(){
     if(this->_p==NULL){ return; }
-    
+
     switch (this->_type){
     case sstd::num_null    : {} break;
     case sstd::num_bool    : { delete (          bool*)_p; } break;
@@ -310,7 +315,7 @@ void sstd::terp::var::free(){
 //    case sstd::num_hash_str_void_ptr     : { delete (std::unordered_map<std::string,   sstd::void_ptr>*)_p; } break;
 //    case sstd::num_hash_void_ptr_void_ptr: { delete (std::unordered_map<sstd::void_ptr,sstd::void_ptr>*)_p; } break;
         
-    case sstd::num_vec_terp_var: { delete (std::vector<sstd::terp::var>*)_p; } break;
+    case sstd::num_vec_terp_var: { delete (std::vector<sstd::terp::var*>*)_p; } break;
     case sstd::num_hash_terp_var: { delete (std::unordered_map<std::string,sstd::terp::var>*)_p; } break;
         
     default: { sstd::pdbg("ERROR: free() memory is failed. typeNum '%d' is not defined.", this->_type); } break;
@@ -381,12 +386,9 @@ bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs){
 bool sstd::terp::var::operator==(const sstd::terp::var& rhs){ return  _is_equal(*this, rhs); }
 bool sstd::terp::var::operator!=(const sstd::terp::var& rhs){ return !_is_equal(*this, rhs); }
 
-#define _CAST2VEC(_P) (*(std::vector<sstd::terp::var>*)_P)
-#define _CAST2HASH(_P) (*(std::unordered_map<std::string,sstd::terp::var>*)_P)
-
 #define _OPE_SUBSCRIPT_IDX_BASE()                                       \
     switch(_type){                                                      \
-    case sstd::num_vec_terp_var: { return _CAST2VEC(this->_p)[idx]; } break; \
+    case sstd::num_vec_terp_var: { return *_CAST2VEC(this->_p)[idx]; } break; \
     default: { sstd::pdbg_err("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var takes \"sstd::terp::hash()\" type, but treat as a \"sstd::terp::list()\".\n"); } break; \
     }                                                                   \
     return *this;
@@ -457,7 +459,7 @@ uint sstd::terp::var::bucket_count(){
 sstd::terp::iterator sstd::terp::var::erase(const sstd::terp::iterator& rhs){
     switch(_type){
     case sstd::num_vec_terp_var:  { return sstd::terp::iterator( _CAST2VEC(_p).erase(rhs._v_itr_R()) ); } break;
-    case sstd::num_null:             {} break;
+    case sstd::num_null:          {} break;
     default: { sstd::pdbg_err("ERROR\n"); }
     }
     return sstd::terp::iterator();
@@ -465,7 +467,7 @@ sstd::terp::iterator sstd::terp::var::erase(const sstd::terp::iterator& rhs){
 uint sstd::terp::var::erase(const char* pKey){
     switch(_type){
     case sstd::num_hash_terp_var: { return _CAST2HASH(_p).erase(pKey); } break;
-    case sstd::num_null:             {} break;
+    case sstd::num_null:          {} break;
     default: { sstd::pdbg_err("ERROR\n"); }
     }
     return 0;
@@ -476,7 +478,7 @@ uint sstd::terp::var::erase(const char* pKey){
 sstd::terp::iterator sstd::terp::var::find(const char* pKey) const {
     switch(_type){
     case sstd::num_hash_terp_var: { return sstd::terp::iterator( _CAST2HASH(_p).find(pKey) ); } break;
-    case sstd::num_null:             {} break;
+    case sstd::num_null:          {} break;
     default: { sstd::pdbg_err("ERROR\n"); }
     }
     return sstd::terp::iterator();
@@ -491,8 +493,8 @@ sstd::terp::iterator sstd::terp::var::find(const std::string  key) const {
 void sstd::terp::var::pop_back(){
     NULL_CHECK(_p);
     switch(_type){
-    case sstd::num_vec_terp_var: { if(_CAST2VEC(this->_p).size()==0){return;} _CAST2VEC(this->_p).pop_back(); return; } break;
-    case sstd::num_null:            {} break;
+    case sstd::num_vec_terp_var: { if(_CAST2VEC(this->_p).size()==0){return;} delete _CAST2VEC(this->_p).back(); _CAST2VEC(this->_p).pop_back(); return; } break;
+    case sstd::num_null:         {} break;
     default: { sstd::pdbg_err("ERROR\n"); }
     }
     return;
@@ -501,28 +503,44 @@ void sstd::terp::var::pop_back(){
 void sstd::terp::var::push_back(){ // push_back null
     NULL_CHECK(_p);
     if(_type!=sstd::num_vec_terp_var){ sstd::pdbg_err("push_back(char*) is failed. Unexpedted data type. This function requires sstd::num_vec_terp_var type, but takes %s type.\n", sstd::typeNum2str(this->_type).c_str()); return; }
-    _CAST2VEC(_p).push_back(sstd::terp::null());
+    _CAST2VEC(_p).push_back(new sstd::terp::var());
 }
 void sstd::terp::var::push_back(const char* pRhs){
     NULL_CHECK(_p);
     if(_type!=sstd::num_vec_terp_var){ sstd::pdbg_err("push_back(char*) is failed. Unexpedted data type. This function requires sstd::num_vec_terp_var type, but takes %s type.\n", sstd::typeNum2str(this->_type).c_str()); return; }
-    _CAST2VEC(_p).push_back(sstd::terp::var(pRhs));
+    _CAST2VEC(_p).push_back(new sstd::terp::var(pRhs));
 }
 void sstd::terp::var::push_back(const sstd::terp::var& rhs){
     NULL_CHECK(_p);
     if(_type!=sstd::num_vec_terp_var){ sstd::pdbg_err("push_back(var&) is failed. Unexpedted data type. This function requires sstd::num_vec_terp_var type, but takes %s type.\n", sstd::typeNum2str(this->_type).c_str()); return; }
-    _CAST2VEC(_p).push_back(rhs);
+    _CAST2VEC(_p).push_back(new sstd::terp::var(rhs));
 }
 void sstd::terp::var::push_back(      sstd::terp::var&& rhs){
     NULL_CHECK(_p);
     if(_type!=sstd::num_vec_terp_var){ sstd::pdbg_err("push_back(var&) is failed. Unexpedted data type. This function requires sstd::num_vec_terp_var type, but takes %s type.\n", sstd::typeNum2str(this->_type).c_str()); return; }
-    _CAST2VEC(_p).push_back(std::move(rhs)); // call move constructor of "sstd::void_ptr::void_ptr()"
+    _CAST2VEC(_p).push_back(new sstd::terp::var(std::move(rhs))); // call move constructor of "sstd::void_ptr::void_ptr()"
 }
 
 void sstd::terp::var::resize(uint len){
+    uint current_size = this->size();
+    
+    if(len < current_size){
+        // Release the outscope memory
+        for(int i=current_size-1; i>=len; --i){
+            delete _CAST2VEC(_p)[i];
+        }
+    }
+    
     switch(_type){
     case sstd::num_vec_terp_var: { _CAST2VEC(_p).resize( len ); } break;
     default: { sstd::pdbg_err("ERROR\n"); } break;
+    }
+
+    if(len > current_size){
+        // Allocate the outscope memory
+        for(int i=current_size; i<len; ++i){
+            _CAST2VEC(_p)[i] = new sstd::terp::var();
+        }
     }
 }
 

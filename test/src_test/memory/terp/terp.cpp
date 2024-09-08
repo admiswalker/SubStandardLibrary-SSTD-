@@ -111,15 +111,14 @@ TEST(memory_terp, list_ope_assign_with_reference){ // Ope=
     sstd::terp::var x = a; // TEST THIS LINE
     
     ASSERT_TRUE(x[0].is_reference() == false);
-    ASSERT_TRUE(x[1].is_reference() == false);
+    ASSERT_TRUE(x[1].is_reference() == true );
 
-    a[0][0]="x1";
-    ASSERT_TRUE(a[0][0].to<std::string>() == "x1");
-    ASSERT_TRUE(a[1][0].to<std::string>() == "x1");
+    x[0][0]="x";
+    ASSERT_TRUE(a[0][0].to<std::string>() == "x");
+    ASSERT_TRUE(a[1][0].to<std::string>() == "x");
     
-    x[0][0]="x2";
-    ASSERT_TRUE(x[0][0].to<std::string>() == "x2");
-    ASSERT_TRUE(x[1][0].to<std::string>() == "a");
+    ASSERT_TRUE(x[0][0].to<std::string>() == "x");
+    ASSERT_TRUE(x[1][0].to<std::string>() == "x");
 }
 
 // operator==

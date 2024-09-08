@@ -26,9 +26,6 @@ namespace sstd::terp{
     var list(uint allocate_size);
     var list();
 
-    // null
-    var null();
-    
     // type check
     bool isHash (const sstd::terp::var& rhs);
     bool isList (const sstd::terp::var& rhs);
@@ -171,7 +168,7 @@ public:
 
 namespace sstd::terp{
     // iterator
-    using _v_iterator = typename std::vector<sstd::terp::var>::const_iterator;
+    using _v_iterator = typename std::vector<sstd::terp::var*>::const_iterator;
     using _h_iterator = typename std::unordered_map<std::string,sstd::terp::var>::const_iterator;
 }
 
@@ -203,8 +200,8 @@ public:
     T first_to() const {
         T ret = T();
         switch(this->_type){
-        case sstd::num_vec_terp_var:  { sstd::terp::_to(ret, (sstd::terp::var)(*_v_itr)      ); return ret; } break;
-        case sstd::num_hash_terp_var: { sstd::terp::_to(ret, (std::string       )(*_h_itr).first); return ret; } break;
+        case sstd::num_vec_terp_var:  { sstd::terp::_to(ret, *(sstd::terp::var*)(*_v_itr)      ); return ret; } break;
+        case sstd::num_hash_terp_var: { sstd::terp::_to(ret,  (std::string     )(*_h_itr).first); return ret; } break;
         default: { sstd::pdbg_err("ERROR\n"); }
         }
         return ret;
