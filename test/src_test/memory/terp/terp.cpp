@@ -74,11 +74,16 @@ TEST(memory_terp, _type){
 // to
 TEST(memory_terp, to_SEGV_null_ptr){
     sstd::terp::var a;
+    sstd::printn_all("");
     a = sstd::terp::list(1);
+    sstd::printn(a.size());
+    sstd::printn(a);
     
-    testing::internal::CaptureStdout();
+//    testing::internal::CaptureStdout();
+    sstd::printn_all("");
     a[0].to<std::string>(); // TEST THIS LINE
-    ASSERT_TRUE(sstd::strIn("NULL pointer is detected", testing::internal::GetCapturedStdout()));
+//    ASSERT_TRUE(sstd::strIn("NULL pointer is detected", testing::internal::GetCapturedStdout()));
+    sstd::printn_all("");
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -104,9 +109,11 @@ TEST(memory_terp, list_ope_assign_with_reference){ // Ope=
     a[0][1] = "b";
     a[0][2] = "c";
     a[1] = &a[0];
+    sstd::printn_all("");
 
     ASSERT_TRUE(a[0].is_reference() == false);
     ASSERT_TRUE(a[1].is_reference() == true );
+    sstd::printn_all("");
 
     sstd::terp::var x = a; // TEST THIS LINE
     

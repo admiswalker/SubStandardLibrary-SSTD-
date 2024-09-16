@@ -128,7 +128,9 @@ public:
     template <typename T>
     const T to() const {
         T ret = T();
+        printf("131\n");
         if(this->_p==NULL){ sstd::pdbg_err("NULL pointer is detected\n"); return ret; }
+        printf("133\n");
         sstd::terp::_to(ret, *this);
         return ret;
     }
