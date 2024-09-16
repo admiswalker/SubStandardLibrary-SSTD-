@@ -74,16 +74,11 @@ TEST(memory_terp, _type){
 // to
 TEST(memory_terp, to_SEGV_null_ptr){
     sstd::terp::var a;
-    sstd::printn_all("");
     a = sstd::terp::list(1);
-    sstd::printn(a.size());
-    sstd::printn(a);
     
-//    testing::internal::CaptureStdout();
-    sstd::printn_all("");
+    testing::internal::CaptureStdout();
     a[0].to<std::string>(); // TEST THIS LINE
-//    ASSERT_TRUE(sstd::strIn("NULL pointer is detected", testing::internal::GetCapturedStdout()));
-    sstd::printn_all("");
+    ASSERT_TRUE(sstd::strIn("NULL pointer is detected", testing::internal::GetCapturedStdout()));
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -109,11 +104,9 @@ TEST(memory_terp, list_ope_assign_with_reference){ // Ope=
     a[0][1] = "b";
     a[0][2] = "c";
     a[1] = &a[0];
-    sstd::printn_all("");
 
     ASSERT_TRUE(a[0].is_reference() == false);
     ASSERT_TRUE(a[1].is_reference() == true );
-    sstd::printn_all("");
 
     sstd::terp::var x = a; // TEST THIS LINE
     
@@ -875,5 +868,30 @@ TEST(memory_terp, reference_of_sstd_terp_var_01){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+//
+
+void _tmp_001(class sstd::terp::var& tmp){
+    sstd::printn(tmp.type());
+}
+TEST(memory_terp, copy_list_001_tmp){
+    sstd::terp::var* tmp = new sstd::terp::var();
+    sstd::printn(tmp->type());
+    _tmp_001(*tmp);
+    
+    sstd::terp::var x;
+    x = sstd::terp::list(1);
+    printf("877\n");
+    sstd::printn(x.size());
+    x[0] = "a";
+    sstd::printn(x.size());
+    sstd::printn(x);
+    
+    sstd::terp::var a; // ans
+    a = x; // copy
+    sstd::printn(a.size());
+    sstd::printn(a);
+    
+    ASSERT_TRUE(x==a);
+}
 
 EXECUTE_TESTS();

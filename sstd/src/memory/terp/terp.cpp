@@ -222,64 +222,62 @@ uint & sstd::terp::var::type_RW(){ return this->_type; }
 // common
 
 // copy(), allocate(), free()
-void sstd::terp::var::copy(const class sstd::terp::var& rhs){
-    sstd::terp::var::free();
-    
-    this->_type = rhs.type();
-    if(rhs.p()==NULL){ this->_p=NULL; return; }
-    switch (this->_type){
+void _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs){
+    pLhs->type_RW() = pRhs->type();
+    if(pRhs->p()==NULL){ pLhs->p_RW()=NULL; return; }
+    switch (pLhs->type()){
     case sstd::num_null    : {} break;
         
-    case sstd::num_bool    : { this->_p = new           bool(*(         bool *)rhs.p()); } break;
-    case sstd::num_char    : { this->_p = new           char(*(         char *)rhs.p()); } break;
-    case sstd::num_int8    : { this->_p = new          int8 (*(         int8 *)rhs.p()); } break;
-    case sstd::num_int16   : { this->_p = new          int16(*(         int16*)rhs.p()); } break;
-    case sstd::num_int32   : { this->_p = new          int32(*(         int32*)rhs.p()); } break;
-    case sstd::num_int64   : { this->_p = new          int64(*(         int64*)rhs.p()); } break;
-    case sstd::num_uint8   : { this->_p = new         uint8 (*(        uint8 *)rhs.p()); } break;
-    case sstd::num_uint16  : { this->_p = new         uint16(*(        uint16*)rhs.p()); } break;
-    case sstd::num_uint32  : { this->_p = new         uint32(*(        uint32*)rhs.p()); } break;
-    case sstd::num_uint64  : { this->_p = new         uint64(*(        uint64*)rhs.p()); } break;
-    case sstd::num_float   : { this->_p = new          float(*(         float*)rhs.p()); } break;
-    case sstd::num_double  : { this->_p = new         double(*(        double*)rhs.p()); } break;
-    case sstd::num_str     : { this->_p = new    std::string(*(   std::string*)rhs.p()); } break;
-//    case sstd::num_void_ptr: { this->_p = new sstd::void_ptr(*(sstd::void_ptr*)rhs.p()); } break;
+    case sstd::num_bool    : { pLhs->p_RW() = new           bool(*(         bool *)pRhs->p()); } break;
+    case sstd::num_char    : { pLhs->p_RW() = new           char(*(         char *)pRhs->p()); } break;
+    case sstd::num_int8    : { pLhs->p_RW() = new          int8 (*(         int8 *)pRhs->p()); } break;
+    case sstd::num_int16   : { pLhs->p_RW() = new          int16(*(         int16*)pRhs->p()); } break;
+    case sstd::num_int32   : { pLhs->p_RW() = new          int32(*(         int32*)pRhs->p()); } break;
+    case sstd::num_int64   : { pLhs->p_RW() = new          int64(*(         int64*)pRhs->p()); } break;
+    case sstd::num_uint8   : { pLhs->p_RW() = new         uint8 (*(        uint8 *)pRhs->p()); } break;
+    case sstd::num_uint16  : { pLhs->p_RW() = new         uint16(*(        uint16*)pRhs->p()); } break;
+    case sstd::num_uint32  : { pLhs->p_RW() = new         uint32(*(        uint32*)pRhs->p()); } break;
+    case sstd::num_uint64  : { pLhs->p_RW() = new         uint64(*(        uint64*)pRhs->p()); } break;
+    case sstd::num_float   : { pLhs->p_RW() = new          float(*(         float*)pRhs->p()); } break;
+    case sstd::num_double  : { pLhs->p_RW() = new         double(*(        double*)pRhs->p()); } break;
+    case sstd::num_str     : { pLhs->p_RW() = new    std::string(*(   std::string*)pRhs->p()); } break;
+//    case sstd::num_void_ptr: { pLhs->_p = new sstd::void_ptr(*(sstd::void_ptr*)pRhs->p()); } break;
         
-    case sstd::num_vec_bool    : { this->_p = new std::vector<          bool>(*(std::vector<          bool>*)rhs.p()); } break;
-    case sstd::num_vec_char    : { this->_p = new std::vector<          char>(*(std::vector<          char>*)rhs.p()); } break;
-    case sstd::num_vec_int8    : { this->_p = new std::vector<         int8 >(*(std::vector<         int8 >*)rhs.p()); } break;
-    case sstd::num_vec_int16   : { this->_p = new std::vector<         int16>(*(std::vector<         int16>*)rhs.p()); } break;
-    case sstd::num_vec_int32   : { this->_p = new std::vector<         int32>(*(std::vector<         int32>*)rhs.p()); } break;
-    case sstd::num_vec_int64   : { this->_p = new std::vector<         int64>(*(std::vector<         int64>*)rhs.p()); } break;
-    case sstd::num_vec_uint8   : { this->_p = new std::vector<        uint8 >(*(std::vector<        uint8 >*)rhs.p()); } break;
-    case sstd::num_vec_uint16  : { this->_p = new std::vector<        uint16>(*(std::vector<        uint16>*)rhs.p()); } break;
-    case sstd::num_vec_uint32  : { this->_p = new std::vector<        uint32>(*(std::vector<        uint32>*)rhs.p()); } break;
-    case sstd::num_vec_uint64  : { this->_p = new std::vector<        uint64>(*(std::vector<        uint64>*)rhs.p()); } break;
-    case sstd::num_vec_float   : { this->_p = new std::vector<         float>(*(std::vector<         float>*)rhs.p()); } break;
-    case sstd::num_vec_double  : { this->_p = new std::vector<        double>(*(std::vector<        double>*)rhs.p()); } break;
-    case sstd::num_vec_str     : { this->_p = new std::vector<   std::string>(*(std::vector<   std::string>*)rhs.p()); } break;
-//    case sstd::num_vec_void_ptr: { this->_p = new std::vector<sstd::void_ptr>(*(std::vector<sstd::void_ptr>*)rhs.p()); } break;
+    case sstd::num_vec_bool    : { pLhs->p_RW() = new std::vector<          bool>(*(std::vector<          bool>*)pRhs->p()); } break;
+    case sstd::num_vec_char    : { pLhs->p_RW() = new std::vector<          char>(*(std::vector<          char>*)pRhs->p()); } break;
+    case sstd::num_vec_int8    : { pLhs->p_RW() = new std::vector<         int8 >(*(std::vector<         int8 >*)pRhs->p()); } break;
+    case sstd::num_vec_int16   : { pLhs->p_RW() = new std::vector<         int16>(*(std::vector<         int16>*)pRhs->p()); } break;
+    case sstd::num_vec_int32   : { pLhs->p_RW() = new std::vector<         int32>(*(std::vector<         int32>*)pRhs->p()); } break;
+    case sstd::num_vec_int64   : { pLhs->p_RW() = new std::vector<         int64>(*(std::vector<         int64>*)pRhs->p()); } break;
+    case sstd::num_vec_uint8   : { pLhs->p_RW() = new std::vector<        uint8 >(*(std::vector<        uint8 >*)pRhs->p()); } break;
+    case sstd::num_vec_uint16  : { pLhs->p_RW() = new std::vector<        uint16>(*(std::vector<        uint16>*)pRhs->p()); } break;
+    case sstd::num_vec_uint32  : { pLhs->p_RW() = new std::vector<        uint32>(*(std::vector<        uint32>*)pRhs->p()); } break;
+    case sstd::num_vec_uint64  : { pLhs->p_RW() = new std::vector<        uint64>(*(std::vector<        uint64>*)pRhs->p()); } break;
+    case sstd::num_vec_float   : { pLhs->p_RW() = new std::vector<         float>(*(std::vector<         float>*)pRhs->p()); } break;
+    case sstd::num_vec_double  : { pLhs->p_RW() = new std::vector<        double>(*(std::vector<        double>*)pRhs->p()); } break;
+    case sstd::num_vec_str     : { pLhs->p_RW() = new std::vector<   std::string>(*(std::vector<   std::string>*)pRhs->p()); } break;
+//    case sstd::num_vec_void_ptr: { pLhs->p_RW() = new std::vector<sstd::void_ptr>(*(std::vector<sstd::void_ptr>*)pRhs->p()); } break;
         
-    case sstd::num_hash_str_str          : { this->_p = new std::unordered_map<std::string,      std::string>(*(std::unordered_map<std::string,      std::string>*)rhs.p()); } break;
-//    case sstd::num_hash_str_void_ptr     : { this->_p = new std::unordered_map<std::string,   sstd::void_ptr>(*(std::unordered_map<std::string,   sstd::void_ptr>*)rhs.p()); } break;
-//    case sstd::num_hash_void_ptr_void_ptr: { this->_p = new std::unordered_map<sstd::void_ptr,sstd::void_ptr>(*(std::unordered_map<sstd::void_ptr,sstd::void_ptr>*)rhs.p()); } break;
+    case sstd::num_hash_str_str          : { pLhs->p_RW() = new std::unordered_map<std::string,      std::string>(*(std::unordered_map<std::string,      std::string>*)pRhs->p()); } break;
+//    case sstd::num_hash_str_void_ptr     : { pLhs->p_RW() = new std::unordered_map<std::string,   sstd::void_ptr>(*(std::unordered_map<std::string,   sstd::void_ptr>*)pRhs->p()); } break;
+//    case sstd::num_hash_void_ptr_void_ptr: { pLhs->p_RW() = new std::unordered_map<sstd::void_ptr,sstd::void_ptr>(*(std::unordered_map<sstd::void_ptr,sstd::void_ptr>*)pRhs->p()); } break;
         
-//    case sstd::num_vec_terp_var:  { this->_p = new std::vector<sstd::terp::var*>(*(std::vector<sstd::terp::var*>*)rhs.p()); } break;
     case sstd::num_vec_terp_var:  {
-        //*
-        this->_p = new std::vector<sstd::terp::var*>(rhs.size(), NULL);
-//        printf(" size: %d\n", rhs.size());
-//        printf(" type: %d\n", rhs.type());
-        for(uint i=0;i<rhs.size();++i){
-            _CAST2VEC(this->_p)[i] = new sstd::terp::var();
-// TODO:           copy(_CAST2VEC(this->_p)[i].p_RW() = rhs[i].p());
+        pLhs->p_RW() = new std::vector<sstd::terp::var*>(pRhs->size(), NULL);
+        for(uint i=0;i<pRhs->size();++i){
+            _CAST2VEC(pLhs->p_RW())[i] = new sstd::terp::var();
+            _copy_base(_CAST2VEC(pLhs->p_RW())[i], _CAST2VEC(pRhs->p())[i]);
         }
     } break;
-    case sstd::num_hash_terp_var: { this->_p = new std::unordered_map<std::string,sstd::terp::var>(*(std::unordered_map<std::string,sstd::terp::var>*)rhs.p()); } break;
+    case sstd::num_hash_terp_var: { pLhs->p_RW() = new std::unordered_map<std::string,sstd::terp::var>(*(std::unordered_map<std::string,sstd::terp::var>*)pRhs->p()); } break;
        
-    default: { sstd::pdbg("ERROR: allocating memory is failed. typeNum '%d' is not defined.", this->_type); } break;
+    default: { sstd::pdbg("ERROR: allocating memory is failed. typeNum '%d' is not defined.", pLhs->type()); } break;
         
     }
+}
+void sstd::terp::var::copy(const class sstd::terp::var& rhs){
+    sstd::terp::var::free();
+    _copy_base(this, &rhs);
 }
 
 void sstd::terp::var::move(      class sstd::terp::var&& rhs){
