@@ -169,7 +169,7 @@ public:
 namespace sstd::terp{
     // iterator
     using _v_iterator = typename std::vector<sstd::terp::var*>::const_iterator;
-    using _h_iterator = typename std::unordered_map<std::string,sstd::terp::var>::const_iterator;
+    using _h_iterator = typename std::unordered_map<std::string,sstd::terp::var*>::const_iterator;
 }
 
 //---
@@ -211,7 +211,7 @@ public:
     T second_to() const {
         T ret = T();
         switch(this->_type){
-        case sstd::num_hash_terp_var: { sstd::terp::_to(ret, (sstd::terp::var)(*_h_itr).second); return ret; } break;
+        case sstd::num_hash_terp_var: { sstd::terp::_to(ret, *(sstd::terp::var*)(*_h_itr).second); return ret; } break;
         default: { sstd::pdbg_err("ERROR\n"); }
         }
         return ret;

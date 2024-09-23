@@ -894,4 +894,37 @@ TEST(memory_terp, copy_list_001_tmp){
     ASSERT_TRUE(x==a);
 }
 
+//---
+
+TEST(memory_terp, hash_ope_assign_tmp){
+    sstd::terp::var x;
+    x = sstd::terp::hash();
+//    sstd::printn_all(x);
+//    x = "v1";
+    sstd::printn_all(x);
+    x["k1"] = "v1";
+//    x["k1"] = sstd::terp::var("v1");
+    sstd::printn_all(x);
+    sstd::printn_all(x["k1"]);
+    sstd::printn_all(x["k1"].type());
+    
+    /*
+    sstd::terp::var a;
+    a = sstd::terp::hash(0); // TEST THIS LINE
+    sstd::printn_all(a);
+    sstd::printn_all(a.size());
+    a["k1"] = sstd::terp::hash(); // TEST THIS LINE
+    sstd::printn_all(a);
+    a["k1"]["k11"] = "v1";
+    sstd::printn_all(a);
+    a["k1"]["k12"] = "v2";
+    sstd::printn_all(a);
+    
+    ASSERT_STREQ(a["k1"]["k11"].to<std::string>().c_str(), "v1");
+    ASSERT_STREQ(a["k1"]["k12"].to<std::string>().c_str(), "v2");
+    */
+}
+
+//---
+
 EXECUTE_TESTS();

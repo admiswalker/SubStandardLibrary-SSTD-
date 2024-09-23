@@ -7,7 +7,7 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 #define _CAST2VEC(_P) (*(std::vector<sstd::terp::var*>*)_P)
-#define _CAST2HASH(_P) (*(std::unordered_map<std::string,sstd::terp::var>*)_P)
+#define _CAST2HASH(_P) (*(std::unordered_map<std::string,sstd::terp::var*>*)_P)
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // for internal use
@@ -51,7 +51,7 @@ void sstd::terp::_to(std::string& dst, const std::string    & src){ dst = src; }
 
 // constructors
 sstd::terp::iterator::iterator(): _type(sstd::num_null) {}
-sstd::terp::iterator::iterator(const _v_iterator& rhs){ this->_type=sstd::num_vec_terp_var;  _v_itr=rhs; }
+sstd::terp::iterator::iterator(const _v_iterator& rhs){ this->_type=sstd::num_vec_terp_var;  _v_itr=rhs; } 
 sstd::terp::iterator::iterator(const _h_iterator& rhs){ this->_type=sstd::num_hash_terp_var; _h_itr=rhs; }
 sstd::terp::iterator::~iterator(){}
 
@@ -107,8 +107,8 @@ sstd::terp::iterator sstd::terp::iterator::operator++(){
 
 sstd::terp::var sstd::terp::hash(uint allocate_size){
     sstd::terp::var r;
-    r.type_RW() = num_hash_terp_var;
-    r.p_RW()    = new std::unordered_map<std::string, sstd::void_ptr>(allocate_size);
+    r.type_RW() = sstd::num_hash_terp_var;
+    r.p_RW()    = new std::unordered_map<std::string, sstd::terp::var*>(allocate_size);
     return r;
 }
 sstd::terp::var sstd::terp::hash(){ return sstd::terp::hash(0); }
@@ -269,8 +269,20 @@ void _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs){
             _copy_base(_CAST2VEC(pLhs->p_RW())[i], _CAST2VEC(pRhs->p())[i]);
         }
     } break;
-    case sstd::num_hash_terp_var: { pLhs->p_RW() = new std::unordered_map<std::string,sstd::terp::var>(*(std::unordered_map<std::string,sstd::terp::var>*)pRhs->p()); } break;
-       
+//    case sstd::num_hash_terp_var: { pLhs->p_RW() = new std::unordered_map<std::string,sstd::terp::var*>(*(std::unordered_map<std::string,sstd::terp::var*>*)pRhs->p()); } break;
+    case sstd::num_hash_terp_var: {
+        std::unordered_map<std::string,sstd::terp::var*>* pRHash = (std::unordered_map<std::string,sstd::terp::var*>*)pRhs->p();
+        
+        std::unordered_map<std::string,sstd::terp::var*>* pLHash = new std::unordered_map<std::string,sstd::terp::var*>( pRHash->size() );
+        pLhs->p_RW() = pLHash;
+        
+        for(auto itr=pRHash->begin(); itr!=pRHash->end(); ++itr){
+            sstd::terp::var* pVal = new sstd::terp::var();
+            (*pLHash)[ itr->first ] = pVal;
+            _copy_base(pVal, itr->second);
+        }
+    } break;
+        
     default: { sstd::pdbg("ERROR: allocating memory is failed. typeNum '%d' is not defined.", pLhs->type()); } break;
         
     }
@@ -330,7 +342,12 @@ void sstd::terp::var::free(){
         }
         delete (std::vector<sstd::terp::var*>*)_p;
     } break;
-    case sstd::num_hash_terp_var: { delete (std::unordered_map<std::string,sstd::terp::var>*)_p; } break;
+    case sstd::num_hash_terp_var: {
+        for(auto itr=_CAST2HASH(_p).begin(); itr!=_CAST2HASH(_p).end(); ++itr){
+            delete itr->second;
+        }
+        delete (std::unordered_map<std::string,sstd::terp::var*>*)_p;
+    } break;
         
     default: { sstd::pdbg("ERROR: free() memory is failed. typeNum '%d' is not defined.", this->_type); } break;
     }
@@ -370,7 +387,7 @@ bool _is_equal_list(const sstd::terp::var& lhs, const sstd::terp::var& rhs){
     
     return true;
 }
-bool _is_equal_hash(const sstd::terp::var& lhs, const sstd::terp::var& rhs){
+bool _is_equal_hash(const sstd::terp::var& lhs, const sstd::terp::var& rhs){ // TODO: これ，reference あるとかなり実装が面倒になるはず
     if(lhs.size()!=rhs.size()){ return false; }
 
     for(auto itr=lhs.begin(); itr!=lhs.end(); ++itr){
@@ -408,16 +425,46 @@ bool sstd::terp::var::operator!=(const sstd::terp::var& rhs){ return !_is_equal(
     return *this;
 #define _OPE_SUBSCRIPT_KEY_BASE(pKey)                                   \
     switch(_type){                                                      \
-    case sstd::num_hash_terp_var: { return _CAST2HASH(_p)[pKey]; } break; \
-    default: { sstd::pdbg_err("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var takes \"sstd::terp::list()\" type, but treat as a \"sstd::terp::hash()\".\n"); } break; \
+    case sstd::num_hash_terp_var: {                                     \
+        sstd::terp::var** ppVal = &(_CAST2HASH(_p)[pKey]);              \
+        if(*ppVal==NULL){ (*ppVal)=new sstd::terp::var(); }             \
+        return **ppVal;                                                 \
+    } break;                                                            \
+    case sstd::num_null: {                                              \
+        _type = sstd::num_hash_terp_var;                                \
+        _p    = new std::unordered_map<std::string, sstd::terp::var*>(); \
+        sstd::terp::var** ppVal = &(_CAST2HASH(_p)[pKey]);              \
+        (*ppVal)=new sstd::terp::var();                                 \
+        return **ppVal;                                                 \
+    } break;                                                            \
+    default: { sstd::pdbg_err("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var takes type number `%d`, but treat as a \"sstd::terp::hash()\".\n", _type); } break; \
+    }                                                                   \
+    return *this;
+#define _OPE_SUBSCRIPT_KEY_BASE_CONST(pKey)                             \
+    switch(_type){                                                      \
+    case sstd::num_hash_terp_var: {                                     \
+        sstd::terp::var* pVal = _CAST2HASH(_p)[pKey];                   \
+        if(pVal==NULL){ sstd::pdbg_err("Ope[](char*) is failed. NULL pointer detection error. pKey: `%s` is NOT allocated.\n", pKey); } \
+        return sstd::terp::var();                                       \
+    } break;                                                            \
+    default: { sstd::pdbg_err("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var takes type number `%d`, but treat as a \"sstd::terp::hash()\".\n", _type); } break; \
     }                                                                   \
     return *this;
       sstd::terp::var& sstd::terp::var::operator[](const   int  idx)       { _OPE_SUBSCRIPT_IDX_BASE(); }
 const sstd::terp::var& sstd::terp::var::operator[](const   int  idx) const { _OPE_SUBSCRIPT_IDX_BASE(); }
-      sstd::terp::var& sstd::terp::var::operator[](const       char* pKey)       { _OPE_SUBSCRIPT_KEY_BASE(pKey); }
-const sstd::terp::var& sstd::terp::var::operator[](const       char* pKey) const { _OPE_SUBSCRIPT_KEY_BASE(pKey); }
-      sstd::terp::var& sstd::terp::var::operator[](const std::string  key)       { _OPE_SUBSCRIPT_KEY_BASE(key.c_str()); }
-const sstd::terp::var& sstd::terp::var::operator[](const std::string  key) const { _OPE_SUBSCRIPT_KEY_BASE(key.c_str()); }
+      sstd::terp::var& sstd::terp::var::operator[](const       char* pKey)       { _OPE_SUBSCRIPT_KEY_BASE      (pKey); }
+const sstd::terp::var& sstd::terp::var::operator[](const       char* pKey) const { _OPE_SUBSCRIPT_KEY_BASE_CONST(pKey); }
+      sstd::terp::var& sstd::terp::var::operator[](const std::string  key)       { _OPE_SUBSCRIPT_KEY_BASE      (key.c_str()); }
+const sstd::terp::var& sstd::terp::var::operator[](const std::string  key) const { _OPE_SUBSCRIPT_KEY_BASE_CONST(key.c_str()); }
+/*
+sstd::terp::var sstd::terp::hash(uint allocate_size){
+    sstd::terp::var r;
+    r.type_RW() = sstd::num_hash_terp_var;
+    r.p_RW()    = new std::unordered_map<std::string, sstd::terp::var*>(allocate_size);
+    return r;
+}
+sstd::terp::var sstd::terp::hash(){ return sstd::terp::hash(0); }
+*/
 
 //---
 
@@ -480,7 +527,7 @@ sstd::terp::iterator sstd::terp::var::erase(const sstd::terp::iterator& rhs){
 }
 uint sstd::terp::var::erase(const char* pKey){
     switch(_type){
-    case sstd::num_hash_terp_var: { return _CAST2HASH(_p).erase(pKey); } break;
+    case sstd::num_hash_terp_var: { return _CAST2HASH(_p).erase(pKey); } break; // TODO ここ delete 必要では？
     case sstd::num_null:          {} break;
     default: { sstd::pdbg_err("ERROR\n"); }
     }
