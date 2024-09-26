@@ -905,7 +905,7 @@ TEST(memory_terp, hash_ope_assign_tmp){
     x["k1"] = "v1";
 //    x["k1"] = sstd::terp::var("v1");
     sstd::printn_all(x);
-    sstd::printn_all(x["k1"]);
+    sstd::printn_all(x["k1"]); // TODO: ここの print を修正する
     sstd::printn_all(x["k1"].type());
     
     /*

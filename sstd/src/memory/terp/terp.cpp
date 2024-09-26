@@ -108,7 +108,7 @@ sstd::terp::iterator sstd::terp::iterator::operator++(){
 sstd::terp::var sstd::terp::hash(uint allocate_size){
     sstd::terp::var r;
     r.type_RW() = sstd::num_hash_terp_var;
-    r.p_RW()    = new std::unordered_map<std::string, sstd::terp::var*>(allocate_size);
+    r.p_RW()    = new std::unordered_map<std::string,sstd::terp::var*>(allocate_size);
     return r;
 }
 sstd::terp::var sstd::terp::hash(){ return sstd::terp::hash(0); }
@@ -273,7 +273,7 @@ void _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs){
     case sstd::num_hash_terp_var: {
         std::unordered_map<std::string,sstd::terp::var*>* pRHash = (std::unordered_map<std::string,sstd::terp::var*>*)pRhs->p();
         
-        std::unordered_map<std::string,sstd::terp::var*>* pLHash = new std::unordered_map<std::string,sstd::terp::var*>( pRHash->size() );
+        std::unordered_map<std::string,sstd::terp::var*>* pLHash = new std::unordered_map<std::string,sstd::terp::var*>( pRHash->bucket_count() );
         pLhs->p_RW() = pLHash;
         
         for(auto itr=pRHash->begin(); itr!=pRHash->end(); ++itr){
