@@ -469,13 +469,16 @@ TEST(memory_terp, hash_begin_end_with_objects){
         v_key.push_back(key);
         v_val.push_back(val);
     }
+    sstd::sort(v_key, v_val);
     
-    ASSERT_STREQ(v_key[0].c_str(), "k2");
+    ASSERT_EQ(v_key.size(), 3);
+    ASSERT_EQ(v_val.size(), 3);
+    ASSERT_STREQ(v_key[0].c_str(), "k0");
     ASSERT_STREQ(v_key[1].c_str(), "k1");
-    ASSERT_STREQ(v_key[2].c_str(), "k0");
-    ASSERT_STREQ(v_val[0].c_str(), "v2");
+    ASSERT_STREQ(v_key[2].c_str(), "k2");
+    ASSERT_STREQ(v_val[0].c_str(), "v0");
     ASSERT_STREQ(v_val[1].c_str(), "v1");
-    ASSERT_STREQ(v_val[2].c_str(), "v0");
+    ASSERT_STREQ(v_val[2].c_str(), "v2");
 }
 
 // erase()
@@ -497,11 +500,14 @@ TEST(memory_terp, hash_erase){
         v_key.push_back(key);
         v_val.push_back(val);
     }
+    sstd::sort(v_key, v_val);
     
-    ASSERT_STREQ(v_key[0].c_str(), "k2");
-    ASSERT_STREQ(v_key[1].c_str(), "k0");
-    ASSERT_STREQ(v_val[0].c_str(), "v2");
-    ASSERT_STREQ(v_val[1].c_str(), "v0");
+    ASSERT_EQ(v_key.size(), 2);
+    ASSERT_EQ(v_val.size(), 2);
+    ASSERT_STREQ(v_key[0].c_str(), "k0");
+    ASSERT_STREQ(v_key[1].c_str(), "k2");
+    ASSERT_STREQ(v_val[0].c_str(), "v0");
+    ASSERT_STREQ(v_val[1].c_str(), "v2");
 }
 
 // find()
