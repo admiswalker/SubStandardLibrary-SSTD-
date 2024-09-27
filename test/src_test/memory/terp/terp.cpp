@@ -771,7 +771,8 @@ TEST(memory_terp, var_ope_subscript_insert_char_to_list_type){
     testing::internal::CaptureStdout();
     a["k0"] = "v0"; // TEST THIS LINE
     std::string ret = testing::internal::GetCapturedStdout().c_str();
-    ASSERT_TRUE(sstd::strIn("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var takes \"sstd::terp::list()\" type, but treat as a \"sstd::terp::hash()\".\n", ret.c_str()));
+    ASSERT_TRUE(sstd::strIn("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var takes type number `119`, but treat as a \"sstd::terp::hash()\".\n", ret.c_str()));
+
 }
 TEST(memory_terp, var_ope_subscript_insert_number_to_hash_type){
     sstd::terp::var a;
