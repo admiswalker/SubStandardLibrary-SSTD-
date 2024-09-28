@@ -197,21 +197,6 @@ sstd::terp::var::var(const std::string& rhs){ _is_reference=false; _type=sstd::n
 sstd::terp::var::~var(){ if(!_is_reference){sstd::terp::var::free();} }
 
 //---
-/*
-void sstd::terp::var::list(uint allocate_size){
-    printf("in l\n");
-    sstd::terp::var::free();
-        printf("in l2\n");
-    this->_p    = new std::vector<sstd::terp::var>(allocate_size);
-    this->_type = num_vec_terp_var;
-}
-void sstd::terp::var::list(){
-    sstd::terp::var::free();
-    this->_p    = new std::vector<sstd::terp::var>();
-    this->_type = num_vec_terp_var;
-}
-*/
-//---
 // internal
 
 bool sstd::terp::var::is_reference() const { return this->_is_reference; }
@@ -224,7 +209,7 @@ uint & sstd::terp::var::type_RW(){ return this->_type; }
 // common
 
 // copy(), allocate(), free()
-void _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs){
+void _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs){ // TODO: これ，reference あるとかなり実装が面倒になるはず
     pLhs->type_RW() = pRhs->type();
     if(pRhs->p()==NULL){ pLhs->p_RW()=NULL; return; }
     switch (pLhs->type()){
@@ -447,7 +432,7 @@ bool sstd::terp::var::operator!=(const sstd::terp::var& rhs){ return !_is_equal(
     case sstd::num_hash_terp_var: {                                     \
         sstd::terp::var* pVal = _CAST2HASH(_p)[pKey];                   \
         if(pVal==NULL){ sstd::pdbg_err("Ope[](char*) is failed. NULL pointer detection error. pKey: `%s` is NOT allocated.\n", pKey); } \
-        return sstd::terp::var();                                       \
+        return *this;                                                   \
     } break;                                                            \
     default: { sstd::pdbg_err("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var takes type number `%d`, but treat as a \"sstd::terp::hash()\".\n", _type); } break; \
     }                                                                   \
@@ -587,7 +572,7 @@ void sstd::terp::var::resize(uint len){
     
     if(len < current_size){
         // Release the outscope memory
-        for(int i=current_size-1; i>=len; --i){
+        for(int i=current_size-1; i>=(int)len; --i){
             delete _CAST2VEC(_p)[i];
         }
     }
@@ -599,7 +584,7 @@ void sstd::terp::var::resize(uint len){
 
     if(len > current_size){
         // Allocate the outscope memory
-        for(int i=current_size; i<len; ++i){
+        for(uint i=current_size; i<len; ++i){
             _CAST2VEC(_p)[i] = new sstd::terp::var();
         }
     }
