@@ -4,6 +4,8 @@
 #include "../../print/pdbg.hpp"
 #include "../../string/ssprintf.hpp"
 
+#include "../../print/print.hpp" // for sstd::printn()
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 #define _CAST2VEC(_P) (*(std::vector<sstd::terp::var*>*)_P)
@@ -75,7 +77,7 @@ sstd::terp::iterator sstd::terp::iterator::operator+(const int rhs){
 sstd::terp::var sstd::terp::iterator::second(){
     switch(this->_type){
     case sstd::num_hash_terp_var: {
-        return sstd::terp::var((*_h_itr).second);
+        return sstd::terp::var(*(*_h_itr).second);
     } break;
     default: { sstd::pdbg_err("ERROR\n"); }
     }
