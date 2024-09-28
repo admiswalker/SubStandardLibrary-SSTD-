@@ -458,15 +458,6 @@ const sstd::terp::var& sstd::terp::var::operator[](const   int  idx) const { _OP
 const sstd::terp::var& sstd::terp::var::operator[](const       char* pKey) const { _OPE_SUBSCRIPT_KEY_BASE_CONST(pKey); }
       sstd::terp::var& sstd::terp::var::operator[](const std::string  key)       { _OPE_SUBSCRIPT_KEY_BASE      (key.c_str()); }
 const sstd::terp::var& sstd::terp::var::operator[](const std::string  key) const { _OPE_SUBSCRIPT_KEY_BASE_CONST(key.c_str()); }
-/*
-sstd::terp::var sstd::terp::hash(uint allocate_size){
-    sstd::terp::var r;
-    r.type_RW() = sstd::num_hash_terp_var;
-    r.p_RW()    = new std::unordered_map<std::string, sstd::terp::var*>(allocate_size);
-    return r;
-}
-sstd::terp::var sstd::terp::hash(){ return sstd::terp::hash(0); }
-*/
 
 //---
 
