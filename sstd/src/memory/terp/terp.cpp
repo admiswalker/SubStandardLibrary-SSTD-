@@ -529,7 +529,14 @@ sstd::terp::iterator sstd::terp::var::erase(const sstd::terp::iterator& rhs){
 }
 uint sstd::terp::var::erase(const char* pKey){
     switch(_type){
-    case sstd::num_hash_terp_var: { return _CAST2HASH(_p).erase(pKey); } break; // TODO ここ delete 必要では？
+    case sstd::num_hash_terp_var: {
+        auto itr = _CAST2HASH(_p).find(pKey);
+        if(itr!=_CAST2HASH(_p).end()){
+            delete (sstd::terp::var*)itr->second;
+            return (_CAST2HASH(_p).erase(itr)!=_CAST2HASH(_p).end() ? 1:0);
+        }
+        return 0;
+    } break;
     case sstd::num_null:          {} break;
     default: { sstd::pdbg_err("ERROR\n"); }
     }
