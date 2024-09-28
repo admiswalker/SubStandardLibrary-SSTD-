@@ -521,7 +521,7 @@ uint sstd::terp::var::bucket_count(){
 
 sstd::terp::iterator sstd::terp::var::erase(const sstd::terp::iterator& rhs){
     switch(_type){
-    case sstd::num_vec_terp_var:  { return sstd::terp::iterator( _CAST2VEC(_p).erase(rhs._v_itr_R()) ); } break; // TODO ここ delete 必要では？
+    case sstd::num_vec_terp_var:  { delete (sstd::terp::var*)(*rhs._v_itr_R()); return sstd::terp::iterator( _CAST2VEC(_p).erase(rhs._v_itr_R()) ); } break;
     case sstd::num_null:          {} break;
     default: { sstd::pdbg_err("ERROR\n"); }
     }
