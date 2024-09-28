@@ -471,8 +471,8 @@ TEST(memory_terp, hash_begin_end_with_objects){
     }
     sstd::sort(v_key, v_val);
     
-    ASSERT_EQ(v_key.size(), 3);
-    ASSERT_EQ(v_val.size(), 3);
+    ASSERT_EQ(v_key.size(), (uint)3);
+    ASSERT_EQ(v_val.size(), (uint)3);
     ASSERT_STREQ(v_key[0].c_str(), "k0");
     ASSERT_STREQ(v_key[1].c_str(), "k1");
     ASSERT_STREQ(v_key[2].c_str(), "k2");
@@ -502,8 +502,8 @@ TEST(memory_terp, hash_erase){
     }
     sstd::sort(v_key, v_val);
     
-    ASSERT_EQ(v_key.size(), 2);
-    ASSERT_EQ(v_val.size(), 2);
+    ASSERT_EQ(v_key.size(), (uint)2);
+    ASSERT_EQ(v_val.size(), (uint)2);
     ASSERT_STREQ(v_key[0].c_str(), "k0");
     ASSERT_STREQ(v_key[1].c_str(), "k2");
     ASSERT_STREQ(v_val[0].c_str(), "v0");
