@@ -59,8 +59,13 @@ namespace sstd::terp{
 
 class sstd::terp::var{
 private:
-    bool _is_reference;
     uint _type;
+    bool _is_reference;
+    bool _is_pCRC_tbl_base;
+    std::unordered_map<
+        sstd::terp::var*,
+        std::unordered_map<sstd::terp::var*, uint>
+        >* _pCRC_tbl; // Cross Reference Count Table
     void* _p;
     
 public:

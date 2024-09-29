@@ -176,23 +176,23 @@ std::string _format(double rhs){
 }
 
 // constructors
-sstd::terp::var::var():                      _is_reference(false), _type(sstd::num_null), _p(NULL) {}
-sstd::terp::var::var(const class var&  rhs): _is_reference(false), _type(sstd::num_null), _p(NULL) { copy(rhs); }
-sstd::terp::var::var(      class var&& rhs): _is_reference(false), _type(sstd::num_null), _p(NULL) { free(); move(std::move(rhs)); }
-sstd::terp::var::var(        bool       rhs){ _is_reference=false; _type=sstd::num_str; _p=new std::string(rhs?"true":"false"); }
-sstd::terp::var::var(        char       rhs){ _is_reference=false; _type=sstd::num_str; _p=new std::string({rhs}); }
-sstd::terp::var::var(        int8       rhs){ _is_reference=false; _type=sstd::num_str; _p=new std::string(sstd::ssprintf("%d", rhs)); }
-sstd::terp::var::var(        int16      rhs){ _is_reference=false; _type=sstd::num_str; _p=new std::string(sstd::ssprintf("%d", rhs)); }
-sstd::terp::var::var(        int32      rhs){ _is_reference=false; _type=sstd::num_str; _p=new std::string(sstd::ssprintf("%d", rhs)); }
-sstd::terp::var::var(        int64      rhs){ _is_reference=false; _type=sstd::num_str; _p=new std::string(sstd::ssprintf("%ld", rhs)); }
-sstd::terp::var::var(       uint8       rhs){ _is_reference=false; _type=sstd::num_str; _p=new std::string(sstd::ssprintf("%u", rhs)); }
-sstd::terp::var::var(       uint16      rhs){ _is_reference=false; _type=sstd::num_str; _p=new std::string(sstd::ssprintf("%u", rhs)); }
-sstd::terp::var::var(       uint32      rhs){ _is_reference=false; _type=sstd::num_str; _p=new std::string(sstd::ssprintf("%u", rhs)); }
-sstd::terp::var::var(       uint64      rhs){ _is_reference=false; _type=sstd::num_str; _p=new std::string(sstd::ssprintf("%lu", rhs)); }
-sstd::terp::var::var(        float      rhs){ _is_reference=false; _type=sstd::num_str; _p=new std::string(sstd::ssprintf(_format(rhs).c_str(), rhs)); }
-sstd::terp::var::var(       double      rhs){ _is_reference=false; _type=sstd::num_str; _p=new std::string(sstd::ssprintf(_format(rhs).c_str(), rhs)); }
-sstd::terp::var::var(const char*        rhs){ _is_reference=false; _type=sstd::num_str; _p=new std::string(rhs); }
-sstd::terp::var::var(const std::string& rhs){ _is_reference=false; _type=sstd::num_str; _p=new std::string(rhs); }
+sstd::terp::var::var():                       _type(sstd::num_null), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(NULL) {}
+sstd::terp::var::var(const class var&   rhs): _type(sstd::num_null), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(NULL) { copy(rhs); }
+sstd::terp::var::var(      class var&&  rhs): _type(sstd::num_null), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(NULL) { free(); move(std::move(rhs)); }
+sstd::terp::var::var(        bool       rhs): _type(sstd::num_null), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(rhs?"true":"false")) {}
+sstd::terp::var::var(        char       rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string({rhs})) {}
+sstd::terp::var::var(        int8       rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(sstd::ssprintf("%d", rhs))) {}
+sstd::terp::var::var(        int16      rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(sstd::ssprintf("%d", rhs))) {}
+sstd::terp::var::var(        int32      rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(sstd::ssprintf("%d", rhs))) {}
+sstd::terp::var::var(        int64      rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(sstd::ssprintf("%ld", rhs))) {}
+sstd::terp::var::var(       uint8       rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(sstd::ssprintf("%u", rhs))) {}
+sstd::terp::var::var(       uint16      rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(sstd::ssprintf("%u", rhs))) {}
+sstd::terp::var::var(       uint32      rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(sstd::ssprintf("%u", rhs))) {}
+sstd::terp::var::var(       uint64      rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(sstd::ssprintf("%lu", rhs))) {}
+sstd::terp::var::var(        float      rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(sstd::ssprintf(_format(rhs).c_str(), rhs))) {}
+sstd::terp::var::var(       double      rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(sstd::ssprintf(_format(rhs).c_str(), rhs))) {}
+sstd::terp::var::var(const char*        rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(rhs)) {}
+sstd::terp::var::var(const std::string& rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(rhs)) {}
 
 sstd::terp::var::~var(){ if(!_is_reference){sstd::terp::var::free();} }
 

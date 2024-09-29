@@ -876,4 +876,31 @@ TEST(memory_terp, reference_of_sstd_terp_var_01){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+TEST(memory_terp, list_ope_assign_with_reference_tmp){ // Ope=
+    sstd::terp::var a;
+    a = sstd::terp::list(2);
+    a[0] = sstd::terp::list(3);
+    a[0][0] = "a";
+    a[0][1] = "b";
+    a[0][2] = "c";
+    a[1] = &a[0];
+
+    ASSERT_TRUE(a[0].is_reference() == false);
+    ASSERT_TRUE(a[1].is_reference() == true );
+
+    sstd::terp::var x = a; // TEST THIS LINE
+    
+    ASSERT_TRUE(x[0].is_reference() == false);
+    ASSERT_TRUE(x[1].is_reference() == true );
+
+    x[0][0]="x";
+    ASSERT_TRUE(a[0][0].to<std::string>() == "x");
+    ASSERT_TRUE(a[1][0].to<std::string>() == "x");
+    
+    ASSERT_TRUE(x[0][0].to<std::string>() == "x");
+    ASSERT_TRUE(x[1][0].to<std::string>() == "x");
+}
+
+//---
+
 EXECUTE_TESTS();
