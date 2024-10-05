@@ -55,17 +55,25 @@ TEST(memory_terp, var_typeStr_c){
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // internal interface
 
+TEST(memory_terp, _type){
+    sstd::terp::var a;
+    ASSERT_TRUE(a.type() == sstd::num_null); // TEST THIS LINE
+}
 TEST(memory_terp, _is_reference){
     sstd::terp::var a;
     ASSERT_TRUE(a.is_reference() == false); // TEST THIS LINE
 }
+TEST(memory_terp, _is_pSRCR_tbl_base){
+    sstd::terp::var a;
+    ASSERT_TRUE(a.is_pSRCR_tbl_base() == true); // TEST THIS LINE
+}
+TEST(memory_terp, _pSRCR_tbl){
+    sstd::terp::var a;
+    ASSERT_TRUE(a.pSRCR_tbl() != NULL); // TEST THIS LINE
+}
 TEST(memory_terp, _p){
     sstd::terp::var a;
     ASSERT_TRUE(a.p() == NULL); // TEST THIS LINE
-}
-TEST(memory_terp, _type){
-    sstd::terp::var a;
-    ASSERT_TRUE(a.type() == sstd::num_null); // TEST THIS LINE
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -899,6 +907,28 @@ TEST(memory_terp, list_ope_assign_with_reference_tmp){ // Ope=
     
     ASSERT_TRUE(x[0][0].to<std::string>() == "x");
     ASSERT_TRUE(x[1][0].to<std::string>() == "x");
+}
+
+TEST(memory_terp, list_ope_assign_with_reference_tmp2){ // Ope=
+    sstd::terp::var y;
+    {
+        sstd::terp::var x = "test";
+        y = &x;
+        sstd::printn(x);
+        sstd::printn(y);
+
+        // A destructor of variable x is called.
+    }
+    
+//    sstd::printn(y);
+    /*
+    sstd::terp::var x, y;
+    x = "test";
+    y = &x;
+
+    sstd::printn(x);
+    sstd::printn(y);
+    */
 }
 
 //---

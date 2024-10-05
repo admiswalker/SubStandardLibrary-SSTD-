@@ -11,6 +11,8 @@
 #define _CAST2VEC(_P) (*(std::vector<sstd::terp::var*>*)_P)
 #define _CAST2HASH(_P) (*(std::unordered_map<std::string,sstd::terp::var*>*)_P)
 
+using srcr_tbl = std::unordered_map<sstd::terp::var*,std::unordered_set<sstd::terp::var*>>;
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // for internal use
 
@@ -176,32 +178,35 @@ std::string _format(double rhs){
 }
 
 // constructors
-sstd::terp::var::var():                       _type(sstd::num_null), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(NULL) {}
-sstd::terp::var::var(const class var&   rhs): _type(sstd::num_null), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(NULL) { copy(rhs); }
-sstd::terp::var::var(      class var&&  rhs): _type(sstd::num_null), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(NULL) { free(); move(std::move(rhs)); }
-sstd::terp::var::var(        bool       rhs): _type(sstd::num_null), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(rhs?"true":"false")) {}
-sstd::terp::var::var(        char       rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string({rhs})) {}
-sstd::terp::var::var(        int8       rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(sstd::ssprintf("%d", rhs))) {}
-sstd::terp::var::var(        int16      rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(sstd::ssprintf("%d", rhs))) {}
-sstd::terp::var::var(        int32      rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(sstd::ssprintf("%d", rhs))) {}
-sstd::terp::var::var(        int64      rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(sstd::ssprintf("%ld", rhs))) {}
-sstd::terp::var::var(       uint8       rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(sstd::ssprintf("%u", rhs))) {}
-sstd::terp::var::var(       uint16      rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(sstd::ssprintf("%u", rhs))) {}
-sstd::terp::var::var(       uint32      rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(sstd::ssprintf("%u", rhs))) {}
-sstd::terp::var::var(       uint64      rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(sstd::ssprintf("%lu", rhs))) {}
-sstd::terp::var::var(        float      rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(sstd::ssprintf(_format(rhs).c_str(), rhs))) {}
-sstd::terp::var::var(       double      rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(sstd::ssprintf(_format(rhs).c_str(), rhs))) {}
-sstd::terp::var::var(const char*        rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(rhs)) {}
-sstd::terp::var::var(const std::string& rhs): _type(sstd::num_str ), _is_reference(false), _is_pCRC_tbl_base(false), _pCRC_tbl(NULL), _p(new std::string(rhs)) {}
+sstd::terp::var::var():                       _type(sstd::num_null), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new srcr_tbl()), _p(NULL) {}
+sstd::terp::var::var(const class var&   rhs): _type(sstd::num_null), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new srcr_tbl()), _p(NULL) { copy(rhs); }
+sstd::terp::var::var(      class var&&  rhs): _type(sstd::num_null), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new srcr_tbl()), _p(NULL) { free(); move(std::move(rhs)); }
+sstd::terp::var::var(        bool       rhs): _type(sstd::num_null), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new srcr_tbl()), _p(new std::string(rhs?"true":"false")) {}
+sstd::terp::var::var(        char       rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new srcr_tbl()), _p(new std::string({rhs})) {}
+sstd::terp::var::var(        int8       rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new srcr_tbl()), _p(new std::string(sstd::ssprintf("%d", rhs))) {}
+sstd::terp::var::var(        int16      rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new srcr_tbl()), _p(new std::string(sstd::ssprintf("%d", rhs))) {}
+sstd::terp::var::var(        int32      rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new srcr_tbl()), _p(new std::string(sstd::ssprintf("%d", rhs))) {}
+sstd::terp::var::var(        int64      rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new srcr_tbl()), _p(new std::string(sstd::ssprintf("%ld", rhs))) {}
+sstd::terp::var::var(       uint8       rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new srcr_tbl()), _p(new std::string(sstd::ssprintf("%u", rhs))) {}
+sstd::terp::var::var(       uint16      rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new srcr_tbl()), _p(new std::string(sstd::ssprintf("%u", rhs))) {}
+sstd::terp::var::var(       uint32      rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new srcr_tbl()), _p(new std::string(sstd::ssprintf("%u", rhs))) {}
+sstd::terp::var::var(       uint64      rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new srcr_tbl()), _p(new std::string(sstd::ssprintf("%lu", rhs))) {}
+sstd::terp::var::var(        float      rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new srcr_tbl()), _p(new std::string(sstd::ssprintf(_format(rhs).c_str(), rhs))) {}
+sstd::terp::var::var(       double      rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new srcr_tbl()), _p(new std::string(sstd::ssprintf(_format(rhs).c_str(), rhs))) {}
+sstd::terp::var::var(const char*        rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new srcr_tbl()), _p(new std::string(rhs)) {}
+sstd::terp::var::var(const std::string& rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new srcr_tbl()), _p(new std::string(rhs)) {}
 
 sstd::terp::var::~var(){ if(!_is_reference){sstd::terp::var::free();} }
 
 //---
 // internal
 
-bool sstd::terp::var::is_reference() const { return this->_is_reference; }
-void* sstd::terp::var::p() const { return this->_p; }
 uint sstd::terp::var::type() const { return this->_type; }
+bool sstd::terp::var::is_reference() const { return this->_is_reference; }
+bool sstd::terp::var::is_pSRCR_tbl_base() const { return this->_is_pSRCR_tbl_base; }
+srcr_tbl* sstd::terp::var::pSRCR_tbl() const { return this->_pSRCR_tbl; }
+void* sstd::terp::var::p() const { return this->_p; }
+
 void*& sstd::terp::var::p_RW(){ return this->_p; }
 uint & sstd::terp::var::type_RW(){ return this->_type; }
 
@@ -285,6 +290,7 @@ void sstd::terp::var::move(      class sstd::terp::var&& rhs){
 }
 
 void sstd::terp::var::free(){
+    if(this->_is_pSRCR_tbl_base){ this->_is_pSRCR_tbl_base=false; delete this->_pSRCR_tbl; this->_pSRCR_tbl=NULL; }
     if(this->_p==NULL){ return; }
 
     switch (this->_type){
@@ -350,6 +356,9 @@ sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var* rhs){
     this->_is_reference = true;
     this->_type         = rhs->type();
     this->_p            = rhs->p();
+    
+    (*_pSRCR_tbl)[ (sstd::terp::var*)rhs ].insert( (sstd::terp::var*)this );
+    
     return *this;
 }
 

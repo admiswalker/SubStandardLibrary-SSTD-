@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <unordered_set>
 
 #include "../void_ptr.hpp"
 #include "../../definitions/typeDef.h"
@@ -61,11 +62,11 @@ class sstd::terp::var{
 private:
     uint _type;
     bool _is_reference;
-    bool _is_pCRC_tbl_base;
+    bool _is_pSRCR_tbl_base;
     std::unordered_map<
         sstd::terp::var*,
-        std::unordered_map<sstd::terp::var*, uint>
-        >* _pCRC_tbl; // Cross Reference Count Table
+        std::unordered_set<sstd::terp::var*>
+        >* _pSRCR_tbl; // Self-reference and Cross-reference Table
     void* _p;
     
 public:
@@ -91,9 +92,11 @@ public:
     //---
     // internal
 
-    bool is_reference() const;
-    void* p() const;
     uint type() const;
+    bool is_reference() const;
+    bool is_pSRCR_tbl_base() const;
+    std::unordered_map<sstd::terp::var*,std::unordered_set<sstd::terp::var*>>* pSRCR_tbl() const;
+    void* p() const;
     
     void*& p_RW();
     uint & type_RW();
