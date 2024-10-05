@@ -206,7 +206,6 @@ bool sstd::terp::var::is_reference() const { return this->_is_reference; }
 bool sstd::terp::var::is_pSRCR_tbl_base() const { return this->_is_pSRCR_tbl_base; }
 srcr_tbl* sstd::terp::var::pSRCR_tbl() const { return this->_pSRCR_tbl; }
 void* sstd::terp::var::p() const { return this->_p; }
-
 void*& sstd::terp::var::p_RW(){ return this->_p; }
 uint & sstd::terp::var::type_RW(){ return this->_type; }
 

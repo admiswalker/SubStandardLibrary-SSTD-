@@ -336,6 +336,28 @@ TEST(print, for_printn_vector_re_depth4){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// for std::unordered_set<T>
+
+TEST(print, for_printn_hash_set){
+    std::unordered_set<std::string> table;
+    table.insert( "abc" );
+    table.insert( "def" );
+
+    {
+        testing::internal::CaptureStdout();
+        sstd::for_printn( table );
+
+        std::string buf = testing::internal::GetCapturedStdout().c_str();
+        bool tf1 = sstd::strcmp(buf, " = [\"def\", \"abc\"]\n");
+        if(tf1){
+            ASSERT_STREQ(buf.c_str(), " = [\"def\", \"abc\"]\n");
+        }else{
+            ASSERT_STREQ(buf.c_str(), " = [\"abc\", \"def\"]\n");
+        }
+    }
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 // for std::unordered_map<T_lhs, T_rhs>
 
 TEST(print, for_printn_table){

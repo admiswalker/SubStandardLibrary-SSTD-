@@ -917,6 +917,8 @@ TEST(memory_terp, list_ope_assign_with_reference_tmp2){ // Ope=
         sstd::printn(x);
         sstd::printn(y);
 
+//        sstd::printn(*y.pSRCR_tbl());
+
         // A destructor of variable x is called.
     }
     
