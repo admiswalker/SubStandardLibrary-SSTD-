@@ -4,7 +4,7 @@
 #include "../../print/pdbg.hpp"
 #include "../../string/ssprintf.hpp"
 
-//#include "../../print/print.hpp" // sstd::printn() for debugging at development
+#include "../../print/print.hpp" // sstd::printn() for debugging at development
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -127,7 +127,12 @@ sstd::terp::var sstd::terp::list(uint allocate_size){
     
     for(uint i=0; i<allocate_size; ++i){
         // Allocate the outscope memory
-        _CAST2VEC(r.p_RW())[i] = new sstd::terp::var();
+        _CAST2VEC(r.p_RW())[i] = new sstd::terp::var(); // TODO: _pSRCR_tbl の再確保を余儀なくされているので，専用のコンストラクタを作る
+
+        // Update _pSRCR_tbl base
+        delete _CAST2VEC(r.p_RW())[i]->pSRCR_tbl_RW();
+        _CAST2VEC(r.p_RW())[i]->is_pSRCR_tbl_base_RW() = false;
+        _CAST2VEC(r.p_RW())[i]->pSRCR_tbl_RW()         = r.pSRCR_tbl();
     }
     
     return r;
@@ -206,8 +211,12 @@ bool sstd::terp::var::is_reference() const { return this->_is_reference; }
 bool sstd::terp::var::is_pSRCR_tbl_base() const { return this->_is_pSRCR_tbl_base; }
 srcr_tbl* sstd::terp::var::pSRCR_tbl() const { return this->_pSRCR_tbl; }
 void* sstd::terp::var::p() const { return this->_p; }
-void*& sstd::terp::var::p_RW(){ return this->_p; }
+
 uint & sstd::terp::var::type_RW(){ return this->_type; }
+bool & sstd::terp::var::is_reference_RW(){ return this->_is_reference; }
+bool & sstd::terp::var::is_pSRCR_tbl_base_RW(){ return this->_is_pSRCR_tbl_base; }
+srcr_tbl*& sstd::terp::var::pSRCR_tbl_RW(){ return this->_pSRCR_tbl; }
+void*& sstd::terp::var::p_RW(){ return this->_p; }
 
 //---
 // common
@@ -287,9 +296,46 @@ void sstd::terp::var::move(      class sstd::terp::var&& rhs){
     this->_type = rhs.type(); rhs.type_RW() = sstd::num_null;
     this->_p    = rhs.p();    rhs.p_RW()    = NULL;
 }
-
+/*
+void sstd::terp::var::_fill_ref_src_null(sstd::terp::var* ref_src_address){
+    
+    auto itr = _pSRCR_tbl->find(ref_src_address);
+    
+    if(itr!=_pSRCR_tbl->end()){
+        std::unordered_set<sstd::terp::var*> hash_set = itr->second;
+        
+        for(auto itr=hash_set.begin(); itr!=hash_set.end(); ++itr){
+            printf("301\n");
+            sstd::terp::var* pRef = *itr;
+            pRef->type_RW()         = sstd::num_null;
+            pRef->is_reference_RW() = false;
+            pRef->p_RW()            = NULL;
+        }
+    }
+}*/
+void sstd::terp::var::_fill_ref_src_null(const std::unordered_set<sstd::terp::var*>& hash_set){
+    for(auto itr=hash_set.begin(); itr!=hash_set.end(); ++itr){
+        sstd::terp::var* pRef = *itr;
+        pRef->type_RW()         = sstd::num_null;
+        pRef->is_reference_RW() = false;
+        pRef->p_RW()            = NULL;
+    }
+}
+void sstd::terp::var::_fillout_ref_src_null(){
+    if(this->_is_pSRCR_tbl_base){
+        for(auto itr=_pSRCR_tbl->begin(); itr!=_pSRCR_tbl->end(); ++itr){
+            sstd::terp::var::_fill_ref_src_null(itr->second);
+        }
+        
+        this->_is_pSRCR_tbl_base=false;
+        delete this->_pSRCR_tbl;
+        this->_pSRCR_tbl=NULL;
+    }else{
+        // TODO
+    }
+}
 void sstd::terp::var::free(){
-    if(this->_is_pSRCR_tbl_base){ this->_is_pSRCR_tbl_base=false; delete this->_pSRCR_tbl; this->_pSRCR_tbl=NULL; }
+    sstd::terp::var::_fillout_ref_src_null();
     if(this->_p==NULL){ return; }
 
     switch (this->_type){
@@ -351,13 +397,14 @@ sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var& rhs){
     copy(rhs);
     return *this;
 }
-sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var* rhs){
+sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var* pRhs){
     this->_is_reference = true;
-    this->_type         = rhs->type();
-    this->_p            = rhs->p();
-    
-    (*_pSRCR_tbl)[ (sstd::terp::var*)rhs ].insert( (sstd::terp::var*)this );
-    
+    this->_type         = pRhs->type();
+    this->_p            = pRhs->p(); // TODO: ref アドレスが _is_reference==true の場合，free() が厄介になるので，解決してから代入するように修正すること
+    printf("404\n");
+    sstd::printn(pRhs->_pSRCR_tbl);
+    (*pRhs->_pSRCR_tbl)[ (sstd::terp::var*)pRhs ].insert( (sstd::terp::var*)this );
+    printf("406\n");
     return *this;
 }
 

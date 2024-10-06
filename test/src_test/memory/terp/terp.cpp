@@ -891,46 +891,53 @@ TEST(memory_terp, list_ope_assign_with_reference_tmp){ // Ope=
     a[0][0] = "a";
     a[0][1] = "b";
     a[0][2] = "c";
+    printf("894\n");
     a[1] = &a[0];
+    printf("895\n");
 
     ASSERT_TRUE(a[0].is_reference() == false);
     ASSERT_TRUE(a[1].is_reference() == true );
+    printf("899\n");
 
     sstd::terp::var x = a; // TEST THIS LINE
     
     ASSERT_TRUE(x[0].is_reference() == false);
     ASSERT_TRUE(x[1].is_reference() == true );
+    printf("905\n");
 
     x[0][0]="x";
     ASSERT_TRUE(a[0][0].to<std::string>() == "x");
     ASSERT_TRUE(a[1][0].to<std::string>() == "x");
+    printf("910\n");
     
     ASSERT_TRUE(x[0][0].to<std::string>() == "x");
     ASSERT_TRUE(x[1][0].to<std::string>() == "x");
+    printf("913\n");
 }
 
-TEST(memory_terp, list_ope_assign_with_reference_tmp2){ // Ope=
-    sstd::terp::var y;
+TEST(memory_terp, list_ope_assign_with_reference_case_01_delete_src){
+    sstd::terp::var dst;
     {
-        sstd::terp::var x = "test";
-        y = &x;
-        sstd::printn(x);
-        sstd::printn(y);
-
-//        sstd::printn(*y.pSRCR_tbl());
+        sstd::terp::var src = "test";
+        
+        dst = &src;
+        
+        ASSERT_TRUE(src.is_reference() == false);
+        ASSERT_TRUE(src.is_pSRCR_tbl_base() == true);
+        ASSERT_TRUE(src.p() != NULL);
+        
+        ASSERT_TRUE(dst.is_reference() == true);
+        ASSERT_TRUE(dst.is_pSRCR_tbl_base() == true);
+        ASSERT_TRUE(dst.p() != NULL);
 
         // A destructor of variable x is called.
-    }
+    } // Test this line (test destructor)
     
-//    sstd::printn(y);
-    /*
-    sstd::terp::var x, y;
-    x = "test";
-    y = &x;
-
-    sstd::printn(x);
-    sstd::printn(y);
-    */
+    ASSERT_TRUE(dst.is_reference() == false);
+    ASSERT_TRUE(dst.is_pSRCR_tbl_base() == true);
+    ASSERT_TRUE(dst.p() == NULL);
+}
+TEST(memory_terp, list_ope_assign_with_reference_case_02_delete_dst){
 }
 
 //---

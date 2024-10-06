@@ -34,6 +34,17 @@ namespace sstd{
         }
         printf("]");
     }
+    template <typename T>
+    void print_for_vT(const std::unordered_set<T>& rhs){
+        printf("[");
+        for(auto itr=rhs.begin();;){
+            sstd::print_for_vT(*itr);
+            ++itr;
+            if(itr!=rhs.end()){ printf(", "); continue; }
+            break;
+        }
+        printf("]");
+    }
     
     void print(const  void* rhs);
     void print(const  bool  rhs);
@@ -54,18 +65,7 @@ namespace sstd{
     template <typename T>
     void print(const std::vector<T>& rhs){ sstd::print_for_vT(rhs); printf("\n"); }
     template <typename T>
-    void print_table_base(const std::unordered_set<T>& rhs){
-        printf("[");
-        for(auto itr=rhs.begin();;){
-            sstd::print_for_vT(*itr);
-            ++itr;
-            if(itr!=rhs.end()){ printf(", "); continue; }
-            break;
-        }
-        printf("]");
-    }
-    template <typename T>
-    void print(const std::unordered_set<T>& rhs){ sstd::print_table_base<T>(rhs); printf("\n"); }
+    void print(const std::unordered_set<T>& rhs){ sstd::print_for_vT<T>(rhs); printf("\n"); }
     template <typename T_lhs, typename T_rhs>
     void print_table_base(const std::unordered_map<T_lhs, T_rhs>& rhs){
         printf("[");
@@ -105,7 +105,7 @@ namespace sstd{
     template <typename T>
     void for_printn(const std::unordered_set<T>& rhs){
         printf(" = ");
-        sstd::print_table_base<T>(rhs); // using "without line feed" version for recursive call for deep std::vector<std::vector<... std::vector<T>... >>.
+        sstd::print_for_vT<T>(rhs); // using "without line feed" version for recursive call for deep std::vector<std::vector<... std::vector<T>... >>.
         printf("\n");
     }
     template <typename T_lhs, typename T_rhs>

@@ -98,11 +98,18 @@ public:
     std::unordered_map<sstd::terp::var*,std::unordered_set<sstd::terp::var*>>* pSRCR_tbl() const;
     void* p() const;
     
-    void*& p_RW();
     uint & type_RW();
+    bool & is_reference_RW();
+    bool & is_pSRCR_tbl_base_RW();
+    std::unordered_map<sstd::terp::var*,std::unordered_set<sstd::terp::var*>>*& pSRCR_tbl_RW();
+    void*& p_RW();
     
     //---
     // common
+
+    //void _fill_ref_src_null(sstd::terp::var* rhs);
+    void _fill_ref_src_null(const std::unordered_set<sstd::terp::var*>& hash_set);
+    void _fillout_ref_src_null();
 
     void copy(const class sstd::terp::var&  rhs);
     void move(      class sstd::terp::var&& rhs);
