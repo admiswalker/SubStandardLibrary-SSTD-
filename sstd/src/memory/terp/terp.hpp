@@ -32,6 +32,9 @@ namespace sstd::terp{
     bool isList (const sstd::terp::var& rhs);
     bool isNull (const sstd::terp::var& rhs);
     bool isValue(const sstd::terp::var& rhs);
+
+    // type name
+    using srcr_tbl = std::unordered_map<sstd::terp::var*,std::unordered_set<sstd::terp::var*>>;
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -63,10 +66,7 @@ private:
     uint _type;
     bool _is_reference;
     bool _is_pSRCR_tbl_base;
-    std::unordered_map<
-        sstd::terp::var*,
-        std::unordered_set<sstd::terp::var*>
-        >* _pSRCR_tbl; // Self-reference and Cross-reference Table
+    sstd::terp::srcr_tbl* _pSRCR_tbl; // Self-reference and Cross-reference Table
     void* _p;
     
 public:
@@ -95,13 +95,13 @@ public:
     uint type() const;
     bool is_reference() const;
     bool is_pSRCR_tbl_base() const;
-    std::unordered_map<sstd::terp::var*,std::unordered_set<sstd::terp::var*>>* pSRCR_tbl() const;
+    sstd::terp::srcr_tbl* pSRCR_tbl() const;
     void* p() const;
     
     uint & type_RW();
     bool & is_reference_RW();
     bool & is_pSRCR_tbl_base_RW();
-    std::unordered_map<sstd::terp::var*,std::unordered_set<sstd::terp::var*>>*& pSRCR_tbl_RW();
+    sstd::terp::srcr_tbl*& pSRCR_tbl_RW();
     void*& p_RW();
     
     //---
@@ -113,13 +113,15 @@ public:
 
     void copy(const class sstd::terp::var&  rhs);
     void move(      class sstd::terp::var&& rhs);
+    void free_tbl();
+    void free_val();
     void free();
     
     template <typename T>
     void _overwrite(T* ptr);
     
-    var& operator=(const sstd::terp::var& rhs);
-    //var operator=(      sstd::terp::var&& rhs);
+    var& operator=(const sstd::terp::var&  rhs);
+//    var  operator=(      sstd::terp::var&& rhs);
     
     var& operator=(const char* rhs);
     var& operator=(const  var* rhs); // for the reference of var address. // Note: sstd::terp did NOT mention the trouble with circular reference.

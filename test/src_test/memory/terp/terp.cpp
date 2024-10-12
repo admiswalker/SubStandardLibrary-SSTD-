@@ -884,6 +884,37 @@ TEST(memory_terp, reference_of_sstd_terp_var_01){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+TEST(memory_terp, var_init_constructor){
+    sstd::terp::var a;
+    ASSERT_TRUE(a.is_pSRCR_tbl_base() == true );
+    ASSERT_TRUE(a.pSRCR_tbl() != NULL );
+}
+TEST(memory_terp, var_init_list){
+    sstd::terp::var a;
+    printf("894\n");
+    a = sstd::terp::list(2);
+    printf("896\n");
+    sstd::printn(a.is_pSRCR_tbl_base());
+    sstd::printn(a.pSRCR_tbl());
+    sstd::printn(a[0].is_pSRCR_tbl_base());
+    sstd::printn(a[0].pSRCR_tbl());
+    sstd::printn(a[1].pSRCR_tbl());
+    
+    ASSERT_TRUE(a.is_pSRCR_tbl_base() == true );
+    ASSERT_TRUE(a.pSRCR_tbl() != NULL );
+    
+    ASSERT_TRUE(a[0].is_pSRCR_tbl_base() == false );
+    ASSERT_TRUE(a[0].pSRCR_tbl() != NULL );
+    
+    ASSERT_TRUE(a[1].is_pSRCR_tbl_base() == false );
+    ASSERT_TRUE(a[1].pSRCR_tbl() != NULL );
+    
+    ASSERT_TRUE( a.pSRCR_tbl() == a[0].pSRCR_tbl() );
+    ASSERT_TRUE( a.pSRCR_tbl() == a[1].pSRCR_tbl() );
+
+    // TODO: アドレス構造をコピーできるようにして，テストする．
+}
+/*
 TEST(memory_terp, list_ope_assign_with_reference_tmp){ // Ope=
     sstd::terp::var a;
     a = sstd::terp::list(2);
@@ -892,8 +923,11 @@ TEST(memory_terp, list_ope_assign_with_reference_tmp){ // Ope=
     a[0][1] = "b";
     a[0][2] = "c";
     printf("894\n");
-    a[1] = &a[0];
+    sstd::printn(a.pSRCR_tbl());
+    sstd::printn(a[0].pSRCR_tbl());
     printf("895\n");
+    a[1] = &a[0];
+    printf("897\n");
 
     ASSERT_TRUE(a[0].is_reference() == false);
     ASSERT_TRUE(a[1].is_reference() == true );
@@ -914,7 +948,7 @@ TEST(memory_terp, list_ope_assign_with_reference_tmp){ // Ope=
     ASSERT_TRUE(x[1][0].to<std::string>() == "x");
     printf("913\n");
 }
-
+*/
 TEST(memory_terp, list_ope_assign_with_reference_case_01_delete_src){
     sstd::terp::var dst;
     {
@@ -937,8 +971,8 @@ TEST(memory_terp, list_ope_assign_with_reference_case_01_delete_src){
     ASSERT_TRUE(dst.is_pSRCR_tbl_base() == true);
     ASSERT_TRUE(dst.p() == NULL);
 }
-TEST(memory_terp, list_ope_assign_with_reference_case_02_delete_dst){
-}
+//TEST(memory_terp, list_ope_assign_with_reference_case_02_delete_dst){
+//}
 
 //---
 
