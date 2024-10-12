@@ -125,13 +125,7 @@ sstd::terp::var sstd::terp::list(uint allocate_size){
     r.p_RW()    = new std::vector<sstd::terp::var*>(allocate_size);
     
     for(uint i=0; i<allocate_size; ++i){
-        // Allocate the outscope memory
-        _CAST2VEC(r.p_RW())[i] = new sstd::terp::var(); // TODO: _pSRCR_tbl の再確保を余儀なくされているので，専用のコンストラクタを作る
-
-        // Update _pSRCR_tbl base
-        delete _CAST2VEC(r.p_RW())[i]->pSRCR_tbl_RW();
-        _CAST2VEC(r.p_RW())[i]->is_pSRCR_tbl_base_RW() = false;
-        _CAST2VEC(r.p_RW())[i]->pSRCR_tbl_RW()         = r.pSRCR_tbl();
+        _CAST2VEC(r.p_RW())[i] = new sstd::terp::var(r.pSRCR_tbl());
     }
     
     return r;
@@ -199,6 +193,7 @@ sstd::terp::var::var(        float      rhs): _type(sstd::num_str ), _is_referen
 sstd::terp::var::var(       double      rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new sstd::terp::srcr_tbl()), _p(new std::string(sstd::ssprintf(_format(rhs).c_str(), rhs))) {}
 sstd::terp::var::var(const char*        rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new sstd::terp::srcr_tbl()), _p(new std::string(rhs)) {}
 sstd::terp::var::var(const std::string& rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new sstd::terp::srcr_tbl()), _p(new std::string(rhs)) {}
+sstd::terp::var::var(const sstd::terp::srcr_tbl* rhs): _type(sstd::num_null), _is_reference(false), _is_pSRCR_tbl_base(false), _pSRCR_tbl((sstd::terp::srcr_tbl*)rhs), _p(NULL) {}
 
 sstd::terp::var::~var(){ if(!_is_reference){sstd::terp::var::free();} }
 
@@ -272,11 +267,8 @@ void _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs){
         // copy _p and its value
         pLhs->p_RW() = new std::vector<sstd::terp::var*>(pRhs->size(), NULL);
         for(uint i=0;i<pRhs->size();++i){
-            _CAST2VEC(pLhs->p_RW())[i] = new sstd::terp::var();
-//            _CAST2VEC(pLhs->p_RW())[i].is_reference_RW() = false; // TODO: false で初期化できるように修正する．
-//            delete _CAST2VEC(pLhs->p_RW())[i].is_pSRCR_tbl_base_RW(); // TODO: false で初期化できるように修正する．
-//            _CAST2VEC(pLhs->p_RW())[i].is_pSRCR_tbl_base_RW() = pLhs->is_pSRCR_tbl_base(); // TODO: false で初期化できるように修正する．
-            _copy_base(_CAST2VEC(pLhs->p_RW())[i], _CAST2VEC(pRhs->p())[i]);
+            _CAST2VEC(pLhs->p_RW())[i] = new sstd::terp::var(pLhs->pSRCR_tbl());
+            _copy_base(_CAST2VEC(pLhs->p_RW())[i], _CAST2VEC(pRhs->p())[i]); // TODO: base の pLhs->pSRCR_tbl() がコピー先でも再帰的に適用されるように修正する
         }
     } break;
 //    case sstd::num_hash_terp_var: { pLhs->p_RW() = new std::unordered_map<std::string,sstd::terp::var*>(*(std::unordered_map<std::string,sstd::terp::var*>*)pRhs->p()); } break;
