@@ -890,15 +890,7 @@ TEST(memory_terp, var_init_constructor){
     ASSERT_TRUE(a.pSRCR_tbl() != NULL );
 }
 TEST(memory_terp, var_init_list){
-    sstd::terp::var a;
-    printf("894\n");
-    a = sstd::terp::list(2);
-    printf("896\n");
-    sstd::printn(a.is_pSRCR_tbl_base());
-    sstd::printn(a.pSRCR_tbl());
-    sstd::printn(a[0].is_pSRCR_tbl_base());
-    sstd::printn(a[0].pSRCR_tbl());
-    sstd::printn(a[1].pSRCR_tbl());
+    sstd::terp::var a = sstd::terp::list(2); // TEST THIS LINE
     
     ASSERT_TRUE(a.is_pSRCR_tbl_base() == true );
     ASSERT_TRUE(a.pSRCR_tbl() != NULL );
@@ -911,9 +903,52 @@ TEST(memory_terp, var_init_list){
     
     ASSERT_TRUE( a.pSRCR_tbl() == a[0].pSRCR_tbl() );
     ASSERT_TRUE( a.pSRCR_tbl() == a[1].pSRCR_tbl() );
+}
 
+//---
+
+TEST(memory_terp, copy_list){
+    sstd::terp::var a;
+    a = (const sstd::terp::var)sstd::terp::list(2); // TEST THIS LINE
+    
+    ASSERT_TRUE(a.is_pSRCR_tbl_base() == true );
+    ASSERT_TRUE(a.pSRCR_tbl() != NULL );
+    
+    ASSERT_TRUE(a[0].is_pSRCR_tbl_base() == false );
+    ASSERT_TRUE(a[0].pSRCR_tbl() != NULL );
+    
+    ASSERT_TRUE(a[1].is_pSRCR_tbl_base() == false );
+    ASSERT_TRUE(a[1].pSRCR_tbl() != NULL );
+    
+    ASSERT_TRUE( a.pSRCR_tbl() == a[0].pSRCR_tbl() );
+    ASSERT_TRUE( a.pSRCR_tbl() == a[1].pSRCR_tbl() );
+}
+
+TEST(memory_terp, copy_list_with_ref){
     // TODO: アドレス構造をコピーできるようにして，テストする．
 }
+
+//---
+
+TEST(memory_terp, copy_list_with_ref_as_move){
+    sstd::terp::var a;
+    a = sstd::terp::list(2); // TEST THIS LINE
+    
+    ASSERT_TRUE(a.is_pSRCR_tbl_base() == true );
+    ASSERT_TRUE(a.pSRCR_tbl() != NULL );
+    
+    ASSERT_TRUE(a[0].is_pSRCR_tbl_base() == false );
+    ASSERT_TRUE(a[0].pSRCR_tbl() != NULL );
+    
+    ASSERT_TRUE(a[1].is_pSRCR_tbl_base() == false );
+    ASSERT_TRUE(a[1].pSRCR_tbl() != NULL );
+    
+    ASSERT_TRUE( a.pSRCR_tbl() == a[0].pSRCR_tbl() );
+    ASSERT_TRUE( a.pSRCR_tbl() == a[1].pSRCR_tbl() );
+}
+
+//---
+
 /*
 TEST(memory_terp, list_ope_assign_with_reference_tmp){ // Ope=
     sstd::terp::var a;

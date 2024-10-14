@@ -290,7 +290,6 @@ void _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs){
     }
 }
 void sstd::terp::var::copy(const class sstd::terp::var& rhs){
-    //sstd::terp::var::free(); // コピー先の _pSrCR_tbl を開放されると，当然バグる．
     sstd::terp::var::free_val();
     _copy_base(this, &rhs);
 }
@@ -402,15 +401,16 @@ void sstd::terp::var::free(){
     sstd::terp::var::free_val();
 }
 
-sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var& rhs){
+sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var&  rhs){
     printf("398 sstd::terp::var::operator=()\n");
     copy(rhs);
     return *this;
 }
-//sstd::terp::var sstd::terp::var::operator=(sstd::terp::var&& rhs){
-//    printf("403 sstd::terp::var::operator=(&&)\n");
-//    return *this;
-//}
+sstd::terp::var  sstd::terp::var::operator=(      sstd::terp::var&& rhs){
+    printf("403 sstd::terp::var::operator=(&&)\n");
+    move(std::move(rhs));
+    return *this;
+}
 sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var* pRhs){
     this->_is_reference = true;
     this->_type         = pRhs->type();

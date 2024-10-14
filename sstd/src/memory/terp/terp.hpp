@@ -122,7 +122,7 @@ public:
     void _overwrite(T* ptr);
     
     var& operator=(const sstd::terp::var&  rhs);
-//    var  operator=(      sstd::terp::var&& rhs);
+    var  operator=(      sstd::terp::var&& rhs);
     
     var& operator=(const char* rhs);
     var& operator=(const  var* rhs); // for the reference of var address. // Note: sstd::terp did NOT mention the trouble with circular reference.
