@@ -865,7 +865,7 @@ TEST(memory_terp, reference_of_sstd_terp_var_01){
     x[0][1] = "b";
     x[0][2] = "c";
     x[1] = &x[0];
-    //sstd::printn(x);
+    sstd::printn_all(x);
     
     sstd::terp::var a; // ans
     a = sstd::terp::list(2);
@@ -877,7 +877,7 @@ TEST(memory_terp, reference_of_sstd_terp_var_01){
     a[1][0] = "a";
     a[1][1] = "b";
     a[1][2] = "c";
-    //sstd::printn(a);
+    sstd::printn_all(a);
     
     ASSERT_TRUE(x==a);
 }

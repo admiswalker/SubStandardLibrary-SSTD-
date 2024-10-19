@@ -297,6 +297,10 @@ void sstd::terp::var::copy(const class sstd::terp::var& rhs){
 void sstd::terp::var::move(      class sstd::terp::var&& rhs){
     this->_type = rhs.type(); rhs.type_RW() = sstd::num_null;
     this->_p    = rhs.p();    rhs.p_RW()    = NULL;
+
+    delete this->_pSRCR_tbl;
+    this->_is_pSRCR_tbl_base = true;    rhs.is_pSRCR_tbl_base_RW() = false;
+    this->_pSRCR_tbl = rhs.pSRCR_tbl(); rhs.pSRCR_tbl_RW()         = NULL;
 }
 /*
 void sstd::terp::var::_fill_ref_src_null(sstd::terp::var* ref_src_address){
@@ -337,6 +341,7 @@ void sstd::terp::var::_fillout_ref_src_null(){
     }
 }
 void sstd::terp::var::free_tbl(){
+    if(this->_is_reference==false || this->_pSRCR_tbl==NULL){ return; }
     sstd::terp::var::_fillout_ref_src_null();
 }
 void sstd::terp::var::free_val(){
