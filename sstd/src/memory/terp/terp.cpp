@@ -480,11 +480,11 @@ bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs, const boo
     return false;
 }
 bool sstd::terp::var::equal(const sstd::terp::var& rhs, const char* opt){
-    //if(!sstd::charIn_all(std::string(opt)+" ", "ar ")){ sstd::pdbg_err("sstd::terp::var::equal() is falied. `%s` is unexpected option.", opt); return false; }
+    if(!sstd::charIn_all(std::string(opt)+" ", "ar ")){ sstd::pdbg_err("sstd::terp::var::equal() is falied. `%s` is unexpected option.", opt); return false; }
     bool check_ref_flag = sstd::charIn('r', opt); // Opt "r" checks reference flag
     bool check_ref_addr = sstd::charIn('a', opt); // Opt "a" checks reference address
     
-    _is_equal(*this, rhs, check_ref_flag, check_ref_addr);
+    return _is_equal(*this, rhs, check_ref_flag, check_ref_addr);
 }
 bool sstd::terp::var::operator==(const sstd::terp::var& rhs){ return  sstd::terp::var::equal(rhs, "r"); }
 bool sstd::terp::var::operator!=(const sstd::terp::var& rhs){ return !sstd::terp::var::equal(rhs, "r"); }
