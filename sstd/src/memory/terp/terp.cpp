@@ -1,8 +1,11 @@
+//#include <stdio.h>
+//#include <string.h>
 #include "terp.hpp"
 
 #include "../../definitions/typeNum.hpp"
 #include "../../print/pdbg.hpp"
 #include "../../string/ssprintf.hpp"
+#include "../../string/strmatch.hpp"
 
 #include "../../print/print.hpp" // sstd::printn() for debugging at development
 
@@ -438,45 +441,53 @@ sstd::terp::var& sstd::terp::var::operator=(const char* rhs){
     return *this;
 }
 
-bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs); // forward declaration
-bool _is_equal_list(const sstd::terp::var& lhs, const sstd::terp::var& rhs){
+bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs, const bool check_ref_flag, const bool check_ref_addr); // forward declaration
+bool _is_equal_list(const sstd::terp::var& lhs, const sstd::terp::var& rhs, const bool check_ref_flag, const bool check_ref_addr){
     if(lhs.size()!=rhs.size()){ return false; }
     
     for(uint i=0; i<lhs.size(); ++i){
-        if(!_is_equal(lhs[i], rhs[i])){ return false; }
+        if(!_is_equal(lhs[i], rhs[i], check_ref_flag, check_ref_addr)){ return false; }
     }
     
     return true;
 }
-bool _is_equal_hash(const sstd::terp::var& lhs, const sstd::terp::var& rhs){ // TODO: これ，reference あるとかなり実装が面倒になるはず
+bool _is_equal_hash(const sstd::terp::var& lhs, const sstd::terp::var& rhs, const bool check_ref_flag, const bool check_ref_addr){ // TODO: これ，reference あるとかなり実装が面倒になるはず
     if(lhs.size()!=rhs.size()){ return false; }
-
+    
     for(auto itr=lhs.begin(); itr!=lhs.end(); ++itr){
         std::string key = itr.first_to<std::string>();
         
         auto itr_rhs = rhs.find(key.c_str());
         if(!(itr_rhs!=rhs.end())){ return false; }
 
-        if(!_is_equal(itr.second(), itr_rhs.second())){ return false; }
+        if(!_is_equal(itr.second(), itr_rhs.second(), check_ref_flag, check_ref_addr)){ return false; }
     }
     
     return true;
 }
-bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs){
+bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs, const bool check_ref_flag, const bool check_ref_addr){
+    if(check_ref_flag && lhs.is_reference()!=rhs.is_reference()){ return false; }
     if(lhs.type()!=rhs.type()){ return false; }
     
     switch(lhs.typeNum()){
     case sstd::num_str:           { return lhs.to<std::string>()==rhs.to<std::string>(); } break;
-    case sstd::num_vec_terp_var:  { return _is_equal_list(lhs, rhs); } break;
-    case sstd::num_hash_terp_var: { return _is_equal_hash(lhs, rhs); } break;
-    case sstd::num_null:             { return true; } break;
+    case sstd::num_vec_terp_var:  { return _is_equal_list(lhs, rhs, check_ref_flag, check_ref_addr); } break;
+    case sstd::num_hash_terp_var: { return _is_equal_hash(lhs, rhs, check_ref_flag, check_ref_addr); } break;
+    case sstd::num_null:          { return true; } break;
     default: { sstd::pdbg_err("ERROR\n"); } break;
     }
     
     return false;
 }
-bool sstd::terp::var::operator==(const sstd::terp::var& rhs){ return  _is_equal(*this, rhs); }
-bool sstd::terp::var::operator!=(const sstd::terp::var& rhs){ return !_is_equal(*this, rhs); }
+bool sstd::terp::var::equal(const sstd::terp::var& rhs, const char* opt){
+    //if(!sstd::charIn_all(std::string(opt)+" ", "ar ")){ sstd::pdbg_err("sstd::terp::var::equal() is falied. `%s` is unexpected option.", opt); return false; }
+    bool check_ref_flag = sstd::charIn('r', opt); // Opt "r" checks reference flag
+    bool check_ref_addr = sstd::charIn('a', opt); // Opt "a" checks reference address
+    
+    _is_equal(*this, rhs, check_ref_flag, check_ref_addr);
+}
+bool sstd::terp::var::operator==(const sstd::terp::var& rhs){ return  sstd::terp::var::equal(rhs, "r"); }
+bool sstd::terp::var::operator!=(const sstd::terp::var& rhs){ return !sstd::terp::var::equal(rhs, "r"); }
 
 #define _OPE_SUBSCRIPT_IDX_BASE()                                       \
     switch(_type){                                                      \

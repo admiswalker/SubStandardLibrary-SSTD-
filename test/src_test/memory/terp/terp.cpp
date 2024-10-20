@@ -865,7 +865,7 @@ TEST(memory_terp, reference_of_sstd_terp_var_01){
     x[0][1] = "b";
     x[0][2] = "c";
     x[1] = &x[0];
-    sstd::printn_all(x);
+    //sstd::printn_all(x);
     
     sstd::terp::var a; // ans
     a = sstd::terp::list(2);
@@ -877,7 +877,7 @@ TEST(memory_terp, reference_of_sstd_terp_var_01){
     a[1][0] = "a";
     a[1][1] = "b";
     a[1][2] = "c";
-    sstd::printn_all(a);
+    //sstd::printn_all(a);
     
     ASSERT_TRUE(x==a);
 }
@@ -907,7 +907,7 @@ TEST(memory_terp, var_init_list){
 
 //---
 
-TEST(memory_terp, copy_list){
+TEST(memory_terp, copy_list){ // operator=(&)
     sstd::terp::var a;
     a = (const sstd::terp::var)sstd::terp::list(2); // TEST THIS LINE
     
@@ -923,14 +923,10 @@ TEST(memory_terp, copy_list){
     ASSERT_TRUE( a.pSRCR_tbl() == a[0].pSRCR_tbl() );
     ASSERT_TRUE( a.pSRCR_tbl() == a[1].pSRCR_tbl() );
 }
-
-TEST(memory_terp, copy_list_with_ref){
-    // TODO: アドレス構造をコピーできるようにして，テストする．
+TEST(memory_terp, copy_hash){ // operator=(&)
 }
 
-//---
-
-TEST(memory_terp, copy_list_with_ref_as_move){
+TEST(memory_terp, move_list){ // operator=(&&)
     sstd::terp::var a;
     a = sstd::terp::list(2); // TEST THIS LINE
     
@@ -945,6 +941,74 @@ TEST(memory_terp, copy_list_with_ref_as_move){
     
     ASSERT_TRUE( a.pSRCR_tbl() == a[0].pSRCR_tbl() );
     ASSERT_TRUE( a.pSRCR_tbl() == a[1].pSRCR_tbl() );
+}
+TEST(memory_terp, move_hash){ // operator=(&&)
+}
+
+//---
+
+TEST(memory_terp, copy_self_ref_list){
+    sstd::terp::var s; // src
+    s = sstd::terp::list(2);
+    s[0] = sstd::terp::list(3);
+    s[0][0] = "a";
+    s[0][1] = "b";
+    s[0][2] = "c";
+    s[1] = &s[0];
+    //sstd::printn_all(x);
+    
+    sstd::terp::var d = s; // dst // TEST THIS LINE // TODO: アドレス構造をコピーできるようにして，テストする
+    
+    sstd::terp::var a; // ans
+    a = sstd::terp::list(2);
+    a[0] = sstd::terp::list(3);
+    a[0][0] = "a";
+    a[0][1] = "b";
+    a[0][2] = "c";
+    a[1] = sstd::terp::list(3);
+    a[1][0] = "a";
+    a[1][1] = "b";
+    a[1][2] = "c";
+    //sstd::printn_all(a);
+    
+    sstd::printn_all(s[1].is_reference());
+    sstd::printn_all(d[1].is_reference());
+    sstd::printn_all(a[1].is_reference());
+    printf("\n");
+    
+    sstd::printn_all(s[1].p());
+    sstd::printn_all(d[1].p());
+    sstd::printn_all(a[1].p());
+    printf("\n");
+    
+    sstd::printn_all(s[1].pSRCR_tbl());
+    sstd::printn_all(d[1].pSRCR_tbl());
+    sstd::printn_all(a[1].pSRCR_tbl());
+    
+    ASSERT_TRUE(s==a);
+    ASSERT_TRUE(d==a);
+}
+
+TEST(memory_terp, copy_self_ref_hash){
+}
+
+//---
+
+TEST(memory_terp, equal1__compare_only_value){ // operator==
+    // sstd::terp::equal0
+}
+
+TEST(memory_terp, equal2__compare_value_and_isReference){
+    // sstd::terp::equal1
+    
+    // sstd::terp::isSame
+}
+
+TEST(memory_terp, equal3__compare_all){
+    // sstd::terp::equal2
+    
+    // sstd::terp::isEqualObj
+    // sstd::terp::isSameObject
 }
 
 //---

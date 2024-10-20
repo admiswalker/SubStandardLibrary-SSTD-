@@ -126,7 +126,12 @@ public:
     
     var& operator=(const char* rhs);
     var& operator=(const  var* rhs); // for the reference of var address. // Note: sstd::terp did NOT mention the trouble with circular reference.
-
+    
+    bool equal(const sstd::terp::var& rhs, const char* opt); // "r" (checks reference flag), "a" (checks reference address) for opt
+//    bool equal1(const sstd::terp::var& rhs); // checks: actual object
+//    bool equal2(const sstd::terp::var& rhs); // checks: actual object, reference flag // equal2() is used in Ope==.
+//    bool equal3(const sstd::terp::var& rhs); // checks: actual object, reference flag, reference address
+    
     bool operator==(const sstd::terp::var& rhs);
     bool operator!=(const sstd::terp::var& rhs);
 
