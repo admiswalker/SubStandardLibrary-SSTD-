@@ -947,7 +947,7 @@ TEST(memory_terp, move_hash){ // operator=(&&)
 
 //---
 
-TEST(memory_terp, copy_self_ref_list){
+TEST(memory_terp, copy_self_ref_list__obj){
     sstd::terp::var s; // src
     s = sstd::terp::list(2);
     s[0] = sstd::terp::list(3);
@@ -957,7 +957,8 @@ TEST(memory_terp, copy_self_ref_list){
     s[1] = &s[0];
     //sstd::printn_all(x);
     
-    sstd::terp::var d = s; // dst // TEST THIS LINE // TODO: アドレス構造をコピーできるようにして，テストする
+    sstd::terp::var d; // dst
+    d = s; // TEST THIS LINE
     
     sstd::terp::var a; // ans
     a = sstd::terp::list(2);
@@ -969,6 +970,31 @@ TEST(memory_terp, copy_self_ref_list){
     a[1][0] = "a";
     a[1][1] = "b";
     a[1][2] = "c";
+    //sstd::printn_all(a);
+    
+    ASSERT_TRUE(sstd::terp::equal(s, a, "")); // compares: only actual value
+    ASSERT_TRUE(sstd::terp::equal(d, a, "")); // compares: only actual value
+}
+TEST(memory_terp, copy_self_ref_list__ref){
+    sstd::terp::var s; // src
+    s = sstd::terp::list(2);
+    s[0] = sstd::terp::list(3);
+    s[0][0] = "a";
+    s[0][1] = "b";
+    s[0][2] = "c";
+    s[1] = &s[0];
+    //sstd::printn_all(x);
+    
+    sstd::terp::var d; // dst
+    d = s; // TEST THIS LINE // TODO: アドレス構造をコピーできるようにして，テストする
+    
+    sstd::terp::var a; // ans
+    a = sstd::terp::list(2);
+    a[0] = sstd::terp::list(3);
+    a[0][0] = "a";
+    a[0][1] = "b";
+    a[0][2] = "c";
+    a[1] = &a[0];
     //sstd::printn_all(a);
     
     sstd::printn_all(s[1].is_reference());
@@ -985,8 +1011,8 @@ TEST(memory_terp, copy_self_ref_list){
     sstd::printn_all(d[1].pSRCR_tbl());
     sstd::printn_all(a[1].pSRCR_tbl());
     
-    ASSERT_TRUE(s==a);
-    ASSERT_TRUE(d==a);
+    ASSERT_TRUE(sstd::terp::equal(s, a, "r")); // compares: actual value and is_reference
+    ASSERT_TRUE(sstd::terp::equal(d, a, "r")); // compares: actual value and is_reference
 }
 
 TEST(memory_terp, copy_self_ref_hash){

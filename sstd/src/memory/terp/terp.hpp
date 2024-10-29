@@ -35,6 +35,12 @@ namespace sstd::terp{
 
     // type name
     using srcr_tbl = std::unordered_map<sstd::terp::var*,std::unordered_set<sstd::terp::var*>>;
+
+    struct path{
+        uint type;
+        uint list_idx;
+        std::string hash_key;
+    };
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -57,6 +63,9 @@ namespace sstd::terp{
     void _to(const char*& dst, const sstd::terp::var& src);
     void _to(std::string& dst, const sstd::terp::var& src);
     void _to(std::string& dst, const std::string   & src);
+
+    bool equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs);
+    bool equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs, const char* opt);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -126,12 +135,9 @@ public:
     
     var& operator=(const char* rhs);
     var& operator=(const  var* rhs); // for the reference of var address. // Note: sstd::terp did NOT mention the trouble with circular reference.
-    
-    bool equal(const sstd::terp::var& rhs, const char* opt); // "r" (checks reference flag), "a" (checks reference address) for opt
-//    bool equal1(const sstd::terp::var& rhs); // checks: actual object
-//    bool equal2(const sstd::terp::var& rhs); // checks: actual object, reference flag // equal2() is used in Ope==.
-//    bool equal3(const sstd::terp::var& rhs); // checks: actual object, reference flag, reference address
-    
+
+    bool equal(const sstd::terp::var& rhs) const;
+    bool equal(const sstd::terp::var& rhs, const char* opt) const; // "r" (checks reference flag), "a" (checks reference address) for opt
     bool operator==(const sstd::terp::var& rhs);
     bool operator!=(const sstd::terp::var& rhs);
 

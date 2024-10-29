@@ -52,6 +52,16 @@ void sstd::terp::_to(std::string& dst, const std::string    & src){ dst = src; }
 #define NULL_CHECK(p) if(p==NULL){ sstd::pdbg_err("NULL pointer is detected\n"); return; }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// sstd::terp
+
+bool sstd::terp::equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs){ // TODO: write interface tests
+    return lhs.equal(rhs);
+}
+bool sstd::terp::equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs, const char* opt){ // TODO: write interface tests
+    return lhs.equal(rhs, opt);
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 // sstd::terp::iterator
 
 // constructors
@@ -219,7 +229,7 @@ void*& sstd::terp::var::p_RW(){ return this->_p; }
 // common
 
 // copy(), allocate(), free()
-void _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs){ // TODO: これ，reference あるとかなり実装が面倒になるはず
+void _copy_base_process(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs, std::vector<struct sstd::terp::path>& vPath){ // TODO: これ，reference あるとかなり実装が面倒になるはず
     pLhs->type_RW() = pRhs->type();
     if(pRhs->p()==NULL){ pLhs->p_RW()=NULL; return; }
     switch (pLhs->type()){
@@ -271,7 +281,7 @@ void _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs){
         pLhs->p_RW() = new std::vector<sstd::terp::var*>(pRhs->size(), NULL);
         for(uint i=0;i<pRhs->size();++i){
             _CAST2VEC(pLhs->p_RW())[i] = new sstd::terp::var(pLhs->pSRCR_tbl());
-            _copy_base(_CAST2VEC(pLhs->p_RW())[i], _CAST2VEC(pRhs->p())[i]); // TODO: base の pLhs->pSRCR_tbl() がコピー先でも再帰的に適用されるように修正する
+            _copy_base_process(_CAST2VEC(pLhs->p_RW())[i], _CAST2VEC(pRhs->p())[i], vPath); // TODO: base の pLhs->pSRCR_tbl() がコピー先でも再帰的に適用されるように修正する
         }
     } break;
 //    case sstd::num_hash_terp_var: { pLhs->p_RW() = new std::unordered_map<std::string,sstd::terp::var*>(*(std::unordered_map<std::string,sstd::terp::var*>*)pRhs->p()); } break;
@@ -284,13 +294,17 @@ void _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs){
         for(auto itr=pRHash->begin(); itr!=pRHash->end(); ++itr){
             sstd::terp::var* pVal = new sstd::terp::var();
             (*pLHash)[ itr->first ] = pVal;
-            _copy_base(pVal, itr->second);
+            _copy_base_process(pVal, itr->second, vPath);
         }
     } break;
         
     default: { sstd::pdbg("ERROR: allocating memory is failed. typeNum '%d' is not defined.", pLhs->type()); } break;
         
     }
+}
+void _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs){
+    std::vector<struct sstd::terp::path> vPath;
+    _copy_base_process(pLhs, pRhs, vPath);
 }
 void sstd::terp::var::copy(const class sstd::terp::var& rhs){
     sstd::terp::var::free_val();
@@ -479,15 +493,19 @@ bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs, const boo
     
     return false;
 }
-bool sstd::terp::var::equal(const sstd::terp::var& rhs, const char* opt){
+bool sstd::terp::var::equal(const sstd::terp::var& rhs, const char* opt) const { // TODO: write interface tests
     if(!sstd::charIn_all(std::string(opt)+" ", "ar ")){ sstd::pdbg_err("sstd::terp::var::equal() is falied. `%s` is unexpected option.", opt); return false; }
+    // TOCO: sstd::charIn_all("", "abc") のように strlen(arg1)==0 の return 値は true にした方がよいのでは・・・？
     bool check_ref_flag = sstd::charIn('r', opt); // Opt "r" checks reference flag
     bool check_ref_addr = sstd::charIn('a', opt); // Opt "a" checks reference address
     
     return _is_equal(*this, rhs, check_ref_flag, check_ref_addr);
 }
-bool sstd::terp::var::operator==(const sstd::terp::var& rhs){ return  sstd::terp::var::equal(rhs, "r"); }
-bool sstd::terp::var::operator!=(const sstd::terp::var& rhs){ return !sstd::terp::var::equal(rhs, "r"); }
+bool sstd::terp::var::equal(const sstd::terp::var& rhs) const { // TODO: write interface tests
+    return sstd::terp::var::equal(rhs, "r");
+}
+bool sstd::terp::var::operator==(const sstd::terp::var& rhs){ return  sstd::terp::var::equal(rhs); }
+bool sstd::terp::var::operator!=(const sstd::terp::var& rhs){ return !sstd::terp::var::equal(rhs); }
 
 #define _OPE_SUBSCRIPT_IDX_BASE()                                       \
     switch(_type){                                                      \
