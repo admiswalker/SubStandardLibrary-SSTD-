@@ -997,22 +997,26 @@ TEST(memory_terp, copy_self_ref_list__ref){
     a[1] = &a[0];
     //sstd::printn_all(a);
     
-    sstd::printn_all(s[1].is_reference());
+    sstd::printn_all(d);
     sstd::printn_all(d[1].is_reference());
-    sstd::printn_all(a[1].is_reference());
-    printf("\n");
     
-    sstd::printn_all(s[1].p());
-    sstd::printn_all(d[1].p());
-    sstd::printn_all(a[1].p());
-    printf("\n");
+//    sstd::printn_all(s[1].is_reference());
+//    sstd::printn_all(d[1].is_reference());
+  //  sstd::printn_all(a[1].is_reference());
+//    printf("\n");
     
-    sstd::printn_all(s[1].pSRCR_tbl());
-    sstd::printn_all(d[1].pSRCR_tbl());
-    sstd::printn_all(a[1].pSRCR_tbl());
+//    sstd::printn_all(s[1].p());
+//    sstd::printn_all(d[1].p());
+//    sstd::printn_all(a[1].p());
+//    printf("\n");
     
-    ASSERT_TRUE(sstd::terp::equal(s, a, "r")); // compares: actual value and is_reference
-    ASSERT_TRUE(sstd::terp::equal(d, a, "r")); // compares: actual value and is_reference
+//    sstd::printn_all(s[1].pSRCR_tbl());
+//    sstd::printn_all(d[1].pSRCR_tbl());
+//    sstd::printn_all(a[1].pSRCR_tbl());
+    
+//    ASSERT_TRUE(sstd::terp::equal(s, a, "r")); // compares: actual value and is_reference
+//    ASSERT_TRUE(sstd::terp::equal(d, a, "r")); // compares: actual value and is_reference
+    ASSERT_TRUE(false);
 }
 
 TEST(memory_terp, copy_self_ref_hash){
