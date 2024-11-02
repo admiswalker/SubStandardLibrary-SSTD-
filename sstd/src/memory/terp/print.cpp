@@ -45,6 +45,8 @@ void _print_terp_hash(const sstd::terp::var& rhs){
     printf("}");
 }
 
+//---
+
 #define sstd_print_terp_var_base(rhs)                                   \
     switch(rhs.typeNum()){                                              \
     case sstd::num_str          : { _print_terp_str (rhs); } break;     \
@@ -54,23 +56,34 @@ void _print_terp_hash(const sstd::terp::var& rhs){
     default: { sstd::pdbg("ERROR"); } break;                            \
     }
 
-//-----------------------------------------------------------------------------------------------------------------------------------------------
-
-void sstd::print(const sstd::terp::var& rhs){
-    sstd_print_terp_var_base(rhs);
-    printf("\n");
-}
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
-
-void sstd::for_printn(const sstd::terp::var& rhs){ printf(" = "); sstd::print(rhs); }
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
-
-void sstd::print_for_vT(const sstd::terp::var& rhs){
-    sstd_print_terp_var_base(rhs);
-}
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
+void sstd::print       (const sstd::terp::var& rhs){ sstd_print_terp_var_base(rhs); printf("\n"); }
+void sstd::for_printn  (const sstd::terp::var& rhs){ printf(" = "); sstd::print(rhs); }
+void sstd::print_for_vT(const sstd::terp::var& rhs){ sstd_print_terp_var_base(rhs); }
 
 #undef sstd_print_terp_var_base
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+void sstd_print_terp_pVar_base(const sstd::terp::var* rhs){
+    printf("%p", rhs); 
+}
+
+//---
+
+void sstd::print       (const sstd::terp::var* rhs){ sstd_print_terp_pVar_base(rhs); printf("\n"); }
+void sstd::for_printn  (const sstd::terp::var* rhs){ printf(" = "); sstd::print(rhs); }
+void sstd::print_for_vT(const sstd::terp::var* rhs){ sstd_print_terp_pVar_base(rhs); }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+void sstd_print_terp_path_base(const sstd::terp::path& rhs){
+    printf("(type: `%u`, list_idx: `%u`, hash_key: `%s`)", rhs.type, rhs.list_idx, rhs.hash_key.c_str());
+}
+
+//---
+
+void sstd::print       (const sstd::terp::path& rhs){ sstd_print_terp_path_base(rhs); printf("\n"); }
+void sstd::for_printn  (const sstd::terp::path& rhs){ printf(" = "); sstd::print(rhs); }
+void sstd::print_for_vT(const sstd::terp::path& rhs){ sstd_print_terp_path_base(rhs); }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------

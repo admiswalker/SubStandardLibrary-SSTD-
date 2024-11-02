@@ -229,9 +229,16 @@ void*& sstd::terp::var::p_RW(){ return this->_p; }
 // common
 
 // copy(), allocate(), free()
-void _copy_base_process(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs, std::vector<struct sstd::terp::path>& vPath){ // TODO: これ，reference あるとかなり実装が面倒になるはず
+void _copy_base_process(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs, std::unordered_map<sstd::terp::var*,std::vector<struct sstd::terp::path>>& addr2path_tbl, std::vector<struct sstd::terp::path>& vPath){ // TODO: これ，reference あるとかなり実装が面倒になるはず
+    
+    struct sstd::terp::path path;
+    vPath.push_back(path);
+    addr2path_tbl[ (sstd::terp::var*)pRhs ] = vPath;
+    
+    //---
+    
     pLhs->type_RW() = pRhs->type();
-    if(pRhs->p()==NULL){ pLhs->p_RW()=NULL; return; }
+    if(pRhs->p()==NULL){ pLhs->p_RW()=NULL; goto EXIT; }
     switch (pLhs->type()){
     case sstd::num_null    : {} break;
         
@@ -281,7 +288,7 @@ void _copy_base_process(class sstd::terp::var* pLhs, const class sstd::terp::var
         pLhs->p_RW() = new std::vector<sstd::terp::var*>(pRhs->size(), NULL);
         for(uint i=0;i<pRhs->size();++i){
             _CAST2VEC(pLhs->p_RW())[i] = new sstd::terp::var(pLhs->pSRCR_tbl());
-            _copy_base_process(_CAST2VEC(pLhs->p_RW())[i], _CAST2VEC(pRhs->p())[i], vPath); // TODO: base の pLhs->pSRCR_tbl() がコピー先でも再帰的に適用されるように修正する
+            _copy_base_process(_CAST2VEC(pLhs->p_RW())[i], _CAST2VEC(pRhs->p())[i], addr2path_tbl, vPath); // TODO: base の pLhs->pSRCR_tbl() がコピー先でも再帰的に適用されるように修正する
         }
     } break;
 //    case sstd::num_hash_terp_var: { pLhs->p_RW() = new std::unordered_map<std::string,sstd::terp::var*>(*(std::unordered_map<std::string,sstd::terp::var*>*)pRhs->p()); } break;
@@ -294,17 +301,25 @@ void _copy_base_process(class sstd::terp::var* pLhs, const class sstd::terp::var
         for(auto itr=pRHash->begin(); itr!=pRHash->end(); ++itr){
             sstd::terp::var* pVal = new sstd::terp::var();
             (*pLHash)[ itr->first ] = pVal;
-            _copy_base_process(pVal, itr->second, vPath);
+            _copy_base_process(pVal, itr->second, addr2path_tbl, vPath);
         }
     } break;
         
     default: { sstd::pdbg("ERROR: allocating memory is failed. typeNum '%d' is not defined.", pLhs->type()); } break;
         
     }
+
+    //---
+    
+ EXIT:
+    vPath.pop_back();
+    
+    return;
 }
 void _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs){
+    std::unordered_map<sstd::terp::var*,std::vector<struct sstd::terp::path>> addr2path_tbl; // address to path
     std::vector<struct sstd::terp::path> vPath;
-    _copy_base_process(pLhs, pRhs, vPath);
+    _copy_base_process(pLhs, pRhs, addr2path_tbl, vPath);
 }
 void sstd::terp::var::copy(const class sstd::terp::var& rhs){
     sstd::terp::var::free_val();
