@@ -9,6 +9,10 @@
 
 
 namespace sstd{
+//    template<typename... Types> void print(const std::tuple<Types...>& rhs);
+
+    //---
+    
     void print_for_vT(const  void* rhs);
     void print_for_vT(const  bool  rhs);
     void print_for_vT(const  char  rhs);
@@ -83,21 +87,28 @@ namespace sstd{
     //---
     // for std::tuple<T1, T2, ...>
 
-    //template <typetypename... Types>
     template<typename TupleT, typename LastIdx>
     void _print_tuple(const TupleT& rhs){
-        print_for_vT( rhs );
+        print_for_vT( std::get<LastIdx>(rhs) );
     }
-    template<typename TupleT, typename HeadIdx, typename... TailIdx>
+    template<typename TupleT, unsigned HeadIdx, typename... TailIdx>
     void _print_tuple(const TupleT& rhs){
-        print_for_vT( rhs );
+        print_for_vT( std::get<HeadIdx>(rhs) );
         printf(", ");
+        sstd::_print_tuple<TupleT, TailIdx...>(rhs);
     }
+    /*
+    template<typename TupleT, unsigned HeadIdx, unsigned TailIdx>
+    void _print_tuple(const TupleT& rhs){
+        print_for_vT( std::get<HeadIdx>(rhs) );
+        printf(", ");
+        print_for_vT( std::get<TailIdx>(rhs) );
+    }*/
     template<typename... Types>
     void print(const std::tuple<Types...>& rhs){
         printf("(");
-        _print_tuple<std::tuple<Types...>, 0, sizeof...(Types) - 1>(rhs);
-        printf(")");
+        sstd::_print_tuple<std::tuple<Types...>, 0, sizeof...(Types) - 1>(rhs);
+        printf(")\n");
     }
 
     //---

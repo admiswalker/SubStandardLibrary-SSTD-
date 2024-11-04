@@ -349,7 +349,10 @@ void _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs){
                        tbl_copySrcAds_to_copyDstAds
                        );
 
-    sstd::printn_all(vStack_copyDstAds_asRef_and_origRefAds);
+    std::tuple<sstd::terp::var*,sstd::terp::var*,sstd::terp::var*> tmp;
+    sstd::print(tmp);
+//    sstd::print(vStack_copyDstAds_asRef_and_origRefAds[0]);
+//    sstd::printn_all(vStack_copyDstAds_asRef_and_origRefAds);
     sstd::printn_all(tbl_copySrcAds_to_copyDstAds);
 }
 void sstd::terp::var::copy(const class sstd::terp::var& rhs){
