@@ -1017,6 +1017,12 @@ TEST(memory_terp, copy_self_ref_list__ref){
 //    ASSERT_TRUE(sstd::terp::equal(s, a, "r")); // compares: actual value and is_reference
 //    ASSERT_TRUE(sstd::terp::equal(d, a, "r")); // compares: actual value and is_reference
     ASSERT_TRUE(false);
+
+    /*
+_copy_base(351): ret_vAds = [0x55ab77a2e890]
+_copy_base(352): ret_ads2path_tbl = [ [key: 0x55ab77a2e890, value: [(type: `119`, list_idx: `1`, hash_key: ``)]], [key: 0x55ab77a2e990, value: [(type: `119`, list_idx: `0`, hash_key: ``) (type: `119`, list_idx: `2`, hash_key: ``)]], [key: 0x55ab77a2e8f0, value: [(type: `119`, list_idx: `0`, hash_key: ``) (type: `119`, list_idx: `1`, hash_key: ``)]], [key: 0x55ab77a2e910, value: [(type: `119`, list_idx: `0`, hash_key: ``) (type: `119`, list_idx: `0`, hash_key: ``)]], [key: 0x55ab77a2e870, value: [(type: `119`, list_idx: `0`, hash_key: ``)]] ]
+
+*/
 }
 
 TEST(memory_terp, copy_self_ref_hash){

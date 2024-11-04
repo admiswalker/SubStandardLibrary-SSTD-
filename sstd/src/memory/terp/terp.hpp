@@ -35,12 +35,6 @@ namespace sstd::terp{
 
     // type name
     using srcr_tbl = std::unordered_map<sstd::terp::var*,std::unordered_set<sstd::terp::var*>>;
-
-    struct path{
-        uint type;
-        uint list_idx;
-        std::string hash_key;
-    };
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

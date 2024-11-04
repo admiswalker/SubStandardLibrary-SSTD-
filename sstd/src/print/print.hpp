@@ -80,6 +80,28 @@ namespace sstd{
     template <typename T_lhs, typename T_rhs>
     void print(const std::unordered_map<T_lhs, T_rhs>& rhs){ sstd::print_table_base<T_lhs, T_rhs>(rhs); printf("\n"); }
     
+    //---
+    // for std::tuple<T1, T2, ...>
+
+    //template <typetypename... Types>
+    template<typename TupleT, typename LastIdx>
+    void _print_tuple(const TupleT& rhs){
+        print_for_vT( rhs );
+    }
+    template<typename TupleT, typename HeadIdx, typename... TailIdx>
+    void _print_tuple(const TupleT& rhs){
+        print_for_vT( rhs );
+        printf(", ");
+    }
+    template<typename... Types>
+    void print(const std::tuple<Types...>& rhs){
+        printf("(");
+        _print_tuple<std::tuple<Types...>, 0, sizeof...(Types) - 1>(rhs);
+        printf(")");
+    }
+
+    //---
+    
     void for_printn( void* rhs);
     void for_printn( bool  rhs);
     void for_printn( char  rhs);

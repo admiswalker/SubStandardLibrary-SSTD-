@@ -231,16 +231,17 @@ void*& sstd::terp::var::p_RW(){ return this->_p; }
 // copy(), allocate(), free()
 void _copy_base_process(
                         class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs,
-
-                        std::vector<sstd::terp::var*>& ret_vAds,
-                        std::unordered_map<sstd::terp::var*,std::vector<struct sstd::terp::path>>& ret_ads2path_tbl,
-                        std::vector<struct sstd::terp::path>& vPath,
                         
-                        const uint prev_type,
-                        const uint prev_list_idx,
-                        const std::string prev_hash_key
+                        std::vector<std::tuple<sstd::terp::var*,sstd::terp::var*>>& vStack_copyDstAds_asRef_and_origRefAds,
+                        std::unordered_map<sstd::terp::var*,sstd::terp::var*>& tbl_copySrcAds_to_copyDstAds
                         )
 { // TODO: これ，reference あるとかなり実装が面倒になるはず
+
+    tbl_copySrcAds_to_copyDstAds[ (sstd::terp::var*)pRhs ] = (sstd::terp::var*)pLhs;
+
+    vStack_copyDstAds_asRef_and_origRefAds.push_back( std::make_tuple((sstd::terp::var*)pLhs, (sstd::terp::var*)pRhs) );
+    
+    /*
     if(prev_type!=sstd::num_null){
         struct sstd::terp::path path;
         path.type = prev_type;
@@ -256,15 +257,15 @@ void _copy_base_process(
     }
     
     if(pRhs->is_reference()){
-        //ret_vAds.push_back( (sstd::terp::var*)pRhs->p() );
-        ret_vAds.push_back( (sstd::terp::var*)pRhs );
+        ret_vAds.push_back( (sstd::terp::var*)pRhs->p() );
+        //ret_vAds.push_back( (sstd::terp::var*)pRhs );
         goto EXIT;
     }
-    
+    */
     //---
     
     pLhs->type_RW() = pRhs->type();
-    if(pRhs->p()==NULL){ pLhs->p_RW()=NULL; goto EXIT; }
+    if(pRhs->p()==NULL){ pLhs->p_RW()=NULL; /*goto EXIT;*/ }
     switch (pRhs->type()){
     case sstd::num_null    : {} break;
         
@@ -314,7 +315,8 @@ void _copy_base_process(
         pLhs->p_RW() = new std::vector<sstd::terp::var*>(pRhs->size(), NULL);
         for(uint i=0;i<pRhs->size();++i){
             _CAST2VEC(pLhs->p_RW())[i] = new sstd::terp::var(pLhs->pSRCR_tbl());
-            _copy_base_process(_CAST2VEC(pLhs->p_RW())[i], _CAST2VEC(pRhs->p())[i], ret_vAds, ret_ads2path_tbl, vPath, pRhs->type(), i, ""); // TODO: base の pLhs->pSRCR_tbl() がコピー先でも再帰的に適用されるように修正する
+            _copy_base_process(_CAST2VEC(pLhs->p_RW())[i], _CAST2VEC(pRhs->p())[i],
+                               vStack_copyDstAds_asRef_and_origRefAds, tbl_copySrcAds_to_copyDstAds); // TODO: base の pLhs->pSRCR_tbl() がコピー先でも再帰的に適用されるように修正する
         }
     } break;
 //    case sstd::num_hash_terp_var: { pLhs->p_RW() = new std::unordered_map<std::string,sstd::terp::var*>(*(std::unordered_map<std::string,sstd::terp::var*>*)pRhs->p()); } break;
@@ -327,29 +329,28 @@ void _copy_base_process(
         for(auto itr=pRHash->begin(); itr!=pRHash->end(); ++itr){
             sstd::terp::var* pVal = new sstd::terp::var();
             (*pLHash)[ itr->first ] = pVal;
-            _copy_base_process(pVal, itr->second, ret_vAds, ret_ads2path_tbl, vPath, pRhs->type(), 0, itr->first);
+            _copy_base_process(pVal, itr->second,
+                               vStack_copyDstAds_asRef_and_origRefAds, tbl_copySrcAds_to_copyDstAds);
         }
     } break;
         
     default: { sstd::pdbg("ERROR: allocating memory is failed. typeNum '%d' is not defined.", pLhs->type()); } break;
         
     }
-
- EXIT:
-    if(prev_type!=sstd::num_null){
-        vPath.pop_back();
-    }
     
     return;
 }
 void _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs){
-    std::vector<sstd::terp::var*> ret_vAds;
-    std::unordered_map<sstd::terp::var*,std::vector<struct sstd::terp::path>> ret_ads2path_tbl; // address to path
-    std::vector<struct sstd::terp::path> tmp_vPath;
-    _copy_base_process(pLhs, pRhs, ret_vAds, ret_ads2path_tbl, tmp_vPath, sstd::num_null, 0, "");
+    
+    std::vector<std::tuple<sstd::terp::var*,sstd::terp::var*>> vStack_copyDstAds_asRef_and_origRefAds;
+    std::unordered_map<sstd::terp::var*,sstd::terp::var*> tbl_copySrcAds_to_copyDstAds;
+    _copy_base_process(pLhs, pRhs,
+                       vStack_copyDstAds_asRef_and_origRefAds,
+                       tbl_copySrcAds_to_copyDstAds
+                       );
 
-    sstd::printn_all(ret_vAds);
-    sstd::printn_all(ret_ads2path_tbl);
+    sstd::printn_all(vStack_copyDstAds_asRef_and_origRefAds);
+    sstd::printn_all(tbl_copySrcAds_to_copyDstAds);
 }
 void sstd::terp::var::copy(const class sstd::terp::var& rhs){
     sstd::terp::var::free_val();

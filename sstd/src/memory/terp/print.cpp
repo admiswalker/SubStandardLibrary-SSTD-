@@ -75,15 +75,3 @@ void sstd::for_printn  (const sstd::terp::var* rhs){ printf(" = "); sstd::print(
 void sstd::print_for_vT(const sstd::terp::var* rhs){ sstd_print_terp_pVar_base(rhs); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-
-void sstd_print_terp_path_base(const sstd::terp::path& rhs){
-    printf("(type: `%u`, list_idx: `%u`, hash_key: `%s`)", rhs.type, rhs.list_idx, rhs.hash_key.c_str());
-}
-
-//---
-
-void sstd::print       (const sstd::terp::path& rhs){ sstd_print_terp_path_base(rhs); printf("\n"); }
-void sstd::for_printn  (const sstd::terp::path& rhs){ printf(" = "); sstd::print(rhs); }
-void sstd::print_for_vT(const sstd::terp::path& rhs){ sstd_print_terp_path_base(rhs); }
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
