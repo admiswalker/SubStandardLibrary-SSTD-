@@ -107,7 +107,8 @@ namespace sstd{
     template<typename... Types>
     void print(const std::tuple<Types...>& rhs){
         printf("(");
-        sstd::_print_tuple<std::tuple<Types...>, 0, sizeof...(Types) - 1>(rhs);
+        //sstd::_print_tuple<std::tuple<Types...>, 0, sizeof...(Types) - 1>(rhs);
+        sstd::_print_tuple<std::tuple<Types...>, std::make_index_sequence<sizeof...(Types)>(rhs);
         printf(")\n");
     }
 
