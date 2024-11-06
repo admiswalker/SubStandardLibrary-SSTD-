@@ -86,7 +86,7 @@ namespace sstd{
     
     //---
     // for std::tuple<T1, T2, ...>
-
+    /*
     template<typename TupleT, typename LastIdx>
     void _print_tuple(const TupleT& rhs){
         print_for_vT( std::get<LastIdx>(rhs) );
@@ -96,7 +96,7 @@ namespace sstd{
         print_for_vT( std::get<HeadIdx>(rhs) );
         printf(", ");
         sstd::_print_tuple<TupleT, TailIdx...>(rhs);
-    }
+    }*/
     /*
     template<typename TupleT, unsigned HeadIdx, unsigned TailIdx>
     void _print_tuple(const TupleT& rhs){
@@ -104,11 +104,15 @@ namespace sstd{
         printf(", ");
         print_for_vT( std::get<TailIdx>(rhs) );
     }*/
+    template<typename TupleT, size_t... IDs>
+    void _print_tuple(const TupleT& rhs, std::index_sequence<IDs...>){
+        (..., ( print_for_vT( std::get<IDs>(rhs) ) ));
+    }
     template<typename... Types>
     void print(const std::tuple<Types...>& rhs){
         printf("(");
         //sstd::_print_tuple<std::tuple<Types...>, 0, sizeof...(Types) - 1>(rhs);
-        sstd::_print_tuple<std::tuple<Types...>, std::make_index_sequence<sizeof...(Types)>(rhs);
+        sstd::_print_tuple(rhs, std::make_index_sequence<sizeof...(Types)>());
         printf(")\n");
     }
 
