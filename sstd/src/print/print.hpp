@@ -86,32 +86,19 @@ namespace sstd{
     
     //---
     // for std::tuple<T1, T2, ...>
-    /*
-    template<typename TupleT, typename LastIdx>
-    void _print_tuple(const TupleT& rhs){
-        print_for_vT( std::get<LastIdx>(rhs) );
+    
+    template<typename TupleT, size_t ID>
+    void _print_tuple_base(const TupleT& rhs, const size_t idx){
+        if(idx!=0){ printf(", "); }
+        print_for_vT( std::get<ID>(rhs) );
     }
-    template<typename TupleT, unsigned HeadIdx, typename... TailIdx>
-    void _print_tuple(const TupleT& rhs){
-        print_for_vT( std::get<HeadIdx>(rhs) );
-        printf(", ");
-        sstd::_print_tuple<TupleT, TailIdx...>(rhs);
-    }*/
-    /*
-    template<typename TupleT, unsigned HeadIdx, unsigned TailIdx>
-    void _print_tuple(const TupleT& rhs){
-        print_for_vT( std::get<HeadIdx>(rhs) );
-        printf(", ");
-        print_for_vT( std::get<TailIdx>(rhs) );
-    }*/
     template<typename TupleT, size_t... IDs>
     void _print_tuple(const TupleT& rhs, std::index_sequence<IDs...>){
-        (..., ( print_for_vT( std::get<IDs>(rhs) ) ));
+        (..., ( _print_tuple_base<TupleT,IDs>(rhs, IDs) ));
     }
     template<typename... Types>
     void print(const std::tuple<Types...>& rhs){
         printf("(");
-        //sstd::_print_tuple<std::tuple<Types...>, 0, sizeof...(Types) - 1>(rhs);
         sstd::_print_tuple(rhs, std::make_index_sequence<sizeof...(Types)>());
         printf(")\n");
     }
@@ -151,6 +138,14 @@ namespace sstd{
         printf(" = ");
         sstd::print_table_base<T_lhs, T_rhs>(rhs); // using "without line feed" version for recursive call for deep std::vector<std::vector<... std::vector<T>... >>.
         printf("\n");
+    }
+
+    //---
+
+    template<typename... Types>
+    void for_printn(const std::tuple<Types...>& rhs){
+        printf(" = ");
+        sstd::print(rhs);
     }
 
     //---

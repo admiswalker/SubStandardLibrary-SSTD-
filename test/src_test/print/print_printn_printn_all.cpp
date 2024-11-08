@@ -24,6 +24,38 @@ TEST(print, print_table){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// for print(tuple)
+
+TEST(print, print_tuple_int){
+    {
+        std::tuple<int> ix1 = {0};
+        testing::internal::CaptureStdout();
+        sstd::print(ix1);
+        ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), "(0)\n");
+    }
+    {
+        std::tuple<int,int> ix2 = {0, 0};
+        testing::internal::CaptureStdout();
+        sstd::print(ix2);
+        ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), "(0, 0)\n");
+    }
+    {
+        std::tuple<int,int,int> ix3 = {0, 0, 0};
+        testing::internal::CaptureStdout();
+        sstd::print(ix3);
+        ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), "(0, 0, 0)\n");
+    }
+}
+TEST(print, print_tuple_iss){
+    {
+        std::tuple<int,std::string,std::string> iss = {0, "abc", "def"};
+        testing::internal::CaptureStdout();
+        sstd::print(iss);
+        ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), "(0, \"abc\", \"def\")\n");
+    }
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 // for_printn
 
 TEST(print, for_printn_voidp){
@@ -378,6 +410,11 @@ TEST(print, for_printn_table){
         }
     }
 }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// for std::tuple<T...>
+
+
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // for #define printn
