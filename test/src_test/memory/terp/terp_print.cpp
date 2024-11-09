@@ -139,9 +139,9 @@ TEST(memory_terp_print, for_printn){
     a = "string";
     
     testing::internal::CaptureStdout();
-    sstd::for_printn(a); // TEST THIS LINE
+    sstd::print(a); // TEST THIS LINE
     std::string ret = testing::internal::GetCapturedStdout().c_str();
-    ASSERT_STREQ(ret.c_str(), " = \"string\"\n");
+    ASSERT_STREQ(ret.c_str(), "\"string\"\n");
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -152,9 +152,9 @@ TEST(memory_terp_print, print_for_vT){
     a = "string";
     
     testing::internal::CaptureStdout();
-    sstd::print_for_vT(a); // TEST THIS LINE
+    sstd::print(a); // TEST THIS LINE
     std::string ret = testing::internal::GetCapturedStdout().c_str();
-    ASSERT_STREQ(ret.c_str(), "\"string\"");
+    ASSERT_STREQ(ret.c_str(), "\"string\"\n");
 }
 TEST(memory_terp_print, print_for_vT_by_template){
     std::vector<sstd::terp::var> a;
@@ -163,9 +163,9 @@ TEST(memory_terp_print, print_for_vT_by_template){
     a.push_back("s3");
     
     testing::internal::CaptureStdout();
-    sstd::print_for_vT(a); // TEST THIS LINE
+    sstd::print(a); // TEST THIS LINE
     std::string ret = testing::internal::GetCapturedStdout().c_str();
-    ASSERT_STREQ(ret.c_str(), "[\"s1\" \"s2\" \"s3\"]");
+    ASSERT_STREQ(ret.c_str(), "[\"s1\" \"s2\" \"s3\"]\n");
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
