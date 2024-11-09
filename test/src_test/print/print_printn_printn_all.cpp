@@ -4,28 +4,6 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // print
 
-TEST(print, print_table){
-    std::unordered_map<std::string, std::vector<uint>> table;
-    table["abc"] = {123, 456};
-    table["def"] = {456, 789};
-
-    {
-        testing::internal::CaptureStdout();
-        sstd::print( table );
-
-        std::string buf = testing::internal::GetCapturedStdout().c_str();
-        bool tf1 = sstd::strcmp(buf, "[ [key: \"def\", value: [456 789]], [key: \"abc\", value: [123 456]] ]\n");
-        if(tf1){
-            ASSERT_STREQ(buf.c_str(), "[ [key: \"def\", value: [456 789]], [key: \"abc\", value: [123 456]] ]\n");
-        }else{
-            ASSERT_STREQ(buf.c_str(), "[ [key: \"abc\", value: [123 456]], [key: \"def\", value: [456 789]] ]\n");
-        }
-    }
-}
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
-// print
-
 TEST(print, print_voidp){
     {
         int8 i = 123;
@@ -360,7 +338,7 @@ TEST(print, print_hash_set){
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // for std::unordered_map<T_lhs, T_rhs>
 
-TEST(print, print_table_02){
+TEST(print, print_table){
     std::unordered_map<std::string, std::vector<uint>> table;
     table["abc"] = {123, 456};
     table["def"] = {456, 789};
