@@ -2,6 +2,28 @@
 #include "../../gtest_parallel/test_main.hpp"
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// for #define printn, printn_all and printn_fflv
+
+TEST(print, printn){
+    int valName=0;
+    testing::internal::CaptureStdout();
+    sstd::printn(valName);
+    ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), "valName = 0\n");
+}
+TEST(print, printn_all){
+    int valName=0;
+    testing::internal::CaptureStdout();
+    sstd::printn_all(valName);
+    ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), "TestBody(16): valName = 0\n");
+}
+TEST(print, printn_fflv){
+    int valName=0;
+    testing::internal::CaptureStdout();
+    sstd::printn_fflv(valName);
+    ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), "src_test/print/print_printn_printn_all.cpp: TestBody(22): valName = 0\n");
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 // print
 
 TEST(print, print_voidp){
@@ -410,16 +432,6 @@ TEST(print, v_tuple){
     }
 }
 */
-//-----------------------------------------------------------------------------------------------------------------------------------------------
-// for #define printn
-
-TEST(print, printn){
-    int valName=0;
-    testing::internal::CaptureStdout();
-    sstd::printn(valName);
-    ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), "valName = 0\n");
-}
-
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 EXECUTE_TESTS();
