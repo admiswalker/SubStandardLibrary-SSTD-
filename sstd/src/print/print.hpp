@@ -9,9 +9,14 @@
 
 
 namespace sstd{
-//    template<typename... Types> void print(const std::tuple<Types...>& rhs);
+    // forward declaration
+    template <typename T> void print_base(const std::vector<T>& rhs);
+    template <typename T> void print_base(const std::unordered_set<T>& rhs);
+    template <typename T_lhs, typename T_rhs> void print_base(const std::unordered_map<T_lhs, T_rhs>& rhs);
+    template <typename... Types> void print_base(const std::tuple<Types...>& rhs);
 
     //---
+    // print_base()
     
     void print_base(const  void* rhs);
     void print_base(const  bool  rhs);
@@ -40,40 +45,26 @@ namespace sstd{
     }
     template <typename T>
     void print_base(const std::unordered_set<T>& rhs){
-        printf("[");
+        printf("{");
         for(auto itr=rhs.begin();;){
             sstd::print_base(*itr);
             ++itr;
             if(itr!=rhs.end()){ printf(", "); continue; }
             break;
         }
-        printf("]");
-    }
-
-    //---
-    
-    template <typename T>
-    void print(const T& rhs){
-        print_base(rhs);
-        printf("\n");
+        printf("}");
     }
     template <typename T_lhs, typename T_rhs>
-    void print_table_base(const std::unordered_map<T_lhs, T_rhs>& rhs){
-        printf("[");
+    void print_base(const std::unordered_map<T_lhs, T_rhs>& rhs){
+        printf("{");
         for(auto itr=rhs.begin(); itr!=rhs.end(); ++itr){
             if(itr!=rhs.begin()){ printf(","); }
-            printf(" [key: "); sstd::print_base(itr->first);
+            printf(" (key: "); sstd::print_base(itr->first);
             printf(", value: "); sstd::print_base(itr->second);
-            printf("]");
+            printf(")");
         }
-        printf(" ]");
+        printf(" }");
     }
-    template <typename T_lhs, typename T_rhs>
-    void print(const std::unordered_map<T_lhs, T_rhs>& rhs){ sstd::print_table_base<T_lhs, T_rhs>(rhs); printf("\n"); }
-    
-    //---
-    // for std::tuple<T1, T2, ...>
-    
     template<typename TupleT, size_t ID>
     void _print_tuple_base(const TupleT& rhs, const size_t idx){
         if(idx!=0){ printf(", "); }
@@ -84,16 +75,27 @@ namespace sstd{
         (..., ( _print_tuple_base<TupleT,IDs>(rhs, IDs) ));
     }
     template<typename... Types>
-    void print(const std::tuple<Types...>& rhs){
+    void print_base(const std::tuple<Types...>& rhs){
         printf("(");
         sstd::_print_tuple(rhs, std::make_index_sequence<sizeof...(Types)>());
-        printf(")\n");
+        printf(")");
     }
 
+    //---
+    // print()
+    
+    template <typename T>
+    void print(const T& rhs){
+        print_base(rhs);
+        printf("\n");
+    }
+    
+    //---
     // for #define
     inline void printn_dummy(){}
     inline void printn(...){}
     inline void printn_all(...){}
+    inline void printn_fflv(...){}
 }
 
 #define printn(var) printn_dummy();{printf("%s = ", #var);sstd::print(var);}

@@ -348,11 +348,11 @@ TEST(print, print_hash_set){
         sstd::print( table );
 
         std::string buf = testing::internal::GetCapturedStdout().c_str();
-        bool tf1 = sstd::strcmp(buf, "[\"def\", \"abc\"]\n");
+        bool tf1 = sstd::strcmp(buf, "{\"def\", \"abc\"}\n");
         if(tf1){
-            ASSERT_STREQ(buf.c_str(), "[\"def\", \"abc\"]\n");
+            ASSERT_STREQ(buf.c_str(), "{\"def\", \"abc\"}\n");
         }else{
-            ASSERT_STREQ(buf.c_str(), "[\"abc\", \"def\"]\n");
+            ASSERT_STREQ(buf.c_str(), "{\"abc\", \"def\"}\n");
         }
     }
 }
@@ -370,11 +370,11 @@ TEST(print, print_table){
         sstd::print( table );
 
         std::string buf = testing::internal::GetCapturedStdout().c_str();
-        bool tf1 = sstd::strcmp(buf, "[ [key: \"def\", value: [456 789]], [key: \"abc\", value: [123 456]] ]\n");
+        bool tf1 = sstd::strcmp(buf, "{ (key: \"def\", value: [456 789]), (key: \"abc\", value: [123 456]) }\n");
         if(tf1){
-            ASSERT_STREQ(buf.c_str(), "[ [key: \"def\", value: [456 789]], [key: \"abc\", value: [123 456]] ]\n");
+            ASSERT_STREQ(buf.c_str(), "{ (key: \"def\", value: [456 789]), (key: \"abc\", value: [123 456]) }\n");
         }else{
-            ASSERT_STREQ(buf.c_str(), "[ [key: \"abc\", value: [123 456]], [key: \"def\", value: [456 789]] ]\n");
+            ASSERT_STREQ(buf.c_str(), "{ (key: \"abc\", value: [123 456]), (key: \"def\", value: [456 789]) }\n");
         }
     }
 }
@@ -421,17 +421,46 @@ TEST(print, print_tuple){
         ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), "(0)\n");
     }
 }
-/*
-// std::vector<std::tuple<T...>>
-TEST(print, v_tuple){
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// check forward declarations
+
+TEST(print, forward_declarations_of_vector){
     {
-        std::vector<std::tuple<int,int>> vII = {{0,1}, {2,3}};
-//        testing::internal::CaptureStdout();
+        std::tuple<std::vector<int>,std::vector<int>> vII = {{0,1}, {2,3}};
+        testing::internal::CaptureStdout();
         sstd::print(vII);
-//        ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), "(0)\n");
+        ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), "([0 1], [2 3])\n");
     }
 }
-*/
+
+TEST(print, forward_declarations_of_unordered_set){
+    {
+        std::vector<std::unordered_set<int>> vHash = {  {{0}}  };
+        testing::internal::CaptureStdout();
+        sstd::print(vHash);
+        ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), "[{0}]\n");
+    }
+}
+
+TEST(print, forward_declarations_of_unordered_map){
+    {
+        std::vector<std::unordered_map<int,int>> vHash = {  {{0,1}}  };
+        testing::internal::CaptureStdout();
+        sstd::print(vHash);
+        ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), "[{ (key: 0, value: 1) }]\n");
+    }
+}
+
+TEST(print, forward_declarations_of_tuple){
+    {
+        std::vector<std::tuple<int,int>> vT = {{0,1}, {2,3}};
+        testing::internal::CaptureStdout();
+        sstd::print(vT);
+        ASSERT_STREQ(testing::internal::GetCapturedStdout().c_str(), "[(0, 1) (2, 3)]\n");
+    }
+}
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 EXECUTE_TESTS();
