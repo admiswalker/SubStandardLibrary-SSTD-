@@ -5,56 +5,30 @@
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-void sstd::print(const  void* rhs){ printf("%p\n", rhs); }
-void sstd::print(const  bool  rhs){ printf("%s\n", (rhs ? "true" : "false")); }
-void sstd::print(const  char  rhs){ printf("'%c'\n", rhs); }
-void sstd::print(const  int8  rhs){ printf("%d\n", rhs); }
-void sstd::print(const  int16 rhs){ printf("%d\n", rhs); }
-void sstd::print(const  int32 rhs){ printf("%d\n", rhs); }
-void sstd::print(const  int64 rhs){ printf("%ld\n", rhs); }
-void sstd::print(const uint8  rhs){ printf("%u\n", rhs); }
-void sstd::print(const uint16 rhs){ printf("%u\n", rhs); }
-void sstd::print(const uint32 rhs){ printf("%u\n", rhs); }
-void sstd::print(const uint64 rhs){ printf("%lu\n", rhs); }
-void sstd::print(const float  rhs){
-    std::string s = sstd::ssprintf("%g", rhs);
-    if(! sstd::charIn('.', s) ){ s += '.'; }
-    printf("%s\n", s.c_str());
-}
-void sstd::print(const double  rhs){
-    std::string s = sstd::ssprintf("%g", rhs); // Note: Prioritize readability and do not display all effective digits of double-precision type.
-    if(! sstd::charIn('.', s) ){ s += '.'; }
-    printf("%s\n", s.c_str());
-}
-void sstd::print(const        char* rhs){ printf("\"%s\"\n", rhs); }
-void sstd::print(const std::string& rhs){ printf("\"%s\"\n", rhs.c_str()); }
-void sstd::print(const struct pathAndType& rhs){ printf("\"path: %s, type: %s\"\n", rhs.path.c_str(), (rhs.type=='f' ? "file" : "directory")); }
-
-
-void sstd::print_for_vT(const  void* rhs){ printf("%p", rhs); }
-void sstd::print_for_vT(const  bool  rhs){ printf("%s", (rhs ? "true" : "false")); }
-void sstd::print_for_vT(const  char  rhs){ printf("'%c'", rhs); }
-void sstd::print_for_vT(const  int8  rhs){ printf("%d", rhs); }
-void sstd::print_for_vT(const  int16 rhs){ printf("%d", rhs); }
-void sstd::print_for_vT(const  int32 rhs){ printf("%d", rhs); }
-void sstd::print_for_vT(const  int64 rhs){ printf("%ld", rhs); }
-void sstd::print_for_vT(const uint8  rhs){ printf("%u", rhs); }
-void sstd::print_for_vT(const uint16 rhs){ printf("%u", rhs); }
-void sstd::print_for_vT(const uint32 rhs){ printf("%u", rhs); }
-void sstd::print_for_vT(const uint64 rhs){ printf("%lu", rhs); }
-void sstd::print_for_vT(const float  rhs){
+void sstd::print_base(const  void* rhs){ printf("%p", rhs); }
+void sstd::print_base(const  bool  rhs){ printf("%s", (rhs ? "true" : "false")); }
+void sstd::print_base(const  char  rhs){ printf("'%c'", rhs); }
+void sstd::print_base(const  int8  rhs){ printf("%d", rhs); }
+void sstd::print_base(const  int16 rhs){ printf("%d", rhs); }
+void sstd::print_base(const  int32 rhs){ printf("%d", rhs); }
+void sstd::print_base(const  int64 rhs){ printf("%ld", rhs); }
+void sstd::print_base(const uint8  rhs){ printf("%u", rhs); }
+void sstd::print_base(const uint16 rhs){ printf("%u", rhs); }
+void sstd::print_base(const uint32 rhs){ printf("%u", rhs); }
+void sstd::print_base(const uint64 rhs){ printf("%lu", rhs); }
+void sstd::print_base(const float  rhs){
     std::string s = sstd::ssprintf("%g", rhs);
     if(! sstd::charIn('.', s) ){ s += '.'; }
     printf("%s", s.c_str());
 }
-void sstd::print_for_vT(const double  rhs){
+void sstd::print_base(const double  rhs){
     std::string s = sstd::ssprintf("%g", rhs); // Note: Prioritize readability and do not display all effective digits of double-precision type.
     if(! sstd::charIn('.', s) ){ s += '.'; }
     printf("%s", s.c_str());
 }
-void sstd::print_for_vT(const        char* rhs){ printf("\"%s\"", rhs); }
-void sstd::print_for_vT(const std::string& rhs){ printf("\"%s\"", rhs.c_str()); }
-void sstd::print_for_vT(const struct pathAndType& rhs){ printf("\"path: %s, type: %s\"", rhs.path.c_str(), (rhs.type=='f' ? "file" : "directory")); }
+void sstd::print_base(const        char* rhs){ printf("\"%s\"", rhs); }
+void sstd::print_base(const std::string& rhs){ printf("\"%s\"", rhs.c_str()); }
+void sstd::print_base(const struct pathAndType& rhs){ printf("\"path: %s, type: %s\"", rhs.path.c_str(), (rhs.type=='f' ? "file" : "directory")); }
 
 
 void sstd::for_printn( void* rhs){ printf(" = "); sstd::print(rhs); }

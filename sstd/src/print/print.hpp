@@ -13,70 +13,57 @@ namespace sstd{
 
     //---
     
-    void print_for_vT(const  void* rhs);
-    void print_for_vT(const  bool  rhs);
-    void print_for_vT(const  char  rhs);
-    void print_for_vT(const  int8  rhs);
-    void print_for_vT(const  int16 rhs);
-    void print_for_vT(const  int32 rhs);
-    void print_for_vT(const  int64 rhs);
-    void print_for_vT(const uint8  rhs);
-    void print_for_vT(const uint16 rhs);
-    void print_for_vT(const uint32 rhs);
-    void print_for_vT(const uint64 rhs);
-    void print_for_vT(const float  rhs);
-    void print_for_vT(const double rhs);
-    void print_for_vT(const        char* rhs);
-    void print_for_vT(const std::string& rhs);
-    void print_for_vT(const struct pathAndType& rhs);
+    void print_base(const  void* rhs);
+    void print_base(const  bool  rhs);
+    void print_base(const  char  rhs);
+    void print_base(const  int8  rhs);
+    void print_base(const  int16 rhs);
+    void print_base(const  int32 rhs);
+    void print_base(const  int64 rhs);
+    void print_base(const uint8  rhs);
+    void print_base(const uint16 rhs);
+    void print_base(const uint32 rhs);
+    void print_base(const uint64 rhs);
+    void print_base(const float  rhs);
+    void print_base(const double rhs);
+    void print_base(const        char* rhs);
+    void print_base(const std::string& rhs);
+    void print_base(const struct pathAndType& rhs);
     template <typename T>
-    void print_for_vT(const std::vector<T>& rhs){
+    void print_base(const std::vector<T>& rhs){
         printf("[");
         if(rhs.size()>=1){
-            for(uint i=0; i<rhs.size()-1; ++i){ sstd::print_for_vT(rhs[i]); printf(" "); }
-            sstd::print_for_vT( rhs[rhs.size()-1] );
+            for(uint i=0; i<rhs.size()-1; ++i){ sstd::print_base(rhs[i]); printf(" "); }
+            sstd::print_base( rhs[rhs.size()-1] );
         }
         printf("]");
     }
     template <typename T>
-    void print_for_vT(const std::unordered_set<T>& rhs){
+    void print_base(const std::unordered_set<T>& rhs){
         printf("[");
         for(auto itr=rhs.begin();;){
-            sstd::print_for_vT(*itr);
+            sstd::print_base(*itr);
             ++itr;
             if(itr!=rhs.end()){ printf(", "); continue; }
             break;
         }
         printf("]");
     }
+
+    //---
     
-    void print(const  void* rhs);
-    void print(const  bool  rhs);
-    void print(const  char  rhs);
-    void print(const  int8  rhs);
-    void print(const  int16 rhs);
-    void print(const  int32 rhs);
-    void print(const  int64 rhs);
-    void print(const uint8  rhs);
-    void print(const uint16 rhs);
-    void print(const uint32 rhs);
-    void print(const uint64 rhs);
-    void print(const float  rhs);
-    void print(const double rhs);
-    void print(const        char* rhs);
-    void print(const std::string& rhs);
-    void print(const struct pathAndType& rhs);
     template <typename T>
-    void print(const std::vector<T>& rhs){ sstd::print_for_vT(rhs); printf("\n"); }
-    template <typename T>
-    void print(const std::unordered_set<T>& rhs){ sstd::print_for_vT<T>(rhs); printf("\n"); }
+    void print(const T& rhs){
+        print_base(rhs);
+        printf("\n");
+    }
     template <typename T_lhs, typename T_rhs>
     void print_table_base(const std::unordered_map<T_lhs, T_rhs>& rhs){
         printf("[");
         for(auto itr=rhs.begin(); itr!=rhs.end(); ++itr){
             if(itr!=rhs.begin()){ printf(","); }
-            printf(" [key: "); sstd::print_for_vT(itr->first);
-            printf(", value: "); sstd::print_for_vT(itr->second);
+            printf(" [key: "); sstd::print_base(itr->first);
+            printf(", value: "); sstd::print_base(itr->second);
             printf("]");
         }
         printf(" ]");
@@ -90,7 +77,7 @@ namespace sstd{
     template<typename TupleT, size_t ID>
     void _print_tuple_base(const TupleT& rhs, const size_t idx){
         if(idx!=0){ printf(", "); }
-        print_for_vT( std::get<ID>(rhs) );
+        print_base( std::get<ID>(rhs) );
     }
     template<typename TupleT, size_t... IDs>
     void _print_tuple(const TupleT& rhs, std::index_sequence<IDs...>){
@@ -124,13 +111,13 @@ namespace sstd{
     template <typename T>
     void for_printn(const std::vector<T>& rhs){
         printf(" = ");
-        sstd::print_for_vT(rhs); // using "without line feed" version for recursive call for deep std::vector<std::vector<... std::vector<T>... >>.
+        sstd::print_base(rhs); // using "without line feed" version for recursive call for deep std::vector<std::vector<... std::vector<T>... >>.
         printf("\n");
     }
     template <typename T>
     void for_printn(const std::unordered_set<T>& rhs){
         printf(" = ");
-        sstd::print_for_vT<T>(rhs); // using "without line feed" version for recursive call for deep std::vector<std::vector<... std::vector<T>... >>.
+        sstd::print_base<T>(rhs); // using "without line feed" version for recursive call for deep std::vector<std::vector<... std::vector<T>... >>.
         printf("\n");
     }
     template <typename T_lhs, typename T_rhs>
