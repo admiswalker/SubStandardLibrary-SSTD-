@@ -90,57 +90,12 @@ namespace sstd{
         printf(")\n");
     }
 
-    //---
-    
-    void for_printn( void* rhs);
-    void for_printn( bool  rhs);
-    void for_printn( char  rhs);
-    void for_printn( int8  rhs);
-    void for_printn( int16 rhs);
-    void for_printn( int32 rhs);
-    void for_printn( int64 rhs);
-    void for_printn(uint8  rhs);
-    void for_printn(uint16 rhs);
-    void for_printn(uint32 rhs);
-    void for_printn(uint64 rhs);
-    void for_printn( float rhs);
-    void for_printn(double rhs);
-    void for_printn(const        char* rhs);
-    void for_printn(const std::string& rhs);
-    void for_printn(const struct pathAndType& rhs);
-    template <typename T>
-    void for_printn(const std::vector<T>& rhs){
-        printf(" = ");
-        sstd::print_base(rhs); // using "without line feed" version for recursive call for deep std::vector<std::vector<... std::vector<T>... >>.
-        printf("\n");
-    }
-    template <typename T>
-    void for_printn(const std::unordered_set<T>& rhs){
-        printf(" = ");
-        sstd::print_base<T>(rhs); // using "without line feed" version for recursive call for deep std::vector<std::vector<... std::vector<T>... >>.
-        printf("\n");
-    }
-    template <typename T_lhs, typename T_rhs>
-    void for_printn(const std::unordered_map<T_lhs, T_rhs>& rhs){
-        printf(" = ");
-        sstd::print_table_base<T_lhs, T_rhs>(rhs); // using "without line feed" version for recursive call for deep std::vector<std::vector<... std::vector<T>... >>.
-        printf("\n");
-    }
-    template<typename... Types>
-    void for_printn(const std::tuple<Types...>& rhs){
-        printf(" = ");
-        sstd::print(rhs);
-    }
-
-    //---
-    
     // for #define
     inline void printn_dummy(){}
     inline void printn(...){}
     inline void printn_all(...){}
 }
 
-#define printn(var) printn_dummy();{printf("%s", #var);sstd::for_printn(var);}
-#define printn_all(var) printn_dummy();{printf("%s(%d): %s", __func__, __LINE__, #var);sstd::for_printn(var);}
-#define printn_fflv(var) printn_dummy();{printf("%s: %s(%d): %s", __FILE__, __func__, __LINE__, #var);sstd::for_printn(var);}
-
+#define printn(var) printn_dummy();{printf("%s = ", #var);sstd::print(var);}
+#define printn_all(var) printn_dummy();{printf("%s(%d): %s = ", __func__, __LINE__, #var);sstd::print(var);}
+#define printn_fflv(var) printn_dummy();{printf("%s: %s(%d): %s = ", __FILE__, __func__, __LINE__, #var);sstd::print(var);}
