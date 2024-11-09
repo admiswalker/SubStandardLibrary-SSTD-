@@ -139,9 +139,6 @@ namespace sstd{
         sstd::print_table_base<T_lhs, T_rhs>(rhs); // using "without line feed" version for recursive call for deep std::vector<std::vector<... std::vector<T>... >>.
         printf("\n");
     }
-
-    //---
-
     template<typename... Types>
     void for_printn(const std::tuple<Types...>& rhs){
         printf(" = ");
