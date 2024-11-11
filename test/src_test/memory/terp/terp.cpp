@@ -986,7 +986,18 @@ TEST(memory_terp, copy_self_ref_list__ref){
     //sstd::printn_all(x);
     
     sstd::terp::var d; // dst
+    printf("---- copy ---- b\n");
     d = s; // TEST THIS LINE // TODO: アドレス構造をコピーできるようにして，テストする
+    printf("---- copy ---- e\n");
+    sstd::printn(s[1].p());
+    sstd::printn(s[0].p());
+    sstd::printn(&s[0]);
+    
+    sstd::printn(d[1].p());
+    sstd::printn(d[0].p());
+    sstd::printn(&d[0]);
+    sstd::printn(&d[1]);
+    printf("---- copy ---- e2\n");
     
     sstd::terp::var a; // ans
     a = sstd::terp::list(2);
@@ -1019,9 +1030,21 @@ TEST(memory_terp, copy_self_ref_list__ref){
     ASSERT_TRUE(false);
 
     /*
-_copy_base(351): ret_vAds = [0x55ab77a2e890]
-_copy_base(352): ret_ads2path_tbl = [ [key: 0x55ab77a2e890, value: [(type: `119`, list_idx: `1`, hash_key: ``)]], [key: 0x55ab77a2e990, value: [(type: `119`, list_idx: `0`, hash_key: ``) (type: `119`, list_idx: `2`, hash_key: ``)]], [key: 0x55ab77a2e8f0, value: [(type: `119`, list_idx: `0`, hash_key: ``) (type: `119`, list_idx: `1`, hash_key: ``)]], [key: 0x55ab77a2e910, value: [(type: `119`, list_idx: `0`, hash_key: ``) (type: `119`, list_idx: `0`, hash_key: ``)]], [key: 0x55ab77a2e870, value: [(type: `119`, list_idx: `0`, hash_key: ``)]] ]
-
+---- copy ---- b
+398 sstd::terp::var::operator=()
+_copy_base(358): vStack_copyDstAds_asRef_and_origRefAds = [(0x5614dbb1eda0, 0x5614dbb1e8b0)]
+_copy_base(359): tbl_copySrcAds_to_copyDstAds = { (key: 0x5614dbb1e830, value: 0x5614dbb1e970), (key: 0x5614dbb1e6a0, value: 0x5614dbb1ed30), (key: 0x5614dbb12570, value: 0x5614dbb1ecc0), (key: 0x5614dbb1e8b0, value: 0x5614dbb1e9b0), (key: 0x5614dbb1e640, value: 0x5614dbb1ebe0) }
+begin: ---
+end: ---
+---- copy ---- e
+s[1].p() = 0x5614dbb1e8b0
+s[0].p() = 0x5614dbb1e8b0
+&s[0] = 0x5614dbb1e870
+d[1].p() = (nil)
+d[0].p() = 0x5614dbb1e9b0
+&d[0] = 0x5614dbb1e9d0
+&d[1] = 0x5614dbb1eda0
+---- copy ---- e2
 */
 }
 
