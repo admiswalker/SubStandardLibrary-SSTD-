@@ -1008,7 +1008,11 @@ TEST(memory_terp, copy_self_ref_list__ref){
     a[1] = &a[0];
     //sstd::printn_all(a);
     
+    sstd::printn_all(s);
+    sstd::printn_all(s[1].type());
+    sstd::printn_all(s[1].is_reference());
     sstd::printn_all(d);
+    sstd::printn_all(d[1].type());
     sstd::printn_all(d[1].is_reference());
     
 //    sstd::printn_all(s[1].is_reference());
@@ -1032,18 +1036,33 @@ TEST(memory_terp, copy_self_ref_list__ref){
     /*
 ---- copy ---- b
 398 sstd::terp::var::operator=()
-_copy_base(358): vStack_copyDstAds_asRef_and_origRefAds = [(0x5614dbb1eda0, 0x5614dbb1e8b0)]
-_copy_base(359): tbl_copySrcAds_to_copyDstAds = { (key: 0x5614dbb1e830, value: 0x5614dbb1e970), (key: 0x5614dbb1e6a0, value: 0x5614dbb1ed30), (key: 0x5614dbb12570, value: 0x5614dbb1ecc0), (key: 0x5614dbb1e8b0, value: 0x5614dbb1e9b0), (key: 0x5614dbb1e640, value: 0x5614dbb1ebe0) }
+_copy_base(358): vStack_copyDstAds_asRef_and_origRefAds = [(0x56417a239da0, 0x56417a2398b0)]
+_copy_base(359): tbl_copySrcAds_to_copyDstAds = { (key: 0x56417a239830, value: 0x56417a239970), (key: 0x56417a2396a0, value: 0x56417a239d30), (key: 0x56417a22d570, value: 0x56417a239cc0), (key: 0x56417a2398b0, value: 0x56417a2399b0), (key: 0x56417a239640, value: 0x56417a239be0) }
 begin: ---
 end: ---
 ---- copy ---- e
-s[1].p() = 0x5614dbb1e8b0
-s[0].p() = 0x5614dbb1e8b0
-&s[0] = 0x5614dbb1e870
+s[1].p() = 0x56417a2398b0
+s[0].p() = 0x56417a2398b0
+&s[0] = 0x56417a239870
 d[1].p() = (nil)
-d[0].p() = 0x5614dbb1e9b0
-&d[0] = 0x5614dbb1e9d0
-&d[1] = 0x5614dbb1eda0
+d[0].p() = 0x56417a2399b0
+&d[0] = 0x56417a2399d0
+&d[1] = 0x56417a239da0
+---- copy ---- e2
+
+
+---- copy ---- b
+398 sstd::terp::var::operator=()
+_copy_base(380): vStack_copyDstAds_asRef_and_origRefAds = [(0x55e9b2f85da0, 0x55e9b2f858b0)]
+_copy_base(381): tbl_copySrcAds_to_copyDstAds = { (key: 0x55e9b2f85830, value: 0x55e9b2f85970), (key: 0x55e9b2f856a0, value: 0x55e9b2f85d30), (key: 0x55e9b2f79570, value: 0x55e9b2f85cc0), (key: 0x55e9b2f858b0, value: 0x55e9b2f859b0), (key: 0x55e9b2f85640, value: 0x55e9b2f85be0) }
+---- copy ---- e
+s[1].p() = 0x55e9b2f858b0
+s[0].p() = 0x55e9b2f858b0
+&s[0] = 0x55e9b2f85870
+d[1].p() = 0x55e9b2f859b0
+d[0].p() = 0x55e9b2f859b0
+&d[0] = 0x55e9b2f859d0
+&d[1] = 0x55e9b2f85da0
 ---- copy ---- e2
 */
 }
