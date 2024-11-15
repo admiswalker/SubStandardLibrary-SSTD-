@@ -237,34 +237,11 @@ void _copy_value(
                  )
 { // TODO: これ，reference あるとかなり実装が面倒になるはず
 
-    //tbl_copySrcAds_to_copyDstAds[ (sstd::terp::var*)pRhs ] = (sstd::terp::var*)pLhs;
-
     if(pRhs->is_reference()){
         vStack_copyDstAds_asRef_and_origRefAds.push_back( std::make_tuple((sstd::terp::var*)pLhs, (sstd::terp::var*)pRhs->p(), pRhs->type()) );
         return;
     }
     
-    /*
-    if(prev_type!=sstd::num_null){
-        struct sstd::terp::path path;
-        path.type = prev_type;
-        switch ( prev_type ){
-        case sstd::num_null         : {} break;
-        case sstd::num_vec_terp_var : { path.list_idx = prev_list_idx; } break;
-        case sstd::num_hash_terp_var: { path.hash_key = prev_hash_key; } break;
-        default: {} break;
-        }
-        vPath.push_back( path );
-    
-        ret_ads2path_tbl[ (sstd::terp::var*)pRhs ] = vPath;
-    }
-    
-    if(pRhs->is_reference()){
-        ret_vAds.push_back( (sstd::terp::var*)pRhs->p() );
-        //ret_vAds.push_back( (sstd::terp::var*)pRhs );
-        goto EXIT;
-    }
-    */
     //---
     
     pLhs->type_RW() = pRhs->type();
@@ -341,7 +318,6 @@ void _copy_value(
         
     }
 
-//    tbl_copySrcAds_to_copyDstAds[ (sstd::terp::var*)pRhs ] = (sstd::terp::var*)pLhs;
     tbl_copySrcAds_to_copyDstAds[ (sstd::terp::var*)pRhs->p() ] = (sstd::terp::var*)pLhs->p();
     
     return;
@@ -361,7 +337,6 @@ void _copy_reference(
             copyDstAds_asRef->is_reference_RW() = true;
             copyDstAds_asRef->p_RW()            = itr->second;
             copyDstAds_asRef->type_RW()         = type;
-            //copyDstAds_asRef->type_RW()         = ((sstd::terp::var*)itr->second->p())->type();
         }else{
             copyDstAds_asRef->is_reference_RW() = true;
             copyDstAds_asRef->p_RW()            = origRefAds;

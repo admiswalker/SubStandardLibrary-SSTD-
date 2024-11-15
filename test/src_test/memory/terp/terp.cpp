@@ -989,14 +989,6 @@ TEST(memory_terp, copy_self_ref_list__ref){
     printf("---- copy ---- b\n");
     d = s; // TEST THIS LINE // TODO: アドレス構造をコピーできるようにして，テストする
     printf("---- copy ---- e\n");
-    sstd::printn(s[1].p());
-    sstd::printn(s[0].p());
-    sstd::printn(&s[0]);
-    
-    sstd::printn(d[1].p());
-    sstd::printn(d[0].p());
-    sstd::printn(&d[0]);
-    sstd::printn(&d[1]);
     printf("---- copy ---- e2\n");
     
     sstd::terp::var a; // ans
@@ -1014,16 +1006,14 @@ TEST(memory_terp, copy_self_ref_list__ref){
     sstd::printn_all(d);
     sstd::printn_all(d[1].type());
     sstd::printn_all(d[1].is_reference());
-    
-//    sstd::printn_all(s[1].is_reference());
-//    sstd::printn_all(d[1].is_reference());
-  //  sstd::printn_all(a[1].is_reference());
-//    printf("\n");
-    
-//    sstd::printn_all(s[1].p());
-//    sstd::printn_all(d[1].p());
-//    sstd::printn_all(a[1].p());
-//    printf("\n");
+
+    ASSERT_EQ(d[0].is_reference(), s[0].is_reference());
+    ASSERT_EQ(d[1].is_reference(), s[1].is_reference());
+    ASSERT_EQ(d[0].type(), s[0].type());
+    ASSERT_EQ(d[1].type(), s[1].type());
+
+    ASSERT_NE(&d[0], &d[1]);
+    ASSERT_EQ(d[0].p(), d[1].p());
     
 //    sstd::printn_all(s[1].pSRCR_tbl());
 //    sstd::printn_all(d[1].pSRCR_tbl());
@@ -1033,38 +1023,6 @@ TEST(memory_terp, copy_self_ref_list__ref){
 //    ASSERT_TRUE(sstd::terp::equal(d, a, "r")); // compares: actual value and is_reference
     ASSERT_TRUE(false);
 
-    /*
----- copy ---- b
-398 sstd::terp::var::operator=()
-_copy_base(358): vStack_copyDstAds_asRef_and_origRefAds = [(0x56417a239da0, 0x56417a2398b0)]
-_copy_base(359): tbl_copySrcAds_to_copyDstAds = { (key: 0x56417a239830, value: 0x56417a239970), (key: 0x56417a2396a0, value: 0x56417a239d30), (key: 0x56417a22d570, value: 0x56417a239cc0), (key: 0x56417a2398b0, value: 0x56417a2399b0), (key: 0x56417a239640, value: 0x56417a239be0) }
-begin: ---
-end: ---
----- copy ---- e
-s[1].p() = 0x56417a2398b0
-s[0].p() = 0x56417a2398b0
-&s[0] = 0x56417a239870
-d[1].p() = (nil)
-d[0].p() = 0x56417a2399b0
-&d[0] = 0x56417a2399d0
-&d[1] = 0x56417a239da0
----- copy ---- e2
-
-
----- copy ---- b
-398 sstd::terp::var::operator=()
-_copy_base(380): vStack_copyDstAds_asRef_and_origRefAds = [(0x55e9b2f85da0, 0x55e9b2f858b0)]
-_copy_base(381): tbl_copySrcAds_to_copyDstAds = { (key: 0x55e9b2f85830, value: 0x55e9b2f85970), (key: 0x55e9b2f856a0, value: 0x55e9b2f85d30), (key: 0x55e9b2f79570, value: 0x55e9b2f85cc0), (key: 0x55e9b2f858b0, value: 0x55e9b2f859b0), (key: 0x55e9b2f85640, value: 0x55e9b2f85be0) }
----- copy ---- e
-s[1].p() = 0x55e9b2f858b0
-s[0].p() = 0x55e9b2f858b0
-&s[0] = 0x55e9b2f85870
-d[1].p() = 0x55e9b2f859b0
-d[0].p() = 0x55e9b2f859b0
-&d[0] = 0x55e9b2f859d0
-&d[1] = 0x55e9b2f85da0
----- copy ---- e2
-*/
 }
 
 TEST(memory_terp, copy_self_ref_hash){
