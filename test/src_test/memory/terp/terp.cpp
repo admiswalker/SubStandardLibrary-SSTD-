@@ -1021,7 +1021,7 @@ TEST(memory_terp, copy_self_ref_list__ref){
     
 //    ASSERT_TRUE(sstd::terp::equal(s, a, "r")); // compares: actual value and is_reference
 //    ASSERT_TRUE(sstd::terp::equal(d, a, "r")); // compares: actual value and is_reference
-    ASSERT_TRUE(false);
+    ASSERT_TRUE(false); // TODO
 
 }
 
@@ -1108,6 +1108,25 @@ TEST(memory_terp, list_ope_assign_with_reference_case_01_delete_src){
 }
 //TEST(memory_terp, list_ope_assign_with_reference_case_02_delete_dst){
 //}
+
+//---
+
+TEST(memory_terp, resolve_double_reference){
+    sstd::terp::var s; // src
+    s = sstd::terp::list(3);
+    s[0] = "a";
+    s[1] = &s[0];
+    s[2] = &s[1];
+
+    ASSERT_FALSE(s[0].is_reference());
+    ASSERT_TRUE(s[1].is_reference());
+    ASSERT_TRUE(s[2].is_reference());
+
+    ASSERT_EQ(s[1].type(), s[0].type());
+    ASSERT_EQ(s[2].type(), s[0].type());
+    ASSERT_EQ(s[1].p(), s[0].p());
+    ASSERT_EQ(s[2].p(), s[0].p());
+}
 
 //---
 

@@ -493,11 +493,12 @@ sstd::terp::var  sstd::terp::var::operator=(      sstd::terp::var&& rhs){
 sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var* pRhs){
     this->_is_reference = true;
     this->_type         = pRhs->type();
-    this->_p            = pRhs->p(); // TODO: ref アドレスが _is_reference==true の場合，free() が厄介になるので，解決してから代入するように修正すること
+    this->_p            = pRhs->p();
     printf("404\n");
     sstd::printn(pRhs->_pSRCR_tbl);
     (*pRhs->_pSRCR_tbl)[ (sstd::terp::var*)pRhs ].insert( (sstd::terp::var*)this );
     printf("406\n");
+
     return *this;
 }
 
