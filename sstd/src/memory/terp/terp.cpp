@@ -245,7 +245,7 @@ void _copy_value(
     //---
     
     pLhs->type_RW() = pRhs->type();
-    if(pRhs->p()==NULL){ pLhs->p_RW()=NULL; /*goto EXIT;*/ }
+    if(pRhs->p()==NULL){ pLhs->p_RW()=NULL; }
     switch (pRhs->type()){
     case sstd::num_null    : {} break;
         
@@ -284,14 +284,6 @@ void _copy_value(
 //    case sstd::num_hash_void_ptr_void_ptr: { pLhs->p_RW() = new std::unordered_map<sstd::void_ptr,sstd::void_ptr>(*(std::unordered_map<sstd::void_ptr,sstd::void_ptr>*)pRhs->p()); } break;
         
     case sstd::num_vec_terp_var: {
-        // copy _pSRCR_tbl table and its value
-        //pLhs->is_pSRCR_tbl_base_RW();
-        //pLhs->pSRCR_tbl_RW() = new srcr_tbl(pRhs->pSRCR_tbl()->size());
-        for(auto itr=pRhs->pSRCR_tbl()->begin(); itr!=pRhs->pSRCR_tbl()->end(); ++itr){
-            (*pLhs->pSRCR_tbl_RW())[ itr->first ] = itr->second;
-        }
-        
-        // copy _p and its value
         pLhs->p_RW() = new std::vector<sstd::terp::var*>(pRhs->size(), NULL);
         for(uint i=0;i<pRhs->size();++i){
             _CAST2VEC(pLhs->p_RW())[i] = new sstd::terp::var(pLhs->pSRCR_tbl());
@@ -328,6 +320,8 @@ void _copy_reference(
                      )
 {
     for(uint i=0; i<vStack_copyDstAds_asRef_and_origRefAds.size(); ++i){
+        
+        // Update addresses
         sstd::terp::var* copyDstAds_asRef = std::get<0>( vStack_copyDstAds_asRef_and_origRefAds[i] );
         sstd::terp::var* origRefAds       = std::get<1>( vStack_copyDstAds_asRef_and_origRefAds[i] );
         uint type                         = std::get<2>( vStack_copyDstAds_asRef_and_origRefAds[i] );
@@ -341,8 +335,10 @@ void _copy_reference(
             copyDstAds_asRef->is_reference_RW() = true;
             copyDstAds_asRef->p_RW()            = origRefAds;
             copyDstAds_asRef->type_RW()         = type;
-            // TODO: update pSRCR_tbl_RW
         }
+        
+        // Update _pSRCR_tbl
+        (*copyDstAds_asRef->pSRCR_tbl_RW())[ (sstd::terp::var*)copyDstAds_asRef->p() ].insert( copyDstAds_asRef );
     }
     
     return;
@@ -355,9 +351,6 @@ void _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs){
                 vStack_copyDstAds_asRef_and_origRefAds,
                 tbl_copySrcAds_to_copyDstAds
                 );
-
-    sstd::printn_all(vStack_copyDstAds_asRef_and_origRefAds);
-    sstd::printn_all(tbl_copySrcAds_to_copyDstAds);
 
     _copy_reference(vStack_copyDstAds_asRef_and_origRefAds,
                     tbl_copySrcAds_to_copyDstAds
@@ -494,11 +487,7 @@ sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var* pRhs){
     this->_is_reference = true;
     this->_type         = pRhs->type();
     this->_p            = pRhs->p();
-    printf("404\n");
-    sstd::printn(pRhs->_pSRCR_tbl);
-    (*pRhs->_pSRCR_tbl)[ (sstd::terp::var*)pRhs ].insert( (sstd::terp::var*)this );
-    printf("406\n");
-
+    (*pRhs->_pSRCR_tbl)[ (sstd::terp::var*)pRhs->p() ].insert( (sstd::terp::var*)this );
     return *this;
 }
 

@@ -1130,4 +1130,90 @@ TEST(memory_terp, resolve_double_reference){
 
 //---
 
+TEST(memory_terp, _pSRCR_tbl_case1_1_new_ref_by_hand){
+    sstd::terp::var s; // src
+    s = sstd::terp::list(2);
+    s[0] = "a";
+    s[1] = &s[0]; // TEST THIS LINE
+
+    ASSERT_FALSE(s[0].is_reference());
+    ASSERT_TRUE(s[1].is_reference());
+    ASSERT_EQ(s[1].type(), s[0].type());
+    ASSERT_EQ(s[1].p(), s[0].p());
+
+    ASSERT_TRUE(s.is_pSRCR_tbl_base());
+    ASSERT_FALSE(s[0].is_pSRCR_tbl_base());
+    ASSERT_FALSE(s[1].is_pSRCR_tbl_base());
+    
+    sstd::terp::srcr_tbl tbl = *s.pSRCR_tbl();
+    
+    ASSERT_EQ(tbl.size(), (uint)1);
+    auto itr = tbl.find( (sstd::terp::var*)s[0].p() ); // TEST THIS LINE
+    ASSERT_TRUE(itr!=tbl.end());
+
+    ASSERT_EQ(itr->second.size(), (uint)1);
+    auto itr2 = itr->second.find( &s[1] ); // TEST THIS LINE
+    ASSERT_TRUE(itr2!=itr->second.end());
+
+//  sstd::printn(s[0].p());
+//  sstd::printn(s[1].p());
+//  sstd::printn(&s[1]);
+//  sstd::printn(*s.pSRCR_tbl());
+
+//  Example of the addresses dependency:
+//  
+//  s[0].p() = 0x55e9e8d5a570
+//  s[1].p() = 0x55e9e8d5a570
+//  &s[1] = 0x55e9e8d66e40
+//  *s.pSRCR_tbl() = { (key: 0x55e9e8d5a570, value: {0x55e9e8d66e40}) }
+//
+}
+TEST(memory_terp, _pSRCR_tbl_case1_2_new_ref_by_copy){
+    sstd::terp::var s; // src
+    s = sstd::terp::list(2);
+    s[0] = "a";
+    s[1] = &s[0];
+    
+    sstd::terp::var d; // dst
+    d = s; // TEST THIS LINE
+    
+    ASSERT_EQ(d.pSRCR_tbl()->size(), (uint)1);
+    auto itr = d.pSRCR_tbl()->find( (sstd::terp::var*) d[0].p() ); // TEST THIS LINE
+    ASSERT_TRUE(itr != d.pSRCR_tbl()->end());
+    
+    ASSERT_EQ(itr->second.size(), (uint)1);
+    auto itr2 = itr->second.find( &d[1] ); // TEST THIS LINE
+    ASSERT_TRUE(itr2!=itr->second.end());
+    
+//    sstd::printn(d[0].p());
+//    sstd::printn(d[1].p());
+//    sstd::printn(&d[1]);
+//    sstd::printn(*d.pSRCR_tbl());
+
+//  Example of the addresses dependency:
+//
+//  d[0].p() = 0x55f911e69ed0
+//  d[1].p() = 0x55f911e69ed0
+//  &d[1] = 0x55f911e76f00
+//  *d.pSRCR_tbl() = { (key: 0x55f911e69ed0, value: {0x55f911e76f00}) }
+}
+
+//---
+
+TEST(memory_terp, _pSRCR_tbl_case2_1_overwrite_dependent_object){}
+TEST(memory_terp, _pSRCR_tbl_case2_2_destructor_of_the_dependent_object_is_called){}
+TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_1_list_pop_back){}
+TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_2_list_resize){}
+TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_3_hash_erase){}
+
+//---
+
+TEST(memory_terp, _pSRCR_tbl_case3_1_overwrite_precedent_object){}
+TEST(memory_terp, _pSRCR_tbl_case3_2_destructor_of_the_precedent_object_is_called){}
+TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_1_list_pop_back){}
+TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_2_list_resize){}
+TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_3_hash_erase){}
+
+//---
+
 EXECUTE_TESTS();
