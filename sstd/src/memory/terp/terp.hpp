@@ -117,7 +117,8 @@ public:
 
     void copy(const class sstd::terp::var&  rhs);
     void move(      class sstd::terp::var&& rhs);
-    void free_tbl();
+    void fill_dependent_ref_null();
+    void free_SRCR_tbl();
     void free_val();
     void free();
     

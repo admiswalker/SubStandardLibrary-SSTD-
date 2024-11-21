@@ -407,9 +407,26 @@ void sstd::terp::var::_fillout_ref_src_null(){
         // TODO
     }
 }
-void sstd::terp::var::free_tbl(){
-    if(this->_is_reference==false || this->_pSRCR_tbl==NULL){ return; }
-    sstd::terp::var::_fillout_ref_src_null();
+void sstd::terp::var::fill_dependent_ref_null(){
+    if(this->_is_reference==true || this->_pSRCR_tbl==NULL){ return; }
+
+    auto itr_ht = _pSRCR_tbl->find( (sstd::terp::var*)this->_p ); // _ht: hash table
+    if(!(itr_ht!=_pSRCR_tbl->end())){ return; }
+    
+    std::unordered_set<sstd::terp::var*>& hash_set = itr_ht->second;
+    for(auto itr_hs=hash_set.begin(); itr_hs!=hash_set.end(); ++itr_hs){ // _hs: hash set
+        ((sstd::terp::var*)*itr_hs)->type_RW()         = sstd::num_null;
+        ((sstd::terp::var*)*itr_hs)->is_reference_RW() = false;
+        ((sstd::terp::var*)*itr_hs)->p_RW()            = NULL;
+    }
+
+    _pSRCR_tbl->erase( itr_ht );
+}
+void sstd::terp::var::free_SRCR_tbl(){
+    if(this->_is_pSRCR_tbl_base){
+        delete this->_pSRCR_tbl;
+        this->_pSRCR_tbl=NULL;
+    }
 }
 void sstd::terp::var::free_val(){
     if(this->_p==NULL){ return; }
@@ -469,7 +486,8 @@ void sstd::terp::var::free_val(){
     this->_p=NULL;
 }
 void sstd::terp::var::free(){
-    sstd::terp::var::free_tbl();
+    sstd::terp::var::fill_dependent_ref_null();
+//    sstd::terp::var::free_SRCR_tbl(); // TODO: fix
     sstd::terp::var::free_val();
 }
 
