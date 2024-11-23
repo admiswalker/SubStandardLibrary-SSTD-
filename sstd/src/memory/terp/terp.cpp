@@ -437,22 +437,20 @@ void sstd::terp::var::_free_SRCR_tbl(){
     sstd::printn_all((void*)this->_pSRCR_tbl);
 }
 void _free_vec_terp_var(void* _p, uint _type, const bool _is_reference){
-//    sstd::printn_all( _CAST2VEC(_p).size() );
-    
     for(uint i=0;i<_CAST2VEC(_p).size();++i){
-//#define _CAST2VEC(_P) (*(std::vector<sstd::terp::var*>*)_P)
         sstd::terp::var* var_p = _CAST2VEC(_p)[i];
-//        sstd::printn_all( i );
-//        sstd::printn_all( p );
-//        sstd::printn_all( p->is_reference() );
-//        sstd::printn_all( p->type() );
         if( var_p==NULL || var_p->is_reference() ){ continue; }
-        //delete var_p;
         _free_val( var_p->p_RW(), var_p->type(), var_p->is_reference() );
     }
     delete (std::vector<sstd::terp::var*>*)_p;
 }
-void _free_hash_terp_var(){
+void _free_hash_terp_var(void* _p, uint _type, const bool _is_reference){
+    for(auto itr=_CAST2HASH(_p).begin(); itr!=_CAST2HASH(_p).end(); ++itr){
+        sstd::terp::var* var_p = itr->second;
+        if( var_p==NULL || var_p->is_reference() ){ continue; }
+        _free_val( var_p->p_RW(), var_p->type(), var_p->is_reference() );
+    }
+    delete (std::unordered_map<std::string,sstd::terp::var*>*)_p;
 }
 void _free_val(void*& _p, const uint _type, const bool _is_reference){
     if(_p==NULL){ return; }
@@ -494,13 +492,8 @@ void _free_val(void*& _p, const uint _type, const bool _is_reference){
 //    case sstd::num_hash_str_void_ptr     : { delete (std::unordered_map<std::string,   sstd::void_ptr>*)_p; } break;
 //    case sstd::num_hash_void_ptr_void_ptr: { delete (std::unordered_map<sstd::void_ptr,sstd::void_ptr>*)_p; } break;
         
-    case sstd::num_vec_terp_var: { _free_vec_terp_var(_p, _type, _is_reference); } break;
-    case sstd::num_hash_terp_var: {
-        for(auto itr=_CAST2HASH(_p).begin(); itr!=_CAST2HASH(_p).end(); ++itr){
-            delete itr->second;
-        }
-        delete (std::unordered_map<std::string,sstd::terp::var*>*)_p;
-    } break;
+    case sstd::num_vec_terp_var:  { _free_vec_terp_var(_p, _type, _is_reference); } break;
+    case sstd::num_hash_terp_var: { _free_hash_terp_var(_p, _type, _is_reference); } break;
         
     default: { sstd::pdbg("ERROR: free() memory is failed. typeNum '%d' is not defined.", _type); } break;
     }
