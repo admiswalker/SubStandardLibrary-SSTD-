@@ -1175,15 +1175,19 @@ TEST(memory_terp, _pSRCR_tbl_case1_2_new_ref_by_copy){
     s[1] = &s[0];
     
     sstd::terp::var d; // dst
+    sstd::printn_all("---");
     d = s; // TEST THIS LINE
     
+    sstd::printn_all("---");
     ASSERT_EQ(d.pSRCR_tbl()->size(), (uint)1);
     auto itr = d.pSRCR_tbl()->find( (sstd::terp::var*) d[0].p() ); // TEST THIS LINE
     ASSERT_TRUE(itr != d.pSRCR_tbl()->end());
     
+    sstd::printn_all("---");
     ASSERT_EQ(itr->second.size(), (uint)1);
     auto itr2 = itr->second.find( &d[1] ); // TEST THIS LINE
     ASSERT_TRUE(itr2!=itr->second.end());
+    sstd::printn_all("---");
     
 //    sstd::printn(d[0].p());
 //    sstd::printn(d[1].p());
@@ -1228,6 +1232,7 @@ TEST(memory_terp, _pSRCR_tbl_case3_2_destructor_of_the_precedent_object_is_calle
         ASSERT_NE(y.p(), (void*)NULL);
         
     } // x will be deleted. -> y.p() will be filled with NULL.
+    sstd::printn_all(y);
     
     ASSERT_EQ(y.p(), (void*)NULL); // checks the y.p() is the null filled.
     ASSERT_TRUE(y.is_reference()==false);

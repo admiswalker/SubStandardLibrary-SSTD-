@@ -117,9 +117,14 @@ public:
 
     void copy(const class sstd::terp::var&  rhs);
     void move(      class sstd::terp::var&& rhs);
-    void fill_dependent_ref_null();
-    void free_SRCR_tbl();
-    void free_val();
+    
+    void _fill_dependent_ref_null();
+    void _free_SRCR_tbl();
+    
+    //void _free_vec_terp_var();
+    //void _free_hash_terp_var();
+    //void _free_val();
+    
     void free();
     
     template <typename T>
