@@ -1192,7 +1192,6 @@ TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_calle
 
 TEST(memory_terp, _pSRCR_tbl_case3_1_overwrite_precedent_object){}
 TEST(memory_terp, _pSRCR_tbl_case3_2_destructor_of_the_precedent_object_is_called_1_out_of_scope){
-    
     sstd::terp::var y; // Dependent object
 
     {
@@ -1213,7 +1212,29 @@ TEST(memory_terp, _pSRCR_tbl_case3_2_destructor_of_the_precedent_object_is_calle
     ASSERT_EQ(y.p(), (void*)NULL); // checks the y.p() is the null filled.
     ASSERT_TRUE(y.is_reference()==false);
 }
-TEST(memory_terp, _pSRCR_tbl_case3_2_destructor_of_the_precedent_object_is_called_2_explicit_delete){}
+TEST(memory_terp, _pSRCR_tbl_case3_2_destructor_of_the_precedent_object_is_called_2_explicit_delete){
+    sstd::terp::var y; // Dependent object
+
+    //---
+
+    sstd::terp::var* pX = new sstd::terp::var(); // Precedent object
+    (*pX) = "a";
+    y = &(*pX); // Cross variable reference
+    
+    ASSERT_TRUE((*pX).is_reference()==false);
+    ASSERT_TRUE(y.is_reference()==true );
+        
+    ASSERT_STREQ((*pX).to<std::string>().c_str(), "a");
+    ASSERT_STREQ(y.to<std::string>().c_str(), "a");
+
+    ASSERT_NE(y.p(), (void*)NULL);
+    delete pX; // x will be deleted. -> y.p() will be filled with NULL.
+
+    //---
+    
+    ASSERT_EQ(y.p(), (void*)NULL); // checks the y.p() is the null filled.
+    ASSERT_TRUE(y.is_reference()==false);
+}
 TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_1_list_pop_back){}
 TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_2_list_resize){}
 TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_3_hash_erase){}
