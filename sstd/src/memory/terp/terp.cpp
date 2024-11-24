@@ -363,32 +363,22 @@ void sstd::terp::var::copy(const class sstd::terp::var& rhs){
     _free_val(_p, _type, _is_reference);
     _copy_base(this, &rhs);
 }
-
 void sstd::terp::var::move(      class sstd::terp::var&& rhs){
-    this->_type = rhs.type(); rhs.type_RW() = sstd::num_null;
-    this->_p    = rhs.p();    rhs.p_RW()    = NULL;
-
-    delete this->_pSRCR_tbl;
-    this->_is_pSRCR_tbl_base = true;    rhs.is_pSRCR_tbl_base_RW() = false;
-    this->_pSRCR_tbl = rhs.pSRCR_tbl(); rhs.pSRCR_tbl_RW()         = NULL;
-}
-/*
-void sstd::terp::var::_fill_ref_src_null(sstd::terp::var* ref_src_address){
-    
-    auto itr = _pSRCR_tbl->find(ref_src_address);
-    
-    if(itr!=_pSRCR_tbl->end()){
-        std::unordered_set<sstd::terp::var*> hash_set = itr->second;
+    if(this->_is_pSRCR_tbl_base && rhs.is_pSRCR_tbl_base()){
+        this->_type = rhs.type(); rhs.type_RW() = sstd::num_null;
+        this->_p    = rhs.p();    rhs.p_RW()    = NULL;
         
-        for(auto itr=hash_set.begin(); itr!=hash_set.end(); ++itr){
-            printf("301\n");
-            sstd::terp::var* pRef = *itr;
-            pRef->type_RW()         = sstd::num_null;
-            pRef->is_reference_RW() = false;
-            pRef->p_RW()            = NULL;
-        }
+        delete this->_pSRCR_tbl;
+        this->_is_pSRCR_tbl_base = true;    rhs.is_pSRCR_tbl_base_RW() = false;
+        this->_pSRCR_tbl = rhs.pSRCR_tbl(); rhs.pSRCR_tbl_RW()         = NULL;
+        
+    }else{
+        // Because of pSRCR_tbl is shareed amaong all the elements, 
+        // if rhs is NOT a root (=base) element, `sstd::terp::var` can NOT identify which pSRCR_tbl's values should be copied.
+        sstd::terp::var::copy(rhs);
+        
     }
-}*/
+}
 void sstd::terp::var::_fill_ref_src_null(const std::unordered_set<sstd::terp::var*>& hash_set){
     for(auto itr=hash_set.begin(); itr!=hash_set.end(); ++itr){
         sstd::terp::var* pRef = *itr;
@@ -396,25 +386,18 @@ void sstd::terp::var::_fill_ref_src_null(const std::unordered_set<sstd::terp::va
         pRef->is_reference_RW() = false;
         pRef->p_RW()            = NULL;
     }
-}/*
-void sstd::terp::var::_fillout_ref_src_null(){
-    if(this->_is_pSRCR_tbl_base){
-        for(auto itr=_pSRCR_tbl->begin(); itr!=_pSRCR_tbl->end(); ++itr){
-            sstd::terp::var::_fill_ref_src_null(itr->second);
-        }
-        
-        this->_is_pSRCR_tbl_base=false;
-        delete this->_pSRCR_tbl;
-        this->_pSRCR_tbl=NULL;
-    }else{
-        // TODO
-    }
-}*/
+}
 void sstd::terp::var::_fill_dependent_ref_null(){
     if(this->_is_reference==true || this->_pSRCR_tbl==NULL){ return; }
+    sstd::printn_all("");
+    sstd::printn_all(_pSRCR_tbl);
+    sstd::printn_all(_p);
+    sstd::printn_all(*_pSRCR_tbl);
 
     auto itr_ht = _pSRCR_tbl->find( (sstd::terp::var*)this->_p ); // _ht: hash table
+    sstd::printn_all("");
     if(!(itr_ht!=_pSRCR_tbl->end())){ return; }
+    sstd::printn_all("");
     
     std::unordered_set<sstd::terp::var*>& hash_set = itr_ht->second;
     for(auto itr_hs=hash_set.begin(); itr_hs!=hash_set.end(); ++itr_hs){ // _hs: hash set
@@ -426,15 +409,12 @@ void sstd::terp::var::_fill_dependent_ref_null(){
     _pSRCR_tbl->erase( itr_ht );
 }
 void sstd::terp::var::_free_SRCR_tbl(){
-    sstd::printn_all(this->_is_pSRCR_tbl_base);
-    sstd::printn_all(this->_pSRCR_tbl);
     if(this->_pSRCR_tbl==NULL){ return; }
     if(this->_is_pSRCR_tbl_base){
         delete this->_pSRCR_tbl;
         this->_pSRCR_tbl=NULL;
         this->_is_pSRCR_tbl_base=false;
     }
-    sstd::printn_all((void*)this->_pSRCR_tbl);
 }
 void _free_vec_terp_var(void* _p, uint _type, const bool _is_reference){
     for(uint i=0;i<_CAST2VEC(_p).size();++i){
@@ -501,10 +481,11 @@ void _free_val(void*& _p, const uint _type, const bool _is_reference){
     _p=NULL;
 }
 void sstd::terp::var::free(){
+    printf("471\n");
     sstd::terp::var::_fill_dependent_ref_null();
+    printf("473\n");
     sstd::terp::var::_free_SRCR_tbl(); // TODO: fix
     printf("496\n");
-    //sstd::terp::var::_free_val();
     _free_val(_p, _type, _is_reference);
     printf("498\n");
 }
