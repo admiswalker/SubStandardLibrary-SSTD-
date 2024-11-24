@@ -1181,7 +1181,33 @@ TEST(memory_terp, _pSRCR_tbl_case1_2_new_ref_by_copy){
 
 //---
 
-TEST(memory_terp, _pSRCR_tbl_case2_1_overwrite_dependent_object){}
+TEST(memory_terp, _pSRCR_tbl_case2_1_overwrite_dependent_object_01){
+    sstd::terp::var y; // Dependent object
+    y = sstd::terp::list(2);
+    y[0] = sstd::terp::list(2);
+    y[0][0] = "a";
+    y[0][1] = &y[0][0];
+    y[1] = sstd::terp::list(2);
+    y[1][0] = "b";
+    y[1][1] = &y[1][0];
+    
+    sstd::printn_all(y);
+    sstd::printn_all(*y.pSRCR_tbl());
+    sstd::printn_all(y[1][0].p());
+    sstd::printn_all(&y[1][0]);
+    sstd::printn_all(y[1][0].type());
+
+    y[1] = "overwritten";
+    sstd::printn_all(y);
+    sstd::printn_all(*y.pSRCR_tbl());
+    
+    sstd::printn_all(y);
+    sstd::printn_all(*y.pSRCR_tbl());
+//    sstd::printn_all(y[1][0].p());
+//    sstd::printn_all(&y[1][0]);
+//    sstd::printn_all(y[1][0].type());
+
+}
 TEST(memory_terp, _pSRCR_tbl_case2_2_destructor_of_the_dependent_object_is_called_1_out_of_scope){}
 TEST(memory_terp, _pSRCR_tbl_case2_2_destructor_of_the_dependent_object_is_called_2_explicit_delete){}
 TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_1_list_pop_back){}

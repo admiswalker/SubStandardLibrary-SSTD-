@@ -101,3 +101,5 @@ namespace sstd{
 #define printn(var) printn_dummy();{printf("%s = ", #var);sstd::print(var);}
 #define printn_all(var) printn_dummy();{printf("%s(%d): %s = ", __func__, __LINE__, #var);sstd::print(var);}
 #define printn_fflv(var) printn_dummy();{printf("%s: %s(%d): %s = ", __FILE__, __func__, __LINE__, #var);sstd::print(var);}
+
+#define print_all(var) printn_dummy();{printf("%s(%d): ", __func__, __LINE__);sstd::print(var);}

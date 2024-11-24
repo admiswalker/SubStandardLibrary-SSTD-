@@ -118,7 +118,7 @@ public:
     void copy(const class sstd::terp::var&  rhs);
     void move(      class sstd::terp::var&& rhs);
     
-    void _fill_dependent_ref_null();
+    //void _fill_dependent_ref_null();
     void _free_SRCR_tbl();
     
     //void _free_vec_terp_var();
