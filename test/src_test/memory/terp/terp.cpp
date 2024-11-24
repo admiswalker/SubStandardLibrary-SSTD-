@@ -122,11 +122,11 @@ TEST(memory_terp, list_ope_assign_with_reference){ // Ope=
     ASSERT_TRUE(x[1].is_reference() == true );
 
     x[0][0]="x";
-    ASSERT_TRUE(a[0][0].to<std::string>() == "x");
-    ASSERT_TRUE(a[1][0].to<std::string>() == "x");
+    ASSERT_STREQ(a[0][0].to<std::string>().c_str(), "a");
+    ASSERT_STREQ(a[1][0].to<std::string>().c_str(), "a");
     
-    ASSERT_TRUE(x[0][0].to<std::string>() == "x");
-    ASSERT_TRUE(x[1][0].to<std::string>() == "x");
+    ASSERT_STREQ(x[0][0].to<std::string>().c_str(), "x");
+    ASSERT_STREQ(x[1][0].to<std::string>().c_str(), "x");
 }
 
 // operator==
@@ -1021,9 +1021,7 @@ TEST(memory_terp, copy_self_ref_list__ref){
     
 //    ASSERT_TRUE(sstd::terp::equal(s, a, "r")); // compares: actual value and is_reference
 //    ASSERT_TRUE(sstd::terp::equal(d, a, "r")); // compares: actual value and is_reference
-//    ASSERT_TRUE(false); // TODO
-
-    sstd::printn_all("---");
+    ASSERT_TRUE(false); // TODO
 }
 
 TEST(memory_terp, copy_self_ref_hash){

@@ -135,7 +135,6 @@ sstd::terp::var sstd::terp::hash(){ return sstd::terp::hash(0); }
 // sstd::terp::list
 
 sstd::terp::var sstd::terp::list(uint allocate_size){
-    printf("124 sstd::terp::list()\n");
     sstd::terp::var r;
     r.type_RW() = num_vec_terp_var;
     r.p_RW()    = new std::vector<sstd::terp::var*>(allocate_size);
@@ -389,15 +388,9 @@ void sstd::terp::var::_fill_ref_src_null(const std::unordered_set<sstd::terp::va
 }
 void sstd::terp::var::_fill_dependent_ref_null(){
     if(this->_is_reference==true || this->_pSRCR_tbl==NULL){ return; }
-    sstd::printn_all("");
-    sstd::printn_all(_pSRCR_tbl);
-    sstd::printn_all(_p);
-    sstd::printn_all(*_pSRCR_tbl);
 
     auto itr_ht = _pSRCR_tbl->find( (sstd::terp::var*)this->_p ); // _ht: hash table
-    sstd::printn_all("");
     if(!(itr_ht!=_pSRCR_tbl->end())){ return; }
-    sstd::printn_all("");
     
     std::unordered_set<sstd::terp::var*>& hash_set = itr_ht->second;
     for(auto itr_hs=hash_set.begin(); itr_hs!=hash_set.end(); ++itr_hs){ // _hs: hash set
@@ -481,22 +474,16 @@ void _free_val(void*& _p, const uint _type, const bool _is_reference){
     _p=NULL;
 }
 void sstd::terp::var::free(){
-    printf("471\n");
     sstd::terp::var::_fill_dependent_ref_null();
-    printf("473\n");
     sstd::terp::var::_free_SRCR_tbl(); // TODO: fix
-    printf("496\n");
     _free_val(_p, _type, _is_reference);
-    printf("498\n");
 }
 
 sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var&  rhs){
-    printf("398 sstd::terp::var::operator=()\n");
     copy(rhs);
     return *this;
 }
 sstd::terp::var  sstd::terp::var::operator=(      sstd::terp::var&& rhs){
-    printf("403 sstd::terp::var::operator=(&&)\n");
     move(std::move(rhs));
     return *this;
 }
@@ -504,7 +491,6 @@ sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var* pRhs){
     this->_is_reference = true;
     this->_type         = pRhs->type();
     this->_p            = pRhs->p();
-    sstd::printn(_pSRCR_tbl);
     (*pRhs->_pSRCR_tbl)[ (sstd::terp::var*)pRhs->p() ].insert( (sstd::terp::var*)this );
     return *this;
 }
@@ -516,7 +502,6 @@ void sstd::terp::var::_overwrite(T* ptr){
     this->_p    = ptr;
 }
 sstd::terp::var& sstd::terp::var::operator=(const char* rhs){
-    printf("524\n");
     _overwrite(new std::string(rhs));
     return *this;
 }
