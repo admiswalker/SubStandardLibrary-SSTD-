@@ -1182,28 +1182,39 @@ TEST(memory_terp, _pSRCR_tbl_case1_2_new_ref_by_copy){
 //---
 
 TEST(memory_terp, _pSRCR_tbl_case2_1_overwrite_dependent_object_01){
-    sstd::terp::var y; // Dependent object
-    y = sstd::terp::list(2);
-    y[0] = sstd::terp::list(2);
-    y[0][0] = "a";
-    y[0][1] = &y[0][0];
-    y[1] = sstd::terp::list(2);
-    y[1][0] = "b";
-    y[1][1] = &y[1][0];
+    sstd::terp::var x; // Precedent object
+    x = sstd::terp::list(2);
+    x[0] = sstd::terp::list(2);
+    x[0][0] = "a";
+    x[0][1] = &x[0][0];
+    x[1] = sstd::terp::list(2);
+    x[1][0] = "b";
+    x[1][1] = &x[1][0];
 
-    ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)2);
+    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)2);
     
-    y[1] = "overwritten"; // TEST THIS LINE
+    x[1] = "overwritten"; // TEST THIS LINE
     
-    ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)1);
+    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)1);
 
-    auto itr = y.pSRCR_tbl()->begin();
+    auto itr = x.pSRCR_tbl()->begin();
     sstd::terp::var*                      key = itr->first;
     std::unordered_set<sstd::terp::var*>& val = itr->second;
     auto val_itr = val.begin();
     
-    ASSERT_EQ(key,       y[0][0].p());
-    ASSERT_EQ(*val_itr, &y[0][1]    );
+    ASSERT_EQ(key,       x[0][0].p());
+    ASSERT_EQ(*val_itr, &x[0][1]    );
+}
+TEST(memory_terp, _pSRCR_tbl_case2_1_overwrite_dependent_object_02){
+    sstd::terp::var x; // Precedent object
+    x = "a";
+    
+    sstd::terp::var y; // Dependent object
+    y = &x;
+
+    y = "overwritten"; // TEST THIS LINE
+    
+    ASSERT_TRUE(false);
 }
 TEST(memory_terp, _pSRCR_tbl_case2_2_destructor_of_the_dependent_object_is_called_1_out_of_scope){}
 TEST(memory_terp, _pSRCR_tbl_case2_2_destructor_of_the_dependent_object_is_called_2_explicit_delete){}
