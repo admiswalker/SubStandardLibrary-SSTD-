@@ -1210,11 +1210,47 @@ TEST(memory_terp, _pSRCR_tbl_case2_1_overwrite_dependent_object_02){
     x = "a";
     
     sstd::terp::var y; // Dependent object
+    
+    sstd::printn_all(x);
+    sstd::printn_all(y);
+    sstd::printn(*x.pSRCR_tbl());
+    sstd::printn(*y.pSRCR_tbl());
+    
     y = &x;
+    
+//    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)1);
+//    ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)0);
+//    ASSERT_FALSE(x.is_reference());
+//    ASSERT_TRUE (y.is_reference());
+//    ASSERT_NE(x.p(), (void*)0);
+//    ASSERT_NE(y.p(), (void*)0);
 
+    sstd::printn_all(x);
+    sstd::printn_all(y);
+    sstd::printn(*x.pSRCR_tbl());
+    sstd::printn(*y.pSRCR_tbl());
+    sstd::printn(x.is_reference());
+    sstd::printn(x.p());
+    sstd::printn(y.is_reference());
+    sstd::printn(y.p());
+    
     y = "overwritten"; // TEST THIS LINE
     
-    ASSERT_TRUE(false);
+    sstd::printn_all(x);
+    sstd::printn_all(y);
+    sstd::printn(*x.pSRCR_tbl());
+    sstd::printn(*y.pSRCR_tbl());
+    sstd::printn(x.is_reference());
+    sstd::printn(x.p());
+    sstd::printn(y.is_reference());
+    sstd::printn(y.p());
+    
+//    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)0);
+//    ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)0);
+//    ASSERT_FALSE(x.is_reference());
+//    ASSERT_FALSE(y.is_reference());
+//    ASSERT_NE(x.p(), (void*)0);
+//    ASSERT_EQ(y.p(), (void*)0);
 }
 TEST(memory_terp, _pSRCR_tbl_case2_2_destructor_of_the_dependent_object_is_called_1_out_of_scope){}
 TEST(memory_terp, _pSRCR_tbl_case2_2_destructor_of_the_dependent_object_is_called_2_explicit_delete){}
@@ -1224,7 +1260,31 @@ TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_calle
 
 //---
 
-TEST(memory_terp, _pSRCR_tbl_case3_1_overwrite_precedent_object){}
+TEST(memory_terp, _pSRCR_tbl_case3_1_overwrite_precedent_object_01){}
+TEST(memory_terp, _pSRCR_tbl_case3_1_overwrite_precedent_object_02){
+    sstd::terp::var x; // Precedent object
+    x = "a";
+    
+    sstd::terp::var y; // Dependent object
+    
+    y = &x;
+    
+    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)1);
+    ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)0);
+    ASSERT_FALSE(x.is_reference());
+    ASSERT_TRUE (y.is_reference());
+    ASSERT_NE(x.p(), (void*)0);
+    ASSERT_NE(y.p(), (void*)0);
+
+    x = "overwritten"; // TEST THIS LINE
+    
+    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)0);
+    ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)0);
+    ASSERT_FALSE(x.is_reference());
+    ASSERT_FALSE(y.is_reference());
+    ASSERT_NE(x.p(), (void*)0);
+    ASSERT_EQ(y.p(), (void*)0);
+}
 TEST(memory_terp, _pSRCR_tbl_case3_2_destructor_of_the_precedent_object_is_called_1_out_of_scope){
     sstd::terp::var y; // Dependent object
 

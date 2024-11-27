@@ -14,8 +14,7 @@
 #define _CAST2VEC(_P) (*(std::vector<sstd::terp::var*>*)_P)
 #define _CAST2HASH(_P) (*(std::unordered_map<std::string,sstd::terp::var*>*)_P)
 
-
-void _free_val(void*& _p, sstd::terp::srcr_tbl* _pSRCR_tbl, const uint type, const bool _is_reference);
+void _free_val(sstd::terp::var* _pVar, void*& _p, sstd::terp::srcr_tbl* _pSRCR_tbl, const uint type, const bool _is_reference);
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // for internal use
@@ -359,7 +358,7 @@ void _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs){
                     );
 }
 void sstd::terp::var::copy(const class sstd::terp::var& rhs){
-    _free_val(_p, _pSRCR_tbl, _type, _is_reference);
+    _free_val(this, _p, _pSRCR_tbl, _type, _is_reference);
     _copy_base(this, &rhs);
 }
 void sstd::terp::var::move(      class sstd::terp::var&& rhs){
@@ -377,15 +376,8 @@ void sstd::terp::var::move(      class sstd::terp::var&& rhs){
         
     }
 }
-void sstd::terp::var::_fill_ref_src_null(const std::unordered_set<sstd::terp::var*>& hash_set){
-    for(auto itr=hash_set.begin(); itr!=hash_set.end(); ++itr){
-        sstd::terp::var* pRef = *itr;
-        pRef->type_RW()         = sstd::num_null;
-        pRef->is_reference_RW() = false;
-        pRef->p_RW()            = NULL;
-    }
-}
-void _fill_dependent_ref_null(void* _p, sstd::terp::srcr_tbl* _pSRCR_tbl, const uint _type, const bool _is_reference){
+
+void _fill_dependent_ref_null(sstd::terp::var* _pVar, void* _p, sstd::terp::srcr_tbl* _pSRCR_tbl, const uint _type, const bool _is_reference){
     if(_is_reference==true || _pSRCR_tbl==NULL){ return; }
 
     auto itr_ht = _pSRCR_tbl->find( (sstd::terp::var*)_p ); // _ht: hash table
@@ -400,26 +392,43 @@ void _fill_dependent_ref_null(void* _p, sstd::terp::srcr_tbl* _pSRCR_tbl, const 
 
     _pSRCR_tbl->erase( itr_ht );
 }
-void _free_vec_terp_var(void* _p, const uint _type, const bool _is_reference){
+void _rm_dependent_ret_from_precedent_pSRCR_tbl(sstd::terp::var* _pVar, void* _p, sstd::terp::srcr_tbl* _pSRCR_tbl, const uint _type, const bool _is_reference){
+    if(_is_reference==false || _pSRCR_tbl==NULL){ return; }
+    
+    auto itr_ht = _pSRCR_tbl->find( (sstd::terp::var*)_p ); // _ht: hash table
+    if(!(itr_ht!=_pSRCR_tbl->end())){ return; }
+    
+    std::unordered_set<sstd::terp::var*>& hash_set = itr_ht->second;
+    auto itr_hs = hash_set.find( _pVar );
+    if(!(itr_hs!=hash_set.end())){ return; }
+    
+    if(hash_set.size()==1){
+        _pSRCR_tbl->erase( itr_ht );
+    }else{
+        hash_set.erase( itr_hs );
+    }
+}
+void _free_vec_terp_var(sstd::terp::var* _pVar, void* _p, const uint _type, const bool _is_reference){
     for(uint i=0;i<_CAST2VEC(_p).size();++i){
         sstd::terp::var* var_p = _CAST2VEC(_p)[i];
         if( var_p==NULL || var_p->is_reference() ){ continue; }
-        _free_val( var_p->p_RW(), var_p->pSRCR_tbl_RW(), var_p->type(), var_p->is_reference() );
+        _free_val( var_p, var_p->p_RW(), var_p->pSRCR_tbl_RW(), var_p->type(), var_p->is_reference() );
     }
     delete (std::vector<sstd::terp::var*>*)_p;
 }
-void _free_hash_terp_var(void* _p, const uint _type, const bool _is_reference){
+void _free_hash_terp_var(sstd::terp::var* _pVar, void* _p, const uint _type, const bool _is_reference){
     for(auto itr=_CAST2HASH(_p).begin(); itr!=_CAST2HASH(_p).end(); ++itr){
         sstd::terp::var* var_p = itr->second;
         if( var_p==NULL || var_p->is_reference() ){ continue; }
-        _free_val( var_p->p_RW(), var_p->pSRCR_tbl_RW(), var_p->type(), var_p->is_reference() );
+        _free_val( var_p, var_p->p_RW(), var_p->pSRCR_tbl_RW(), var_p->type(), var_p->is_reference() );
     }
     delete (std::unordered_map<std::string,sstd::terp::var*>*)_p;
 }
-void _free_val(void*& _p, sstd::terp::srcr_tbl* _pSRCR_tbl, const uint _type, const bool _is_reference){
+void _free_val(sstd::terp::var* _pVar, void*& _p, sstd::terp::srcr_tbl* _pSRCR_tbl, const uint _type, const bool _is_reference){
     if(_p==NULL){ return; }
     if(_is_reference==true){ return; }
-    _fill_dependent_ref_null(_p, _pSRCR_tbl, _type, _is_reference);
+    _fill_dependent_ref_null                  (_pVar, _p, _pSRCR_tbl, _type, _is_reference);
+    _rm_dependent_ret_from_precedent_pSRCR_tbl(_pVar, _p, _pSRCR_tbl, _type, _is_reference);
 
     switch (_type){
     case sstd::num_null    : {} break;
@@ -457,8 +466,8 @@ void _free_val(void*& _p, sstd::terp::srcr_tbl* _pSRCR_tbl, const uint _type, co
 //    case sstd::num_hash_str_void_ptr     : { delete (std::unordered_map<std::string,   sstd::void_ptr>*)_p; } break;
 //    case sstd::num_hash_void_ptr_void_ptr: { delete (std::unordered_map<sstd::void_ptr,sstd::void_ptr>*)_p; } break;
         
-    case sstd::num_vec_terp_var:  { _free_vec_terp_var(_p, _type, _is_reference); } break;
-    case sstd::num_hash_terp_var: { _free_hash_terp_var(_p, _type, _is_reference); } break;
+    case sstd::num_vec_terp_var:  { _free_vec_terp_var (_pVar, _p, _type, _is_reference); } break;
+    case sstd::num_hash_terp_var: { _free_hash_terp_var(_pVar, _p, _type, _is_reference); } break;
         
     default: { sstd::pdbg("ERROR: free() memory is failed. typeNum '%d' is not defined.", _type); } break;
     }
@@ -474,8 +483,8 @@ void sstd::terp::var::_free_SRCR_tbl(){
     }
 }
 void sstd::terp::var::free(){
-    _fill_dependent_ref_null(_p, _pSRCR_tbl, _type, _is_reference);
-    _free_val               (_p, _pSRCR_tbl, _type, _is_reference);
+    _fill_dependent_ref_null(this, _p, _pSRCR_tbl, _type, _is_reference);
+    _free_val               (this, _p, _pSRCR_tbl, _type, _is_reference);
     sstd::terp::var::_free_SRCR_tbl();
 }
 
@@ -500,7 +509,7 @@ sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var* pRhs){
 
 template <typename T>
 void sstd::terp::var::_overwrite(T* ptr){
-    _free_val(_p, _pSRCR_tbl, _type, _is_reference); // TODO : fix
+    _free_val(this, _p, _pSRCR_tbl, _type, _is_reference); // TODO : fix
     this->_type = sstd::type2num(T());
     this->_p    = ptr;
 }
