@@ -110,7 +110,7 @@ public:
     
     //---
     // common
-
+    
     //void _fill_ref_src_null(sstd::terp::var* rhs);
     void _fill_ref_src_null(const std::unordered_set<sstd::terp::var*>& hash_set);
     void _fillout_ref_src_null();
@@ -147,6 +147,11 @@ public:
     const var& operator[](const       char* pKey) const;
           var& operator[](const std::string  key);
     const var& operator[](const std::string  key) const;
+
+          var& ope_sb  (const int idx);                // To test Ope[] // sb: square_brackets, c: const
+    const var& ope_sb_c(const int idx) const;          // To test Ope[] // sb: square_brackets, c: const
+          var& ope_sb  (const       char* pKey);       // To test Ope[] // sb: square_brackets, c: const
+    const var& ope_sb_c(const       char* pKey) const; // To test Ope[] // sb: square_brackets, c: const
     
     sstd::terp::iterator begin() const;
     sstd::terp::iterator end  () const;
@@ -157,8 +162,9 @@ public:
     template <typename T>
     const T to() const {
         T ret = T();
+        const sstd::terp::var* pVar = (! this->_is_reference) ? this : (const sstd::terp::var*)this->_p;
         if(this->_p==NULL){ sstd::pdbg_err("NULL pointer is detected\n"); return ret; }
-        sstd::terp::_to(ret, *this);
+        sstd::terp::_to(ret, *pVar);
         return ret;
     }
     

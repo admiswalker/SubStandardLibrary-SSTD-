@@ -1229,8 +1229,10 @@ TEST(memory_terp, _pSRCR_tbl_case2_1_overwrite_dependent_object_02){
     sstd::printn_all(y);
     sstd::printn(*x.pSRCR_tbl());
     sstd::printn(*y.pSRCR_tbl());
+    sstd::printn(&x);
     sstd::printn(x.is_reference());
     sstd::printn(x.p());
+    sstd::printn(&y);
     sstd::printn(y.is_reference());
     sstd::printn(y.p());
     
@@ -1240,8 +1242,10 @@ TEST(memory_terp, _pSRCR_tbl_case2_1_overwrite_dependent_object_02){
     sstd::printn_all(y);
     sstd::printn(*x.pSRCR_tbl());
     sstd::printn(*y.pSRCR_tbl());
+    sstd::printn(&x);
     sstd::printn(x.is_reference());
     sstd::printn(x.p());
+    sstd::printn(&y);
     sstd::printn(y.is_reference());
     sstd::printn(y.p());
     
@@ -1251,6 +1255,8 @@ TEST(memory_terp, _pSRCR_tbl_case2_1_overwrite_dependent_object_02){
 //    ASSERT_FALSE(y.is_reference());
 //    ASSERT_NE(x.p(), (void*)0);
 //    ASSERT_EQ(y.p(), (void*)0);
+    
+    ASSERT_TRUE(false);
 }
 TEST(memory_terp, _pSRCR_tbl_case2_2_destructor_of_the_dependent_object_is_called_1_out_of_scope){}
 TEST(memory_terp, _pSRCR_tbl_case2_2_destructor_of_the_dependent_object_is_called_2_explicit_delete){}
@@ -1332,6 +1338,132 @@ TEST(memory_terp, _pSRCR_tbl_case3_2_destructor_of_the_precedent_object_is_calle
 TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_1_list_pop_back){}
 TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_2_list_resize){}
 TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_3_hash_erase){}
+
+//---
+
+TEST(memory_terp, _pSRCR_tbl_case1_1_new_ref_by_hand___TMP){
+    sstd::terp::var s; // src
+    s = sstd::terp::list(2);
+    s[0] = "a";
+    s[1] = &s[0]; // TEST THIS LINE
+
+  sstd::printn_all(s);
+  sstd::printn_all("");
+  sstd::printn_all("");
+  
+  sstd::printn(s[0].p());
+  sstd::printn(s[1].p());
+  sstd::printn(&s[1]);
+  sstd::printn(*s.pSRCR_tbl());
+    
+    ASSERT_FALSE(s[0].is_reference());
+    ASSERT_TRUE(s[1].is_reference());
+    ASSERT_EQ(s[1].type(), s[0].type());
+    ASSERT_EQ(s[1].p(), s[0].p());
+
+    ASSERT_TRUE(s.is_pSRCR_tbl_base());
+    ASSERT_FALSE(s[0].is_pSRCR_tbl_base());
+    ASSERT_FALSE(s[1].is_pSRCR_tbl_base());
+    
+    sstd::terp::srcr_tbl tbl = *s.pSRCR_tbl();
+    
+    ASSERT_EQ(tbl.size(), (uint)1);
+    auto itr = tbl.find( (sstd::terp::var*)s[0].p() ); // TEST THIS LINE
+    ASSERT_TRUE(itr!=tbl.end());
+
+    ASSERT_EQ(itr->second.size(), (uint)1);
+    auto itr2 = itr->second.find( &s[1] ); // TEST THIS LINE
+    ASSERT_TRUE(itr2!=itr->second.end());
+
+//  sstd::printn(s[0].p());
+//  sstd::printn(s[1].p());
+//  sstd::printn(&s[1]);
+//  sstd::printn(*s.pSRCR_tbl());
+
+//  Example of the addresses dependency:
+//  
+//  s[0].p() = 0x55e9e8d5a570
+//  s[1].p() = 0x55e9e8d5a570
+//  &s[1] = 0x55e9e8d66e40
+//  *s.pSRCR_tbl() = { (key: 0x55e9e8d5a570, value: {0x55e9e8d66e40}) }
+//
+}
+
+//---
+
+// operator[]
+TEST(memory_terp, var_ope_square_brackets_list){
+    sstd::terp::var x;
+    x = sstd::terp::list(2);
+    x[0] = "val1";
+    x[1] = "val2";
+
+    ASSERT_EQ(x.size(), 2);
+    ASSERT_STREQ(x.ope_sb  (0).to<std::string>().c_str(), "val1"); // TEST Ope[]
+    ASSERT_STREQ(x.ope_sb  (1).to<std::string>().c_str(), "val2"); // TEST Ope[]
+    ASSERT_STREQ(x.ope_sb_c(0).to<std::string>().c_str(), "val1"); // TEST Ope[] const
+    ASSERT_STREQ(x.ope_sb_c(1).to<std::string>().c_str(), "val2"); // TEST Ope[] const
+}
+TEST(memory_terp, var_ope_square_brackets_hash){
+    sstd::terp::var x;
+    x = sstd::terp::hash();
+    x["key1"] = "val1";
+    x["key2"] = "val2";
+
+    ASSERT_EQ(x.size(), 2);
+    ASSERT_STREQ(x.ope_sb  ("key1").to<std::string>().c_str(), "val1"); // TEST Ope[]
+    ASSERT_STREQ(x.ope_sb  ("key2").to<std::string>().c_str(), "val2"); // TEST Ope[]
+    ASSERT_STREQ(x.ope_sb_c("key1").to<std::string>().c_str(), "val1"); // TEST Ope[] const
+    ASSERT_STREQ(x.ope_sb_c("key2").to<std::string>().c_str(), "val2"); // TEST Ope[] const
+}
+
+// operator[] with REF
+TEST(memory_terp, var_ope_square_brackets_list__REF){
+    sstd::terp::var x;
+    x = sstd::terp::list(2);
+    x[0] = "val1";
+    x[1] = &x[0];
+
+    ASSERT_EQ(x.size(), 2);
+    
+    ASSERT_EQ(x.ope_sb  (0).type(), sstd::num_str); // TEST Ope[]
+    ASSERT_EQ(x.ope_sb  (1).type(), sstd::num_str); // TEST Ope[]
+    ASSERT_EQ(x.ope_sb_c(0).type(), sstd::num_str); // TEST Ope[] const
+    ASSERT_EQ(x.ope_sb_c(1).type(), sstd::num_str); // TEST Ope[] const
+    
+    ASSERT_STREQ(x.ope_sb  (0).to<std::string>().c_str(), "val1"); // TEST Ope[]
+    ASSERT_STREQ(x.ope_sb  (1).to<std::string>().c_str(), "val1"); // TEST Ope[]
+    ASSERT_STREQ(x.ope_sb_c(0).to<std::string>().c_str(), "val1"); // TEST Ope[] const
+    ASSERT_STREQ(x.ope_sb_c(1).to<std::string>().c_str(), "val1"); // TEST Ope[] const
+    
+    ASSERT_EQ(x.ope_sb  (0).is_reference(), false); // TEST Ope[]
+    ASSERT_EQ(x.ope_sb  (1).is_reference(),  true); // TEST Ope[]
+    ASSERT_EQ(x.ope_sb_c(0).is_reference(), false); // TEST Ope[] const
+    ASSERT_EQ(x.ope_sb_c(1).is_reference(),  true); // TEST Ope[] const
+}
+TEST(memory_terp, var_ope_square_brackets_hash__REF){
+    sstd::terp::var x;
+    x = sstd::terp::hash();
+    x["key1"] = "val1";
+    x["key2"] = &x["key1"];
+    
+    ASSERT_EQ(x.size(), 2);
+    
+    ASSERT_EQ(x.ope_sb  ("key1").type(), sstd::num_str); // TEST Ope[]
+    ASSERT_EQ(x.ope_sb  ("key2").type(), sstd::num_str); // TEST Ope[]
+    ASSERT_EQ(x.ope_sb_c("key1").type(), sstd::num_str); // TEST Ope[] const
+    ASSERT_EQ(x.ope_sb_c("key2").type(), sstd::num_str); // TEST Ope[] const
+    
+    ASSERT_STREQ(x.ope_sb  ("key1").to<std::string>().c_str(), "val1"); // TEST Ope[]
+    ASSERT_STREQ(x.ope_sb  ("key2").to<std::string>().c_str(), "val1"); // TEST Ope[]
+    ASSERT_STREQ(x.ope_sb_c("key1").to<std::string>().c_str(), "val1"); // TEST Ope[] const
+    ASSERT_STREQ(x.ope_sb_c("key2").to<std::string>().c_str(), "val1"); // TEST Ope[] const
+    
+    ASSERT_EQ(x.ope_sb  ("key1").is_reference(), false); // TEST Ope[]
+    ASSERT_EQ(x.ope_sb  ("key2").is_reference(),  true); // TEST Ope[]
+    ASSERT_EQ(x.ope_sb_c("key1").is_reference(), false); // TEST Ope[] const
+    ASSERT_EQ(x.ope_sb_c("key2").is_reference(),  true); // TEST Ope[] const
+}
 
 //---
 

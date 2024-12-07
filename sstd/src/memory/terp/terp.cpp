@@ -395,7 +395,7 @@ void _fill_dependent_ref_null(sstd::terp::var* _pVar, void* _p, sstd::terp::srcr
 void _rm_dependent_ret_from_precedent_pSRCR_tbl(sstd::terp::var* _pVar, void* _p, sstd::terp::srcr_tbl* _pSRCR_tbl, const uint _type, const bool _is_reference){
     if(_is_reference==false || _pSRCR_tbl==NULL){ return; }
     
-    auto itr_ht = _pSRCR_tbl->find( (sstd::terp::var*)_p ); // _ht: hash table
+    auto itr_ht = _pSRCR_tbl->find( _pVar ); // _ht: hash table
     if(!(itr_ht!=_pSRCR_tbl->end())){ return; }
     
     std::unordered_set<sstd::terp::var*>& hash_set = itr_ht->second;
@@ -426,9 +426,9 @@ void _free_hash_terp_var(sstd::terp::var* _pVar, void* _p, const uint _type, con
 }
 void _free_val(sstd::terp::var* _pVar, void*& _p, sstd::terp::srcr_tbl* _pSRCR_tbl, const uint _type, const bool _is_reference){
     if(_p==NULL){ return; }
-    if(_is_reference==true){ return; }
     _fill_dependent_ref_null                  (_pVar, _p, _pSRCR_tbl, _type, _is_reference);
     _rm_dependent_ret_from_precedent_pSRCR_tbl(_pVar, _p, _pSRCR_tbl, _type, _is_reference);
+    if(_is_reference==true){ return; }
 
     switch (_type){
     case sstd::num_null    : {} break;
@@ -501,15 +501,16 @@ sstd::terp::var  sstd::terp::var::operator=(      sstd::terp::var&& rhs){
 sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var* pRhs){
     sstd::print_all("operator=(const sstd::terp::var* pRhs)");
     this->_is_reference = true;
-    this->_type         = pRhs->type();
-    this->_p            = pRhs->p();
-    (*pRhs->_pSRCR_tbl)[ (sstd::terp::var*)pRhs->p() ].insert( (sstd::terp::var*)this );
+    this->_type         =        pRhs->type();
+    this->_p            = (void*)pRhs;
+    (*pRhs->_pSRCR_tbl)[ (sstd::terp::var*)pRhs ].insert( (sstd::terp::var*)this );
     return *this;
 }
 
 template <typename T>
 void sstd::terp::var::_overwrite(T* ptr){
-    _free_val(this, _p, _pSRCR_tbl, _type, _is_reference); // TODO : fix
+    sstd::terp::var* candidate_of_precedentAds = (sstd::terp::var*)_p;
+    _free_val(candidate_of_precedentAds, _p, _pSRCR_tbl, _type, _is_reference); // TODO : fix
     this->_type = sstd::type2num(T());
     this->_p    = ptr;
 }
@@ -573,7 +574,7 @@ bool sstd::terp::var::operator!=(const sstd::terp::var& rhs){ return !sstd::terp
 
 #define _OPE_SUBSCRIPT_IDX_BASE()                                       \
     switch(_type){                                                      \
-    case sstd::num_vec_terp_var: { return *_CAST2VEC(this->_p)[idx]; } break; \
+    case sstd::num_vec_terp_var: { return *_CAST2VEC(_p)[idx]; } break; \
     default: { sstd::pdbg_err("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var takes \"sstd::terp::hash()\" type, but treat as a \"sstd::terp::list()\".\n"); } break; \
     }                                                                   \
     return *this;
@@ -598,8 +599,8 @@ bool sstd::terp::var::operator!=(const sstd::terp::var& rhs){ return !sstd::terp
     switch(_type){                                                      \
     case sstd::num_hash_terp_var: {                                     \
         sstd::terp::var* pVal = _CAST2HASH(_p)[pKey];                   \
-        if(pVal==NULL){ sstd::pdbg_err("Ope[](char*) is failed. NULL pointer detection error. pKey: `%s` is NOT allocated.\n", pKey); } \
-        return *this;                                                   \
+        if(pVal==NULL){ sstd::pdbg_err("Ope[](char*) is failed. NULL pointer detection error. pKey: `%s` is NOT allocated.\n", pKey); return *this; } \
+        return *pVal;                                                   \
     } break;                                                            \
     default: { sstd::pdbg_err("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var takes type number `%d`, but treat as a \"sstd::terp::hash()\".\n", _type); } break; \
     }                                                                   \
@@ -611,34 +612,39 @@ const sstd::terp::var& sstd::terp::var::operator[](const       char* pKey) const
       sstd::terp::var& sstd::terp::var::operator[](const std::string  key)       { _OPE_SUBSCRIPT_KEY_BASE      (key.c_str()); }
 const sstd::terp::var& sstd::terp::var::operator[](const std::string  key) const { _OPE_SUBSCRIPT_KEY_BASE_CONST(key.c_str()); }
 
+      sstd::terp::var& sstd::terp::var::ope_sb  (const int idx)       { return (*this)[idx]; }
+const sstd::terp::var& sstd::terp::var::ope_sb_c(const int idx) const { return (*this)[idx]; }
+      sstd::terp::var& sstd::terp::var::ope_sb  (const       char* pKey)       { return (*this)[pKey]; }
+const sstd::terp::var& sstd::terp::var::ope_sb_c(const       char* pKey) const { return (*this)[pKey]; }
+
 //---
 
-const sstd::terp::_v_iterator _v_begin(void* p_in){
-    return _CAST2VEC(p_in).begin();
+const sstd::terp::_v_iterator _v_begin(bool _is_reference, void* p_in){
+    return (! _is_reference) ? _CAST2VEC(p_in).begin() : _CAST2VEC(((sstd::terp::var*)p_in)->p()).begin();
 }
-const sstd::terp::_v_iterator _v_end(void* p_in){
-    return _CAST2VEC(p_in).end();
+const sstd::terp::_v_iterator _v_end  (bool _is_reference, void* p_in){
+    return (! _is_reference) ? _CAST2VEC(p_in).end()   : _CAST2VEC(((sstd::terp::var*)p_in)->p()).end();
 }
-const sstd::terp::_h_iterator _h_begin(void* p_in){
-    return _CAST2HASH(p_in).begin();
+const sstd::terp::_h_iterator _h_begin(bool _is_reference, void* p_in){
+    return (! _is_reference) ? _CAST2HASH(p_in).begin() : _CAST2HASH(((sstd::terp::var*)p_in)->p()).begin();
 }
-const sstd::terp::_h_iterator _h_end(void* p_in){
-    return _CAST2HASH(p_in).end();
+const sstd::terp::_h_iterator _h_end  (bool _is_reference, void* p_in){
+    return (! _is_reference) ? _CAST2HASH(p_in).end()   : _CAST2HASH(((sstd::terp::var*)p_in)->p()).end();
 }
 sstd::terp::iterator sstd::terp::var::begin() const {
     switch(_type){
-    case sstd::num_vec_terp_var:  { return sstd::terp::iterator(_v_begin(_p)); } break;
-    case sstd::num_hash_terp_var: { return sstd::terp::iterator(_h_begin(_p)); } break;
-    case sstd::num_null:             {} break;
+    case sstd::num_vec_terp_var:  { return sstd::terp::iterator(_v_begin(_is_reference, _p)); } break;
+    case sstd::num_hash_terp_var: { return sstd::terp::iterator(_h_begin(_is_reference, _p)); } break;
+    case sstd::num_null:          {} break;
     default: { sstd::pdbg_err("ERROR\n"); }
     }
     return sstd::terp::iterator();
 }
 sstd::terp::iterator sstd::terp::var::end() const {
     switch(_type){
-    case sstd::num_vec_terp_var:  { return sstd::terp::iterator(_v_end(_p)); } break;
-    case sstd::num_hash_terp_var: { return sstd::terp::iterator(_h_end(_p)); } break;
-    case sstd::num_null:             {} break;
+    case sstd::num_vec_terp_var:  { return sstd::terp::iterator(_v_end(_is_reference, _p)); } break;
+    case sstd::num_hash_terp_var: { return sstd::terp::iterator(_h_end(_is_reference, _p)); } break;
+    case sstd::num_null:          {} break;
     default: { sstd::pdbg_err("ERROR\n"); }
     }
     return sstd::terp::iterator();
