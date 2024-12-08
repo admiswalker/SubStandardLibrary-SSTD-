@@ -193,6 +193,7 @@ std::string _format(double rhs){
 sstd::terp::var::var():                       _type(sstd::num_null), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new sstd::terp::srcr_tbl()), _p(NULL) {}
 sstd::terp::var::var(const class var&   rhs): _type(sstd::num_null), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new sstd::terp::srcr_tbl()), _p(NULL) { copy(rhs); }
 sstd::terp::var::var(      class var&&  rhs): _type(sstd::num_null), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new sstd::terp::srcr_tbl()), _p(NULL) { free(); move(std::move(rhs)); }
+sstd::terp::var::var(const class var*  pRhs): _type(sstd::num_null), _is_reference(true ), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new sstd::terp::srcr_tbl()), _p(NULL) { _type=pRhs->type(); _p=(void*)pRhs; }
 sstd::terp::var::var(        bool       rhs): _type(sstd::num_null), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new sstd::terp::srcr_tbl()), _p(new std::string(rhs?"true":"false")) {}
 sstd::terp::var::var(        char       rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new sstd::terp::srcr_tbl()), _p(new std::string({rhs})) {}
 sstd::terp::var::var(        int8       rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new sstd::terp::srcr_tbl()), _p(new std::string(sstd::ssprintf("%d", rhs))) {}
@@ -352,10 +353,15 @@ void _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs){
                 vStack_copyDstAds_asRef_and_origRefAds,
                 tbl_copySrcAds_to_copyDstAds
                 );
+    sstd::printn_all(*pLhs);
+    sstd::printn_all(*pRhs);
 
     _copy_reference(vStack_copyDstAds_asRef_and_origRefAds,
                     tbl_copySrcAds_to_copyDstAds
                     );
+    sstd::printn_all(*pLhs);
+    sstd::printn_all(*pRhs);
+
 }
 void sstd::terp::var::copy(const class sstd::terp::var& rhs){
     _free_val(this, _p, _pSRCR_tbl, _type, _is_reference);
@@ -573,8 +579,10 @@ bool sstd::terp::var::operator==(const sstd::terp::var& rhs){ return  sstd::terp
 bool sstd::terp::var::operator!=(const sstd::terp::var& rhs){ return !sstd::terp::var::equal(rhs); }
 
 #define _OPE_SUBSCRIPT_IDX_BASE()                                       \
+    void* local_p = (! this->_is_reference) ? _p : (void*)((sstd::terp::var*)_p)->_p; \
+                                                                        \
     switch(_type){                                                      \
-    case sstd::num_vec_terp_var: { return *_CAST2VEC(_p)[idx]; } break; \
+    case sstd::num_vec_terp_var: { return *_CAST2VEC(local_p)[idx]; } break; \
     default: { sstd::pdbg_err("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var takes \"sstd::terp::hash()\" type, but treat as a \"sstd::terp::list()\".\n"); } break; \
     }                                                                   \
     return *this;
@@ -764,9 +772,11 @@ void sstd::terp::var::resize(uint len){
 }
 
 uint sstd::terp::var::size() const {
+    void* local_p = (! this->_is_reference) ? _p : (void*)((sstd::terp::var*)_p)->_p;
+    
     switch(_type){
-    case sstd::num_vec_terp_var : { return _CAST2VEC (_p).size(); } break;
-    case sstd::num_hash_terp_var: { return _CAST2HASH(_p).size(); } break;
+    case sstd::num_vec_terp_var : { return _CAST2VEC (local_p).size(); } break;
+    case sstd::num_hash_terp_var: { return _CAST2HASH(local_p).size(); } break;
     default: { sstd::pdbg_err("ERROR\n"); } break;
     }
     return 0;

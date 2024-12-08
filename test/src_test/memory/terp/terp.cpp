@@ -362,6 +362,24 @@ TEST(memory_terp, list_size_arg_10){
     a = sstd::terp::list(10);
     ASSERT_EQ(a.size(), (uint)10);
 }
+TEST(memory_terp, list_size_arg_null_REF){
+    sstd::terp::var a;
+    a = sstd::terp::list();
+    sstd::terp::var a_ref;
+    a_ref = &a;
+    sstd::printn_all(a.type());
+    sstd::printn_all(a_ref.type());
+    ASSERT_EQ(a_ref.size(), (uint)0);
+}
+TEST(memory_terp, list_size_arg_10_REF){
+    sstd::terp::var a;
+    a = sstd::terp::list(10);
+    sstd::terp::var a_ref;
+    a_ref = &a;
+    sstd::printn_all(a.type());
+    sstd::printn_all(a_ref.type());
+    ASSERT_EQ(a_ref.size(), (uint)10);
+}
 
 // typeNum()
 TEST(memory_terp, list_typeNum){
@@ -766,6 +784,22 @@ TEST(memory_terp, var_constructor_and_to_bool_err){
     
     ASSERT_TRUE(ret==false);
     ASSERT_TRUE(sstd::strIn("input string is not bool type.", ret_str.c_str()));
+}
+
+TEST(memory_terp, var_REF_constructor){
+    sstd::terp::var a = "test";
+    sstd::terp::var a_ref = &a; // TEST THIS LINE
+
+    ASSERT_EQ(a.is_reference(), false);
+    ASSERT_EQ(a_ref.is_reference(), true);
+    ASSERT_STREQ(a.to<std::string>().c_str(), "test");
+    ASSERT_STREQ(a_ref.to<std::string>().c_str(), "test");
+
+    a = "x";
+    ASSERT_EQ(a.is_reference(), false);
+    ASSERT_EQ(a_ref.is_reference(), true);
+    ASSERT_STREQ(a.to<std::string>().c_str(), "x");
+    ASSERT_STREQ(a_ref.to<std::string>().c_str(), "x");
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -1463,6 +1497,40 @@ TEST(memory_terp, var_ope_square_brackets_hash__REF){
     ASSERT_EQ(x.ope_sb  ("key2").is_reference(),  true); // TEST Ope[]
     ASSERT_EQ(x.ope_sb_c("key1").is_reference(), false); // TEST Ope[] const
     ASSERT_EQ(x.ope_sb_c("key2").is_reference(),  true); // TEST Ope[] const
+}
+
+//---
+
+TEST(memory_terp, list_ope_assign_with_reference__TMP){ // Ope=
+    sstd::terp::var a;
+    a = sstd::terp::list(2);
+    a[0] = sstd::terp::list(3);
+    a[0][0] = "a";
+    a[0][1] = "b";
+    a[0][2] = "c";
+    a[1] = &a[0];
+
+    ASSERT_EQ(a[0].is_reference(), false);
+    ASSERT_EQ(a[1].is_reference(), true );
+
+    sstd::printn_all("");
+    sstd::terp::var x = a; // TEST THIS LINE
+    sstd::printn_all("");
+    
+    sstd::printn_all(a);
+    sstd::printn_all(x);
+    
+    ASSERT_EQ(x[0].is_reference(), false);
+    ASSERT_EQ(x[1].is_reference(), true );
+
+    x[0][0]="x";
+    sstd::printn_all(a);
+    sstd::printn_all(x);
+    ASSERT_STREQ(a[0][0].to<std::string>().c_str(), "a");
+    ASSERT_STREQ(a[1][0].to<std::string>().c_str(), "a");
+    
+    ASSERT_STREQ(x[0][0].to<std::string>().c_str(), "x");
+    ASSERT_STREQ(x[1][0].to<std::string>().c_str(), "x");
 }
 
 //---

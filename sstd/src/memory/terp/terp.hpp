@@ -76,6 +76,7 @@ public:
     var();
     var(const class var&  rhs);
     var(      class var&& rhs);
+    var(const class var*  rhs);
     var(const bool         rhs);
     var(const char         rhs);
     var(const  int8        rhs);
