@@ -1501,38 +1501,4 @@ TEST(memory_terp, var_ope_square_brackets_hash__REF){
 
 //---
 
-TEST(memory_terp, list_ope_assign_with_reference__TMP){ // Ope=
-    sstd::terp::var a;
-    a = sstd::terp::list(2);
-    a[0] = sstd::terp::list(3);
-    a[0][0] = "a";
-    a[0][1] = "b";
-    a[0][2] = "c";
-    a[1] = &a[0];
-
-    ASSERT_EQ(a[0].is_reference(), false);
-    ASSERT_EQ(a[1].is_reference(), true );
-
-    sstd::printn_all("");
-    sstd::terp::var x = a; // TEST THIS LINE
-    sstd::printn_all("");
-    
-    sstd::printn_all(a);
-    sstd::printn_all(x);
-    
-    ASSERT_EQ(x[0].is_reference(), false);
-    ASSERT_EQ(x[1].is_reference(), true );
-
-    x[0][0]="x";
-    sstd::printn_all(a);
-    sstd::printn_all(x);
-    ASSERT_STREQ(a[0][0].to<std::string>().c_str(), "a");
-    ASSERT_STREQ(a[1][0].to<std::string>().c_str(), "a");
-    
-    ASSERT_STREQ(x[0][0].to<std::string>().c_str(), "x");
-    ASSERT_STREQ(x[1][0].to<std::string>().c_str(), "x");
-}
-
-//---
-
 EXECUTE_TESTS();

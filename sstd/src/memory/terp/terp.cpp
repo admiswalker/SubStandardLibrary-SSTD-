@@ -312,7 +312,7 @@ void _copy_value(
         
     }
 
-    tbl_copySrcAds_to_copyDstAds[ (sstd::terp::var*)pRhs->p() ] = (sstd::terp::var*)pLhs->p();
+    tbl_copySrcAds_to_copyDstAds[ (sstd::terp::var*)pRhs ] = (sstd::terp::var*)pLhs;
     
     return;
 }
@@ -322,6 +322,7 @@ void _copy_reference(
                      )
 {
     for(uint i=0; i<vStack_copyDstAds_asRef_and_origRefAds.size(); ++i){
+sstd::printn_all(i);
         
         // Update addresses
         sstd::terp::var* copyDstAds_asRef = std::get<0>( vStack_copyDstAds_asRef_and_origRefAds[i] );
@@ -340,7 +341,7 @@ void _copy_reference(
         }
         
         // Update _pSRCR_tbl
-        (*copyDstAds_asRef->pSRCR_tbl_RW())[ (sstd::terp::var*)copyDstAds_asRef->p() ].insert( copyDstAds_asRef );
+        (*copyDstAds_asRef->pSRCR_tbl_RW())[ (sstd::terp::var*)copyDstAds_asRef ].insert( copyDstAds_asRef );
     }
     
     return;
@@ -355,6 +356,8 @@ void _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs){
                 );
     sstd::printn_all(*pLhs);
     sstd::printn_all(*pRhs);
+    sstd::printn_all(vStack_copyDstAds_asRef_and_origRefAds);
+    sstd::printn_all(tbl_copySrcAds_to_copyDstAds);
 
     _copy_reference(vStack_copyDstAds_asRef_and_origRefAds,
                     tbl_copySrcAds_to_copyDstAds
