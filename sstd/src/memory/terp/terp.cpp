@@ -484,8 +484,7 @@ void sstd::terp::var::_free_SRCR_tbl(){
     }
 }
 void sstd::terp::var::free(){
-//    _fill_dependent_ref_null(this, _p, _pSRCR_tbl, _type, _is_reference);
-    _free_val               (this, _p, _pSRCR_tbl, _type, _is_reference);
+    _free_val(this, _p, _pSRCR_tbl, _type, _is_reference);
     sstd::terp::var::_free_SRCR_tbl();
 }
 
@@ -512,8 +511,7 @@ sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var* pRhs_in){
 
 template <typename T>
 void sstd::terp::var::_overwrite(T* ptr){
-    sstd::terp::var* candidate_of_precedentAds = (sstd::terp::var*)_p;
-    _free_val(candidate_of_precedentAds, _p, _pSRCR_tbl, _type, _is_reference); // TODO : fix
+    _free_val(this, _p, _pSRCR_tbl, _type, _is_reference);
     this->_type = sstd::type2num(T());
     this->_p    = ptr;
 }
