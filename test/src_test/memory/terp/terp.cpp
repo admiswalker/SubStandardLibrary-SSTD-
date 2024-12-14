@@ -1236,8 +1236,8 @@ TEST(memory_terp, _pSRCR_tbl_case2_1_overwrite_dependent_object_01){
     std::unordered_set<sstd::terp::var*>& val = itr->second;
     auto val_itr = val.begin();
     
-    ASSERT_EQ(key,       x[0][0].p());
-    ASSERT_EQ(*val_itr, &x[0][1]    );
+    ASSERT_EQ(key,      &x[0][0]);
+    ASSERT_EQ(*val_itr, &x[0][1]);
 }
 TEST(memory_terp, _pSRCR_tbl_case2_1_overwrite_dependent_object_02){
     sstd::terp::var x; // Precedent object
@@ -1450,6 +1450,7 @@ TEST(memory_terp, var_ope_square_brackets_hash__REF){
 }
 
 //---
+
 
 
 //---
