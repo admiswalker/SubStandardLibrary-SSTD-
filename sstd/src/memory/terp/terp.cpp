@@ -393,14 +393,17 @@ void _fill_dependent_ref_null(sstd::terp::var* _pVar, void* _p, sstd::terp::srcr
 
     _pSRCR_tbl->erase( itr_ht );
 }
-void _rm_dependent_ret_from_precedent_pSRCR_tbl(sstd::terp::var* _pVar, void* _p, sstd::terp::srcr_tbl* _pSRCR_tbl, const uint _type, const bool _is_reference){
-    if(_is_reference==false || _pSRCR_tbl==NULL){ return; }
+void _rm_dependent_ret_from_precedent_pSRCR_tbl(sstd::terp::var* _pVar_in, void* _p, sstd::terp::srcr_tbl* _pSRCR_tbl_in, const uint _type, const bool _is_reference){
+    if(_pSRCR_tbl_in==NULL){ return; }
+    
+    sstd::terp::var*      _pVar      = (!_is_reference) ? _pVar_in      : (sstd::terp::var*)_pVar_in->p();
+    sstd::terp::srcr_tbl* _pSRCR_tbl = (!_is_reference) ? _pSRCR_tbl_in :((sstd::terp::var*)_pVar_in->p())->pSRCR_tbl();
     
     auto itr_ht = _pSRCR_tbl->find( _pVar ); // _ht: hash table
     if(!(itr_ht!=_pSRCR_tbl->end())){ return; }
     
     std::unordered_set<sstd::terp::var*>& hash_set = itr_ht->second;
-    auto itr_hs = hash_set.find( _pVar );
+    auto itr_hs = hash_set.find( _pVar_in );
     if(!(itr_hs!=hash_set.end())){ return; }
     
     if(hash_set.size()==1){
@@ -429,7 +432,7 @@ void _free_val(sstd::terp::var* _pVar, void*& _p, sstd::terp::srcr_tbl* _pSRCR_t
     if(_p==NULL){ return; }
     _fill_dependent_ref_null                  (_pVar, _p, _pSRCR_tbl, _type, _is_reference); // A Process for the dependent object
     _rm_dependent_ret_from_precedent_pSRCR_tbl(_pVar, _p, _pSRCR_tbl, _type, _is_reference); // A Process for the precedent object
-    if(_is_reference==true){ return; }
+    if(_is_reference==true){ _pVar->type_RW()=sstd::num_null; _pVar->is_reference_RW()=false; _pVar->p_RW()=NULL; return; }
 
     switch (_type){
     case sstd::num_null    : {} break;
