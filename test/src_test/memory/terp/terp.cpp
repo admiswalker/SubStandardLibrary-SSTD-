@@ -1036,8 +1036,8 @@ TEST(memory_terp, copy_self_ref_list__ref){
     ASSERT_EQ(d[0].type(), s[0].type());
     ASSERT_EQ(d[1].type(), s[1].type());
 
-    ASSERT_NE(&d[0], &d[1]);
-    ASSERT_EQ(d[0].p(), d[1].p());
+    ASSERT_NE(&d[1], &d[0]);
+    ASSERT_EQ(d[1].p(), &d[0]);
 }
 
 TEST(memory_terp, copy_self_ref_hash){
@@ -1139,8 +1139,8 @@ TEST(memory_terp, resolve_double_reference){
 
     ASSERT_EQ(s[1].type(), s[0].type());
     ASSERT_EQ(s[2].type(), s[0].type());
-    ASSERT_EQ(s[1].p(), s[0].p());
-    ASSERT_EQ(s[2].p(), s[0].p());
+    ASSERT_EQ(s[1].p(), &s[0]);
+    ASSERT_EQ(s[2].p(), &s[0]);
 }
 
 //---
@@ -1154,7 +1154,7 @@ TEST(memory_terp, _pSRCR_tbl_case1_1_new_ref_by_hand){
     ASSERT_FALSE(s[0].is_reference());
     ASSERT_TRUE(s[1].is_reference());
     ASSERT_EQ(s[1].type(), s[0].type());
-    ASSERT_EQ(s[1].p(), s[0].p());
+    ASSERT_EQ(s[1].p(), &s[0]);
 
     ASSERT_TRUE(s.is_pSRCR_tbl_base());
     ASSERT_FALSE(s[0].is_pSRCR_tbl_base());
@@ -1163,7 +1163,7 @@ TEST(memory_terp, _pSRCR_tbl_case1_1_new_ref_by_hand){
     sstd::terp::srcr_tbl tbl = *s.pSRCR_tbl();
     
     ASSERT_EQ(tbl.size(), (uint)1);
-    auto itr = tbl.find( (sstd::terp::var*)s[0].p() ); // TEST THIS LINE
+    auto itr = tbl.find( (sstd::terp::var*)&s[0] ); // TEST THIS LINE
     ASSERT_TRUE(itr!=tbl.end());
 
     ASSERT_EQ(itr->second.size(), (uint)1);
@@ -1375,56 +1375,6 @@ TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_calle
 
 //---
 
-TEST(memory_terp, _pSRCR_tbl_case1_1_new_ref_by_hand___TMP){
-    sstd::terp::var s; // src
-    s = sstd::terp::list(2);
-    s[0] = "a";
-    s[1] = &s[0]; // TEST THIS LINE
-
-  sstd::printn_all(s);
-  sstd::printn_all("");
-  sstd::printn_all("");
-  
-  sstd::printn(s[0].p());
-  sstd::printn(s[1].p());
-  sstd::printn(&s[1]);
-  sstd::printn(*s.pSRCR_tbl());
-    
-    ASSERT_FALSE(s[0].is_reference());
-    ASSERT_TRUE(s[1].is_reference());
-    ASSERT_EQ(s[1].type(), s[0].type());
-    ASSERT_EQ(s[1].p(), s[0].p());
-
-    ASSERT_TRUE(s.is_pSRCR_tbl_base());
-    ASSERT_FALSE(s[0].is_pSRCR_tbl_base());
-    ASSERT_FALSE(s[1].is_pSRCR_tbl_base());
-    
-    sstd::terp::srcr_tbl tbl = *s.pSRCR_tbl();
-    
-    ASSERT_EQ(tbl.size(), (uint)1);
-    auto itr = tbl.find( (sstd::terp::var*)s[0].p() ); // TEST THIS LINE
-    ASSERT_TRUE(itr!=tbl.end());
-
-    ASSERT_EQ(itr->second.size(), (uint)1);
-    auto itr2 = itr->second.find( &s[1] ); // TEST THIS LINE
-    ASSERT_TRUE(itr2!=itr->second.end());
-
-//  sstd::printn(s[0].p());
-//  sstd::printn(s[1].p());
-//  sstd::printn(&s[1]);
-//  sstd::printn(*s.pSRCR_tbl());
-
-//  Example of the addresses dependency:
-//  
-//  s[0].p() = 0x55e9e8d5a570
-//  s[1].p() = 0x55e9e8d5a570
-//  &s[1] = 0x55e9e8d66e40
-//  *s.pSRCR_tbl() = { (key: 0x55e9e8d5a570, value: {0x55e9e8d66e40}) }
-//
-}
-
-//---
-
 // operator[]
 TEST(memory_terp, var_ope_square_brackets_list){
     sstd::terp::var x;
@@ -1498,6 +1448,9 @@ TEST(memory_terp, var_ope_square_brackets_hash__REF){
     ASSERT_EQ(x.ope_sb_c("key1").is_reference(), false); // TEST Ope[] const
     ASSERT_EQ(x.ope_sb_c("key2").is_reference(),  true); // TEST Ope[] const
 }
+
+//---
+
 
 //---
 

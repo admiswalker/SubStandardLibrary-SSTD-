@@ -322,7 +322,6 @@ void _copy_reference(
                      )
 {
     for(uint i=0; i<vStack_copyDstAds_asRef_and_origRefAds.size(); ++i){
-sstd::printn_all(i);
         
         // Update addresses
         sstd::terp::var* copyDstAds_asRef = std::get<0>( vStack_copyDstAds_asRef_and_origRefAds[i] );
@@ -354,17 +353,10 @@ void _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs){
                 vStack_copyDstAds_asRef_and_origRefAds,
                 tbl_copySrcAds_to_copyDstAds
                 );
-    sstd::printn_all(*pLhs);
-    sstd::printn_all(*pRhs);
-    sstd::printn_all(vStack_copyDstAds_asRef_and_origRefAds);
-    sstd::printn_all(tbl_copySrcAds_to_copyDstAds);
 
     _copy_reference(vStack_copyDstAds_asRef_and_origRefAds,
                     tbl_copySrcAds_to_copyDstAds
                     );
-    sstd::printn_all(*pLhs);
-    sstd::printn_all(*pRhs);
-
 }
 void sstd::terp::var::copy(const class sstd::terp::var& rhs){
     _free_val(this, _p, _pSRCR_tbl, _type, _is_reference);
@@ -389,7 +381,7 @@ void sstd::terp::var::move(      class sstd::terp::var&& rhs){
 void _fill_dependent_ref_null(sstd::terp::var* _pVar, void* _p, sstd::terp::srcr_tbl* _pSRCR_tbl, const uint _type, const bool _is_reference){
     if(_is_reference==true || _pSRCR_tbl==NULL){ return; }
 
-    auto itr_ht = _pSRCR_tbl->find( (sstd::terp::var*)_p ); // _ht: hash table
+    auto itr_ht = _pSRCR_tbl->find( (sstd::terp::var*)_pVar ); // _ht: hash table
     if(!(itr_ht!=_pSRCR_tbl->end())){ return; }
     
     std::unordered_set<sstd::terp::var*>& hash_set = itr_ht->second;
@@ -435,8 +427,8 @@ void _free_hash_terp_var(sstd::terp::var* _pVar, void* _p, const uint _type, con
 }
 void _free_val(sstd::terp::var* _pVar, void*& _p, sstd::terp::srcr_tbl* _pSRCR_tbl, const uint _type, const bool _is_reference){
     if(_p==NULL){ return; }
-    _fill_dependent_ref_null                  (_pVar, _p, _pSRCR_tbl, _type, _is_reference);
-    _rm_dependent_ret_from_precedent_pSRCR_tbl(_pVar, _p, _pSRCR_tbl, _type, _is_reference);
+    _fill_dependent_ref_null                  (_pVar, _p, _pSRCR_tbl, _type, _is_reference); // A Process for the dependent object
+    _rm_dependent_ret_from_precedent_pSRCR_tbl(_pVar, _p, _pSRCR_tbl, _type, _is_reference); // A Process for the precedent object
     if(_is_reference==true){ return; }
 
     switch (_type){
@@ -492,7 +484,7 @@ void sstd::terp::var::_free_SRCR_tbl(){
     }
 }
 void sstd::terp::var::free(){
-    _fill_dependent_ref_null(this, _p, _pSRCR_tbl, _type, _is_reference);
+//    _fill_dependent_ref_null(this, _p, _pSRCR_tbl, _type, _is_reference);
     _free_val               (this, _p, _pSRCR_tbl, _type, _is_reference);
     sstd::terp::var::_free_SRCR_tbl();
 }
@@ -507,8 +499,10 @@ sstd::terp::var  sstd::terp::var::operator=(      sstd::terp::var&& rhs){
     move(std::move(rhs));
     return *this;
 }
-sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var* pRhs){
+sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var* pRhs_in){
     sstd::print_all("operator=(const sstd::terp::var* pRhs)");
+
+    sstd::terp::var* pRhs = (! pRhs_in->is_reference()) ? (sstd::terp::var*)pRhs_in : (sstd::terp::var*)pRhs_in->p(); // resolve double reference
     this->_is_reference = true;
     this->_type         =        pRhs->type();
     this->_p            = (void*)pRhs;
