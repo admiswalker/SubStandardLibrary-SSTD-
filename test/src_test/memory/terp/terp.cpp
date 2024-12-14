@@ -1193,7 +1193,7 @@ TEST(memory_terp, _pSRCR_tbl_case1_2_new_ref_by_copy){
     d = s; // TEST THIS LINE
     
     ASSERT_EQ(d.pSRCR_tbl()->size(), (uint)1);
-    auto itr = d.pSRCR_tbl()->find( (sstd::terp::var*) d[0].p() ); // TEST THIS LINE
+    auto itr = d.pSRCR_tbl()->find( (sstd::terp::var*) &d[0] ); // TEST THIS LINE
     ASSERT_TRUE(itr != d.pSRCR_tbl()->end());
     
     ASSERT_EQ(itr->second.size(), (uint)1);

@@ -340,7 +340,7 @@ void _copy_reference(
         }
         
         // Update _pSRCR_tbl
-        (*copyDstAds_asRef->pSRCR_tbl_RW())[ (sstd::terp::var*)copyDstAds_asRef ].insert( copyDstAds_asRef );
+        (*copyDstAds_asRef->pSRCR_tbl_RW())[ (sstd::terp::var*)copyDstAds_asRef->p() ].insert( copyDstAds_asRef );
     }
     
     return;
