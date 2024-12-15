@@ -363,12 +363,14 @@ void sstd::terp::var::copy(const class sstd::terp::var& rhs){
     _copy_base(this, &rhs);
 }
 void sstd::terp::var::move(      class sstd::terp::var&& rhs){
+    _free_val(this, _p, _pSRCR_tbl, _type, _is_reference);
+    
     if(this->_is_pSRCR_tbl_base && rhs.is_pSRCR_tbl_base()){
-        this->_type = rhs.type(); rhs.type_RW() = sstd::num_null;
-        this->_p    = rhs.p();    rhs.p_RW()    = NULL;
-        
-        this->_is_pSRCR_tbl_base = true;    rhs.is_pSRCR_tbl_base_RW() = false;
-        this->_pSRCR_tbl = rhs.pSRCR_tbl(); rhs.pSRCR_tbl_RW()         = NULL;
+        std::swap(this->_type,              rhs.type_RW()             );
+        std::swap(this->_is_reference,      rhs.is_reference_RW()     );
+        std::swap(this->_is_pSRCR_tbl_base, rhs.is_pSRCR_tbl_base_RW());
+        std::swap(this->_pSRCR_tbl,         rhs.pSRCR_tbl_RW()        );
+        std::swap(this->_p,                 rhs.p_RW()                );
         
     }else{
         // Because of pSRCR_tbl is shareed amaong all the elements, 
