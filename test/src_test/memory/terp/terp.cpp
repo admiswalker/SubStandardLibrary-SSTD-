@@ -1220,7 +1220,14 @@ TEST(memory_terp, resolve_double_reference){
     ASSERT_EQ(s[2].p(), &s[0]);
 }
 
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// For the Reference Type
+// > Tests the _pSRCR_tbl behaviors.
+
 //---
+// CASE1: Making the New Reference / 新規に reference を張るとき
+//   1-1. User makes the regerence by their hand / ユーザが手動で reference を張るとき
+//   1-2. Copy the object with recerence / Reference を持つ sstd::terp::var object をコピーするとき
 
 TEST(memory_terp, _pSRCR_tbl_case1_1_new_ref_by_hand){
     sstd::terp::var s; // src
@@ -1292,6 +1299,17 @@ TEST(memory_terp, _pSRCR_tbl_case1_2_new_ref_by_copy){
 
 //---
 
+// CASE2: "Overwritten" or "Deletion" of Dependent object / Dependent object の「上書き」または「削除」
+//
+//   2-1. Overwritten the Dependent object / Dependent object が上書きされるとき
+//   2-2. Destructor of the Dependent object called / Dependent object のディストラクタが呼ばれるとき
+//     2-2-1. Out of scope / スコープから外れるとき
+//     2-2-2. Explicit delition / 明示的な削除
+//   2-3. Deletion of the Dependent object / Dependent object のディストラクタが呼ばれるとき
+//     2-3-1. `.pop_back()` at list type / list 型の .pop_back()
+//     2-3-2. `.resize()` at list type / list 型の .resize()
+//     2-3-3. `.erase()` at hash type / hash 型の .erase()
+
 TEST(memory_terp, _pSRCR_tbl_case2_1_overwrite_dependent_object_01){
     sstd::terp::var x; // Precedent object
     x = sstd::terp::list(2);
@@ -1322,15 +1340,6 @@ TEST(memory_terp, _pSRCR_tbl_case2_1_overwrite_dependent_object_02){
     
     sstd::terp::var y; // Dependent object
     
-    sstd::printn_all(x);
-    sstd::printn_all(y);
-    sstd::printn_all(&x);
-    sstd::printn_all(&y);
-    sstd::printn_all(x.p());
-    sstd::printn_all(y.p());
-    sstd::printn(*x.pSRCR_tbl());
-    sstd::printn(*y.pSRCR_tbl());
-    
     y = &x;
     
     ASSERT_STREQ(x.to<std::string>().c_str(), "a");
@@ -1352,27 +1361,7 @@ TEST(memory_terp, _pSRCR_tbl_case2_1_overwrite_dependent_object_02){
     auto itr2 = itr->second.find( &y ); // TEST THIS LINE
     ASSERT_TRUE(itr2!=itr->second.end());
 
-    sstd::printn_all(x);
-    sstd::printn_all(y);
-    sstd::printn_all(&x);
-    sstd::printn_all(&y);
-    sstd::printn_all(x.p());
-    sstd::printn_all(y.p());
-    sstd::printn(*x.pSRCR_tbl());
-    sstd::printn(*y.pSRCR_tbl());
-    
     y = "overwritten"; // TEST THIS LINE
-    
-    sstd::printn(*x.pSRCR_tbl());
-    sstd::printn(*y.pSRCR_tbl());
-    sstd::printn(&x);
-    sstd::printn(x.is_reference());
-    sstd::printn(x.p());
-    sstd::printn(&y);
-    sstd::printn(y.is_reference());
-    sstd::printn(y.p());
-    sstd::printn_all(x);
-    sstd::printn_all(y);
     
     ASSERT_STREQ(x.to<std::string>().c_str(), "a");
     ASSERT_STREQ(y.to<std::string>().c_str(), "overwritten");
@@ -1383,13 +1372,76 @@ TEST(memory_terp, _pSRCR_tbl_case2_1_overwrite_dependent_object_02){
     ASSERT_NE(x.p(), (void*)NULL);
     ASSERT_NE(y.p(), (void*)NULL);
 }
-TEST(memory_terp, _pSRCR_tbl_case2_2_destructor_of_the_dependent_object_is_called_1_out_of_scope){}
-TEST(memory_terp, _pSRCR_tbl_case2_2_destructor_of_the_dependent_object_is_called_2_explicit_delete){}
+TEST(memory_terp, _pSRCR_tbl_case2_2_destructor_of_the_dependent_object_is_called_1_out_of_scope){
+    sstd::terp::var x; // Precedent object
+    x = "a";
+    
+    {
+        sstd::terp::var y; // Dependent object
+        y = &x; // Cross variable reference
+
+        ASSERT_TRUE(x.is_reference()==false);
+        ASSERT_TRUE(y.is_reference()==true );
+        
+        ASSERT_STREQ(x.to<std::string>().c_str(), "a");
+        ASSERT_STREQ(y.to<std::string>().c_str(), "a");
+
+        ASSERT_NE(x.p(), (void*)NULL);
+        ASSERT_NE(y.p(), (void*)NULL);
+        
+        ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)1);
+        ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)0);
+        
+    } // y will be deleted. -> x.pSRCR_tbl() will be cleared.
+
+    ASSERT_STREQ(x.to<std::string>().c_str(), "a");
+    ASSERT_NE(x.p(), (void*)NULL);
+    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)0); // checks the x.pSRCR_tbl() is cleared.
+    ASSERT_TRUE(x.is_reference()==false);
+}
+TEST(memory_terp, _pSRCR_tbl_case2_2_destructor_of_the_dependent_object_is_called_2_explicit_delete){
+    sstd::terp::var x; // Dependent object
+
+    //---
+
+    sstd::terp::var* pY = new sstd::terp::var(); // Precedent object
+    (*pY) = "a";
+    x = &(*pY); // Cross variable reference
+    
+    ASSERT_TRUE((*pY).is_reference()==false);
+    ASSERT_TRUE(x.is_reference()==true );
+        
+    ASSERT_STREQ((*pY).to<std::string>().c_str(), "a");
+    ASSERT_STREQ(x.to<std::string>().c_str(), "a");
+
+    ASSERT_EQ((*pY).pSRCR_tbl()->size(), (uint)1);
+    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)0);
+    
+    ASSERT_NE(x.p(), (void*)NULL);
+    delete pY; // *pY will be deleted. -> x.p() will be filled with NULL.
+
+    //---
+    
+    ASSERT_EQ(x.p(), (void*)NULL); // checks the y.p() is the null filled.
+    ASSERT_TRUE(x.is_reference()==false);
+    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)0);
+}
 TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_1_list_pop_back){}
 TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_2_list_resize){}
 TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_3_hash_erase){}
 
 //---
+
+// CASE3: "Overwritten" or "Deletion" of Precedent object / Precedent object の「上書き」または「削除」
+//
+//   3-1. Overwritten the Precedent object / Precedent object が上書きされるとき
+//   3-2. Destructor of the Precedent object called / Precedent object のディストラクタが呼ばれるとき
+//     3-2-1. Out of scope / スコープから外れるとき
+//     3-2-2. Explicit delition / 明示的な削除
+//   3-3. Deletion of the Precedent object / Dependent object のディストラクタが呼ばれるとき
+//     3-3-1. `.pop_back()` at list type / list 型の .pop_back()
+//     3-3-2. `.resize()` at list type / list 型の .resize()
+//     3-3-3. `.erase()` at hash type / hash 型の .erase()
 
 TEST(memory_terp, _pSRCR_tbl_case3_1_overwrite_precedent_object_01){}
 TEST(memory_terp, _pSRCR_tbl_case3_1_overwrite_precedent_object_02){
@@ -1464,7 +1516,7 @@ TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_calle
 TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_2_list_resize){}
 TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_3_hash_erase){}
 
-//---
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 
 //---
