@@ -1302,9 +1302,9 @@ TEST(memory_terp, _pSRCR_tbl_case1_2_new_ref_by_copy){
 // CASE2: "Overwritten" or "Deletion" of Dependent object / Dependent object の「上書き」または「削除」
 //
 //   2-1. Overwritten the Dependent object / Dependent object が上書きされるとき
-//     2-1-1. Overwritten by `char*`
-//     2-1-2. Overwritten by `var&`
-//     2-1-2. Overwritten by `var&&`
+//     2-1-1. Overwritten by `operator=(char*)`
+//     2-1-2. Overwritten by `operator=(var&)`
+//     2-1-2. Overwritten by `operator=(var&&)`
 //   2-2. Destructor of the Dependent object called / Dependent object のディストラクタが呼ばれるとき
 //     2-2-1. Out of scope / スコープから外れるとき
 //     2-2-2. Explicit delition / 明示的な削除
@@ -1313,7 +1313,7 @@ TEST(memory_terp, _pSRCR_tbl_case1_2_new_ref_by_copy){
 //     2-3-2. `.resize()` at list type / list 型の .resize()
 //     2-3-3. `.erase()` at hash type / hash 型の .erase()
 
-TEST(memory_terp, _pSRCR_tbl_case2_1_overwrite_dependent_object_1_01){
+TEST(memory_terp, _pSRCR_tbl_case2_1_overwrite_dependent_object_1_01){ // operator=(char*)
     sstd::terp::var x; // Precedent object
     x = sstd::terp::list(2);
     x[0] = sstd::terp::list(2);
@@ -1518,6 +1518,9 @@ TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_calle
 // CASE3: "Overwritten" or "Deletion" of Precedent object / Precedent object の「上書き」または「削除」
 //
 //   3-1. Overwritten the Precedent object / Precedent object が上書きされるとき
+//     3-1-1. Overwritten by `operator=(char*)`
+//     3-1-2. Overwritten by `operator=(var&)`
+//     3-1-2. Overwritten by `operator=(var&&)`
 //   3-2. Destructor of the Precedent object called / Precedent object のディストラクタが呼ばれるとき
 //     3-2-1. Out of scope / スコープから外れるとき
 //     3-2-2. Explicit delition / 明示的な削除
@@ -1526,10 +1529,31 @@ TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_calle
 //     3-3-2. `.resize()` at list type / list 型の .resize()
 //     3-3-3. `.erase()` at hash type / hash 型の .erase()
 
-TEST(memory_terp, _pSRCR_tbl_case3_1_overwrite_precedent_object_01){
+TEST(memory_terp, _pSRCR_tbl_case3_1_overwrite_precedent_object_1_01){ // operator=(char*)
+    sstd::terp::var x; // Precedent object
+    x = sstd::terp::list(2);
+    x[0] = sstd::terp::list(2);
+    x[0][0] = "a";
+    x[0][1] = &x[0][0];
+    x[1] = sstd::terp::list(2);
+    x[1][0] = "b";
+    x[1][1] = &x[1][0];
+
+    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)2);
     
+    x[0] = "overwritten"; // TEST THIS LINE
+    
+    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)1);
+
+    auto itr = x.pSRCR_tbl()->begin();
+    sstd::terp::var*                      key = itr->first;
+    std::unordered_set<sstd::terp::var*>& val = itr->second;
+    auto val_itr = val.begin();
+    
+    ASSERT_EQ(key,      &x[1][0]);
+    ASSERT_EQ(*val_itr, &x[1][1]);
 }
-TEST(memory_terp, _pSRCR_tbl_case3_1_overwrite_precedent_object_02){
+TEST(memory_terp, _pSRCR_tbl_case3_1_overwrite_precedent_object_1_02){ // operator=(char*)
     sstd::terp::var x; // Precedent object
     x = "a";
     
@@ -1552,6 +1576,84 @@ TEST(memory_terp, _pSRCR_tbl_case3_1_overwrite_precedent_object_02){
     ASSERT_FALSE(y.is_reference());
     ASSERT_NE(x.p(), (void*)0);
     ASSERT_EQ(y.p(), (void*)0);
+}
+TEST(memory_terp, _pSRCR_tbl_case3_1_overwrite_precedent_object_2){ // operator=(var&)
+    sstd::terp::var x; // Precedent object
+    x = "a";
+    sstd::terp::var x2; // Precedent object
+    x2 = "overwritten";
+    
+    sstd::terp::var y; // Dependent object
+    
+    y = &x;
+    
+    ASSERT_STREQ(x.to<std::string>().c_str(), "a");
+    ASSERT_STREQ(y.to<std::string>().c_str(), "a");
+    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)1);
+    ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)0);
+    ASSERT_FALSE(x.is_reference());
+    ASSERT_TRUE (y.is_reference());
+    ASSERT_NE(x.p(), (void*)NULL);
+    ASSERT_NE(y.p(), (void*)NULL);
+    
+    sstd::terp::srcr_tbl tbl = *x.pSRCR_tbl();
+    
+    ASSERT_EQ(tbl.size(), (uint)1);
+    auto itr = tbl.find( (sstd::terp::var*)&x ); // TEST THIS LINE
+    ASSERT_TRUE(itr!=tbl.end());
+    
+    ASSERT_EQ(itr->second.size(), (uint)1);
+    auto itr2 = itr->second.find( &y ); // TEST THIS LINE
+    ASSERT_TRUE(itr2!=itr->second.end());
+    
+    x = x2; // TEST THIS LINE
+    
+    ASSERT_STREQ(x.to<std::string>().c_str(), "overwritten");
+    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)0);
+    ASSERT_FALSE(x.is_reference());
+    ASSERT_FALSE(y.is_reference());
+    ASSERT_NE(x.p(), (void*)NULL);
+    ASSERT_EQ(y.p(), (void*)NULL); // checks y was filled with NULL by the overwritten.
+    ASSERT_EQ(y.type(), sstd::num_null);
+}
+TEST(memory_terp, _pSRCR_tbl_case3_1_overwrite_precedent_object_3){ // operator=(var&&)
+    sstd::terp::var x; // Precedent object
+    x = "a";
+    sstd::terp::var x2; // Precedent object
+    x2 = "overwritten";
+    
+    sstd::terp::var y; // Dependent object
+    
+    y = &x;
+    
+    ASSERT_STREQ(x.to<std::string>().c_str(), "a");
+    ASSERT_STREQ(y.to<std::string>().c_str(), "a");
+    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)1);
+    ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)0);
+    ASSERT_FALSE(x.is_reference());
+    ASSERT_TRUE (y.is_reference());
+    ASSERT_NE(x.p(), (void*)NULL);
+    ASSERT_NE(y.p(), (void*)NULL);
+    
+    sstd::terp::srcr_tbl tbl = *x.pSRCR_tbl();
+    
+    ASSERT_EQ(tbl.size(), (uint)1);
+    auto itr = tbl.find( (sstd::terp::var*)&x ); // TEST THIS LINE
+    ASSERT_TRUE(itr!=tbl.end());
+    
+    ASSERT_EQ(itr->second.size(), (uint)1);
+    auto itr2 = itr->second.find( &y ); // TEST THIS LINE
+    ASSERT_TRUE(itr2!=itr->second.end());
+    
+    x = std::move(x2); // TEST THIS LINE
+    
+    ASSERT_STREQ(x.to<std::string>().c_str(), "overwritten");
+    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)0);
+    ASSERT_FALSE(x.is_reference());
+    ASSERT_FALSE(y.is_reference());
+    ASSERT_NE(x.p(), (void*)NULL);
+    ASSERT_EQ(y.p(), (void*)NULL); // checks y was filled with NULL by the overwritten.
+    ASSERT_EQ(y.type(), sstd::num_null);
 }
 TEST(memory_terp, _pSRCR_tbl_case3_2_destructor_of_the_precedent_object_is_called_1_out_of_scope){
     sstd::terp::var y; // Dependent object
