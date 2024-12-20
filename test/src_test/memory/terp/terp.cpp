@@ -1494,12 +1494,14 @@ TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_calle
     ASSERT_EQ(x.size(), (uint)1);               \
     ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)1);  \
     ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)0);  \
+    ASSERT_NE(y.p(), (void*)NULL);              \
                                                 \
     x.CLASS_METHOD; /* TEST THIS LINE */        \
                                                 \
     ASSERT_EQ(x.size(), (uint)0);               \
     ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)0);  \
-    ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)0);
+    ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)0);  \
+    ASSERT_EQ(y.p(), (void*)NULL);
 TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_1_list_pop_back__CR){ TEST_OPE_CR(pop_back()); }
 TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_2_list_resize__CR  ){ TEST_OPE_CR(resize(0)); }
 #undef TEST_OPE_CR
@@ -1515,12 +1517,14 @@ TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_calle
     ASSERT_EQ(x.size(), (uint)1);
     ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)1);
     ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)0);
+    ASSERT_NE(y.p(), (void*)NULL);
     
     x.erase("key1"); // TEST THIS LINE
     
     ASSERT_EQ(x.size(), (uint)0);
     ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)0);
     ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)0);
+    ASSERT_EQ(y.p(), (void*)NULL);
 }
 
 //---
