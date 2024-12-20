@@ -345,7 +345,27 @@ void _copy_reference(
     
     return;
 }
-void _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs){
+void _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs, const char opt_a, const char opt_i, const char opt_e){
+    //  Table. Parameter settings for opt variables (opt_a, opt_i, opt_e).
+    // ┌─────────────────────────┬────────────────────────────────┐
+    // │                         │ Setting of the opts (*1)       │
+    // │                         │                                │
+    // │                         │ Copying object type is:        │
+    // │                         │ Actual │ Internal  │ External  │
+    // │ Copy function name      │ object │ reference │ reference │
+    // ├─────────────────────────┼────────────────────────────────┤
+    // │ sstd::terp::copy()      │    o   │     i     │     e     │
+    // ├─────────────────────────┼────────────────────────────────┤
+    // │ sstd::terp::ref_copy()  │    o   │     e     │     e     │
+    // ├─────────────────────────┼────────────────────────────────┤
+    // │ sstd::terp::deep_copy() │    o   │     o     │     o     │
+    // └─────────────────────────┴────────────────────────────────┘
+    // *1. pOpt:
+    //       o: copy as an object
+    //       i: copy as an internal reference (Constructing an internal reference structure)
+    //       e: copy as an external reference
+    
+    _free_val(pLhs, pLhs->p_RW(), pLhs->pSRCR_tbl_RW(), pLhs->type_RW(), pLhs->is_reference_RW());
     
     std::vector<std::tuple<sstd::terp::var*,sstd::terp::var*,uint>> vStack_copyDstAds_asRef_and_origRefAds;
     std::unordered_map<sstd::terp::var*,sstd::terp::var*> tbl_copySrcAds_to_copyDstAds;
@@ -358,10 +378,9 @@ void _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs){
                     tbl_copySrcAds_to_copyDstAds
                     );
 }
-void sstd::terp::var::copy(const class sstd::terp::var& rhs){
-    _free_val(this, _p, _pSRCR_tbl, _type, _is_reference);
-    _copy_base(this, &rhs);
-}
+void sstd::terp::var::copy(const class sstd::terp::var& rhs){ _copy_base(this, &rhs, 'o', 'i', 'e'); }
+void sstd::terp::var::copy(const class sstd::terp::var& rhs, const char opt_a, const char opt_i, const char opt_e){ _copy_base(this, &rhs, opt_a, opt_i, opt_e); }
+
 void sstd::terp::var::move(      class sstd::terp::var&& rhs){
     _free_val(this, _p, _pSRCR_tbl, _type, _is_reference);
     

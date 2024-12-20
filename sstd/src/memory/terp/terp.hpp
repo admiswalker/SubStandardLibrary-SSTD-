@@ -112,11 +112,11 @@ public:
     //---
     // common
     
-    //void _fill_ref_src_null(sstd::terp::var* rhs);
     void _fill_ref_src_null(const std::unordered_set<sstd::terp::var*>& hash_set);
     void _fillout_ref_src_null();
 
     void copy(const class sstd::terp::var&  rhs);
+    void copy(const class sstd::terp::var&  rhs, const char opt_a, const char opt_i, const char opt_e);
     void move(      class sstd::terp::var&& rhs);
     
     //void _fill_dependent_ref_null();
