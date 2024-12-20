@@ -511,6 +511,8 @@ sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var* pRhs_in){
     this->_type         =        pRhs->type();
     this->_p            = (void*)pRhs;
     (*pRhs->_pSRCR_tbl)[ (sstd::terp::var*)pRhs ].insert( (sstd::terp::var*)this );
+    sstd::printn_all(*pRhs->_pSRCR_tbl);
+    sstd::printn_all(pRhs->_pSRCR_tbl);
     return *this;
 }
 
@@ -590,14 +592,14 @@ bool sstd::terp::var::operator!=(const sstd::terp::var& rhs){ return !sstd::terp
     switch(_type){                                                      \
     case sstd::num_hash_terp_var: {                                     \
         sstd::terp::var** ppVal = &(_CAST2HASH(_p)[pKey]);              \
-        if(*ppVal==NULL){ (*ppVal)=new sstd::terp::var(); }             \
+        if(*ppVal==NULL){ (*ppVal)=new sstd::terp::var(_pSRCR_tbl); }   \
         return **ppVal;                                                 \
     } break;                                                            \
     case sstd::num_null: {                                              \
         _type = sstd::num_hash_terp_var;                                \
         _p    = new std::unordered_map<std::string, sstd::terp::var*>(); \
         sstd::terp::var** ppVal = &(_CAST2HASH(_p)[pKey]);              \
-        (*ppVal)=new sstd::terp::var();                                 \
+        (*ppVal)=new sstd::terp::var(_pSRCR_tbl);                       \
         return **ppVal;                                                 \
     } break;                                                            \
     default: { sstd::pdbg_err("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var takes type number `%d`, but treat as a \"sstd::terp::hash()\".\n", _type); } break; \

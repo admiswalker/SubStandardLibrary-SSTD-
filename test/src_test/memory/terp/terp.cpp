@@ -1341,7 +1341,6 @@ TEST(memory_terp, _pSRCR_tbl_case2_1_overwrite_dependent_object_1_02){ // operat
     x = "a";
     
     sstd::terp::var y; // Dependent object
-    
     y = &x;
     
     ASSERT_STREQ(x.to<std::string>().c_str(), "a");
@@ -1382,7 +1381,6 @@ TEST(memory_terp, _pSRCR_tbl_case2_1_overwrite_dependent_object_1_02){ // operat
     x2 = "overwritten";                                                 \
                                                                         \
     sstd::terp::var y; /* Dependent object */                           \
-                                                                        \
     y = &x;                                                             \
                                                                         \
     ASSERT_STREQ(x.to<std::string>().c_str(), "a");                     \
@@ -1485,7 +1483,7 @@ TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_calle
     ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)0);
 }
 
-#define CR_OPE(CLASS_METHOD)                    \
+#define TEST_OPE_CR(CLASS_METHOD)               \
     sstd::terp::var x; /* Precedent object */   \
     x = sstd::terp::list(1);                    \
     x[0] = "a";                                 \
@@ -1502,11 +1500,28 @@ TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_calle
     ASSERT_EQ(x.size(), (uint)0);               \
     ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)0);  \
     ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)0);
-TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_1_list_pop_back__CR){ CR_OPE(pop_back()); }
-TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_2_list_resize__CR){ CR_OPE(resize(0)); }
-#undef CR_OPE
+TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_1_list_pop_back__CR){ TEST_OPE_CR(pop_back()); }
+TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_2_list_resize__CR  ){ TEST_OPE_CR(resize(0)); }
+#undef TEST_OPE_CR
 
-TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_3_hash_erase__CR){}
+TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_3_hash_erase__CR){
+    sstd::terp::var x; // Precedent object
+    x = sstd::terp::hash();
+    x["key1"] = "val1";
+    
+    sstd::terp::var y; // Dependent object
+    y = &x["key1"];
+    
+    ASSERT_EQ(x.size(), (uint)1);
+    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)1);
+    ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)0);
+    
+    x.erase("key1"); // TEST THIS LINE
+    
+    ASSERT_EQ(x.size(), (uint)0);
+    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)0);
+    ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)0);
+}
 
 //---
 // CASE3: "Overwritten" or "Deletion" of Precedent object / Precedent object の「上書き」または「削除」
@@ -1552,7 +1567,6 @@ TEST(memory_terp, _pSRCR_tbl_case3_1_overwrite_precedent_object_1_02){ // operat
     x = "a";
     
     sstd::terp::var y; // Dependent object
-    
     y = &x;
     
     ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)1);
@@ -1568,8 +1582,8 @@ TEST(memory_terp, _pSRCR_tbl_case3_1_overwrite_precedent_object_1_02){ // operat
     ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)0);
     ASSERT_FALSE(x.is_reference());
     ASSERT_FALSE(y.is_reference());
-    ASSERT_NE(x.p(), (void*)0);
-    ASSERT_EQ(y.p(), (void*)0);
+    ASSERT_NE(x.p(), (void*)NULL);
+    ASSERT_EQ(y.p(), (void*)NULL);
 }
 
 #define TEST_COPY_OR_MOVE_OPE(COPY_OR_MOVE_OPE)                         \
@@ -1579,7 +1593,6 @@ TEST(memory_terp, _pSRCR_tbl_case3_1_overwrite_precedent_object_1_02){ // operat
     x2 = "overwritten";                                                 \
                                                                         \
     sstd::terp::var y; /* Dependent object */                           \
-                                                                        \
     y = &x;                                                             \
                                                                         \
     ASSERT_STREQ(x.to<std::string>().c_str(), "a");                     \
@@ -1695,7 +1708,24 @@ TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_calle
 TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_2_list_resize__CR  ){ TEST_OPE_CR(resize(0) ); }
 #undef TEST_OPE_CR
 
-TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_3_hash_erase__CR){}
+TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_3_hash_erase__CR){
+    sstd::terp::var x; // Precedent object
+    x = "a";
+    
+    sstd::terp::var y; // Dependent object
+    y = sstd::terp::hash();
+    y["key1"] = &x;
+    
+    ASSERT_EQ(y.size(), (uint)1);
+    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)1);
+    ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)0);
+    
+    y.erase("key1"); // TEST THIS LINE
+    
+    ASSERT_EQ(y.size(), (uint)0);
+    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)0);
+    ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)0);
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
