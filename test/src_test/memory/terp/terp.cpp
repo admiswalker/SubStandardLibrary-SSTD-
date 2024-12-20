@@ -1298,7 +1298,6 @@ TEST(memory_terp, _pSRCR_tbl_case1_2_new_ref_by_copy){
 }
 
 //---
-
 // CASE2: "Overwritten" or "Deletion" of Dependent object / Dependent object の「上書き」または「削除」
 //
 //   2-1. Overwritten the Dependent object / Dependent object が上書きされるとき
@@ -1509,12 +1508,24 @@ TEST(memory_terp, _pSRCR_tbl_case2_2_destructor_of_the_dependent_object_is_calle
     ASSERT_TRUE(x.is_reference()==false);
     ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)0);
 }
-TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_1_list_pop_back){}
+TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_1_list_pop_back__SR){
+    sstd::terp::var x; // Precedent object
+    x = sstd::terp::list(2);
+    x[0] = "a";
+    x[1] = &x[0];
+
+    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)1);
+    
+    x.pop_back(); // TEST THIS LINE
+
+    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)0);
+}
+TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_1_list_pop_back__CR){
+}
 TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_2_list_resize){}
 TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_3_hash_erase){}
 
 //---
-
 // CASE3: "Overwritten" or "Deletion" of Precedent object / Precedent object の「上書き」または「削除」
 //
 //   3-1. Overwritten the Precedent object / Precedent object が上書きされるとき
@@ -1699,7 +1710,22 @@ TEST(memory_terp, _pSRCR_tbl_case3_2_destructor_of_the_precedent_object_is_calle
     ASSERT_EQ(y.p(), (void*)NULL); // checks the y.p() is the null filled.
     ASSERT_TRUE(y.is_reference()==false);
 }
-TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_1_list_pop_back){}
+TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_1_list_pop_back__SR){
+    sstd::terp::var x; // Precedent object
+    x = sstd::terp::list(2);
+    x[1] = "a";
+    x[0] = &x[1];
+
+    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)1);
+    
+    x.pop_back(); // TEST THIS LINE
+
+    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)0);
+    ASSERT_EQ(x[0].p(), (void*)NULL);
+    ASSERT_EQ(x[0].is_reference(), false);
+}
+TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_1_list_pop_back__CR){
+}
 TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_2_list_resize){}
 TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_3_hash_erase){}
 
