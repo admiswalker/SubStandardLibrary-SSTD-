@@ -1521,6 +1521,20 @@ TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_calle
     ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)0);
 }
 TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_1_list_pop_back__CR){
+    sstd::terp::var x; // Precedent object
+    x = sstd::terp::list(1);
+    x[0] = "a";
+
+    sstd::terp::var y; // Dependent object
+    y = &x[0];
+
+    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)1);
+    ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)0);
+    
+    x.pop_back(); // TEST THIS LINE
+
+    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)0);
+    ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)0);
 }
 TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_2_list_resize){}
 TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_3_hash_erase){}
@@ -1725,6 +1739,20 @@ TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_calle
     ASSERT_EQ(x[0].is_reference(), false);
 }
 TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_1_list_pop_back__CR){
+    sstd::terp::var x; // Precedent object
+    x = "a";
+    
+    sstd::terp::var y; // Dependent object
+    y = sstd::terp::list(1);
+    y[0] = &x;
+
+    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)1);
+    ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)0);
+    
+    y.pop_back(); // TEST THIS LINE
+
+    ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)0);
+    ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)0);
 }
 TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_2_list_resize){}
 TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_3_hash_erase){}
