@@ -34,8 +34,8 @@ namespace sstd::terp{
     bool isValue(const sstd::terp::var& rhs);
 
     // copy
-    //bool copy();
-    //bool ref_copy();
+    bool copy     (sstd::terp::var& lhs, const sstd::terp::var& rhs);
+    bool eRef_copy(sstd::terp::var& lhs, const sstd::terp::var& rhs);
     bool deep_copy(sstd::terp::var& lhs, const sstd::terp::var& rhs);
     
     // type name

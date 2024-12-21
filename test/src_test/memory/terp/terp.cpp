@@ -1121,6 +1121,170 @@ TEST(memory_terp, copy_self_ref_hash){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// For the Reference Type: `sstd::terp::copy()`
+
+TEST(memory_terp, terp__copy){
+    sstd::terp::var s; // src
+    s = sstd::terp::list(2);
+    s[0] = sstd::terp::list(3);
+    s[0][0] = "a";
+    s[0][1] = "b";
+    s[0][2] = "c";
+    s[1] = &s[0];
+    //sstd::printn_all(x);
+    
+    sstd::terp::var d; // dst
+    bool tf = sstd::terp::copy(d, s); // TEST THIS LINE
+    
+    ASSERT_EQ(s.pSRCR_tbl()->size(), (uint)1);
+    ASSERT_EQ(d.pSRCR_tbl()->size(), (uint)1);
+
+    ASSERT_EQ(d[0].is_reference(), false);
+    ASSERT_EQ(d[1].is_reference(), true );
+    
+    ASSERT_EQ(d.size(), (uint)2);
+    ASSERT_EQ(d[0].size(), (uint)3);
+    ASSERT_EQ(d[1].size(), (uint)3);
+    ASSERT_STREQ(d[0][0].to<std::string>().c_str(), "a");
+    ASSERT_STREQ(d[0][1].to<std::string>().c_str(), "b");
+    ASSERT_STREQ(d[0][2].to<std::string>().c_str(), "c");
+    ASSERT_STREQ(d[1][0].to<std::string>().c_str(), "a");
+    ASSERT_STREQ(d[1][1].to<std::string>().c_str(), "b");
+    ASSERT_STREQ(d[1][2].to<std::string>().c_str(), "c");
+}
+
+//---
+
+TEST(memory_terp, terp__eRef_copy__internal_ref){
+    sstd::terp::var x;
+    x = sstd::terp::list(2);
+    x[0] = sstd::terp::list(3);
+    x[0][0] = "a";
+    x[0][1] = "b";
+    x[0][2] = "c";
+    x[1] = &x[0];
+
+    sstd::terp::var copy_of_x;
+    bool tf = sstd::terp::eRef_copy(copy_of_x, x); // TEST THIS LINE
+    ASSERT_TRUE(tf);
+
+    ASSERT_EQ(copy_of_x.size(), (uint)2);
+    ASSERT_EQ(copy_of_x[0].size(), (uint)3);
+    ASSERT_EQ(copy_of_x[1].size(), (uint)3);
+    
+    {
+        ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)1);
+        auto itr = x.pSRCR_tbl()->find( &x[0] );
+        ASSERT_TRUE(itr!=x.pSRCR_tbl()->end());
+        ASSERT_EQ(itr->second.size(), (uint)2);
+
+        auto itr2 = itr->second.find( &x[1] );
+        ASSERT_TRUE(itr2!=itr->second.end());
+
+        auto itr3 = itr->second.find( &copy_of_x[1] );
+        ASSERT_TRUE(itr2!=itr->second.end());
+    }
+    ASSERT_EQ(copy_of_x.pSRCR_tbl()->size(), (uint)0);
+
+    ASSERT_EQ(copy_of_x[0].is_reference(), false);
+    ASSERT_EQ(copy_of_x[1].is_reference(), true );
+    ASSERT_EQ(copy_of_x[1].p(), &x[0]);
+    ASSERT_NE(copy_of_x[1].p(), &copy_of_x[0]);
+    
+    ASSERT_STREQ(copy_of_x[0][0].to<std::string>().c_str(), "a");
+    ASSERT_STREQ(copy_of_x[0][1].to<std::string>().c_str(), "b");
+    ASSERT_STREQ(copy_of_x[0][2].to<std::string>().c_str(), "c");
+    ASSERT_STREQ(copy_of_x[1][0].to<std::string>().c_str(), "a");
+    ASSERT_STREQ(copy_of_x[1][1].to<std::string>().c_str(), "b");
+    ASSERT_STREQ(copy_of_x[1][2].to<std::string>().c_str(), "c");
+}
+TEST(memory_terp, terp__eRef_copy__external_ref){ // Copy behavior of external_ref is same with `sstd::terp::copy()`
+    sstd::terp::var x;
+    x = "a";
+    sstd::terp::var y;
+    y = &x;
+
+    sstd::terp::var copy_of_y;
+    bool tf = sstd::terp::eRef_copy(copy_of_y, y); // TEST THIS LINE
+    ASSERT_TRUE(tf);
+
+    ASSERT_EQ(copy_of_y.is_reference(), true);
+    ASSERT_EQ(y.p(),         &x);
+    ASSERT_EQ(copy_of_y.p(), &x);
+    ASSERT_STREQ(copy_of_y.to<std::string>().c_str(), "a");
+
+    {
+        ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)1);
+        auto itr = x.pSRCR_tbl()->find( &x );
+        ASSERT_TRUE(itr!=x.pSRCR_tbl()->end());
+        ASSERT_EQ(itr->second.size(), (uint)2);
+
+        auto itr2 = itr->second.find( &y );
+        ASSERT_TRUE(itr2!=itr->second.end());
+
+        auto itr3 = itr->second.find( &copy_of_y );
+        ASSERT_TRUE(itr2!=itr->second.end());
+    }
+    ASSERT_EQ(y.pSRCR_tbl()->size(),         (uint)0);
+    ASSERT_EQ(copy_of_y.pSRCR_tbl()->size(), (uint)0);
+}
+
+//---
+
+TEST(memory_terp, terp__deep_copy__internal_ref){
+    sstd::terp::var x;
+    x = sstd::terp::list(2);
+    x[0] = sstd::terp::list(3);
+    x[0][0] = "a";
+    x[0][1] = "b";
+    x[0][2] = "c";
+    x[1] = &x[0];
+
+    sstd::terp::var copy_of_x;
+    bool tf = sstd::terp::deep_copy(copy_of_x, x); // TEST THIS LINE
+    ASSERT_TRUE(tf);
+    
+    ASSERT_EQ(x.pSRCR_tbl()->size(),         (uint)1);
+    ASSERT_EQ(copy_of_x.pSRCR_tbl()->size(), (uint)0);
+
+    ASSERT_EQ(copy_of_x[0].is_reference(), false);
+    ASSERT_EQ(copy_of_x[1].is_reference(), false);
+    ASSERT_NE(copy_of_x[0].p(), &x[0]);
+    ASSERT_NE(copy_of_x[1].p(), &x[1]);
+    ASSERT_NE(copy_of_x[0].p(), &copy_of_x[1]);
+    
+    ASSERT_EQ(copy_of_x.size(), (uint)2);
+    ASSERT_EQ(copy_of_x[0].size(), (uint)3);
+    ASSERT_EQ(copy_of_x[1].size(), (uint)3);
+    ASSERT_STREQ(copy_of_x[0][0].to<std::string>().c_str(), "a");
+    ASSERT_STREQ(copy_of_x[0][1].to<std::string>().c_str(), "b");
+    ASSERT_STREQ(copy_of_x[0][2].to<std::string>().c_str(), "c");
+    ASSERT_STREQ(copy_of_x[1][0].to<std::string>().c_str(), "a");
+    ASSERT_STREQ(copy_of_x[1][1].to<std::string>().c_str(), "b");
+    ASSERT_STREQ(copy_of_x[1][2].to<std::string>().c_str(), "c");
+}
+TEST(memory_terp, terp__deep_copy__external_ref){
+    sstd::terp::var x;
+    x = "a";
+    sstd::terp::var y;
+    y = &x;
+
+    sstd::terp::var copy_of_y;
+    bool tf = sstd::terp::deep_copy(copy_of_y, y); // TEST THIS LINE
+    ASSERT_TRUE(tf);
+    
+    ASSERT_EQ(x.pSRCR_tbl()->size(),         (uint)1);
+    ASSERT_EQ(y.pSRCR_tbl()->size(),         (uint)0);
+    ASSERT_EQ(copy_of_y.pSRCR_tbl()->size(), (uint)0);
+
+    ASSERT_EQ(copy_of_y.is_reference(), false);
+    ASSERT_NE(copy_of_y.p(), &x);
+    
+    ASSERT_STREQ(copy_of_y.to<std::string>().c_str(), "a");
+}
+TEST(memory_terp, terp__deep_copy_err){}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 TEST(memory_terp, equal1__compare_only_value){ // operator==
     // sstd::terp::equal0
@@ -1732,59 +1896,6 @@ TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_calle
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-// For the Reference Type
-// > Tests the copy behaviors.
-
-TEST(memory_terp, copy){}
-TEST(memory_terp, ref_copy){}
-TEST(memory_terp, deep_copy_01_internal_ref){
-    sstd::terp::var x;
-    x = sstd::terp::list(2);
-    x[0] = sstd::terp::list(3);
-    x[0][0] = "a";
-    x[0][1] = "b";
-    x[0][2] = "c";
-    x[1] = &x[0];
-
-    sstd::terp::var copy_of_x;
-    bool tf = sstd::terp::deep_copy(copy_of_x, x); // TEST THIS LINE
-    ASSERT_TRUE(tf);
-    
-    ASSERT_EQ(x.pSRCR_tbl()->size(),         (uint)1);
-    ASSERT_EQ(copy_of_x.pSRCR_tbl()->size(), (uint)0);
-
-    ASSERT_EQ(copy_of_x[0].is_reference(), false);
-    ASSERT_EQ(copy_of_x[1].is_reference(), false);
-    
-    ASSERT_EQ(copy_of_x.size(), (uint)2);
-    ASSERT_EQ(copy_of_x[0].size(), (uint)3);
-    ASSERT_EQ(copy_of_x[1].size(), (uint)3);
-    ASSERT_STREQ(copy_of_x[0][0].to<std::string>().c_str(), "a");
-    ASSERT_STREQ(copy_of_x[0][1].to<std::string>().c_str(), "b");
-    ASSERT_STREQ(copy_of_x[0][2].to<std::string>().c_str(), "c");
-    ASSERT_STREQ(copy_of_x[1][0].to<std::string>().c_str(), "a");
-    ASSERT_STREQ(copy_of_x[1][1].to<std::string>().c_str(), "b");
-    ASSERT_STREQ(copy_of_x[1][2].to<std::string>().c_str(), "c");
-}
-TEST(memory_terp, deep_copy_02_external_ref){
-    sstd::terp::var x;
-    x = "a";
-    sstd::terp::var y;
-    y = &x;
-
-    sstd::terp::var copy_of_y;
-    bool tf = sstd::terp::deep_copy(copy_of_y, y); // TEST THIS LINE
-    ASSERT_TRUE(tf);
-    
-    ASSERT_EQ(x.pSRCR_tbl()->size(),         (uint)1);
-    ASSERT_EQ(y.pSRCR_tbl()->size(),         (uint)0);
-    ASSERT_EQ(copy_of_y.pSRCR_tbl()->size(), (uint)0);
-
-    ASSERT_EQ(copy_of_y.is_reference(), false);
-    
-    ASSERT_STREQ(copy_of_y.to<std::string>().c_str(), "a");
-}
-
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 //---
