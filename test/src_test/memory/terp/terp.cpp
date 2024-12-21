@@ -1732,6 +1732,60 @@ TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_calle
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// For the Reference Type
+// > Tests the copy behaviors.
+
+TEST(memory_terp, copy){}
+TEST(memory_terp, ref_copy){}
+TEST(memory_terp, deep_copy_01_internal_ref){
+    sstd::terp::var x;
+    x = sstd::terp::list(2);
+    x[0] = sstd::terp::list(3);
+    x[0][0] = "a";
+    x[0][1] = "b";
+    x[0][2] = "c";
+    x[1] = &x[0];
+
+    sstd::terp::var copy_of_x;
+    bool tf = sstd::terp::deep_copy(copy_of_x, x); // TEST THIS LINE
+    ASSERT_TRUE(tf);
+    
+    ASSERT_EQ(x.pSRCR_tbl()->size(),         (uint)1);
+    ASSERT_EQ(copy_of_x.pSRCR_tbl()->size(), (uint)0);
+
+    ASSERT_EQ(copy_of_x[0].is_reference(), false);
+    ASSERT_EQ(copy_of_x[1].is_reference(), false);
+    
+    ASSERT_EQ(copy_of_x.size(), (uint)2);
+    ASSERT_EQ(copy_of_x[0].size(), (uint)3);
+    ASSERT_EQ(copy_of_x[1].size(), (uint)3);
+    ASSERT_STREQ(copy_of_x[0][0].to<std::string>().c_str(), "a");
+    ASSERT_STREQ(copy_of_x[0][1].to<std::string>().c_str(), "b");
+    ASSERT_STREQ(copy_of_x[0][2].to<std::string>().c_str(), "c");
+    ASSERT_STREQ(copy_of_x[1][0].to<std::string>().c_str(), "a");
+    ASSERT_STREQ(copy_of_x[1][1].to<std::string>().c_str(), "b");
+    ASSERT_STREQ(copy_of_x[1][2].to<std::string>().c_str(), "c");
+}
+TEST(memory_terp, deep_copy_02_external_ref){
+    sstd::terp::var x;
+    x = "a";
+    sstd::terp::var y;
+    y = &x;
+
+    sstd::terp::var copy_of_y;
+    bool tf = sstd::terp::deep_copy(copy_of_y, y); // TEST THIS LINE
+    ASSERT_TRUE(tf);
+    
+    ASSERT_EQ(x.pSRCR_tbl()->size(),         (uint)1);
+    ASSERT_EQ(y.pSRCR_tbl()->size(),         (uint)0);
+    ASSERT_EQ(copy_of_y.pSRCR_tbl()->size(), (uint)0);
+
+    ASSERT_EQ(copy_of_y.is_reference(), false);
+    
+    ASSERT_STREQ(copy_of_y.to<std::string>().c_str(), "a");
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 //---
 

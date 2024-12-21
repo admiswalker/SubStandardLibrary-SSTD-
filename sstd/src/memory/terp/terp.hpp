@@ -33,6 +33,11 @@ namespace sstd::terp{
     bool isNull (const sstd::terp::var& rhs);
     bool isValue(const sstd::terp::var& rhs);
 
+    // copy
+    //bool copy();
+    //bool ref_copy();
+    bool deep_copy(sstd::terp::var& lhs, const sstd::terp::var& rhs);
+    
     // type name
     using srcr_tbl = std::unordered_map<sstd::terp::var*,std::unordered_set<sstd::terp::var*>>;
 }
@@ -116,7 +121,7 @@ public:
     void _fillout_ref_src_null();
 
     void copy(const class sstd::terp::var&  rhs);
-    void copy(const class sstd::terp::var&  rhs, const char opt_a, const char opt_i, const char opt_e);
+//    void copy(const class sstd::terp::var&  rhs, const char opt_a, const char opt_i, const char opt_e);
     void move(      class sstd::terp::var&& rhs);
     
     //void _fill_dependent_ref_null();

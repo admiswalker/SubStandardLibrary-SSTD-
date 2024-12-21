@@ -232,16 +232,23 @@ void*& sstd::terp::var::p_RW(){ return this->_p; }
 
 // copy(), allocate(), free()
 void _copy_value(
-                 class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs,
+                 class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs_in,
                         
                  std::vector<std::tuple<sstd::terp::var*,sstd::terp::var*,uint>>& vStack_copyDstAds_asRef_and_origRefAds,
-                 std::unordered_map<sstd::terp::var*,sstd::terp::var*>& tbl_copySrcAds_to_copyDstAds
+                 std::unordered_map<sstd::terp::var*,sstd::terp::var*>& tbl_copySrcAds_to_copyDstAds,
+                 const char opt_a, const char opt_i, const char opt_e
                  )
 { // TODO: これ，reference あるとかなり実装が面倒になるはず
-
-    if(pRhs->is_reference()){
+    class sstd::terp::var* pRhs = (sstd::terp::var*)pRhs_in;
+    
+    bool copy_internal_ref_as_obj = (opt_i=='o') ? true : false;
+    bool copy_external_ref_as_obj = (opt_e=='o') ? true : false;
+    bool is_external_ref = pRhs->is_reference(); // TODO: fix (仮実装のため)
+    if(!copy_internal_ref_as_obj && !copy_external_ref_as_obj && pRhs->is_reference()){
         vStack_copyDstAds_asRef_and_origRefAds.push_back( std::make_tuple((sstd::terp::var*)pLhs, (sstd::terp::var*)pRhs->p(), pRhs->type()) );
         return;
+    }else{
+        pRhs = (!pRhs->is_reference()) ? pRhs : (sstd::terp::var*)pRhs->p();
     }
     
     //---
@@ -290,7 +297,8 @@ void _copy_value(
         for(uint i=0;i<pRhs->size();++i){
             _CAST2VEC(pLhs->p_RW())[i] = new sstd::terp::var(pLhs->pSRCR_tbl());
             _copy_value(_CAST2VEC(pLhs->p_RW())[i], _CAST2VEC(pRhs->p())[i],
-                        vStack_copyDstAds_asRef_and_origRefAds, tbl_copySrcAds_to_copyDstAds); // TODO: base の pLhs->pSRCR_tbl() がコピー先でも再帰的に適用されるように修正する
+                        vStack_copyDstAds_asRef_and_origRefAds, tbl_copySrcAds_to_copyDstAds,
+                        opt_a, opt_i, opt_e); // TODO: base の pLhs->pSRCR_tbl() がコピー先でも再帰的に適用されるように修正する
         }
     } break;
 //    case sstd::num_hash_terp_var: { pLhs->p_RW() = new std::unordered_map<std::string,sstd::terp::var*>(*(std::unordered_map<std::string,sstd::terp::var*>*)pRhs->p()); } break;
@@ -304,7 +312,8 @@ void _copy_value(
             sstd::terp::var* pVal = new sstd::terp::var();
             (*pLHash)[ itr->first ] = pVal;
             _copy_value(pVal, itr->second,
-                        vStack_copyDstAds_asRef_and_origRefAds, tbl_copySrcAds_to_copyDstAds);
+                        vStack_copyDstAds_asRef_and_origRefAds, tbl_copySrcAds_to_copyDstAds,
+                        opt_a, opt_i, opt_e);
         }
     } break;
         
@@ -312,13 +321,15 @@ void _copy_value(
         
     }
 
+    if(copy_internal_ref_as_obj && copy_external_ref_as_obj){ return; }
     tbl_copySrcAds_to_copyDstAds[ (sstd::terp::var*)pRhs ] = (sstd::terp::var*)pLhs;
     
     return;
 }
 void _copy_reference(
                      std::vector<std::tuple<sstd::terp::var*,sstd::terp::var*,uint>>& vStack_copyDstAds_asRef_and_origRefAds,
-                     std::unordered_map<sstd::terp::var*,sstd::terp::var*>& tbl_copySrcAds_to_copyDstAds
+                     std::unordered_map<sstd::terp::var*,sstd::terp::var*>& tbl_copySrcAds_to_copyDstAds,
+                     const char opt_a, const char opt_i, const char opt_e
                      )
 {
     for(uint i=0; i<vStack_copyDstAds_asRef_and_origRefAds.size(); ++i){
@@ -345,25 +356,30 @@ void _copy_reference(
     
     return;
 }
-void _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs, const char opt_a, const char opt_i, const char opt_e){
+bool _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs, const char opt_a, const char opt_i, const char opt_e){
     //  Table. Parameter settings for opt variables (opt_a, opt_i, opt_e).
-    // ┌─────────────────────────┬────────────────────────────────┐
-    // │                         │ Setting of the opts (*1)       │
-    // │                         │                                │
-    // │                         │ Copying object type is:        │
-    // │                         │ Actual │ Internal  │ External  │
-    // │ Copy function name      │ object │ reference │ reference │
-    // ├─────────────────────────┼────────────────────────────────┤
-    // │ sstd::terp::copy()      │    o   │     i     │     e     │
-    // ├─────────────────────────┼────────────────────────────────┤
-    // │ sstd::terp::ref_copy()  │    o   │     e     │     e     │
-    // ├─────────────────────────┼────────────────────────────────┤
-    // │ sstd::terp::deep_copy() │    o   │     o     │     o     │
-    // └─────────────────────────┴────────────────────────────────┘
-    // *1. pOpt:
+    // ┌─────────────────────────┬───────────────────────────────────┐
+    // │                         │ Setting of the options (*1)       │
+    // │                         │                                   │
+    // │                         │    Copying object type is (*2):   │
+    // │                         │ Actual  │ Internal   │ External   │
+    // │                         │ object: │ reference: │ reference: │
+    // │ Copy function name      │  opt_a  │  opt_i     │  opt_e     │
+    // ├─────────────────────────┼───────────────────────────────────┤
+    // │ sstd::terp::copy()      │    o    │      i     │      e     │
+    // ├─────────────────────────┼───────────────────────────────────┤
+    // │ sstd::terp::ref_copy()  │    o    │      e     │      e     │
+    // ├─────────────────────────┼───────────────────────────────────┤
+    // │ sstd::terp::deep_copy() │    o    │      o     │      o     │
+    // └─────────────────────────┴───────────────────────────────────┘
+    // *1. Options:
     //       o: copy as an object
     //       i: copy as an internal reference (Constructing an internal reference structure)
     //       e: copy as an external reference
+    // *2. Possible options:
+    //       opt_a: 'o'
+    //       opt_i: 'o', 'i', 'e'
+    //       opt_e: 'o',      'e'
     
     _free_val(pLhs, pLhs->p_RW(), pLhs->pSRCR_tbl_RW(), pLhs->type_RW(), pLhs->is_reference_RW());
     
@@ -371,15 +387,27 @@ void _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs, 
     std::unordered_map<sstd::terp::var*,sstd::terp::var*> tbl_copySrcAds_to_copyDstAds;
     _copy_value(pLhs, pRhs,
                 vStack_copyDstAds_asRef_and_origRefAds,
-                tbl_copySrcAds_to_copyDstAds
+                tbl_copySrcAds_to_copyDstAds,
+                opt_a, opt_i, opt_e
                 );
 
     _copy_reference(vStack_copyDstAds_asRef_and_origRefAds,
-                    tbl_copySrcAds_to_copyDstAds
+                    tbl_copySrcAds_to_copyDstAds,
+                    opt_a, opt_i, opt_e
                     );
+
+    return true;
 }
 void sstd::terp::var::copy(const class sstd::terp::var& rhs){ _copy_base(this, &rhs, 'o', 'i', 'e'); }
-void sstd::terp::var::copy(const class sstd::terp::var& rhs, const char opt_a, const char opt_i, const char opt_e){ _copy_base(this, &rhs, opt_a, opt_i, opt_e); }
+//void sstd::terp::var::copy(const class sstd::terp::var& rhs, const char opt_a, const char opt_i, const char opt_e){ _copy_base(this, &rhs, opt_a, opt_i, opt_e); }
+
+//---
+
+bool sstd::terp::deep_copy(sstd::terp::var& lhs, const sstd::terp::var& rhs){
+    return _copy_base(&lhs, &rhs, 'o', 'o', 'o');
+}
+
+//---
 
 void sstd::terp::var::move(      class sstd::terp::var&& rhs){
     _free_val(this, _p, _pSRCR_tbl, _type, _is_reference);
