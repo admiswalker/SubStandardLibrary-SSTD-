@@ -1287,13 +1287,76 @@ TEST(memory_terp, terp__deep_copy_err){}
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // For the Reference Type: `sstd::terp::equal()`
 
-TEST(memory_terp, terp__equal){
-    ;
+TEST(memory_terp, terp__equal__case01_eq){
+    sstd::terp::var x;
+    x = sstd::terp::list(2);
+    x[0] = sstd::terp::list(3);
+    x[0][0] = "a";
+    x[0][1] = "b";
+    x[0][2] = "c";
+    x[1] = &x[0];
+
+    sstd::terp::var y;
+    y = sstd::terp::list(2);
+    y[0] = sstd::terp::list(3);
+    y[0][0] = "a";
+    y[0][1] = "b";
+    y[0][2] = "c";
+    y[1] = &y[0];
+
+    ASSERT_TRUE(sstd::terp::equal(x, y));
+}
+TEST(memory_terp, terp__equal__case02_eq){
+    sstd::terp::var x;
+    x = sstd::terp::list(3);
+    x[0] = sstd::terp::list(2);
+    x[0][0] = "a";
+    x[0][1] = "b";
+    x[1] = sstd::terp::list(2);
+    x[1][0] = "a";
+    x[1][1] = "b";
+    x[2] = &x[0];
+
+    sstd::terp::var y;
+    y = sstd::terp::list(3);
+    y[0] = sstd::terp::list(2);
+    y[0][0] = "a";
+    y[0][1] = "b";
+    y[1] = sstd::terp::list(2);
+    y[1][0] = "a";
+    y[1][1] = "b";
+    y[2] = &y[0];
+
+    ASSERT_TRUE(sstd::terp::equal(x, y));
+}
+TEST(memory_terp, terp__equal__case02_not_eq){
+    sstd::terp::var x;
+    x = sstd::terp::list(3);
+    x[0] = sstd::terp::list(2);
+    x[0][0] = "a";
+    x[0][1] = "b";
+    x[1] = sstd::terp::list(2);
+    x[1][0] = "a";
+    x[1][1] = "b";
+    x[2] = &x[0];
+
+    sstd::terp::var y;
+    y = sstd::terp::list(3);
+    y[0] = sstd::terp::list(2);
+    y[0][0] = "a";
+    y[0][1] = "b";
+    y[1] = sstd::terp::list(2);
+    y[1][0] = "a";
+    y[1][1] = "b";
+    y[2] = &y[1]; // change the ref point from x
+
+    ASSERT_FALSE(sstd::terp::equal(x, y));
 }
 
-TEST(memory_terp, terp__equal_val){
-    ;
-}
+//---
+
+TEST(memory_terp, terp__equal_val){}
+TEST(memory_terp, terp__equal_refAbsAddr){}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 

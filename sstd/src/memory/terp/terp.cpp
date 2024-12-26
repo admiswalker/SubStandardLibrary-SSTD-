@@ -258,9 +258,6 @@ bool _copy_value(
     bool copy_internal_ref_as_obj = _is_internal_ref(pRhs) && opt_i=='o';
     bool copy_external_ref_as_obj = _is_external_ref(pRhs) && opt_e=='o';
     bool copy_ref_as_obj = copy_internal_ref_as_obj || copy_external_ref_as_obj;
-    sstd::printn_all(copy_ref_as_obj);
-    sstd::printn_all(pRhs->is_reference());
-    sstd::printn_all(!copy_ref_as_obj && pRhs->is_reference());
     if(!copy_ref_as_obj && pRhs->is_reference()){
         vStack_copyDstAds_asRef_and_origRefAds.push_back( std::make_tuple((sstd::terp::var*)pLhs, (sstd::terp::var*)pRhs->p(), pRhs->type()) );
         return res;
@@ -418,8 +415,6 @@ bool sstd::terp::var::_copy_base(const class sstd::terp::var* pRhs, const char o
                        tbl_copySrcAds_to_copyDstAds,
                        opt_a, opt_i, opt_e
                        );
-    sstd::printn_all( vStack_copyDstAds_asRef_and_origRefAds );
-    sstd::printn_all( tbl_copySrcAds_to_copyDstAds );
 
     _copy_reference(vStack_copyDstAds_asRef_and_origRefAds,
                     tbl_copySrcAds_to_copyDstAds,
@@ -599,17 +594,22 @@ sstd::terp::var& sstd::terp::var::operator=(const char* rhs){
 }
 
 bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
+               std::unordered_map<sstd::terp::var*,sstd::terp::var*>& tbl_lhsAds_to_rhsAds,
                const bool check_ref_flag, const bool ref_addr_graph, const bool check_ref_abs_addr); // forward declaration
-bool _is_equal_list(const sstd::terp::var& lhs, const sstd::terp::var& rhs, const bool check_ref_flag, const bool check_ref_addr){
+bool _is_equal_list(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
+                    std::unordered_map<sstd::terp::var*,sstd::terp::var*>& tbl_lhsAds_to_rhsAds,
+                    const bool check_ref_flag, const bool ref_addr_graph, const bool check_ref_abs_addr){
     if(lhs.size()!=rhs.size()){ return false; }
     
     for(uint i=0; i<lhs.size(); ++i){
-        if(!_is_equal(lhs[i], rhs[i], check_ref_flag, true, check_ref_addr)){ return false; }
+        if(!_is_equal(lhs[i], rhs[i], tbl_lhsAds_to_rhsAds, check_ref_flag, ref_addr_graph, check_ref_abs_addr)){ return false; }
     }
     
     return true;
 }
-bool _is_equal_hash(const sstd::terp::var& lhs, const sstd::terp::var& rhs, const bool check_ref_flag, const bool check_ref_addr){ // TODO: これ，reference あるとかなり実装が面倒になるはず
+bool _is_equal_hash(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
+                    std::unordered_map<sstd::terp::var*,sstd::terp::var*>& tbl_lhsAds_to_rhsAds,
+                    const bool check_ref_flag, const bool ref_addr_graph, const bool check_ref_abs_addr){
     if(lhs.size()!=rhs.size()){ return false; }
     
     for(auto itr=lhs.begin(); itr!=lhs.end(); ++itr){
@@ -618,12 +618,13 @@ bool _is_equal_hash(const sstd::terp::var& lhs, const sstd::terp::var& rhs, cons
         auto itr_rhs = rhs.find(key.c_str());
         if(!(itr_rhs!=rhs.end())){ return false; }
 
-        if(!_is_equal(itr.second(), itr_rhs.second(), check_ref_flag, true, check_ref_addr)){ return false; }
+        if(!_is_equal(itr.second(), itr_rhs.second(), tbl_lhsAds_to_rhsAds, check_ref_flag, ref_addr_graph, check_ref_abs_addr)){ return false; }
     }
     
     return true;
 }
 bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
+               std::unordered_map<sstd::terp::var*,sstd::terp::var*>& tbl_lhsAds_to_rhsAds,
                const bool check_ref_flag, const bool ref_addr_graph, const bool check_ref_abs_addr){
     //  Table. Parameter settings for the sstd::terp::var::equal().
     // ┌────────────────────────────────┬───────────────────────────────────────────────────────────────┬──────────────┐
@@ -647,21 +648,27 @@ bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
     //       ref_flag:       'true' | 'false'
     //       ref_addr_graph: 'true' | 'false'
     //       ref_abs_addr:   'true' | 'false'
-    
+
     if(check_ref_flag && lhs.is_reference()!=rhs.is_reference()){ return false; }
     if(lhs.type()!=rhs.type()){ return false; }
     
     switch(lhs.typeNum()){
     case sstd::num_str:           { return lhs.to<std::string>()==rhs.to<std::string>(); } break;
-    case sstd::num_vec_terp_var:  { return _is_equal_list(lhs, rhs, check_ref_flag, check_ref_abs_addr); } break;
-    case sstd::num_hash_terp_var: { return _is_equal_hash(lhs, rhs, check_ref_flag, check_ref_abs_addr); } break;
+    case sstd::num_vec_terp_var:  { return _is_equal_list(lhs, rhs, tbl_lhsAds_to_rhsAds, check_ref_flag, ref_addr_graph, check_ref_abs_addr); } break;
+    case sstd::num_hash_terp_var: { return _is_equal_hash(lhs, rhs, tbl_lhsAds_to_rhsAds, check_ref_flag, ref_addr_graph, check_ref_abs_addr); } break;
     case sstd::num_null:          { return true; } break;
     default: { sstd::pdbg_err("ERROR\n"); } break;
     }
     
     return false;
 }
-
+bool _is_equal_base(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
+                    const bool check_ref_flag, const bool ref_addr_graph, const bool check_ref_abs_addr){
+    
+    std::unordered_map<sstd::terp::var*,sstd::terp::var*> tbl_lhsAds_to_rhsAds;
+    
+    return _is_equal(lhs, rhs, tbl_lhsAds_to_rhsAds, check_ref_flag, ref_addr_graph, check_ref_abs_addr);
+}
 //---
 
 bool sstd::terp::var::equal(const sstd::terp::var& rhs, const char* opt) const { // TODO: write interface tests
@@ -670,12 +677,10 @@ bool sstd::terp::var::equal(const sstd::terp::var& rhs, const char* opt) const {
     bool check_ref_flag = sstd::charIn('r', opt); // Opt "r" checks reference flag
     bool check_ref_addr = sstd::charIn('a', opt); // Opt "a" checks reference address
     
-    return _is_equal(*this, rhs, check_ref_flag, true, check_ref_addr);
+    return _is_equal_base(*this, rhs, check_ref_flag, true, check_ref_addr);
 }
-bool sstd::terp::var::equal(const sstd::terp::var& rhs) const { // TODO: write interface tests
-    return _is_equal(*this, rhs, true, true, false);
-    
-    //return sstd::terp::var::equal(rhs, "r");
+bool sstd::terp::var::equal(const sstd::terp::var& rhs) const {
+    return _is_equal_base(*this, rhs, true, true, false);
 }
 bool sstd::terp::var::operator==(const sstd::terp::var& rhs){ return  sstd::terp::var::equal(rhs); }
 bool sstd::terp::var::operator!=(const sstd::terp::var& rhs){ return !sstd::terp::var::equal(rhs); }

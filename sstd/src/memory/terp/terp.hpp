@@ -39,9 +39,9 @@ namespace sstd::terp{
     bool deep_copy(sstd::terp::var& lhs, const sstd::terp::var& rhs);
 
     // equal
-    bool equal        (const sstd::terp::var& lhs, const sstd::terp::var& rhs);
-    bool equal_val    (const sstd::terp::var& lhs, const sstd::terp::var& rhs);
-    bool equal_refAddr(const sstd::terp::var& lhs, const sstd::terp::var& rhs);
+    bool equal           (const sstd::terp::var& lhs, const sstd::terp::var& rhs);
+    bool equal_val       (const sstd::terp::var& lhs, const sstd::terp::var& rhs);
+    bool equal_refAbsAddr(const sstd::terp::var& lhs, const sstd::terp::var& rhs);
     
     bool equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs, const char* opt);
 }
