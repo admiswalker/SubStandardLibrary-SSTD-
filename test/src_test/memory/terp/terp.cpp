@@ -1285,23 +1285,17 @@ TEST(memory_terp, terp__deep_copy__external_ref){
 TEST(memory_terp, terp__deep_copy_err){}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// For the Reference Type: `sstd::terp::equal()`
 
-TEST(memory_terp, equal1__compare_only_value){ // operator==
-    // sstd::terp::equal0
+TEST(memory_terp, terp__equal){
+    ;
 }
 
-TEST(memory_terp, equal2__compare_value_and_isReference){
-    // sstd::terp::equal1
-    
-    // sstd::terp::isSame
+TEST(memory_terp, terp__equal_val){
+    ;
 }
 
-TEST(memory_terp, equal3__compare_all){
-    // sstd::terp::equal2
-    
-    // sstd::terp::isEqualObj
-    // sstd::terp::isSameObject
-}
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 //---
 

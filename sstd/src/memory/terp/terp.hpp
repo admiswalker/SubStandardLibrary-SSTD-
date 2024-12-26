@@ -10,7 +10,7 @@
 //#include "../../print/print.hpp" // for debug
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-// forward declaration
+// For the forward declaration and user's use
 
 namespace sstd::terp{
     // var
@@ -37,9 +37,13 @@ namespace sstd::terp{
     bool copy     (sstd::terp::var& lhs, const sstd::terp::var& rhs);
     bool eRef_copy(sstd::terp::var& lhs, const sstd::terp::var& rhs);
     bool deep_copy(sstd::terp::var& lhs, const sstd::terp::var& rhs);
+
+    // equal
+    bool equal        (const sstd::terp::var& lhs, const sstd::terp::var& rhs);
+    bool equal_val    (const sstd::terp::var& lhs, const sstd::terp::var& rhs);
+    bool equal_refAddr(const sstd::terp::var& lhs, const sstd::terp::var& rhs);
     
-    // type name
-    using srcr_tbl = std::unordered_map<sstd::terp::var*,std::unordered_set<sstd::terp::var*>>;
+    bool equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs, const char* opt);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -63,8 +67,8 @@ namespace sstd::terp{
     void _to(std::string& dst, const sstd::terp::var& src);
     void _to(std::string& dst, const std::string   & src);
 
-    bool equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs);
-    bool equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs, const char* opt);
+    // type name
+    using srcr_tbl = std::unordered_map<sstd::terp::var*,std::unordered_set<sstd::terp::var*>>;
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -120,8 +124,8 @@ public:
     void _fill_ref_src_null(const std::unordered_set<sstd::terp::var*>& hash_set);
     void _fillout_ref_src_null();
 
-    void copy(const class sstd::terp::var&  rhs);
-//    void copy(const class sstd::terp::var&  rhs, const char opt_a, const char opt_i, const char opt_e);
+    bool _copy_base(const class sstd::terp::var* pRhs, const char opt_a, const char opt_i, const char opt_e);
+    bool copy(const class sstd::terp::var&  rhs);
     void move(      class sstd::terp::var&& rhs);
     
     //void _fill_dependent_ref_null();
@@ -144,6 +148,7 @@ public:
 
     bool equal(const sstd::terp::var& rhs) const;
     bool equal(const sstd::terp::var& rhs, const char* opt) const; // "r" (checks reference flag), "a" (checks reference address) for opt
+    bool equal_v2(const sstd::terp::var& rhs, const bool check_ref) const;
     bool operator==(const sstd::terp::var& rhs);
     bool operator!=(const sstd::terp::var& rhs);
 

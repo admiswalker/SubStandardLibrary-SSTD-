@@ -56,6 +56,12 @@ void sstd::terp::_to(std::string& dst, const std::string    & src){ dst = src; }
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // sstd::terp
 
+bool sstd::terp::copy     (sstd::terp::var& lhs, const sstd::terp::var& rhs){ return lhs._copy_base(&rhs, 'o', 'i', 'e'); }
+bool sstd::terp::eRef_copy(sstd::terp::var& lhs, const sstd::terp::var& rhs){ return lhs._copy_base(&rhs, 'o', 'e', 'e'); }
+bool sstd::terp::deep_copy(sstd::terp::var& lhs, const sstd::terp::var& rhs){ return lhs._copy_base(&rhs, 'o', 'o', 'o'); }
+
+//---
+
 bool sstd::terp::equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs){ // TODO: write interface tests
     return lhs.equal(rhs);
 }
@@ -376,7 +382,7 @@ void _copy_reference(
     
     return;
 }
-bool _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs, const char opt_a, const char opt_i, const char opt_e){
+bool sstd::terp::var::_copy_base(const class sstd::terp::var* pRhs, const char opt_a, const char opt_i, const char opt_e){
     //  Table. Parameter settings for opt variables (opt_a, opt_i, opt_e).
     // ┌─────────────────────────┬───────────────────────────────────┬──────────────────────────────────────────────────────────────────────────┐
     // │                         │ Setting of the options (*1)       │                                                                          │
@@ -401,6 +407,7 @@ bool _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs, 
     //       opt_i: 'o', 'i', 'e'
     //       opt_e: 'o',      'e'
     bool res=true;
+    class sstd::terp::var* pLhs = this;
     
     _free_val(pLhs, pLhs->p_RW(), pLhs->pSRCR_tbl_RW(), pLhs->type_RW(), pLhs->is_reference_RW());
     
@@ -421,14 +428,7 @@ bool _copy_base(class sstd::terp::var* pLhs, const class sstd::terp::var* pRhs, 
 
     return res;
 }
-void sstd::terp::var::copy(const class sstd::terp::var& rhs){ _copy_base(this, &rhs, 'o', 'i', 'e'); }
-//void sstd::terp::var::copy(const class sstd::terp::var& rhs, const char opt_a, const char opt_i, const char opt_e){ _copy_base(this, &rhs, opt_a, opt_i, opt_e); }
-
-//---
-
-bool sstd::terp::copy     (sstd::terp::var& lhs, const sstd::terp::var& rhs){ return _copy_base(&lhs, &rhs, 'o', 'i', 'e'); }
-bool sstd::terp::eRef_copy(sstd::terp::var& lhs, const sstd::terp::var& rhs){ return _copy_base(&lhs, &rhs, 'o', 'e', 'e'); }
-bool sstd::terp::deep_copy(sstd::terp::var& lhs, const sstd::terp::var& rhs){ return _copy_base(&lhs, &rhs, 'o', 'o', 'o'); }
+bool sstd::terp::var::copy(const class sstd::terp::var& rhs){ return this->_copy_base(&rhs, 'o', 'i', 'e'); }
 
 //---
 
@@ -622,30 +622,58 @@ bool _is_equal_hash(const sstd::terp::var& lhs, const sstd::terp::var& rhs, cons
     
     return true;
 }
-bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs, const bool check_ref_flag, const bool check_ref_addr){
+bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs, const bool check_ref_flag, const bool check_ref_abs_addr){
+    //  Table. Parameter settings for the sstd::terp::var::equal().
+    // ┌────────────────────────────────┬───────────────────────────────────────────────────────────────┬──────────────┐
+    // │                                │ Setting of the options (*1)                                   │              │
+    // │                                │                                                               │              │
+    // │                                │              Comparation object type is (*2):                 │              │
+    // │                                │ Does check:   │ Does check: │ Does check:     │ Does check:   │              │
+    // │ Comparation Operation          │  actual-value │  ref_flag   │  ref_addr_graph │  ref_abs_addr │ Descriptions │
+    // ├────────────────────────────────┼───────────────────────────────────────────────────────────────┼──────────────┤
+    // │ sstd::terp::equal()            │     true      │    true     │      true       │    fals       │              │
+    // ├────────────────────────────────┼───────────────────────────────────────────────────────────────┼──────────────┤
+    // │ sstd::terp::equal_val()        │     true      │    false    │      false      │    fals       │              │
+    // ├────────────────────────────────┼───────────────────────────────────────────────────────────────┼──────────────┤
+    // │ sstd::terp::equal_refAbsAddr() │     true      │    true     │      false      │    true       │              │
+    // └────────────────────────────────┴───────────────────────────────────────────────────────────────┴──────────────┘
+    // *1. Options:
+    //       true:  sets to check the option
+    //       false: sets NOT to check the option
+    // *2. Possible options:
+    //       actual-value:   'true'
+    //       ref_flag:       'true' | 'false'
+    //       ref_addr_graph: 'true' | 'false'
+    //       ref_abs_addr:   'true' | 'false'
+    
     if(check_ref_flag && lhs.is_reference()!=rhs.is_reference()){ return false; }
     if(lhs.type()!=rhs.type()){ return false; }
     
     switch(lhs.typeNum()){
     case sstd::num_str:           { return lhs.to<std::string>()==rhs.to<std::string>(); } break;
-    case sstd::num_vec_terp_var:  { return _is_equal_list(lhs, rhs, check_ref_flag, check_ref_addr); } break;
-    case sstd::num_hash_terp_var: { return _is_equal_hash(lhs, rhs, check_ref_flag, check_ref_addr); } break;
+    case sstd::num_vec_terp_var:  { return _is_equal_list(lhs, rhs, check_ref_flag, check_ref_abs_addr); } break;
+    case sstd::num_hash_terp_var: { return _is_equal_hash(lhs, rhs, check_ref_flag, check_ref_abs_addr); } break;
     case sstd::num_null:          { return true; } break;
     default: { sstd::pdbg_err("ERROR\n"); } break;
     }
     
     return false;
 }
+
+//---
+
 bool sstd::terp::var::equal(const sstd::terp::var& rhs, const char* opt) const { // TODO: write interface tests
     if(!sstd::charIn_all(std::string(opt)+" ", "ar ")){ sstd::pdbg_err("sstd::terp::var::equal() is falied. `%s` is unexpected option.", opt); return false; }
-    // TOCO: sstd::charIn_all("", "abc") のように strlen(arg1)==0 の return 値は true にした方がよいのでは・・・？
+    // TODO: sstd::charIn_all("", "abc") のように strlen(arg1)==0 の return 値は true にした方がよいのでは・・・？
     bool check_ref_flag = sstd::charIn('r', opt); // Opt "r" checks reference flag
     bool check_ref_addr = sstd::charIn('a', opt); // Opt "a" checks reference address
     
     return _is_equal(*this, rhs, check_ref_flag, check_ref_addr);
 }
 bool sstd::terp::var::equal(const sstd::terp::var& rhs) const { // TODO: write interface tests
-    return sstd::terp::var::equal(rhs, "r");
+    return _is_equal(*this, rhs, const bool check_ref_flag, const bool check_ref_addr);
+    
+    //return sstd::terp::var::equal(rhs, "r");
 }
 bool sstd::terp::var::operator==(const sstd::terp::var& rhs){ return  sstd::terp::var::equal(rhs); }
 bool sstd::terp::var::operator!=(const sstd::terp::var& rhs){ return !sstd::terp::var::equal(rhs); }
