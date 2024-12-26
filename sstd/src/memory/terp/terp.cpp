@@ -598,12 +598,13 @@ sstd::terp::var& sstd::terp::var::operator=(const char* rhs){
     return *this;
 }
 
-bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs, const bool check_ref_flag, const bool check_ref_addr); // forward declaration
+bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
+               const bool check_ref_flag, const bool ref_addr_graph, const bool check_ref_abs_addr); // forward declaration
 bool _is_equal_list(const sstd::terp::var& lhs, const sstd::terp::var& rhs, const bool check_ref_flag, const bool check_ref_addr){
     if(lhs.size()!=rhs.size()){ return false; }
     
     for(uint i=0; i<lhs.size(); ++i){
-        if(!_is_equal(lhs[i], rhs[i], check_ref_flag, check_ref_addr)){ return false; }
+        if(!_is_equal(lhs[i], rhs[i], check_ref_flag, true, check_ref_addr)){ return false; }
     }
     
     return true;
@@ -617,12 +618,13 @@ bool _is_equal_hash(const sstd::terp::var& lhs, const sstd::terp::var& rhs, cons
         auto itr_rhs = rhs.find(key.c_str());
         if(!(itr_rhs!=rhs.end())){ return false; }
 
-        if(!_is_equal(itr.second(), itr_rhs.second(), check_ref_flag, check_ref_addr)){ return false; }
+        if(!_is_equal(itr.second(), itr_rhs.second(), check_ref_flag, true, check_ref_addr)){ return false; }
     }
     
     return true;
 }
-bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs, const bool check_ref_flag, const bool check_ref_abs_addr){
+bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
+               const bool check_ref_flag, const bool ref_addr_graph, const bool check_ref_abs_addr){
     //  Table. Parameter settings for the sstd::terp::var::equal().
     // ┌────────────────────────────────┬───────────────────────────────────────────────────────────────┬──────────────┐
     // │                                │ Setting of the options (*1)                                   │              │
@@ -631,9 +633,9 @@ bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs, const boo
     // │                                │ Does check:   │ Does check: │ Does check:     │ Does check:   │              │
     // │ Comparation Operation          │  actual-value │  ref_flag   │  ref_addr_graph │  ref_abs_addr │ Descriptions │
     // ├────────────────────────────────┼───────────────────────────────────────────────────────────────┼──────────────┤
-    // │ sstd::terp::equal()            │     true      │    true     │      true       │    fals       │              │
+    // │ sstd::terp::equal()            │     true      │    true     │      true       │    false      │              │
     // ├────────────────────────────────┼───────────────────────────────────────────────────────────────┼──────────────┤
-    // │ sstd::terp::equal_val()        │     true      │    false    │      false      │    fals       │              │
+    // │ sstd::terp::equal_val()        │     true      │    false    │      false      │    false      │              │
     // ├────────────────────────────────┼───────────────────────────────────────────────────────────────┼──────────────┤
     // │ sstd::terp::equal_refAbsAddr() │     true      │    true     │      false      │    true       │              │
     // └────────────────────────────────┴───────────────────────────────────────────────────────────────┴──────────────┘
@@ -668,10 +670,10 @@ bool sstd::terp::var::equal(const sstd::terp::var& rhs, const char* opt) const {
     bool check_ref_flag = sstd::charIn('r', opt); // Opt "r" checks reference flag
     bool check_ref_addr = sstd::charIn('a', opt); // Opt "a" checks reference address
     
-    return _is_equal(*this, rhs, check_ref_flag, check_ref_addr);
+    return _is_equal(*this, rhs, check_ref_flag, true, check_ref_addr);
 }
 bool sstd::terp::var::equal(const sstd::terp::var& rhs) const { // TODO: write interface tests
-    return _is_equal(*this, rhs, const bool check_ref_flag, const bool check_ref_addr);
+    return _is_equal(*this, rhs, true, true, false);
     
     //return sstd::terp::var::equal(rhs, "r");
 }
