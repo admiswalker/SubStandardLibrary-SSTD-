@@ -956,7 +956,7 @@ TEST(memory_terp, var_ope_square_brackets_list){
     x[0] = "val1";
     x[1] = "val2";
 
-    ASSERT_EQ(x.size(), 2);
+    ASSERT_EQ(x.size(), (uint)2);
     ASSERT_STREQ(x.ope_sb  (0).to<std::string>().c_str(), "val1"); // TEST Ope[]
     ASSERT_STREQ(x.ope_sb  (1).to<std::string>().c_str(), "val2"); // TEST Ope[]
     ASSERT_STREQ(x.ope_sb_c(0).to<std::string>().c_str(), "val1"); // TEST Ope[] const
@@ -968,7 +968,7 @@ TEST(memory_terp, var_ope_square_brackets_hash){
     x["key1"] = "val1";
     x["key2"] = "val2";
 
-    ASSERT_EQ(x.size(), 2);
+    ASSERT_EQ(x.size(), (uint)2);
     ASSERT_STREQ(x.ope_sb  ("key1").to<std::string>().c_str(), "val1"); // TEST Ope[]
     ASSERT_STREQ(x.ope_sb  ("key2").to<std::string>().c_str(), "val2"); // TEST Ope[]
     ASSERT_STREQ(x.ope_sb_c("key1").to<std::string>().c_str(), "val1"); // TEST Ope[] const
@@ -982,7 +982,7 @@ TEST(memory_terp, var_ope_square_brackets_list__REF){
     x[0] = "val1";
     x[1] = &x[0];
 
-    ASSERT_EQ(x.size(), 2);
+    ASSERT_EQ(x.size(), (uint)2);
     
     ASSERT_EQ(x.ope_sb  (0).type(), sstd::num_str); // TEST Ope[]
     ASSERT_EQ(x.ope_sb  (1).type(), sstd::num_str); // TEST Ope[]
@@ -1005,7 +1005,7 @@ TEST(memory_terp, var_ope_square_brackets_hash__REF){
     x["key1"] = "val1";
     x["key2"] = &x["key1"];
     
-    ASSERT_EQ(x.size(), 2);
+    ASSERT_EQ(x.size(), (uint)2);
     
     ASSERT_EQ(x.ope_sb  ("key1").type(), sstd::num_str); // TEST Ope[]
     ASSERT_EQ(x.ope_sb  ("key2").type(), sstd::num_str); // TEST Ope[]
@@ -1103,6 +1103,7 @@ TEST(memory_terp, terp__copy){
     
     sstd::terp::var d; // dst
     bool tf = sstd::terp::copy(d, s); // TEST THIS LINE
+    ASSERT_TRUE(tf);
     
     ASSERT_EQ(s.pSRCR_tbl()->size(), (uint)1);
     ASSERT_EQ(d.pSRCR_tbl()->size(), (uint)1);
@@ -1150,7 +1151,7 @@ TEST(memory_terp, terp__eRef_copy__internal_ref){
         ASSERT_TRUE(itr2!=itr->second.end());
 
         auto itr3 = itr->second.find( &copy_of_x[1] );
-        ASSERT_TRUE(itr2!=itr->second.end());
+        ASSERT_TRUE(itr3!=itr->second.end());
     }
     ASSERT_EQ(copy_of_x.pSRCR_tbl()->size(), (uint)0);
 
@@ -1191,7 +1192,7 @@ TEST(memory_terp, terp__eRef_copy__external_ref){ // Copy behavior of external_r
         ASSERT_TRUE(itr2!=itr->second.end());
 
         auto itr3 = itr->second.find( &copy_of_y );
-        ASSERT_TRUE(itr2!=itr->second.end());
+        ASSERT_TRUE(itr3!=itr->second.end());
     }
     ASSERT_EQ(y.pSRCR_tbl()->size(),         (uint)0);
     ASSERT_EQ(copy_of_y.pSRCR_tbl()->size(), (uint)0);
