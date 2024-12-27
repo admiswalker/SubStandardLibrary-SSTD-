@@ -41,8 +41,6 @@ namespace sstd::terp{
     // equal
     bool equal    (const sstd::terp::var& lhs, const sstd::terp::var& rhs);
     bool equal_val(const sstd::terp::var& lhs, const sstd::terp::var& rhs);
-    
-    bool equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs, const char* opt);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -147,7 +145,6 @@ public:
 
     bool equal    (const sstd::terp::var& rhs) const;
     bool equal_val(const sstd::terp::var& rhs) const;
-    bool equal(const sstd::terp::var& rhs, const char* opt) const; // "r" (checks reference flag), "a" (checks reference address) for opt
     bool operator==(const sstd::terp::var& rhs);
     bool operator!=(const sstd::terp::var& rhs);
 

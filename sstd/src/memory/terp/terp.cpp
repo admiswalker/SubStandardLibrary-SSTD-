@@ -64,9 +64,6 @@ bool sstd::terp::deep_copy(sstd::terp::var& lhs, const sstd::terp::var& rhs){ re
 
 bool sstd::terp::equal    (const sstd::terp::var& lhs, const sstd::terp::var& rhs){ return lhs.equal    (rhs); }
 bool sstd::terp::equal_val(const sstd::terp::var& lhs, const sstd::terp::var& rhs){ return lhs.equal_val(rhs); }
-bool sstd::terp::equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs, const char* opt){ // TODO: write interface tests
-    return lhs.equal(rhs, opt);
-}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // sstd::terp::iterator
@@ -590,6 +587,8 @@ sstd::terp::var& sstd::terp::var::operator=(const char* rhs){
     return *this;
 }
 
+//---
+
 bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
                const bool check_ref_flag, const bool ref_addr_graph, const bool check_ref_abs_addr,
                std::vector<std::tuple<sstd::terp::var*,sstd::terp::var*>>& vStack_lhsP_and_rhsP,
@@ -712,20 +711,13 @@ bool _is_equal_base(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
     
     return res;
 }
-//---
 
-bool sstd::terp::var::equal(const sstd::terp::var& rhs, const char* opt) const { // TODO: write interface tests
-    if(!sstd::charIn_all(std::string(opt)+" ", "ar ")){ sstd::pdbg_err("sstd::terp::var::equal() is falied. `%s` is unexpected option.", opt); return false; }
-    // TODO: sstd::charIn_all("", "abc") のように strlen(arg1)==0 の return 値は true にした方がよいのでは・・・？
-    bool check_ref_flag = sstd::charIn('r', opt); // Opt "r" checks reference flag
-    bool check_ref_addr = sstd::charIn('a', opt); // Opt "a" checks reference address
-    
-    return _is_equal_base(*this, rhs, check_ref_flag, true, check_ref_addr);
-}
 bool sstd::terp::var::equal    (const sstd::terp::var& rhs) const { return _is_equal_base(*this, rhs, true, true, false); }
 bool sstd::terp::var::equal_val(const sstd::terp::var& rhs) const { return _is_equal_base(*this, rhs, false, false, false); }
 bool sstd::terp::var::operator==(const sstd::terp::var& rhs){ return  sstd::terp::var::equal(rhs); }
 bool sstd::terp::var::operator!=(const sstd::terp::var& rhs){ return !sstd::terp::var::equal(rhs); }
+
+//---
 
 #define _OPE_SUBSCRIPT_IDX_BASE()                                       \
     void* local_p = (! this->_is_reference) ? _p : (void*)((sstd::terp::var*)_p)->_p; \

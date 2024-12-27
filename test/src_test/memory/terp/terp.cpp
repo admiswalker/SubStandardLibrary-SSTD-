@@ -1083,8 +1083,8 @@ TEST(memory_terp, copy_self_ref_list__obj){
     a[1][2] = "c";
     //sstd::printn_all(a);
     
-    ASSERT_TRUE(sstd::terp::equal(s, a, "")); // compares: only actual value
-    ASSERT_TRUE(sstd::terp::equal(d, a, "")); // compares: only actual value
+    ASSERT_TRUE(sstd::terp::equal_val(s, a)); // compares: only actual value
+    ASSERT_TRUE(sstd::terp::equal_val(d, a)); // compares: only actual value
 }
 TEST(memory_terp, copy_self_ref_list__ref){
     sstd::terp::var s; // src
