@@ -576,8 +576,6 @@ sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var* pRhs_in){
     this->_type         =        pRhs->type();
     this->_p            = (void*)pRhs;
     (*pRhs->_pSRCR_tbl)[ (sstd::terp::var*)pRhs ].insert( (sstd::terp::var*)this );
-    sstd::printn_all(*pRhs->_pSRCR_tbl);
-    sstd::printn_all(pRhs->_pSRCR_tbl);
     return *this;
 }
 
@@ -594,22 +592,28 @@ sstd::terp::var& sstd::terp::var::operator=(const char* rhs){
 }
 
 bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
-               std::unordered_map<sstd::terp::var*,sstd::terp::var*>& tbl_lhsAds_to_rhsAds,
-               const bool check_ref_flag, const bool ref_addr_graph, const bool check_ref_abs_addr); // forward declaration
+               const bool check_ref_flag, const bool ref_addr_graph, const bool check_ref_abs_addr,
+               std::vector<std::tuple<sstd::terp::var*,sstd::terp::var*>>& vStack_lhsP_and_rhsP,
+               std::unordered_map<sstd::terp::var*,sstd::terp::var*>& tbl_lhsAds_to_rhsAds
+               ); // forward declaration
 bool _is_equal_list(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
-                    std::unordered_map<sstd::terp::var*,sstd::terp::var*>& tbl_lhsAds_to_rhsAds,
-                    const bool check_ref_flag, const bool ref_addr_graph, const bool check_ref_abs_addr){
+                    const bool check_ref_flag, const bool ref_addr_graph, const bool check_ref_abs_addr,
+                    std::vector<std::tuple<sstd::terp::var*,sstd::terp::var*>>& vStack_lhsP_and_rhsP,
+                     std::unordered_map<sstd::terp::var*,sstd::terp::var*>& tbl_lhsAds_to_rhsAds
+                    ){
     if(lhs.size()!=rhs.size()){ return false; }
     
     for(uint i=0; i<lhs.size(); ++i){
-        if(!_is_equal(lhs[i], rhs[i], tbl_lhsAds_to_rhsAds, check_ref_flag, ref_addr_graph, check_ref_abs_addr)){ return false; }
+        if(!_is_equal(lhs[i], rhs[i], check_ref_flag, ref_addr_graph, check_ref_abs_addr, vStack_lhsP_and_rhsP, tbl_lhsAds_to_rhsAds)){ return false; }
     }
     
     return true;
 }
 bool _is_equal_hash(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
-                    std::unordered_map<sstd::terp::var*,sstd::terp::var*>& tbl_lhsAds_to_rhsAds,
-                    const bool check_ref_flag, const bool ref_addr_graph, const bool check_ref_abs_addr){
+                    const bool check_ref_flag, const bool ref_addr_graph, const bool check_ref_abs_addr,
+                    std::vector<std::tuple<sstd::terp::var*,sstd::terp::var*>>& vStack_lhsP_and_rhsP,
+                    std::unordered_map<sstd::terp::var*,sstd::terp::var*>& tbl_lhsAds_to_rhsAds
+                    ){
     if(lhs.size()!=rhs.size()){ return false; }
     
     for(auto itr=lhs.begin(); itr!=lhs.end(); ++itr){
@@ -618,14 +622,16 @@ bool _is_equal_hash(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
         auto itr_rhs = rhs.find(key.c_str());
         if(!(itr_rhs!=rhs.end())){ return false; }
 
-        if(!_is_equal(itr.second(), itr_rhs.second(), tbl_lhsAds_to_rhsAds, check_ref_flag, ref_addr_graph, check_ref_abs_addr)){ return false; }
+        if(!_is_equal(itr.second(), itr_rhs.second(), check_ref_flag, ref_addr_graph, check_ref_abs_addr, vStack_lhsP_and_rhsP, tbl_lhsAds_to_rhsAds)){ return false; }
     }
     
     return true;
 }
 bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
-               std::unordered_map<sstd::terp::var*,sstd::terp::var*>& tbl_lhsAds_to_rhsAds,
-               const bool check_ref_flag, const bool ref_addr_graph, const bool check_ref_abs_addr){
+               const bool check_ref_flag, const bool ref_addr_graph, const bool check_ref_abs_addr,
+               std::vector<std::tuple<sstd::terp::var*,sstd::terp::var*>>& vStack_lhsP_and_rhsP,
+               std::unordered_map<sstd::terp::var*,sstd::terp::var*>& tbl_lhsAds_to_rhsAds
+               ){
     //  Table. Parameter settings for the sstd::terp::var::equal().
     // ┌────────────────────────────────┬───────────────────────────────────────────────────────────────┬──────────────┐
     // │                                │ Setting of the options (*1)                                   │              │
@@ -648,26 +654,65 @@ bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
     //       ref_flag:       'true' | 'false'
     //       ref_addr_graph: 'true' | 'false'
     //       ref_abs_addr:   'true' | 'false'
-
-    if(check_ref_flag && lhs.is_reference()!=rhs.is_reference()){ return false; }
+    
+    if(check_ref_flag){
+        if(lhs.is_reference()!=rhs.is_reference()){ return false; }
+        if(lhs.is_reference()){
+            bool is_internal_ref_lhs = _is_internal_ref(&lhs);
+            bool is_internal_ref_rhs = _is_internal_ref(&rhs);
+            if(is_internal_ref_lhs != is_internal_ref_rhs){ return false; }
+            if(is_internal_ref_lhs){
+                // If the reference is `internal` reference.
+                vStack_lhsP_and_rhsP.push_back( std::make_tuple((sstd::terp::var*)&lhs, (sstd::terp::var*)&rhs) );
+            }else{
+                // If the reference is `external` reference.
+                if(lhs.p() != rhs.p()){ sstd::printn_all("");return false; }
+            }
+        }
+    }
     if(lhs.type()!=rhs.type()){ return false; }
+    
+    if(ref_addr_graph){
+        tbl_lhsAds_to_rhsAds[ (sstd::terp::var*)&lhs ] = (sstd::terp::var*)&rhs;
+    }
     
     switch(lhs.typeNum()){
     case sstd::num_str:           { return lhs.to<std::string>()==rhs.to<std::string>(); } break;
-    case sstd::num_vec_terp_var:  { return _is_equal_list(lhs, rhs, tbl_lhsAds_to_rhsAds, check_ref_flag, ref_addr_graph, check_ref_abs_addr); } break;
-    case sstd::num_hash_terp_var: { return _is_equal_hash(lhs, rhs, tbl_lhsAds_to_rhsAds, check_ref_flag, ref_addr_graph, check_ref_abs_addr); } break;
+    case sstd::num_vec_terp_var:  { return _is_equal_list(lhs, rhs, check_ref_flag, ref_addr_graph, check_ref_abs_addr, vStack_lhsP_and_rhsP, tbl_lhsAds_to_rhsAds); } break;
+    case sstd::num_hash_terp_var: { return _is_equal_hash(lhs, rhs, check_ref_flag, ref_addr_graph, check_ref_abs_addr, vStack_lhsP_and_rhsP, tbl_lhsAds_to_rhsAds); } break;
     case sstd::num_null:          { return true; } break;
     default: { sstd::pdbg_err("ERROR\n"); } break;
     }
     
     return false;
 }
+bool _check_internal_ref_graph(std::vector<std::tuple<sstd::terp::var*,sstd::terp::var*>> vStack_lhsP_and_rhsP,
+                               std::unordered_map<sstd::terp::var*,sstd::terp::var*> tbl_lhsAds_to_rhsAds){
+    
+    for(uint i=0; i<vStack_lhsP_and_rhsP.size(); ++i){
+        sstd::terp::var* lhs_p = std::get<0>( vStack_lhsP_and_rhsP[i] );
+        sstd::terp::var* rhs_p = std::get<1>( vStack_lhsP_and_rhsP[i] );
+
+        auto itr = tbl_lhsAds_to_rhsAds.find( (sstd::terp::var*)lhs_p->p() );
+        if(!(itr!=tbl_lhsAds_to_rhsAds.end())){ sstd::pdbg_err("sstd::terp::var::equal() is falied. The _check_internal_ref_graph() can NOT found a graph address in the table."); return false; }
+        sstd::terp::var* val_p = itr->second;
+        
+        if(rhs_p->p() != val_p){ return false; }
+    }
+    
+    return true;
+}
 bool _is_equal_base(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
                     const bool check_ref_flag, const bool ref_addr_graph, const bool check_ref_abs_addr){
     
+    std::vector<std::tuple<sstd::terp::var*,sstd::terp::var*>> vStack_lhsP_and_rhsP;
     std::unordered_map<sstd::terp::var*,sstd::terp::var*> tbl_lhsAds_to_rhsAds;
+
+    bool res = true;
+    res &= _is_equal(lhs, rhs, check_ref_flag, ref_addr_graph, check_ref_abs_addr, vStack_lhsP_and_rhsP, tbl_lhsAds_to_rhsAds);
+    res &= _check_internal_ref_graph(vStack_lhsP_and_rhsP, tbl_lhsAds_to_rhsAds);
     
-    return _is_equal(lhs, rhs, tbl_lhsAds_to_rhsAds, check_ref_flag, ref_addr_graph, check_ref_abs_addr);
+    return res;
 }
 //---
 
