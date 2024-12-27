@@ -39,9 +39,8 @@ namespace sstd::terp{
     bool deep_copy(sstd::terp::var& lhs, const sstd::terp::var& rhs);
 
     // equal
-    bool equal           (const sstd::terp::var& lhs, const sstd::terp::var& rhs);
-    bool equal_val       (const sstd::terp::var& lhs, const sstd::terp::var& rhs);
-    bool equal_refAbsAddr(const sstd::terp::var& lhs, const sstd::terp::var& rhs);
+    bool equal    (const sstd::terp::var& lhs, const sstd::terp::var& rhs);
+    bool equal_val(const sstd::terp::var& lhs, const sstd::terp::var& rhs);
     
     bool equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs, const char* opt);
 }
@@ -146,9 +145,9 @@ public:
     var& operator=(const char* rhs);
     var& operator=(const  var* rhs); // for the reference of var address. // Note: sstd::terp did NOT mention the trouble with circular reference.
 
-    bool equal(const sstd::terp::var& rhs) const;
+    bool equal    (const sstd::terp::var& rhs) const;
+    bool equal_val(const sstd::terp::var& rhs) const;
     bool equal(const sstd::terp::var& rhs, const char* opt) const; // "r" (checks reference flag), "a" (checks reference address) for opt
-    bool equal_v2(const sstd::terp::var& rhs, const bool check_ref) const;
     bool operator==(const sstd::terp::var& rhs);
     bool operator!=(const sstd::terp::var& rhs);
 

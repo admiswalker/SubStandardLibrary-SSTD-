@@ -1304,9 +1304,18 @@ TEST(memory_terp, terp__equal__case01_eq){
     y[0][2] = "c";
     y[1] = &y[0];
 
-    ASSERT_TRUE(sstd::terp::equal(x, y));
+    ASSERT_TRUE(sstd::terp::equal(x, y)); // TEST THIS LINE
 }
-TEST(memory_terp, terp__equal__case02_eq){
+TEST(memory_terp, terp__equal__case02_not_eq){
+    sstd::terp::var x;
+    x = "a";
+
+    sstd::terp::var y;
+    y = "different-string-from-x";
+
+    ASSERT_FALSE(sstd::terp::equal(x, y)); // TEST THIS LINE
+}
+TEST(memory_terp, terp__equal__case03_eq){
     sstd::terp::var x;
     x = sstd::terp::list(3);
     x[0] = sstd::terp::list(2);
@@ -1327,9 +1336,9 @@ TEST(memory_terp, terp__equal__case02_eq){
     y[1][1] = "b";
     y[2] = &y[0];
 
-    ASSERT_TRUE(sstd::terp::equal(x, y));
+    ASSERT_TRUE(sstd::terp::equal(x, y)); // TEST THIS LINE
 }
-TEST(memory_terp, terp__equal__case02_not_eq){
+TEST(memory_terp, terp__equal__case04_not_eq){
     sstd::terp::var x;
     x = sstd::terp::list(3);
     x[0] = sstd::terp::list(2);
@@ -1350,13 +1359,74 @@ TEST(memory_terp, terp__equal__case02_not_eq){
     y[1][1] = "b";
     y[2] = &y[1]; // change the ref point from x
 
-    ASSERT_FALSE(sstd::terp::equal(x, y));
+    ASSERT_FALSE(sstd::terp::equal(x, y)); // TEST THIS LINE
 }
 
 //---
 
-TEST(memory_terp, terp__equal_val){}
-TEST(memory_terp, terp__equal_refAbsAddr){}
+TEST(memory_terp, terp__equal_val__case01_eq_internal_ref){
+    sstd::terp::var x;
+    x = sstd::terp::list(3);
+    x[0] = sstd::terp::list(2);
+    x[0][0] = "a";
+    x[0][1] = "b";
+    x[1] = sstd::terp::list(2);
+    x[1][0] = "a";
+    x[1][1] = "b";
+    x[2] = &x[0];
+
+    sstd::terp::var y;
+    y = sstd::terp::list(3);
+    y[0] = sstd::terp::list(2);
+    y[0][0] = "a";
+    y[0][1] = "b";
+    y[1] = sstd::terp::list(2);
+    y[1][0] = "a";
+    y[1][1] = "b";
+    y[2] = &y[0];
+
+    ASSERT_TRUE(sstd::terp::equal_val(x, y)); // TEST THIS LINE
+}
+TEST(memory_terp, terp__equal_val__case02_eq_internal_ref){
+    sstd::terp::var x;
+    x = sstd::terp::list(3);
+    x[0] = sstd::terp::list(2);
+    x[0][0] = "a";
+    x[0][1] = "b";
+    x[1] = sstd::terp::list(2);
+    x[1][0] = "a";
+    x[1][1] = "b";
+    x[2] = &x[0];
+
+    sstd::terp::var y;
+    y = sstd::terp::list(3);
+    y[0] = sstd::terp::list(2);
+    y[0][0] = "a";
+    y[0][1] = "b";
+    y[1] = sstd::terp::list(2);
+    y[1][0] = "a";
+    y[1][1] = "b";
+    y[2] = &y[1]; // change the ref point from x
+
+    ASSERT_TRUE(sstd::terp::equal_val(x, y)); // TEST THIS LINE
+}
+TEST(memory_terp, terp__equal_val__case03_eq_external_ref){
+    sstd::terp::var z = "a";
+
+    sstd::terp::var x = &z;
+    sstd::terp::var y = &z;
+
+    ASSERT_TRUE(sstd::terp::equal_val(x, y)); // TEST THIS LINE
+}
+TEST(memory_terp, terp__equal_val__case04_not_eq){
+    sstd::terp::var x;
+    x = "a";
+
+    sstd::terp::var y;
+    y = "different-string-from-x";
+
+    ASSERT_FALSE(sstd::terp::equal_val(x, y)); // TEST THIS LINE
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 

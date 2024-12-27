@@ -62,9 +62,8 @@ bool sstd::terp::deep_copy(sstd::terp::var& lhs, const sstd::terp::var& rhs){ re
 
 //---
 
-bool sstd::terp::equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs){ // TODO: write interface tests
-    return lhs.equal(rhs);
-}
+bool sstd::terp::equal    (const sstd::terp::var& lhs, const sstd::terp::var& rhs){ return lhs.equal    (rhs); }
+bool sstd::terp::equal_val(const sstd::terp::var& lhs, const sstd::terp::var& rhs){ return lhs.equal_val(rhs); }
 bool sstd::terp::equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs, const char* opt){ // TODO: write interface tests
     return lhs.equal(rhs, opt);
 }
@@ -633,19 +632,19 @@ bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
                std::unordered_map<sstd::terp::var*,sstd::terp::var*>& tbl_lhsAds_to_rhsAds
                ){
     //  Table. Parameter settings for the sstd::terp::var::equal().
-    // ┌────────────────────────────────┬───────────────────────────────────────────────────────────────┬──────────────┐
-    // │                                │ Setting of the options (*1)                                   │              │
-    // │                                │                                                               │              │
-    // │                                │              Comparation object type is (*2):                 │              │
-    // │                                │ Does check:   │ Does check: │ Does check:     │ Does check:   │              │
-    // │ Comparation Operation          │  actual-value │  ref_flag   │  ref_addr_graph │  ref_abs_addr │ Descriptions │
-    // ├────────────────────────────────┼───────────────────────────────────────────────────────────────┼──────────────┤
-    // │ sstd::terp::equal()            │     true      │    true     │      true       │    false      │              │
-    // ├────────────────────────────────┼───────────────────────────────────────────────────────────────┼──────────────┤
-    // │ sstd::terp::equal_val()        │     true      │    false    │      false      │    false      │              │
-    // ├────────────────────────────────┼───────────────────────────────────────────────────────────────┼──────────────┤
-    // │ sstd::terp::equal_refAbsAddr() │     true      │    true     │      false      │    true       │              │
-    // └────────────────────────────────┴───────────────────────────────────────────────────────────────┴──────────────┘
+    // ┌────────────────────────────────┬───────────────────────────────────────────────┬──────────────┐
+    // │                                │ Setting of the options (*1)                   │              │
+    // │                                │                                               │              │
+    // │                                │              Comparation object type is (*2): │              │
+    // │                                │ Does check:   │ Does check: │ Does check:     │              │
+    // │ Comparation Operation          │  actual-value │  ref_flag   │  ref_addr_graph │ Descriptions │
+    // ├────────────────────────────────┼───────────────────────────────────────────────┼──────────────┤
+    // │ sstd::terp::equal()            │     true      │    true     │      true       │              │
+    // ├────────────────────────────────┼───────────────────────────────────────────────┼──────────────┤
+    // │ sstd::terp::equal_val()        │     true      │    false    │      false      │              │
+    // ├────────────────────────────────┼───────────────────────────────────────────────┼──────────────┤
+    // │ sstd::terp::equal_refAbsAddr() │     true      │    true     │      false      │              │
+    // └────────────────────────────────┴───────────────────────────────────────────────┴──────────────┘
     // *1. Options:
     //       true:  sets to check the option
     //       false: sets NOT to check the option
@@ -653,7 +652,6 @@ bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
     //       actual-value:   'true'
     //       ref_flag:       'true' | 'false'
     //       ref_addr_graph: 'true' | 'false'
-    //       ref_abs_addr:   'true' | 'false'
     
     if(check_ref_flag){
         if(lhs.is_reference()!=rhs.is_reference()){ return false; }
@@ -724,9 +722,8 @@ bool sstd::terp::var::equal(const sstd::terp::var& rhs, const char* opt) const {
     
     return _is_equal_base(*this, rhs, check_ref_flag, true, check_ref_addr);
 }
-bool sstd::terp::var::equal(const sstd::terp::var& rhs) const {
-    return _is_equal_base(*this, rhs, true, true, false);
-}
+bool sstd::terp::var::equal    (const sstd::terp::var& rhs) const { return _is_equal_base(*this, rhs, true, true, false); }
+bool sstd::terp::var::equal_val(const sstd::terp::var& rhs) const { return _is_equal_base(*this, rhs, false, false, false); }
 bool sstd::terp::var::operator==(const sstd::terp::var& rhs){ return  sstd::terp::var::equal(rhs); }
 bool sstd::terp::var::operator!=(const sstd::terp::var& rhs){ return !sstd::terp::var::equal(rhs); }
 
