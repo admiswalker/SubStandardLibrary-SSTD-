@@ -889,34 +889,6 @@ TEST(memory_terp, isValue_false){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-// referendce of the `sstd::terp::var` address
-
-TEST(memory_terp, reference_of_sstd_terp_var_01){
-    sstd::terp::var x;
-    x = sstd::terp::list(2);
-    x[0] = sstd::terp::list(3);
-    x[0][0] = "a";
-    x[0][1] = "b";
-    x[0][2] = "c";
-    x[1] = &x[0];
-    //sstd::printn_all(x);
-    
-    sstd::terp::var a; // ans
-    a = sstd::terp::list(2);
-    a[0] = sstd::terp::list(3);
-    a[0][0] = "a";
-    a[0][1] = "b";
-    a[0][2] = "c";
-    a[1] = sstd::terp::list(3);
-    a[1][0] = "a";
-    a[1][1] = "b";
-    a[1][2] = "c";
-    //sstd::printn_all(a);
-    
-    ASSERT_TRUE(x==a);
-}
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
 // For the Reference Type (Constructor)
 
 TEST(memory_terp, var_init_constructor){
@@ -1287,7 +1259,29 @@ TEST(memory_terp, terp__deep_copy_err){}
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // For the Reference Type: `sstd::terp::equal()`
 
-TEST(memory_terp, terp__equal__case01_eq){
+TEST(memory_terp, terp__equal__case01_not_eq){
+    sstd::terp::var x;
+    x = sstd::terp::list(2);
+    x[0] = sstd::terp::list(3);
+    x[0][0] = "a";
+    x[0][1] = "b";
+    x[0][2] = "c";
+    x[1] = &x[0];
+    
+    sstd::terp::var a; // ans
+    a = sstd::terp::list(2);
+    a[0] = sstd::terp::list(3);
+    a[0][0] = "a";
+    a[0][1] = "b";
+    a[0][2] = "c";
+    a[1] = sstd::terp::list(3);
+    a[1][0] = "a";
+    a[1][1] = "b";
+    a[1][2] = "c";
+    
+    ASSERT_FALSE(sstd::terp::equal(x, a)); // TEST THIS LINE
+}
+TEST(memory_terp, terp__equal__case02_eq){
     sstd::terp::var x;
     x = sstd::terp::list(2);
     x[0] = sstd::terp::list(3);
@@ -1306,7 +1300,7 @@ TEST(memory_terp, terp__equal__case01_eq){
 
     ASSERT_TRUE(sstd::terp::equal(x, y)); // TEST THIS LINE
 }
-TEST(memory_terp, terp__equal__case02_not_eq){
+TEST(memory_terp, terp__equal__case03_not_eq){
     sstd::terp::var x;
     x = "a";
 
@@ -1315,7 +1309,7 @@ TEST(memory_terp, terp__equal__case02_not_eq){
 
     ASSERT_FALSE(sstd::terp::equal(x, y)); // TEST THIS LINE
 }
-TEST(memory_terp, terp__equal__case03_eq){
+TEST(memory_terp, terp__equal__case04_eq){
     sstd::terp::var x;
     x = sstd::terp::list(3);
     x[0] = sstd::terp::list(2);
@@ -1338,7 +1332,7 @@ TEST(memory_terp, terp__equal__case03_eq){
 
     ASSERT_TRUE(sstd::terp::equal(x, y)); // TEST THIS LINE
 }
-TEST(memory_terp, terp__equal__case04_not_eq){
+TEST(memory_terp, terp__equal__case05_not_eq){
     sstd::terp::var x;
     x = sstd::terp::list(3);
     x[0] = sstd::terp::list(2);
@@ -1364,7 +1358,29 @@ TEST(memory_terp, terp__equal__case04_not_eq){
 
 //---
 
-TEST(memory_terp, terp__equal_val__case01_eq_internal_ref){
+TEST(memory_terp, terp__equal_val__case01_eq){
+    sstd::terp::var x;
+    x = sstd::terp::list(2);
+    x[0] = sstd::terp::list(3);
+    x[0][0] = "a";
+    x[0][1] = "b";
+    x[0][2] = "c";
+    x[1] = &x[0];
+    
+    sstd::terp::var a; // ans
+    a = sstd::terp::list(2);
+    a[0] = sstd::terp::list(3);
+    a[0][0] = "a";
+    a[0][1] = "b";
+    a[0][2] = "c";
+    a[1] = sstd::terp::list(3);
+    a[1][0] = "a";
+    a[1][1] = "b";
+    a[1][2] = "c";
+    
+    ASSERT_TRUE(sstd::terp::equal_val(x, a)); // TEST THIS LINE
+}
+TEST(memory_terp, terp__equal_val__case02_eq_internal_ref){
     sstd::terp::var x;
     x = sstd::terp::list(3);
     x[0] = sstd::terp::list(2);
@@ -1387,7 +1403,7 @@ TEST(memory_terp, terp__equal_val__case01_eq_internal_ref){
 
     ASSERT_TRUE(sstd::terp::equal_val(x, y)); // TEST THIS LINE
 }
-TEST(memory_terp, terp__equal_val__case02_eq_internal_ref){
+TEST(memory_terp, terp__equal_val__case03_eq_internal_ref){
     sstd::terp::var x;
     x = sstd::terp::list(3);
     x[0] = sstd::terp::list(2);
@@ -1410,7 +1426,7 @@ TEST(memory_terp, terp__equal_val__case02_eq_internal_ref){
 
     ASSERT_TRUE(sstd::terp::equal_val(x, y)); // TEST THIS LINE
 }
-TEST(memory_terp, terp__equal_val__case03_eq_external_ref){
+TEST(memory_terp, terp__equal_val__case04_eq_external_ref){
     sstd::terp::var z = "a";
 
     sstd::terp::var x = &z;
@@ -1418,7 +1434,7 @@ TEST(memory_terp, terp__equal_val__case03_eq_external_ref){
 
     ASSERT_TRUE(sstd::terp::equal_val(x, y)); // TEST THIS LINE
 }
-TEST(memory_terp, terp__equal_val__case04_not_eq){
+TEST(memory_terp, terp__equal_val__case05_not_eq){
     sstd::terp::var x;
     x = "a";
 
