@@ -367,8 +367,6 @@ TEST(memory_terp, list_size_arg_null_REF){
     a = sstd::terp::list();
     sstd::terp::var a_ref;
     a_ref = &a;
-    sstd::printn_all(a.type());
-    sstd::printn_all(a_ref.type());
     ASSERT_EQ(a_ref.size(), (uint)0);
 }
 TEST(memory_terp, list_size_arg_10_REF){
@@ -376,8 +374,6 @@ TEST(memory_terp, list_size_arg_10_REF){
     a = sstd::terp::list(10);
     sstd::terp::var a_ref;
     a_ref = &a;
-    sstd::printn_all(a.type());
-    sstd::printn_all(a_ref.type());
     ASSERT_EQ(a_ref.size(), (uint)10);
 }
 

@@ -555,18 +555,14 @@ void sstd::terp::var::free(){
 }
 
 sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var&  rhs){
-    sstd::print_all("operator=(const sstd::terp::var&  rhs)");
     copy(rhs);
     return *this;
 }
 sstd::terp::var  sstd::terp::var::operator=(      sstd::terp::var&& rhs){
-    sstd::print_all("operator=(      sstd::terp::var&& rhs)");
     move(std::move(rhs));
     return *this;
 }
 sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var* pRhs_in){
-    sstd::print_all("operator=(const sstd::terp::var* pRhs)");
-
     sstd::terp::var* pRhs = (! pRhs_in->is_reference()) ? (sstd::terp::var*)pRhs_in : (sstd::terp::var*)pRhs_in->p(); // resolve double reference
     this->_is_reference = true;
     this->_type         =        pRhs->type();
@@ -582,7 +578,6 @@ void sstd::terp::var::_overwrite(T* ptr){
     this->_p    = ptr;
 }
 sstd::terp::var& sstd::terp::var::operator=(const char* rhs){
-    sstd::print_all("operator=(const char* rhs)");
     _overwrite(new std::string(rhs));
     return *this;
 }
