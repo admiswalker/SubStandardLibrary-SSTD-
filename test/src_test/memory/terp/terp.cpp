@@ -999,7 +999,7 @@ TEST(memory_terp, var_ope_square_brackets_list__REF){
     ASSERT_EQ(x.ope_sb_c(0).is_reference(), false); // TEST Ope[] const
     ASSERT_EQ(x.ope_sb_c(1).is_reference(),  true); // TEST Ope[] const
 }
-TEST(memory_terp, var_ope_square_brackets_hash__REF){
+TEST(memory_terp, var_ope_square_brackets_hash_REF){
     sstd::terp::var x;
     x = sstd::terp::hash();
     x["key1"] = "val1";
@@ -1720,7 +1720,7 @@ TEST(memory_terp, _pSRCR_tbl_case2_1_overwrite_dependent_object_2){ TEST_COPY_OR
 TEST(memory_terp, _pSRCR_tbl_case2_1_overwrite_dependent_object_3){ TEST_COPY_OR_MOVE_OPE( y=std::move(x2) ); } // operator=(var&&)
 #undef TEST_COPY_OR_MOVE_OPE
 
-TEST(memory_terp, _pSRCR_tbl_case2_2_destructor_of_the_dependent_object_is_called_1_out_of_scope){
+TEST(memory_terp, _pSRCR_tbl_case2_2_calls_the_destructor_of_dependent_object_1_out_of_scope){
     sstd::terp::var x; // Precedent object
     x = "a";
     
@@ -1747,7 +1747,7 @@ TEST(memory_terp, _pSRCR_tbl_case2_2_destructor_of_the_dependent_object_is_calle
     ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)0); // checks the x.pSRCR_tbl() is cleared.
     ASSERT_TRUE(x.is_reference()==false);
 }
-TEST(memory_terp, _pSRCR_tbl_case2_2_destructor_of_the_dependent_object_is_called_2_explicit_delete){
+TEST(memory_terp, _pSRCR_tbl_case2_2_calls_the_destructor_of_dependent_object_2_explicit_delete){
     sstd::terp::var x; // Dependent object
 
     //---
@@ -1774,7 +1774,7 @@ TEST(memory_terp, _pSRCR_tbl_case2_2_destructor_of_the_dependent_object_is_calle
     ASSERT_TRUE(x.is_reference()==false);
     ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)0);
 }
-TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_1_list_pop_back__SR){
+TEST(memory_terp, _pSRCR_tbl_case2_3_calls_the_destructor_of_dependent_object_1_list_pop_back_SR){
     sstd::terp::var x; // Precedent object
     x = sstd::terp::list(2);
     x[0] = "a";
@@ -1806,11 +1806,11 @@ TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_calle
     ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)0);  \
     ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)0);  \
     ASSERT_EQ(y.p(), (void*)NULL);
-TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_1_list_pop_back__CR){ TEST_OPE_CR(pop_back()); }
-TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_2_list_resize__CR  ){ TEST_OPE_CR(resize(0)); }
+TEST(memory_terp, _pSRCR_tbl_case2_3_calls_the_destructor_of_dependent_object_1_list_pop_back_CR){ TEST_OPE_CR(pop_back()); }
+TEST(memory_terp, _pSRCR_tbl_case2_3_calls_the_destructor_of_dependent_object_2_list_resize_CR  ){ TEST_OPE_CR(resize(0)); }
 #undef TEST_OPE_CR
 
-TEST(memory_terp, _pSRCR_tbl_case2_3_destructor_of_the_dependent_object_is_called_3_hash_erase__CR){
+TEST(memory_terp, _pSRCR_tbl_case2_3_calls_the_destructor_of_dependent_object_3_hash_erase_CR){
     sstd::terp::var x; // Precedent object
     x = sstd::terp::hash();
     x["key1"] = "val1";
@@ -1935,7 +1935,7 @@ TEST(memory_terp, _pSRCR_tbl_case3_1_overwrite_precedent_object_2){ TEST_COPY_OR
 TEST(memory_terp, _pSRCR_tbl_case3_1_overwrite_precedent_object_3){ TEST_COPY_OR_MOVE_OPE(x=std::move(x2)); } // operator=(var&&)
 #undef TEST_COPY_OR_MOVE_OPE
 
-TEST(memory_terp, _pSRCR_tbl_case3_2_destructor_of_the_precedent_object_is_called_1_out_of_scope){
+TEST(memory_terp, _pSRCR_tbl_case3_2_calls_the_destructor_of_precedent_object_1_out_of_scope){
     sstd::terp::var y; // Dependent object
 
     {
@@ -1956,7 +1956,7 @@ TEST(memory_terp, _pSRCR_tbl_case3_2_destructor_of_the_precedent_object_is_calle
     ASSERT_EQ(y.p(), (void*)NULL); // checks the y.p() is the null filled.
     ASSERT_TRUE(y.is_reference()==false);
 }
-TEST(memory_terp, _pSRCR_tbl_case3_2_destructor_of_the_precedent_object_is_called_2_explicit_delete){
+TEST(memory_terp, _pSRCR_tbl_case3_2_calls_the_destructor_of_precedent_object_2_explicit_delete){
     sstd::terp::var y; // Dependent object
 
     //---
@@ -1980,7 +1980,7 @@ TEST(memory_terp, _pSRCR_tbl_case3_2_destructor_of_the_precedent_object_is_calle
     ASSERT_TRUE(y.is_reference()==false);
 }
 
-TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_1_list_pop_back__SR){
+TEST(memory_terp, _pSRCR_tbl_case3_3_calls_the_destructor_of_precedent_object_1_list_pop_back_SR){
     sstd::terp::var x; // Precedent object
     x = sstd::terp::list(2);
     x[1] = "a";
@@ -2012,11 +2012,11 @@ TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_calle
     ASSERT_EQ(y.size(), (uint)0);               \
     ASSERT_EQ(x.pSRCR_tbl()->size(), (uint)0);  \
     ASSERT_EQ(y.pSRCR_tbl()->size(), (uint)0);
-TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_1_list_pop_back__CR){ TEST_OPE_CR(pop_back()); }
-TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_2_list_resize__CR  ){ TEST_OPE_CR(resize(0) ); }
+TEST(memory_terp, _pSRCR_tbl_case3_3_calls_the_destructor_of_precedent_object_1_list_pop_back_CR){ TEST_OPE_CR(pop_back()); }
+TEST(memory_terp, _pSRCR_tbl_case3_3_calls_the_destructor_of_precedent_object_2_list_resize_CR  ){ TEST_OPE_CR(resize(0) ); }
 #undef TEST_OPE_CR
 
-TEST(memory_terp, _pSRCR_tbl_case3_3_destructor_of_the_precedent_object_is_called_3_hash_erase__CR){
+TEST(memory_terp, _pSRCR_tbl_case3_3_calls_the_destructor_of_precedent_object_3_hash_erase_CR){
     sstd::terp::var x; // Precedent object
     x = "a";
     
