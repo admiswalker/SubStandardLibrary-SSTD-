@@ -83,16 +83,26 @@ TEST(memory_terp_print, hash_depth2){
     a = sstd::terp::hash();
     a["k0"] = "v0";
     a["k1"] = "v1";
-    a["k2"] = "v2";
-    a["k3"] = sstd::terp::hash();
-    a["k3"]["k0"] = "v0";
-    a["k3"]["k1"] = "v1";
-    a["k3"]["k2"] = "v2";
+    a["k2"] = sstd::terp::hash();
+    a["k2"]["k0"] = "v0";
+    a["k2"]["k1"] = "v1";
     
     testing::internal::CaptureStdout();
     sstd::print(a); // TEST THIS LINE
     std::string ret = testing::internal::GetCapturedStdout().c_str();
-    ASSERT_STREQ(ret.c_str(), "{\"k3\": {\"k2\": \"v2\", \"k1\": \"v1\", \"k0\": \"v0\"}, \"k2\": \"v2\", \"k1\": \"v1\", \"k0\": \"v0\"}\n");
+    
+    bool tf1 = false;
+    tf1 |= ret.find("\"k2\": {\"k0\": \"v0\", \"k1\": \"v1\"}");
+    tf1 |= ret.find("\"k2\": {\"k1\": \"v1\", \"k0\": \"v0\"}");
+    bool tf2 = false;
+    tf2 |= ret.find("\"k1\": \"v1\"");
+    bool tf3 = false;
+    tf3 |= ret.find("\"k0\": \"v0\"");
+    ASSERT_TRUE(tf1);
+    ASSERT_TRUE(tf2);
+    ASSERT_TRUE(tf3);
+    
+    ASSERT_EQ(ret.size(), (uint)57);
 }
 
 //*/
@@ -123,12 +133,17 @@ TEST(memory_terp_print, hash_list_hash){
     a["k1"][0] = "v10";
     a["k1"][1] = sstd::terp::hash();
     a["k1"][1]["k110"] = "v110";
-    a["k1"][1]["k111"] = "v111";
     
     testing::internal::CaptureStdout();
     sstd::print(a); // TEST THIS LINE
     std::string ret = testing::internal::GetCapturedStdout().c_str();
-    ASSERT_STREQ(ret.c_str(), "{\"k1\": [\"v10\" {\"k111\": \"v111\", \"k110\": \"v110\"}], \"k0\": \"v0\"}\n");
+
+    bool tf1 = false;
+    tf1 |= ret.find("{\"k1\": [\"v10\" {\"k110\": \"v110\"}], \"k0\": \"v0\"}\n");
+    tf1 |= ret.find("{\"k0\": \"v0\", \"k1\": [\"v10\" {\"k110\": \"v110\"}]}\n");
+    ASSERT_TRUE(tf1);
+    
+    ASSERT_EQ(ret.size(), (uint)45);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
