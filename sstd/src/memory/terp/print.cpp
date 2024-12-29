@@ -45,32 +45,25 @@ void _print_terp_hash(const sstd::terp::var& rhs){
     printf("}");
 }
 
+//---
+
 #define sstd_print_terp_var_base(rhs)                                   \
     switch(rhs.typeNum()){                                              \
-    case sstd::num_str          : { _print_terp_str (rhs); } break; \
-    case sstd::num_vec_terp_var : { _print_terp_list(rhs); } break; \
-    case sstd::num_hash_terp_var: { _print_terp_hash(rhs); } break; \
+    case sstd::num_str          : { _print_terp_str (rhs); } break;     \
+    case sstd::num_vec_terp_var : { _print_terp_list(rhs); } break;     \
+    case sstd::num_hash_terp_var: { _print_terp_hash(rhs); } break;     \
     case sstd::num_null: {} break;                                      \
     default: { sstd::pdbg("ERROR"); } break;                            \
     }
 
-//-----------------------------------------------------------------------------------------------------------------------------------------------
-
-void sstd::print(const sstd::terp::var& rhs){
-    sstd_print_terp_var_base(rhs);
-    printf("\n");
-}
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
-
-void sstd::for_printn(const sstd::terp::var& rhs){ printf(" = "); sstd::print(rhs); }
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
-
-void sstd::print_for_vT(const sstd::terp::var& rhs){
-    sstd_print_terp_var_base(rhs);
-}
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------
+void sstd::print_base(const sstd::terp::var& rhs){ sstd_print_terp_var_base(rhs); }
 
 #undef sstd_print_terp_var_base
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+void sstd::print_base(const sstd::terp::var* rhs){
+    printf("%p", rhs); 
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
