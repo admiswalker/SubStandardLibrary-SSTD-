@@ -49,12 +49,7 @@
     printf("    aa_val: `%s`\n", rhs.aa_val.c_str());           \
     printf(",\n");
 
-void sstd::print(const sstd_yaml::token& rhs){
-    sstd_print_token_base(rhs);
-    printf("\n");
-}
-void sstd::for_printn(const sstd_yaml::token& rhs){ printf(" = "); sstd::print(rhs); }
-void sstd::print_for_vT(const sstd_yaml::token& rhs){
+void sstd::print_base(const sstd_yaml::token& rhs){
     sstd_print_token_base(rhs);
 }
 
@@ -79,13 +74,9 @@ void sstd::print_for_vT(const sstd_yaml::token& rhs){
     printf("    aa_val: `%s`\n", rhs.aa_val.c_str());           \
     printf(",\n");
 
-void sstd::print(const sstd_yaml::command& rhs){
+void sstd::print_base(const sstd_yaml::command& rhs){
     sstd_print_command_v2_base(rhs);
     printf("\n");
-}
-void sstd::for_printn(const sstd_yaml::command& rhs){ printf(" = "); sstd::print(rhs); }
-void sstd::print_for_vT(const sstd_yaml::command& rhs){
-    sstd_print_command_v2_base(rhs);
 }
 
 #undef sstd_print_command_v2_base

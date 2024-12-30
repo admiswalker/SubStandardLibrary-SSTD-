@@ -109,13 +109,8 @@ namespace sstd_yaml{
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 namespace sstd{
-    void print(const sstd_yaml::token& rhs);
-    void for_printn(const sstd_yaml::token& rhs);
-    void print_for_vT(const sstd_yaml::token& rhs);
-    
-    void print(const sstd_yaml::command& rhs);
-    void for_printn(const sstd_yaml::command& rhs);
-    void print_for_vT(const sstd_yaml::command& rhs);
+    void print_base(const sstd_yaml::token& rhs);
+    void print_base(const sstd_yaml::command& rhs);
     
     bool yaml_load     (           sstd::terp::var & ret_yml,  const        char* s);
     bool yaml_load     (           sstd::terp::var & ret_yml,  const std::string& s);
