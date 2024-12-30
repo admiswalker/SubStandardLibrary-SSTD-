@@ -455,12 +455,15 @@ def main():
     # convert to a pseudo pointer type
     for i in range(1,len(valList)):
         if typeList[i].pointer_sidePy: valList[i]=[valList[i]]
-        
-    # import running function
-    exec('sys.path.append(\'%s\')' % os.path.dirname(importFile))
+
+    # prepare names
     importFile_baseName = os.path.basename(importFile)
-    exec('import %s' % importFile_baseName)
     funcName=importFile_baseName+'.'+funcName
+    
+    # make import string for the running function
+    import_pyFunc  = ''
+    import_pyFunc += ('sys.path.append(\'%s\')\n' % os.path.dirname(importFile))
+    import_pyFunc += ('import %s\n' % importFile_baseName)
     
     # run function
     valNumList=[int(i) for i in range(len(valList))]
@@ -479,7 +482,7 @@ def main():
         for i in range(len(valNumList)-retNum-1):
             run_pyFunc += (',valList[%d]' % valNumList[n]); n+=1
     run_pyFunc += ')'
-    exec(run_pyFunc)
+    exec(import_pyFunc + run_pyFunc)
     
     # Inverse transformation of a pseudo pointer type
     for i in range(1,len(valList)):
