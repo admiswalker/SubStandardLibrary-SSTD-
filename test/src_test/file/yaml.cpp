@@ -4401,6 +4401,55 @@ TEST(yaml, _str2token__multi_list__anchor_and_alias__case2){
 //---
 
 TEST(yaml, anchor_and_alias__case01){
+    std::string s=R"(
+- &ll
+  - a
+- *ll
+)";
+    sstd::terp::var yml;
+    bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
+
+    ASSERT_TRUE(ret);
+
+    ASSERT_EQ(yml.size(), (uint)2);
+    ASSERT_EQ(yml[0].size(), (uint)1);
+    ASSERT_EQ(yml[1].size(), (uint)1);
+
+    ASSERT_STREQ(yml[0][0].to<std::string>().c_str(), "a");
+    ASSERT_STREQ(yml[1][0].to<std::string>().c_str(), "a");
+
+    ASSERT_EQ(yml[0].is_reference(), false);
+    ASSERT_EQ(yml[1].is_reference(), true );
+    
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::list(2);
+    ans[0] = sstd::terp::list(1);
+    ans[0][0] = "a";
+    ans[1] = &ans[0];
+
+    sstd::printn(yml);
+    sstd::printn(ans);
+
+    sstd::printn(*yml.pSRCR_tbl());
+    sstd::printn(*ans.pSRCR_tbl());
+
+    sstd::printn(yml == ans);
+    sstd::printn(sstd::terp::equal(yml, ans));
+    sstd::printn(sstd::terp::equal_val(yml, ans));
+
+    sstd::printn(yml[0].is_reference());
+    sstd::printn(yml[1].is_reference());
+    sstd::printn(ans[0].is_reference());
+    sstd::printn(ans[1].is_reference());
+
+    ASSERT_TRUE(yml == ans);
+
+    //---
+    
+}
+TEST(yaml, anchor_and_alias__case02){
     std::string s = R"(
 - &ll
   - - a
@@ -4408,48 +4457,18 @@ TEST(yaml, anchor_and_alias__case01){
   - c
 - *ll
 )";
-    /*
-#hh: &hh
-#  k1: v1
-#  k2: v2
-
-#- &l a # anchor
-#- *l # alias
-#- [*l]
-#- {*l}
-*/
 }
-TEST(yaml, anchor_and_alias__case02){
-    std::string s=R"(
-- &ll
-  - a
-- *ll
+TEST(yaml, anchor_and_alias__case03){
+    std::string s = R"(
+hh: &hh
+  k1: v1
+  k2: v2
+
+- &l a # anchor
+- *l # alias
+- [*l]
+- {*l}
 )";
-//    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-//    sstd::printn_all(yml);
-
-//    sstd::printn((void*)&yml);
-//    sstd::printn((void*) yml.p());
-//    sstd::printn((void*)&yml[0]);
-//    sstd::printn((void*) yml[0].p());
-//    sstd::printn((void*)&yml[0][0]);
-//    sstd::printn((void*) yml[0][0].p());
-//    sstd::printn((void*)&yml[1]);
-
-    //---
-    
-//    sstd::terp::var ans;
-//    ans = sstd::terp::list(2);
-//    ans[0] = "a";
-//    ans[1] = "b";
-
-    /*
-    sstd::terp::var x;
-    x = sstd::terp::list(2);
-    x[0] = sstd::terp::list(1);
-    x[0][0] = "a";
-    x[1] = &x[0];
-     */
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

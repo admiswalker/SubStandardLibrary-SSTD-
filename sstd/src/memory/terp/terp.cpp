@@ -637,7 +637,7 @@ bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
     // ├────────────────────────────────┼───────────────────────────────────────────────┼──────────────┤
     // │ sstd::terp::equal_val()        │     true      │    false    │      false      │              │
     // ├────────────────────────────────┼───────────────────────────────────────────────┼──────────────┤
-    // │ sstd::terp::equal_refAbsAddr() │     true      │    true     │      false      │              │
+    // │ sstd::terp::equal_refAbsAddr() │     true      │    true     │      false      │              │ /* <- This is NOT implimented yet */
     // └────────────────────────────────┴───────────────────────────────────────────────┴──────────────┘
     // *1. Options:
     //       true:  sets to check the option
@@ -658,7 +658,7 @@ bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
                 vStack_lhsP_and_rhsP.push_back( std::make_tuple((sstd::terp::var*)&lhs, (sstd::terp::var*)&rhs) );
             }else{
                 // If the reference is `external` reference.
-                if(lhs.p() != rhs.p()){ sstd::printn_all("");return false; }
+                if(lhs.p() != rhs.p()){ return false; }
             }
         }
     }

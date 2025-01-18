@@ -120,7 +120,7 @@ public:
     
     void _fill_ref_src_null(const std::unordered_set<sstd::terp::var*>& hash_set);
     void _fillout_ref_src_null();
-
+    
     bool _copy_base(const class sstd::terp::var* pRhs, const char opt_a, const char opt_i, const char opt_e);
     bool copy(const class sstd::terp::var&  rhs);
     void move(      class sstd::terp::var&& rhs);
