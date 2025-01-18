@@ -563,11 +563,14 @@ sstd::terp::var  sstd::terp::var::operator=(      sstd::terp::var&& rhs){
     return *this;
 }
 sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var* pRhs_in){
+    sstd::printn_all("imh");
     sstd::terp::var* pRhs = (! pRhs_in->is_reference()) ? (sstd::terp::var*)pRhs_in : (sstd::terp::var*)pRhs_in->p(); // resolve double reference
     this->_is_reference = true;
     this->_type         =        pRhs->type();
     this->_p            = (void*)pRhs;
     (*pRhs->_pSRCR_tbl)[ (sstd::terp::var*)pRhs ].insert( (sstd::terp::var*)this );
+    sstd::printn_all(pRhs->_pSRCR_tbl);
+    sstd::printn_all(*pRhs->_pSRCR_tbl);
     return *this;
 }
 

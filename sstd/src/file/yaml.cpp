@@ -746,7 +746,13 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml
                 if(cmd.ref_type==sstd_yaml::ref_type_anchor){
                     tbl_anchor_to_address[ cmd.aa_val ] = &var[ var.size()-1 ];
                 }else if(cmd.ref_type==sstd_yaml::ref_type_alias){
-                    var[ var.size()-1 ] = (sstd::terp::var*)tbl_anchor_to_address[ cmd.aa_val ];
+                    sstd::printn_all( "imh--------------------------------(begin)" );
+                    //var[ var.size()-1 ] = (sstd::terp::var*)tbl_anchor_to_address[ cmd.aa_val ];
+                    sstd::printn_all( var.size()-1 );
+                    var[ 1 ] = &var[ 0 ];
+                    sstd::printn_all( var.pSRCR_tbl() );
+                    sstd::printn_all( *var.pSRCR_tbl() );
+                    sstd::printn_all( "imh--------------------------------(end)" );
                 }
             } break;
             case sstd_yaml::type_hash: {

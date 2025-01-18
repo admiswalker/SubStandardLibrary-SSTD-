@@ -4444,6 +4444,11 @@ TEST(yaml, anchor_and_alias__case01){
     sstd::printn(ans[0].is_reference());
     sstd::printn(ans[1].is_reference());
 
+    sstd::printn(yml[0].is_pSRCR_tbl_base());
+    sstd::printn(yml[1].is_pSRCR_tbl_base());
+    sstd::printn(ans[0].is_pSRCR_tbl_base());
+    sstd::printn(ans[1].is_pSRCR_tbl_base());
+
     ASSERT_TRUE(yml == ans);
 
     //---
