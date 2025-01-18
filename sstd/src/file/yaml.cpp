@@ -377,10 +377,10 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
                 // --- anchor and alias ---
                 if(t.ref_type==sstd_yaml::ref_type_anchor){
                     c.ref_type    = t.ref_type;
-                    c.aa_val      = t.val; // ここはあとで，c.aa_val = t.aa_val にする
+                    c.aa_val      = t.aa_val;
                 }else if(t.ref_type==sstd_yaml::ref_type_alias){
                     c.ref_type    = t.ref_type;
-                    c.aa_val      = t.val; // ここはあとで，c.aa_val = t.aa_val にする
+                    c.aa_val      = t.aa_val;
                 }
                 ret_vCmd.push_back(c);
             }
@@ -908,9 +908,9 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
         if(is_list){ tmp.type += sstd_yaml::type_list; tmp.hsc_hx+=2; }
         if(is_hash){ tmp.type += sstd_yaml::type_hash; }
         
-        if(is_flow  ){ tmp.format   = sstd_yaml::format_flow_style;                     }
-        if(is_anchor){ tmp.ref_type = sstd_yaml::ref_type_anchor;   tmp.val.erase(0,1); } // 1) set format type, 2) remove '&' in the head of the string
-        if(is_alias ){ tmp.ref_type = sstd_yaml::ref_type_alias;    tmp.val.erase(0,1); } // 1) set format type, 2) remove '*' in the head of the string
+        if(is_flow  ){ tmp.format   = sstd_yaml::format_flow_style;                                                     }
+        if(is_anchor){ tmp.ref_type = sstd_yaml::ref_type_anchor;   tmp.val.erase(0,1); std::swap(tmp.val, tmp.aa_val); } // 1) set format type, 2) remove '&' in the head of the string
+        if(is_alias ){ tmp.ref_type = sstd_yaml::ref_type_alias;    tmp.val.erase(0,1); std::swap(tmp.val, tmp.aa_val); } // 1) set format type, 2) remove '*' in the head of the string
         
         // Skip empty tokens until the first non-empty token occurs. (Empty token is treated as a line-break related with to other token in a context of multi-line YAML)
         if(ret.size()==0 &&

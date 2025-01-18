@@ -397,6 +397,11 @@ TEST(yaml, _str2token_multi_list_case11){
 
 //TEST(yaml, _str2token_multi_list_except_pipe_or_inequality_sign_case01){
 //}
+
+//---
+
+
+
 //*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Test _format_mult_line_str()
@@ -4304,8 +4309,98 @@ TEST(yaml, yaml_load_all_fp){
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // anchor and alias
 
-TEST(yaml, _str2token_multi_list_case00_tmp){
-    printf("#####################################################\n");
+TEST(yaml, _str2token__multi_list__anchor_and_alias__case1){
+    std::string s=R"(
+- &ll
+  - a
+- *ll
+)";
+    std::vector<sstd_yaml::token> v_ret;
+    bool ret = sstd_yaml::_str2token(v_ret, s);
+//    sstd::printn_all(ret);
+//    sstd::printn_all(v_ret.size());
+//    sstd::printn_all(v_ret);
+    
+    //---
+    
+    ASSERT_TRUE(ret);
+    ASSERT_EQ(v_ret.size(), (uint)3);
+    
+    ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- &ll"  );
+    ASSERT_STREQ(v_ret[0].key.c_str(),    ""       );
+    ASSERT_STREQ(v_ret[0].val.c_str(),    ""       );
+    ASSERT_STREQ(v_ret[0].aa_val.c_str(), "ll"     );
+    ASSERT_EQ   (v_ret[0].ref_type,       (uint)  0);
+    
+    ASSERT_STREQ(v_ret[1].rawStr.c_str(), "  - a"  );
+    ASSERT_STREQ(v_ret[1].key.c_str(),    ""       );
+    ASSERT_STREQ(v_ret[1].val.c_str(),    "a"      );
+    ASSERT_STREQ(v_ret[1].aa_val.c_str(), ""       );
+    ASSERT_EQ   (v_ret[1].ref_type,       (uint)255);
+    
+    ASSERT_STREQ(v_ret[2].rawStr.c_str(), "- *ll"  );
+    ASSERT_STREQ(v_ret[2].key.c_str(),    ""       );
+    ASSERT_STREQ(v_ret[2].val.c_str(),    ""       );
+    ASSERT_STREQ(v_ret[2].aa_val.c_str(), "ll"     );
+    ASSERT_EQ   (v_ret[2].ref_type,       (uint)  1);
+}
+TEST(yaml, _str2token__multi_list__anchor_and_alias__case2){
+    std::string s = R"(
+- &ll
+  - - a
+  - b
+  - c
+- *ll
+)";
+    std::vector<sstd_yaml::token> v_ret;
+    bool ret = sstd_yaml::_str2token(v_ret, s);
+//    sstd::printn_all(ret);
+//    sstd::printn_all(v_ret.size());
+//    sstd::printn_all(v_ret);
+    
+    ASSERT_TRUE(ret);
+    ASSERT_EQ(v_ret.size(), (uint)6);
+    
+    ASSERT_STREQ(v_ret[0].rawStr.c_str(), "- &ll"  );
+    ASSERT_STREQ(v_ret[0].key.c_str(),    ""       );
+    ASSERT_STREQ(v_ret[0].val.c_str(),    ""       );
+    ASSERT_STREQ(v_ret[0].aa_val.c_str(), "ll"     );
+    ASSERT_EQ   (v_ret[0].ref_type,       (uint)  0);
+    
+    ASSERT_STREQ(v_ret[1].rawStr.c_str(), "  - - a");
+    ASSERT_STREQ(v_ret[1].key.c_str(),    ""       );
+    ASSERT_STREQ(v_ret[1].val.c_str(),    ""       );
+    ASSERT_STREQ(v_ret[1].aa_val.c_str(), ""       );
+    ASSERT_EQ   (v_ret[1].ref_type,       (uint)255);
+    
+    ASSERT_STREQ(v_ret[2].rawStr.c_str(), "  - - a");
+    ASSERT_STREQ(v_ret[2].key.c_str(),    ""       );
+    ASSERT_STREQ(v_ret[2].val.c_str(),    "a"      );
+    ASSERT_STREQ(v_ret[2].aa_val.c_str(), ""       );
+    ASSERT_EQ   (v_ret[2].ref_type,       (uint)255);
+    
+    ASSERT_STREQ(v_ret[3].rawStr.c_str(), "  - b"  );
+    ASSERT_STREQ(v_ret[3].key.c_str(),    ""       );
+    ASSERT_STREQ(v_ret[3].val.c_str(),    "b"      );
+    ASSERT_STREQ(v_ret[3].aa_val.c_str(), ""       );
+    ASSERT_EQ   (v_ret[3].ref_type,       (uint)255);
+    
+    ASSERT_STREQ(v_ret[4].rawStr.c_str(), "  - c"  );
+    ASSERT_STREQ(v_ret[4].key.c_str(),    ""       );
+    ASSERT_STREQ(v_ret[4].val.c_str(),    "c"      );
+    ASSERT_STREQ(v_ret[4].aa_val.c_str(), ""       );
+    ASSERT_EQ   (v_ret[4].ref_type,       (uint)255);
+
+    ASSERT_STREQ(v_ret[5].rawStr.c_str(), "- *ll"  );
+    ASSERT_STREQ(v_ret[5].key.c_str(),    ""       );
+    ASSERT_STREQ(v_ret[5].val.c_str(),    ""       );
+    ASSERT_STREQ(v_ret[5].aa_val.c_str(), "ll"     );
+    ASSERT_EQ   (v_ret[5].ref_type,       (uint)  1);
+}
+
+//---
+
+TEST(yaml, anchor_and_alias__case01){
     std::string s = R"(
 - &ll
   - - a
@@ -4323,167 +4418,23 @@ TEST(yaml, _str2token_multi_list_case00_tmp){
 #- [*l]
 #- {*l}
 */
-    std::vector<sstd_yaml::token> v_ret;
-    bool ret = sstd_yaml::_str2token(v_ret, s);
-    sstd::printn_all(ret);
-    sstd::printn_all(v_ret.size());
-    sstd::printn_all(v_ret);
-    /*
-    ASSERT_TRUE(ret);
-    ASSERT_EQ(v_ret.size(), (uint)3);
-    ASSERT_STREQ(v_ret[0].rawStr.c_str(), "k_X: ");
-    ASSERT_STREQ(v_ret[0].val.c_str(),    ""     );
-    ASSERT_STREQ(v_ret[1].rawStr.c_str(), "  k1: |+\n     a\n     \n     c\n     ");
-    ASSERT_STREQ(v_ret[1].key.c_str(),      "k1" );
-    ASSERT_STREQ(v_ret[1].val.c_str(),          "a\n\nc\n\n"); // "|+\n     a\n     \n     c\n     "
-    ASSERT_STREQ(v_ret[2].rawStr.c_str(), "k_Y: v_Y");
-    ASSERT_STREQ(v_ret[2].key.c_str(),    "k_Y");
-    ASSERT_STREQ(v_ret[2].val.c_str(),    "v_Y");
-    */
 }
-TEST(yaml, _str2token_multi_list_case00_tmp2){
+TEST(yaml, anchor_and_alias__case02){
     std::string s=R"(
 - &ll
   - a
 - *ll
 )";
-/*
-v_token = [
-debug info:
-    line_num_begin: 2
-    line_num_end: 2
-    rawStr: `- `
-command:
-    type: 1
-    format: 0
-    ref_type: 255
-    list_type_cnt: 1
-    hsc_lx: 0
-    hsc_hx: 2
-    hasValue: false
-    key_is_dqed: false
-    key_is_sqed: false
-    val_is_dqed: false
-    val_is_sqed: false
-    mult_line_val: false
-    key: ``
-    val: ``
-,
- 
-debug info:
-    line_num_begin: 3
-    line_num_end: 1
-    rawStr: `  - a`
-command:
-    type: 1
-    format: 0
-    ref_type: 255
-    list_type_cnt: 1
-    hsc_lx: 2
-    hsc_hx: 4
-    hasValue: ture
-    key_is_dqed: false
-    key_is_sqed: false
-    val_is_dqed: false
-    val_is_sqed: false
-    mult_line_val: ture
-    key: ``
-    val: `a`
-,
-]
-yml = [["a"]]
+//    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
+//    sstd::printn_all(yml);
 
----
-
-v_cmd = [
-debug info:
-    line_num_begin: 2
-    line_num_end: 2
-    rawStr: `-`
-command:
-    ope: 0
-    hsc: 0
-    type: 1
-    format: 0
-    val: ``
-anchor and alias:
-    ref_type: 255
-    aa_val: ``
-,
- 
-debug info:
-    line_num_begin: 2
-    line_num_end: 2
-    rawStr: `-`
-command:
-    ope: 1
-    hsc: 2
-    type: 1
-    format: 0
-    val: ``
-anchor and alias:
-    ref_type: 255
-    aa_val: ``
-,
- 
-debug info:
-    line_num_begin: 3
-    line_num_end: 1
-    rawStr: `  - a`
-command:
-    ope: 0
-    hsc: 2
-    type: 1
-    format: 0
-    val: ``
-anchor and alias:
-    ref_type: 255
-    aa_val: ``
-,
- 
-debug info:
-    line_num_begin: 3
-    line_num_end: 1
-    rawStr: `  - a`
-command:
-    ope: 2
-    hsc: 4
-    type: 0
-    format: 0
-    val: `a`
-anchor and alias:
-    ref_type: 255
-    aa_val: ``
-,
-]
-yml = [["a"]]
-*/
-/*
-- &ll
-  - - a
-  - b
-  - c
-- *ll
-*/
-/*
-- 
-  - - a
-  - b
-  - c
-- 
-  - - a
-  - b
-  - c
-*/
-    sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn_all(yml);
-    sstd::printn((void*)&yml);
-    sstd::printn((void*) yml.p());
-    sstd::printn((void*)&yml[0]);
-    sstd::printn((void*) yml[0].p());
-    sstd::printn((void*)&yml[0][0]);
-    sstd::printn((void*) yml[0][0].p());
-    sstd::printn((void*)&yml[1]);
+//    sstd::printn((void*)&yml);
+//    sstd::printn((void*) yml.p());
+//    sstd::printn((void*)&yml[0]);
+//    sstd::printn((void*) yml[0].p());
+//    sstd::printn((void*)&yml[0][0]);
+//    sstd::printn((void*) yml[0][0].p());
+//    sstd::printn((void*)&yml[1]);
 
     //---
     
@@ -4499,13 +4450,9 @@ yml = [["a"]]
     x[0][0] = "a";
     x[1] = &x[0];
      */
-    
-    //---
-    
-//    ASSERT_TRUE(yml==ans);
 }
 
-//--
+//-----------------------------------------------------------------------------------------------------------------------------------------------
 
 EXECUTE_TESTS();
 
