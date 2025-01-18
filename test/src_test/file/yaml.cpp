@@ -4476,7 +4476,7 @@ yml = [["a"]]
   - c
 */
     sstd::terp::var yml; ASSERT_TRUE(sstd::yaml_load(yml, s)); // TEST THIS LINE
-    sstd::printn(yml);
+    sstd::printn_all(yml);
     sstd::printn((void*)&yml);
     sstd::printn((void*) yml.p());
     sstd::printn((void*)&yml[0]);

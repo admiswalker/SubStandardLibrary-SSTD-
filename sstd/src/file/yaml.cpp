@@ -398,24 +398,6 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
                 c.val             = t.val; // t.key;
                 ret_vCmd.push_back(c);
             }
-            /*
-            if(t.ref_type==sstd_yaml::ref_type_anchor){
-                // --- debug info ---
-                c.line_num_begin  = t.line_num_begin;
-                c.line_num_end    = t.line_num_end;
-                c.rawStr          = t.rawStr;
-                // --- construct info ---
-                c.ope             = sstd_yaml::ope_push_ref;
-                c.hsc             = t.hsc_hx; // t.hsc_lx;
-                c.type            = sstd_yaml::type_null;
-                c.format          = t.format;
-                c.val             = t.val; // t.key;
-                // --- anchor and alias ---
-                c.ref_type        = t.ref_type;
-                c.aa_val          = t.val; // ここはあとで，c.aa_val = t.aa_val にする
-                ret_vCmd.push_back(c);
-            }*/
-            
         } break;
         case sstd_yaml::type_hash: {
             // --- debug info ---
@@ -747,17 +729,6 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml
                 if(!_flow_style_str_to_obj(var, cmd.val)){ sstd::pdbg_err("_flow_style_str_to_obj() is failed.\n"); return false; }
             }else{
                 var = cmd.val;
-//                sstd::printn(var);
-//                sstd::printn(&var);
-//                if(cmd.ref_type==sstd_yaml::ref_type_alias){
-//                    sstd::printn(var);
-//                    sstd::printn(cmd.aa_val);
-//                    sstd::printn(tbl_anchor_to_address);
-//                    // tbl_anchor_to_address.find();
-//                    var = (sstd::terp::var*)tbl_anchor_to_address[ cmd.aa_val ];
-//                }else if(cmd.ref_type!=sstd_yaml::ref_type_anchor){
-//                    var = cmd.val;
-//                }
             }
         }else if(cmd.ope==sstd_yaml::ope_alloc){
             if(var.typeNum()==sstd::num_null){
@@ -770,18 +741,13 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml
             
             switch(cmd.type){
             case sstd_yaml::type_list: {
-                sstd::printn_all(var.size());
-                sstd::printn_all(&ret_yml[0]);
                 var.push_back();
-                sstd::printn_all(&ret_yml[0]);
                 v_dst_cr.push_back(&var[var.size()-1]);
-                sstd::printn_all(&ret_yml[0]);
                 if(cmd.ref_type==sstd_yaml::ref_type_anchor){
                     tbl_anchor_to_address[ cmd.aa_val ] = &var[ var.size()-1 ];
                 }else if(cmd.ref_type==sstd_yaml::ref_type_alias){
                     var[ var.size()-1 ] = (sstd::terp::var*)tbl_anchor_to_address[ cmd.aa_val ];
                 }
-                sstd::printn_all(&ret_yml[0]);
             } break;
             case sstd_yaml::type_hash: {
                 auto itr = var.find(cmd.val);
@@ -790,19 +756,10 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml
             } break;
             default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
             }
-//        }else if(cmd.ope==sstd_yaml::ope_push_ref){
-//            tbl_anchor_to_address[ cmd.aa_val ] = &var;
         }else{
             sstd::pdbg_err("Unexpected data type\n"); return false;
         }
-        sstd::printn_all(&ret_yml[0]);
     }
-
-    sstd::printn(tbl_anchor_to_address);
-
-    sstd::printn(&ret_yml);
-    sstd::printn(&ret_yml[0]);
-//    ret_yml[1] = &ret_yml[0];
     
     return true;
 }
@@ -1256,11 +1213,8 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string
 
 bool _yaml_load_base(sstd::terp::var& ret_yml, const std::vector<sstd_yaml::token>& v_token){
     
-    sstd::printn(v_token);
     std::vector<struct sstd_yaml::command> v_cmd;
     if(!sstd_yaml::_token2cmd(v_cmd, v_token)){ return false; }
-    printf("\n\n");
-    sstd::printn(v_cmd);
     
     if(!_construct_var(ret_yml, v_cmd)){ return false; }
     
