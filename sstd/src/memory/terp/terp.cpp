@@ -210,7 +210,11 @@ sstd::terp::var::var(        float      rhs): _type(sstd::num_str ), _is_referen
 sstd::terp::var::var(       double      rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new sstd::terp::srcr_tbl()), _p(new std::string(sstd::ssprintf(_format(rhs).c_str(), rhs))) {}
 sstd::terp::var::var(const char*        rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new sstd::terp::srcr_tbl()), _p(new std::string(rhs)) {}
 sstd::terp::var::var(const std::string& rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new sstd::terp::srcr_tbl()), _p(new std::string(rhs)) {}
-sstd::terp::var::var(const sstd::terp::srcr_tbl* rhs): _type(sstd::num_null), _is_reference(false), _is_pSRCR_tbl_base(false), _pSRCR_tbl((sstd::terp::srcr_tbl*)rhs), _p(NULL) {}
+
+sstd::terp::var::var(const sstd::terp::srcr_tbl* tbl                        ): _type(sstd::num_null), _is_reference(false), _is_pSRCR_tbl_base(false), _pSRCR_tbl((sstd::terp::srcr_tbl*)tbl), _p(NULL) {}
+sstd::terp::var::var(const sstd::terp::srcr_tbl* tbl, const class var&   rhs): _type(sstd::num_null), _is_reference(false), _is_pSRCR_tbl_base(false), _pSRCR_tbl((sstd::terp::srcr_tbl*)tbl), _p(NULL) { copy(rhs); }
+sstd::terp::var::var(const sstd::terp::srcr_tbl* tbl,       class var&&  rhs): _type(sstd::num_null), _is_reference(false), _is_pSRCR_tbl_base(false), _pSRCR_tbl((sstd::terp::srcr_tbl*)tbl), _p(NULL) { free(); move(std::move(rhs)); }
+sstd::terp::var::var(const sstd::terp::srcr_tbl* tbl, const char*        rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(false), _pSRCR_tbl((sstd::terp::srcr_tbl*)tbl), _p(new std::string(rhs)) {}
 
 sstd::terp::var::~var(){ sstd::terp::var::free(); }
 
@@ -563,14 +567,11 @@ sstd::terp::var  sstd::terp::var::operator=(      sstd::terp::var&& rhs){
     return *this;
 }
 sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var* pRhs_in){
-    sstd::printn_all("imh");
     sstd::terp::var* pRhs = (! pRhs_in->is_reference()) ? (sstd::terp::var*)pRhs_in : (sstd::terp::var*)pRhs_in->p(); // resolve double reference
     this->_is_reference = true;
     this->_type         =        pRhs->type();
     this->_p            = (void*)pRhs;
     (*pRhs->_pSRCR_tbl)[ (sstd::terp::var*)pRhs ].insert( (sstd::terp::var*)this );
-    sstd::printn_all(pRhs->_pSRCR_tbl);
-    sstd::printn_all(*pRhs->_pSRCR_tbl);
     return *this;
 }
 
@@ -869,22 +870,22 @@ void sstd::terp::var::pop_back(){
 void sstd::terp::var::push_back(){ // push_back null
     NULL_CHECK(_p);
     if(_type!=sstd::num_vec_terp_var){ sstd::pdbg_err("push_back(char*) is failed. Unexpedted data type. This function requires sstd::num_vec_terp_var type, but takes %s type.\n", sstd::typeNum2str(this->_type).c_str()); return; }
-    _CAST2VEC(_p).push_back(new sstd::terp::var());
+    _CAST2VEC(_p).push_back(new sstd::terp::var((sstd::terp::srcr_tbl*)this->_pSRCR_tbl));
 }
 void sstd::terp::var::push_back(const char* pRhs){
     NULL_CHECK(_p);
     if(_type!=sstd::num_vec_terp_var){ sstd::pdbg_err("push_back(char*) is failed. Unexpedted data type. This function requires sstd::num_vec_terp_var type, but takes %s type.\n", sstd::typeNum2str(this->_type).c_str()); return; }
-    _CAST2VEC(_p).push_back(new sstd::terp::var(pRhs));
+    _CAST2VEC(_p).push_back(new sstd::terp::var((sstd::terp::srcr_tbl*)this->_pSRCR_tbl, pRhs));
 }
 void sstd::terp::var::push_back(const sstd::terp::var& rhs){
     NULL_CHECK(_p);
     if(_type!=sstd::num_vec_terp_var){ sstd::pdbg_err("push_back(var&) is failed. Unexpedted data type. This function requires sstd::num_vec_terp_var type, but takes %s type.\n", sstd::typeNum2str(this->_type).c_str()); return; }
-    _CAST2VEC(_p).push_back(new sstd::terp::var(rhs));
+    _CAST2VEC(_p).push_back(new sstd::terp::var((sstd::terp::srcr_tbl*)this->_pSRCR_tbl, rhs));
 }
 void sstd::terp::var::push_back(      sstd::terp::var&& rhs){
     NULL_CHECK(_p);
     if(_type!=sstd::num_vec_terp_var){ sstd::pdbg_err("push_back(var&) is failed. Unexpedted data type. This function requires sstd::num_vec_terp_var type, but takes %s type.\n", sstd::typeNum2str(this->_type).c_str()); return; }
-    _CAST2VEC(_p).push_back(new sstd::terp::var(std::move(rhs))); // call move constructor of "sstd::void_ptr::void_ptr()"
+    _CAST2VEC(_p).push_back(new sstd::terp::var((sstd::terp::srcr_tbl*)this->_pSRCR_tbl, std::move(rhs))); // call move constructor of "sstd::void_ptr::void_ptr()"
 }
 
 void sstd::terp::var::resize(uint len){

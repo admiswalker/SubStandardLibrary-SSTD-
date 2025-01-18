@@ -97,7 +97,10 @@ public:
     var(const double       rhs);
     var(const char*        rhs);
     var(const std::string& rhs);
-    var(const sstd::terp::srcr_tbl* rhs); // for internal use of sstd::terp::var
+    var(const sstd::terp::srcr_tbl* tbl                        ); // for internal use of sstd::terp::var
+    var(const sstd::terp::srcr_tbl* tbl, const class var&   rhs); // for internal use of sstd::terp::var
+    var(const sstd::terp::srcr_tbl* tbl,       class var&&  rhs); // for internal use of sstd::terp::var
+    var(const sstd::terp::srcr_tbl* tbl, const char*        rhs); // for internal use of sstd::terp::var
     ~var();
     
     //---
