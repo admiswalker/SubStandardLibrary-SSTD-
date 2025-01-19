@@ -14,16 +14,23 @@ namespace sstd{
     
     std::vector<std::string> splitByLine(const        char* str);
     std::vector<std::string> splitByLine(const std::string& str);
-    
     bool splitByLine_quotes(std::vector<std::string>& ret, const        char* str);
     bool splitByLine_quotes(std::vector<std::string>& ret, const std::string& str);
 
     std::vector<std::string> split(const char*        str);
     std::vector<std::string> split(const std::string& str);
+    std::vector<std::string> split(const char*        str, int maxsplit);
+    std::vector<std::string> split(const std::string& str, int maxsplit);
+    
     std::vector<std::string> split(const char*        str, const char X);
     std::vector<std::string> split(const std::string& str, const char X);
+//    std::vector<std::string> split(const char*        str, const char X, int maxsplit); // TODO
+//    std::vector<std::string> split(const std::string& str, const char X, int maxsplit); // TODO
+    
     std::vector<std::string> split(const char*        str, const char*        X);
     std::vector<std::string> split(const std::string& str, const std::string& X);
+//    std::vector<std::string> split(const char*        str, const char*        X, int maxsplit); // TODO
+//    std::vector<std::string> split(const std::string& str, const std::string& X, int maxsplit); // TODO
     
     std::vector<std::string> split_rmSpace(const char*        str);               // rm: remove
     std::vector<std::string> split_rmSpace(const std::string& str);               // rm: remove

@@ -201,6 +201,21 @@ TEST(strEdit, split_s){ TEST_SPLIT_CS(std::string(" a  b, c"), "a", "b,", "c"); 
 
 //---
 
+#define TEST_SPLIT_MAX_CS(S_IN, MAX, ...)                               \
+    std::vector<std::string> ret_v = sstd::split(S_IN, MAX); /* TEST THIS LINE */ \
+    /* sstd::printn(ret_v); */                                          \
+    ASSERT_TRUE(ret_v == std::vector<std::string>({__VA_ARGS__}) );
+
+TEST(strEdit, split_max_c_0){ TEST_SPLIT_MAX_CS(" a  b, c ", 0, " a  b, c "); }
+TEST(strEdit, split_max_c_1){ TEST_SPLIT_MAX_CS(" a  b,  c ", 1, "a", "b,  c"); }
+TEST(strEdit, split_max_c_2){ TEST_SPLIT_MAX_CS("  a  b,  c  ", 2, "a", "b,", "c"); }
+TEST(strEdit, split_max_c_3){ TEST_SPLIT_MAX_CS("  a  b,  c  ", 3, "a", "b,", "c"); }
+TEST(strEdit, split_max_s){ TEST_SPLIT_MAX_CS(std::string(" a  b,  c "), 1, "a", "b,  c"); }
+
+#undef TEST_SPLIT_MAX_CS
+
+//---
+
 #define TEST_SPLIT_CS_X(X_IN, S_IN, ...)                                 \
     std::vector<std::string> ret_v = sstd::split(S_IN, X_IN); /* TEST THIS LINE */ \
     /* sstd::printn(ret_v); */                                          \
