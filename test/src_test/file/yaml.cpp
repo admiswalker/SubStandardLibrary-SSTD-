@@ -4409,6 +4409,8 @@ TEST(yaml, anchor_and_alias__case01){
     sstd::terp::var yml;
     bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
 
+    //---
+
     ASSERT_TRUE(ret);
 
     ASSERT_EQ(yml.size(), (uint)2);
@@ -4429,30 +4431,7 @@ TEST(yaml, anchor_and_alias__case01){
     ans[0][0] = "a";
     ans[1] = &ans[0];
 
-    sstd::printn(yml);
-    sstd::printn(ans);
-
-    sstd::printn(*yml.pSRCR_tbl());
-    sstd::printn(*ans.pSRCR_tbl());
-
-    sstd::printn(yml == ans);
-    sstd::printn(sstd::terp::equal(yml, ans));
-    sstd::printn(sstd::terp::equal_val(yml, ans));
-
-    sstd::printn(yml[0].is_reference());
-    sstd::printn(yml[1].is_reference());
-    sstd::printn(ans[0].is_reference());
-    sstd::printn(ans[1].is_reference());
-
-    sstd::printn(yml[0].is_pSRCR_tbl_base());
-    sstd::printn(yml[1].is_pSRCR_tbl_base());
-    sstd::printn(ans[0].is_pSRCR_tbl_base());
-    sstd::printn(ans[1].is_pSRCR_tbl_base());
-
     ASSERT_TRUE(yml == ans);
-
-    //---
-    
 }
 TEST(yaml, anchor_and_alias__case02){
     std::string s = R"(
@@ -4462,17 +4441,53 @@ TEST(yaml, anchor_and_alias__case02){
   - c
 - *ll
 )";
+    sstd::terp::var yml;
+    bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
+//    sstd::printn_all(yml);
+
+    //---
+
+    sstd::terp::var ans;
+    ans = sstd::terp::list(2);
+    ans[0] = sstd::terp::list(3);
+    ans[0][0] = sstd::terp::list(1);
+    ans[0][0][0] = "a";
+    ans[0][1] = "b";
+    ans[0][2] = "c";
+    ans[1] = &ans[0];
+
+    ASSERT_TRUE(yml == ans);
 }
 TEST(yaml, anchor_and_alias__case03){
+    std::string s = R"(
+- &l a  x # anchor
+- *l # alias
+#- [*l]
+#- {*l}
+)";
+    sstd::terp::var yml;
+    bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
+    sstd::printn_all(yml);
+
+    //---
+
+    sstd::terp::var ans;
+//    ans = sstd::terp::list(4);
+    ans = sstd::terp::list(3);
+    ans[0] = "a";
+    ans[1] = &ans[0];
+    ans[2] = sstd::terp::list(1);
+    ans[2][0] = &ans[0];
+//    ans[3] = sstd::terp::hash();
+//    ans[3][ &ans[0] ];
+
+    ASSERT_TRUE(yml == ans);
+}
+TEST(yaml, anchor_and_alias__case04){
     std::string s = R"(
 hh: &hh
   k1: v1
   k2: v2
-
-- &l a # anchor
-- *l # alias
-- [*l]
-- {*l}
 )";
 }
 

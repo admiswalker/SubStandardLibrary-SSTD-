@@ -487,7 +487,6 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
         
         // construction of stack() command
         if( !t.hasValue && (t.type==sstd_yaml::type_list || t.type==sstd_yaml::type_hash || t.type==sstd_yaml::type_list_and_hash )){
-            sstd::printn_all("in\n");
             uint hsc_curr = c.hsc;
             uint hsc_next = 0;
 
@@ -533,7 +532,6 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
             if((isGr     && hsc_next> hsc_curr) ||
                (isGrOrEq && hsc_next>=hsc_curr)    )
             {
-                sstd::printn_all("in2\n");
                 // --- debug info ---
                 c.line_num_begin  = t.line_num_begin;
                 c.line_num_end    = t.line_num_end;
@@ -746,13 +744,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml
                 if(cmd.ref_type==sstd_yaml::ref_type_anchor){
                     tbl_anchor_to_address[ cmd.aa_val ] = &var[ var.size()-1 ];
                 }else if(cmd.ref_type==sstd_yaml::ref_type_alias){
-                    sstd::printn_all( "imh--------------------------------(begin)" );
-                    //var[ var.size()-1 ] = (sstd::terp::var*)tbl_anchor_to_address[ cmd.aa_val ];
-                    sstd::printn_all( var.size()-1 );
-                    var[ 1 ] = &var[ 0 ];
-                    sstd::printn_all( var.pSRCR_tbl() );
-                    sstd::printn_all( *var.pSRCR_tbl() );
-                    sstd::printn_all( "imh--------------------------------(end)" );
+                    var[ var.size()-1 ] = (sstd::terp::var*)tbl_anchor_to_address[ cmd.aa_val ];
                 }
             } break;
             case sstd_yaml::type_hash: {
@@ -1230,6 +1222,7 @@ bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     
     std::vector<sstd_yaml::token> v_token;
     if(!sstd_yaml::_str2token(v_token, s)){ sstd::pdbg_err("single or double quatation is not closed\n"); return false; } // v: vector, ls: line string
+    sstd::printn_all(v_token);
     
     if(!_yaml_load_base(ret_yml, v_token)){ sstd::pdbg_err("_yaml_load_base() is failed.\n"); return false; }
     
