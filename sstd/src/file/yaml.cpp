@@ -311,7 +311,7 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret_str, const std::string& s
 
             v_tmp.push_back(tmp);
         }
-    
+        
         if((!ret_plusSymbol) && (!ret_minusSymbol)){
             // "|N" or ">N"
         
@@ -608,7 +608,8 @@ bool _get_hash_value(bool& is_null, std::string& ret_value, const std::vector<st
     // { "k1" { "k2": }}
     return false;
 }
-bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
+bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::unordered_map<std::string, sstd::terp::var*>& tbl_anchor_to_address, const std::string& s_in){
+    
     std::vector<std::string> v_cs; // vector of commands and string
     if(!sstd_yaml::_split_quotes_by_control_chars(v_cs, s_in.c_str(), s_in.size())){ sstd::pdbg_err("_split_quotes_by_control_chars() is failed. Un-cloused quate.\n"); return false; }
     
@@ -656,7 +657,13 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
                     v_dst.push_back( &(var[var.size()-1]) );
                     --i; continue;
                 }
-                var.push_back(v_cs[i]);
+                
+//                bool is_alias = _is_alias(v_cs[i]); // for the '*' (alias)
+//                if(is_alias){
+//                    var.push_back( (sstd::terp::var*)tbl_anchor_to_address[ v_cs[i] ] );
+//                }else{
+                    var.push_back( v_cs[i] );
+//                }
             } break;
             case sstd::num_hash_terp_var: {
                 // hash
@@ -724,7 +731,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml
         if(cmd.ope==sstd_yaml::ope_assign){
             if(var.typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data.\n"); return false; }
             if(cmd.format==sstd_yaml::format_flow_style){
-                if(!_flow_style_str_to_obj(var, cmd.val)){ sstd::pdbg_err("_flow_style_str_to_obj() is failed.\n"); return false; }
+                if(!_flow_style_str_to_obj(var, tbl_anchor_to_address, cmd.val)){ sstd::pdbg_err("_flow_style_str_to_obj() is failed.\n"); return false; }
             }else{
                 var = cmd.val;
             }
