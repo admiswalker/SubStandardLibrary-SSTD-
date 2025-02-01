@@ -4466,6 +4466,7 @@ TEST(yaml, anchor_and_alias__case03){
 )";
     sstd::terp::var yml;
     bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
+    ASSERT_TRUE(ret);
 //    sstd::printn_all(yml);
 
     //---
@@ -4481,26 +4482,44 @@ TEST(yaml, anchor_and_alias__case04){
     std::string s = R"(
 - &r a
 - [*r]
-#- {*r}
 )";
     sstd::terp::var yml;
     bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
+    ASSERT_TRUE(ret);
     sstd::printn_all(yml);
 
     //---
 
     sstd::terp::var ans;
-    ans = sstd::terp::list(3);
+    ans = sstd::terp::list(2);
+    ans[0] = "a";
+    ans[1] = sstd::terp::list(1);
+    ans[1][0] = &ans[0];
+
+    ASSERT_TRUE(yml == ans);
+}/*
+TEST(yaml, anchor_and_alias__case05){
+    std::string s = R"(
+- &r a
+- {*r}
+)";
+    sstd::terp::var yml;
+    bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
+    ASSERT_TRUE(ret);
+    sstd::printn_all(yml);
+
+    //---
+
+    sstd::terp::var ans;
+    ans = sstd::terp::list(2);
     ans[0] = "a";
     ans[1] = &ans[0];
-    ans[2] = sstd::terp::list(1);
-    ans[2][0] = &ans[0];
-//    ans[3] = sstd::terp::hash();
-//    ans[3][ &ans[0] ];
+    ans[2] = sstd::terp::hash();
+    ans[2]["a"];
 
     ASSERT_TRUE(yml == ans);
 }
-TEST(yaml, anchor_and_alias__case05){
+TEST(yaml, anchor_and_alias__case06){
     std::string s = R"(
 - &r [a, b, c]
 - *r
@@ -4509,7 +4528,7 @@ hh: &hh
   k2: v2
 )";
 }
-
+//*/
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 EXECUTE_TESTS();

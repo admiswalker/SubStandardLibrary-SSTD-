@@ -1122,12 +1122,15 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::unordered_map<s
                     --i; continue;
                 }
                 
-//                bool is_alias = _is_alias(v_cs[i]); // for the '*' (alias)
-//                if(is_alias){
-//                    var.push_back( (sstd::terp::var*)tbl_anchor_to_address[ v_cs[i] ] );
-//                }else{
+                bool is_alias = _is_alias(v_cs[i]); // for the '*' (alias)
+                if(is_alias){
+                    std::string tmp = v_cs[i];
+                    auto itr = tbl_anchor_to_address.find( tmp.erase(0,1) );
+                    if(itr==tbl_anchor_to_address.end()){ sstd::pdbg_err("Anchor does NOT found. Anchor name: %s\n", v_cs[i].c_str()); break; }
+                    var.push_back( itr->second );
+                }else{
                     var.push_back( v_cs[i] );
-//                }
+                }
             } break;
             case sstd::num_hash_terp_var: {
                 // hash
@@ -1215,7 +1218,9 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml
                 if(cmd.ref_type==sstd_yaml::ref_type_anchor){
                     tbl_anchor_to_address[ cmd.aa_val ] = &var[ var.size()-1 ];
                 }else if(cmd.ref_type==sstd_yaml::ref_type_alias){
-                    var[ var.size()-1 ] = (sstd::terp::var*)tbl_anchor_to_address[ cmd.aa_val ];
+                    auto itr = tbl_anchor_to_address.find( cmd.aa_val );
+                    if(itr==tbl_anchor_to_address.end()){ sstd::pdbg_err("Anchor does NOT found. Anchor name: %s\n", cmd.aa_val.c_str()); break; }
+                    var[ var.size()-1 ] = (sstd::terp::var*)itr->second;
                 }
             } break;
             case sstd_yaml::type_hash: {
