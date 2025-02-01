@@ -144,7 +144,8 @@ std::string _rm_comment(const std::string& s){
     return sstd::rstrip(v[0]);
 }
 
-//---
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// _format_mult_line_str() section
 
 std::string _join_mult_line(const std::vector<std::string>& v, const bool ret_pipeSymbol, const bool ret_greaterThanSymbol){
     std::string ret;
@@ -340,6 +341,9 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret_str, const std::string& s
     std::swap(ret_str, ret);
     return true;
 }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// _token2cmd() section
 
 bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, const std::vector<sstd_yaml::token>& v_token){
     
@@ -542,227 +546,6 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
                 
                 ret_vCmd.push_back(c);
             }
-        }
-    }
-    
-    return true;
-}
-
-bool _is_control_chars(const char c){
-    return (c=='[' || c==']' || c=='{' || c=='}' || c==':' || c==',');
-}
-bool sstd_yaml::_split_quotes_by_control_chars(std::vector<std::string>& ret, const char* str, const uint str_len){
-    bool is_escaped=false;
-    bool in_d_quate=false; // double quate
-    bool in_s_quate=false; // single quate
-    std::string buf;
-    uint i=0;
-    while(i<str_len){ // r: read place
-        if(str[i]=='\\'){ is_escaped=true; buf+=str[i]; ++i; if(i>=str_len){break;} }
-        
-        if(!is_escaped && !in_s_quate && str[i]=='"' ){ in_d_quate = !in_d_quate; }
-        if(!is_escaped && !in_d_quate && str[i]=='\''){ in_s_quate = !in_s_quate; }
-        
-        if(!in_d_quate && !in_s_quate && (_is_control_chars(str[i]))){
-            buf = sstd::strip(buf);
-            if(buf.size()!=0){
-                ret.push_back(buf);
-                buf.clear();
-            }
-            ret.push_back(std::string(1, str[i])); // append a control char
-            ++i;
-        }else{
-            buf += str[i];
-            ++i;
-        }
-        
-        is_escaped=false;
-    }
-    if(in_d_quate){ ret.clear(); return false; }
-    if(in_s_quate){ ret.clear(); return false; }
-    buf = sstd::strip(buf);
-    if(buf.size()!=0){ ret.push_back(buf); }
-    
-    return true;
-}
-bool _get_hash_value(bool& is_null, std::string& ret_value, const std::vector<std::string>& v_cs, uint& i){
-    
-    if(i+3<v_cs.size() && v_cs[i+1][0]==':' && (v_cs[i+2][0]!=',' && v_cs[i+2][0]!='}' && v_cs[i+2][0]!=']') && (v_cs[i+3][0]==',' || v_cs[i+3][0]=='}' || v_cs[i+3][0]==']')){
-        // { "k1": "v1" }, { "k1": "v1", "k2": "v2" } or [ "k1": "v1" ] (<- Abbreviated of "[{ "k1": "v1" }]")
-        ret_value = v_cs[i+2];
-        is_null = false;
-        i+=2;
-        return true; // get value
-    }else if(i+2<v_cs.size() && v_cs[i+1][0]==':' && (v_cs[i+2][0]=='}' || v_cs[i+2][0]==']' || v_cs[i+2][0]==',')){
-        // { "k1": }, { "k1":, "k2" } or [ "k1": "v1" ] (<- Abbreviated of "[{ "k1": "v1" }]")
-        is_null = true;
-        ++i;
-        return true; // get null value
-    }else if(i+1<v_cs.size() && (v_cs[i+1][0]=='}' || v_cs[i+1][0]==']' || v_cs[i+1][0]==',')){
-        // { "k1" }, { "k1", "k2" } or [ "k1": "v1" ] (<- Abbreviated of "[{ "k1": "v1" }]")
-        is_null = true;
-        return true; // get null value
-    }
-
-    // not get a string value (have a value of object)
-    // { "k1" { "k2": }}
-    return false;
-}
-bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::unordered_map<std::string, sstd::terp::var*>& tbl_anchor_to_address, const std::string& s_in){
-    
-    std::vector<std::string> v_cs; // vector of commands and string
-    if(!sstd_yaml::_split_quotes_by_control_chars(v_cs, s_in.c_str(), s_in.size())){ sstd::pdbg_err("_split_quotes_by_control_chars() is failed. Un-cloused quate.\n"); return false; }
-    
-    std::vector<sstd::terp::var*> v_dst;
-    v_dst.push_back( &var_out );
-    
-    for(uint i=0; i<v_cs.size(); ++i){
-        if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
-        sstd::terp::var* pVar = v_dst[v_dst.size()-1];
-        sstd::terp::var& var = *pVar;
-        
-        if(v_cs[i].size()==1 && _is_control_chars(v_cs[i][0])){
-            switch(v_cs[i][0]){
-            case '[': {
-                if(var.typeNum()==sstd::num_null){
-                    var = sstd::terp::list();
-                }else if(var.typeNum()==sstd::num_vec_terp_var){
-                    var.push_back( sstd::terp::list() );
-                    v_dst.push_back( &(var[var.size()-1]) );
-                }
-            } break;
-            case ']': {
-                if(var.typeNum()==sstd::num_hash_terp_var){ v_dst.pop_back(); } // for [k: v] which is an abbreviated notation of [{k: v}]
-                v_dst.pop_back();
-            } break;
-            case '{': {
-                if(var.typeNum()==sstd::num_null){
-                    var = sstd::terp::hash();
-                }else if(var.typeNum()==sstd::num_vec_terp_var){
-                    var.push_back( sstd::terp::hash() );
-                    v_dst.push_back( &(var[var.size()-1]) );
-                }
-            } break;
-            case '}': { v_dst.pop_back(); } break;
-            case ':': {} break;
-            case ',': {} break;
-            default: { sstd::pdbg_err("Unexpected char\n"); return false; } break;
-            }
-        }else{
-            switch(var.typeNum()){
-            case sstd::num_vec_terp_var: {
-                // list
-                if(i+1<v_cs.size() && v_cs[i+1].size()==1 && v_cs[i+1][0]==':'){ // for [k: v] which is an abbreviated notation of [{k: v}]
-                    var.push_back( sstd::terp::hash() );
-                    v_dst.push_back( &(var[var.size()-1]) );
-                    --i; continue;
-                }
-                
-//                bool is_alias = _is_alias(v_cs[i]); // for the '*' (alias)
-//                if(is_alias){
-//                    var.push_back( (sstd::terp::var*)tbl_anchor_to_address[ v_cs[i] ] );
-//                }else{
-                    var.push_back( v_cs[i] );
-//                }
-            } break;
-            case sstd::num_hash_terp_var: {
-                // hash
-                bool is_null;
-                std::string key = v_cs[i];
-                std::string val;
-                if(_get_hash_value(is_null, val, v_cs, i)){
-                    if(!is_null){ var[ key.c_str() ] = _extract_quotes_value(sstd::strip_quotes(val.c_str()));
-                    }   else    { var[ key.c_str() ]; }
-                }else{
-                    v_dst.push_back( &(var[key.c_str()]) );
-                }
-            } break;
-            case sstd::num_null: {} break;
-            default: { sstd::pdbg_err("Unexpected data type. Type: %s\n", sstd::typeNum2str(var.typeNum()).c_str()); sstd::printn_all(var); } break;
-            }
-        }
-    }
-    if(v_dst.size()!=0){ sstd::pdbg_err("'[' or '{' is not closed.\n"); return false; }
-    
-    return true;
-}
-bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::command>& v_cmd){
-    std::vector<sstd::terp::var*> v_dst;    // v: vector, _dst: destination address. An address stack for sstd_yaml::ope_alloc (follows the YAML indent)
-    std::vector<sstd::terp::var*> v_dst_cr; // v: vector, _dst: destination address, _cr: current. An address stack for sstd_yaml::ope_stack or sstd_yaml::ope_assign.
-    std::vector<uint> v_hsc; // v: vector, hsc: head space count
-    v_dst.push_back(&ret_yml);
-    v_dst_cr.push_back(&ret_yml);
-    v_hsc.push_back(0);
-
-    std::unordered_map<std::string, sstd::terp::var*> tbl_anchor_to_address;
-    
-    for(uint i=0; i<v_cmd.size(); ++i){
-        if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
-        const struct sstd_yaml::command& cmd = v_cmd[i];
-
-        if(cmd.ope==sstd_yaml::ope_alloc){
-            // Inits v_dst_cr if the v_cmd is the beginning of the `sstd_yaml::ope_alloc` operation.
-            v_dst_cr.clear();
-            if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
-            v_dst_cr.push_back(v_dst[v_dst.size()-1]);
-        }
-        sstd::terp::var* pVar = v_dst_cr[v_dst_cr.size()-1];
-        sstd::terp::var& var = *pVar;
-        if(v_hsc.size()==0){ sstd::pdbg_err("v_hsc is out of range\n"); return false; }
-        uint hsc_base = v_hsc[v_hsc.size()-1];
-        
-        // checking the stack command
-        if(cmd.ope==sstd_yaml::ope_stack){
-            if(v_dst_cr.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
-            v_dst.push_back(v_dst_cr[v_dst_cr.size()-1]);
-            v_hsc.push_back(cmd.hsc);
-            continue;
-        }
-        
-        // checking the YAML indent
-        if(cmd.hsc < hsc_base){
-            v_dst.pop_back();
-            v_hsc.pop_back();
-            --i;
-            continue; // continue for multiple escape
-        }
-        
-        // setting the value or allocate dst address
-        if(cmd.ope==sstd_yaml::ope_assign){
-            if(var.typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data.\n"); return false; }
-            if(cmd.format==sstd_yaml::format_flow_style){
-                if(!_flow_style_str_to_obj(var, tbl_anchor_to_address, cmd.val)){ sstd::pdbg_err("_flow_style_str_to_obj() is failed.\n"); return false; }
-            }else{
-                var = cmd.val;
-            }
-        }else if(cmd.ope==sstd_yaml::ope_alloc){
-            if(var.typeNum()==sstd::num_null){
-                switch(cmd.type){
-                case sstd_yaml::type_list: { var = sstd::terp::list(); } break;
-                case sstd_yaml::type_hash: { var = sstd::terp::hash(); } break;
-                default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
-                }
-            }
-            
-            switch(cmd.type){
-            case sstd_yaml::type_list: {
-                var.push_back();
-                v_dst_cr.push_back(&var[var.size()-1]);
-                if(cmd.ref_type==sstd_yaml::ref_type_anchor){
-                    tbl_anchor_to_address[ cmd.aa_val ] = &var[ var.size()-1 ];
-                }else if(cmd.ref_type==sstd_yaml::ref_type_alias){
-                    var[ var.size()-1 ] = (sstd::terp::var*)tbl_anchor_to_address[ cmd.aa_val ];
-                }
-            } break;
-            case sstd_yaml::type_hash: {
-                auto itr = var.find(cmd.val);
-                if(itr!=var.end()){ sstd::pdbg_err("Detecting the duplicated hash key.\n"); return false; }
-                v_dst_cr.push_back(&var[cmd.val]);
-            } break;
-            default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
-            }
-        }else{
-            sstd::pdbg_err("Unexpected data type\n"); return false;
         }
     }
     
@@ -1225,6 +1008,230 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str_i
     return true;
 }
 bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string& str){ return sstd_yaml::_str2token(ret, str.c_str()); }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// _construct_var() section
+
+bool _is_control_chars(const char c){
+    return (c=='[' || c==']' || c=='{' || c=='}' || c==':' || c==',');
+}
+bool sstd_yaml::_split_quotes_by_control_chars(std::vector<std::string>& ret, const char* str, const uint str_len){
+    bool is_escaped=false;
+    bool in_d_quate=false; // double quate
+    bool in_s_quate=false; // single quate
+    std::string buf;
+    uint i=0;
+    while(i<str_len){ // r: read place
+        if(str[i]=='\\'){ is_escaped=true; buf+=str[i]; ++i; if(i>=str_len){break;} }
+        
+        if(!is_escaped && !in_s_quate && str[i]=='"' ){ in_d_quate = !in_d_quate; }
+        if(!is_escaped && !in_d_quate && str[i]=='\''){ in_s_quate = !in_s_quate; }
+        
+        if(!in_d_quate && !in_s_quate && (_is_control_chars(str[i]))){
+            buf = sstd::strip(buf);
+            if(buf.size()!=0){
+                ret.push_back(buf);
+                buf.clear();
+            }
+            ret.push_back(std::string(1, str[i])); // append a control char
+            ++i;
+        }else{
+            buf += str[i];
+            ++i;
+        }
+        
+        is_escaped=false;
+    }
+    if(in_d_quate){ ret.clear(); return false; }
+    if(in_s_quate){ ret.clear(); return false; }
+    buf = sstd::strip(buf);
+    if(buf.size()!=0){ ret.push_back(buf); }
+    
+    return true;
+}
+bool _get_hash_value(bool& is_null, std::string& ret_value, const std::vector<std::string>& v_cs, uint& i){
+    
+    if(i+3<v_cs.size() && v_cs[i+1][0]==':' && (v_cs[i+2][0]!=',' && v_cs[i+2][0]!='}' && v_cs[i+2][0]!=']') && (v_cs[i+3][0]==',' || v_cs[i+3][0]=='}' || v_cs[i+3][0]==']')){
+        // { "k1": "v1" }, { "k1": "v1", "k2": "v2" } or [ "k1": "v1" ] (<- Abbreviated of "[{ "k1": "v1" }]")
+        ret_value = v_cs[i+2];
+        is_null = false;
+        i+=2;
+        return true; // get value
+    }else if(i+2<v_cs.size() && v_cs[i+1][0]==':' && (v_cs[i+2][0]=='}' || v_cs[i+2][0]==']' || v_cs[i+2][0]==',')){
+        // { "k1": }, { "k1":, "k2" } or [ "k1": "v1" ] (<- Abbreviated of "[{ "k1": "v1" }]")
+        is_null = true;
+        ++i;
+        return true; // get null value
+    }else if(i+1<v_cs.size() && (v_cs[i+1][0]=='}' || v_cs[i+1][0]==']' || v_cs[i+1][0]==',')){
+        // { "k1" }, { "k1", "k2" } or [ "k1": "v1" ] (<- Abbreviated of "[{ "k1": "v1" }]")
+        is_null = true;
+        return true; // get null value
+    }
+
+    // not get a string value (have a value of object)
+    // { "k1" { "k2": }}
+    return false;
+}
+bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::unordered_map<std::string, sstd::terp::var*>& tbl_anchor_to_address, const std::string& s_in){
+    
+    std::vector<std::string> v_cs; // vector of commands and string
+    if(!sstd_yaml::_split_quotes_by_control_chars(v_cs, s_in.c_str(), s_in.size())){ sstd::pdbg_err("_split_quotes_by_control_chars() is failed. Un-cloused quate.\n"); return false; }
+    
+    std::vector<sstd::terp::var*> v_dst;
+    v_dst.push_back( &var_out );
+    
+    for(uint i=0; i<v_cs.size(); ++i){
+        if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
+        sstd::terp::var* pVar = v_dst[v_dst.size()-1];
+        sstd::terp::var& var = *pVar;
+        
+        if(v_cs[i].size()==1 && _is_control_chars(v_cs[i][0])){
+            switch(v_cs[i][0]){
+            case '[': {
+                if(var.typeNum()==sstd::num_null){
+                    var = sstd::terp::list();
+                }else if(var.typeNum()==sstd::num_vec_terp_var){
+                    var.push_back( sstd::terp::list() );
+                    v_dst.push_back( &(var[var.size()-1]) );
+                }
+            } break;
+            case ']': {
+                if(var.typeNum()==sstd::num_hash_terp_var){ v_dst.pop_back(); } // for [k: v] which is an abbreviated notation of [{k: v}]
+                v_dst.pop_back();
+            } break;
+            case '{': {
+                if(var.typeNum()==sstd::num_null){
+                    var = sstd::terp::hash();
+                }else if(var.typeNum()==sstd::num_vec_terp_var){
+                    var.push_back( sstd::terp::hash() );
+                    v_dst.push_back( &(var[var.size()-1]) );
+                }
+            } break;
+            case '}': { v_dst.pop_back(); } break;
+            case ':': {} break;
+            case ',': {} break;
+            default: { sstd::pdbg_err("Unexpected char\n"); return false; } break;
+            }
+        }else{
+            switch(var.typeNum()){
+            case sstd::num_vec_terp_var: {
+                // list
+                if(i+1<v_cs.size() && v_cs[i+1].size()==1 && v_cs[i+1][0]==':'){ // for [k: v] which is an abbreviated notation of [{k: v}]
+                    var.push_back( sstd::terp::hash() );
+                    v_dst.push_back( &(var[var.size()-1]) );
+                    --i; continue;
+                }
+                
+//                bool is_alias = _is_alias(v_cs[i]); // for the '*' (alias)
+//                if(is_alias){
+//                    var.push_back( (sstd::terp::var*)tbl_anchor_to_address[ v_cs[i] ] );
+//                }else{
+                    var.push_back( v_cs[i] );
+//                }
+            } break;
+            case sstd::num_hash_terp_var: {
+                // hash
+                bool is_null;
+                std::string key = v_cs[i];
+                std::string val;
+                if(_get_hash_value(is_null, val, v_cs, i)){
+                    if(!is_null){ var[ key.c_str() ] = _extract_quotes_value(sstd::strip_quotes(val.c_str()));
+                    }   else    { var[ key.c_str() ]; }
+                }else{
+                    v_dst.push_back( &(var[key.c_str()]) );
+                }
+            } break;
+            case sstd::num_null: {} break;
+            default: { sstd::pdbg_err("Unexpected data type. Type: %s\n", sstd::typeNum2str(var.typeNum()).c_str()); sstd::printn_all(var); } break;
+            }
+        }
+    }
+    if(v_dst.size()!=0){ sstd::pdbg_err("'[' or '{' is not closed.\n"); return false; }
+    
+    return true;
+}
+bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::command>& v_cmd){
+    std::vector<sstd::terp::var*> v_dst;    // v: vector, _dst: destination address. An address stack for sstd_yaml::ope_alloc (follows the YAML indent)
+    std::vector<sstd::terp::var*> v_dst_cr; // v: vector, _dst: destination address, _cr: current. An address stack for sstd_yaml::ope_stack or sstd_yaml::ope_assign.
+    std::vector<uint> v_hsc; // v: vector, hsc: head space count
+    v_dst.push_back(&ret_yml);
+    v_dst_cr.push_back(&ret_yml);
+    v_hsc.push_back(0);
+
+    std::unordered_map<std::string, sstd::terp::var*> tbl_anchor_to_address;
+    
+    for(uint i=0; i<v_cmd.size(); ++i){
+        if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
+        const struct sstd_yaml::command& cmd = v_cmd[i];
+
+        if(cmd.ope==sstd_yaml::ope_alloc){
+            // Inits v_dst_cr if the v_cmd is the beginning of the `sstd_yaml::ope_alloc` operation.
+            v_dst_cr.clear();
+            if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
+            v_dst_cr.push_back(v_dst[v_dst.size()-1]);
+        }
+        sstd::terp::var* pVar = v_dst_cr[v_dst_cr.size()-1];
+        sstd::terp::var& var = *pVar;
+        if(v_hsc.size()==0){ sstd::pdbg_err("v_hsc is out of range\n"); return false; }
+        uint hsc_base = v_hsc[v_hsc.size()-1];
+        
+        // checking the stack command
+        if(cmd.ope==sstd_yaml::ope_stack){
+            if(v_dst_cr.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
+            v_dst.push_back(v_dst_cr[v_dst_cr.size()-1]);
+            v_hsc.push_back(cmd.hsc);
+            continue;
+        }
+        
+        // checking the YAML indent
+        if(cmd.hsc < hsc_base){
+            v_dst.pop_back();
+            v_hsc.pop_back();
+            --i;
+            continue; // continue for multiple escape
+        }
+        
+        // setting the value or allocate dst address
+        if(cmd.ope==sstd_yaml::ope_assign){
+            if(var.typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data.\n"); return false; }
+            if(cmd.format==sstd_yaml::format_flow_style){
+                if(!_flow_style_str_to_obj(var, tbl_anchor_to_address, cmd.val)){ sstd::pdbg_err("_flow_style_str_to_obj() is failed.\n"); return false; }
+            }else{
+                var = cmd.val;
+            }
+        }else if(cmd.ope==sstd_yaml::ope_alloc){
+            if(var.typeNum()==sstd::num_null){
+                switch(cmd.type){
+                case sstd_yaml::type_list: { var = sstd::terp::list(); } break;
+                case sstd_yaml::type_hash: { var = sstd::terp::hash(); } break;
+                default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
+                }
+            }
+            
+            switch(cmd.type){
+            case sstd_yaml::type_list: {
+                var.push_back();
+                v_dst_cr.push_back(&var[var.size()-1]);
+                if(cmd.ref_type==sstd_yaml::ref_type_anchor){
+                    tbl_anchor_to_address[ cmd.aa_val ] = &var[ var.size()-1 ];
+                }else if(cmd.ref_type==sstd_yaml::ref_type_alias){
+                    var[ var.size()-1 ] = (sstd::terp::var*)tbl_anchor_to_address[ cmd.aa_val ];
+                }
+            } break;
+            case sstd_yaml::type_hash: {
+                auto itr = var.find(cmd.val);
+                if(itr!=var.end()){ sstd::pdbg_err("Detecting the duplicated hash key.\n"); return false; }
+                v_dst_cr.push_back(&var[cmd.val]);
+            } break;
+            default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
+            }
+        }else{
+            sstd::pdbg_err("Unexpected data type\n"); return false;
+        }
+    }
+    
+    return true;
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // YAML load section
