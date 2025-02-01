@@ -780,7 +780,20 @@ bool _is_anchor(const std::string& s){
 bool _is_alias(const std::string& s){
     return s.starts_with("*");
 }
-
+void _split_aa_val_and_val(std::string& out_aa_val, std::string& out_val, const std::string& in){
+    std::vector<std::string> v_tmp = sstd::split(in, 1);
+    if(v_tmp.size()==1){
+        std::string tmp;
+        std::swap(out_aa_val, v_tmp[0]);
+        std::swap(out_val,    tmp     );
+    }else if(v_tmp.size()==2){
+        std::swap(out_aa_val, v_tmp[0]);
+        std::swap(out_val,    v_tmp[1]);
+    }else{
+        sstd::pdbg_err("Unexpected data size\n"); 
+    }
+    return;
+}
 bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret, const std::string& str){
     // Parse rule of YAML string
     // 
@@ -907,8 +920,8 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
         if(is_hash){ tmp.type += sstd_yaml::type_hash; }
         
         if(is_flow  ){ tmp.format   = sstd_yaml::format_flow_style;                                                     }
-        if(is_anchor){ tmp.ref_type = sstd_yaml::ref_type_anchor;   tmp.val.erase(0,1); std::swap(tmp.val, tmp.aa_val); } // 1) set format type, 2) remove '&' in the head of the string
-        if(is_alias ){ tmp.ref_type = sstd_yaml::ref_type_alias;    tmp.val.erase(0,1); std::swap(tmp.val, tmp.aa_val); } // 1) set format type, 2) remove '*' in the head of the string
+        if(is_anchor){ tmp.ref_type = sstd_yaml::ref_type_anchor; tmp.val.erase(0,1); _split_aa_val_and_val(tmp.aa_val, tmp.val, tmp.val); } // 1) set format type, 2) remove '&' in the head of the string
+        if(is_alias ){ tmp.ref_type = sstd_yaml::ref_type_alias;  tmp.val.erase(0,1); _split_aa_val_and_val(tmp.aa_val, tmp.val, tmp.val); } // 1) set format type, 2) remove '*' in the head of the string
         
         // Skip empty tokens until the first non-empty token occurs. (Empty token is treated as a line-break related with to other token in a context of multi-line YAML)
         if(ret.size()==0 &&
@@ -919,10 +932,10 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
         // set hasValue
         tmp.hasValue=false;
         switch(tmp.type){
-        case sstd_yaml::type_str:           { if((tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1) && (tmp.ref_type==sstd_yaml::ref_type_null)){tmp.hasValue=true;} } break;
-        case sstd_yaml::type_list:          { if((tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1) && (tmp.ref_type==sstd_yaml::ref_type_null)){tmp.hasValue=true;} } break; // check the value is NOT NULL
+        case sstd_yaml::type_str:
+        case sstd_yaml::type_list:
         case sstd_yaml::type_list_and_hash:
-        case sstd_yaml::type_hash:          { if((tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1) && (tmp.ref_type==sstd_yaml::ref_type_null)){tmp.hasValue=true;} } break; // check the value is NOT NULL
+        case sstd_yaml::type_hash:          { if(tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1){tmp.hasValue=true;} } break; // check the value is NOT NULL
         default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
         }
 
@@ -1213,6 +1226,7 @@ bool _yaml_load_base(sstd::terp::var& ret_yml, const std::vector<sstd_yaml::toke
     
     std::vector<struct sstd_yaml::command> v_cmd;
     if(!sstd_yaml::_token2cmd(v_cmd, v_token)){ return false; }
+    sstd::printn_all(v_cmd);
     
     if(!_construct_var(ret_yml, v_cmd)){ return false; }
     
@@ -1225,6 +1239,7 @@ bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     sstd::printn_all(v_token);
     
     if(!_yaml_load_base(ret_yml, v_token)){ sstd::pdbg_err("_yaml_load_base() is failed.\n"); return false; }
+    sstd::printn_all(ret_yml);
     
     return true;
 }

@@ -29,7 +29,7 @@
 #../test/src_test/file/read_write.cpp
 #../test/src_test/file/rm.cpp
 #../test/src_test/file/tinyInterpreter.cpp
-#../test/src_test/file/yaml.cpp
+../test/src_test/file/yaml.cpp
 #../test/src_test/math/math.cpp
 #../test/src_test/math/signal.cpp
 #../test/src_test/math/hashFnc_of_MD5_SHA1_SHA2/hashSum.cpp
@@ -42,7 +42,7 @@
 #../test/src_test/print/print_printn_printn_all.cpp
 #../test/src_test/python/c2py.cpp
 #../test/src_test/string/encode_decode.cpp
-../test/src_test/string/strEdit.cpp
+#../test/src_test/string/strEdit.cpp
 #../test/src_test/string/strmatch.cpp
 #../test/src_test/string/utf8.cpp
 #../test/src_test/sys/status.cpp
