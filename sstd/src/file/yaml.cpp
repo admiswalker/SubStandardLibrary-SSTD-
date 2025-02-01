@@ -1072,6 +1072,21 @@ bool _get_hash_value(bool& is_null, std::string& ret_value, const std::vector<st
     // { "k1" { "k2": }}
     return false;
 }
+bool _get_alias_address(bool& out_is_alias, sstd::terp::var*& out_address, const std::unordered_map<std::string, sstd::terp::var*>& tbl_anchor_to_address, const std::string& s_in){
+    
+    out_is_alias = _is_alias(s_in);
+    
+    if(out_is_alias){
+        std::string alias_name = std::string(s_in).erase(0,1); // removes '*' in the head of the string
+        
+        auto itr = tbl_anchor_to_address.find( alias_name );
+        if(itr==tbl_anchor_to_address.end()){ sstd::pdbg_err("Anchor does NOT found. Anchor name: %s\n", s_in.c_str()); return false; }
+        
+        out_address = itr->second;
+    }
+    
+    return true;
+}
 bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::unordered_map<std::string, sstd::terp::var*>& tbl_anchor_to_address, const std::string& s_in){
     
     std::vector<std::string> v_cs; // vector of commands and string
@@ -1122,24 +1137,40 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::unordered_map<s
                     --i; continue;
                 }
                 
-                bool is_alias = _is_alias(v_cs[i]); // for the '*' (alias)
+                bool is_alias; sstd::terp::var* address;
+                if(!_get_alias_address(is_alias, address, tbl_anchor_to_address, v_cs[i])){ sstd::pdbg_err("_get_alias_address() failed.\n"); return false; } // for the '*' (alias)
                 if(is_alias){
-                    std::string tmp = v_cs[i];
-                    auto itr = tbl_anchor_to_address.find( tmp.erase(0,1) );
-                    if(itr==tbl_anchor_to_address.end()){ sstd::pdbg_err("Anchor does NOT found. Anchor name: %s\n", v_cs[i].c_str()); break; }
-                    var.push_back( itr->second );
+                    var.push_back( address );
                 }else{
                     var.push_back( v_cs[i] );
                 }
             } break;
             case sstd::num_hash_terp_var: {
+                bool is_key_alias; sstd::terp::var* key_address;
+                if(!_get_alias_address(is_key_alias, key_address, tbl_anchor_to_address, v_cs[i])){ sstd::pdbg_err("_get_alias_address() failed.\n"); return false; } // for the '*' (alias)
+                
                 // hash
                 bool is_null;
-                std::string key = v_cs[i];
+                std::string key = (!is_key_alias ? v_cs[i] : key_address->to<std::string>());
                 std::string val;
-                if(_get_hash_value(is_null, val, v_cs, i)){
-                    if(!is_null){ var[ key.c_str() ] = _extract_quotes_value(sstd::strip_quotes(val.c_str()));
-                    }   else    { var[ key.c_str() ]; }
+                bool has_object_value = _get_hash_value(is_null, val, v_cs, i);
+                if(has_object_value){
+                    bool is_value_alias; sstd::terp::var* value_address;
+                    if(!_get_alias_address(is_value_alias, value_address, tbl_anchor_to_address, val)){ sstd::pdbg_err("_get_alias_address() failed.\n"); return false; } // for the '*' (alias)
+                    sstd::printn_all(is_null);
+                    sstd::printn_all(val);
+                    sstd::printn_all(is_value_alias);
+                    sstd::printn_all(value_address);
+                    
+                    if(!is_null){
+                        if(!is_value_alias){
+                            var[ key.c_str() ] = _extract_quotes_value(sstd::strip_quotes(val.c_str()));
+                        }else{
+                            var[ key.c_str() ] = value_address;
+                        }
+                    }   else    {
+                        var[ key.c_str() ];
+                    }
                 }else{
                     v_dst.push_back( &(var[key.c_str()]) );
                 }
@@ -1160,7 +1191,7 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml
     v_dst.push_back(&ret_yml);
     v_dst_cr.push_back(&ret_yml);
     v_hsc.push_back(0);
-
+    
     std::unordered_map<std::string, sstd::terp::var*> tbl_anchor_to_address;
     
     for(uint i=0; i<v_cmd.size(); ++i){
