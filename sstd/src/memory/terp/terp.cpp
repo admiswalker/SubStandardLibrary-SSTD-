@@ -19,11 +19,6 @@ void _free_val(sstd::terp::var* _pVar, void*& _p, sstd::terp::srcr_tbl* _pSRCR_t
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // for internal use
 
-// cast
-std::string*                                    _cast2str (void* rhs){ return (                std::string*)rhs; }
-std::vector<sstd::void_ptr>*                    _cast2vec (void* rhs){ return (std::vector<sstd::void_ptr>*)rhs; }
-std::unordered_map<std::string,sstd::void_ptr>* _cast2hash(void* rhs){ return (std::unordered_map<std::string,sstd::void_ptr>*)rhs; }
-
 #define STR (*(std::string*)src.p())
 
 void sstd::terp::_to(     bool  & dst, const sstd::terp::var& src){
@@ -578,8 +573,8 @@ sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var* pRhs_in){
 template <typename T>
 void sstd::terp::var::_overwrite(T* ptr){
     _free_val(this, _p, _pSRCR_tbl, _type, _is_reference);
-    this->_type = sstd::type2num(T());
-    this->_p    = ptr;
+    this->_type              = sstd::type2num(T());
+    this->_p                 = ptr;
 }
 sstd::terp::var& sstd::terp::var::operator=(const char* rhs){
     _overwrite(new std::string(rhs));
@@ -618,8 +613,9 @@ bool _is_equal_hash(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
         
         auto itr_rhs = rhs.find(key.c_str());
         if(!(itr_rhs!=rhs.end())){ return false; }
-
-        if(!_is_equal(itr.second(), itr_rhs.second(), check_ref_flag, ref_addr_graph, check_ref_abs_addr, vStack_lhsP_and_rhsP, tbl_lhsAds_to_rhsAds)){ return false; }
+        
+        //if(!_is_equal(itr.second(), itr_rhs.second(), check_ref_flag, ref_addr_graph, check_ref_abs_addr, vStack_lhsP_and_rhsP, tbl_lhsAds_to_rhsAds)){ return false; } // This is invalid implimentation. Because the "itr.second()" makes the new temporal object and the address of `pSRCR_tbl()` changed.
+        if(!_is_equal(lhs[key.c_str()], rhs[key.c_str()], check_ref_flag, ref_addr_graph, check_ref_abs_addr, vStack_lhsP_and_rhsP, tbl_lhsAds_to_rhsAds)){ return false; }
     }
     
     return true;
@@ -656,6 +652,7 @@ bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
         if(lhs.is_reference()){
             bool is_internal_ref_lhs = _is_internal_ref(&lhs);
             bool is_internal_ref_rhs = _is_internal_ref(&rhs);
+            
             if(is_internal_ref_lhs != is_internal_ref_rhs){ return false; }
             if(is_internal_ref_lhs){
                 // If the reference is `internal` reference.
@@ -730,7 +727,7 @@ bool sstd::terp::var::operator!=(const sstd::terp::var& rhs){ return !sstd::terp
     switch(_type){                                                      \
     case sstd::num_hash_terp_var: {                                     \
         sstd::terp::var** ppVal = &(_CAST2HASH(_p)[pKey]);              \
-        if(*ppVal==NULL){ (*ppVal)=new sstd::terp::var(_pSRCR_tbl); }   \
+        if(*ppVal==NULL){ (*ppVal)=new sstd::terp::var(_pSRCR_tbl); } \
         return **ppVal;                                                 \
     } break;                                                            \
     case sstd::num_null: {                                              \
@@ -746,9 +743,9 @@ bool sstd::terp::var::operator!=(const sstd::terp::var& rhs){ return !sstd::terp
 #define _OPE_SUBSCRIPT_KEY_BASE_CONST(pKey)                             \
     switch(_type){                                                      \
     case sstd::num_hash_terp_var: {                                     \
-        sstd::terp::var* pVal = _CAST2HASH(_p)[pKey];                   \
-        if(pVal==NULL){ sstd::pdbg_err("Ope[](char*) is failed. NULL pointer detection error. pKey: `%s` is NOT allocated.\n", pKey); return *this; } \
-        return *pVal;                                                   \
+        sstd::terp::var** ppVal = &(_CAST2HASH(_p)[pKey]);              \
+        if(*ppVal==NULL){ sstd::pdbg_err("Ope[](char*) is failed. NULL pointer detection error. pKey: `%s` is NOT allocated.\n", pKey); return *this; } \
+        return **ppVal;                                                 \
     } break;                                                            \
     default: { sstd::pdbg_err("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var takes type number `%d`, but treat as a \"sstd::terp::hash()\".\n", _type); } break; \
     }                                                                   \

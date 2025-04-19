@@ -1344,6 +1344,9 @@ TEST(memory_terp, terp__deep_copy_err){}
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // For the Reference Type: `sstd::terp::equal()`
 
+//---
+// for list()
+
 TEST(memory_terp, terp__equal__case01_not_eq){
     sstd::terp::var x;
     x = sstd::terp::list(2);
@@ -1442,6 +1445,26 @@ TEST(memory_terp, terp__equal__case05_not_eq){
 }
 
 //---
+// for hash()
+
+TEST(memory_terp, terp__equal__list_and_hash__case01_eq){
+    sstd::terp::var x;
+    x = sstd::terp::list(2);
+    x[0] = "a-z";
+    x[1] = sstd::terp::hash();
+    x[1]["key"] = &x[0];
+    
+    sstd::terp::var y;
+    y = sstd::terp::list(2);
+    y[0] = "a-z";
+    y[1] = sstd::terp::hash();
+    y[1]["key"] = &y[0];
+
+    ASSERT_TRUE(sstd::terp::equal(x, y)); // TEST THIS LINE
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// For the Reference Type: `sstd::terp::equal_val()`
 
 TEST(memory_terp, terp__equal_val__case01_eq){
     sstd::terp::var x;
