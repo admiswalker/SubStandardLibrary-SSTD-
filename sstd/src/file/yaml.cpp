@@ -555,9 +555,6 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // str2token section
 
-bool _is_flow(const std::string& s){
-    return (s.starts_with('[') || s.starts_with('{'));
-}
 bool _is_end_marker(const std::string& s){
     return s.starts_with("...");
 }
@@ -569,6 +566,11 @@ bool _is_anchor(const std::string& s){
 }
 bool _is_alias(const std::string& s){
     return s.starts_with("*");
+}
+bool _is_flow(const std::string& s_in){
+    std::string s = sstd::lstrip(s_in);
+    bool is_anchor = _is_anchor(s); // for the '&' (anchor)
+    return (s.starts_with('[') || s.starts_with('{'));
 }
 void _split_aa_val_and_val(std::string& out_aa_val, std::string& out_val, const std::string& in){
     std::vector<std::string> v_tmp = sstd::split(in, 1);
@@ -1157,10 +1159,6 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::unordered_map<s
                 if(has_object_value){
                     bool is_value_alias; sstd::terp::var* value_address;
                     if(!_get_alias_address(is_value_alias, value_address, tbl_anchor_to_address, val)){ sstd::pdbg_err("_get_alias_address() failed.\n"); return false; } // for the '*' (alias)
-                    sstd::printn_all(is_null);
-                    sstd::printn_all(val);
-                    sstd::printn_all(is_value_alias);
-                    sstd::printn_all(value_address);
                     
                     if(!is_null){
                         if(!is_value_alias){
@@ -1176,7 +1174,7 @@ bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::unordered_map<s
                 }
             } break;
             case sstd::num_null: {} break;
-            default: { sstd::pdbg_err("Unexpected data type. Type: %s\n", sstd::typeNum2str(var.typeNum()).c_str()); sstd::printn_all(var); } break;
+            default: { sstd::pdbg_err("Unexpected data type. Type: %s\n", sstd::typeNum2str(var.typeNum()).c_str()); } break;
             }
         }
     }
@@ -1276,7 +1274,7 @@ bool _yaml_load_base(sstd::terp::var& ret_yml, const std::vector<sstd_yaml::toke
     
     std::vector<struct sstd_yaml::command> v_cmd;
     if(!sstd_yaml::_token2cmd(v_cmd, v_token)){ return false; }
-    sstd::printn_all(v_cmd);
+//    sstd::printn_all(v_cmd);
     
     if(!_construct_var(ret_yml, v_cmd)){ return false; }
     
@@ -1286,10 +1284,10 @@ bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     
     std::vector<sstd_yaml::token> v_token;
     if(!sstd_yaml::_str2token(v_token, s)){ sstd::pdbg_err("single or double quatation is not closed\n"); return false; } // v: vector, ls: line string
-    sstd::printn_all(v_token);
+//    sstd::printn_all(v_token);
     
     if(!_yaml_load_base(ret_yml, v_token)){ sstd::pdbg_err("_yaml_load_base() is failed.\n"); return false; }
-    sstd::printn_all(ret_yml);
+//    sstd::printn_all(ret_yml);
     
     return true;
 }
