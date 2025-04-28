@@ -568,8 +568,14 @@ bool _is_alias(const std::string& s){
     return s.starts_with("*");
 }
 bool _is_flow(const std::string& s_in){
-    std::string s = sstd::lstrip(s_in);
+    std::string s = sstd::lstrip(s_in); // "  [a, b, c]" -> "[a, b, c]"
+    
     bool is_anchor = _is_anchor(s); // for the '&' (anchor)
+    if(is_anchor){
+        std::vector<std::string> v_s = sstd::split(s); // "&ref [a, b, c]" -> ["&ref" "[a," "b," "c]"]
+        if(v_s.size()>=2){ s = v_s[1]; }
+    }
+    
     return (s.starts_with('[') || s.starts_with('{'));
 }
 void _split_aa_val_and_val(std::string& out_aa_val, std::string& out_val, const std::string& in){

@@ -4560,7 +4560,7 @@ TEST(yaml, anchor_and_alias__case06_hash_value){
 //    sstd::printn_all(ans);
 
     ASSERT_TRUE(yml == ans);
-}/*
+}
 TEST(yaml, anchor_and_alias__case07_list){
     std::string s = R"(
 - &r [a, b, c]
@@ -4583,8 +4583,7 @@ TEST(yaml, anchor_and_alias__case07_list){
     sstd::printn_all(ans);
 
     ASSERT_TRUE(yml == ans);
-}
-/*
+}/*
 TEST(yaml, anchor_and_alias__case08_hash){
     std::string s = R"(
 - &r {k: v}
@@ -4605,7 +4604,7 @@ TEST(yaml, anchor_and_alias__case08_hash){
     sstd::printn_all(ans);
 
     ASSERT_TRUE(yml == ans);
-}
+}/*
 TEST(yaml, anchor_and_alias__case06){
     std::string s = R"(
 hh: &hh

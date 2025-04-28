@@ -551,6 +551,26 @@ TEST(memory_terp, hash_find_false){
     auto itr = a.find("k0"); // TEST THIS LINE
     ASSERT_FALSE( itr!=a.end() );
 }
+TEST(memory_terp, hash_find_ref){
+    sstd::terp::var a;
+    a = sstd::terp::list(2);
+    a[0] = sstd::terp::hash();
+    a[0]["k0"] = "v0";
+    a[1] = &a[0];
+
+    auto itr0 = a[0].find("k0"); // TEST THIS LINE
+    ASSERT_TRUE( itr0!=a[0].end() );
+    ASSERT_STREQ(itr0.first_to<std::string>().c_str(),  "k0");
+    ASSERT_STREQ(itr0.second_to<std::string>().c_str(), "v0");
+    
+    auto itr1 = a[1].find("k0"); // TEST THIS LINE
+    ASSERT_TRUE( itr1!=a[1].end() );
+    ASSERT_STREQ(itr1.first_to<std::string>().c_str(),  "k0");
+    ASSERT_STREQ(itr1.second_to<std::string>().c_str(), "v0");
+    
+    auto itr2 = a[1].find("non-existing-key"); // TEST THIS LINE
+    ASSERT_FALSE( itr2!=a[1].end() );
+}
 
 // size()
 TEST(memory_terp, hash_size_arg_null){

@@ -607,17 +607,20 @@ bool _is_equal_hash(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
                     std::unordered_map<sstd::terp::var*,sstd::terp::var*>& tbl_lhsAds_to_rhsAds
                     ){
     if(lhs.size()!=rhs.size()){ return false; }
+    sstd::printn_all("in");
     
     for(auto itr=lhs.begin(); itr!=lhs.end(); ++itr){
         std::string key = itr.first_to<std::string>();
+        sstd::printn_all(key);
         
         auto itr_rhs = rhs.find(key.c_str());
-        if(!(itr_rhs!=rhs.end())){ return false; }
+        if(!(itr_rhs!=rhs.end())){ sstd::printn_all("ex");return false; }
         
+        sstd::printn_all("m");
         //if(!_is_equal(itr.second(), itr_rhs.second(), check_ref_flag, ref_addr_graph, check_ref_abs_addr, vStack_lhsP_and_rhsP, tbl_lhsAds_to_rhsAds)){ return false; } // This is invalid implimentation. Because the "itr.second()" makes the new temporal object and the address of `pSRCR_tbl()` changed.
-        if(!_is_equal(lhs[key.c_str()], rhs[key.c_str()], check_ref_flag, ref_addr_graph, check_ref_abs_addr, vStack_lhsP_and_rhsP, tbl_lhsAds_to_rhsAds)){ return false; }
+        if(!_is_equal(lhs[key.c_str()], rhs[key.c_str()], check_ref_flag, ref_addr_graph, check_ref_abs_addr, vStack_lhsP_and_rhsP, tbl_lhsAds_to_rhsAds)){ sstd::printn_all("ex");return false; }
     }
-    
+    sstd::printn_all("ex");
     return true;
 }
 bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
@@ -625,6 +628,7 @@ bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
                std::vector<std::tuple<sstd::terp::var*,sstd::terp::var*>>& vStack_lhsP_and_rhsP,
                std::unordered_map<sstd::terp::var*,sstd::terp::var*>& tbl_lhsAds_to_rhsAds
                ){
+    sstd::printn_all(" in");
     //  Table. Parameter settings for the sstd::terp::var::equal().
     // ┌────────────────────────────────┬───────────────────────────────────────────────┬──────────────┐
     // │                                │ Setting of the options (*1)                   │              │
@@ -677,6 +681,7 @@ bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
     default: { sstd::pdbg_err("ERROR\n"); } break;
     }
     
+    sstd::printn_all(" ex");
     return false;
 }
 bool _check_internal_ref_graph(std::vector<std::tuple<sstd::terp::var*,sstd::terp::var*>> vStack_lhsP_and_rhsP,
@@ -841,7 +846,10 @@ uint sstd::terp::var::erase(const char* pKey){
 
 sstd::terp::iterator sstd::terp::var::find(const char* pKey) const {
     switch(_type){
-    case sstd::num_hash_terp_var: { return sstd::terp::iterator( _CAST2HASH(_p).find(pKey) ); } break;
+    case sstd::num_hash_terp_var: {
+        void* local_p = (! this->_is_reference) ? _p : (void*)((sstd::terp::var*)_p)->_p;
+        return sstd::terp::iterator( _CAST2HASH(local_p).find(pKey) );
+    } break;
     case sstd::num_null:          {} break;
     default: { sstd::pdbg_err("ERROR\n"); }
     }
