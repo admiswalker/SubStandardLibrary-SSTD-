@@ -614,6 +614,7 @@ bool _is_equal_hash(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
         sstd::printn_all(key);
         
         auto itr_rhs = rhs.find(key.c_str());
+        sstd::printn_all("find done");
         if(!(itr_rhs!=rhs.end())){ sstd::printn_all("ex");return false; }
         
         sstd::printn_all("m");
@@ -628,7 +629,6 @@ bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
                std::vector<std::tuple<sstd::terp::var*,sstd::terp::var*>>& vStack_lhsP_and_rhsP,
                std::unordered_map<sstd::terp::var*,sstd::terp::var*>& tbl_lhsAds_to_rhsAds
                ){
-    sstd::printn_all(" in");
     //  Table. Parameter settings for the sstd::terp::var::equal().
     // ┌────────────────────────────────┬───────────────────────────────────────────────┬──────────────┐
     // │                                │ Setting of the options (*1)                   │              │
@@ -681,7 +681,6 @@ bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
     default: { sstd::pdbg_err("ERROR\n"); } break;
     }
     
-    sstd::printn_all(" ex");
     return false;
 }
 bool _check_internal_ref_graph(std::vector<std::tuple<sstd::terp::var*,sstd::terp::var*>> vStack_lhsP_and_rhsP,
@@ -729,10 +728,12 @@ bool sstd::terp::var::operator!=(const sstd::terp::var& rhs){ return !sstd::terp
     }                                                                   \
     return *this;
 #define _OPE_SUBSCRIPT_KEY_BASE(pKey)                                   \
+    void* local_p = (! this->_is_reference) ? _p : (void*)((sstd::terp::var*)_p)->_p; \
+                                                                        \
     switch(_type){                                                      \
     case sstd::num_hash_terp_var: {                                     \
-        sstd::terp::var** ppVal = &(_CAST2HASH(_p)[pKey]);              \
-        if(*ppVal==NULL){ (*ppVal)=new sstd::terp::var(_pSRCR_tbl); } \
+        sstd::terp::var** ppVal = &(_CAST2HASH(local_p)[pKey]);         \
+        if(*ppVal==NULL){ (*ppVal)=new sstd::terp::var(_pSRCR_tbl); }   \
         return **ppVal;                                                 \
     } break;                                                            \
     case sstd::num_null: {                                              \
@@ -746,9 +747,11 @@ bool sstd::terp::var::operator!=(const sstd::terp::var& rhs){ return !sstd::terp
     }                                                                   \
     return *this;
 #define _OPE_SUBSCRIPT_KEY_BASE_CONST(pKey)                             \
+    void* local_p = (! this->_is_reference) ? _p : (void*)((sstd::terp::var*)_p)->_p; \
+                                                                        \
     switch(_type){                                                      \
     case sstd::num_hash_terp_var: {                                     \
-        sstd::terp::var** ppVal = &(_CAST2HASH(_p)[pKey]);              \
+        sstd::terp::var** ppVal = &(_CAST2HASH(local_p)[pKey]);         \
         if(*ppVal==NULL){ sstd::pdbg_err("Ope[](char*) is failed. NULL pointer detection error. pKey: `%s` is NOT allocated.\n", pKey); return *this; } \
         return **ppVal;                                                 \
     } break;                                                            \

@@ -1107,7 +1107,7 @@ TEST(memory_terp, var_ope_square_brackets_list__REF){
     ASSERT_EQ(x.ope_sb_c(0).is_reference(), false); // TEST Ope[] const
     ASSERT_EQ(x.ope_sb_c(1).is_reference(),  true); // TEST Ope[] const
 }
-TEST(memory_terp, var_ope_square_brackets_hash_REF){
+TEST(memory_terp, var_ope_square_brackets_hash_REF_01){
     sstd::terp::var x;
     x = sstd::terp::hash();
     x["key1"] = "val1";
@@ -1129,6 +1129,17 @@ TEST(memory_terp, var_ope_square_brackets_hash_REF){
     ASSERT_EQ(x.ope_sb  ("key2").is_reference(),  true); // TEST Ope[]
     ASSERT_EQ(x.ope_sb_c("key1").is_reference(), false); // TEST Ope[] const
     ASSERT_EQ(x.ope_sb_c("key2").is_reference(),  true); // TEST Ope[] const
+}
+TEST(memory_terp, var_ope_square_brackets_hash_REF_02){
+    sstd::terp::var x;
+    x = sstd::terp::list(2);
+    x[0] = sstd::terp::hash();
+    x[0]["k"] = "v";
+    x[1] = &x[0];
+    
+    ASSERT_STREQ(x[1]["k"].to<std::string>().c_str(), "v"); // TEST Ope[]
+    ASSERT_STREQ(x[1].ope_sb  ("k").to<std::string>().c_str(), "v"); // TEST Ope[]
+    ASSERT_STREQ(x[1].ope_sb_c("k").to<std::string>().c_str(), "v"); // TEST Ope[] const
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
