@@ -400,6 +400,9 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
                 c.type            = sstd_yaml::type_str;
                 c.format          = t.format;
                 c.val             = t.val; // t.key;
+                // --- anchor and alias ---
+                c.ref_type        = sstd_yaml::ref_type_null;
+                c.aa_val          = "";
                 ret_vCmd.push_back(c);
             }
         } break;
@@ -414,6 +417,14 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
             c.type            = sstd_yaml::type_hash;
             //c.format          = t.format;
             c.val             = t.key; // t.val; // key
+            // --- anchor and alias ---
+            if(t.ref_type==sstd_yaml::ref_type_anchor){
+                c.ref_type    = t.ref_type;
+                c.aa_val      = t.aa_val;
+            }else if(t.ref_type==sstd_yaml::ref_type_alias){
+                c.ref_type    = t.ref_type;
+                c.aa_val      = t.aa_val;
+            }
             ret_vCmd.push_back(c);
             
             if(t.hasValue){ // check the value is NOT NULL
@@ -427,6 +438,9 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
                 c.type            = sstd_yaml::type_str;
                 c.format          = t.format;
                 c.val             = t.val; // t.key; // value
+                // --- anchor and alias ---
+                c.ref_type        = sstd_yaml::ref_type_null;
+                c.aa_val          = "";
                 ret_vCmd.push_back(c);
             }
         } break;
@@ -543,6 +557,9 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
                 // --- construct info ---
                 c.ope             = sstd_yaml::ope_stack;
                 c.hsc             = hsc_next;
+                // --- anchor and alias ---
+                c.ref_type        = sstd_yaml::ref_type_null;
+                c.aa_val          = "";
                 
                 ret_vCmd.push_back(c);
             }
@@ -588,7 +605,7 @@ void _split_aa_val_and_val(std::string& out_aa_val, std::string& out_val, const 
         std::swap(out_aa_val, v_tmp[0]);
         std::swap(out_val,    v_tmp[1]);
     }else{
-        sstd::pdbg_err("Unexpected data size\n"); 
+        sstd::pdbg_err("Unexpected data size\n");
     }
     return;
 }
@@ -1262,6 +1279,13 @@ bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml
                 auto itr = var.find(cmd.val);
                 if(itr!=var.end()){ sstd::pdbg_err("Detecting the duplicated hash key.\n"); return false; }
                 v_dst_cr.push_back(&var[cmd.val]);
+                if(cmd.ref_type==sstd_yaml::ref_type_anchor){
+                    tbl_anchor_to_address[ cmd.aa_val ] = &var[ cmd.val ];
+                }else if(cmd.ref_type==sstd_yaml::ref_type_alias){
+                    auto itr = tbl_anchor_to_address.find( cmd.aa_val );
+                    if(itr==tbl_anchor_to_address.end()){ sstd::pdbg_err("Anchor does NOT found. Anchor name: %s\n", cmd.aa_val.c_str()); break; }
+                    var[ cmd.val ] = (sstd::terp::var*)itr->second;
+                }
             } break;
             default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
             }

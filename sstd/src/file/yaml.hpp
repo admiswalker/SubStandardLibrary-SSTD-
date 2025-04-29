@@ -35,8 +35,8 @@ namespace sstd_yaml{
     const static uint8 format_flow_style  = 1; // list [] or {}
     
     const static uint8 ref_type_null      = 255;
-    const static uint8 ref_type_anchor    = 0;
-    const static uint8 ref_type_alias     = 1;
+    const static uint8 ref_type_anchor    = 0; // &
+    const static uint8 ref_type_alias     = 1; // *
 
     //---
     // token for proceed YAML parsing

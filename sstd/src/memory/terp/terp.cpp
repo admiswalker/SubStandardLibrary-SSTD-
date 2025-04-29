@@ -607,21 +607,17 @@ bool _is_equal_hash(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
                     std::unordered_map<sstd::terp::var*,sstd::terp::var*>& tbl_lhsAds_to_rhsAds
                     ){
     if(lhs.size()!=rhs.size()){ return false; }
-    sstd::printn_all("in");
     
     for(auto itr=lhs.begin(); itr!=lhs.end(); ++itr){
         std::string key = itr.first_to<std::string>();
-        sstd::printn_all(key);
         
         auto itr_rhs = rhs.find(key.c_str());
-        sstd::printn_all("find done");
-        if(!(itr_rhs!=rhs.end())){ sstd::printn_all("ex");return false; }
+        if(!(itr_rhs!=rhs.end())){ return false; }
         
-        sstd::printn_all("m");
         //if(!_is_equal(itr.second(), itr_rhs.second(), check_ref_flag, ref_addr_graph, check_ref_abs_addr, vStack_lhsP_and_rhsP, tbl_lhsAds_to_rhsAds)){ return false; } // This is invalid implimentation. Because the "itr.second()" makes the new temporal object and the address of `pSRCR_tbl()` changed.
-        if(!_is_equal(lhs[key.c_str()], rhs[key.c_str()], check_ref_flag, ref_addr_graph, check_ref_abs_addr, vStack_lhsP_and_rhsP, tbl_lhsAds_to_rhsAds)){ sstd::printn_all("ex");return false; }
+        if(!_is_equal(lhs[key.c_str()], rhs[key.c_str()], check_ref_flag, ref_addr_graph, check_ref_abs_addr, vStack_lhsP_and_rhsP, tbl_lhsAds_to_rhsAds)){ return false; }
     }
-    sstd::printn_all("ex");
+    
     return true;
 }
 bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
@@ -651,6 +647,11 @@ bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
     //       ref_flag:       'true' | 'false'
     //       ref_addr_graph: 'true' | 'false'
     
+    if(lhs.type()!=rhs.type()){ return false; }
+    
+    if(ref_addr_graph){
+        tbl_lhsAds_to_rhsAds[ (sstd::terp::var*)&lhs ] = (sstd::terp::var*)&rhs;
+    }
     if(check_ref_flag){
         if(lhs.is_reference()!=rhs.is_reference()){ return false; }
         if(lhs.is_reference()){
@@ -661,16 +662,12 @@ bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
             if(is_internal_ref_lhs){
                 // If the reference is `internal` reference.
                 vStack_lhsP_and_rhsP.push_back( std::make_tuple((sstd::terp::var*)&lhs, (sstd::terp::var*)&rhs) );
+                return true; // Check the `vStack_lhsP_and_rhsP` later. (Just confirm the address consistency is enough.)
             }else{
                 // If the reference is `external` reference.
                 if(lhs.p() != rhs.p()){ return false; }
             }
         }
-    }
-    if(lhs.type()!=rhs.type()){ return false; }
-    
-    if(ref_addr_graph){
-        tbl_lhsAds_to_rhsAds[ (sstd::terp::var*)&lhs ] = (sstd::terp::var*)&rhs;
     }
     
     switch(lhs.typeNum()){
