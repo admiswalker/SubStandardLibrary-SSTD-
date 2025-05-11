@@ -898,7 +898,7 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
         sstd_yaml::token tmp = (*pT);
 
         // Check criteria values (Defining criteria value as a base token like list, hash or list_and_hash type to merge)
-        bool start_with_string = (*pT).val.size()>=1 && (*pT).ref_type==sstd_yaml::ref_type_null;
+        bool start_with_string = (*pT).val.size()>=1;
         uint criteria_hsc = _get_criteria_hsc((*pT)); // criteria_hsc: criteria head space count
         
         for(uint merge_cnt=1;; ++merge_cnt){
@@ -935,6 +935,15 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             tmp.val    += '\n' + (*pT).rawStr; // Needs to copy as row string in order to treat multi-line string as a raw data. Ex1: "k:\n x\n - a" is interpreted as `{k: "x - a"}`. Ex2: "k: |\n x # comment" is interpreted as `{k: "x # comment"}`.
             tmp.line_num_end = (*pT).line_num_end;
             tmp.mult_line_val = true;
+            
+            if( (*pT).ref_type!=sstd_yaml::ref_type_null ){
+                if(tmp.ref_type!=sstd_yaml::ref_type_null){ sstd::pdbg_err("The Duplicated anchor (&) definition.\n"); return false; }
+                
+                tmp.ref_type = (*pT).ref_type;
+                tmp.aa_val   = (*pT).aa_val;
+                ++i;
+                break;
+            }
         }
         
         ret.push_back(std::move(tmp));
@@ -1027,7 +1036,9 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str_i
     std::string str = std::regex_replace(str_in, std::regex("\r"), ""); // "\r\n" -> "\n"
     
     if(!sstd_yaml::_str2token_except_multilines(ret, str.c_str())){ sstd::pdbg_err("sstd_yaml::_str2token_except_multilines() was failed.\n"); return false; }
+    sstd::printn_all(ret);
     if(!sstd_yaml::_token2token_merge_multilines(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_merge_multilines() was failed.\n"); return false; }
+    sstd::printn_all(ret);
     if(!sstd_yaml::_token2token_split_bv_list_type_cnt(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_split_bv_list_type_cnt() was failed.\n"); return false; }
     if(!sstd_yaml::_token2token_postprocess(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_postprocess() was failed.\n"); return false; }
     return true;
@@ -1304,7 +1315,7 @@ bool _yaml_load_base(sstd::terp::var& ret_yml, const std::vector<sstd_yaml::toke
     
     std::vector<struct sstd_yaml::command> v_cmd;
     if(!sstd_yaml::_token2cmd(v_cmd, v_token)){ return false; }
-//    sstd::printn_all(v_cmd);
+    sstd::printn_all(v_cmd);
     
     if(!_construct_var(ret_yml, v_cmd)){ return false; }
     
@@ -1314,10 +1325,9 @@ bool sstd::yaml_load(sstd::terp::var& ret_yml, const char* s){
     
     std::vector<sstd_yaml::token> v_token;
     if(!sstd_yaml::_str2token(v_token, s)){ sstd::pdbg_err("single or double quatation is not closed\n"); return false; } // v: vector, ls: line string
-//    sstd::printn_all(v_token);
     
     if(!_yaml_load_base(ret_yml, v_token)){ sstd::pdbg_err("_yaml_load_base() is failed.\n"); return false; }
-//    sstd::printn_all(ret_yml);
+    sstd::printn_all(ret_yml);
     
     return true;
 }
