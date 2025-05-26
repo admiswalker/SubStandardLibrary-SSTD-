@@ -908,7 +908,7 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             pT = &io[i];
 
             bool is_control_types = _is_control_types((*pT).type);
-            
+
             // Check break
             uint curr_hsc = _get_current_hsc((*pT)); // curr_hsc: current head space count
             if( merge_cnt==1 && is_control_types && (!start_with_string||(curr_hsc<=criteria_hsc)) ){ break; }
@@ -927,15 +927,37 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             //   - `(*pT).key.size()!=0||(*pT).val.size()!=0`: The line is NOT Empty. (If the line is empty, the parser needs to treat as a line break of multi-line string).
             //   - `curr_hsc<=criteria_hsc`: The line is out of scope.
             if( start_with_string && (((*pT).key.size()!=0||(*pT).val.size()!=0||(*pT).key_is_dqed||(*pT).key_is_sqed||(*pT).val_is_dqed||(*pT).val_is_sqed) && curr_hsc<=criteria_hsc) ){ break; }
-
+/*            sstd::printn_all((*pT).rawStr);
+            sstd::printn_all((*pT).key);
+            sstd::printn_all((*pT).val);
+            sstd::printn_all(start_with_string);
+            sstd::printn_all((*pT).key.size()!=0);
+            sstd::printn_all((*pT).val.size()!=0);
+            sstd::printn_all((*pT).key_is_dqed);
+            sstd::printn_all((*pT).key_is_sqed);
+            sstd::printn_all((*pT).val_is_dqed);
+            sstd::printn_all((*pT).val_is_sqed);
+            sstd::printn_all(curr_hsc<=criteria_hsc);
+            sstd::printn_all("");
+*/
+// //            if( start_with_string && (((*pT).key.size()!=0||(*pT).val.size()!=0||(*pT).key_is_dqed||(*pT).key_is_sqed||(*pT).val_is_dqed||(*pT).val_is_sqed) && curr_hsc<=criteria_hsc) ){ break; }
+//             if( start_with_string &&
+//                 (((*pT).key.size()!=0||(*pT).val.size()!=0||(*pT).key_is_dqed||(*pT).key_is_sqed||(*pT).val_is_dqed||(*pT).val_is_sqed) &&
+//                  curr_hsc<=criteria_hsc) ){ break; }
+            if( start_with_string && (*pT).type==sstd_yaml::type_hash){ break; }
+            
             if( _is_separator((*pT).rawStr) ){ break; }
+//            if( !start_with_string ){ break; }
             
             // Copy values
             tmp.rawStr += '\n' + (*pT).rawStr;
             tmp.val    += '\n' + (*pT).rawStr; // Needs to copy as row string in order to treat multi-line string as a raw data. Ex1: "k:\n x\n - a" is interpreted as `{k: "x - a"}`. Ex2: "k: |\n x # comment" is interpreted as `{k: "x # comment"}`.
             tmp.line_num_end = (*pT).line_num_end;
             tmp.mult_line_val = true;
-            
+
+//            if((*pT).type!=sstd_yaml::type_str){ break; }
+//            if(){}
+            /*
             if( (*pT).ref_type!=sstd_yaml::ref_type_null ){
                 if(tmp.ref_type!=sstd_yaml::ref_type_null){ sstd::pdbg_err("The Duplicated anchor (&) definition.\n"); return false; }
                 
@@ -943,6 +965,16 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
                 tmp.aa_val   = (*pT).aa_val;
                 ++i;
                 break;
+            }
+            */
+        }
+        
+        if(tmp.val.size()!=0){
+            std::string s_val = sstd::stripAll(tmp.val, " \n"); // sstd::lstripAll(tmp.val, " \n");
+            if(s_val.starts_with('&')){
+                tmp.ref_type = sstd_yaml::ref_type_anchor;
+                tmp.aa_val   = sstd::stripAll(tmp.val, "& \n");
+                tmp.val.clear();
             }
         }
         

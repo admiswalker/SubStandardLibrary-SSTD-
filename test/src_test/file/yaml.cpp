@@ -4650,7 +4650,22 @@ h2: *h1
 
     ASSERT_TRUE(yml == ans);
 }
-/*
+TEST(yaml, anchor_and_alias__case09error01_hash){
+    std::string s = R"(
+h1: &h1
+  &h2
+  k1: v1
+h2: *h2
+)";
+    sstd::terp::var yml;
+
+    testing::internal::CaptureStdout();
+    bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
+    std::string err_msg = testing::internal::GetCapturedStdout();
+    ASSERT_TRUE(sstd::strIn("The Duplicated anchor (&) definition.", err_msg));
+    
+    ASSERT_FALSE(ret);
+}
 TEST(yaml, anchor_and_alias__case09c_hash){
     std::string s = R"(
 h1:
@@ -4675,8 +4690,34 @@ h2: *h1
 //    sstd::printn_all(ans);
 
     ASSERT_TRUE(yml == ans);
-}
-*/
+}/*
+TEST(yaml, anchor_and_alias__case09c_hash__aaa){
+    std::string s = R"(
+h1:
+
+  a
+
+  b
+
+  c
+
+)";
+    sstd::terp::var yml;
+    bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
+    ASSERT_TRUE(ret);
+    sstd::printn_all(yml);
+
+    //---
+
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["h1"] = sstd::terp::hash();
+    ans["h1"]["k1"] = "v1";
+    ans["h2"] = &ans["h1"];
+//    sstd::printn_all(ans);
+
+    ASSERT_TRUE(yml == ans);
+}*/
 /*
 TEST(yaml, anchor_and_alias__case09d_hash){
     std::string s = R"(
@@ -4702,22 +4743,7 @@ h2:
     ASSERT_TRUE(yml == ans);
 }
 */
-TEST(yaml, anchor_and_alias__case09error01_hash){
-    std::string s = R"(
-h1: &h1
-  &h2
-  k1: v1
-h2: *h2
-)";
-    sstd::terp::var yml;
-
-    testing::internal::CaptureStdout();
-    bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
-    std::string err_msg = testing::internal::GetCapturedStdout();
-    ASSERT_TRUE(sstd::strIn("The Duplicated anchor (&) definition.", err_msg));
-    
-    ASSERT_FALSE(ret);
-}/*
+/*
 TEST(yaml, anchor_and_alias__case09error02_hash){
     std::string s = R"(
 h1:
@@ -4757,6 +4783,29 @@ h2: *h2
     ans["h1"]["k1"] = "v1";
     ans["h2"] = &ans["h1"];
 //    sstd::printn_all(ans);
+
+    ASSERT_TRUE(yml == ans);
+}
+*/
+/*
+TEST(yaml, hash__conor_cases){
+    std::string s = R"(
+h1:
+
+  k1: v1
+)";
+    sstd::terp::var yml;
+    bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
+    ASSERT_TRUE(ret);
+    sstd::printn_all(yml);
+
+    //---
+
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["h1"] = sstd::terp::hash();
+    ans["h1"]["k1"] = "v1";
+    sstd::printn_all(ans);
 
     ASSERT_TRUE(yml == ans);
 }
