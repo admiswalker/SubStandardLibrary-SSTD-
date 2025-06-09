@@ -157,7 +157,6 @@ TEST(strEdit, extract_unquoted__false){
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-
 //splitByLine
 
 //TEST(strEdit, splitByLine){}
@@ -186,6 +185,7 @@ R"()"}) );
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// sstd::split(), sstd::splitAll(), sstd::split_rmSpace()
 
 #define TEST_SPLIT_CS(S_IN, ...)                                        \
     std::vector<std::string> ret_v = sstd::split(S_IN); /* TEST THIS LINE */ \
@@ -249,6 +249,20 @@ TEST(strEdit, split_s_s){ TEST_SPLIT_SS_X(std::string("abc"), std::string("123ab
 #undef TEST_SPLIT_SS_X
 
 //---
+// sstd::splitAll()
+
+#define TEST_SPLIT_ALL(X_IN, S_IN, ...)                                 \
+    std::vector<std::string> ret_v = sstd::splitAll(S_IN, X_IN); /* TEST THIS LINE */ \
+    /* sstd::printn(ret_v); */                                          \
+    ASSERT_TRUE(ret_v == std::vector<std::string>({__VA_ARGS__}) );
+
+TEST(strEdit, splitAll_CC){ TEST_SPLIT_ALL(" ,\n", " a  b, c", "", "a", "", "b", "", "c"); }
+//TEST(strEdit, splitAll_CS){ TEST_SPLIT_ALL(" ,\n", std::string(" a  b, c"), "a", "b,", "c"); }
+
+#undef TEST_SPLITALL_CS
+
+//---
+// sstd::split_rmSpace()
 
 #define TEST_SPLIT_RMSPACE_CS(S_IN, ...)                                \
     std::vector<std::string> ret_v = sstd::split_rmSpace(S_IN); /* TEST THIS LINE */ \
