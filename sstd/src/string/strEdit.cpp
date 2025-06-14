@@ -215,6 +215,37 @@ std::vector<std::string> sstd::splitAll(const std::string& str, const std::strin
 
 //---
 
+std::vector<std::string> _split_all_tight_base(const char* str, const uint str_len, const char* X, const uint X_len){
+    if(X_len==0){ return std::vector<std::string>({str}); }
+    
+    std::vector<std::string> splitList;
+    std::string buf;
+    bool is_separator=false;
+    for(uint i=0;;){
+        for(; str[i]!='\0' && sstd::charIn(str[i], X);){ is_separator=true; ++i; } // skip separator
+        if(str[i]=='\0'){ break; }
+        
+        if(is_separator){
+            if(buf.size()!=0){
+                splitList.push_back(buf);
+                buf.clear();
+            }
+        }else{
+            buf += str[i]; ++i;
+        }
+        
+        is_separator=false;
+    }
+    if(buf.size()!=0){ splitList.push_back(buf); }
+    return splitList;
+}
+std::vector<std::string> sstd::splitAll_tight(const char*        str, const char*        X){ return _split_all_tight_base(str,         ::strlen(str), X,         ::strlen(X)); }
+std::vector<std::string> sstd::splitAll_tight(const std::string& str, const char*        X){ return _split_all_tight_base(str.c_str(),    str.size(), X,         ::strlen(X)); }
+std::vector<std::string> sstd::splitAll_tight(const char*        str, const std::string& X){ return _split_all_tight_base(str,         ::strlen(str), X.c_str(),    X.size()); }
+std::vector<std::string> sstd::splitAll_tight(const std::string& str, const std::string& X){ return _split_all_tight_base(str.c_str(),    str.size(), X.c_str(),    X.size()); }
+
+//---
+
 std::vector<std::string> sstd::split_rmSpace(const        char* str              ){ return _asAX_rmSpace(str,         ' ', -1); }
 std::vector<std::string> sstd::split_rmSpace(const std::string& str              ){ return _asAX_rmSpace(str.c_str(), ' ', -1); }
 std::vector<std::string> sstd::split_rmSpace(const        char* str, const char X){ return _asAX_rmSpace(str        ,  X , -1); }

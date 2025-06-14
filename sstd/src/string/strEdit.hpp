@@ -36,8 +36,10 @@ namespace sstd{
     std::vector<std::string> splitAll       (const std::string& str, const char*        X);
     std::vector<std::string> splitAll       (const char*        str, const std::string& X);
     std::vector<std::string> splitAll       (const std::string& str, const std::string& X);
-//    std::vector<std::string> splitAll_tight(const char*        str, const char*        X);
-//    std::vector<std::string> splitAll_tight(const std::string& str, const std::string& X);
+    std::vector<std::string> splitAll_tight(const char*        str, const char*        X);
+    std::vector<std::string> splitAll_tight(const std::string& str, const char*        X);
+    std::vector<std::string> splitAll_tight(const char*        str, const std::string& X);
+    std::vector<std::string> splitAll_tight(const std::string& str, const std::string& X);
     
     std::vector<std::string> split_rmSpace(const char*        str);               // rm: remove
     std::vector<std::string> split_rmSpace(const std::string& str);               // rm: remove
