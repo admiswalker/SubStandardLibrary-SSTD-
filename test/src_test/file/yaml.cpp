@@ -1455,6 +1455,34 @@ k[]{}: v[]{} # OK
 
 //---
 
+TEST(yaml, hash_multiple_line){
+    std::string s = R"(
+h1:
+
+  a
+
+  b
+
+  c
+
+)";
+    sstd::terp::var yml;
+    bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
+    ASSERT_TRUE(ret);
+//    sstd::printn_all(yml);
+
+    //---
+
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["h1"] = "a\nb\nc";
+//    sstd::printn_all(ans);
+
+    ASSERT_TRUE(yml == ans);
+}
+
+//---
+
 TEST(yaml, hash_duplicated_err){ // TODO: ここの仕様を直す
     std::string s=R"(
 k1: val1
@@ -4691,34 +4719,6 @@ h2: *h1
 
     ASSERT_TRUE(yml == ans);
 }/*
-TEST(yaml, anchor_and_alias__case09c_hash__aaa){
-    std::string s = R"(
-h1:
-
-  a
-
-  b
-
-  c
-
-)";
-    sstd::terp::var yml;
-    bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
-    ASSERT_TRUE(ret);
-    sstd::printn_all(yml);
-
-    //---
-
-    sstd::terp::var ans;
-    ans = sstd::terp::hash();
-    ans["h1"] = sstd::terp::hash();
-    ans["h1"]["k1"] = "v1";
-    ans["h2"] = &ans["h1"];
-//    sstd::printn_all(ans);
-
-    ASSERT_TRUE(yml == ans);
-}*/
-/*
 TEST(yaml, anchor_and_alias__case09d_hash){
     std::string s = R"(
 h1: &h1
