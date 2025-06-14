@@ -931,27 +931,9 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             //   - `(*pT).key.size()!=0||(*pT).val.size()!=0`: The line is NOT Empty. (If the line is empty, the parser needs to treat as a line break of multi-line string).
             //   - `curr_hsc<=criteria_hsc`: The line is out of scope.
             if( start_with_string && (((*pT).key.size()!=0||(*pT).val.size()!=0||(*pT).key_is_dqed||(*pT).key_is_sqed||(*pT).val_is_dqed||(*pT).val_is_sqed) && curr_hsc<=criteria_hsc) ){ break; }
-/*            sstd::printn_all((*pT).rawStr);
-            sstd::printn_all((*pT).key);
-            sstd::printn_all((*pT).val);
-            sstd::printn_all(start_with_string);
-            sstd::printn_all((*pT).key.size()!=0);
-            sstd::printn_all((*pT).val.size()!=0);
-            sstd::printn_all((*pT).key_is_dqed);
-            sstd::printn_all((*pT).key_is_sqed);
-            sstd::printn_all((*pT).val_is_dqed);
-            sstd::printn_all((*pT).val_is_sqed);
-            sstd::printn_all(curr_hsc<=criteria_hsc);
-            sstd::printn_all("");
-*/
-// //            if( start_with_string && (((*pT).key.size()!=0||(*pT).val.size()!=0||(*pT).key_is_dqed||(*pT).key_is_sqed||(*pT).val_is_dqed||(*pT).val_is_sqed) && curr_hsc<=criteria_hsc) ){ break; }
-//             if( start_with_string &&
-//                 (((*pT).key.size()!=0||(*pT).val.size()!=0||(*pT).key_is_dqed||(*pT).key_is_sqed||(*pT).val_is_dqed||(*pT).val_is_sqed) &&
-//                  curr_hsc<=criteria_hsc) ){ break; }
             if( start_with_string && (*pT).type==sstd_yaml::type_hash){ break; }
             
             if( _is_separator((*pT).rawStr) ){ break; }
-//            if( !start_with_string ){ break; }
             
             // Copy values
             tmp.rawStr += '\n' + (*pT).rawStr;
@@ -962,38 +944,16 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             if((*pT).ref_type==sstd_yaml::ref_type_anchor){
                 aa_val_stack.push_back((*pT).aa_val);
             }
-//            if((*pT).type!=sstd_yaml::type_str){ break; }
-//            if(){}
-            /*
-            if( (*pT).ref_type!=sstd_yaml::ref_type_null ){
-                if(tmp.ref_type!=sstd_yaml::ref_type_null){ sstd::pdbg_err("The Duplicated anchor (&) definition.\n"); return false; }
-                
-                tmp.ref_type = (*pT).ref_type;
-                tmp.aa_val   = (*pT).aa_val;
-                ++i;
-                break;
-            }
-            */
         }
 
         if(aa_val_stack.size()>=2){ sstd::pdbg_err("Duplicated anchor (&) definition. Troubled definition names: "); sstd::print_base(aa_val_stack); printf(".\n"); return false; }
         if(aa_val_stack.size()==1){
             tmp.ref_type = sstd_yaml::ref_type_anchor;
             tmp.aa_val   = aa_val_stack[0];
-//            tmp.val.clear();
 
             aa_val_stack.clear();
         }
-        /*
-        if(tmp.val.size()!=0){
-            std::string s_val = sstd::stripAll(tmp.val, " \n"); // sstd::lstripAll(tmp.val, " \n");
-            if(s_val.starts_with('&')){
-                tmp.ref_type = sstd_yaml::ref_type_anchor;
-                tmp.aa_val   = sstd::stripAll(tmp.val, "& \n");
-                tmp.val.clear();
-            }
-        }
-        */
+        
         ret.push_back(std::move(tmp));
     }while( i<io.size() );
     
