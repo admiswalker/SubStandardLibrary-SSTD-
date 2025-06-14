@@ -33,6 +33,8 @@ namespace sstd{
 //    std::vector<std::string> split(const std::string& str, const std::string& X, int maxsplit); // TODO
     
     std::vector<std::string> splitAll       (const char*        str, const char*        X);
+    std::vector<std::string> splitAll       (const std::string& str, const char*        X);
+    std::vector<std::string> splitAll       (const char*        str, const std::string& X);
     std::vector<std::string> splitAll       (const std::string& str, const std::string& X);
 //    std::vector<std::string> splitAll_tight(const char*        str, const char*        X);
 //    std::vector<std::string> splitAll_tight(const std::string& str, const std::string& X);
