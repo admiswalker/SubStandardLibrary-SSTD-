@@ -220,21 +220,13 @@ std::vector<std::string> _split_all_tight_base(const char* str, const uint str_l
     
     std::vector<std::string> splitList;
     std::string buf;
-    bool is_separator=false;
-    for(uint i=0;;){
-        for(; str[i]!='\0' && sstd::charIn(str[i], X);){ is_separator=true; ++i; } // skip separator
-        if(str[i]=='\0'){ break; }
-        
-        if(is_separator){
-            if(buf.size()!=0){
-                splitList.push_back(buf);
-                buf.clear();
-            }
-        }else{
-            buf += str[i]; ++i;
+    for(uint i=0; str[i]!='\0'; ++i){
+        if(!sstd::charIn(str[i], X)){
+            buf += str[i];
+        }else if(buf.size()!=0){
+            splitList.push_back(buf);
+            buf.clear();
         }
-        
-        is_separator=false;
     }
     if(buf.size()!=0){ splitList.push_back(buf); }
     return splitList;
