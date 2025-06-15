@@ -4822,6 +4822,9 @@ h2:
 
     ASSERT_TRUE(yml == ans);
 }
+
+//---
+
 TEST(yaml, anchor_and_alias__case10_hash_list){
     std::string s = R"(
 h1:
@@ -4834,7 +4837,7 @@ h2: *h1_val
     sstd::terp::var yml;
     bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
     ASSERT_TRUE(ret);
-    sstd::printn_all(yml);
+//    sstd::printn_all(yml);
 
     //---
 
@@ -4843,31 +4846,34 @@ h2: *h1_val
     ans["h1"] = sstd::terp::list(1);
     ans["h1"][0] = "v1";
     ans["h2"] = &ans["h1"];
-    sstd::printn_all(ans);
+//    sstd::printn_all(ans);
 
     ASSERT_TRUE(yml == ans);
 }
-TEST(yaml, _str2token_multi_list_case10_tmpppppppppppppppppp){
-    std::string s=R"(
-- a
- - a
-)";
-    std::vector<sstd_yaml::token> v_ret;
-    bool ret = sstd_yaml::_str2token(v_ret, s);
-    sstd::printn(v_ret);
-    
-    ASSERT_TRUE(ret);
-    ASSERT_EQ(v_ret.size(), (uint)1);
-//    sstd::printn(v_ret[0].rawStr.c_str());
-//    ASSERT_STREQ(v_ret[0].rawStr.c_str(), R"()");
-//    sstd::printn(v_ret[0].val.c_str());
-    ASSERT_STREQ(v_ret[0].val.c_str(), "a - a"); // "a\n - a"
-}
-/*
+TEST(yaml, anchor_and_alias__case11_list){ // For more comfirmation of the case, "TEST(yaml, _str2token_multi_list_case10)".
+    std::string s = R"(
 - &a
  - a
 - *a
-*/
+)";
+    sstd::terp::var yml;
+    bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
+    ASSERT_TRUE(ret);
+//    sstd::printn_all(yml);
+
+    //---
+
+    sstd::terp::var ans;
+    ans = sstd::terp::list(2);
+    ans[0] = sstd::terp::list(1);
+    ans[0][0] = "a";
+    ans[1] = &ans[0];
+//    sstd::printn_all(ans);
+
+    ASSERT_TRUE(yml == ans);
+}
+
+//---
 
 /*
 h1: &h1
