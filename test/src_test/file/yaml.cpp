@@ -1455,7 +1455,7 @@ k[]{}: v[]{} # OK
 
 //---
 
-TEST(yaml, hash_multiple_line){
+TEST(yaml, hash_multiple_line_01){
     std::string s = R"(
 h1:
 
@@ -1477,6 +1477,27 @@ h1:
     ans = sstd::terp::hash();
     ans["h1"] = "a\nb\nc";
 //    sstd::printn_all(ans);
+
+    ASSERT_TRUE(yml == ans);
+}
+TEST(yaml, hash_multiple_line_02){
+    std::string s = R"(
+h1:
+
+  k1: v1
+)";
+    sstd::terp::var yml;
+    bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
+    ASSERT_TRUE(ret);
+//    sstd::printn_all(yml);
+
+    //---
+
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["h1"] = sstd::terp::hash();
+    ans["h1"]["k1"] = "v1";
+    sstd::printn_all(ans);
 
     ASSERT_TRUE(yml == ans);
 }
@@ -4785,29 +4806,6 @@ h2: &h2
 h3:
   *h2
 
-*/
-/*
-TEST(yaml, hash__conor_cases){
-    std::string s = R"(
-h1:
-
-  k1: v1
-)";
-    sstd::terp::var yml;
-    bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
-    ASSERT_TRUE(ret);
-    sstd::printn_all(yml);
-
-    //---
-
-    sstd::terp::var ans;
-    ans = sstd::terp::hash();
-    ans["h1"] = sstd::terp::hash();
-    ans["h1"]["k1"] = "v1";
-    sstd::printn_all(ans);
-
-    ASSERT_TRUE(yml == ans);
-}
 */
 /*
 - &r
