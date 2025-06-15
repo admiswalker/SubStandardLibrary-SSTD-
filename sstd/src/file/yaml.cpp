@@ -874,6 +874,7 @@ bool sstd_yaml::_token2token_split_bv_list_type_cnt(std::vector<sstd_yaml::token
 }
 bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io){
     std::vector<sstd_yaml::token> ret;
+    std::vector<uint8> ref_type_stack;
     std::vector<std::string> aa_val_stack;
 
     bool is_all_the_data_flowStyle = _is_all_the_data_flowStyle(io);
@@ -901,7 +902,8 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
         // Check criteria values (Defining criteria value as a base token like list, hash or list_and_hash type to merge)
         bool start_with_string = (*pT).val.size()>=1;
         uint criteria_hsc = _get_criteria_hsc((*pT)); // criteria_hsc: criteria head space count
-        if((*pT).ref_type==sstd_yaml::ref_type_anchor){
+        if((*pT).ref_type!=sstd_yaml::ref_type_null){
+            ref_type_stack.push_back((*pT).ref_type);
             aa_val_stack.push_back((*pT).aa_val);
         }
         
@@ -940,21 +942,20 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             tmp.val    += '\n' + (*pT).rawStr; // Needs to copy as row string in order to treat multi-line string as a raw data. Ex1: "k:\n x\n - a" is interpreted as `{k: "x - a"}`. Ex2: "k: |\n x # comment" is interpreted as `{k: "x # comment"}`.
             tmp.line_num_end = (*pT).line_num_end;
             tmp.mult_line_val = true;
-
+            
             tmp.hasValue |= (*pT).hasValue;
             tmp.line_num_end = (*pT).line_num_end;
             
-            if((*pT).ref_type==sstd_yaml::ref_type_anchor){
+            if((*pT).ref_type!=sstd_yaml::ref_type_null){
+                ref_type_stack.push_back((*pT).ref_type);
                 aa_val_stack.push_back((*pT).aa_val);
             }
         }
 
         if(aa_val_stack.size()>=2){ sstd::pdbg_err("Duplicated anchor (&) definition. Troubled definition names: "); sstd::print_base(aa_val_stack); printf(".\n"); return false; }
         if(aa_val_stack.size()==1){
-            tmp.ref_type = sstd_yaml::ref_type_anchor;
-            tmp.aa_val   = aa_val_stack[0];
-
-            aa_val_stack.clear();
+            tmp.ref_type = ref_type_stack[0]; ref_type_stack.clear();
+            tmp.aa_val   = aa_val_stack  [0]; aa_val_stack.clear();
         }
         
         ret.push_back(std::move(tmp));
