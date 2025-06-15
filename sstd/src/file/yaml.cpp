@@ -933,7 +933,8 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             //   - `(*pT).key.size()!=0||(*pT).val.size()!=0`: The line is NOT Empty. (If the line is empty, the parser needs to treat as a line break of multi-line string).
             //   - `curr_hsc<=criteria_hsc`: The line is out of scope.
             if( start_with_string && (((*pT).key.size()!=0||(*pT).val.size()!=0||(*pT).key_is_dqed||(*pT).key_is_sqed||(*pT).val_is_dqed||(*pT).val_is_sqed) && curr_hsc<=criteria_hsc) ){ break; }
-            if( start_with_string && (*pT).type==sstd_yaml::type_hash){ break; }
+            if( start_with_string && (*pT).type==sstd_yaml::type_hash                          ){ break; }
+            if( start_with_string && (*pT).type==sstd_yaml::type_list && aa_val_stack.size()!=0){ break; }
             
             if( _is_separator((*pT).rawStr) ){ break; }
             
