@@ -1497,7 +1497,7 @@ h1:
     ans = sstd::terp::hash();
     ans["h1"] = sstd::terp::hash();
     ans["h1"]["k1"] = "v1";
-    sstd::printn_all(ans);
+//    sstd::printn_all(ans);
 
     ASSERT_TRUE(yml == ans);
 }
@@ -4642,7 +4642,7 @@ TEST(yaml, anchor_and_alias__case07b_list){
     sstd::terp::var yml;
     bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
     ASSERT_TRUE(ret);
-    sstd::printn_all(yml);
+//    sstd::printn_all(yml);
 
     //---
 
@@ -4653,7 +4653,7 @@ TEST(yaml, anchor_and_alias__case07b_list){
     ans[0][1] = "b";
     ans[0][2] = "c";
     ans[1] = &ans[0];
-    sstd::printn_all(ans);
+//    sstd::printn_all(ans);
 
     ASSERT_TRUE(yml == ans);
 }
@@ -4951,7 +4951,7 @@ TEST(yaml, anchor_and_alias__case12_list_hash){
     sstd::terp::var yml;
     bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
     ASSERT_TRUE(ret);
-    sstd::printn_all(yml);
+//    sstd::printn_all(yml);
 
     //---
 
@@ -4963,7 +4963,7 @@ TEST(yaml, anchor_and_alias__case12_list_hash){
     ans[0]["h1"]["k2"] = "v2";
     ans[1] = sstd::terp::hash();
     ans[1]["h2"] = &ans[0]["h1"];
-    sstd::printn_all(ans);
+//    sstd::printn_all(ans);
 
     ASSERT_TRUE(yml == ans);
 }

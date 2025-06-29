@@ -1058,9 +1058,7 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str_i
     std::string str = std::regex_replace(str_in, std::regex("\r"), ""); // "\r\n" -> "\n"
     
     if(!sstd_yaml::_str2token_except_multilines(ret, str.c_str())){ sstd::pdbg_err("sstd_yaml::_str2token_except_multilines() was failed.\n"); return false; }
-    sstd::printn_all(ret);
     if(!sstd_yaml::_token2token_merge_multilines(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_merge_multilines() was failed.\n"); return false; }
-    sstd::printn_all(ret);
     if(!sstd_yaml::_token2token_split_bv_list_type_cnt(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_split_bv_list_type_cnt() was failed.\n"); return false; }
     if(!sstd_yaml::_token2token_postprocess(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_postprocess() was failed.\n"); return false; }
     return true;
@@ -1337,7 +1335,6 @@ bool _yaml_load_base(sstd::terp::var& ret_yml, const std::vector<sstd_yaml::toke
     
     std::vector<struct sstd_yaml::command> v_cmd;
     if(!sstd_yaml::_token2cmd(v_cmd, v_token)){ return false; }
-    sstd::printn_all(v_cmd);
     
     if(!_construct_var(ret_yml, v_cmd)){ return false; }
     
