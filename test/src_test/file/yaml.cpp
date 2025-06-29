@@ -4941,16 +4941,34 @@ TEST(yaml, anchor_and_alias__case11_list){ // For more comfirmation of the case,
 
     ASSERT_TRUE(yml == ans);
 }
-
-//---
-/*
+TEST(yaml, anchor_and_alias__case12_list_hash){
     std::string s = R"(
 - h1: &h1
     k1: v1
     k2: v2
 - h2: *h1
 )";
-*/
+    sstd::terp::var yml;
+    bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
+    ASSERT_TRUE(ret);
+    sstd::printn_all(yml);
+
+    //---
+
+    sstd::terp::var ans;
+    ans = sstd::terp::list(2);
+    ans[0] = sstd::terp::hash();
+    ans[0]["h1"] = sstd::terp::hash();
+    ans[0]["h1"]["k1"] = "v1";
+    ans[0]["h1"]["k2"] = "v2";
+    ans[1] = sstd::terp::hash();
+    ans[1]["h2"] = &ans[0]["h1"];
+    sstd::printn_all(ans);
+
+    ASSERT_TRUE(yml == ans);
+}
+
+//---
 /*
     std::string s = R"(
 hx: &hx

@@ -457,6 +457,14 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
                 //c.format          = t.format;
                 //c.val             = t.val; // t.key;
                 ret_vCmd.push_back(c);
+                // --- anchor and alias ---
+                if(t.ref_type==sstd_yaml::ref_type_anchor){
+                    c.ref_type    = t.ref_type;
+                    c.aa_val      = t.aa_val;
+                }else if(t.ref_type==sstd_yaml::ref_type_alias){
+                    c.ref_type    = t.ref_type;
+                    c.aa_val      = t.aa_val;
+                }
             }
 
             {
