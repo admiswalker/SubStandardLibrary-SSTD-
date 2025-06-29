@@ -276,7 +276,7 @@ TEST(strEdit, splitAll_04){ TEST_SPLIT_ALL(" \n", "&h abc\n def\n &x", "&h", "ab
 
 #define TEST_SPLIT_ALL_TIGHT(X_IN, S_IN, ...)                           \
     std::vector<std::string> ret_v = sstd::splitAll_tight(S_IN, X_IN); /* TEST THIS LINE */ \
-    sstd::printn(ret_v);                                                \
+    /* sstd::printn(ret_v); */                                          \
     ASSERT_TRUE(ret_v == std::vector<std::string>({__VA_ARGS__}) );
 
 TEST(strEdit, splitAll_tight_CC_interface_test){ TEST_SPLIT_ALL_TIGHT(            " ,\n",              " a  b, c",  "a", "b", "c"); }
