@@ -4944,59 +4944,6 @@ TEST(yaml, anchor_and_alias__case11_list){ // For more comfirmation of the case,
 
 //---
 /*
-TEST(yaml, anchor_and_alias__case12_hash_key){
-    std::string s = R"(
-&h1_key h1: v1
-h2: *h1_key
-)";
-    sstd::terp::var yml;
-    bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
-    ASSERT_TRUE(ret);
-//    sstd::printn_all(yml);
-    
-    //---
-    
-    sstd::terp::var ans;
-    ans = sstd::terp::hash();
-    ans["h1"] = sstd::terp::list(1);
-    ans[0][0] = "a";
-
-    auto itr = ans.find("h1");
-    ans[1] = itr.first;
-//    sstd::printn_all(ans);
-    
-    ASSERT_TRUE(yml == ans);
-}
-*/
-//---
-/*
-&h1_key h1: v1
-h2: *h1_key
-*/
-/*
-h1: &h1
-  k1: v1
-h2: &h2 // よく考えると、h1 を使えばよいだけでは？
-  *h1
-h3:
-  *h2
-*/
-/*
-h1:
-  &h1
-  &k1 k1: v1
-h2: *h1
-h3: *k1
-*/
-/*
-    std::string s = R"(
-h1:
- &h1
-  k1: v1
-h2: *h1
-)";
-*/
-/*
     std::string s = R"(
 - h1: &h1
     k1: v1
@@ -5012,6 +4959,28 @@ h2:
   <<: *hx
   k2: v2
 )";
+*/
+
+//--
+// TODO
+/*
+&h1_key h1: v1
+h2: *h1_key
+*/
+/*
+h1:
+  &h1
+  &k1 k1: v1
+h2: *h1
+h3: *k1
+*/
+/*
+h1: &h1
+  k1: v1
+h2: &h2 // よく考えると、h1 を使えばよいだけでは？
+  *h1
+h3:
+  *h2
 */
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
