@@ -4657,9 +4657,31 @@ TEST(yaml, anchor_and_alias__case07b_list){
 
     ASSERT_TRUE(yml == ans);
 }
-TEST(yaml, anchor_and_alias__case08_hash){
+TEST(yaml, anchor_and_alias__case08a_hash){
     std::string s = R"(
 - &r {k: v}
+- *r
+)";
+    sstd::terp::var yml;
+    bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
+    ASSERT_TRUE(ret);
+//    sstd::printn_all(yml);
+
+    //---
+
+    sstd::terp::var ans;
+    ans = sstd::terp::list(2);
+    ans[0] = sstd::terp::hash();
+    ans[0]["k"] = "v";
+    ans[1] = &ans[0];
+//    sstd::printn_all(ans);
+
+    ASSERT_TRUE(yml == ans);
+}
+TEST(yaml, anchor_and_alias__case08b_hash){
+    std::string s = R"(
+- &r
+  {k: v}
 - *r
 )";
     sstd::terp::var yml;
