@@ -943,9 +943,10 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             tmp.val    += '\n' + (*pT).rawStr; // Needs to copy as row string in order to treat multi-line string as a raw data. Ex1: "k:\n x\n - a" is interpreted as `{k: "x - a"}`. Ex2: "k: |\n x # comment" is interpreted as `{k: "x # comment"}`.
             tmp.line_num_end = (*pT).line_num_end;
             tmp.mult_line_val = true;
-            
+
             tmp.hasValue |= (*pT).hasValue;
             tmp.line_num_end = (*pT).line_num_end;
+            if((*pT).hasValue){ tmp.format = (*pT).format; }
             
             if((*pT).ref_type!=sstd_yaml::ref_type_null){
                 ref_type_stack.push_back((*pT).ref_type);

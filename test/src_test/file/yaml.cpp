@@ -4610,7 +4610,7 @@ TEST(yaml, anchor_and_alias__case06_hash_value){
 
     ASSERT_TRUE(yml == ans);
 }
-TEST(yaml, anchor_and_alias__case07_list){
+TEST(yaml, anchor_and_alias__case07a_list){
     std::string s = R"(
 - &r [a, b, c]
 - *r
@@ -4630,6 +4630,30 @@ TEST(yaml, anchor_and_alias__case07_list){
     ans[0][2] = "c";
     ans[1] = &ans[0];
 //    sstd::printn_all(ans);
+
+    ASSERT_TRUE(yml == ans);
+}
+TEST(yaml, anchor_and_alias__case07b_list){
+    std::string s = R"(
+- &r
+  [a, b, c]
+- *r
+)";
+    sstd::terp::var yml;
+    bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
+    ASSERT_TRUE(ret);
+    sstd::printn_all(yml);
+
+    //---
+
+    sstd::terp::var ans;
+    ans = sstd::terp::list(2);
+    ans[0] = sstd::terp::list(3);
+    ans[0][0] = "a";
+    ans[0][1] = "b";
+    ans[0][2] = "c";
+    ans[1] = &ans[0];
+    sstd::printn_all(ans);
 
     ASSERT_TRUE(yml == ans);
 }
@@ -4677,6 +4701,29 @@ h2: *h1
     ASSERT_TRUE(yml == ans);
 }
 TEST(yaml, anchor_and_alias__case09b_hash){
+    std::string s = R"(
+h1:
+  &h1
+  k1: v1
+h2: *h1
+)";
+    sstd::terp::var yml;
+    bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
+    ASSERT_TRUE(ret);
+//    sstd::printn_all(yml);
+
+    //---
+
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["h1"] = sstd::terp::hash();
+    ans["h1"]["k1"] = "v1";
+    ans["h2"] = &ans["h1"];
+//    sstd::printn_all(ans);
+
+    ASSERT_TRUE(yml == ans);
+}
+TEST(yaml, anchor_and_alias__case09b2_hash){
     std::string s = R"(
 h1:
          &h1
@@ -4874,11 +4921,40 @@ TEST(yaml, anchor_and_alias__case11_list){ // For more comfirmation of the case,
 }
 
 //---
+/*
+TEST(yaml, anchor_and_alias__case12_hash_key){
+    std::string s = R"(
+&h1_key h1: v1
+h2: *h1_key
+)";
+    sstd::terp::var yml;
+    bool ret = sstd::yaml_load(yml, s); // TEST THIS LINE
+    ASSERT_TRUE(ret);
+//    sstd::printn_all(yml);
+    
+    //---
+    
+    sstd::terp::var ans;
+    ans = sstd::terp::hash();
+    ans["h1"] = sstd::terp::list(1);
+    ans[0][0] = "a";
 
+    auto itr = ans.find("h1");
+    ans[1] = itr.first;
+//    sstd::printn_all(ans);
+    
+    ASSERT_TRUE(yml == ans);
+}
+*/
+//---
+/*
+&h1_key h1: v1
+h2: *h1_key
+*/
 /*
 h1: &h1
   k1: v1
-h2: &h2
+h2: &h2 // よく考えると、h1 を使えばよいだけでは？
   *h1
 h3:
   *h2
@@ -4889,11 +4965,6 @@ h1:
   &k1 k1: v1
 h2: *h1
 h3: *k1
-*/
-/*
-- &r
- [a, b, c]
-- *r
 */
 /*
     std::string s = R"(
