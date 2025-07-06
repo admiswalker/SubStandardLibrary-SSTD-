@@ -19,11 +19,6 @@ void _free_val(sstd::terp::var* _pVar, void*& _p, sstd::terp::srcr_tbl* _pSRCR_t
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // for internal use
 
-// cast
-std::string*                                    _cast2str (void* rhs){ return (                std::string*)rhs; }
-std::vector<sstd::void_ptr>*                    _cast2vec (void* rhs){ return (std::vector<sstd::void_ptr>*)rhs; }
-std::unordered_map<std::string,sstd::void_ptr>* _cast2hash(void* rhs){ return (std::unordered_map<std::string,sstd::void_ptr>*)rhs; }
-
 #define STR (*(std::string*)src.p())
 
 void sstd::terp::_to(     bool  & dst, const sstd::terp::var& src){
@@ -210,7 +205,11 @@ sstd::terp::var::var(        float      rhs): _type(sstd::num_str ), _is_referen
 sstd::terp::var::var(       double      rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new sstd::terp::srcr_tbl()), _p(new std::string(sstd::ssprintf(_format(rhs).c_str(), rhs))) {}
 sstd::terp::var::var(const char*        rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new sstd::terp::srcr_tbl()), _p(new std::string(rhs)) {}
 sstd::terp::var::var(const std::string& rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(true), _pSRCR_tbl(new sstd::terp::srcr_tbl()), _p(new std::string(rhs)) {}
-sstd::terp::var::var(const sstd::terp::srcr_tbl* rhs): _type(sstd::num_null), _is_reference(false), _is_pSRCR_tbl_base(false), _pSRCR_tbl((sstd::terp::srcr_tbl*)rhs), _p(NULL) {}
+
+sstd::terp::var::var(const sstd::terp::srcr_tbl* tbl                        ): _type(sstd::num_null), _is_reference(false), _is_pSRCR_tbl_base(false), _pSRCR_tbl((sstd::terp::srcr_tbl*)tbl), _p(NULL) {}
+sstd::terp::var::var(const sstd::terp::srcr_tbl* tbl, const class var&   rhs): _type(sstd::num_null), _is_reference(false), _is_pSRCR_tbl_base(false), _pSRCR_tbl((sstd::terp::srcr_tbl*)tbl), _p(NULL) { copy(rhs); }
+sstd::terp::var::var(const sstd::terp::srcr_tbl* tbl,       class var&&  rhs): _type(sstd::num_null), _is_reference(false), _is_pSRCR_tbl_base(false), _pSRCR_tbl((sstd::terp::srcr_tbl*)tbl), _p(NULL) { free(); move(std::move(rhs)); }
+sstd::terp::var::var(const sstd::terp::srcr_tbl* tbl, const char*        rhs): _type(sstd::num_str ), _is_reference(false), _is_pSRCR_tbl_base(false), _pSRCR_tbl((sstd::terp::srcr_tbl*)tbl), _p(new std::string(rhs)) {}
 
 sstd::terp::var::~var(){ sstd::terp::var::free(); }
 
@@ -574,8 +573,8 @@ sstd::terp::var& sstd::terp::var::operator=(const sstd::terp::var* pRhs_in){
 template <typename T>
 void sstd::terp::var::_overwrite(T* ptr){
     _free_val(this, _p, _pSRCR_tbl, _type, _is_reference);
-    this->_type = sstd::type2num(T());
-    this->_p    = ptr;
+    this->_type              = sstd::type2num(T());
+    this->_p                 = ptr;
 }
 sstd::terp::var& sstd::terp::var::operator=(const char* rhs){
     _overwrite(new std::string(rhs));
@@ -614,8 +613,9 @@ bool _is_equal_hash(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
         
         auto itr_rhs = rhs.find(key.c_str());
         if(!(itr_rhs!=rhs.end())){ return false; }
-
-        if(!_is_equal(itr.second(), itr_rhs.second(), check_ref_flag, ref_addr_graph, check_ref_abs_addr, vStack_lhsP_and_rhsP, tbl_lhsAds_to_rhsAds)){ return false; }
+        
+        //if(!_is_equal(itr.second(), itr_rhs.second(), check_ref_flag, ref_addr_graph, check_ref_abs_addr, vStack_lhsP_and_rhsP, tbl_lhsAds_to_rhsAds)){ return false; } // This is invalid implimentation. Because the "itr.second()" makes the new temporal object and the address of `pSRCR_tbl()` changed.
+        if(!_is_equal(lhs[key.c_str()], rhs[key.c_str()], check_ref_flag, ref_addr_graph, check_ref_abs_addr, vStack_lhsP_and_rhsP, tbl_lhsAds_to_rhsAds)){ return false; }
     }
     
     return true;
@@ -637,7 +637,7 @@ bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
     // ├────────────────────────────────┼───────────────────────────────────────────────┼──────────────┤
     // │ sstd::terp::equal_val()        │     true      │    false    │      false      │              │
     // ├────────────────────────────────┼───────────────────────────────────────────────┼──────────────┤
-    // │ sstd::terp::equal_refAbsAddr() │     true      │    true     │      false      │              │
+    // │ sstd::terp::equal_refAbsAddr() │     true      │    true     │      false      │              │ /* <- This is NOT implimented yet */
     // └────────────────────────────────┴───────────────────────────────────────────────┴──────────────┘
     // *1. Options:
     //       true:  sets to check the option
@@ -647,25 +647,27 @@ bool _is_equal(const sstd::terp::var& lhs, const sstd::terp::var& rhs,
     //       ref_flag:       'true' | 'false'
     //       ref_addr_graph: 'true' | 'false'
     
+    if(lhs.type()!=rhs.type()){ return false; }
+    
+    if(ref_addr_graph){
+        tbl_lhsAds_to_rhsAds[ (sstd::terp::var*)&lhs ] = (sstd::terp::var*)&rhs;
+    }
     if(check_ref_flag){
         if(lhs.is_reference()!=rhs.is_reference()){ return false; }
         if(lhs.is_reference()){
             bool is_internal_ref_lhs = _is_internal_ref(&lhs);
             bool is_internal_ref_rhs = _is_internal_ref(&rhs);
+            
             if(is_internal_ref_lhs != is_internal_ref_rhs){ return false; }
             if(is_internal_ref_lhs){
                 // If the reference is `internal` reference.
                 vStack_lhsP_and_rhsP.push_back( std::make_tuple((sstd::terp::var*)&lhs, (sstd::terp::var*)&rhs) );
+                return true; // Check the `vStack_lhsP_and_rhsP` later. (Just confirm the address consistency is enough.)
             }else{
                 // If the reference is `external` reference.
-                if(lhs.p() != rhs.p()){ sstd::printn_all("");return false; }
+                if(lhs.p() != rhs.p()){ return false; }
             }
         }
-    }
-    if(lhs.type()!=rhs.type()){ return false; }
-    
-    if(ref_addr_graph){
-        tbl_lhsAds_to_rhsAds[ (sstd::terp::var*)&lhs ] = (sstd::terp::var*)&rhs;
     }
     
     switch(lhs.typeNum()){
@@ -723,9 +725,11 @@ bool sstd::terp::var::operator!=(const sstd::terp::var& rhs){ return !sstd::terp
     }                                                                   \
     return *this;
 #define _OPE_SUBSCRIPT_KEY_BASE(pKey)                                   \
+    void* local_p = (! this->_is_reference) ? _p : (void*)((sstd::terp::var*)_p)->_p; \
+                                                                        \
     switch(_type){                                                      \
     case sstd::num_hash_terp_var: {                                     \
-        sstd::terp::var** ppVal = &(_CAST2HASH(_p)[pKey]);              \
+        sstd::terp::var** ppVal = &(_CAST2HASH(local_p)[pKey]);         \
         if(*ppVal==NULL){ (*ppVal)=new sstd::terp::var(_pSRCR_tbl); }   \
         return **ppVal;                                                 \
     } break;                                                            \
@@ -740,11 +744,13 @@ bool sstd::terp::var::operator!=(const sstd::terp::var& rhs){ return !sstd::terp
     }                                                                   \
     return *this;
 #define _OPE_SUBSCRIPT_KEY_BASE_CONST(pKey)                             \
+    void* local_p = (! this->_is_reference) ? _p : (void*)((sstd::terp::var*)_p)->_p; \
+                                                                        \
     switch(_type){                                                      \
     case sstd::num_hash_terp_var: {                                     \
-        sstd::terp::var* pVal = _CAST2HASH(_p)[pKey];                   \
-        if(pVal==NULL){ sstd::pdbg_err("Ope[](char*) is failed. NULL pointer detection error. pKey: `%s` is NOT allocated.\n", pKey); return *this; } \
-        return *pVal;                                                   \
+        sstd::terp::var** ppVal = &(_CAST2HASH(local_p)[pKey]);         \
+        if(*ppVal==NULL){ sstd::pdbg_err("Ope[](char*) is failed. NULL pointer detection error. pKey: `%s` is NOT allocated.\n", pKey); return *this; } \
+        return **ppVal;                                                 \
     } break;                                                            \
     default: { sstd::pdbg_err("Ope[](char*) is failed. Unexpedted data type. sstd::terp::var takes type number `%d`, but treat as a \"sstd::terp::hash()\".\n", _type); } break; \
     }                                                                   \
@@ -840,7 +846,10 @@ uint sstd::terp::var::erase(const char* pKey){
 
 sstd::terp::iterator sstd::terp::var::find(const char* pKey) const {
     switch(_type){
-    case sstd::num_hash_terp_var: { return sstd::terp::iterator( _CAST2HASH(_p).find(pKey) ); } break;
+    case sstd::num_hash_terp_var: {
+        void* local_p = (! this->_is_reference) ? _p : (void*)((sstd::terp::var*)_p)->_p;
+        return sstd::terp::iterator( _CAST2HASH(local_p).find(pKey) );
+    } break;
     case sstd::num_null:          {} break;
     default: { sstd::pdbg_err("ERROR\n"); }
     }
@@ -866,22 +875,22 @@ void sstd::terp::var::pop_back(){
 void sstd::terp::var::push_back(){ // push_back null
     NULL_CHECK(_p);
     if(_type!=sstd::num_vec_terp_var){ sstd::pdbg_err("push_back(char*) is failed. Unexpedted data type. This function requires sstd::num_vec_terp_var type, but takes %s type.\n", sstd::typeNum2str(this->_type).c_str()); return; }
-    _CAST2VEC(_p).push_back(new sstd::terp::var());
+    _CAST2VEC(_p).push_back(new sstd::terp::var((sstd::terp::srcr_tbl*)this->_pSRCR_tbl));
 }
 void sstd::terp::var::push_back(const char* pRhs){
     NULL_CHECK(_p);
     if(_type!=sstd::num_vec_terp_var){ sstd::pdbg_err("push_back(char*) is failed. Unexpedted data type. This function requires sstd::num_vec_terp_var type, but takes %s type.\n", sstd::typeNum2str(this->_type).c_str()); return; }
-    _CAST2VEC(_p).push_back(new sstd::terp::var(pRhs));
+    _CAST2VEC(_p).push_back(new sstd::terp::var((sstd::terp::srcr_tbl*)this->_pSRCR_tbl, pRhs));
 }
 void sstd::terp::var::push_back(const sstd::terp::var& rhs){
     NULL_CHECK(_p);
     if(_type!=sstd::num_vec_terp_var){ sstd::pdbg_err("push_back(var&) is failed. Unexpedted data type. This function requires sstd::num_vec_terp_var type, but takes %s type.\n", sstd::typeNum2str(this->_type).c_str()); return; }
-    _CAST2VEC(_p).push_back(new sstd::terp::var(rhs));
+    _CAST2VEC(_p).push_back(new sstd::terp::var((sstd::terp::srcr_tbl*)this->_pSRCR_tbl, rhs));
 }
 void sstd::terp::var::push_back(      sstd::terp::var&& rhs){
     NULL_CHECK(_p);
     if(_type!=sstd::num_vec_terp_var){ sstd::pdbg_err("push_back(var&) is failed. Unexpedted data type. This function requires sstd::num_vec_terp_var type, but takes %s type.\n", sstd::typeNum2str(this->_type).c_str()); return; }
-    _CAST2VEC(_p).push_back(new sstd::terp::var(std::move(rhs))); // call move constructor of "sstd::void_ptr::void_ptr()"
+    _CAST2VEC(_p).push_back(new sstd::terp::var((sstd::terp::srcr_tbl*)this->_pSRCR_tbl, std::move(rhs))); // call move constructor of "sstd::void_ptr::void_ptr()"
 }
 
 void sstd::terp::var::resize(uint len){

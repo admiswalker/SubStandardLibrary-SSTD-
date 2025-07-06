@@ -97,7 +97,10 @@ public:
     var(const double       rhs);
     var(const char*        rhs);
     var(const std::string& rhs);
-    var(const sstd::terp::srcr_tbl* rhs); // for internal use of sstd::terp::var
+    var(const sstd::terp::srcr_tbl* tbl                        ); // for internal use of sstd::terp::var
+    var(const sstd::terp::srcr_tbl* tbl, const class var&   rhs); // for internal use of sstd::terp::var
+    var(const sstd::terp::srcr_tbl* tbl,       class var&&  rhs); // for internal use of sstd::terp::var
+    var(const sstd::terp::srcr_tbl* tbl, const char*        rhs); // for internal use of sstd::terp::var
     ~var();
     
     //---
@@ -120,7 +123,7 @@ public:
     
     void _fill_ref_src_null(const std::unordered_set<sstd::terp::var*>& hash_set);
     void _fillout_ref_src_null();
-
+    
     bool _copy_base(const class sstd::terp::var* pRhs, const char opt_a, const char opt_i, const char opt_e);
     bool copy(const class sstd::terp::var&  rhs);
     void move(      class sstd::terp::var&& rhs);

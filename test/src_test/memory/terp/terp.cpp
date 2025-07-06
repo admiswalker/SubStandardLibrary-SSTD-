@@ -551,6 +551,26 @@ TEST(memory_terp, hash_find_false){
     auto itr = a.find("k0"); // TEST THIS LINE
     ASSERT_FALSE( itr!=a.end() );
 }
+TEST(memory_terp, hash_find_ref){
+    sstd::terp::var a;
+    a = sstd::terp::list(2);
+    a[0] = sstd::terp::hash();
+    a[0]["k0"] = "v0";
+    a[1] = &a[0];
+
+    auto itr0 = a[0].find("k0"); // TEST THIS LINE
+    ASSERT_TRUE( itr0!=a[0].end() );
+    ASSERT_STREQ(itr0.first_to<std::string>().c_str(),  "k0");
+    ASSERT_STREQ(itr0.second_to<std::string>().c_str(), "v0");
+    
+    auto itr1 = a[1].find("k0"); // TEST THIS LINE
+    ASSERT_TRUE( itr1!=a[1].end() );
+    ASSERT_STREQ(itr1.first_to<std::string>().c_str(),  "k0");
+    ASSERT_STREQ(itr1.second_to<std::string>().c_str(), "v0");
+    
+    auto itr2 = a[1].find("non-existing-key"); // TEST THIS LINE
+    ASSERT_FALSE( itr2!=a[1].end() );
+}
 
 // size()
 TEST(memory_terp, hash_size_arg_null){
@@ -907,6 +927,94 @@ TEST(memory_terp, var_init_list){
     ASSERT_TRUE( a.pSRCR_tbl() == a[0].pSRCR_tbl() );
     ASSERT_TRUE( a.pSRCR_tbl() == a[1].pSRCR_tbl() );
 }
+TEST(memory_terp, var_init_list_by_push_back_NULL){
+    sstd::terp::var a = sstd::terp::list();
+    a.push_back(); // TEST THIS LINE
+    a.push_back(); // TEST THIS LINE
+    
+    ASSERT_TRUE(a.is_pSRCR_tbl_base() == true );
+    ASSERT_TRUE(a.pSRCR_tbl() != NULL );
+    
+    ASSERT_TRUE(a[0].is_pSRCR_tbl_base() == false );
+    ASSERT_TRUE(a[0].pSRCR_tbl() != NULL );
+    
+    ASSERT_TRUE(a[1].is_pSRCR_tbl_base() == false );
+    ASSERT_TRUE(a[1].pSRCR_tbl() != NULL );
+    
+    ASSERT_TRUE( a.pSRCR_tbl() == a[0].pSRCR_tbl() );
+    ASSERT_TRUE( a.pSRCR_tbl() == a[1].pSRCR_tbl() );
+}
+TEST(memory_terp, var_init_list_by_push_back_CHAR){
+    sstd::terp::var a = sstd::terp::list();
+    a.push_back("a"); // TEST THIS LINE
+    a.push_back("b"); // TEST THIS LINE
+
+    ASSERT_EQ(a.size(), (uint)2);
+    ASSERT_STREQ(a[0].to<std::string>().c_str(), "a");
+    ASSERT_STREQ(a[1].to<std::string>().c_str(), "b");
+    
+    ASSERT_TRUE(a.is_pSRCR_tbl_base() == true );
+    ASSERT_TRUE(a.pSRCR_tbl() != NULL );
+    
+    ASSERT_TRUE(a[0].is_pSRCR_tbl_base() == false );
+    ASSERT_TRUE(a[0].pSRCR_tbl() != NULL );
+    
+    ASSERT_TRUE(a[1].is_pSRCR_tbl_base() == false );
+    ASSERT_TRUE(a[1].pSRCR_tbl() != NULL );
+    
+    ASSERT_TRUE( a.pSRCR_tbl() == a[0].pSRCR_tbl() );
+    ASSERT_TRUE( a.pSRCR_tbl() == a[1].pSRCR_tbl() );
+
+}
+TEST(memory_terp, var_init_list_by_push_back_VAR){
+    sstd::terp::var x = "x";
+    
+    sstd::terp::var a = sstd::terp::list();
+    a.push_back(x); // TEST THIS LINE
+    a.push_back(x); // TEST THIS LINE
+
+    ASSERT_EQ(a.size(), (uint)2);
+    ASSERT_STREQ(a[0].to<std::string>().c_str(), "x");
+    ASSERT_STREQ(a[1].to<std::string>().c_str(), "x");
+    
+    ASSERT_TRUE(a.is_pSRCR_tbl_base() == true );
+    ASSERT_TRUE(a.pSRCR_tbl() != NULL );
+    
+    ASSERT_TRUE(a[0].is_pSRCR_tbl_base() == false );
+    ASSERT_TRUE(a[0].pSRCR_tbl() != NULL );
+    
+    ASSERT_TRUE(a[1].is_pSRCR_tbl_base() == false );
+    ASSERT_TRUE(a[1].pSRCR_tbl() != NULL );
+    
+    ASSERT_TRUE( a.pSRCR_tbl() == a[0].pSRCR_tbl() );
+    ASSERT_TRUE( a.pSRCR_tbl() == a[1].pSRCR_tbl() );
+
+}
+TEST(memory_terp, var_init_list_by_push_back_VAR_MOVE){
+    sstd::terp::var x1 = "x1";
+    sstd::terp::var x2 = "x2";
+    
+    sstd::terp::var a = sstd::terp::list();
+    a.push_back(std::move(x1)); // TEST THIS LINE
+    a.push_back(std::move(x2)); // TEST THIS LINE
+
+    ASSERT_EQ(a.size(), (uint)2);
+    ASSERT_STREQ(a[0].to<std::string>().c_str(), "x1");
+    ASSERT_STREQ(a[1].to<std::string>().c_str(), "x2");
+    
+    ASSERT_TRUE(a.is_pSRCR_tbl_base() == true );
+    ASSERT_TRUE(a.pSRCR_tbl() != NULL );
+    
+    ASSERT_TRUE(a[0].is_pSRCR_tbl_base() == false );
+    ASSERT_TRUE(a[0].pSRCR_tbl() != NULL );
+    
+    ASSERT_TRUE(a[1].is_pSRCR_tbl_base() == false );
+    ASSERT_TRUE(a[1].pSRCR_tbl() != NULL );
+    
+    ASSERT_TRUE( a.pSRCR_tbl() == a[0].pSRCR_tbl() );
+    ASSERT_TRUE( a.pSRCR_tbl() == a[1].pSRCR_tbl() );
+
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // For the Reference Type (Operator)
@@ -999,7 +1107,7 @@ TEST(memory_terp, var_ope_square_brackets_list__REF){
     ASSERT_EQ(x.ope_sb_c(0).is_reference(), false); // TEST Ope[] const
     ASSERT_EQ(x.ope_sb_c(1).is_reference(),  true); // TEST Ope[] const
 }
-TEST(memory_terp, var_ope_square_brackets_hash_REF){
+TEST(memory_terp, var_ope_square_brackets_hash_REF_01){
     sstd::terp::var x;
     x = sstd::terp::hash();
     x["key1"] = "val1";
@@ -1021,6 +1129,17 @@ TEST(memory_terp, var_ope_square_brackets_hash_REF){
     ASSERT_EQ(x.ope_sb  ("key2").is_reference(),  true); // TEST Ope[]
     ASSERT_EQ(x.ope_sb_c("key1").is_reference(), false); // TEST Ope[] const
     ASSERT_EQ(x.ope_sb_c("key2").is_reference(),  true); // TEST Ope[] const
+}
+TEST(memory_terp, var_ope_square_brackets_hash_REF_02){
+    sstd::terp::var x;
+    x = sstd::terp::list(2);
+    x[0] = sstd::terp::hash();
+    x[0]["k"] = "v";
+    x[1] = &x[0];
+    
+    ASSERT_STREQ(x[1]["k"].to<std::string>().c_str(), "v"); // TEST Ope[]
+    ASSERT_STREQ(x[1].ope_sb  ("k").to<std::string>().c_str(), "v"); // TEST Ope[]
+    ASSERT_STREQ(x[1].ope_sb_c("k").to<std::string>().c_str(), "v"); // TEST Ope[] const
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
@@ -1256,6 +1375,9 @@ TEST(memory_terp, terp__deep_copy_err){}
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // For the Reference Type: `sstd::terp::equal()`
 
+//---
+// for list()
+
 TEST(memory_terp, terp__equal__case01_not_eq){
     sstd::terp::var x;
     x = sstd::terp::list(2);
@@ -1354,6 +1476,26 @@ TEST(memory_terp, terp__equal__case05_not_eq){
 }
 
 //---
+// for hash()
+
+TEST(memory_terp, terp__equal__list_and_hash__case01_eq){
+    sstd::terp::var x;
+    x = sstd::terp::list(2);
+    x[0] = "a-z";
+    x[1] = sstd::terp::hash();
+    x[1]["key"] = &x[0];
+    
+    sstd::terp::var y;
+    y = sstd::terp::list(2);
+    y[0] = "a-z";
+    y[1] = sstd::terp::hash();
+    y[1]["key"] = &y[0];
+
+    ASSERT_TRUE(sstd::terp::equal(x, y)); // TEST THIS LINE
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// For the Reference Type: `sstd::terp::equal_val()`
 
 TEST(memory_terp, terp__equal_val__case01_eq){
     sstd::terp::var x;
@@ -1443,43 +1585,6 @@ TEST(memory_terp, terp__equal_val__case05_not_eq){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-//---
-
-/*
-TEST(memory_terp, list_ope_assign_with_reference_tmp){ // Ope=
-    sstd::terp::var a;
-    a = sstd::terp::list(2);
-    a[0] = sstd::terp::list(3);
-    a[0][0] = "a";
-    a[0][1] = "b";
-    a[0][2] = "c";
-    printf("894\n");
-    sstd::printn(a.pSRCR_tbl());
-    sstd::printn(a[0].pSRCR_tbl());
-    printf("895\n");
-    a[1] = &a[0];
-    printf("897\n");
-
-    ASSERT_TRUE(a[0].is_reference() == false);
-    ASSERT_TRUE(a[1].is_reference() == true );
-    printf("899\n");
-
-    sstd::terp::var x = a; // TEST THIS LINE
-    
-    ASSERT_TRUE(x[0].is_reference() == false);
-    ASSERT_TRUE(x[1].is_reference() == true );
-    printf("905\n");
-
-    x[0][0]="x";
-    ASSERT_TRUE(a[0][0].to<std::string>() == "x");
-    ASSERT_TRUE(a[1][0].to<std::string>() == "x");
-    printf("910\n");
-    
-    ASSERT_TRUE(x[0][0].to<std::string>() == "x");
-    ASSERT_TRUE(x[1][0].to<std::string>() == "x");
-    printf("913\n");
-}
-*/
 TEST(memory_terp, list_ope_assign_with_reference_case_01_delete_src){
     sstd::terp::var dst;
     {

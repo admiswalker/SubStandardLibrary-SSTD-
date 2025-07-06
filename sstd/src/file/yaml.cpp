@@ -32,6 +32,7 @@
     printf("command:\n");                                               \
     printf("    type: %d\n", rhs.type);                                 \
     printf("    format: %d\n", rhs.format);                             \
+    printf("    ref_type: %d\n", rhs.ref_type);                         \
     printf("    list_type_cnt: %d\n", rhs.list_type_cnt);               \
     printf("    hsc_lx: %d\n", rhs.hsc_lx);                             \
     printf("    hsc_hx: %d\n", rhs.hsc_hx);                             \
@@ -43,14 +44,12 @@
     printf("    mult_line_val: %s\n", (rhs.mult_line_val?"ture":"false")); \
     printf("    key: `%s`\n", rhs.key.c_str());                         \
     printf("    val: `%s`\n", rhs.val.c_str());                         \
+    printf("anchor and alias:\n");                              \
+    printf("    ref_type: %d\n", rhs.ref_type);                 \
+    printf("    aa_val: `%s`\n", rhs.aa_val.c_str());           \
     printf(",\n");
 
-void sstd::print(const sstd_yaml::token& rhs){
-    sstd_print_token_base(rhs);
-    printf("\n");
-}
-void sstd::for_printn(const sstd_yaml::token& rhs){ printf(" = "); sstd::print(rhs); }
-void sstd::print_for_vT(const sstd_yaml::token& rhs){
+void sstd::print_base(const sstd_yaml::token& rhs){
     sstd_print_token_base(rhs);
 }
 
@@ -70,15 +69,14 @@ void sstd::print_for_vT(const sstd_yaml::token& rhs){
     printf("    type: %d\n", rhs.type);                         \
     printf("    format: %d\n", rhs.format);                     \
     printf("    val: `%s`\n", rhs.val.c_str());                 \
+    printf("anchor and alias:\n");                              \
+    printf("    ref_type: %d\n", rhs.ref_type);                 \
+    printf("    aa_val: `%s`\n", rhs.aa_val.c_str());           \
     printf(",\n");
 
-void sstd::print(const sstd_yaml::command& rhs){
+void sstd::print_base(const sstd_yaml::command& rhs){
     sstd_print_command_v2_base(rhs);
     printf("\n");
-}
-void sstd::for_printn(const sstd_yaml::command& rhs){ printf(" = "); sstd::print(rhs); }
-void sstd::print_for_vT(const sstd_yaml::command& rhs){
-    sstd_print_command_v2_base(rhs);
 }
 
 #undef sstd_print_command_v2_base
@@ -146,7 +144,8 @@ std::string _rm_comment(const std::string& s){
     return sstd::rstrip(v[0]);
 }
 
-//---
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// _format_mult_line_str() section
 
 std::string _join_mult_line(const std::vector<std::string>& v, const bool ret_pipeSymbol, const bool ret_greaterThanSymbol){
     std::string ret;
@@ -313,7 +312,7 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret_str, const std::string& s
 
             v_tmp.push_back(tmp);
         }
-    
+        
         if((!ret_plusSymbol) && (!ret_minusSymbol)){
             // "|N" or ">N"
         
@@ -343,6 +342,9 @@ bool sstd_yaml::_format_mult_line_str(std::string& ret_str, const std::string& s
     return true;
 }
 
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// _token2cmd() section
+
 bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, const std::vector<sstd_yaml::token>& v_token){
     
     for(uint i=0; i<v_token.size(); ++i){
@@ -351,7 +353,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
         // Construct alloc() or assign() command
         struct sstd_yaml::command c;
         switch(t.type){
-        case sstd_yaml::num_str: {
+        case sstd_yaml::type_str: {
             // --- debug info ---
             c.line_num_begin  = t.line_num_begin;
             c.line_num_end    = t.line_num_end;
@@ -359,12 +361,12 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
             // --- construct info ---
             c.ope             = sstd_yaml::ope_assign;
             c.hsc             = t.hsc_hx; // t.hsc_lx
-            c.type            = sstd_yaml::num_str;
+            c.type            = sstd_yaml::type_str;
             c.format          = t.format;
             c.val             = t.val; // t.key;
             ret_vCmd.push_back(c);
         } break;
-        case sstd_yaml::num_list: {
+        case sstd_yaml::type_list: {
             {
                 // --- debug info ---
                 c.line_num_begin  = t.line_num_begin;
@@ -373,12 +375,20 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
                 // --- construct info ---
                 c.ope             = sstd_yaml::ope_alloc;
                 c.hsc             = t.hsc_lx; // t.hsc_hx
-                c.type            = sstd_yaml::num_list;
+                c.type            = sstd_yaml::type_list;
                 //c.format          = t.format;
                 //c.val             = t.val; // t.key;
+                // --- anchor and alias ---
+                if(t.ref_type==sstd_yaml::ref_type_anchor){
+                    c.ref_type    = t.ref_type;
+                    c.aa_val      = t.aa_val;
+                }else if(t.ref_type==sstd_yaml::ref_type_alias){
+                    c.ref_type    = t.ref_type;
+                    c.aa_val      = t.aa_val;
+                }
                 ret_vCmd.push_back(c);
             }
-            
+
             if(t.hasValue){ // check the value is NOT NULL
                 // --- debug info ---
                 c.line_num_begin  = t.line_num_begin;
@@ -387,13 +397,16 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
                 // --- construct info ---
                 c.ope             = sstd_yaml::ope_assign;
                 c.hsc             = t.hsc_hx; // t.hsc_lx;
-                c.type            = sstd_yaml::num_str;
+                c.type            = sstd_yaml::type_str;
                 c.format          = t.format;
                 c.val             = t.val; // t.key;
+                // --- anchor and alias ---
+                c.ref_type        = sstd_yaml::ref_type_null;
+                c.aa_val          = "";
                 ret_vCmd.push_back(c);
             }
         } break;
-        case sstd_yaml::num_hash: {
+        case sstd_yaml::type_hash: {
             // --- debug info ---
             c.line_num_begin  = t.line_num_begin;
             c.line_num_end    = t.line_num_end;
@@ -401,9 +414,17 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
             // --- construct info ---
             c.ope             = sstd_yaml::ope_alloc;
             c.hsc             = t.hsc_hx; // t.hsc_lx
-            c.type            = sstd_yaml::num_hash;
+            c.type            = sstd_yaml::type_hash;
             //c.format          = t.format;
             c.val             = t.key; // t.val; // key
+            // --- anchor and alias ---
+            if(t.ref_type==sstd_yaml::ref_type_anchor){
+                c.ref_type    = t.ref_type;
+                c.aa_val      = t.aa_val;
+            }else if(t.ref_type==sstd_yaml::ref_type_alias){
+                c.ref_type    = t.ref_type;
+                c.aa_val      = t.aa_val;
+            }
             ret_vCmd.push_back(c);
             
             if(t.hasValue){ // check the value is NOT NULL
@@ -414,13 +435,16 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
                 // --- construct info ---
                 c.ope             = sstd_yaml::ope_assign;
                 c.hsc             = t.hsc_hx + 2; // t.hsc_lx;
-                c.type            = sstd_yaml::num_str;
+                c.type            = sstd_yaml::type_str;
                 c.format          = t.format;
                 c.val             = t.val; // t.key; // value
+                // --- anchor and alias ---
+                c.ref_type        = sstd_yaml::ref_type_null;
+                c.aa_val          = "";
                 ret_vCmd.push_back(c);
             }
         } break;
-        case sstd_yaml::num_list_and_hash:{
+        case sstd_yaml::type_list_and_hash:{
             {
                 // --- debug info ---
                 c.line_num_begin  = t.line_num_begin;
@@ -429,10 +453,18 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
                 // --- construct info ---
                 c.ope             = sstd_yaml::ope_alloc;
                 c.hsc             = t.hsc_lx; // t.hsc_hx + 2*ti
-                c.type            = sstd_yaml::num_list;
+                c.type            = sstd_yaml::type_list;
                 //c.format          = t.format;
                 //c.val             = t.val; // t.key;
                 ret_vCmd.push_back(c);
+                // --- anchor and alias ---
+                if(t.ref_type==sstd_yaml::ref_type_anchor){
+                    c.ref_type    = t.ref_type;
+                    c.aa_val      = t.aa_val;
+                }else if(t.ref_type==sstd_yaml::ref_type_alias){
+                    c.ref_type    = t.ref_type;
+                    c.aa_val      = t.aa_val;
+                }
             }
 
             {
@@ -456,7 +488,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
             // --- construct info ---
             c.ope             = sstd_yaml::ope_alloc;
             c.hsc             = t.hsc_hx; // hsc_lx
-            c.type            = sstd_yaml::num_hash;
+            c.type            = sstd_yaml::type_hash;
             //c.format          = t.format;
             c.val             = t.key; // t.val; // key
             ret_vCmd.push_back(c);
@@ -469,7 +501,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
                 // --- construct info ---
                 c.ope             = sstd_yaml::ope_assign;
                 c.hsc             = t.hsc_hx + 2; // t.hsc_lx;
-                c.type            = sstd_yaml::num_str;
+                c.type            = sstd_yaml::type_str;
                 c.format          = t.format;
                 c.val             = t.val; // t.key; // value
                 ret_vCmd.push_back(c);
@@ -480,7 +512,7 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
 
         
         // construction of stack() command
-        if( !t.hasValue && (t.type==sstd_yaml::num_list || t.type==sstd_yaml::num_hash || t.type==sstd_yaml::num_list_and_hash )){
+        if( !t.hasValue && (t.type==sstd_yaml::type_list || t.type==sstd_yaml::type_hash || t.type==sstd_yaml::type_list_and_hash )){
             uint hsc_curr = c.hsc;
             uint hsc_next = 0;
 
@@ -495,11 +527,11 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
             const sstd_yaml::token& t_nx = v_token[i+1]; // _nx: next
             
             switch(t_nx.type){
-                //case sstd_yaml::num_str:           { hsc_next = t_nx.hsc_hx;                            } break;
-            case sstd_yaml::num_str:           { continue; } break;
-            case sstd_yaml::num_list:          { hsc_next = t_nx.hsc_lx + 2*(t_nx.list_type_cnt-1); } break;
-            case sstd_yaml::num_hash:          { hsc_next = t_nx.hsc_hx;                            } break;
-            case sstd_yaml::num_list_and_hash: { hsc_next = t_nx.hsc_lx + 2*(t_nx.list_type_cnt-1); } break; // works as a list
+          //case sstd_yaml::type_str:           { hsc_next = t_nx.hsc_hx;                            } break;
+            case sstd_yaml::type_str:           { continue; } break;
+            case sstd_yaml::type_list:          { hsc_next = t_nx.hsc_lx + 2*(t_nx.list_type_cnt-1); } break;
+            case sstd_yaml::type_hash:          { hsc_next = t_nx.hsc_hx;                            } break;
+            case sstd_yaml::type_list_and_hash: { hsc_next = t_nx.hsc_lx + 2*(t_nx.list_type_cnt-1); } break; // works as a list
             default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
             };
 
@@ -521,8 +553,8 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
             // │ t │                   │                   │                   │                   │
             // └───┴───────────────────┴───────────────────┴───────────────────┴───────────────────┘
             //
-            bool isGr     = t.type==sstd_yaml::num_list || t_nx.type==sstd_yaml::num_hash; // check '>' case
-            bool isGrOrEq = !isGr;                                                         // check '>=' case
+            bool isGr     = t.type==sstd_yaml::type_list || t_nx.type==sstd_yaml::type_hash; // check '>'  case
+            bool isGrOrEq = !isGr;                                                           // check '>=' case
             if((isGr     && hsc_next> hsc_curr) ||
                (isGrOrEq && hsc_next>=hsc_curr)    )
             {
@@ -533,6 +565,9 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
                 // --- construct info ---
                 c.ope             = sstd_yaml::ope_stack;
                 c.hsc             = hsc_next;
+                // --- anchor and alias ---
+                c.ref_type        = sstd_yaml::ref_type_null;
+                c.aa_val          = "";
                 
                 ret_vCmd.push_back(c);
             }
@@ -542,225 +577,46 @@ bool sstd_yaml::_token2cmd(std::vector<struct sstd_yaml::command>& ret_vCmd, con
     return true;
 }
 
-bool _is_control_chars(const char c){
-    return (c=='[' || c==']' || c=='{' || c=='}' || c==':' || c==',');
-}
-bool sstd_yaml::_split_quotes_by_control_chars(std::vector<std::string>& ret, const char* str, const uint str_len){
-    bool is_escaped=false;
-    bool in_d_quate=false; // double quate
-    bool in_s_quate=false; // single quate
-    std::string buf;
-    uint i=0;
-    while(i<str_len){ // r: read place
-        if(str[i]=='\\'){ is_escaped=true; buf+=str[i]; ++i; if(i>=str_len){break;} }
-        
-        if(!is_escaped && !in_s_quate && str[i]=='"' ){ in_d_quate = !in_d_quate; }
-        if(!is_escaped && !in_d_quate && str[i]=='\''){ in_s_quate = !in_s_quate; }
-        
-        if(!in_d_quate && !in_s_quate && (_is_control_chars(str[i]))){
-            buf = sstd::strip(buf);
-            if(buf.size()!=0){
-                ret.push_back(buf);
-                buf.clear();
-            }
-            ret.push_back(std::string(1, str[i])); // append a control char
-            ++i;
-        }else{
-            buf += str[i];
-            ++i;
-        }
-        
-        is_escaped=false;
-    }
-    if(in_d_quate){ ret.clear(); return false; }
-    if(in_s_quate){ ret.clear(); return false; }
-    buf = sstd::strip(buf);
-    if(buf.size()!=0){ ret.push_back(buf); }
-    
-    return true;
-}
-bool _get_hash_value(bool& is_null, std::string& ret_value, const std::vector<std::string>& v_cs, uint& i){
-    
-    if(i+3<v_cs.size() && v_cs[i+1][0]==':' && (v_cs[i+2][0]!=',' && v_cs[i+2][0]!='}' && v_cs[i+2][0]!=']') && (v_cs[i+3][0]==',' || v_cs[i+3][0]=='}' || v_cs[i+3][0]==']')){
-        // { "k1": "v1" }, { "k1": "v1", "k2": "v2" } or [ "k1": "v1" ] (<- Abbreviated of "[{ "k1": "v1" }]")
-        ret_value = v_cs[i+2];
-        is_null = false;
-        i+=2;
-        return true; // get value
-    }else if(i+2<v_cs.size() && v_cs[i+1][0]==':' && (v_cs[i+2][0]=='}' || v_cs[i+2][0]==']' || v_cs[i+2][0]==',')){
-        // { "k1": }, { "k1":, "k2" } or [ "k1": "v1" ] (<- Abbreviated of "[{ "k1": "v1" }]")
-        is_null = true;
-        ++i;
-        return true; // get null value
-    }else if(i+1<v_cs.size() && (v_cs[i+1][0]=='}' || v_cs[i+1][0]==']' || v_cs[i+1][0]==',')){
-        // { "k1" }, { "k1", "k2" } or [ "k1": "v1" ] (<- Abbreviated of "[{ "k1": "v1" }]")
-        is_null = true;
-        return true; // get null value
-    }
-
-    // not get a string value (have a value of object)
-    // { "k1" { "k2": }}
-    return false;
-}
-bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::string& s_in){
-    std::vector<std::string> v_cs; // vector of commands and string
-    if(!sstd_yaml::_split_quotes_by_control_chars(v_cs, s_in.c_str(), s_in.size())){ sstd::pdbg_err("_split_quotes_by_control_chars() is failed. Un-cloused quate.\n"); return false; }
-    
-    std::vector<sstd::terp::var*> v_dst;
-    v_dst.push_back( &var_out );
-    
-    for(uint i=0; i<v_cs.size(); ++i){
-        if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
-        sstd::terp::var* pVar = v_dst[v_dst.size()-1];
-        sstd::terp::var& var = *pVar;
-        
-        if(v_cs[i].size()==1 && _is_control_chars(v_cs[i][0])){
-            switch(v_cs[i][0]){
-            case '[': {
-                if(var.typeNum()==sstd::num_null){
-                    var = sstd::terp::list();
-                }else if(var.typeNum()==sstd::num_vec_terp_var){
-                    var.push_back( sstd::terp::list() );
-                    v_dst.push_back( &(var[var.size()-1]) );
-                }
-            } break;
-            case ']': {
-                if(var.typeNum()==sstd::num_hash_terp_var){ v_dst.pop_back(); } // for [k: v] which is an abbreviated notation of [{k: v}]
-                v_dst.pop_back();
-            } break;
-            case '{': {
-                if(var.typeNum()==sstd::num_null){
-                    var = sstd::terp::hash();
-                }else if(var.typeNum()==sstd::num_vec_terp_var){
-                    var.push_back( sstd::terp::hash() );
-                    v_dst.push_back( &(var[var.size()-1]) );
-                }
-            } break;
-            case '}': { v_dst.pop_back(); } break;
-            case ':': {} break;
-            case ',': {} break;
-            default: { sstd::pdbg_err("Unexpected char\n"); return false; } break;
-            }
-        }else{
-            switch(var.typeNum()){
-            case sstd::num_vec_terp_var: {
-                // list
-                if(i+1<v_cs.size() && v_cs[i+1].size()==1 && v_cs[i+1][0]==':'){ // for [k: v] which is an abbreviated notation of [{k: v}]
-                    var.push_back( sstd::terp::hash() );
-                    v_dst.push_back( &(var[var.size()-1]) );
-                    --i; continue;
-                }
-                var.push_back(v_cs[i]);
-            } break;
-            case sstd::num_hash_terp_var: {
-                // hash
-                bool is_null;
-                std::string key = v_cs[i];
-                std::string val;
-                if(_get_hash_value(is_null, val, v_cs, i)){
-                    if(!is_null){ var[ key.c_str() ] = _extract_quotes_value(sstd::strip_quotes(val.c_str()));
-                    }   else    { var[ key.c_str() ]; }
-                }else{
-                    v_dst.push_back( &(var[key.c_str()]) );
-                }
-            } break;
-            case sstd::num_null: {} break;
-            default: { sstd::pdbg_err("Unexpected data type. Type: %s\n", sstd::typeNum2str(var.typeNum()).c_str()); sstd::printn_all(var); } break;
-            }
-        }
-    }
-    if(v_dst.size()!=0){ sstd::pdbg_err("'[' or '{' is not closed.\n"); return false; }
-    
-    return true;
-}
-bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::command>& v_cmd){
-    std::vector<sstd::terp::var*> v_dst;    // v: vector, _dst: destination. An address stack for sstd_yaml::ope_alloc (follows the YAML indent)
-    std::vector<sstd::terp::var*> v_dst_cr; // v: vector, _dst: destination address, _cr: current. An address stack for sstd_yaml::ope_stack or sstd_yaml::ope_assign.
-    std::vector<uint> v_hsc; // v: vector, hsc: head space count
-    v_dst.push_back(&ret_yml);
-    v_dst_cr.push_back(&ret_yml);
-    v_hsc.push_back(0);
-    
-    for(uint i=0; i<v_cmd.size(); ++i){
-        if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
-        const struct sstd_yaml::command& cmd = v_cmd[i];
-
-        if(cmd.ope==sstd_yaml::ope_alloc){
-            // Inits v_dst_cr if the v_cmd is the beginning of the `sstd_yaml::ope_alloc` operation.
-            v_dst_cr.clear();
-            if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
-            v_dst_cr.push_back(v_dst[v_dst.size()-1]);
-        }
-        sstd::terp::var* pVar = v_dst_cr[v_dst_cr.size()-1];
-        sstd::terp::var& var = *pVar;
-        if(v_hsc.size()==0){ sstd::pdbg_err("v_hsc is out of range\n"); return false; }
-        uint hsc_base = v_hsc[v_hsc.size()-1];
-        
-        // checking the stack command
-        if(cmd.ope==sstd_yaml::ope_stack){
-            if(v_dst_cr.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
-            v_dst.push_back(v_dst_cr[v_dst_cr.size()-1]);
-            v_hsc.push_back(cmd.hsc);
-            continue;
-        }
-        
-        // checking the YAML indent
-        if(cmd.hsc < hsc_base){
-            v_dst.pop_back();
-            v_hsc.pop_back();
-            --i;
-            continue; // continue for multiple escape
-        }
-        
-        // setting the value or allocate dst address
-        if(cmd.ope==sstd_yaml::ope_assign){
-            if(var.typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data.\n"); return false; }
-            if(cmd.format==sstd_yaml::num_flow_style_base){
-                if(!_flow_style_str_to_obj(var, cmd.val)){ sstd::pdbg_err("_flow_style_str_to_obj() is failed.\n"); return false; }
-            }else{
-                var = cmd.val;
-            }
-        }else if(cmd.ope==sstd_yaml::ope_alloc){
-            if(var.typeNum()==sstd::num_null){
-                switch(cmd.type){
-                case sstd_yaml::num_list: { var = sstd::terp::list(); } break;
-                case sstd_yaml::num_hash: { var = sstd::terp::hash(); } break;
-                default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
-                }
-            }
-
-            switch(cmd.type){
-            case sstd_yaml::num_list: {
-                var.push_back();
-                v_dst_cr.push_back(&var[var.size()-1]);
-            } break;
-            case sstd_yaml::num_hash: {
-                auto itr = var.find(cmd.val);
-                if(itr!=var.end()){ sstd::pdbg_err("Detecting the duplicated hash key.\n"); return false; }
-                v_dst_cr.push_back(&var[cmd.val]);
-            } break;
-            default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
-            }
-        }else{
-            sstd::pdbg_err("Unexpected data type\n"); return false;
-        }
-    }
-    return true;
-}
-
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // str2token section
 
-bool _is_flow(const std::string& subt){
-    return (subt.starts_with('[') || subt.starts_with('{'));
+bool _is_end_marker(const std::string& s){
+    return s.starts_with("...");
 }
-bool _is_end_marker(const std::string& subt){
-    return subt.starts_with("...");
+bool _is_separator(const std::string& s){
+    return s.starts_with("---");
 }
-bool _is_separator(const std::string& subt){
-    return subt.starts_with("---");
+bool _is_anchor(const std::string& s){
+    return s.starts_with("&");
 }
-
+bool _is_alias(const std::string& s){
+    return s.starts_with("*");
+}
+bool _is_flow(const std::string& s_in){
+    std::string s = sstd::lstrip(s_in); // "  [a, b, c]" -> "[a, b, c]"
+    
+    bool is_anchor = _is_anchor(s); // for the '&' (anchor)
+    if(is_anchor){
+        std::vector<std::string> v_s = sstd::split(s); // "&ref [a, b, c]" -> ["&ref" "[a," "b," "c]"]
+        if(v_s.size()>=2){ s = v_s[1]; }
+    }
+    
+    return (s.starts_with('[') || s.starts_with('{'));
+}
+void _split_aa_val_and_val(std::string& out_aa_val, std::string& out_val, const std::string& in){
+    std::vector<std::string> v_tmp = sstd::split(in, 1);
+    if(v_tmp.size()==1){
+        std::string tmp;
+        std::swap(out_aa_val, v_tmp[0]);
+        std::swap(out_val,    tmp     );
+    }else if(v_tmp.size()==2){
+        std::swap(out_aa_val, v_tmp[0]);
+        std::swap(out_val,    v_tmp[1]);
+    }else{
+        sstd::pdbg_err("Unexpected data size\n");
+    }
+    return;
+}
 bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret, const std::string& str){
     // Parse rule of YAML string
     // 
@@ -827,7 +683,7 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
             
             if(!is_escaped && !in_s_quate && str[r]=='"' ){ in_d_quate = !in_d_quate; dqed=true; }
             if(!is_escaped && !in_d_quate && str[r]=='\''){ in_s_quate = !in_s_quate; sqed=true; }
-
+            
             if(!in_d_quate && !in_s_quate){
                 if((subt.size()==0 && str[r]=='#') || (str[r]==' ' && str[r+1]=='#')){
                     tmp.rawStr+=str[r]; ++r;
@@ -880,24 +736,29 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
         tmp.val=std::move(sstd::strip(subt));
         tmp.val_is_dqed=dqed;
         tmp.val_is_sqed=sqed;
+        bool is_anchor = _is_anchor(tmp.val); // for the '&' (anchor)
+        bool is_alias  = _is_alias (tmp.val); // for the '*' (alias)
         
-        if(is_list){ tmp.type += sstd_yaml::num_list; tmp.hsc_hx+=2; }
-        if(is_hash){ tmp.type += sstd_yaml::num_hash; }
-        if(is_flow){ tmp.format = sstd_yaml::num_flow_style_base; }
+        if(is_list){ tmp.type += sstd_yaml::type_list; tmp.hsc_hx+=2; }
+        if(is_hash){ tmp.type += sstd_yaml::type_hash; }
+        
+        if(is_flow  ){ tmp.format   = sstd_yaml::format_flow_style;                                                     }
+        if(is_anchor){ tmp.ref_type = sstd_yaml::ref_type_anchor; tmp.val.erase(0,1); _split_aa_val_and_val(tmp.aa_val, tmp.val, tmp.val); } // 1) set format type, 2) remove '&' in the head of the string
+        if(is_alias ){ tmp.ref_type = sstd_yaml::ref_type_alias;  tmp.val.erase(0,1); _split_aa_val_and_val(tmp.aa_val, tmp.val, tmp.val); } // 1) set format type, 2) remove '*' in the head of the string
         
         // Skip empty tokens until the first non-empty token occurs. (Empty token is treated as a line-break related with to other token in a context of multi-line YAML)
         if(ret.size()==0 &&
            tmp.key.size()==0 &&
            tmp.val.size()==0 &&
-           tmp.type==sstd_yaml::num_str){ continue; }
+           tmp.type==sstd_yaml::type_str){ continue; }
         
         // set hasValue
         tmp.hasValue=false;
         switch(tmp.type){
-        case sstd_yaml::num_str:           { if(tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1){tmp.hasValue=true;} } break;
-        case sstd_yaml::num_list:          { if(tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1){tmp.hasValue=true;} } break; // check the value is NOT NULL
-        case sstd_yaml::num_list_and_hash:
-        case sstd_yaml::num_hash:          { if(tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1){tmp.hasValue=true;} } break; // check the value is NOT NULL
+        case sstd_yaml::type_str:
+        case sstd_yaml::type_list:
+        case sstd_yaml::type_list_and_hash:
+        case sstd_yaml::type_hash:          { if(tmp.val_is_dqed||tmp.val_is_sqed||tmp.val.size()>=1){tmp.hasValue=true;} } break; // check the value is NOT NULL
         default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
         }
 
@@ -914,13 +775,13 @@ bool sstd_yaml::_str2token_except_multilines(std::vector<sstd_yaml::token>& ret,
 }
 bool _is_all_the_data_str_type(const std::vector<sstd_yaml::token>& v){
     for(uint i=0; i<v.size(); ++i){
-        if(v[i].type!=sstd_yaml::num_str){ return false; }
+        if(v[i].type!=sstd_yaml::type_str){ return false; }
     }
     return true;
 }
 bool _is_all_the_data_flowStyle(const std::vector<sstd_yaml::token>& v){
     for(uint i=0; i<v.size(); ++i){
-        if(v[i].format!=sstd_yaml::num_flow_style_base){ return false; }
+        if(v[i].format!=sstd_yaml::format_flow_style){ return false; }
     }
     return true;
 }
@@ -943,23 +804,34 @@ bool _merge_all_str(std::vector<sstd_yaml::token>& ret, const std::vector<sstd_y
     return true;
 }
 bool _is_control_types(uint type){
-    return (type==sstd_yaml::num_list || type==sstd_yaml::num_hash || type==sstd_yaml::num_list_and_hash);
+    return (type==sstd_yaml::type_list || type==sstd_yaml::type_hash || type==sstd_yaml::type_list_and_hash);
 }
 uint _get_criteria_hsc(const sstd_yaml::token& t){
-    if(t.type==sstd_yaml::num_hash || t.type==sstd_yaml::num_list_and_hash){
+    if(t.type==sstd_yaml::type_hash || t.type==sstd_yaml::type_list_and_hash){
         return t.hsc_hx;
     }else{
+        if(t.list_type_cnt!=1){ return t.hsc_lx + t.list_type_cnt * 2; }
         return t.hsc_lx;
     }
 }
 uint _get_current_hsc(const sstd_yaml::token& t){
-    if(t.type==sstd_yaml::num_hash){
+    if(t.type==sstd_yaml::type_hash){
         return t.hsc_hx;
     }else{
-        return t.hsc_lx; // for sstd_yaml::num_str or sstd_yaml::num_list
+        return t.hsc_lx; // for sstd_yaml::type_str or sstd_yaml::type_list
     }
 }
 bool sstd_yaml::_token2token_split_bv_list_type_cnt(std::vector<sstd_yaml::token>& io){
+    // Example:
+    //
+    // in:
+    // > - - - a
+    //
+    // out:
+    // > -
+    // >   -
+    // >     - a
+    
     std::vector<sstd_yaml::token> ret;
     
     for(uint i=0; i<io.size(); ++i){
@@ -973,8 +845,8 @@ bool sstd_yaml::_token2token_split_bv_list_type_cnt(std::vector<sstd_yaml::token
             for(; ti+1<t.list_type_cnt; ++ti){
                 sstd_yaml::token tmp = t;
                 
-                tmp.type = sstd_yaml::num_list;
-                tmp.format = sstd_yaml::num_block_style_base;
+                tmp.type = sstd_yaml::type_list;
+                tmp.format = sstd_yaml::format_block_style;
                 tmp.list_type_cnt = 1;
                 tmp.hsc_lx = tmp.hsc_lx + 2 * ti;
                 tmp.hsc_hx = tmp.hsc_lx + 2;
@@ -1010,6 +882,8 @@ bool sstd_yaml::_token2token_split_bv_list_type_cnt(std::vector<sstd_yaml::token
 }
 bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io){
     std::vector<sstd_yaml::token> ret;
+    std::vector<uint8> ref_type_stack;
+    std::vector<std::string> aa_val_stack;
 
     bool is_all_the_data_flowStyle = _is_all_the_data_flowStyle(io);
     if(is_all_the_data_flowStyle){
@@ -1035,7 +909,11 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
 
         // Check criteria values (Defining criteria value as a base token like list, hash or list_and_hash type to merge)
         bool start_with_string = (*pT).val.size()>=1;
-        uint criteria_hsc = _get_criteria_hsc((*pT));
+        uint criteria_hsc = _get_criteria_hsc((*pT)); // criteria_hsc: criteria head space count
+        if((*pT).ref_type!=sstd_yaml::ref_type_null){
+            ref_type_stack.push_back((*pT).ref_type);
+            aa_val_stack.push_back((*pT).aa_val);
+        }
         
         for(uint merge_cnt=1;; ++merge_cnt){
             // Update
@@ -1046,7 +924,7 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             bool is_control_types = _is_control_types((*pT).type);
             
             // Check break
-            uint curr_hsc = _get_current_hsc((*pT));
+            uint curr_hsc = _get_current_hsc((*pT)); // curr_hsc: current head space count
             if( merge_cnt==1 && is_control_types && (!start_with_string||(curr_hsc<=criteria_hsc)) ){ break; }
             // - `!start_with_string` is for:
             //   │ k0:
@@ -1056,14 +934,16 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             //   │ - k2: v2
 
             // Update `start_with_string` to the current token
-            start_with_string |= (*pT).type==sstd_yaml::num_str; // for "k:\n  l1\n  l2"
+            start_with_string |= (*pT).type==sstd_yaml::type_str; // for "k:\n  l1\n  l2"
             // Check the needs of breaking the merge process
             // Under the following situation, the parser needs to break the process of multi-line merging.
             //   - `start_with_string`: The string start with non-control charactor
             //   - `(*pT).key.size()!=0||(*pT).val.size()!=0`: The line is NOT Empty. (If the line is empty, the parser needs to treat as a line break of multi-line string).
             //   - `curr_hsc<=criteria_hsc`: The line is out of scope.
             if( start_with_string && (((*pT).key.size()!=0||(*pT).val.size()!=0||(*pT).key_is_dqed||(*pT).key_is_sqed||(*pT).val_is_dqed||(*pT).val_is_sqed) && curr_hsc<=criteria_hsc) ){ break; }
-
+            if( start_with_string && (*pT).type==sstd_yaml::type_hash                          ){ break; }
+            if( start_with_string && (*pT).type==sstd_yaml::type_list && aa_val_stack.size()!=0){ break; }
+            
             if( _is_separator((*pT).rawStr) ){ break; }
             
             // Copy values
@@ -1071,6 +951,21 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             tmp.val    += '\n' + (*pT).rawStr; // Needs to copy as row string in order to treat multi-line string as a raw data. Ex1: "k:\n x\n - a" is interpreted as `{k: "x - a"}`. Ex2: "k: |\n x # comment" is interpreted as `{k: "x # comment"}`.
             tmp.line_num_end = (*pT).line_num_end;
             tmp.mult_line_val = true;
+
+            tmp.hasValue |= (*pT).hasValue;
+            tmp.line_num_end = (*pT).line_num_end;
+            if((*pT).hasValue){ tmp.format = (*pT).format; }
+            
+            if((*pT).ref_type!=sstd_yaml::ref_type_null){
+                ref_type_stack.push_back((*pT).ref_type);
+                aa_val_stack.push_back((*pT).aa_val);
+            }
+        }
+
+        if(aa_val_stack.size()>=2){ sstd::pdbg_err("Duplicated anchor (&) definition. Troubled definition names: "); sstd::print_base(aa_val_stack); printf(".\n"); return false; }
+        if(aa_val_stack.size()==1){
+            tmp.ref_type = ref_type_stack[0]; ref_type_stack.clear();
+            tmp.aa_val   = aa_val_stack  [0]; aa_val_stack.clear();
         }
         
         ret.push_back(std::move(tmp));
@@ -1104,10 +999,10 @@ bool _escape_to_unicode_character(std::string& io){
             case '0':  { tmp += (uchar)0x00; break; }
                 
             //case ' ': { tmp += '\\'; break; }
-//            case '_':  { tmp += '\u00a0'; break; } // Needs to check "How UTF-8 encode" if we treats as UTF-8.
-//            case 'N':  { tmp += '\u0085'; break; } // Needs to check "How UTF-8 encode" if we treats as UTF-8.
-//            case 'L':  { tmp += '\u2028'; break; } // Needs to check "How UTF-8 encode" if we treats as UTF-8.
-//            case 'P':  { tmp += '\u2029'; break; } // Needs to check "How UTF-8 encode" if we treats as UTF-8.
+//            case '_':  { tmp += '\u00a0'; break; } // Needs to check "How UTF-8 encode" if we treats as UTF-8. (Byte order is the concern point)
+//            case 'N':  { tmp += '\u0085'; break; } // Needs to check "How UTF-8 encode" if we treats as UTF-8. (Byte order is the concern point)
+//            case 'L':  { tmp += '\u2028'; break; } // Needs to check "How UTF-8 encode" if we treats as UTF-8. (Byte order is the concern point)
+//            case 'P':  { tmp += '\u2029'; break; } // Needs to check "How UTF-8 encode" if we treats as UTF-8. (Byte order is the concern point)
             default: {
 //                if      (sstd::startswith(&io[i+1], "x41"      )){ tmp += "A"; i+=strlen("x41"      ); break; // Needs to check "How UTF-8 encode" if we treats as UTF-8.
 //                }else if(sstd::startswith(&io[i+1], "u0041"    )){ tmp += "A"; i+=strlen("u0041"    ); break; // Needs to check "How UTF-8 encode" if we treats as UTF-8.
@@ -1163,12 +1058,275 @@ bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const char* str_i
     std::string str = std::regex_replace(str_in, std::regex("\r"), ""); // "\r\n" -> "\n"
     
     if(!sstd_yaml::_str2token_except_multilines(ret, str.c_str())){ sstd::pdbg_err("sstd_yaml::_str2token_except_multilines() was failed.\n"); return false; }
-    if(!sstd_yaml::_token2token_split_bv_list_type_cnt(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_split_bv_list_type_cnt() was failed.\n"); return false; }
     if(!sstd_yaml::_token2token_merge_multilines(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_merge_multilines() was failed.\n"); return false; }
+    if(!sstd_yaml::_token2token_split_bv_list_type_cnt(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_split_bv_list_type_cnt() was failed.\n"); return false; }
     if(!sstd_yaml::_token2token_postprocess(ret)){ sstd::pdbg_err("sstd_yaml::_token2token_postprocess() was failed.\n"); return false; }
     return true;
 }
 bool sstd_yaml::_str2token(std::vector<sstd_yaml::token>& ret, const std::string& str){ return sstd_yaml::_str2token(ret, str.c_str()); }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// _construct_var() section
+
+bool _is_control_chars(const char c){
+    return (c=='[' || c==']' || c=='{' || c=='}' || c==':' || c==',');
+}
+bool sstd_yaml::_split_quotes_by_control_chars(std::vector<std::string>& ret, const char* str, const uint str_len){
+    bool is_escaped=false;
+    bool in_d_quate=false; // double quate
+    bool in_s_quate=false; // single quate
+    std::string buf;
+    uint i=0;
+    while(i<str_len){ // r: read place
+        if(str[i]=='\\'){ is_escaped=true; buf+=str[i]; ++i; if(i>=str_len){break;} }
+        
+        if(!is_escaped && !in_s_quate && str[i]=='"' ){ in_d_quate = !in_d_quate; }
+        if(!is_escaped && !in_d_quate && str[i]=='\''){ in_s_quate = !in_s_quate; }
+        
+        if(!in_d_quate && !in_s_quate && (_is_control_chars(str[i]))){
+            buf = sstd::strip(buf);
+            if(buf.size()!=0){
+                ret.push_back(buf);
+                buf.clear();
+            }
+            ret.push_back(std::string(1, str[i])); // append a control char
+            ++i;
+        }else{
+            buf += str[i];
+            ++i;
+        }
+        
+        is_escaped=false;
+    }
+    if(in_d_quate){ ret.clear(); return false; }
+    if(in_s_quate){ ret.clear(); return false; }
+    buf = sstd::strip(buf);
+    if(buf.size()!=0){ ret.push_back(buf); }
+    
+    return true;
+}
+bool _get_hash_value(bool& is_null, std::string& ret_value, const std::vector<std::string>& v_cs, uint& i){
+    
+    if(i+3<v_cs.size() && v_cs[i+1][0]==':' && (v_cs[i+2][0]!=',' && v_cs[i+2][0]!='}' && v_cs[i+2][0]!=']') && (v_cs[i+3][0]==',' || v_cs[i+3][0]=='}' || v_cs[i+3][0]==']')){
+        // { "k1": "v1" }, { "k1": "v1", "k2": "v2" } or [ "k1": "v1" ] (<- Abbreviated of "[{ "k1": "v1" }]")
+        ret_value = v_cs[i+2];
+        is_null = false;
+        i+=2;
+        return true; // get value
+    }else if(i+2<v_cs.size() && v_cs[i+1][0]==':' && (v_cs[i+2][0]=='}' || v_cs[i+2][0]==']' || v_cs[i+2][0]==',')){
+        // { "k1": }, { "k1":, "k2" } or [ "k1": "v1" ] (<- Abbreviated of "[{ "k1": "v1" }]")
+        is_null = true;
+        ++i;
+        return true; // get null value
+    }else if(i+1<v_cs.size() && (v_cs[i+1][0]=='}' || v_cs[i+1][0]==']' || v_cs[i+1][0]==',')){
+        // { "k1" }, { "k1", "k2" } or [ "k1": "v1" ] (<- Abbreviated of "[{ "k1": "v1" }]")
+        is_null = true;
+        return true; // get null value
+    }
+
+    // not get a string value (have a value of object)
+    // { "k1" { "k2": }}
+    return false;
+}
+bool _get_alias_address(bool& out_is_alias, sstd::terp::var*& out_address, const std::unordered_map<std::string, sstd::terp::var*>& tbl_anchor_to_address, const std::string& s_in){
+    
+    out_is_alias = _is_alias(s_in);
+    
+    if(out_is_alias){
+        std::string alias_name = std::string(s_in).erase(0,1); // removes '*' in the head of the string
+        
+        auto itr = tbl_anchor_to_address.find( alias_name );
+        if(itr==tbl_anchor_to_address.end()){ sstd::pdbg_err("Anchor does NOT found. Anchor name: %s\n", s_in.c_str()); return false; }
+        
+        out_address = itr->second;
+    }
+    
+    return true;
+}
+bool _flow_style_str_to_obj(sstd::terp::var& var_out, const std::unordered_map<std::string, sstd::terp::var*>& tbl_anchor_to_address, const std::string& s_in){
+    
+    std::vector<std::string> v_cs; // vector of commands and string
+    if(!sstd_yaml::_split_quotes_by_control_chars(v_cs, s_in.c_str(), s_in.size())){ sstd::pdbg_err("_split_quotes_by_control_chars() is failed. Un-cloused quate.\n"); return false; }
+    
+    std::vector<sstd::terp::var*> v_dst;
+    v_dst.push_back( &var_out );
+    
+    for(uint i=0; i<v_cs.size(); ++i){
+        if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
+        sstd::terp::var* pVar = v_dst[v_dst.size()-1];
+        sstd::terp::var& var = *pVar;
+        
+        if(v_cs[i].size()==1 && _is_control_chars(v_cs[i][0])){
+            switch(v_cs[i][0]){
+            case '[': {
+                if(var.typeNum()==sstd::num_null){
+                    var = sstd::terp::list();
+                }else if(var.typeNum()==sstd::num_vec_terp_var){
+                    var.push_back( sstd::terp::list() );
+                    v_dst.push_back( &(var[var.size()-1]) );
+                }
+            } break;
+            case ']': {
+                if(var.typeNum()==sstd::num_hash_terp_var){ v_dst.pop_back(); } // for [k: v] which is an abbreviated notation of [{k: v}]
+                v_dst.pop_back();
+            } break;
+            case '{': {
+                if(var.typeNum()==sstd::num_null){
+                    var = sstd::terp::hash();
+                }else if(var.typeNum()==sstd::num_vec_terp_var){
+                    var.push_back( sstd::terp::hash() );
+                    v_dst.push_back( &(var[var.size()-1]) );
+                }
+            } break;
+            case '}': { v_dst.pop_back(); } break;
+            case ':': {} break;
+            case ',': {} break;
+            default: { sstd::pdbg_err("Unexpected char\n"); return false; } break;
+            }
+        }else{
+            switch(var.typeNum()){
+            case sstd::num_vec_terp_var: {
+                // list
+                if(i+1<v_cs.size() && v_cs[i+1].size()==1 && v_cs[i+1][0]==':'){ // for [k: v] which is an abbreviated notation of [{k: v}]
+                    var.push_back( sstd::terp::hash() );
+                    v_dst.push_back( &(var[var.size()-1]) );
+                    --i; continue;
+                }
+                
+                bool is_alias; sstd::terp::var* address;
+                if(!_get_alias_address(is_alias, address, tbl_anchor_to_address, v_cs[i])){ sstd::pdbg_err("_get_alias_address() failed.\n"); return false; } // for the '*' (alias)
+                if(is_alias){
+                    var.push_back( address );
+                }else{
+                    var.push_back( v_cs[i] );
+                }
+            } break;
+            case sstd::num_hash_terp_var: {
+                bool is_key_alias; sstd::terp::var* key_address;
+                if(!_get_alias_address(is_key_alias, key_address, tbl_anchor_to_address, v_cs[i])){ sstd::pdbg_err("_get_alias_address() failed.\n"); return false; } // for the '*' (alias)
+                
+                // hash
+                bool is_null;
+                std::string key = (!is_key_alias ? v_cs[i] : key_address->to<std::string>());
+                std::string val;
+                bool has_object_value = _get_hash_value(is_null, val, v_cs, i);
+                if(has_object_value){
+                    bool is_value_alias; sstd::terp::var* value_address;
+                    if(!_get_alias_address(is_value_alias, value_address, tbl_anchor_to_address, val)){ sstd::pdbg_err("_get_alias_address() failed.\n"); return false; } // for the '*' (alias)
+                    
+                    if(!is_null){
+                        if(!is_value_alias){
+                            var[ key.c_str() ] = _extract_quotes_value(sstd::strip_quotes(val.c_str()));
+                        }else{
+                            var[ key.c_str() ] = value_address;
+                        }
+                    }   else    {
+                        var[ key.c_str() ];
+                    }
+                }else{
+                    v_dst.push_back( &(var[key.c_str()]) );
+                }
+            } break;
+            case sstd::num_null: {} break;
+            default: { sstd::pdbg_err("Unexpected data type. Type: %s\n", sstd::typeNum2str(var.typeNum()).c_str()); } break;
+            }
+        }
+    }
+    if(v_dst.size()!=0){ sstd::pdbg_err("'[' or '{' is not closed.\n"); return false; }
+    
+    return true;
+}
+bool _construct_var(sstd::terp::var& ret_yml, const std::vector<struct sstd_yaml::command>& v_cmd){
+    std::vector<sstd::terp::var*> v_dst;    // v: vector, _dst: destination address. An address stack for sstd_yaml::ope_alloc (follows the YAML indent)
+    std::vector<sstd::terp::var*> v_dst_cr; // v: vector, _dst: destination address, _cr: current. An address stack for sstd_yaml::ope_stack or sstd_yaml::ope_assign.
+    std::vector<uint> v_hsc; // v: vector, hsc: head space count
+    v_dst.push_back(&ret_yml);
+    v_dst_cr.push_back(&ret_yml);
+    v_hsc.push_back(0);
+    
+    std::unordered_map<std::string, sstd::terp::var*> tbl_anchor_to_address;
+    
+    for(uint i=0; i<v_cmd.size(); ++i){
+        if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
+        const struct sstd_yaml::command& cmd = v_cmd[i];
+
+        if(cmd.ope==sstd_yaml::ope_alloc){
+            // Inits v_dst_cr if the v_cmd is the beginning of the `sstd_yaml::ope_alloc` operation.
+            v_dst_cr.clear();
+            if(v_dst.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
+            v_dst_cr.push_back(v_dst[v_dst.size()-1]);
+        }
+        sstd::terp::var* pVar = v_dst_cr[v_dst_cr.size()-1];
+        sstd::terp::var& var = *pVar;
+        if(v_hsc.size()==0){ sstd::pdbg_err("v_hsc is out of range\n"); return false; }
+        uint hsc_base = v_hsc[v_hsc.size()-1];
+        
+        // checking the stack command
+        if(cmd.ope==sstd_yaml::ope_stack){
+            if(v_dst_cr.size()==0){ sstd::pdbg_err("broken pointer\n"); return false; }
+            v_dst.push_back(v_dst_cr[v_dst_cr.size()-1]);
+            v_hsc.push_back(cmd.hsc);
+            continue;
+        }
+        
+        // checking the YAML indent
+        if(cmd.hsc < hsc_base){
+            v_dst.pop_back();
+            v_hsc.pop_back();
+            --i;
+            continue; // continue for multiple escape
+        }
+        
+        // setting the value or allocate dst address
+        if(cmd.ope==sstd_yaml::ope_assign){
+            if(var.typeNum()!=sstd::num_null){ sstd::pdbg_err("OverWritting the existing data.\n"); return false; }
+            if(cmd.format==sstd_yaml::format_flow_style){
+                if(!_flow_style_str_to_obj(var, tbl_anchor_to_address, cmd.val)){ sstd::pdbg_err("_flow_style_str_to_obj() is failed.\n"); return false; }
+            }else{
+                var = cmd.val;
+            }
+        }else if(cmd.ope==sstd_yaml::ope_alloc){
+            if(var.typeNum()==sstd::num_null){
+                switch(cmd.type){
+                case sstd_yaml::type_list: { var = sstd::terp::list(); } break;
+                case sstd_yaml::type_hash: { var = sstd::terp::hash(); } break;
+                default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
+                }
+            }
+            
+            switch(cmd.type){
+            case sstd_yaml::type_list: {
+                var.push_back();
+                v_dst_cr.push_back(&var[var.size()-1]);
+                if(cmd.ref_type==sstd_yaml::ref_type_anchor){
+                    tbl_anchor_to_address[ cmd.aa_val ] = &var[ var.size()-1 ];
+                }else if(cmd.ref_type==sstd_yaml::ref_type_alias){
+                    auto itr = tbl_anchor_to_address.find( cmd.aa_val );
+                    if(itr==tbl_anchor_to_address.end()){ sstd::pdbg_err("Anchor does NOT found. Anchor name: %s\n", cmd.aa_val.c_str()); break; }
+                    var[ var.size()-1 ] = (sstd::terp::var*)itr->second;
+                }
+            } break;
+            case sstd_yaml::type_hash: {
+                auto itr = var.find(cmd.val);
+                if(itr!=var.end()){ sstd::pdbg_err("Detecting the duplicated hash key.\n"); return false; }
+                v_dst_cr.push_back(&var[cmd.val]);
+                if(cmd.ref_type==sstd_yaml::ref_type_anchor){
+                    tbl_anchor_to_address[ cmd.aa_val ] = &var[ cmd.val ];
+                }else if(cmd.ref_type==sstd_yaml::ref_type_alias){
+                    auto itr = tbl_anchor_to_address.find( cmd.aa_val );
+                    if(itr==tbl_anchor_to_address.end()){ sstd::pdbg_err("Anchor does NOT found. Anchor name: %s\n", cmd.aa_val.c_str()); break; }
+                    var[ cmd.val ] = (sstd::terp::var*)itr->second;
+                }
+            } break;
+            default: { sstd::pdbg_err("Unexpected data type\n"); return false; } break;
+            }
+        }else{
+            sstd::pdbg_err("Unexpected data type\n"); return false;
+        }
+    }
+    
+    return true;
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // YAML load section

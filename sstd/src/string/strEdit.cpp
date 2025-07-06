@@ -111,13 +111,20 @@ bool sstd::splitByLine_quotes(std::vector<std::string>& ret, const std::string& 
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-std::vector<std::string> _asAX_rmSpace(const char* str, const char X){
+std::vector<std::string> _asAX_rmSpace(const char* str, const char X, const int maxsplit){
+    if(maxsplit==0){ return std::vector<std::string>({str}); }
     std::vector<std::string> splitList;
     
     std::string buf;
     uint i=0;
+    
     while(str[i]!='\0'){ if(str[i]==' '){++i;}else{break;} } // skip space
     while(str[i]!='\0'){
+        if(maxsplit>=0 && splitList.size()==(uint)maxsplit){
+            buf += (const char*)&str[i];
+            break;
+        }
+        
         if(X==str[i]){
             sstd::rstrip_ow(buf); splitList.push_back(buf); buf.clear();
             ++i;
@@ -153,15 +160,16 @@ std::vector<std::string> _asAX(const char* str, const char X){
     if(i>=1 && str[i-1]==X){ splitList.push_back(std::string()); }
     return splitList;
 }
-std::vector<std::string> sstd::split(const        char* str              ){ return _asAX_rmSpace(str,         ' '); }
-std::vector<std::string> sstd::split(const std::string& str              ){ return _asAX_rmSpace(str.c_str(), ' '); }
+std::vector<std::string> sstd::split(const        char* str              ){ return _asAX_rmSpace(str,         ' ',       -1); }
+std::vector<std::string> sstd::split(const std::string& str              ){ return _asAX_rmSpace(str.c_str(), ' ',       -1); }
+std::vector<std::string> sstd::split(const char*        str, int maxsplit){ return _asAX_rmSpace(str,         ' ', maxsplit); }
+std::vector<std::string> sstd::split(const std::string& str, int maxsplit){ return _asAX_rmSpace(str.c_str(), ' ', maxsplit); }
 std::vector<std::string> sstd::split(const        char* str, const char X){ return _asAX(str,          X ); }
 std::vector<std::string> sstd::split(const std::string& str, const char X){ return _asAX(str.c_str(),  X ); }
 
 std::vector<std::string> _split_ss_base(const char* str, const uint str_len, const char* X, const uint X_len){
-    if(str_len<=1){ return std::vector<std::string>({str}); }
-    if(X_len  ==0){ return std::vector<std::string>({str}); }
-    if(X_len  ==1){ return sstd::split(str, X[0]); }
+    if(X_len==0){ return std::vector<std::string>({str}); }
+    if(X_len==1){ return sstd::split(str, X[0]); }
     
     std::vector<std::string> splitList;
     std::string buf;
@@ -184,10 +192,56 @@ std::vector<std::string> sstd::split(const std::string& str, const std::string& 
 
 //---
 
-std::vector<std::string> sstd::split_rmSpace(const        char* str              ){ return _asAX_rmSpace(str,         ' '); }
-std::vector<std::string> sstd::split_rmSpace(const std::string& str              ){ return _asAX_rmSpace(str.c_str(), ' '); }
-std::vector<std::string> sstd::split_rmSpace(const        char* str, const char X){ return _asAX_rmSpace(str        ,  X ); }
-std::vector<std::string> sstd::split_rmSpace(const std::string& str, const char X){ return _asAX_rmSpace(str.c_str(),  X ); }
+std::vector<std::string> _split_all_base(const char* str, const uint str_len, const char* X, const uint X_len){
+    if(X_len==0){ return std::vector<std::string>({str}); }
+    
+    std::vector<std::string> splitList;
+    std::string buf;
+    for(uint i=0; str[i]!='\0'; ++i){
+        if(!sstd::charIn(str[i], X)){
+            buf += str[i];
+        }else{
+            splitList.push_back(buf);
+            buf.clear();
+        }
+    }
+    if((str_len>=1 && sstd::charIn(str[str_len-1], X)) || buf.size()!=0){ splitList.push_back(buf); }
+    return splitList;
+}
+std::vector<std::string> sstd::splitAll(const char*        str, const char*        X){ return _split_all_base(str,         ::strlen(str), X,         ::strlen(X)); }
+std::vector<std::string> sstd::splitAll(const std::string& str, const char*        X){ return _split_all_base(str.c_str(),    str.size(), X,         ::strlen(X)); }
+std::vector<std::string> sstd::splitAll(const char*        str, const std::string& X){ return _split_all_base(str,         ::strlen(str), X.c_str(),    X.size()); }
+std::vector<std::string> sstd::splitAll(const std::string& str, const std::string& X){ return _split_all_base(str.c_str(),    str.size(), X.c_str(),    X.size()); }
+
+//---
+
+std::vector<std::string> _split_all_tight_base(const char* str, const uint str_len, const char* X, const uint X_len){
+    if(X_len==0){ return std::vector<std::string>({str}); }
+    
+    std::vector<std::string> splitList;
+    std::string buf;
+    for(uint i=0; str[i]!='\0'; ++i){
+        if(!sstd::charIn(str[i], X)){
+            buf += str[i];
+        }else if(buf.size()!=0){
+            splitList.push_back(buf);
+            buf.clear();
+        }
+    }
+    if(buf.size()!=0){ splitList.push_back(buf); }
+    return splitList;
+}
+std::vector<std::string> sstd::splitAll_tight(const char*        str, const char*        X){ return _split_all_tight_base(str,         ::strlen(str), X,         ::strlen(X)); }
+std::vector<std::string> sstd::splitAll_tight(const std::string& str, const char*        X){ return _split_all_tight_base(str.c_str(),    str.size(), X,         ::strlen(X)); }
+std::vector<std::string> sstd::splitAll_tight(const char*        str, const std::string& X){ return _split_all_tight_base(str,         ::strlen(str), X.c_str(),    X.size()); }
+std::vector<std::string> sstd::splitAll_tight(const std::string& str, const std::string& X){ return _split_all_tight_base(str.c_str(),    str.size(), X.c_str(),    X.size()); }
+
+//---
+
+std::vector<std::string> sstd::split_rmSpace(const        char* str              ){ return _asAX_rmSpace(str,         ' ', -1); }
+std::vector<std::string> sstd::split_rmSpace(const std::string& str              ){ return _asAX_rmSpace(str.c_str(), ' ', -1); }
+std::vector<std::string> sstd::split_rmSpace(const        char* str, const char X){ return _asAX_rmSpace(str        ,  X , -1); }
+std::vector<std::string> sstd::split_rmSpace(const std::string& str, const char X){ return _asAX_rmSpace(str.c_str(),  X , -1); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
