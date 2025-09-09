@@ -71,6 +71,7 @@
 
 #include "src/python/c2py.hpp"
 
+#include "src/string/argparse.hpp"
 #include "src/string/encode_decode.hpp"
 #include "src/string/ssprintf.hpp"
 #include "src/string/strEdit.hpp"
