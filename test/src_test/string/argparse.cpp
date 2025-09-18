@@ -167,18 +167,17 @@ enum class CmdID {
 
 TEST(argparse, example05){
 
-    int cmd_id;
     bool rm_hs, rm_ts;
     std::vector<int> vlineNum;
     int num;
     
-    sstd::argparse ap(cmd_id, argc, argv,
-                      sstd::argparse::cmd_rule(CmdID::EMPTY),
-                      sstd::argparse::cmd_rule(CmdID::GET_LINES, "get lines", -1, vlineNum, {}),
-                      sstd::argparse::cmd_rule(CmdID::GET_LINE,  "get line" ,  1, num,       0),
-                      sstd::argparse::opt_rule("-h", "--rm-head-spaces", 1, rm_hs, false),
-                      sstd::argparse::opt_rule("-t", "--rm-tail-spaces", 1, rm_ts, false)
-                      );
+    int cmd_id = sstd::argparse(argc, argv,
+                                sstd::argparse::cmd_rule(CmdID::EMPTY),
+                                sstd::argparse::cmd_rule(CmdID::GET_LINES, "get lines", -1, vlineNum, {}),
+                                sstd::argparse::cmd_rule(CmdID::GET_LINE,  "get line" ,  1, num,       0),
+                                sstd::argparse::opt_rule("-h", "--rm-head-spaces", 1, rm_hs, false),
+                                sstd::argparse::opt_rule("-t", "--rm-tail-spaces", 1, rm_ts, false)
+                                );
     
     switch(cmd_id){
     case CmdID::EMPTY : { print_help(); } break;
