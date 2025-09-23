@@ -3,7 +3,7 @@
 sstd::argparse::argparse(){}
 sstd::argparse::~argparse(){}
 
-//int sstd::argparse::add_switch_rule(const char* a, int b, T c){
+//int sstd::argparse::parse(const int argc, const char* argv[]){
 //    return 0;
 //}
 
