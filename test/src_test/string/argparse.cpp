@@ -170,14 +170,15 @@ TEST(argparse, example05){
     bool rm_hs, rm_ts;
     std::vector<int> vlineNum;
     int num;
-    
-    int cmd_id = sstd::argparse(argc, argv,
-                                sstd::argparse::cmd_rule(CmdID::EMPTY),
-                                sstd::argparse::cmd_rule(CmdID::GET_LINES, "get lines", -1, vlineNum, {}),
-                                sstd::argparse::cmd_rule(CmdID::GET_LINE,  "get line" ,  1, num,       0),
-                                sstd::argparse::opt_rule("-h", "--rm-head-spaces", 1, rm_hs, false),
-                                sstd::argparse::opt_rule("-t", "--rm-tail-spaces", 1, rm_ts, false)
-                                );
+
+    sstd::argparse ap;
+    int cmd_id = ap(argc, argv,
+                    sstd::argparse::cmd_rule("", 0, CmdID::EMPTY),
+                    sstd::argparse::cmd_rule("get lines", -1, vlineNum, {}, CmdID::GET_LINES),
+                    sstd::argparse::cmd_rule("get line" ,  1, num,       0, CmdID::GET_LINE ),
+                    sstd::argparse::opt_rule("-h", "--rm-head-spaces", 1, rm_hs, false),
+                    sstd::argparse::opt_rule("-t", "--rm-tail-spaces", 1, rm_ts, false)
+                    );
     
     switch(cmd_id){
     case CmdID::EMPTY : { print_help(); } break;
