@@ -21,7 +21,12 @@ namespace sstd{
     }
 }
 
-namespace sstd{ class argparse; }
+namespace sstd{
+    class argparse;
+}
+namespace sstd::arg_rule{
+    std::string cmd(const char* ps);
+}
 
 class sstd::argparse{
 private:

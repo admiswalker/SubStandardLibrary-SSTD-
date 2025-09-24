@@ -64,9 +64,12 @@ TEST(argparse, argc_0){
     
     sstd::argparse ap;
     int cmd_id = ap.parse(argc, argv
-                          , std::string("rule1") // for test
-                          , std::string("rule2") // for test
-                          , std::string("rule3") // for test
+                          , sstd::arg_rule::cmd("in1")
+                          , sstd::arg_rule::cmd("in2")
+                          , sstd::arg_rule::cmd("in3")
+//                          , std::string("rule1") // for test
+//                          , std::string("rule2") // for test
+//                          , std::string("rule3") // for test
 //                          , sstd::argparse::cmd_rule(CmdID::EMPTY, "", 0)
 //                    , sstd::argparse::cmd_rule(CmdID::GET_LINES, vlineNum, {}, "get lines", -1)
 //                    , sstd::argparse::cmd_rule(CmdID::GET_LINE , num,       0, "get line" ,  1)

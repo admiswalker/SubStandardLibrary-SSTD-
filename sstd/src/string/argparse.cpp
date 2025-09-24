@@ -1,5 +1,11 @@
 #include "argparse.hpp"
 
+//---
+
+std::string sstd::arg_rule::cmd(const char* ps){ return std::string(ps); }
+
+//---
+
 sstd::argparse::argparse(){}
 sstd::argparse::~argparse(){}
 
