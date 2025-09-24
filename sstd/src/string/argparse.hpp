@@ -4,6 +4,23 @@
 #include <vector>
 #include "../definitions/typeDef.h"
 
+namespace sstd{
+    template<typename T>
+    void _argstack(std::vector<T>& res_stack, T&& obj){
+        res_stack.push_back(obj);
+    }
+    template<typename T, class Head, class... Tail>
+    void _argstack(std::vector<T>& res_stack, Head&& head, Tail&&... tail){
+        res_stack.push_back(head);
+        _argstack(res_stack, std::forward<Tail>(tail)...);
+    }
+    
+    template<typename T, class... Args>
+    void argstack(std::vector<T>& res_stack, Args... args){
+        sstd::_argstack(res_stack, std::forward<Args>(args)...);
+    }
+}
+
 namespace sstd{ class argparse; }
 
 class sstd::argparse{
@@ -16,19 +33,9 @@ public:
     argparse();
     ~argparse();
 
-    void _stack(std::string&& s){
-        arg_stack.push_back(s);
-    }
-    template <class Head, class... Tail>
-    void _stack(Head&& head, Tail&&... tail){
-        arg_stack.push_back(head);
-        _stack(std::forward<Tail>(tail)...);
-    }
-    
     template<class... Args>
-    int parse(int argc, char* argv[], Args... args
-              ){
-        _stack(std::forward<Args>(args)...);
+    int parse(int argc, char* argv[], Args... args){
+        sstd::argstack(arg_stack, args...);
         return 0;
     }
 
@@ -40,4 +47,5 @@ public:
 //        return 0;
 //    }
 };
+
 
