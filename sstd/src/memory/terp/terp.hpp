@@ -3,7 +3,6 @@
 #include <vector>
 #include <unordered_set>
 
-#include "../void_ptr.hpp"
 #include "../../definitions/typeDef.h"
 #include "../../definitions/typeNum.hpp"
 #include "../../print/pdbg.hpp"
@@ -168,7 +167,6 @@ public:
     
     uint size() const;
 
-//    void _to(std::string& dst, const sstd::void_ptr& src) const { dst = (*(std::string*)_p->ptr()); }
     template <typename T>
     const T to() const {
         T ret = T();
