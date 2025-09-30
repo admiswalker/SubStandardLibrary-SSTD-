@@ -44,15 +44,16 @@ TEST(argparse, argc_0){
     // example input
     int argc = 0;
     char *argv[] = {
-                    "./a.out",
+//                    "./a.out",
+                    "./a.out get lines 1 3 5",
     };
 //    sstd::printn(argc);
 //    sstd::printn(argv[0]);
     
     enum class CmdID{
-                 EMPTY,
-                 GET_LINES,
-                 GET_LINE
+                     EMPTY,
+                     GET_LINES,
+                     GET_LINE
     };
 //    sstd::printn((int)CmdID::EMPTY);
 //    sstd::printn((int)CmdID::GET_LINES);
@@ -64,17 +65,15 @@ TEST(argparse, argc_0){
     
     sstd::argparse ap;
     int cmd_id = ap.parse(argc, argv
-                          , sstd::arg_rule::cmd("in1")
-                          , sstd::arg_rule::cmd("in2")
-                          , sstd::arg_rule::cmd("in3")
-                          , sstd::arg_rule::cmd((int)CmdID::EMPTY, "", 0)
-//                    , sstd::argparse::cmd_rule(CmdID::GET_LINES, vlineNum, {}, "get lines", -1)
-//                    , sstd::argparse::cmd_rule(CmdID::GET_LINE , num,       0, "get line" ,  1)
-//                    , sstd::argparse::opt_rule(rm_hs, false, "-h", "--rm-head-spaces", 1)
-//                    , sstd::argparse::opt_rule(rm_ts, false, "-t", "--rm-tail-spaces", 1)
+                          , sstd::arg_rule::cmd((int)CmdID::EMPTY, "<CmdID::EMPTY>", 0)
+                          , sstd::arg_rule::cmd((int)CmdID::GET_LINES, vlineNum, {}, "get lines", -1)
+//                    , sstd::arg_rule::cmd((int)CmdID::GET_LINE , num,       0, "get line" ,  1)
+//                    , sstd::arg_rule::opt(rm_hs, false, "-h", "--rm-head-spaces", 1)
+//                    , sstd::arg_rule::opt(rm_ts, false, "-t", "--rm-tail-spaces", 1)
                     );
 
     sstd::printn(ap._get_arg_stack());
+    sstd::printn(cmd_id);
     
     /*
     sstd::argparse ap;
@@ -86,17 +85,21 @@ TEST(argparse, argc_0){
                     sstd::argparse::opt_rule(rm_ts, false, "-t", "--rm-tail-spaces", 1)
                     );
     
-    switch(cmd_id){
-    case CmdID::EMPTY : { ap.print_help(); } break;
-    case CmdID::GET_LINES: { // process get lines
-    } break;
-    case CmdID::GET_LINE : { // process get line
-    } break;
-    default : { printf("error: %s\n", ap.error.c_str()); }
-    }
-
-    return 0;
     //*/
+    switch(cmd_id){
+    case (int)CmdID::EMPTY : {
+//        ap.print_help();
+    } break;
+    case (int)CmdID::GET_LINES: {
+        // process get lines
+    } break;
+    case (int)CmdID::GET_LINE : {
+        // process get line
+    } break;
+    default : {
+//        printf("error: %s\n", ap.error.c_str());
+    }
+    }
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
