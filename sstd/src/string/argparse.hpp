@@ -25,38 +25,35 @@ namespace sstd{
 //---
 
 namespace sstd{
-//    template<typename K, typename V, typename T>
-    template<typename K, typename T>
-    bool _arghash(std::unordered_map<K,T>& res_hashT,
-                  K (*pFn_T2K)(const T&),
-//                  V&& (*pFn_T2V)(T&&),
+    template<typename K, typename V, typename T>
+    bool _arghash(std::unordered_map<K,V>& res_hashT,
+                  K (*pFn_T2K)(const T& ),
+                  V (*pFn_T2V)(      T&&),
                   T&& obj)
     {
-//        auto [itr, inserted] = res_hashT.insert({pFn_T2K(obj), pFn_T2V(obj)});
-        auto [itr, inserted] = res_hashT.insert({pFn_T2K(obj), obj});
+        K key = pFn_T2K(obj);
+        auto [itr, inserted] = res_hashT.insert({std::move(key), pFn_T2V(std::move(obj))});
         return inserted;
     }
-//    template<typename K, typename V, typename T, class Head, class... Tail>
-    template<typename K, typename T, class Head, class... Tail>
-    bool _arghash(std::unordered_map<K,T>& res_hashT,
-                  K (*pFn_T2K)(const T&),
-//                  V&& (*pFn_T2V)(T&&),
+    template<typename K, typename V, typename T, class Head, class... Tail>
+    bool _arghash(std::unordered_map<K,V>& res_hashT,
+                  K (*pFn_T2K)(const T& ),
+                  V (*pFn_T2V)(      T&&),
                   Head&& head, Tail&&... tail)
     {
-        auto [itr, inserted] = res_hashT.insert({pFn_T2K(head), head});
-//        auto [itr, inserted] = res_hashT.insert({pFn_T2K(head), pFn_T2V(head)});
+        K key = pFn_T2K(head);
+        auto [itr, inserted] = res_hashT.insert({std::move(key), pFn_T2V(std::move(head))});
         if(!inserted){ return false; }
-        return sstd::_arghash(res_hashT, pFn_T2K, std::forward<Tail>(tail)...);
+        return sstd::_arghash(res_hashT, pFn_T2K, pFn_T2V, std::forward<Tail>(tail)...);
     }
     
-//    template<typename K, typename V, typename T, class... Args>
-    template<typename K, typename T, class... Args>
-    bool arghash(std::unordered_map<K,T>& res_hashT,
-                 K (*pFn_T2K)(const T&),
-//                 V&& (*pFn_T2V)(T&&),
+    template<typename K, typename V, typename T, class... Args>
+    bool arghash(std::unordered_map<K,V>& res_hashT,
+                 K (*pFn_T2K)(const T& ),
+                 V (*pFn_T2V)(      T&&),
                  Args... args)
     {
-        return sstd::_arghash(res_hashT, pFn_T2K, std::forward<Args>(args)...);
+        return sstd::_arghash(res_hashT, pFn_T2K, pFn_T2V, std::forward<Args>(args)...);
     }
 }
 
@@ -90,11 +87,10 @@ namespace sstd::arg_rule{
         
         return res;
     }
-    
-    //---
-    
+}
+namespace sstd::_argparse{
     std::string fn_T2K(const struct sstd::arg_rule::cmd_rule&);
-    struct sstd::arg_rule::cmd_rule&& fn_T2V(struct sstd::arg_rule::cmd_rule&&);
+    struct sstd::arg_rule::cmd_rule fn_T2V(struct sstd::arg_rule::cmd_rule&&);
 }
 
 namespace sstd{
@@ -121,9 +117,7 @@ public:
 
     template<class... Args>
     int parse(const int argc, const char* argv[], Args... args){
-        sstd::arghash(arg_hash, sstd::arg_rule::fn_T2K, args...);
-        //sstd::arghash(arg_hashT, sstd::arg_rule::fn_T2K, sstd::arg_rule::fn_T2V, args...);
-        //sstd::argstack(arg_stack, args...);
+        sstd::arghash(arg_hash, sstd::_argparse::fn_T2K, sstd::_argparse::fn_T2V, args...);
         return sstd::argparse::_parse(argc, argv, arg_stack);
     }
 

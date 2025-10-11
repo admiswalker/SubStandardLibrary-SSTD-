@@ -32,10 +32,10 @@ struct sstd::arg_rule::cmd_rule sstd::arg_rule::cmd(const int cmd_id,           
 
 //---
 
-std::string sstd::arg_rule::fn_T2K(const struct sstd::arg_rule::cmd_rule& rhs){
+std::string sstd::_argparse::fn_T2K(const struct sstd::arg_rule::cmd_rule& rhs){
     return rhs.cmd;
 }
-struct sstd::arg_rule::cmd_rule&& fn_T2V(struct sstd::arg_rule::cmd_rule&& rhs){
+struct sstd::arg_rule::cmd_rule sstd::_argparse::fn_T2V(struct sstd::arg_rule::cmd_rule&& rhs){
     return std::move(rhs);
 }
 
