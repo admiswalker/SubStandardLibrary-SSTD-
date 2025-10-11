@@ -117,7 +117,8 @@ public:
 
     template<class... Args>
     int parse(const int argc, const char* argv[], Args... args){
-        sstd::arghash(arg_hash, sstd::_argparse::fn_T2K, sstd::_argparse::fn_T2V, args...);
+        bool res = sstd::arghash(arg_hash, sstd::_argparse::fn_T2K, sstd::_argparse::fn_T2V, args...);
+        if(!res){ this->err="sstd::argparse::_parse() failed. User input command defined by `sstd::arg_rule::cmd()` did NOT found."; return -1; }
         return sstd::argparse::_parse(argc, argv, arg_stack);
     }
 
