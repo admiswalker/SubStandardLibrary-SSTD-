@@ -24,6 +24,44 @@ namespace sstd{
 
 //---
 
+namespace sstd{
+//    template<typename K, typename V, typename T>
+    template<typename K, typename T>
+    bool _arghash(std::unordered_map<K,T>& res_hashT,
+                  K (*pFn_T2K)(const T&),
+//                  V&& (*pFn_T2V)(T&&),
+                  T&& obj)
+    {
+//        auto [itr, inserted] = res_hashT.insert({pFn_T2K(obj), pFn_T2V(obj)});
+        auto [itr, inserted] = res_hashT.insert({pFn_T2K(obj), obj});
+        return inserted;
+    }
+//    template<typename K, typename V, typename T, class Head, class... Tail>
+    template<typename K, typename T, class Head, class... Tail>
+    bool _arghash(std::unordered_map<K,T>& res_hashT,
+                  K (*pFn_T2K)(const T&),
+//                  V&& (*pFn_T2V)(T&&),
+                  Head&& head, Tail&&... tail)
+    {
+        auto [itr, inserted] = res_hashT.insert({pFn_T2K(head), head});
+//        auto [itr, inserted] = res_hashT.insert({pFn_T2K(head), pFn_T2V(head)});
+        if(!inserted){ return false; }
+        return sstd::_arghash(res_hashT, pFn_T2K, std::forward<Tail>(tail)...);
+    }
+    
+//    template<typename K, typename V, typename T, class... Args>
+    template<typename K, typename T, class... Args>
+    bool arghash(std::unordered_map<K,T>& res_hashT,
+                 K (*pFn_T2K)(const T&),
+//                 V&& (*pFn_T2V)(T&&),
+                 Args... args)
+    {
+        return sstd::_arghash(res_hashT, pFn_T2K, std::forward<Args>(args)...);
+    }
+}
+
+//---
+
 namespace sstd::arg_rule{
     struct cmd_rule{
         int cmd_id                     = -1;
@@ -52,6 +90,11 @@ namespace sstd::arg_rule{
         
         return res;
     }
+    
+    //---
+    
+    std::string fn_T2K(const struct sstd::arg_rule::cmd_rule&);
+    struct sstd::arg_rule::cmd_rule&& fn_T2V(struct sstd::arg_rule::cmd_rule&&);
 }
 
 namespace sstd{
@@ -67,20 +110,25 @@ private:
 //    std::vector<std::string> v_sw_cmd;
 //    std::vector<std::string> ;
     std::vector<struct sstd::arg_rule::cmd_rule> arg_stack;
+    std::unordered_map<std::string,struct sstd::arg_rule::cmd_rule> arg_hash;
+    std::string err;
     
 public:
     argparse();
     ~argparse();
 
-    int _parse(int argc, char* argv[], const std::vector<struct sstd::arg_rule::cmd_rule>& arg_stack);
+    int _parse(const int argc, const char* argv[], const std::vector<struct sstd::arg_rule::cmd_rule>& arg_stack);
 
     template<class... Args>
-    int parse(int argc, char* argv[], Args... args){
-        sstd::argstack(arg_stack, args...);
+    int parse(const int argc, const char* argv[], Args... args){
+        sstd::arghash(arg_hash, sstd::arg_rule::fn_T2K, args...);
+        //sstd::arghash(arg_hashT, sstd::arg_rule::fn_T2K, sstd::arg_rule::fn_T2V, args...);
+        //sstd::argstack(arg_stack, args...);
         return sstd::argparse::_parse(argc, argv, arg_stack);
     }
 
-    const std::vector<struct sstd::arg_rule::cmd_rule> _get_arg_stack(){ return arg_stack; }
+    const std::vector<struct sstd::arg_rule::cmd_rule>& _get_arg_stack(){ return arg_stack; }
+    const std::unordered_map<std::string,struct sstd::arg_rule::cmd_rule>& _get_arg_hash(){ return arg_hash; }
 
 //    template<typename T>
 //    int add_switch_rule(const char* cmd, int cmd_num, T res_parsed_cmd, T default_val){

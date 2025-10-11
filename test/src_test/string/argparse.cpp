@@ -42,10 +42,15 @@ TEST(argparse, argc_0){
     printf("hello\n");
 
     // example input
-    int argc = 0;
-    char *argv[] = {
-//                    "./a.out",
-                    "./a.out get lines 1 3 5",
+//    int argc = 1;
+    const int argc = 6;
+    const char *argv[] = {
+                    "./a.out",
+                    "get",
+                    "lines",
+                    "1",
+                    "3",
+                    "5",
     };
 //    sstd::printn(argc);
 //    sstd::printn(argv[0]);
@@ -65,7 +70,8 @@ TEST(argparse, argc_0){
     
     sstd::argparse ap;
     int cmd_id = ap.parse(argc, argv
-                          , sstd::arg_rule::cmd((int)CmdID::EMPTY, "<CmdID::EMPTY>", 0)
+                          , sstd::arg_rule::cmd((int)CmdID::EMPTY, "", 0)
+//                          , sstd::arg_rule::cmd((int)CmdID::EMPTY, "<CmdID::EMPTY>", 0)
                           , sstd::arg_rule::cmd((int)CmdID::GET_LINES, vlineNum, {}, "get lines", -1)
 //                    , sstd::arg_rule::cmd((int)CmdID::GET_LINE , num,       0, "get line" ,  1)
 //                    , sstd::arg_rule::opt(rm_hs, false, "-h", "--rm-head-spaces", 1)
@@ -73,6 +79,7 @@ TEST(argparse, argc_0){
                     );
 
     sstd::printn(ap._get_arg_stack());
+    sstd::printn(ap._get_arg_hash());
     sstd::printn(cmd_id);
     
     /*
