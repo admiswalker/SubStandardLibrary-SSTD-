@@ -98,6 +98,7 @@ TEST(argparse, argc_0){
 //        ap.print_help();
     } break;
     case (int)CmdID::GET_LINES: {
+        sstd::printn(vlineNum);
         // process get lines
     } break;
     case (int)CmdID::GET_LINE : {

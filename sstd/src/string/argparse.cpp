@@ -2,6 +2,7 @@
 #include "../container/vector/slice.hpp"
 #include "../print/print.hpp" // for debug
 #include "../string/strEdit.hpp"
+#include "../string/strmatch.hpp"
 
 //---
 
@@ -51,12 +52,13 @@ int sstd::argparse::_parse(const int argc, const char* argv[], const std::vector
     int max_cmd_len=0;
     for(auto itr=arg_hash.begin(); itr!=arg_hash.end(); ++itr){
         const std::string& cmd_definition = itr->first;
-        max_cmd_len = std::max(max_cmd_len, (int)sstd::split(cmd_definition, ' ').size());
+        itr->second.cmd_len = (int)sstd::split(cmd_definition, ' ').size();
+        max_cmd_len = std::max(max_cmd_len, itr->second.cmd_len);
     }
     
     bool key_found=false;
     auto itr = arg_hash.begin();
-    for(int len=max_cmd_len; len!=0; --len){
+    for(uint len=max_cmd_len; len!=0; --len){
         std::string key = sstd::join(vArg && sstd::slice(1, len+1), ' ');
         
         itr = arg_hash.find( key );
@@ -66,9 +68,27 @@ int sstd::argparse::_parse(const int argc, const char* argv[], const std::vector
         }
     }
     if(!key_found){ this->err="sstd::argparse::_parse() failed. User input command defined by `sstd::arg_rule::cmd()` does NOT found."; return -1; }
+
+    struct sstd::arg_rule::cmd_rule& cr = itr->second;
+    int cmd_id = cr.cmd_id;
+    int cmd_len = cr.cmd_len;
+    sstd::printn(cr.cmd_id);
+    sstd::printn(cr.cmd_len);
     
-    int cmd_id = itr->second.cmd_id;
-    sstd::printn(itr->second.cmd_id);
+    std::vector<std::string> vCmdArg = vArg && sstd::slice(1+cmd_len, sstd::end());
+    sstd::printn(vCmdArg);
+
+    sstd::printn(itr->second.return_val_type);
+
+    void* return_val_ptr = itr->second.return_val_ptr;
+
+    for(uint i=0; i<vCmdArg.size(); ++i){
+        if(!sstd::isNum(vCmdArg[i])){
+            this->err="sstd::argparse::_parse() failed. The `"+cr.cmd+"` command expects integer arguments, but `"+vCmdArg[i]+"` is NOT integer.";
+            return -1;
+        }
+        ((std::vector<int>*)return_val_ptr)->push_back( std::stoi(vCmdArg[i]) );
+    }
     
     printf("\n");
     printf("\n");

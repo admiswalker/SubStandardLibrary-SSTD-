@@ -66,6 +66,7 @@ namespace sstd::arg_rule{
         void* return_val_ptr           = NULL;
         sstd::void_ptr initial_val_ptr;
         std::string cmd;
+        int cmd_len                    = 0;
         int expected_num_of_args       = 0;
     };
 //    struct opt_rule{
