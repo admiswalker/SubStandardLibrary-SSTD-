@@ -18,10 +18,10 @@ void sstd::print_base(const sstd::arg_rule::cmd_rule& rhs){
 //---
 
 void sstd::print_base(const sstd::arg_rule::opt_rule& rhs){
-    printf("cmd_id: %d\n", rhs.cmd_id);
     printf("return_val_ptr: <Print function is NOT implemented>\n");
     printf("initial_val_ptr: <Print function is NOT implemented>\n");
-    printf("cmd: `%s`\n", rhs.cmd.c_str());
+    printf("opt_short: `%s`\n", rhs.opt_short.c_str());
+    printf("opt_full: `%s`\n", rhs.opt_full.c_str());
     printf("expected_num_of_args: %d\n", rhs.expected_num_of_args);
     printf(",\n");
 }
@@ -44,6 +44,19 @@ struct sstd::arg_rule::cmd_rule sstd::arg_rule::cmd(const int cmd_id,           
 
 //---
 
+bool sstd::_argparse::fn_insert_cmd(std::unordered_map<std::string,struct sstd::arg_rule::cmd_rule>& res_hashT, struct sstd::arg_rule::cmd_rule&& cmd_rule){
+    std::string key = cmd_rule.cmd;
+    auto [itr, inserted] = res_hashT.insert({std::move(key), std::move(cmd_rule)});
+    return inserted;
+}
+
+bool sstd::_argparse::fn_insert_opt(std::unordered_map<std::string,struct sstd::arg_rule::opt_rule>& res_hashT, struct sstd::arg_rule::opt_rule&& opt_rule){
+    std::string key = opt_rule.opt_full;
+    auto [itr, inserted] = res_hashT.insert({std::move(key), std::move(opt_rule)});
+    return inserted;
+}
+
+/*
 std::string sstd::_argparse::fn_T2K(const struct sstd::arg_rule::cmd_rule& rhs){
     return rhs.cmd;
 }
@@ -51,6 +64,13 @@ struct sstd::arg_rule::cmd_rule sstd::_argparse::fn_T2V(struct sstd::arg_rule::c
     return std::move(rhs);
 }
 
+std::string sstd::_argparse::fn_T2K(const struct sstd::arg_rule::cmd_opt& rhs){
+    return rhs.opt_;
+}
+struct sstd::arg_rule::opt_rule sstd::_argparse::fn_T2V(struct sstd::arg_rule::opt_rule&& rhs){
+    return std::move(rhs);
+}
+*/
 //---
 
 sstd::argparse::argparse(){}
