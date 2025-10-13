@@ -58,14 +58,14 @@ namespace sstd{
 }
 */
 //---
-/*
+
 namespace sstd{
     template<class... ResArgs, class... ArgsPFn, typename T>
     bool _args2hash(const std::tuple<ResArgs...>& res_tuple_pTbl,
                     const std::tuple<ArgsPFn...>& tuple_pFn,
                     T&& obj)
     {
-        using DEF_pFn_insert = bool(*)(std::unordered_map<std::string,T>&,T&&); // ここの "std::string" を型推論できないので，std::unordered_map<K,V> に対してこの汎用実装はできないことがわかった．(std::vector<T> 向けにはできるかも?)
+        using DEF_pFn_insert = bool(*)(std::unordered_map<std::string,T>&,T&&); // 結局，テンプレートが関数引数の型で推論しているだけなので，ここの "std::string" を型推論できず，std::unordered_map<K,V> に対してこの汎用実装はできないことがわかった．(std::vector<T> 向けにはできるかも?)
         DEF_pFn_insert pFn_insert = std::get<DEF_pFn_insert>(tuple_pFn);
         
         std::unordered_map<std::string,T>* res_pTbl = std::get<std::unordered_map<std::string,T>*>(res_tuple_pTbl);
@@ -89,7 +89,7 @@ namespace sstd{
         return sstd::_args2hash(res_tuple_pTbl, tuple_pFn, std::forward<Args>(args)...);
     }
 }
-*/
+
 //---
 
 namespace sstd::arg_rule{
