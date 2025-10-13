@@ -51,6 +51,7 @@ TEST(argparse, argc_0){
                     "1",
                     "3",
                     "5",
+                    "--rm-head-spaces"
     };
 //    sstd::printn(argc);
 //    sstd::printn(argv[0]);
@@ -71,28 +72,17 @@ TEST(argparse, argc_0){
     sstd::argparse ap;
     int cmd_id = ap.parse(argc, argv
                           , sstd::arg_rule::cmd((int)CmdID::EMPTY, "", 0)
-//                          , sstd::arg_rule::cmd((int)CmdID::EMPTY, "<CmdID::EMPTY>", 0)
                           , sstd::arg_rule::cmd((int)CmdID::GET_LINES, vlineNum, {}, "get lines", -1)
-//                    , sstd::arg_rule::cmd((int)CmdID::GET_LINE , num,       0, "get line" ,  1)
-//                    , sstd::arg_rule::opt(rm_hs, false, "-h", "--rm-head-spaces", 1)
+                          , sstd::arg_rule::cmd((int)CmdID::GET_LINE , num,       0, "get line" ,  1)
+//                          , sstd::arg_rule::opt(rm_hs, false, "-h", "--rm-head-spaces", 1)
 //                    , sstd::arg_rule::opt(rm_ts, false, "-t", "--rm-tail-spaces", 1)
                     );
 
     sstd::printn(ap._get_arg_stack());
-    sstd::printn(ap._get_arg_hash());
+    sstd::printn(ap._get_arg_hash_cmd());
+    sstd::printn(ap._get_arg_hash_opt());
     sstd::printn(cmd_id);
     
-    /*
-    sstd::argparse ap;
-    int cmd_id = ap(argc, argv,
-                    sstd::argparse::cmd_rule(CmdID::EMPTY, "", 0),
-                    sstd::argparse::cmd_rule(CmdID::GET_LINES, vlineNum, {}, "get lines", -1),
-                    sstd::argparse::cmd_rule(CmdID::GET_LINE , num,       0, "get line" ,  1),
-                    sstd::argparse::opt_rule(rm_hs, false, "-h", "--rm-head-spaces", 1),
-                    sstd::argparse::opt_rule(rm_ts, false, "-t", "--rm-tail-spaces", 1)
-                    );
-    
-    //*/
     switch(cmd_id){
     case (int)CmdID::EMPTY : {
 //        ap.print_help();

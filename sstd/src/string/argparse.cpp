@@ -17,6 +17,17 @@ void sstd::print_base(const sstd::arg_rule::cmd_rule& rhs){
 
 //---
 
+void sstd::print_base(const sstd::arg_rule::opt_rule& rhs){
+    printf("cmd_id: %d\n", rhs.cmd_id);
+    printf("return_val_ptr: <Print function is NOT implemented>\n");
+    printf("initial_val_ptr: <Print function is NOT implemented>\n");
+    printf("cmd: `%s`\n", rhs.cmd.c_str());
+    printf("expected_num_of_args: %d\n", rhs.expected_num_of_args);
+    printf(",\n");
+}
+
+//---
+
 struct sstd::arg_rule::cmd_rule sstd::arg_rule::cmd(const char* cmd){
     sstd::arg_rule::cmd_rule res;
     res.cmd                  = std::string(cmd);
@@ -50,19 +61,19 @@ int sstd::argparse::_parse(const int argc, const char* argv[], const std::vector
     for(uint i=0; i<argc; ++i){ vArg.push_back(argv[i]); }
     
     int max_cmd_len=0;
-    for(auto itr=arg_hash.begin(); itr!=arg_hash.end(); ++itr){
+    for(auto itr=arg_hash_cmd.begin(); itr!=arg_hash_cmd.end(); ++itr){
         const std::string& cmd_definition = itr->first;
         itr->second.cmd_len = (int)sstd::split(cmd_definition, ' ').size();
         max_cmd_len = std::max(max_cmd_len, itr->second.cmd_len);
     }
     
     bool key_found=false;
-    auto itr = arg_hash.begin();
+    auto itr = arg_hash_cmd.begin();
     for(uint len=max_cmd_len; len!=0; --len){
         std::string key = sstd::join(vArg && sstd::slice(1, len+1), ' ');
         
-        itr = arg_hash.find( key );
-        if(itr!=arg_hash.end()){
+        itr = arg_hash_cmd.find( key );
+        if(itr!=arg_hash_cmd.end()){
             key_found = true;
             break;
         }
