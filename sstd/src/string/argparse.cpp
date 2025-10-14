@@ -51,11 +51,24 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
                            , const std::vector<struct sstd::arg_rule::cmd_rule>& arg_vCmd
                            , const std::vector<struct sstd::arg_rule::opt_rule>& arg_vOpt)
 {
-    
     std::vector<std::string> vArg;
     for(uint i=0; i<argc; ++i){ vArg.push_back(argv[i]); }
 
-    // Process 
+    // Process arg_vCmd
+    int max_cmd_len=0;
+    std::unordered_map<std::string,uint> ht_cmd2idx;
+    for(uint i=0; i<arg_vCmd.size(); ++i){
+        
+        int cmd_len = (int)sstd::split(arg_vCmd[i].cmd, ' ').size();
+        max_cmd_len = std::max(max_cmd_len, cmd_len);
+
+        auto [itr, inserted] = ht_cmd2idx.insert({arg_vCmd[i].cmd, i});
+        if(!inserted){ this->err="sstd::argparse::_parse() failed. The duplicated command definition by `sstd::arg_rule::cmd()`. The `"+arg_vCmd[i].cmd+"` already exists.";  return -1; }
+    }
+
+    // Process arg_vOpt
+    std::unordered_map<std::string,int> ht_opt2idx;
+    
     /*
     int max_cmd_len=0;
     for(auto itr=arg_hash_cmd.begin(); itr!=arg_hash_cmd.end(); ++itr){
