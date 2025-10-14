@@ -47,11 +47,16 @@ struct sstd::arg_rule::cmd_rule sstd::arg_rule::cmd(const int cmd_id,           
 sstd::argparse::argparse(){}
 sstd::argparse::~argparse(){}
 
-int sstd::argparse::_parse(const int argc, const char* argv[], const std::vector<struct sstd::arg_rule::cmd_rule>& arg_stack){
-    /*
+int sstd::argparse::_parse(const int argc, const char* argv[]
+                           , const std::vector<struct sstd::arg_rule::cmd_rule>& arg_vCmd
+                           , const std::vector<struct sstd::arg_rule::opt_rule>& arg_vOpt)
+{
+    
     std::vector<std::string> vArg;
     for(uint i=0; i<argc; ++i){ vArg.push_back(argv[i]); }
-    
+
+    // Process 
+    /*
     int max_cmd_len=0;
     for(auto itr=arg_hash_cmd.begin(); itr!=arg_hash_cmd.end(); ++itr){
         const std::string& cmd_definition = itr->first;

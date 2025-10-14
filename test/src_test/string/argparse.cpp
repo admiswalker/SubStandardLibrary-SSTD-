@@ -78,7 +78,6 @@ TEST(argparse, argc_0){
 //                    , sstd::arg_rule::opt(rm_ts, false, "-t", "--rm-tail-spaces", 1)
                     );
 
-    sstd::printn(ap._get_arg_stack());
     printf("\n");
     printf("\n");
     sstd::printn(ap._get_arg_vCmd());

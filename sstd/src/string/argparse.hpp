@@ -113,11 +113,6 @@ namespace sstd{ class argparse; }
 
 class sstd::argparse{
 private:
-//    std::vector<std::string> v_sw_cmd;
-//    std::vector<std::string> ;
-    std::vector<struct sstd::arg_rule::cmd_rule> arg_stack;
-//    std::unordered_map<std::string,struct sstd::arg_rule::cmd_rule> arg_hash_cmd;
-//    std::unordered_map<std::string,struct sstd::arg_rule::opt_rule> arg_hash_opt;
     std::vector<struct sstd::arg_rule::cmd_rule> arg_vCmd;
     std::vector<struct sstd::arg_rule::opt_rule> arg_vOpt;
     std::string err;
@@ -126,30 +121,18 @@ public:
     argparse();
     ~argparse();
 
-    int _parse(const int argc, const char* argv[], const std::vector<struct sstd::arg_rule::cmd_rule>& arg_stack);
+    int _parse(const int argc, const char* argv[]
+               , const std::vector<struct sstd::arg_rule::cmd_rule>& arg_vCmd
+               , const std::vector<struct sstd::arg_rule::opt_rule>& arg_vOpt);
 
     template<class... Args>
     int parse(const int argc, const char* argv[], Args... args){
         sstd::argstack(std::make_tuple(&arg_vCmd, &arg_vOpt), args...);
-//        bool res = sstd::args2hash(std::make_tuple(&arg_hash_cmd, &arg_hash_opt),
-//                                   std::make_tuple(sstd::_argparse::fn_insert_cmd, sstd::_argparse::fn_insert_opt),
-//                                   args...);
-//        bool res = sstd::args2hash(arg_hash, sstd::_argparse::fn_T2K, sstd::_argparse::fn_T2V, args...);
-//        if(!res){ this->err="sstd::argparse::_parse() failed. User input command defined by `sstd::arg_rule::cmd()` did NOT found."; return -1; }
-        return sstd::argparse::_parse(argc, argv, arg_stack);
+        return sstd::argparse::_parse(argc, argv, arg_vCmd, arg_vOpt);
     }
 
-    const std::vector<struct sstd::arg_rule::cmd_rule>& _get_arg_stack(){ return arg_stack; }
-//    const std::unordered_map<std::string,struct sstd::arg_rule::cmd_rule>& _get_arg_hash_cmd(){ return arg_hash_cmd; }
-//    const std::unordered_map<std::string,struct sstd::arg_rule::opt_rule>& _get_arg_hash_opt(){ return arg_hash_opt; }
     const std::vector<struct sstd::arg_rule::cmd_rule>& _get_arg_vCmd(){ return arg_vCmd; }
     const std::vector<struct sstd::arg_rule::opt_rule>& _get_arg_vOpt(){ return arg_vOpt; }
-
-//    template<typename T>
-//    int add_switch_rule(const char* cmd, int cmd_num, T res_parsed_cmd, T default_val){
-//        ;
-//        return 0;
-//    }
 };
 
 
