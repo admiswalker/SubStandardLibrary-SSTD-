@@ -41,74 +41,6 @@ namespace sstd{
 }
 
 //---
-/*
-namespace sstd{
-    template<typename K, typename V, typename T>
-    bool _args2hash(std::unordered_map<K,V>& res_hashT,
-                    K (*pFn_T2K)(const T& ),
-                    V (*pFn_T2V)(      T&&),
-                    T&& obj)
-    {
-        K key = pFn_T2K(obj);
-        auto [itr, inserted] = res_hashT.insert({std::move(key), pFn_T2V(std::move(obj))});
-        return inserted;
-    }
-    template<typename K, typename V, typename T, class Head, class... Tail>
-    bool _args2hash(std::unordered_map<K,V>& res_hashT,
-                    K (*pFn_T2K)(const T& ),
-                    V (*pFn_T2V)(      T&&),
-                    Head&& head, Tail&&... tail)
-    {
-        K key = pFn_T2K(head);
-        bool inserted = sstd::_args2hash(res_hashT, pFn_T2K, pFn_T2V, std::move(head));
-        if(!inserted){ return false; }
-        return sstd::_args2hash(res_hashT, pFn_T2K, pFn_T2V, std::forward<Tail>(tail)...);
-    }
-    
-    template<typename K, typename V, typename T, class... Args>
-    bool args2hash(std::unordered_map<K,V>& res_hashT,
-                   K (*pFn_T2K)(const T& ),
-                   V (*pFn_T2V)(      T&&),
-                   Args... args)
-    {
-        return sstd::_args2hash(res_hashT, pFn_T2K, pFn_T2V, std::forward<Args>(args)...);
-    }
-}
-*/
-//---
-/*
-namespace sstd{
-    template<class... ResArgs, class... ArgsPFn, typename T>
-    bool _args2hash(const std::tuple<ResArgs...>& res_tuple_pTbl,
-                    const std::tuple<ArgsPFn...>& tuple_pFn,
-                    T&& obj)
-    {
-        using DEF_pFn_insert = bool(*)(std::unordered_map<std::string,T>&,T&&); // 結局，テンプレートが関数引数の型で推論しているだけなので，ここの "std::string" を型推論できず，std::unordered_map<K,V> に対してこの汎用実装はできないことがわかった．(std::vector<T> 向けにはできるかも?)
-        DEF_pFn_insert pFn_insert = std::get<DEF_pFn_insert>(tuple_pFn);
-        
-        std::unordered_map<std::string,T>* res_pTbl = std::get<std::unordered_map<std::string,T>*>(res_tuple_pTbl);
-        return pFn_insert(*res_pTbl, std::move(obj));
-    }
-    template<class... ResArgs, class... ArgsPFn, class Head, class... Tail>
-    bool _args2hash(const std::tuple<ResArgs...>& res_tuple_pTbl,
-                    const std::tuple<ArgsPFn...>& tuple_pFn,
-                    Head&& head, Tail&&... tail)
-    {
-        bool inserted = sstd::_args2hash(res_tuple_pTbl, tuple_pFn, std::move(head));
-        if(!inserted){ return false; }
-        return sstd::_args2hash(res_tuple_pTbl, tuple_pFn, std::forward<Tail>(tail)...);
-    }
-    
-    template<class... ResArgs, class... ArgsPFn, class... Args>
-    bool args2hash(const std::tuple<ResArgs...>& res_tuple_pTbl,
-                   const std::tuple<ArgsPFn...>& tuple_pFn,
-                   Args... args)
-    {
-        return sstd::_args2hash(res_tuple_pTbl, tuple_pFn, std::forward<Args>(args)...);
-    }
-}
-*/
-//---
 
 namespace sstd::arg_rule{
     struct cmd_rule{
@@ -168,10 +100,6 @@ namespace sstd::arg_rule{
     //---
 }
 namespace sstd::_argparse{
-    bool fn_insert_cmd(std::unordered_map<std::string,struct sstd::arg_rule::cmd_rule>& res_hashT, struct sstd::arg_rule::cmd_rule&& cmd_rule);
-    bool fn_insert_opt(std::unordered_map<std::string,struct sstd::arg_rule::opt_rule>& res_hashT, struct sstd::arg_rule::opt_rule&& opt_rule);
-//    std::string fn_T2K(const struct sstd::arg_rule::cmd_rule&);
-//    struct sstd::arg_rule::cmd_rule fn_T2V(struct sstd::arg_rule::cmd_rule&&);
 }
 
 namespace sstd{

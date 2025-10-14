@@ -44,35 +44,6 @@ struct sstd::arg_rule::cmd_rule sstd::arg_rule::cmd(const int cmd_id,           
 
 //---
 
-bool sstd::_argparse::fn_insert_cmd(std::unordered_map<std::string,struct sstd::arg_rule::cmd_rule>& res_hashT, struct sstd::arg_rule::cmd_rule&& cmd_rule){
-    std::string key = cmd_rule.cmd;
-    auto [itr, inserted] = res_hashT.insert({std::move(key), std::move(cmd_rule)});
-    return inserted;
-}
-
-bool sstd::_argparse::fn_insert_opt(std::unordered_map<std::string,struct sstd::arg_rule::opt_rule>& res_hashT, struct sstd::arg_rule::opt_rule&& opt_rule){
-    std::string key = opt_rule.opt_full;
-    auto [itr, inserted] = res_hashT.insert({std::move(key), std::move(opt_rule)});
-    return inserted;
-}
-
-/*
-std::string sstd::_argparse::fn_T2K(const struct sstd::arg_rule::cmd_rule& rhs){
-    return rhs.cmd;
-}
-struct sstd::arg_rule::cmd_rule sstd::_argparse::fn_T2V(struct sstd::arg_rule::cmd_rule&& rhs){
-    return std::move(rhs);
-}
-
-std::string sstd::_argparse::fn_T2K(const struct sstd::arg_rule::cmd_opt& rhs){
-    return rhs.opt_;
-}
-struct sstd::arg_rule::opt_rule sstd::_argparse::fn_T2V(struct sstd::arg_rule::opt_rule&& rhs){
-    return std::move(rhs);
-}
-*/
-//---
-
 sstd::argparse::argparse(){}
 sstd::argparse::~argparse(){}
 
