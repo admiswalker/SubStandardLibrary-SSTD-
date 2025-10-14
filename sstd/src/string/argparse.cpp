@@ -77,6 +77,7 @@ sstd::argparse::argparse(){}
 sstd::argparse::~argparse(){}
 
 int sstd::argparse::_parse(const int argc, const char* argv[], const std::vector<struct sstd::arg_rule::cmd_rule>& arg_stack){
+    /*
     std::vector<std::string> vArg;
     for(uint i=0; i<argc; ++i){ vArg.push_back(argv[i]); }
     
@@ -130,6 +131,16 @@ int sstd::argparse::_parse(const int argc, const char* argv[], const std::vector
 //    sstd::printn(ht_cmd_cnt);
 //    sstd::printn(min_cmd_len);
     sstd::printn(max_cmd_len);
+    */
+    
+    printf("\n");
+    printf("\n");
+    printf("-------------------------------\n");
+    printf("\n");
+    sstd::printn(arg_vCmd);
+    sstd::printn(arg_vOpt);
+
+    int cmd_id=-1;
     
     return cmd_id;
 }

@@ -81,10 +81,12 @@ TEST(argparse, argc_0){
     sstd::printn(ap._get_arg_stack());
     printf("\n");
     printf("\n");
-    sstd::printn(ap._get_arg_hash_cmd());
+//    sstd::printn(ap._get_arg_hash_cmd());
+    sstd::printn(ap._get_arg_vCmd());
     printf("\n");
     printf("\n");
-    sstd::printn(ap._get_arg_hash_opt());
+//    sstd::printn(ap._get_arg_hash_opt());
+    sstd::printn(ap._get_arg_vOpt());
     printf("\n");
     printf("\n");
     sstd::printn(cmd_id);
