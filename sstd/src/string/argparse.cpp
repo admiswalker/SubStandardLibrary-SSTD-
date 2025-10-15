@@ -67,7 +67,17 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
     }
 
     // Process arg_vOpt
-    std::unordered_map<std::string,int> ht_opt2idx;
+    std::unordered_map<std::string,int> ht_opt2idx_full;
+    std::unordered_map<std::string,int> ht_opt2idx_short;
+    for(uint i=0; i<arg_vOpt.size(); ++i){
+        auto [f_itr, f_inserted] = ht_opt2idx_full.insert({arg_vOpt[i].opt_full, i});
+        if(!f_inserted){ this->err="sstd::argparse::_parse() failed. The duplicated option definition by `sstd::arg_rule::opt()`. The `"+arg_vOpt[i].opt_full+"` already exists.";  return -1; }
+        
+        auto [s_itr, s_inserted] = ht_opt2idx_short.insert({arg_vOpt[i].opt_short, i});
+        if(!s_inserted){ this->err="sstd::argparse::_parse() failed. The duplicated option definition by `sstd::arg_rule::opt()`. The `"+arg_vOpt[i].opt_short+"` already exists.";  return -1; }
+    }
+    sstd::printn(ht_opt2idx_full);
+    sstd::printn(ht_opt2idx_short);
     
     /*
     int max_cmd_len=0;

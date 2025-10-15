@@ -56,8 +56,8 @@ namespace sstd::arg_rule{
         int   return_val_type          = sstd::num_null;
         void* return_val_ptr           = NULL;
         sstd::void_ptr initial_val_ptr;
-        std::string opt_short;
         std::string opt_full;
+        std::string opt_short;
         int opt_len                    = 0;
         int expected_num_of_args       = 0;
     };
