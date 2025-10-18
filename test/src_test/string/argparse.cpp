@@ -46,8 +46,7 @@ TEST(argparse, argc_0){
     const int argc = 6;
     const char *argv[] = {
                     "./a.out",
-                    "get",
-                    "lines",
+                    "get-lines",
                     "1",
                     "3",
                     "5",
@@ -72,8 +71,8 @@ TEST(argparse, argc_0){
     sstd::argparse ap;
     int cmd_id = ap.parse(argc, argv
                           , sstd::arg_rule::cmd((int)CmdID::EMPTY, "", 0)
-                          , sstd::arg_rule::cmd((int)CmdID::GET_LINES, vlineNum, {}, "get lines", -1)
-                          , sstd::arg_rule::cmd((int)CmdID::GET_LINE , num,       0, "get line" ,  1)
+                          , sstd::arg_rule::cmd((int)CmdID::GET_LINES, vlineNum, {}, "get-lines", -1)
+                          , sstd::arg_rule::cmd((int)CmdID::GET_LINE , num,       0, "get-line" ,  1)
                           , sstd::arg_rule::opt(rm_hs, false, "-h", "--rm-head-spaces", 0)
 //                    , sstd::arg_rule::opt(rm_ts, false, "-t", "--rm-tail-spaces", 1)
                     );

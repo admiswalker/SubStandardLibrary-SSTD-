@@ -44,6 +44,105 @@ struct sstd::arg_rule::cmd_rule sstd::arg_rule::cmd(const int cmd_id,           
 
 //---
 
+bool _is_short_opt(const std::stirng s){
+    return s.size()>=2 && sstd::isAlphabet(s[1]);
+}
+bool _is_full_opt(const std::stirng s){
+    return s.starts_with("--");
+}
+
+bool _parse_argc_argv(
+                      // return variables:
+                      std::string& err,
+                      uint& cmdIdx,
+                      std::vector<std::string>& cmdArgs,
+                      std::vector<uint>& v_optIdx,
+                      std::vector<std::vector<std::string>>& v_optArgs,
+                      
+                      // input variables:
+                      const std::unordered_map<std::string,uint>& ht_cmd2idx,
+                      const std::unordered_map<std::string,uint>& ht_opt2idx_full,
+                      const std::unordered_map<std::string,uint>& ht_opt2idx_short,
+                      
+                      const std::vector<struct sstd::arg_rule::cmd_rule>& arg_vCmd,
+                      const std::vector<struct sstd::arg_rule::opt_rule>& arg_vOpt,
+                      
+                      const int argc, const char* argv[])
+{
+    std::vector<std::string> vArg;
+    for(uint i=1; i<argc; ++i){ vArg.push_back(argv[i]); } // Skip exe file name by `i=1`.
+    
+//    for(uint i=1; i<argc; ++i){
+    for(uint i=0; i<vArg.size(); ++i){
+//    std::string arg = argv[i];
+        
+        if(_is_short_opt(vArg[i])){
+//            vArg[i] = vArg[i] && sstd::slice(1, sstd::end()); // rm '-' // あとで追加実装する
+            vArg[i] = (const char*)&vArg[i][1]; // rm '-'
+            std::string opts;
+            std::swap(opts, vArg[i]); // Fill `vArg[i]` empty.
+
+            if(opts.size()==1){
+                auto itr = ht_opt2idx_short.find( "-"+opts );
+                if(itr==ht_opt2idx_short.end()){
+                    err = "ERROR: _parse_argc_argv() failed. User input argument `"+arg[1]+"` does NOT defined by `sstd::arg_rule::opt()`.";
+                    return false;
+                }
+                v_optIdx.push_back( itr->second );
+                v_optArgs.push_back( std::vector<std::string>() );
+            }
+            for(uint is=1; is<opts.size(); ++is){
+                auto itr = ht_opt2idx_short.find( "-"+opts[is] );
+                if(itr==ht_opt2idx_short.end()){
+                    err = "ERROR: _parse_argc_argv() failed. User input argument `-"+opts[is]+"` does NOT defined by `sstd::arg_rule::opt()`.";
+                    return false;
+                }
+
+                uint optIdx = itr->second;
+                v_optIdx.push_back( optIdx );
+                
+                int opt_len = arg_vOpt[ optIdx ].opt_len;
+                if(opt_len==-1){
+                    ;
+                }else if(){
+                    ;
+                }
+                v_optArgs.push_back(  );
+            }
+            
+            
+        }else if(_is_full_opt(arg)){
+            ;
+        }
+    }
+
+    sstd::rmEmpty_ow( vArg ); // This line extracts `cmdArgs` by removing empty items which are filled empty by option rule parsing process.
+    std::swap( cmdArgs, vArg );
+    return true;
+
+    //---
+    
+    std::vector<std::string> res_v;
+//    std::vector<std::string> vOpt_short;
+
+    for(uint i=0; i<vArg.size(); ++i){
+        std::string& arg = vArg[i];
+        if      (arg.starts_with("--")){
+            auto itr = arg_vOpt.find( arg );
+            if(itr==arg_vOpt.end()){ err="ERROR: The `"+arg+"` option is not defined."; return false; }
+            
+            ;
+            
+//        }else if(vArg[i].starts_with("-" )){
+//            ;
+        }else{
+            ;
+        }
+    }
+    
+    return true;
+}
+
 sstd::argparse::argparse(){}
 sstd::argparse::~argparse(){}
 
@@ -51,17 +150,12 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
                            , const std::vector<struct sstd::arg_rule::cmd_rule>& arg_vCmd
                            , const std::vector<struct sstd::arg_rule::opt_rule>& arg_vOpt)
 {
-    std::vector<std::string> vArg;
-    for(uint i=0; i<argc; ++i){ vArg.push_back(argv[i]); }
+//    std::vector<std::string> vArg;
+//    for(uint i=0; i<argc; ++i){ vArg.push_back(argv[i]); }
 
     // Process arg_vCmd
-    int max_cmd_len=0;
     std::unordered_map<std::string,uint> ht_cmd2idx;
     for(uint i=0; i<arg_vCmd.size(); ++i){
-        
-        int cmd_len = (int)sstd::split(arg_vCmd[i].cmd, ' ').size();
-        max_cmd_len = std::max(max_cmd_len, cmd_len);
-
         auto [itr, inserted] = ht_cmd2idx.insert({arg_vCmd[i].cmd, i});
         if(!inserted){ this->err="sstd::argparse::_parse() failed. The duplicated command definition by `sstd::arg_rule::cmd()`. The `"+arg_vCmd[i].cmd+"` already exists.";  return -1; }
     }
@@ -78,6 +172,10 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
     }
     sstd::printn(ht_opt2idx_full);
     sstd::printn(ht_opt2idx_short);
+
+    sstd::printn(vArg);
+    vArg = 
+    sstd::printn(vArg);
     
     /*
     int max_cmd_len=0;
@@ -136,8 +234,8 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
     printf("\n");
     printf("-------------------------------\n");
     printf("\n");
-    sstd::printn(arg_vCmd);
-    sstd::printn(arg_vOpt);
+//    sstd::printn(arg_vCmd);
+//    sstd::printn(arg_vOpt);
 
     int cmd_id=-1;
     
