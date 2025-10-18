@@ -102,12 +102,17 @@ bool _parse_argc_argv(
                 v_optIdx.push_back( optIdx );
                 
                 int opt_len = arg_vOpt[ optIdx ].opt_len;
-                if(opt_len==-1){
-                    ;
-                }else if(){
-                    ;
+                if(opt_len==-1){ // means that the option has variable length argument
+                    opt_len=0;
+                    
                 }
-                v_optArgs.push_back(  );
+//                    vArg && sstd::slice_mv(); // move 後の値の保証がない？ -> sstd::slice_sw() が必要? -> 初期値と sw する
+                if( vArg.size() >= (i+opt_len) ){
+                    err = "ERROR: _parse_argc_argv() failed. User input option `-"+opts[is]+"`, defined by `sstd::arg_rule::opt()` requires "+std::itos(opt_len)+" arguments, but there is only "++" arguments.";
+                    return false;
+                }
+                std::vector<std::string> optArgs = vArg && sstd::slice_sw(i, i+opt_len);
+                v_optArgs.push_back( std::move(optArgs) );
             }
             
             
