@@ -44,31 +44,92 @@ struct sstd::arg_rule::cmd_rule sstd::arg_rule::cmd(const int cmd_id,           
 
 //---
 
-bool _is_short_opt(const std::stirng s){
-    return s.size()>=2 && sstd::isAlphabet(s[1]);
+bool _is_short_opt(const std::stirng& s){
+    return s.starts_with("-") && s.size()>=2 && sstd::isAlphabet(s[1]);
 }
-bool _is_full_opt(const std::stirng s){
+bool _is_full_opt(const std::stirng& s){
     return s.starts_with("--");
+}
+bool _is_cmd(const std::stirng& s, const std::unordered_map<std::string,uint>& ht_cmd2idx){
+    auto itr = ht_cmd2idx.find( s );
+    return itr!=ht_cmd2idx.end();
+}
+
+#define OPT_SHORT 1
+#define OPT_FULL 2
+#define CMD 3
+#define NOT_A_SEPARATOR -1
+int _is_separator(const std::string& s, const std::unordered_map<std::string,uint>& ht_cmd2idx){
+    if      ( _is_short_opt(s)         ){ return OPT_SHORT;
+    }else if( _is_full_opt (s)         ){ return OPT_FULL;
+    }else if( _is_cmd( s, ht_cmd2idx ) ){ return CMD;
+    }
+    return NOT_A_SEPARATOR;
 }
 
 bool _parse_argc_argv(
                       // return variables:
-                      std::string& err,
-                      uint& cmdIdx,
-                      std::vector<std::string>& cmdArgs,
-                      std::vector<uint>& v_optIdx,
-                      std::vector<std::vector<std::string>>& v_optArgs,
+//                      std::string& err,
+//                      uint& cmdIdx,
+                      std::vector<std::string>& res_cmdArgs,
+//                      std::vector<uint>& v_optIdx,
+                      std::vector<std::vector<std::string>>& res_vOptArgs_short,
+                      std::vector<std::vector<std::string>>& res_vOptArgs_full,
                       
                       // input variables:
                       const std::unordered_map<std::string,uint>& ht_cmd2idx,
-                      const std::unordered_map<std::string,uint>& ht_opt2idx_full,
-                      const std::unordered_map<std::string,uint>& ht_opt2idx_short,
+//                      const std::unordered_map<std::string,uint>& ht_opt2idx_full,
+//                      const std::unordered_map<std::string,uint>& ht_opt2idx_short,
                       
-                      const std::vector<struct sstd::arg_rule::cmd_rule>& arg_vCmd,
-                      const std::vector<struct sstd::arg_rule::opt_rule>& arg_vOpt,
+//                      const std::vector<struct sstd::arg_rule::cmd_rule>& arg_vCmd,
+//                      const std::vector<struct sstd::arg_rule::opt_rule>& arg_vOpt,
                       
                       const int argc, const char* argv[])
 {
+    int prev_type=0;
+    std::vector<std::string> tmp_args;
+    for(uint i=1; i<argc; ++i){
+        std::string s = argv[i];
+
+        int type = _is_separator(s, ht_cmd2idx);
+        if(type!=-1){
+            if      (prev_type==OPT_SHORT){ std::vector<std::string> v; std::swap(v, tmp_args); res_vOptArgs_short.push_back(std::move(v));
+            }else if(prev_type==OPT_FULL ){ std::vector<std::string> v; std::swap(v, tmp_args); res_vOptArgs_full. push_back(std::move(v));
+            }else if(prev_type==CMD      ){ std::vector<std::string> v; std::swap(v, tmp_args); res_cmdArgs.       push_back(std::move(v));
+            }
+            prev_type = type;
+        }
+        
+        tmp_args.push_back(std::move(s));
+    }
+    if      (prev_type==OPT_SHORT){ res_vOptArgs_short.push_back(std::move(tmp_args));
+    }else if(prev_type==OPT_FULL ){ res_vOptArgs_full. push_back(std::move(tmp_args));
+    }else if(prev_type==CMD      ){ res_cmdArgs.       push_back(std::move(tmp_args));
+    }
+    
+    return true;
+
+    //---
+
+    bool tf_opt_short = false;
+    bool tf_opt_full  = false;
+    bool tf_cmd       = false;
+    for(uint i=1; i<argc; ++i){
+        std::string s = argv[i];
+        if( (_is_short_opt(s)||_is_full_opt(s)) && res_args.size()!=0 ){
+            ;
+            std::vector<std::string> tmp;
+            res_args;
+        }else if( _is_cmd( s, ht_cmd2idx ) ){
+            ;
+        }
+
+        res_args.push_back( std::move( s ) );
+    }
+    _is_separator();
+    
+    //---
+    
     std::vector<std::string> vArg;
     for(uint i=1; i<argc; ++i){ vArg.push_back(argv[i]); } // Skip exe file name by `i=1`.
     
@@ -148,6 +209,12 @@ bool _parse_argc_argv(
     
     return true;
 }
+#undef NOT_A_SEPARATOR
+#undef CMD
+#undef OPT_FULL
+#undef OPT_SHORT
+
+//---
 
 sstd::argparse::argparse(){}
 sstd::argparse::~argparse(){}
