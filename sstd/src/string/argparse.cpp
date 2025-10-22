@@ -48,14 +48,14 @@ bool _is_cmd(const std::stirng& s){
     auto itr = ht_cmd2idx.find( s );
     return itr!=ht_cmd2idx.end();
 }
-bool _is_opt(const std::stirng& s){
-    return s.starts_with("-") && s.size()>=2;
-}
-bool _is_short_opt(const std::stirng& s){
+bool _is_opt_short(const std::stirng& s){
     return s.starts_with("-") && s.size()>=2 && sstd::isAlphabet(s[1]);
 }
-bool _is_full_opt(const std::stirng& s){
-    return s.starts_with("--");
+bool _is_opt_full(const std::stirng& s){
+    return s.starts_with("--") && s.size()>=3 && sstd::isAlphabet(s[2]);
+}
+bool _is_opt(const std::stirng& s){
+    return ( _is_opt_short(s) || _is_opt_full(s) );
 }
 
 #define OPT 1
@@ -113,14 +113,37 @@ bool _parse_cmd(uint& res_cmd_idx,
     res_cmd_idx = itr->second;
     return true;
 }
+
+bool _get_opt(unit& res_opt_idx, const std::string& opt, const std::unordered_map<std::string,uint>& ht_opt2idx_short){
+    auto itr = ;
+}
 bool _parse_opt(std::vector<uint>& vOptIdx, 
                 const std::vector<std::vector<std::string>>& vOptArgs,
-                const std::unordered_map<std::string,uint>& ht_opt2idx_full,
                 const std::unordered_map<std::string,uint>& ht_opt2idx_short,
+                const std::unordered_map<std::string,uint>& ht_opt2idx_full,
                 const std::vector<struct sstd::arg_rule::opt_rule>& vOptRule)
 {
     for(uint i=0; i<vOptArgs.size(); ++i){
-        vOptArgs[i];
+        if(_is_opt_short(vOptArgs[i])){
+            // Opt is short.
+            std::string& opts = vOptArgs[i];
+            for(uint is=1; is<opts.size(); ++is){ // skip '-'
+                uint opt_idx;
+                if(!_get_opt(opt_idx, "-"+opts[is], ht_opt2idx_short)){
+                    err = "ERROR:";
+                    return false; }
+                vOptIdx.push_back(opt_idx);
+            }
+        }else{
+            // Opt is full.
+            std::string& opt = vOptArgs[i];
+            uint opt_idx;
+            if(!_get_opt(opt_idx, opt, ht_opt2idx_full)){
+                err = "ERROR:";
+                return false;
+            }
+            vOptIdx.push_back(opt_idx);
+        }
     }
     return true;
 }
@@ -170,6 +193,11 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
     // parse opt
     std::vector<uint> vOptIdx;
     if(!_parse_opt(vOptIdx, vOptArgs, ht_opt2idx_full, ht_opt2idx_short, vOptRule)){ return -1; }
+    std::vector<std::tuple<uint,uint>> vDuplicated = sstd::duplicated(vOptIdx);
+    if(vDuplicated.size()!=0){
+        err = "ERROR:";
+        return false;
+    }
     for(uint opt_idx=0; opt_idx<vOptIdx.size(); ++opt_idx){
         if(!_fill_result_arg_by_val(vOptRule[opt_idx], cmdArgs)){ return -1; }
     }
