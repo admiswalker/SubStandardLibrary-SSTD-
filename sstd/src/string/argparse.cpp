@@ -6,6 +6,26 @@
 
 //---
 
+std::vector<std::tuple<uint,uint>> sstd__duplicated(const std::vector<uint>& v_in){
+    std::vector<std::tuple<uint,uint>> out_vDuplicated; // index of `v_in`, count
+    std::unordered_map<uint,uint> tbl_iIdx_oIdx; // in index, out index
+
+    uint outIdx=0;
+    for(uint i=0; i<v_in.size(); ++i){
+        auto [itr, inserted] = tbl_iIdx_oIdx.insert({v_in[i], outIdx});
+        if(inserted){
+            out_vDuplicated.push_back(std::make_tuple({i, 1}));
+            ++outIdx;
+        }else{
+            ++std::get<1>( out_vDuplicated[ itr->second ] );
+        }
+    }
+    
+    return out_vDuplicated;
+}
+
+//---
+
 void sstd::print_base(const sstd::arg_rule::cmd_rule& rhs){
     printf("cmd_id: %d\n", rhs.cmd_id);
     printf("return_val_ptr: <Print function is NOT implemented>\n");
@@ -114,38 +134,35 @@ bool _parse_cmd(uint& res_cmd_idx,
     return true;
 }
 
-bool _get_opt(unit& res_opt_idx, const std::string& opt, const std::unordered_map<std::string,uint>& ht_opt2idx_short){
-    auto itr = ;
+int _get_opt(const std::string& opt, const std::unordered_map<std::string,uint>& ht_opt2idx){
+    auto itr = ht_opt2idx.find( opt );
+    if(itr==ht_opt2idx.end()){ return -1; }
+    return itr->second;
 }
-bool _parse_opt(std::vector<uint>& vOptIdx, 
-                const std::vector<std::vector<std::string>>& vOptArgs,
-                const std::unordered_map<std::string,uint>& ht_opt2idx_short,
-                const std::unordered_map<std::string,uint>& ht_opt2idx_full,
-                const std::vector<struct sstd::arg_rule::opt_rule>& vOptRule)
+std::vector<int> _parse_opt(const std::vector<std::vector<std::string>>& vOptArgs,
+                             const std::unordered_map<std::string,uint>& ht_opt2idx_short,
+                             const std::unordered_map<std::string,uint>& ht_opt2idx_full,
+                             const std::vector<struct sstd::arg_rule::opt_rule>& vOptRule)
 {
+    std::vector<int> res_vOptIdx;
+    
     for(uint i=0; i<vOptArgs.size(); ++i){
         if(_is_opt_short(vOptArgs[i])){
             // Opt is short.
             std::string& opts = vOptArgs[i];
             for(uint is=1; is<opts.size(); ++is){ // skip '-'
-                uint opt_idx;
-                if(!_get_opt(opt_idx, "-"+opts[is], ht_opt2idx_short)){
-                    err = "ERROR:";
-                    return false; }
-                vOptIdx.push_back(opt_idx);
+                int opt_idx = _get_opt("-"+opts[is], ht_opt2idx_short);
+                res_vOptIdx.push_back(opt_idx);
             }
         }else{
             // Opt is full.
             std::string& opt = vOptArgs[i];
-            uint opt_idx;
-            if(!_get_opt(opt_idx, opt, ht_opt2idx_full)){
-                err = "ERROR:";
-                return false;
-            }
-            vOptIdx.push_back(opt_idx);
+            int opt_idx = _get_opt(opt, ht_opt2idx_full);
+            res_vOptIdx.push_back(opt_idx);
         }
     }
-    return true;
+    
+    return res_vOptIdx;
 }
 
 //---
@@ -193,12 +210,17 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
     // parse opt
     std::vector<uint> vOptIdx;
     if(!_parse_opt(vOptIdx, vOptArgs, ht_opt2idx_full, ht_opt2idx_short, vOptRule)){ return -1; }
-    std::vector<std::tuple<uint,uint>> vDuplicated = sstd::duplicated(vOptIdx);
+//    std::vector<std::tuple<uint,uint>> vDuplicated = sstd::duplicated(vOptIdx);
+    std::vector<std::tuple<uint,uint>> vDuplicated = sstd__duplicated(vOptIdx);
     if(vDuplicated.size()!=0){
-        err = "ERROR:";
+        this->err = "ERROR:";
         return false;
     }
     for(uint opt_idx=0; opt_idx<vOptIdx.size(); ++opt_idx){
+        if(vOptRule[opt_idx]==-1){
+            this->err = "ERROR:";
+            return false;
+        }
         if(!_fill_result_arg_by_val(vOptRule[opt_idx], cmdArgs)){ return -1; }
     }
     
