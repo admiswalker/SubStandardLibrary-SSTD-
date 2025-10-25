@@ -1,5 +1,6 @@
 #include "argparse.hpp"
 #include "../container/vector/slice.hpp"
+#include "../container/vector/stdVector_expansion.hpp"
 #include "../print/print.hpp" // for debug
 #include "../string/strEdit.hpp"
 #include "../string/strmatch.hpp"
@@ -15,7 +16,7 @@ std::vector<std::tuple<uint,uint>> sstd__duplicated(const std::vector<T>& v_in){
     for(uint i=0; i<v_in.size(); ++i){
         auto [itr, inserted] = tbl_iIdx_oIdx.insert({v_in[i], outIdx});
         if(inserted){
-            out_vDuplicated.push_back(std::make_tuple({i, 1}));
+            out_vDuplicated.push_back(std::make_tuple(i, 1));
             ++outIdx;
         }else{
             ++std::get<1>( out_vDuplicated[ itr->second ] );
@@ -35,18 +36,20 @@ bool sstd__str2val(std::vector<int>& return_val, const std::vector<std::string>&
     return true;
 }
 
-bool sstd__str2voidp(const void* return_val_ptr, const int type, const std::vector<std::string>& v){
+bool sstd__str2voidp(void* return_val_ptr, const int type, const std::vector<std::string>& v){
     
     switch(type){
-    case num_vec_int32: { if(!sstd__str2val(return_val_ptr, v)){return false;} } break;
+    case sstd::num_vec_int32: { if(!sstd__str2val(*(std::vector<int>*)return_val_ptr, v)){return false;} } break;
     default: { return false; }
     }
     
     return true;
 }
 
+int _get_cmd_id(const struct sstd::arg_rule::cmd_rule& cmdRule){ return cmdRule.cmd_id; }
+int _get_cmd_id(const struct sstd::arg_rule::opt_rule& optRule){ return 0; }
 template<typename T>
-bool _fill_result_arg_by_val(int& res_cmd_id, const T& rule, const std::vector<std::string>& cmdArgs){
+int _fill_result_arg_by_val(const T& rule, const std::vector<std::string>& cmdArgs){
     
 //    if(rule.expected_num_of_args==-1){
 //        // Under construction
@@ -55,12 +58,13 @@ bool _fill_result_arg_by_val(int& res_cmd_id, const T& rule, const std::vector<s
 
     int   return_val_type = rule.return_val_type;
     void* return_val_ptr  = rule.return_val_ptr;
-    bool tf = _str2voidp(return_val_type, return_val_ptr, cmdArgs&&sstd::slice(1,sstd::end()));
+    bool tf = sstd__str2voidp(return_val_ptr, return_val_type, cmdArgs&&sstd::slice(1,sstd::end()));
     if(!tf){
-        this->err="Failed to convert string to value.";
+//        this->err="Failed to convert string to value.";
+        return -1;
     }
 
-    return true;
+    return _get_cmd_id(rule);
 }
 
 //---
@@ -103,17 +107,17 @@ struct sstd::arg_rule::cmd_rule sstd::arg_rule::cmd(const int cmd_id,           
 
 //---
 
-bool _is_cmd(const std::stirng& s){
+bool _is_cmd(const std::string& s, const std::unordered_map<std::string,uint>& ht_cmd2idx){
     auto itr = ht_cmd2idx.find( s );
     return itr!=ht_cmd2idx.end();
 }
-bool _is_opt_short(const std::stirng& s){
+bool _is_opt_short(const std::string& s){
     return s.starts_with("-") && s.size()>=2 && sstd::isAlphabet(s[1]);
 }
-bool _is_opt_full(const std::stirng& s){
+bool _is_opt_full(const std::string& s){
     return s.starts_with("--") && s.size()>=3 && sstd::isAlphabet(s[2]);
 }
-bool _is_opt(const std::stirng& s){
+bool _is_opt(const std::string& s){
     return ( _is_opt_short(s) || _is_opt_full(s) );
 }
 
@@ -138,21 +142,21 @@ bool _parse_argc_argv(
 {
     int prev_type=0;
     std::vector<std::string> tmp_args;
-    for(uint i=1; i<argc; ++i){
+    for(uint i=1; i<(uint)argc; ++i){
         std::string s = argv[i];
 
         int type = _is_separator(s, ht_cmd2idx);
         if(type!=-1){
-            if      (prev_type==OPT){ std::vector<std::string> v; std::swap(v, tmp_args); res_vOptArgs.push_back(std::move(v));
-            }else if(prev_type==CMD){ std::vector<std::string> v; std::swap(v, tmp_args); res_cmdArgs. push_back(std::move(v));
+            if      (prev_type==CMD){ std::vector<std::string> v; std::swap(v, tmp_args); res_cmdArgs  <<= std::move(v);
+            }else if(prev_type==OPT){ std::vector<std::string> v; std::swap(v, tmp_args); res_vOptArgs <<= std::move(v);
             }
             prev_type = type;
         }
         
         tmp_args.push_back(std::move(s));
     }
-    if      (prev_type==OPT){ res_vOptArgs.push_back(std::move(tmp_args));
-    }else if(prev_type==CMD){ res_cmdArgs. push_back(std::move(tmp_args));
+    if      (prev_type==CMD){ res_cmdArgs  <<= std::move(tmp_args);
+    }else if(prev_type==OPT){ res_vOptArgs <<= std::move(tmp_args);
     }
     
     return true;
@@ -163,14 +167,13 @@ bool _parse_argc_argv(
 
 //---
 
-bool _parse_cmd(uint& res_cmd_idx,
-                const std::string& cmd,
+int _parse_cmd(const std::string& cmd,
                 const std::unordered_map<std::string,uint>& ht_cmd2idx)
 {
     auto itr = ht_cmd2idx.find( cmd );
-    if(itr!=ht_cmd2idx.end()){ return false; }
-    res_cmd_idx = itr->second;
-    return true;
+    if(itr==ht_cmd2idx.end()){ return -1; }
+    int cmd_idx = (int)itr->second;
+    return cmd_idx;
 }
 
 int _get_opt(const std::string& opt, const std::unordered_map<std::string,uint>& ht_opt2idx){
@@ -186,16 +189,20 @@ std::vector<int> _parse_opt(const std::vector<std::vector<std::string>>& vOptArg
     std::vector<int> res_vOptIdx;
     
     for(uint i=0; i<vOptArgs.size(); ++i){
-        if(_is_opt_short(vOptArgs[i])){
+        const std::vector<std::string>& optArgs = vOptArgs[i];
+
+        if(optArgs.size()==0){
+            res_vOptIdx.push_back(-1);
+        }else if(_is_opt_short(optArgs[0])){
             // Opt is short.
-            std::string& opts = vOptArgs[i];
+            const std::string& opts = optArgs[0];
             for(uint is=1; is<opts.size(); ++is){ // skip '-'
                 int opt_idx = _get_opt("-"+opts[is], ht_opt2idx_short);
                 res_vOptIdx.push_back(opt_idx);
             }
         }else{
             // Opt is full.
-            std::string& opt = vOptArgs[i];
+            const std::string& opt = optArgs[0];
             int opt_idx = _get_opt(opt, ht_opt2idx_full);
             res_vOptIdx.push_back(opt_idx);
         }
@@ -230,11 +237,7 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
         auto [f_itr, f_inserted] = ht_opt2idx_full.insert({vOptRule[i].opt_full, i});
         if(!f_inserted){ this->err="sstd::argparse::_parse() failed. The duplicated option definition by `sstd::arg_rule::opt()`. The `"+vOptRule[i].opt_full+"` already exists.";  return -1; }
     }
-    sstd::printn(ht_opt2idx_short);
-    sstd::printn(ht_opt2idx_full);
     
-    sstd::printn(vArg);
-
     // Parse input argc and argv
     std::vector<std::string> cmdArgs;
     std::vector<std::vector<std::string>> vOptArgs;
@@ -242,26 +245,29 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
     if(cmdArgs.size()==0){ return -1; }
     
     // parse cmd
-    uint cmd_idx;
-    if(!_parse_cmd(cmd_id, cmd_idx, cmdArgs[0], vCmdRule, ht_cmd2idx)){ return -1; }
-    
-    int cmd_id;
-    if(!_fill_result_arg_by_val(cmd_id, vCmdRule[cmd_idx], cmdArgs)){ return -1; }
+    int cmd_idx = _parse_cmd(cmdArgs[0], ht_cmd2idx); if(cmd_idx==-1){ return -1; }
+    sstd::printn_all(cmd_idx);
+    int cmd_id = _fill_result_arg_by_val(vCmdRule[cmd_idx], cmdArgs); if(cmd_id==-1){ return -1; }
+    sstd::printn_all(cmd_id);
     
     // parse opt
-    std::vector<uint> vOptIdx;
-    if(!_parse_opt(vOptIdx, vOptArgs, ht_opt2idx_full, ht_opt2idx_short, vOptRule)){ return -1; }
+    sstd::printn_all(vOptArgs);
+    std::vector<int> vOptIdx = _parse_opt(vOptArgs, ht_opt2idx_short, ht_opt2idx_full, vOptRule);
+    sstd::printn_all(vOptIdx);
+    
     std::vector<std::tuple<uint,uint>> vDuplicated = sstd__duplicated(vOptIdx);
+    sstd::printn_all(vDuplicated);
     if(vDuplicated.size()!=0){
         this->err = "ERROR: There are duplicated definition in the arg input.";
-        return false;
+        return -1;
     }
-    for(uint opt_idx=0; opt_idx<vOptIdx.size(); ++opt_idx){
-        if(vOptRule[opt_idx]==-1){
+    for(uint i=0; i<vOptIdx.size(); ++i){
+        int opt_idx = vOptIdx[i];
+        if(opt_idx==-1){
             this->err = "ERROR:";
-            return false;
+            return -1;
         }
-        if(!_fill_result_arg_by_val(vOptRule[opt_idx], vOptArgs[opt_idx])){ return -1; }
+        int res = _fill_result_arg_by_val(vOptRule[opt_idx], vOptArgs[opt_idx]); if(res!=0){ return -1; }
     }
     
     return cmd_id;

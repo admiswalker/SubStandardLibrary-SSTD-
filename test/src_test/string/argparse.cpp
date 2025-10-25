@@ -77,22 +77,22 @@ TEST(argparse, argc_0){
 //                    , sstd::arg_rule::opt(rm_ts, false, "-t", "--rm-tail-spaces", 1)
                     );
 
-    printf("\n");
-    printf("\n");
+//    printf("\n");
+//    printf("\n");
     sstd::printn(ap._get_arg_vCmd());
-    printf("\n");
-    printf("\n");
+//    printf("\n");
+//    printf("\n");
     sstd::printn(ap._get_arg_vOpt());
+//    printf("\n");
     printf("\n");
-    printf("\n");
-    sstd::printn(cmd_id);
+    sstd::printn_all(cmd_id);
     
     switch(cmd_id){
     case (int)CmdID::EMPTY : {
 //        ap.print_help();
     } break;
     case (int)CmdID::GET_LINES: {
-        sstd::printn(vlineNum);
+        sstd::printn_all(vlineNum);
         // process get lines
     } break;
     case (int)CmdID::GET_LINE : {
