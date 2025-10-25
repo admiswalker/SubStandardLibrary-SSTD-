@@ -105,6 +105,49 @@ TEST(argparse, argc_0){
     }
 }
 
+//---
+
+#define TEST_OPT_BOOL(args, DEF, CNT, ANS)                              \
+    const int argc = args.size();                                       \
+    const char **argv = args.data();                                    \
+                                                                        \
+    bool rm_hs=!ANS;                                                    \
+                                                                        \
+    sstd::argparse ap;                                                  \
+    int cmd_id = ap.parse(argc, argv                                    \
+                          , sstd::arg_rule::opt(rm_hs, DEF, "-o", "--option", CNT) \
+                          );                                            \
+                                                                        \
+    ASSERT_EQ(cmd_id, -2);                                              \
+    ASSERT_TRUE(rm_hs==ANS);
+TEST(argparse, opt_bool_full_true_as_default){
+    std::vector<const char*> args = {"./a.out", "--option"};
+    TEST_OPT_BOOL(args, true, 0, true);
+}
+TEST(argparse, opt_bool_full_false_as_default){
+    std::vector<const char*> args = {"./a.out", "--option"};
+    TEST_OPT_BOOL(args, false, 0, false);
+}
+TEST(argparse, opt_bool_full_true_1){
+    std::vector<const char*> args = {"./a.out", "--option", "true"};
+    TEST_OPT_BOOL(args, true, 1, true);
+}
+TEST(argparse, opt_bool_full_false_1){
+    std::vector<const char*> args = {"./a.out", "--option", "false"};
+    TEST_OPT_BOOL(args, true, 1, false);
+}
+
+//---
+
+TEST(argparse, opt_bool_short_true_0){
+    std::vector<const char*> args = {"./a.out", "-o"};
+    TEST_OPT_BOOL(args, true, 0, true);
+}
+TEST(argparse, opt_bool_short_false_0){
+    std::vector<const char*> args = {"./a.out", "-o"};
+    TEST_OPT_BOOL(args, false, 0, false);
+}
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 EXECUTE_TESTS();
