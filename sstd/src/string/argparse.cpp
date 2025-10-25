@@ -60,17 +60,6 @@ bool _fill_result_arg_by_val(int& res_cmd_id, const T& rule, const std::vector<s
         this->err="Failed to convert string to value.";
     }
 
-    //---
-    
-//    void* return_val_ptr = itr->second.return_val_ptr;
-//    for(uint i=0; i<vCmdArg.size(); ++i){
-//        if(!sstd::isNum(vCmdArg[i])){
-//            this->err="sstd::argparse::_parse() failed. The `"+cr.cmd+"` command expects integer arguments, but `"+vCmdArg[i]+"` is NOT integer.";
-//            return -1;
-//        }
-//        ((std::vector<int>*)return_val_ptr)->push_back( std::stoi(vCmdArg[i]) );
-//    }
-
     return true;
 }
 
@@ -274,70 +263,6 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
         }
         if(!_fill_result_arg_by_val(vOptRule[opt_idx], vOptArgs[opt_idx])){ return -1; }
     }
-    
-    return cmd_id;
-    
-    /*
-    int max_cmd_len=0;
-    for(auto itr=arg_hash_cmd.begin(); itr!=arg_hash_cmd.end(); ++itr){
-        const std::string& cmd_definition = itr->first;
-        itr->second.cmd_len = (int)sstd::split(cmd_definition, ' ').size();
-        max_cmd_len = std::max(max_cmd_len, itr->second.cmd_len);
-    }
-    
-    bool key_found=false;
-    auto itr = arg_hash_cmd.begin();
-    for(uint len=max_cmd_len; len!=0; --len){
-        std::string key = sstd::join(vArg && sstd::slice(1, len+1), ' ');
-        
-        itr = arg_hash_cmd.find( key );
-        if(itr!=arg_hash_cmd.end()){
-            key_found = true;
-            break;
-        }
-    }
-    if(!key_found){ this->err="sstd::argparse::_parse() failed. User input command defined by `sstd::arg_rule::cmd()` does NOT found."; return -1; }
-
-    struct sstd::arg_rule::cmd_rule& cr = itr->second;
-    int cmd_id = cr.cmd_id;
-    int cmd_len = cr.cmd_len;
-    sstd::printn(cr.cmd_id);
-    sstd::printn(cr.cmd_len);
-    
-    std::vector<std::string> vCmdArg = vArg && sstd::slice(1+cmd_len, sstd::end());
-    sstd::printn(vCmdArg);
-
-    sstd::printn(itr->second.return_val_type);
-
-    void* return_val_ptr = itr->second.return_val_ptr;
-
-    for(uint i=0; i<vCmdArg.size(); ++i){
-        if(!sstd::isNum(vCmdArg[i])){
-            this->err="sstd::argparse::_parse() failed. The `"+cr.cmd+"` command expects integer arguments, but `"+vCmdArg[i]+"` is NOT integer.";
-            return -1;
-        }
-        ((std::vector<int>*)return_val_ptr)->push_back( std::stoi(vCmdArg[i]) );
-    }
-    
-    printf("\n");
-    printf("\n");
-    printf("-------------------------------\n");
-    printf("\n");
-    sstd::printn(argc);
-    sstd::printn(argv);
-//    sstd::printn(ht_cmd_cnt);
-//    sstd::printn(min_cmd_len);
-    sstd::printn(max_cmd_len);
-    */
-    
-    printf("\n");
-    printf("\n");
-    printf("-------------------------------\n");
-    printf("\n");
-//    sstd::printn(vCmdRule);
-//    sstd::printn(vOptRule);
-
-    int cmd_id=-1;
     
     return cmd_id;
 }
