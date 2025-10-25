@@ -39,12 +39,9 @@ TEST(argparse, example01){
 //---
 
 TEST(argparse, argc_0){
-    printf("hello\n");
 
     // example input
-//    int argc = 1;
-    const int argc = 6;
-    const char *argv[] = {
+    std::vector<const char*> args = {
                     "./a.out",
                     "get-lines",
                     "1",
@@ -52,17 +49,14 @@ TEST(argparse, argc_0){
                     "5",
                     "--rm-head-spaces"
     };
-//    sstd::printn(argc);
-//    sstd::printn(argv[0]);
+    const int argc = args.size();
+    const char **argv = args.data();
     
     enum class CmdID{
                      EMPTY,
-                     GET_LINES,
-                     GET_LINE
+                     GET_LINE,
+                     GET_LINES
     };
-//    sstd::printn((int)CmdID::EMPTY);
-//    sstd::printn((int)CmdID::GET_LINES);
-//    sstd::printn((int)CmdID::GET_LINE);
     
     bool rm_hs, rm_ts;
     std::vector<int> vlineNum;
@@ -74,16 +68,9 @@ TEST(argparse, argc_0){
                           , sstd::arg_rule::cmd((int)CmdID::GET_LINES, vlineNum, {}, "get-lines", -1)
                           , sstd::arg_rule::cmd((int)CmdID::GET_LINE , num,       0, "get-line" ,  1)
                           , sstd::arg_rule::opt(rm_hs, true, "-h", "--rm-head-spaces", 0)
-//                    , sstd::arg_rule::opt(rm_ts, false, "-t", "--rm-tail-spaces", 1)
+//                          , sstd::arg_rule::opt(rm_ts, false, "-t", "--rm-tail-spaces", 1)
                     );
 
-//    printf("\n");
-//    printf("\n");
-    sstd::printn(ap._get_arg_vCmd());
-//    printf("\n");
-//    printf("\n");
-    sstd::printn(ap._get_arg_vOpt());
-//    printf("\n");
     printf("\n");
     sstd::printn_all(cmd_id);
     
@@ -107,9 +94,34 @@ TEST(argparse, argc_0){
 
 //---
 
-#define TEST_OPT_BOOL(args, DEF, CNT, ANS)                              \
-    const int argc = args.size();                                       \
-    const char **argv = args.data();                                    \
+TEST(argparse, cmd_3){
+    std::vector<const char*> args = {"./a.out", "get-lines", "1", "3", "5"};
+    const int argc = args.size();
+    const char **argv = args.data();
+    
+    enum class CmdID{
+                     EMPTY,
+                     GET_LINE,
+                     GET_LINES
+    };
+    
+    std::vector<int> vlineNum;
+    
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::cmd((int)CmdID::EMPTY, "", 0)
+                          , sstd::arg_rule::cmd((int)CmdID::GET_LINES, vlineNum, {}, "get-lines", -1)
+                          );
+
+    ASSERT_EQ(cmd_id, (int)CmdID::GET_LINES);
+    ASSERT_TRUE(vlineNum==std::vector<int>({1,3,5}));
+}
+
+//---
+
+#define TEST_OPT_BOOL(ARGS, DEF, CNT, ANS)                              \
+    const int argc = ARGS.size();                                       \
+    const char **argv = ARGS.data();                                    \
                                                                         \
     bool rm_hs=!ANS;                                                    \
                                                                         \
