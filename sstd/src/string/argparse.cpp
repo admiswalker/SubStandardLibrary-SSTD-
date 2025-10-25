@@ -35,11 +35,10 @@ bool sstd__str2val(std::vector<int>& return_val, const std::vector<std::string>&
     return true;
 }
 
-bool sstd__assignVoidPointer(const void* return_val_ptr, const int type, const std::vector<std::string>& v){
-//bool _cmd2return_val(const int return_val_type, const void* return_val_ptr, const std::vector<std::string>& v){
+bool sstd__str2voidp(const void* return_val_ptr, const int type, const std::vector<std::string>& v){
     
     switch(type){
-    case num_vec_int32: { if(!sstd__assignVoidPointer(return_val_ptr, v)){return false;} } break;
+    case num_vec_int32: { if(!sstd__str2val(return_val_ptr, v)){return false;} } break;
     default: { return false; }
     }
     
@@ -56,7 +55,7 @@ bool _fill_result_arg_by_val(int& res_cmd_id, const T& rule, const std::vector<s
 
     int   return_val_type = rule.return_val_type;
     void* return_val_ptr  = rule.return_val_ptr;
-    bool tf = _cmd2return_val(return_val_type, return_val_ptr, cmdArgs&&sstd::slice(1,sstd::end()));
+    bool tf = _str2voidp(return_val_type, return_val_ptr, cmdArgs&&sstd::slice(1,sstd::end()));
     if(!tf){
         this->err="Failed to convert string to value.";
     }
