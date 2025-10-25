@@ -73,7 +73,7 @@ TEST(argparse, argc_0){
                           , sstd::arg_rule::cmd((int)CmdID::EMPTY, "", 0)
                           , sstd::arg_rule::cmd((int)CmdID::GET_LINES, vlineNum, {}, "get-lines", -1)
                           , sstd::arg_rule::cmd((int)CmdID::GET_LINE , num,       0, "get-line" ,  1)
-                          , sstd::arg_rule::opt(rm_hs, false, "-h", "--rm-head-spaces", 0)
+                          , sstd::arg_rule::opt(rm_hs, true, "-h", "--rm-head-spaces", 0)
 //                    , sstd::arg_rule::opt(rm_ts, false, "-t", "--rm-tail-spaces", 1)
                     );
 
@@ -93,6 +93,7 @@ TEST(argparse, argc_0){
     } break;
     case (int)CmdID::GET_LINES: {
         sstd::printn_all(vlineNum);
+        sstd::printn_all(rm_hs);
         // process get lines
     } break;
     case (int)CmdID::GET_LINE : {

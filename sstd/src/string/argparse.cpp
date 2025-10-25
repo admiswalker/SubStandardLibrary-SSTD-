@@ -8,22 +8,33 @@
 //---
 
 template<typename T>
-std::vector<std::tuple<uint,uint>> sstd__duplicated(const std::vector<T>& v_in){
-    std::vector<std::tuple<uint,uint>> out_vDuplicated; // index of `v_in`, count
-    std::unordered_map<T,uint> tbl_iIdx_oIdx; // in index, out index
+std::vector<std::tuple<uint,uint>> sstd__duplicated(const std::vector<T>& v){
+    std::unordered_map<T,uint> tbl_idx_cnt; // index, count
 
-    uint outIdx=0;
-    for(uint i=0; i<v_in.size(); ++i){
-        auto [itr, inserted] = tbl_iIdx_oIdx.insert({v_in[i], outIdx});
-        if(inserted){
-            out_vDuplicated.push_back(std::make_tuple(i, 1));
-            ++outIdx;
-        }else{
-            ++std::get<1>( out_vDuplicated[ itr->second ] );
+    for(uint i=0; i<v.size(); ++i){
+        auto [itr, inserted] = tbl_idx_cnt.insert({v[i], 1});
+        if(!inserted){ ++(itr->second); }
+    }
+    
+    std::vector<std::tuple<uint,uint>> out_vDuplicated; // index of `v_in`, count
+    for(auto itr=tbl_idx_cnt.begin(); itr!=tbl_idx_cnt.end(); ++itr){
+        if(itr->second>=2){
+            out_vDuplicated.push_back(std::make_tuple(itr->first, itr->second));
         }
     }
     
     return out_vDuplicated;
+}
+
+//---
+
+bool _fill_by_initial_val(void* ptr, const int type, const sstd::void_ptr& initial_val_ptr){
+    switch(type){
+    case sstd::num_bool:      { std::swap(*(bool*)ptr,               *(bool*)initial_val_ptr.ptr()              ); } break;
+    case sstd::num_vec_int32: { std::swap(*(std::vector<int32>*)ptr, *(std::vector<int32>*)initial_val_ptr.ptr()); } break;
+    default: { return false; }
+    }
+    return true;
 }
 
 //---
@@ -36,10 +47,24 @@ bool sstd__str2val(std::vector<int>& return_val, const std::vector<std::string>&
     return true;
 }
 
-bool sstd__str2voidp(void* return_val_ptr, const int type, const std::vector<std::string>& v){
+bool sstd__str2val(bool& return_val, const std::vector<std::string>& v){
+    if(v.size()!=1){ return false; }
+    const std::string& rhs=v[0];
+    
+    if      (rhs=="T" || rhs=="true" || rhs=="True"){ return_val=true; return true;
+    }else if(rhs=="F" || rhs=="false" || rhs=="False"){ return_val=false; return true;
+    }else if(sstd::isNum(rhs)){ return_val=(std::stoi(rhs)!=0); return true;
+    }
+    
+    return false;
+}
+
+//bool sstd__str2voidp(void* return_val_ptr, const int type, const std::vector<std::string>& v){
+bool _str2voidp(void* return_val_ptr, const int type, const std::vector<std::string>& v){
     
     switch(type){
-    case sstd::num_vec_int32: { if(!sstd__str2val(*(std::vector<int>*)return_val_ptr, v)){return false;} } break;
+    case sstd::num_bool:      { if(!sstd__str2val(*(bool              *)return_val_ptr, v)){return false;} } break;
+    case sstd::num_vec_int32: { if(!sstd__str2val(*(std::vector<int32>*)return_val_ptr, v)){return false;} } break;
     default: { return false; }
     }
     
@@ -56,12 +81,24 @@ int _fill_result_arg_by_val(const T& rule, const std::vector<std::string>& cmdAr
 //    }
 //    if(cmdArgs.size()!=1+rule.expected_num_of_args){ return false; }
 
-    int   return_val_type = rule.return_val_type;
-    void* return_val_ptr  = rule.return_val_ptr;
-    bool tf = sstd__str2voidp(return_val_ptr, return_val_type, cmdArgs&&sstd::slice(1,sstd::end()));
-    if(!tf){
-//        this->err="Failed to convert string to value.";
-        return -1;
+    std::vector<std::string> args = cmdArgs&&sstd::slice(1,sstd::end());
+
+    int   type = rule.return_val_type;
+    void* ptr  = rule.return_val_ptr;
+    
+    if(args.size()==0){
+        bool tf = _fill_by_initial_val(ptr, type, rule.initial_val_ptr);
+        if(!tf){
+            //        this->err="Failed to convert string to value.";
+            return -1;
+        }
+        
+    }else{
+        bool tf = _str2voidp(ptr, type, args);
+        if(!tf){
+            //        this->err="Failed to convert string to value.";
+            return -1;
+        }
     }
 
     return _get_cmd_id(rule);
@@ -144,6 +181,7 @@ bool _parse_argc_argv(
     std::vector<std::string> tmp_args;
     for(uint i=1; i<(uint)argc; ++i){
         std::string s = argv[i];
+        sstd::printn_all(s);
 
         int type = _is_separator(s, ht_cmd2idx);
         if(type!=-1){
@@ -155,7 +193,7 @@ bool _parse_argc_argv(
         
         tmp_args.push_back(std::move(s));
     }
-    if      (prev_type==CMD){ res_cmdArgs  <<= std::move(tmp_args);
+    if      (prev_type==CMD){ res_cmdArgs  <<= std::move(tmp_args); // TODO: operator の先でmove が機能するようにする
     }else if(prev_type==OPT){ res_vOptArgs <<= std::move(tmp_args);
     }
     
@@ -267,7 +305,9 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
             this->err = "ERROR:";
             return -1;
         }
-        int res = _fill_result_arg_by_val(vOptRule[opt_idx], vOptArgs[opt_idx]); if(res!=0){ return -1; }
+        sstd::printn_all(opt_idx);
+        int res = _fill_result_arg_by_val(vOptRule[opt_idx], vOptArgs[opt_idx]);
+        if(res!=0){ return -1; }
     }
     
     return cmd_id;
