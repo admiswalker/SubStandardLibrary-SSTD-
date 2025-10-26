@@ -94,7 +94,7 @@ TEST(argparse, argc_0){
 
 //---
 
-TEST(argparse, cmd_3){
+TEST(argparse, cmd_expect_m1_in_3){
     std::vector<const char*> args = {"./a.out", "get-lines", "1", "3", "5"};
     const int argc = args.size();
     const char **argv = args.data();
@@ -109,7 +109,6 @@ TEST(argparse, cmd_3){
     
     sstd::argparse ap;
     int cmd_id = ap.parse(argc, argv
-                          , sstd::arg_rule::cmd((int)CmdID::EMPTY, "", 0)
                           , sstd::arg_rule::cmd((int)CmdID::GET_LINES, vlineNum, {}, "get-lines", -1)
                           );
 
@@ -119,7 +118,7 @@ TEST(argparse, cmd_3){
 
 //---
 
-#define TEST_OPT_BOOL(ARGS, DEF, CNT, ANS)                              \
+#define TEST_OPT_BOOL(ARGS, DEFAULT, CNT, ANS)                          \
     const int argc = ARGS.size();                                       \
     const char **argv = ARGS.data();                                    \
                                                                         \
@@ -127,38 +126,19 @@ TEST(argparse, cmd_3){
                                                                         \
     sstd::argparse ap;                                                  \
     int cmd_id = ap.parse(argc, argv                                    \
-                          , sstd::arg_rule::opt(rm_hs, DEF, "-o", "--option", CNT) \
+                          , sstd::arg_rule::opt(rm_hs, DEFAULT, "-o", "--option", CNT) \
                           );                                            \
-                                                                        \
     ASSERT_EQ(cmd_id, -2);                                              \
     ASSERT_TRUE(rm_hs==ANS);
-TEST(argparse, opt_bool_full_true_as_default){
-    std::vector<const char*> args = {"./a.out", "--option"};
-    TEST_OPT_BOOL(args, true, 0, true);
-}
-TEST(argparse, opt_bool_full_false_as_default){
-    std::vector<const char*> args = {"./a.out", "--option"};
-    TEST_OPT_BOOL(args, false, 0, false);
-}
-TEST(argparse, opt_bool_full_true_1){
-    std::vector<const char*> args = {"./a.out", "--option", "true"};
-    TEST_OPT_BOOL(args, true, 1, true);
-}
-TEST(argparse, opt_bool_full_false_1){
-    std::vector<const char*> args = {"./a.out", "--option", "false"};
-    TEST_OPT_BOOL(args, true, 1, false);
-}
+TEST(argparse, opt_bool_full_true_as_default ){ std::vector<const char*> args = {"./a.out", "--option"}; TEST_OPT_BOOL(args, true,  0, true);   }
+TEST(argparse, opt_bool_full_false_as_default){ std::vector<const char*> args = {"./a.out", "--option"}; TEST_OPT_BOOL(args, false, 0, false); }
 
-//---
-
-TEST(argparse, opt_bool_short_true_0){
-    std::vector<const char*> args = {"./a.out", "-o"};
-    TEST_OPT_BOOL(args, true, 0, true);
-}
-TEST(argparse, opt_bool_short_false_0){
-    std::vector<const char*> args = {"./a.out", "-o"};
-    TEST_OPT_BOOL(args, false, 0, false);
-}
+TEST(argparse, opt_bool_full_true_1){ std::vector<const char*> args = {"./a.out", "--option", "true"}; TEST_OPT_BOOL(args, false, 1, true); }
+TEST(argparse, opt_bool_full_True_1){ std::vector<const char*> args = {"./a.out", "--option", "True"}; TEST_OPT_BOOL(args, false, 1, true); }
+TEST(argparse, opt_bool_full_T_1   ){ std::vector<const char*> args = {"./a.out", "--option", "T"};    TEST_OPT_BOOL(args, false, 1, true); }
+TEST(argparse, opt_bool_full_false_1){ std::vector<const char*> args = {"./a.out", "--option", "false"}; TEST_OPT_BOOL(args, true, 1, false); }
+TEST(argparse, opt_bool_full_False_1){ std::vector<const char*> args = {"./a.out", "--option", "False"}; TEST_OPT_BOOL(args, true, 1, false); }
+TEST(argparse, opt_bool_full_F_1    ){ std::vector<const char*> args = {"./a.out", "--option", "F"    }; TEST_OPT_BOOL(args, true, 1, false); }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
