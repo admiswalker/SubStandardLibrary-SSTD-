@@ -117,6 +117,7 @@ TEST(argparse, cmd_expect_m1_in_3){
 }
 
 //---
+// Normal testing / 正常系
 
 #define TEST_OPT_BOOL(ARGS, DEFAULT, CNT, ANS)                          \
     const int argc = ARGS.size();                                       \
@@ -136,9 +137,30 @@ TEST(argparse, opt_bool_full_false_as_default){ std::vector<const char*> args = 
 TEST(argparse, opt_bool_full_true_1){ std::vector<const char*> args = {"./a.out", "--option", "true"}; TEST_OPT_BOOL(args, false, 1, true); }
 TEST(argparse, opt_bool_full_True_1){ std::vector<const char*> args = {"./a.out", "--option", "True"}; TEST_OPT_BOOL(args, false, 1, true); }
 TEST(argparse, opt_bool_full_T_1   ){ std::vector<const char*> args = {"./a.out", "--option", "T"};    TEST_OPT_BOOL(args, false, 1, true); }
+TEST(argparse, opt_bool_full_1_1   ){ std::vector<const char*> args = {"./a.out", "--option", "1"};    TEST_OPT_BOOL(args, false, 1, true); }
 TEST(argparse, opt_bool_full_false_1){ std::vector<const char*> args = {"./a.out", "--option", "false"}; TEST_OPT_BOOL(args, true, 1, false); }
 TEST(argparse, opt_bool_full_False_1){ std::vector<const char*> args = {"./a.out", "--option", "False"}; TEST_OPT_BOOL(args, true, 1, false); }
 TEST(argparse, opt_bool_full_F_1    ){ std::vector<const char*> args = {"./a.out", "--option", "F"    }; TEST_OPT_BOOL(args, true, 1, false); }
+TEST(argparse, opt_bool_full_0_1    ){ std::vector<const char*> args = {"./a.out", "--option", "0"    }; TEST_OPT_BOOL(args, true, 1, false); }
+
+//---
+// Negative testing / 異常系
+
+TEST(argparse, NT_opt_invalid_arg){
+    std::vector<const char*> args = {"./a.out", "--option", "xxx"};
+    
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    bool rm_hs=false;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::opt(rm_hs, false, "-o", "--option", 1)
+                          );
+    ASSERT_EQ(cmd_id, -2);
+    ASSERT_TRUE(rm_hs==true);
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
