@@ -158,6 +158,8 @@ TEST(argparse, NT_opt_invalid_arg){
     int cmd_id = ap.parse(argc, argv
                           , sstd::arg_rule::opt(rm_hs, false, "-o", "--option", 1)
                           );
+    sstd::printn_all(ap.err());
+    
     ASSERT_EQ(cmd_id, -2);
     ASSERT_TRUE(rm_hs==true);
 }

@@ -1,6 +1,7 @@
 #include "argparse.hpp"
 #include "../container/vector/slice.hpp"
 #include "../container/vector/stdVector_expansion.hpp"
+#include "../print/pdbg.hpp"
 #include "../print/print.hpp" // for debug
 #include "../string/strEdit.hpp"
 #include "../string/strmatch.hpp"
@@ -59,13 +60,12 @@ bool sstd__str2val(bool& return_val, const std::vector<std::string>& v){
     return false;
 }
 
-//bool sstd__str2voidp(void* return_val_ptr, const int type, const std::vector<std::string>& v){
-bool _str2voidp(void* return_val_ptr, const int type, const std::vector<std::string>& v){
+int sstd__str2voidp(void* return_val_ptr, const int type, const std::vector<std::string>& v){
     
     switch(type){
-    case sstd::num_bool:      { if(!sstd__str2val(*(bool              *)return_val_ptr, v)){return false;} } break;
-    case sstd::num_vec_int32: { if(!sstd__str2val(*(std::vector<int32>*)return_val_ptr, v)){return false;} } break;
-    default: { return false; }
+    case sstd::num_bool:      { if(!sstd__str2val(*(bool              *)return_val_ptr, v)){return -1;} } break;
+    case sstd::num_vec_int32: { if(!sstd__str2val(*(std::vector<int32>*)return_val_ptr, v)){return -1;} } break;
+    default: { return -2; }
     }
     
     return true;
@@ -94,9 +94,13 @@ int _fill_result_arg_by_val(const T& rule, const std::vector<std::string>& cmdAr
         }
         
     }else{
-        bool tf = _str2voidp(ptr, type, args);
-        if(!tf){
-            //        this->err="Failed to convert string to value.";
+        bool tf = sstd__str2voidp(ptr, type, args);
+        if(tf==-1){
+            this->err=pdbg_err_str()+"ERROR: The input value `` ";
+            // print_base() が，直接標準出力にデータを出力するので，文字列変換として使えない．．．
+            // obj2str の定義が先に必要そう．．．
+            return -1;
+        }else if(tf==-2){
             return -1;
         }
     }
