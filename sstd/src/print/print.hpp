@@ -89,19 +89,11 @@ namespace sstd{
     }
 
     //---
-    // print_base()
-
-    template<typename T>
-    void print_base(const T& rhs){
-        std::cout << sstd::to_string(rhs) + "\n";
-    }
-
-    //---
     // print()
     
     template <typename T>
     void print(const T& rhs){
-        print_base(rhs);
+        std::cout << sstd::to_string(rhs) + "\n";
     }
     
     //---
