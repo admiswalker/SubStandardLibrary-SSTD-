@@ -39,9 +39,9 @@
 #../test/src_test/memory/unique_void_ptr.cpp
 #../test/src_test/memory/void_ptr.cpp
 #../test/src_test/print/pdbg.cpp
-#../test/src_test/print/print_printn_printn_all.cpp
+../test/src_test/print/print_printn_printn_all.cpp
 #../test/src_test/python/c2py.cpp
-../test/src_test/string/argparse.cpp
+#../test/src_test/string/argparse.cpp
 #../test/src_test/string/encode_decode.cpp
 #../test/src_test/string/strEdit.cpp
 #../test/src_test/string/strmatch.cpp

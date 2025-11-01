@@ -103,8 +103,8 @@ namespace sstd::_argparse{
 }
 
 namespace sstd{
-    void print_base(const sstd::arg_rule::cmd_rule& rhs);
-    void print_base(const sstd::arg_rule::opt_rule& rhs);
+    std::string to_string(const sstd::arg_rule::cmd_rule& rhs);
+    std::string to_string(const sstd::arg_rule::opt_rule& rhs);
 }
 
 //---

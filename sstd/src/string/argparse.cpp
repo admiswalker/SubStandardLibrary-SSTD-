@@ -3,6 +3,7 @@
 #include "../container/vector/stdVector_expansion.hpp"
 #include "../print/pdbg.hpp"
 #include "../print/print.hpp" // for debug
+#include "../string/ssprintf.hpp"
 #include "../string/strEdit.hpp"
 #include "../string/strmatch.hpp"
 
@@ -95,14 +96,16 @@ int _fill_result_arg_by_val(const T& rule, const std::vector<std::string>& cmdAr
         
     }else{
         bool tf = sstd__str2voidp(ptr, type, args);
+        /*
         if(tf==-1){
-            this->err=pdbg_err_str()+"ERROR: The input value `` ";
+//            this->err=pdbg_err_str()+"ERROR: The input value `` ";
             // print_base() が，直接標準出力にデータを出力するので，文字列変換として使えない．．．
             // obj2str の定義が先に必要そう．．．
             return -1;
         }else if(tf==-2){
             return -1;
         }
+        */
     }
 
     return _get_cmd_id(rule);
@@ -110,24 +113,28 @@ int _fill_result_arg_by_val(const T& rule, const std::vector<std::string>& cmdAr
 
 //---
 
-void sstd::print_base(const sstd::arg_rule::cmd_rule& rhs){
-    printf("cmd_id: %d\n", rhs.cmd_id);
-    printf("return_val_ptr: <Print function is NOT implemented>\n");
-    printf("initial_val_ptr: <Print function is NOT implemented>\n");
-    printf("cmd: `%s`\n", rhs.cmd.c_str());
-    printf("expected_num_of_args: %d\n", rhs.expected_num_of_args);
-    printf(",\n");
+std::string sstd::to_string(const sstd::arg_rule::cmd_rule& rhs){
+    std::string s;
+    s += sstd::ssprintf("cmd_id: %d\n", rhs.cmd_id);
+    s += sstd::ssprintf("return_val_ptr: <Print function is NOT implemented>\n");
+    s += sstd::ssprintf("initial_val_ptr: <Print function is NOT implemented>\n");
+    s += sstd::ssprintf("cmd: `%s`\n", rhs.cmd.c_str());
+    s += sstd::ssprintf("expected_num_of_args: %d\n", rhs.expected_num_of_args);
+    s += ",\n";
+    return s;
 }
 
 //---
 
-void sstd::print_base(const sstd::arg_rule::opt_rule& rhs){
-    printf("return_val_ptr: <Print function is NOT implemented>\n");
-    printf("initial_val_ptr: <Print function is NOT implemented>\n");
-    printf("opt_short: `%s`\n", rhs.opt_short.c_str());
-    printf("opt_full: `%s`\n", rhs.opt_full.c_str());
-    printf("expected_num_of_args: %d\n", rhs.expected_num_of_args);
-    printf(",\n");
+std::string sstd::to_string(const sstd::arg_rule::opt_rule& rhs){
+    std::string s;
+    s += sstd::ssprintf("return_val_ptr: <Print function is NOT implemented>\n");
+    s += sstd::ssprintf("initial_val_ptr: <Print function is NOT implemented>\n");
+    s += sstd::ssprintf("opt_short: `%s`\n", rhs.opt_short.c_str());
+    s += sstd::ssprintf("opt_full: `%s`\n", rhs.opt_full.c_str());
+    s += sstd::ssprintf("expected_num_of_args: %d\n", rhs.expected_num_of_args);
+    s += ",\n";
+    return s;
 }
 
 //---
