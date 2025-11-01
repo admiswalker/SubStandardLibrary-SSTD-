@@ -115,11 +115,13 @@ class sstd::argparse{
 private:
     std::vector<struct sstd::arg_rule::cmd_rule> arg_vCmd;
     std::vector<struct sstd::arg_rule::opt_rule> arg_vOpt;
-    std::string err;
+    std::string errMsg;
     
 public:
     argparse();
     ~argparse();
+    const std::string& err() const;
+    
 
     int _parse(const int argc, const char* argv[]
                , const std::vector<struct sstd::arg_rule::cmd_rule>& arg_vCmd

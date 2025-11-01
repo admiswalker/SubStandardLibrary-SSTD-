@@ -69,13 +69,13 @@ int sstd__str2voidp(void* return_val_ptr, const int type, const std::vector<std:
     default: { return -2; }
     }
     
-    return true;
+    return 0;
 }
 
 int _get_cmd_id(const struct sstd::arg_rule::cmd_rule& cmdRule){ return cmdRule.cmd_id; }
 int _get_cmd_id(const struct sstd::arg_rule::opt_rule& optRule){ return 0; }
 template<typename T>
-int _fill_result_arg_by_val(const T& rule, const std::vector<std::string>& cmdArgs){
+int _fill_result_arg_by_val(std::string& errMsg, const T& rule, const std::vector<std::string>& cmdArgs){
     
 //    if(rule.expected_num_of_args==-1){
 //        // Under construction
@@ -87,27 +87,26 @@ int _fill_result_arg_by_val(const T& rule, const std::vector<std::string>& cmdAr
     int   type = rule.return_val_type;
     void* ptr  = rule.return_val_ptr;
     
-    if(args.size()==0){
+    int res=0;
+    if(args.size()!=0){
+        res = sstd__str2voidp(ptr, type, args);
+        if(res==-1){
+            errMsg+=sstd::pdbg_err_str("%s", ("The input arguments of `"+sstd::to_string(cmdArgs)+"` is failed to convert to `"+sstd::typeNum2str(type)+"` type.\n").c_str());
+        }else if(res==-2){
+            errMsg+=sstd::pdbg_err_str("%s", ("The input data type of `"+sstd::typeNum2str(type)+"` is our of support.\n").c_str());
+        }
+    }
+    if(res!=0 || args.size()==0){
         bool tf = _fill_by_initial_val(ptr, type, rule.initial_val_ptr);
         if(!tf){
-            //        this->err="Failed to convert string to value.";
+            errMsg+=sstd::pdbg_err_str("%s", ("Failed to init default value. Data type is `"+sstd::typeNum2str(type)+"`.\n").c_str());
             return -1;
         }
-        
-    }else{
-        bool tf = sstd__str2voidp(ptr, type, args);
-        /*
-        if(tf==-1){
-//            this->err=pdbg_err_str()+"ERROR: The input value `` ";
-            // print_base() が，直接標準出力にデータを出力するので，文字列変換として使えない．．．
-            // obj2str の定義が先に必要そう．．．
-            return -1;
-        }else if(tf==-2){
-            return -1;
-        }
-        */
     }
-
+    if(res!=0){
+        return -1;
+    }
+    
     return _get_cmd_id(rule);
 }
 
@@ -264,6 +263,7 @@ std::vector<int> _parse_opt(const std::vector<std::vector<std::string>>& vOptArg
 
 sstd::argparse::argparse(){}
 sstd::argparse::~argparse(){}
+const std::string& sstd::argparse::err() const { return this->errMsg; }
 
 int sstd::argparse::_parse(const int argc, const char* argv[]
                            , const std::vector<struct sstd::arg_rule::cmd_rule>& vCmdRule
@@ -273,7 +273,7 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
     std::unordered_map<std::string,uint> ht_cmd2idx;
     for(uint i=0; i<vCmdRule.size(); ++i){
         auto [itr, inserted] = ht_cmd2idx.insert({vCmdRule[i].cmd, i});
-        if(!inserted){ this->err="sstd::argparse::_parse() failed. The duplicated command definition by `sstd::arg_rule::cmd()`. The `"+vCmdRule[i].cmd+"` already exists.";  return -1; }
+        if(!inserted){ this->errMsg="sstd::argparse::_parse() failed. The duplicated command definition by `sstd::arg_rule::cmd()`. The `"+vCmdRule[i].cmd+"` already exists.";  return -1; }
     }
     sstd::printn_all("");
     
@@ -282,10 +282,10 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
     std::unordered_map<std::string,uint> ht_opt2idx_full;
     for(uint i=0; i<vOptRule.size(); ++i){
         auto [s_itr, s_inserted] = ht_opt2idx_short.insert({vOptRule[i].opt_short, i});
-        if(!s_inserted){ this->err="sstd::argparse::_parse() failed. The duplicated option definition by `sstd::arg_rule::opt()`. The `"+vOptRule[i].opt_short+"` already exists.";  return -1; }
+        if(!s_inserted){ this->errMsg="sstd::argparse::_parse() failed. The duplicated option definition by `sstd::arg_rule::opt()`. The `"+vOptRule[i].opt_short+"` already exists.";  return -1; }
         
         auto [f_itr, f_inserted] = ht_opt2idx_full.insert({vOptRule[i].opt_full, i});
-        if(!f_inserted){ this->err="sstd::argparse::_parse() failed. The duplicated option definition by `sstd::arg_rule::opt()`. The `"+vOptRule[i].opt_full+"` already exists.";  return -1; }
+        if(!f_inserted){ this->errMsg="sstd::argparse::_parse() failed. The duplicated option definition by `sstd::arg_rule::opt()`. The `"+vOptRule[i].opt_full+"` already exists.";  return -1; }
     }
     sstd::printn_all("");
     
@@ -300,7 +300,7 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
     if(cmdArgs.size()!=0){
         int cmd_idx = _parse_cmd(cmdArgs[0], ht_cmd2idx); if(cmd_idx==-1){ return -1; }
         sstd::printn_all(cmd_idx);
-        cmd_id = _fill_result_arg_by_val(vCmdRule[cmd_idx], cmdArgs); if(cmd_id==-1){ return -1; }
+        cmd_id = _fill_result_arg_by_val(this->errMsg, vCmdRule[cmd_idx], cmdArgs); if(cmd_id==-1){ return -1; }
         sstd::printn_all(cmd_id);
     }
     
@@ -312,17 +312,17 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
     std::vector<std::tuple<uint,uint>> vDuplicated = sstd__duplicated(vOptIdx);
     sstd::printn_all(vDuplicated);
     if(vDuplicated.size()!=0){
-        this->err = "ERROR: There are duplicated definition in the arg input.";
+        this->errMsg = "ERROR: There are duplicated definition in the arg input.";
         return -1;
     }
     for(uint i=0; i<vOptIdx.size(); ++i){
         int opt_idx = vOptIdx[i];
         if(opt_idx==-1){
-            this->err = "ERROR:";
+            this->errMsg = "ERROR:";
             return -1;
         }
         sstd::printn_all(opt_idx);
-        int res = _fill_result_arg_by_val(vOptRule[opt_idx], vOptArgs[opt_idx]);
+        int res = _fill_result_arg_by_val(this->errMsg, vOptRule[opt_idx], vOptArgs[opt_idx]);
         if(res!=0){ return -1; }
     }
     

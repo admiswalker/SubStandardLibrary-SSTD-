@@ -152,16 +152,17 @@ TEST(argparse, NT_opt_invalid_arg){
     const int argc = args.size();
     const char **argv = args.data();
 
-    bool rm_hs=false;
+    bool rm_hs=true;
 
     sstd::argparse ap;
     int cmd_id = ap.parse(argc, argv
                           , sstd::arg_rule::opt(rm_hs, false, "-o", "--option", 1)
                           );
     sstd::printn_all(ap.err());
+    ASSERT_TRUE(sstd::strIn("error: The input arguments of `[\"--option\" \"xxx\"]` is failed to convert to `bool` type.", ap.err()));
     
-    ASSERT_EQ(cmd_id, -2);
-    ASSERT_TRUE(rm_hs==true);
+    ASSERT_EQ(cmd_id, -1);
+    ASSERT_TRUE(rm_hs==false);
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
