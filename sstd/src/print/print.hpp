@@ -17,7 +17,7 @@ namespace sstd{
     template <typename... Types> std::string to_string(const std::tuple<Types...>& rhs);
 
     //---
-    // print_base()
+    // to_string()
     
     std::string to_string(const  void* rhs);
     std::string to_string(const  bool  rhs);
@@ -40,7 +40,7 @@ namespace sstd{
         std::string s;
         s+="[";
         if(rhs.size()>=1){
-            for(uint i=0; i<rhs.size()-1; ++i){ s+=sstd::to_string(rhs[i]); s+=" "; }
+            for(uint i=0; i<rhs.size()-1; ++i){ s+=sstd::to_string(rhs[i])+" "; }
             s+=sstd::to_string( rhs[rhs.size()-1] );
         }
         s+="]";
@@ -65,9 +65,7 @@ namespace sstd{
         s+="{";
         for(auto itr=rhs.begin(); itr!=rhs.end(); ++itr){
             if(itr!=rhs.begin()){ s+=","; }
-            s+=" (key: "; s+=sstd::to_string(itr->first);
-            s+=", value: "; s+=sstd::to_string(itr->second);
-            s+=")";
+            s+=" (key: "+sstd::to_string(itr->first)+", value: "+sstd::to_string(itr->second)+")";
         }
         s+=" }";
         return s;
@@ -91,6 +89,7 @@ namespace sstd{
     }
 
     //---
+    // print_base()
 
     template<typename T>
     void print_base(const T& rhs){
