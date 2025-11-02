@@ -119,6 +119,7 @@ TEST(argparse, cmd_expect_m1_in_3){
 //---
 // Normal testing / 正常系
 
+// bool
 #define TEST_OPT_BOOL(ARGS, DEFAULT, CNT, ANS)                          \
     const int argc = ARGS.size();                                       \
     const char **argv = ARGS.data();                                    \
@@ -142,7 +143,26 @@ TEST(argparse, opt_bool_full_false_1){ std::vector<const char*> args = {"./a.out
 TEST(argparse, opt_bool_full_False_1){ std::vector<const char*> args = {"./a.out", "--option", "False"}; TEST_OPT_BOOL(args, true, 1, false); }
 TEST(argparse, opt_bool_full_F_1    ){ std::vector<const char*> args = {"./a.out", "--option", "F"    }; TEST_OPT_BOOL(args, true, 1, false); }
 TEST(argparse, opt_bool_full_0_1    ){ std::vector<const char*> args = {"./a.out", "--option", "0"    }; TEST_OPT_BOOL(args, true, 1, false); }
+/*
+// char
+TEST(argparse, cmd_char){
+    std::vector<const char*> args = {"./a.out", "cmd", "a", "b", "c"};
+    const int argc = args.size();
+    const char **argv = args.data();
 
+    enum class CmdID{SAMPLE_CMD};
+    
+    std::vector<char> v;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::cmd((int)CmdID::SAMPLE_CMD, v, {}, "cmd", -1)
+                          );
+    sstd::printn(ap.err());
+    ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);
+    ASSERT_TRUE(v==std::vector<char>({'a','b','c'}));
+}
+*/
 //---
 // Negative testing / 異常系
 
