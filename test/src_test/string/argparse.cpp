@@ -38,7 +38,7 @@ TEST(argparse, example01){
 
 //---
 
-TEST(argparse, argc_0){
+TEST(argparse, complicated_test_01){
 
     // example input
     std::vector<const char*> args = {
@@ -47,7 +47,8 @@ TEST(argparse, argc_0){
                     "1",
                     "3",
                     "5",
-                    "--rm-head-spaces"
+                    "--rm-head-spaces",
+                    "--rm-tail-spaces"
     };
     const int argc = args.size();
     const char **argv = args.data();
@@ -58,7 +59,7 @@ TEST(argparse, argc_0){
                      GET_LINES
     };
     
-    bool rm_hs, rm_ts;
+    bool rm_hs=false, rm_ts=false;
     std::vector<int> vlineNum;
     int num;
     
@@ -68,20 +69,20 @@ TEST(argparse, argc_0){
                           , sstd::arg_rule::cmd((int)CmdID::GET_LINES, vlineNum, {}, "get-lines", -1)
                           , sstd::arg_rule::cmd((int)CmdID::GET_LINE , num,       0, "get-line" ,  1)
                           , sstd::arg_rule::opt(rm_hs, true, "-h", "--rm-head-spaces", 0)
-//                          , sstd::arg_rule::opt(rm_ts, false, "-t", "--rm-tail-spaces", 1)
+                          , sstd::arg_rule::opt(rm_ts, true, "-t", "--rm-tail-spaces", 0)
                     );
-
-    printf("\n");
-    sstd::printn_all(cmd_id);
+//    sstd::printn_all(cmd_id);
+    ASSERT_EQ(cmd_id, (int)CmdID::GET_LINES);
     
     switch(cmd_id){
     case (int)CmdID::EMPTY : {
 //        ap.print_help();
     } break;
     case (int)CmdID::GET_LINES: {
-        sstd::printn_all(vlineNum);
-        sstd::printn_all(rm_hs);
         // process get lines
+        ASSERT_TRUE(vlineNum==std::vector<int>({1,3,5}));
+        ASSERT_TRUE(rm_hs==true);
+        ASSERT_TRUE(rm_ts==true);
     } break;
     case (int)CmdID::GET_LINE : {
         // process get line
@@ -146,6 +147,8 @@ TEST(argparse, opt_bool_full_0_1    ){ std::vector<const char*> args = {"./a.out
 /*
 // char
 TEST(argparse, cmd_char){
+}
+TEST(argparse, cmd_vchar){
     std::vector<const char*> args = {"./a.out", "cmd", "a", "b", "c"};
     const int argc = args.size();
     const char **argv = args.data();
