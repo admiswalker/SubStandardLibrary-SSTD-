@@ -177,7 +177,25 @@ TEST(argparse, NT_opt_less_arg){
                           , sstd::arg_rule::opt(rm_hs, false, "-o", "--option", 1)
                           );
     sstd::printn_all(ap.err());
-    ASSERT_TRUE(sstd::strIn("error: The number of argument(s) is `0` ([\"--option\"]). But `1` argument(s) are expected by the definition of sstd::arg_rule::opt().", ap.err()));
+    ASSERT_TRUE(sstd::strIn("error: The number of input argument(s) is `0` ([\"--option\"]). But `1` argument(s) are expected by the definition of sstd::arg_rule::opt().", ap.err()));
+    
+    ASSERT_EQ(cmd_id, -1);
+    ASSERT_TRUE(rm_hs==false);
+}
+TEST(argparse, NT_opt_more_arg){
+    std::vector<const char*> args = {"./a.out", "--option", "A", "B"};
+    
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    bool rm_hs=true;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::opt(rm_hs, false, "-o", "--option", 1)
+                          );
+    sstd::printn_all(ap.err());
+    ASSERT_TRUE(sstd::strIn("error: The number of input argument(s) is `2` ([\"--option\" \"A\" \"B\"]). But `1` argument(s) are expected by the definition of sstd::arg_rule::opt().", ap.err()));
     
     ASSERT_EQ(cmd_id, -1);
     ASSERT_TRUE(rm_hs==false);

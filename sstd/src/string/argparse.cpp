@@ -82,7 +82,7 @@ int _fill_result_arg_by_val(std::string& errMsg, const T& rule, const std::vecto
     
     int res=0;
     if(arg_len!=-1 && args.size()!=arg_len){
-        errMsg+=sstd::pdbg_err_str("%s", ("The number of argument(s) is `"+std::to_string(args.size())+"` ("+sstd::to_string(cmdArgs)+"). But `"+std::to_string(arg_len)+"` argument(s) are expected by the definition of sstd::arg_rule::opt().\n").c_str());
+        errMsg+=sstd::pdbg_err_str("%s", ("The number of input argument(s) is `"+std::to_string(args.size())+"` ("+sstd::to_string(cmdArgs)+"). But `"+std::to_string(arg_len)+"` argument(s) are expected by the definition of sstd::arg_rule::opt().\n").c_str());
         res = -1;
     }
 
