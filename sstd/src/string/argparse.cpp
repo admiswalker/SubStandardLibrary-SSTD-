@@ -76,19 +76,20 @@ int _get_cmd_id(const struct sstd::arg_rule::cmd_rule& cmdRule){ return cmdRule.
 int _get_cmd_id(const struct sstd::arg_rule::opt_rule& optRule){ return 0; }
 template<typename T>
 int _fill_result_arg_by_val(std::string& errMsg, const T& rule, const std::vector<std::string>& cmdArgs){
-    
-//    if(rule.expected_num_of_args==-1){
-//        // Under construction
-//    }
-//    if(cmdArgs.size()!=1+rule.expected_num_of_args){ return false; }
 
     std::vector<std::string> args = cmdArgs&&sstd::slice(1,sstd::end());
+    uint arg_len = rule.expected_num_of_args;
+    
+    int res=0;
+    if(arg_len!=-1 && args.size()!=arg_len){
+        errMsg+=sstd::pdbg_err_str("%s", ("The number of argument(s) is `"+std::to_string(args.size())+"` ("+sstd::to_string(cmdArgs)+"). But `"+std::to_string(arg_len)+"` argument(s) are expected by the definition of sstd::arg_rule::opt().\n").c_str());
+        res = -1;
+    }
 
     int   type = rule.return_val_type;
     void* ptr  = rule.return_val_ptr;
     
-    int res=0;
-    if(args.size()!=0){
+    if(res==0 && args.size()!=0){
         res = sstd__str2voidp(ptr, type, args);
         if(res==-1){
             errMsg+=sstd::pdbg_err_str("%s", ("The input arguments of `"+sstd::to_string(cmdArgs)+"` is failed to convert to `"+sstd::typeNum2str(type)+"` type.\n").c_str());
