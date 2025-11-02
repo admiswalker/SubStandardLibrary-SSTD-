@@ -146,9 +146,9 @@ TEST(argparse, opt_bool_full_0_1    ){ std::vector<const char*> args = {"./a.out
 //---
 // Negative testing / 異常系
 
+// options
 TEST(argparse, NT_opt_invalid_arg){
     std::vector<const char*> args = {"./a.out", "--option", "xxx"};
-    
     const int argc = args.size();
     const char **argv = args.data();
 
@@ -158,15 +158,13 @@ TEST(argparse, NT_opt_invalid_arg){
     int cmd_id = ap.parse(argc, argv
                           , sstd::arg_rule::opt(rm_hs, false, "-o", "--option", 1)
                           );
-    sstd::printn_all(ap.err());
-    ASSERT_TRUE(sstd::strIn("error: The input arguments of `[\"--option\" \"xxx\"]` is failed to convert to `bool` type.", ap.err()));
-    
     ASSERT_EQ(cmd_id, -1);
+    
+    ASSERT_TRUE(sstd::strIn("error: The input arguments of `[\"--option\" \"xxx\"]` is failed to convert to `bool` type.", ap.err()));
     ASSERT_TRUE(rm_hs==false);
 }
 TEST(argparse, NT_opt_less_arg){
     std::vector<const char*> args = {"./a.out", "--option"};
-    
     const int argc = args.size();
     const char **argv = args.data();
 
@@ -176,15 +174,13 @@ TEST(argparse, NT_opt_less_arg){
     int cmd_id = ap.parse(argc, argv
                           , sstd::arg_rule::opt(rm_hs, false, "-o", "--option", 1)
                           );
-    sstd::printn_all(ap.err());
-    ASSERT_TRUE(sstd::strIn("error: The number of input argument(s) is `0` ([\"--option\"]). But `1` argument(s) are expected by the definition of sstd::arg_rule::opt().", ap.err()));
-    
     ASSERT_EQ(cmd_id, -1);
+    
+    ASSERT_TRUE(sstd::strIn("error: The number of input argument(s) is `0` ([\"--option\"]). But `1` argument(s) are expected by the definition of sstd::arg_rule::opt().", ap.err()));
     ASSERT_TRUE(rm_hs==false);
 }
 TEST(argparse, NT_opt_more_arg){
     std::vector<const char*> args = {"./a.out", "--option", "A", "B"};
-    
     const int argc = args.size();
     const char **argv = args.data();
 
@@ -194,11 +190,78 @@ TEST(argparse, NT_opt_more_arg){
     int cmd_id = ap.parse(argc, argv
                           , sstd::arg_rule::opt(rm_hs, false, "-o", "--option", 1)
                           );
-    sstd::printn_all(ap.err());
-    ASSERT_TRUE(sstd::strIn("error: The number of input argument(s) is `2` ([\"--option\" \"A\" \"B\"]). But `1` argument(s) are expected by the definition of sstd::arg_rule::opt().", ap.err()));
-    
     ASSERT_EQ(cmd_id, -1);
+    
+    ASSERT_TRUE(sstd::strIn("error: The number of input argument(s) is `2` ([\"--option\" \"A\" \"B\"]). But `1` argument(s) are expected by the definition of sstd::arg_rule::opt().", ap.err()));
     ASSERT_TRUE(rm_hs==false);
+}
+
+// commands
+TEST(argparse, NT_cmd_invalid_arg){
+    std::vector<const char*> args = {"./a.out", "get-lines", "a", "b", "c"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    enum class CmdID{
+                     EMPTY,
+                     GET_LINE,
+                     GET_LINES
+    };
+    
+    std::vector<int> vlineNum;
+    
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::cmd((int)CmdID::GET_LINES, vlineNum, {9, 8, 7}, "get-lines", -1)
+                          );
+    ASSERT_EQ(cmd_id, -1);
+    ASSERT_TRUE(sstd::strIn("error: The input arguments of `[\"get-lines\" \"a\" \"b\" \"c\"]` is failed to convert to `vec_int32` type.", ap.err()));
+    
+    ASSERT_TRUE(vlineNum==std::vector<int>({9,8,7}));
+}
+TEST(argparse, NT_cmd_less_arg){
+    std::vector<const char*> args = {"./a.out", "get-lines", "1", "3"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    enum class CmdID{
+                     EMPTY,
+                     GET_LINE,
+                     GET_LINES
+    };
+    
+    std::vector<int> vlineNum;
+    
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::cmd((int)CmdID::GET_LINES, vlineNum, {9, 8, 7}, "get-lines", 3)
+                          );
+    ASSERT_EQ(cmd_id, -1);
+    ASSERT_TRUE(sstd::strIn("error: The number of input argument(s) is `2` ([\"get-lines\" \"1\" \"3\"]). But `3` argument(s) are expected by the definition of sstd::arg_rule::opt().", ap.err()));
+    
+    ASSERT_TRUE(vlineNum==std::vector<int>({9,8,7}));
+}
+TEST(argparse, NT_cmd_more_arg){
+    std::vector<const char*> args = {"./a.out", "get-lines", "1", "3", "5", "7"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    enum class CmdID{
+                     EMPTY,
+                     GET_LINE,
+                     GET_LINES
+    };
+    
+    std::vector<int> vlineNum;
+    
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::cmd((int)CmdID::GET_LINES, vlineNum, {9, 8, 7}, "get-lines", 3)
+                          );
+    ASSERT_EQ(cmd_id, -1);
+    ASSERT_TRUE(sstd::strIn("error: The number of input argument(s) is `4` ([\"get-lines\" \"1\" \"3\" \"5\" \"7\"]). But `3` argument(s) are expected by the definition of sstd::arg_rule::opt().", ap.err()));
+    
+    ASSERT_TRUE(vlineNum==std::vector<int>({9,8,7}));
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
