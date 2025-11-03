@@ -78,10 +78,10 @@ template<typename T>
 int _fill_result_arg_by_val(std::string& errMsg, const T& rule, const std::vector<std::string>& input_args){
 
     std::vector<std::string> args = input_args&&sstd::slice(1,sstd::end());
-    uint arg_len = rule.expected_num_of_args;
+    int arg_len = rule.expected_num_of_args;
     
     int res=0;
-    if(arg_len!=-1 && args.size()!=arg_len){
+    if(arg_len!=-1 && (int)args.size()!=arg_len){
         errMsg+=sstd::pdbg_err_str(("The number of input argument(s) is `"+std::to_string(args.size())+"` ("+sstd::to_string(input_args)+"). But `"+std::to_string(arg_len)+"` argument(s) are expected by the definition of sstd::arg_rule::opt().\n").c_str());
         res = -1;
     }
@@ -383,17 +383,16 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
     // Parse input argc and argv
     std::vector<std::string> cmd_args;
     std::vector<std::vector<std::string>> opt_vArgs;
-    int res = _parse_argc_argv(this->errMsg, cmd_args, opt_vArgs, argc, argv, ht_cmd2idx);
+    int res_p = _parse_argc_argv(this->errMsg, cmd_args, opt_vArgs, argc, argv, ht_cmd2idx);
     
     // parse command
     int cmd_id = _process_cmd(this->errMsg, cmd_args, cmd_vRule, ht_cmd2idx);
     
     // parse option
     std::vector<bool> opt_vRule_inited(opt_vRule.size(), false);
-    int res1 = _process_opt     (this->errMsg, opt_vRule_inited, opt_vArgs, opt_vRule, ht_opt2idx_short, ht_opt2idx_full);
-    int res2 = _process_opt_init(this->errMsg, opt_vRule, opt_vRule_inited);
-    if(res1==-1 || res2==-1){ return -1; }
+    int res_o1 = _process_opt     (this->errMsg, opt_vRule_inited, opt_vArgs, opt_vRule, ht_opt2idx_short, ht_opt2idx_full);
+    int res_o2 = _process_opt_init(this->errMsg, opt_vRule, opt_vRule_inited);
     
-    if(res!=0){ cmd_id=-1; }
+    if(res_p==-1 || res_o1==-1 || res_o2==-1){ return -1; }
     return cmd_id;
 }
