@@ -184,6 +184,19 @@ int _is_separator(const std::string& s, const std::unordered_map<std::string,uin
     }
     return NOT_A_SEPARATOR;
 }
+std::vector<std::vector<std::string>> _split_opt_m(bool& res, std::string& errMsg, const std::vector<std::string>& args){ // split multi short option
+    // parse "-abc" -> "-a", "-b", "-c"
+    std::vector<std::vector<std::string>> res_vv;
+    res=true;
+    if(args.size()!=1){ errMsg+=sstd::pdbg_err_str(("The multiple short options defined by sstd::arg_rule::opt() can NOT take arguments inputted as `"+sstd::to_string(args)+"`. Please separate the short options inputted if you want to use them with arguments.\n").c_str()); res=false; return res_vv; }
+    
+    std::vector<std::string> v;
+    for(uint i=1; i<args[0].size(); ++i){ // `i=1` means to skipp '-'.
+        res_vv <<= std::vector<std::string>({ std::string("-")+args[0][i] });
+    }
+
+    return res_vv;
+}
 
 int _parse_argc_argv(
                       std::string& errMsg,
@@ -203,33 +216,20 @@ int _parse_argc_argv(
 
         int type = _is_separator(s, ht_cmd2idx);
         if(type!=-1){
-            if      (prev_type==CMD  ){ std::vector<std::string> v; std::swap(v, tmp_args); res_cmd_args  <<= std::move(v);
-            }else if(prev_type==OPT  ){ std::vector<std::string> v; std::swap(v, tmp_args); res_opt_vArgs <<= std::move(v);
-            }else if(prev_type==OPT_M){
-                // parse "-abc" -> "-a", "-b" and "-c"
-                
-                if(tmp_args.size()!=1){ errMsg+=sstd::pdbg_err_str(("The multiple short options defined by sstd::arg_rule::opt() can NOT take arguments inputted as `"+sstd::to_string(tmp_args)+"`. Please separate the short options inputted if you want to use them with arguments.\n").c_str()); return -1; }
-                
-                for(uint i=1; i<tmp_args[0].size(); ++i){ // `i=1` means to skipp '-'.
-                    res_opt_vArgs <<= std::vector<std::string>({ std::string("-")+tmp_args[0][i] });
-                }
+            std::vector<std::string> v; std::swap(v, tmp_args);
+            
+            if      (prev_type==CMD  ){           res_cmd_args  <<= std::move(v);
+            }else if(prev_type==OPT  ){           res_opt_vArgs <<= std::move(v);
+            }else if(prev_type==OPT_M){ bool res; res_opt_vArgs <<= _split_opt_m(res, errMsg, v); if(!res){ return -1; }
             }
             prev_type = type;
         }
         
         tmp_args.push_back(std::move(s));
     }
-    if      (prev_type==CMD  ){ res_cmd_args  <<= std::move(tmp_args); // TODO: operator の先でmove が機能するようにする
-    }else if(prev_type==OPT  ){ res_opt_vArgs <<= std::move(tmp_args);
-    }else if(prev_type==OPT_M){
-        // parse "-abc" -> "-a", "-b" and "-c"
-        
-        if(tmp_args.size()!=1){ errMsg+=sstd::pdbg_err_str(("The multiple short options defined by sstd::arg_rule::opt() can NOT take arguments inputted as `"+sstd::to_string(tmp_args)+"`. Please separate the short options inputted if you want to use them with arguments.\n").c_str()); return -1; }
-        
-        std::vector<std::string> v;
-        for(uint i=1; i<tmp_args[0].size(); ++i){ // `i=1` means to skipp '-'.
-            res_opt_vArgs <<= std::vector<std::string>({ std::string("-")+tmp_args[0][i] });
-        }
+    if      (prev_type==CMD  ){           res_cmd_args  <<= std::move(tmp_args); // TODO: operator の先でmove が機能するようにする
+    }else if(prev_type==OPT  ){           res_opt_vArgs <<= std::move(tmp_args);
+    }else if(prev_type==OPT_M){ bool res; res_opt_vArgs <<= _split_opt_m(res, errMsg, tmp_args); if(!res){ return -1; }
     }
     
     return 0;

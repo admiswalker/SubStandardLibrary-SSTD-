@@ -520,11 +520,30 @@ TEST(argparse, NT_cmd_more_arg){
     ASSERT_TRUE(sstd::strIn(R"(error: The number of input argument(s) is `4` (["get-lines" "1" "3" "5" "7"]). But `3` argument(s) are expected by the definition of sstd::arg_rule::opt().)", ap.err()));
     
     ASSERT_TRUE(vlineNum==std::vector<int>({9,8,7}));
-}/*
+}
 TEST(argparse, NT_cmd_duplicated){
     std::vector<const char*> args = {"./a.out", "get-lines", "1", "3", "5", "get-lines", "7", "9", "10"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    enum class CmdID{
+                     EMPTY,
+                     GET_LINE,
+                     GET_LINES
+    };
+    
+    std::vector<int> vlineNum;
+    
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::cmd((int)CmdID::GET_LINES, vlineNum, {9, 8, 7}, "get-lines", 3)
+                          );
+    ASSERT_EQ(cmd_id, sstd::arg_rule::num_error);
+//    ASSERT_TRUE(sstd::strIn(R"(error: The number of input argument(s) is `4` (["get-lines" "1" "3" "5" "7"]). But `3` argument(s) are expected by the definition of sstd::arg_rule::opt().)", ap.err()));
+    
+    ASSERT_TRUE(vlineNum==std::vector<int>({9,8,7}));
 }
-*/
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
 EXECUTE_TESTS();
