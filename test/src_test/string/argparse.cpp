@@ -340,24 +340,22 @@ TEST(argparse, NT_opt_invalid_arg_short_1){
     ASSERT_TRUE(opt_a==false);
     ASSERT_TRUE(opt_b==false);
 }
+
 TEST(argparse, NT_opt_duplicated_1){
     std::vector<const char*> args = {"./a.out", "--option-a", "--option-a"};
     const int argc = args.size();
     const char **argv = args.data();
 
     bool opt_a=true;
-    bool opt_b=true;
 
     sstd::argparse ap;
     int cmd_id = ap.parse(argc, argv
                           , sstd::arg_rule::opt(opt_a, false, "-a", "--option-a", 0)
-                          , sstd::arg_rule::opt(opt_b, false, "-b", "--option-b", 0)
                           );
     ASSERT_EQ(cmd_id, sstd::arg_rule::num_error);
     
     ASSERT_TRUE(sstd::strIn(R"(error: There are duplicated input in the arg. The duplicated options are follows: `--option-a (-a)`.)", ap.err()));
     ASSERT_TRUE(opt_a==false);
-    ASSERT_TRUE(opt_b==false);
 }
 TEST(argparse, NT_opt_duplicated_2){
     std::vector<const char*> args = {"./a.out", "--option-a", "--option-a", "--option-b", "--option-b"};
@@ -379,11 +377,82 @@ TEST(argparse, NT_opt_duplicated_2){
     ASSERT_TRUE(sstd::strIn(R"(`--option-a (-a)`)", ap.err()));
     ASSERT_TRUE(opt_a==false);
     ASSERT_TRUE(opt_b==false);
-}/*
-TEST(argparse, NT_opt_duplicated_short){
-    std::vector<const char*> args = {"./a.out", "-aa"};
 }
-*/
+TEST(argparse, NT_opt_duplicated_short_1a){
+    std::vector<const char*> args = {"./a.out", "-a", "-a"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    bool opt_a=true;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::opt(opt_a, false, "-a", "--option-a", 0)
+                          );
+    ASSERT_EQ(cmd_id, sstd::arg_rule::num_error);
+    
+    ASSERT_TRUE(sstd::strIn(R"(error: There are duplicated input in the arg. The duplicated options are follows: `--option-a (-a)`.)", ap.err()));
+    ASSERT_TRUE(opt_a==false);
+}
+TEST(argparse, NT_opt_duplicated_short_1b){
+    std::vector<const char*> args = {"./a.out", "-aa"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    bool opt_a=true;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::opt(opt_a, false, "-a", "--option-a", 0)
+                          );
+    ASSERT_EQ(cmd_id, sstd::arg_rule::num_error);
+    
+    ASSERT_TRUE(sstd::strIn(R"(error: There are duplicated input in the arg. The duplicated options are follows: `--option-a (-a)`.)", ap.err()));
+    ASSERT_TRUE(opt_a==false);
+}
+TEST(argparse, NT_opt_duplicated_short_2a){
+    std::vector<const char*> args = {"./a.out", "-a", "-a", "-b", "-b"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    bool opt_a=true;
+    bool opt_b=true;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::opt(opt_a, false, "-a", "--option-a", 0)
+                          , sstd::arg_rule::opt(opt_b, false, "-b", "--option-b", 0)
+                          );
+    ASSERT_EQ(cmd_id, sstd::arg_rule::num_error);
+    
+    ASSERT_TRUE(sstd::strIn(R"(error: There are duplicated input in the arg. The duplicated options are follows: )", ap.err()));
+    ASSERT_TRUE(sstd::strIn(R"(`--option-b (-b)`)", ap.err()));
+    ASSERT_TRUE(sstd::strIn(R"(`--option-a (-a)`)", ap.err()));
+    ASSERT_TRUE(opt_a==false);
+    ASSERT_TRUE(opt_b==false);
+}
+TEST(argparse, NT_opt_duplicated_short_2b){
+    std::vector<const char*> args = {"./a.out", "-aabb"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    bool opt_a=true;
+    bool opt_b=true;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::opt(opt_a, false, "-a", "--option-a", 0)
+                          , sstd::arg_rule::opt(opt_b, false, "-b", "--option-b", 0)
+                          );
+    ASSERT_EQ(cmd_id, sstd::arg_rule::num_error);
+    
+    ASSERT_TRUE(sstd::strIn(R"(error: There are duplicated input in the arg. The duplicated options are follows: )", ap.err()));
+    ASSERT_TRUE(sstd::strIn(R"(`--option-b (-b)`)", ap.err()));
+    ASSERT_TRUE(sstd::strIn(R"(`--option-a (-a)`)", ap.err()));
+    ASSERT_TRUE(opt_a==false);
+    ASSERT_TRUE(opt_b==false);
+}
+
 
 // commands
 TEST(argparse, NT_cmd_invalid_arg){
