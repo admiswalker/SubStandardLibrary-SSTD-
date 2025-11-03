@@ -321,6 +321,25 @@ TEST(argparse, NT_opt_more_arg){
     ASSERT_TRUE(sstd::strIn(R"(error: The number of input argument(s) is `2` (["--option" "A" "B"]). But `1` argument(s) are expected by the definition of sstd::arg_rule::opt().)", ap.err()));
     ASSERT_TRUE(opt==false);
 }
+TEST(argparse, NT_opt_invalid_arg_short_1){
+    std::vector<const char*> args = {"./a.out", "-ab", "T", "T"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    bool opt_a=true;
+    bool opt_b=true;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::opt(opt_a, false, "-a", "--option-a", 1)
+                          , sstd::arg_rule::opt(opt_b, false, "-b", "--option-b", 1)
+                          );
+    ASSERT_EQ(cmd_id, sstd::arg_rule::num_error);
+    
+    ASSERT_TRUE(sstd::strIn(R"(error: The multiple short options defined by sstd::arg_rule::opt() can NOT take arguments inputted as `["-ab" "T" "T"]`. Please separate the short options inputted if you want to use them with arguments.)", ap.err()));
+    ASSERT_TRUE(opt_a==false);
+    ASSERT_TRUE(opt_b==false);
+}
 /*
 TEST(argparse, NT_opt_duplicated){
     std::vector<const char*> args = {"./a.out", "-aa"};
