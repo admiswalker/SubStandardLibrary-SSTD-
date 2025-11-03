@@ -226,21 +226,37 @@ TEST(argparse, cmd_vchar){
 // Negative testing / 異常系
 
 // options
-TEST(argparse, NT_opt_undefined_opt){
+TEST(argparse, NT_opt_undefined_opt_full){
     std::vector<const char*> args = {"./a.out", "--undefined-opt", "xxx"};
     const int argc = args.size();
     const char **argv = args.data();
 
-    bool rm_hs=true;
+    bool opt_a=true;
 
     sstd::argparse ap;
     int cmd_id = ap.parse(argc, argv
-                          , sstd::arg_rule::opt(rm_hs, false, "-a", "--option_a", 0)
+                          , sstd::arg_rule::opt(opt_a, false, "-a", "--option_a", 0)
                           );
     ASSERT_EQ(cmd_id, sstd::arg_rule::num_error);
     
     ASSERT_TRUE(sstd::strIn("error: The input argument(s) of `[\"--undefined-opt\" \"xxx\"]` is NOT defnied by sstd::arg_rule::opt() as an input option.", ap.err()));
-    ASSERT_TRUE(rm_hs==false);
+    ASSERT_TRUE(opt_a==false);
+}
+TEST(argparse, NT_opt_undefined_opt_short){
+    std::vector<const char*> args = {"./a.out", "--d"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    bool opt_a=true;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::opt(opt_a, false, "-a", "--option_a", 0)
+                          );
+    ASSERT_EQ(cmd_id, sstd::arg_rule::num_error);
+    
+    ASSERT_TRUE(sstd::strIn(R"(error: The input argument(s) of `["--d"]` is NOT defnied by sstd::arg_rule::opt() as an input option.)", ap.err()));
+    ASSERT_TRUE(opt_a==false);
 }
 TEST(argparse, NT_opt_invalid_arg){
     std::vector<const char*> args = {"./a.out", "--option", "xxx"};
