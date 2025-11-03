@@ -364,10 +364,9 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
     
     // parse option
     std::vector<bool> opt_vRule_inited(opt_vRule.size(), false);
-    int res_o1 = _process_opt     (this->errMsg, opt_vRule_inited, opt_vArgs, opt_vRule, ht_opt2idx_short, ht_opt2idx_full);
-    int res_o2 = _process_opt_init(this->errMsg, opt_vRule, opt_vRule_inited);
-    if(res_o1==-1){ return -1; }
-    if(res_o2==-1){ return -1; }
+    int res1 = _process_opt     (this->errMsg, opt_vRule_inited, opt_vArgs, opt_vRule, ht_opt2idx_short, ht_opt2idx_full);
+    int res2 = _process_opt_init(this->errMsg, opt_vRule, opt_vRule_inited);
+    if(res1==-1 || res2==-1){ return -1; }
     
     return cmd_id;
 }

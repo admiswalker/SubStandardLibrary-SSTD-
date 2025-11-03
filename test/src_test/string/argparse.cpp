@@ -147,6 +147,21 @@ TEST(argparse, opt_bool_full_false_1){ std::vector<const char*> args = {"./a.out
 TEST(argparse, opt_bool_full_False_1){ std::vector<const char*> args = {"./a.out", "--option", "False"}; TEST_OPT_BOOL(args, true, 1, false); }
 TEST(argparse, opt_bool_full_F_1    ){ std::vector<const char*> args = {"./a.out", "--option", "F"    }; TEST_OPT_BOOL(args, true, 1, false); }
 TEST(argparse, opt_bool_full_0_1    ){ std::vector<const char*> args = {"./a.out", "--option", "0"    }; TEST_OPT_BOOL(args, true, 1, false); }
+
+TEST(argparse, short_opt_1){
+    std::vector<const char*> args = {"./a.out", "-a"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    bool opt_a=false;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::opt(opt_a, true, "-a", "--option-a", 0)
+                          );
+    ASSERT_EQ(cmd_id, sstd::arg_rule::num_command_does_not_exist);
+    ASSERT_TRUE(opt_a==true);
+}
 /*
 // char
 TEST(argparse, cmd_char){
