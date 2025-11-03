@@ -162,6 +162,24 @@ TEST(argparse, short_opt_1){
     ASSERT_EQ(cmd_id, sstd::arg_rule::num_command_does_not_exist);
     ASSERT_TRUE(opt_a==true);
 }
+TEST(argparse, short_opt_2){
+    std::vector<const char*> args = {"./a.out", "-ab"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    bool opt_a=false;
+    bool opt_b=false;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::opt(opt_a, true, "-a", "--option-a", 0)
+                          , sstd::arg_rule::opt(opt_b, true, "-b", "--option-b", 0)
+                          );
+    ASSERT_EQ(cmd_id, sstd::arg_rule::num_command_does_not_exist);
+    ASSERT_TRUE(opt_a==true);
+    ASSERT_TRUE(opt_b==true);
+}
+
 /*
 // char
 TEST(argparse, cmd_char){
@@ -252,6 +270,12 @@ TEST(argparse, NT_opt_more_arg){
     ASSERT_TRUE(sstd::strIn("error: The number of input argument(s) is `2` ([\"--option\" \"A\" \"B\"]). But `1` argument(s) are expected by the definition of sstd::arg_rule::opt().", ap.err()));
     ASSERT_TRUE(rm_hs==false);
 }
+/*
+TEST(argparse, NT_opt_duplicated){
+    std::vector<const char*> args = {"./a.out", "-aa"};
+    std::vector<const char*> args = {"./a.out", "-option-a", "-option-a"};
+}
+*/
 
 // commands
 TEST(argparse, NT_cmd_invalid_arg){

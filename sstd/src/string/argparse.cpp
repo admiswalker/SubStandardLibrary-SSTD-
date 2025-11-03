@@ -169,17 +169,22 @@ bool _is_opt(const std::string& s){
     return ( _is_opt_short(s) || _is_opt_full(s) );
 }
 
-#define OPT 1
-#define CMD 2
+#define DEFAULT 0
+#define CMD 1
+#define OPT_S 2
+#define OPT_F 3
 #define NOT_A_SEPARATOR -1
 int _is_separator(const std::string& s, const std::unordered_map<std::string,uint>& ht_cmd2idx){
-    if      ( _is_opt(s)             ){ return OPT;
-    }else if( _is_cmd(s, ht_cmd2idx) ){ return CMD;
+    if      ( _is_opt_short(s)             ){ return OPT_S;
+    }else if( _is_opt_full (s)             ){ return OPT_F;
+    }else if( _is_cmd      (s, ht_cmd2idx) ){ return CMD;
     }
     return NOT_A_SEPARATOR;
 }
 
 bool _parse_argc_argv(
+                      std::string& errMsg,
+                      
                       // return variables:
                       std::vector<std::string>& res_cmd_args,
                       std::vector<std::vector<std::string>>& res_opt_vArgs,
@@ -188,30 +193,49 @@ bool _parse_argc_argv(
                       const int argc, const char* argv[],
                       const std::unordered_map<std::string,uint>& ht_cmd2idx)
 {
-    int prev_type=0;
+    int prev_type=DEFAULT;
     std::vector<std::string> tmp_args;
     for(uint i=1; i<(uint)argc; ++i){
         std::string s = argv[i];
 
         int type = _is_separator(s, ht_cmd2idx);
         if(type!=-1){
-            if      (prev_type==CMD){ std::vector<std::string> v; std::swap(v, tmp_args); res_cmd_args  <<= std::move(v);
-            }else if(prev_type==OPT){ std::vector<std::string> v; std::swap(v, tmp_args); res_opt_vArgs <<= std::move(v);
+            if      (prev_type==CMD  ){ std::vector<std::string> v; std::swap(v, tmp_args); res_cmd_args  <<= std::move(v);
+            }else if(prev_type==OPT_F){ std::vector<std::string> v; std::swap(v, tmp_args); res_opt_vArgs <<= std::move(v);
+            }else if(prev_type==OPT_S){
+                // parse "-abc" -> "-a", "-b" and "-c"
+                
+                if(tmp_args.size()!=1){ errMsg+=sstd::pdbg_err_str(("The input option defined by sstd::arg_rule::opt() can NOT take arguments inputted as `"+sstd::to_string(tmp_args)+"`.\n").c_str()); return -1; }
+                
+                for(uint i=1; i<tmp_args[0].size(); ++i){ // `i=1` means to skipp '-'.
+                    res_opt_vArgs <<= std::vector<std::string>({ std::string("-")+tmp_args[0][i] });
+                }
             }
             prev_type = type;
         }
         
         tmp_args.push_back(std::move(s));
     }
-    if      (prev_type==CMD){ res_cmd_args  <<= std::move(tmp_args); // TODO: operator の先でmove が機能するようにする
-    }else if(prev_type==OPT){ res_opt_vArgs <<= std::move(tmp_args);
+    if      (prev_type==CMD  ){ res_cmd_args  <<= std::move(tmp_args); // TODO: operator の先でmove が機能するようにする
+    }else if(prev_type==OPT_F){ res_opt_vArgs <<= std::move(tmp_args);
+    }else if(prev_type==OPT_S){
+        // parse "-abc" -> "-a", "-b" and "-c"
+        
+        if(tmp_args.size()!=1){ errMsg+=sstd::pdbg_err_str(("The input option defined by sstd::arg_rule::opt() can NOT take arguments inputted as `"+sstd::to_string(tmp_args)+"`.\n").c_str()); return -1; }
+        
+        std::vector<std::string> v;
+        for(uint i=1; i<tmp_args[0].size(); ++i){ // `i=1` means to skipp '-'.
+            res_opt_vArgs <<= std::vector<std::string>({ std::string("-")+tmp_args[0][i] });
+        }
     }
     
-    return true;
+    return 0;
 }
 #undef NOT_A_SEPARATOR
 #undef CMD
-#undef OPT
+#undef OPT_F
+#undef OPT_S
+#undef DEFAULT
 
 //---
 
@@ -283,7 +307,6 @@ int _process_opt(std::string& errMsg,
                  const std::unordered_map<std::string,uint>& ht_opt2idx_short,
                  const std::unordered_map<std::string,uint>& ht_opt2idx_full)
 {
-    int res;
     std::vector<int> opt_vIdx = _parse_opt(opt_vArgs, opt_vRule, ht_opt2idx_short, ht_opt2idx_full);
     
     std::vector<std::tuple<uint,uint>> vDuplicated = sstd__duplicated(opt_vIdx);
@@ -357,7 +380,8 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
     // Parse input argc and argv
     std::vector<std::string> cmd_args;
     std::vector<std::vector<std::string>> opt_vArgs;
-    _parse_argc_argv(cmd_args, opt_vArgs, argc, argv, ht_cmd2idx);
+    int res = _parse_argc_argv(this->errMsg, cmd_args, opt_vArgs, argc, argv, ht_cmd2idx);
+    if(res!=0){ return -1; }
     
     // parse command
     int cmd_id = _process_cmd(this->errMsg, cmd_args, cmd_vRule, ht_cmd2idx);
