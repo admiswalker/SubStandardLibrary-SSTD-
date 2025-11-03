@@ -160,24 +160,27 @@ bool _is_cmd(const std::string& s, const std::unordered_map<std::string,uint>& h
     return itr!=ht_cmd2idx.end();
 }
 bool _is_opt_short(const std::string& s){
-    return s.starts_with("-") && s.size()>=2 && sstd::isAlphabet(s[1]);
+    return s.starts_with("-") && s.size()==2 && sstd::isAlphabet(s[1]);
+}
+bool _is_opt_multi_short(const std::string& s){
+    return s.starts_with("-") && s.size()>=3 && sstd::isAlphabet(s[1]);
 }
 bool _is_opt_full(const std::string& s){
     return s.starts_with("--") && s.size()>=3 && sstd::isAlphabet(s[2]);
 }
-bool _is_opt(const std::string& s){
+bool _is_opt_fs(const std::string& s){
     return ( _is_opt_short(s) || _is_opt_full(s) );
 }
 
 #define DEFAULT 0
 #define CMD 1
-#define OPT_S 2
-#define OPT_F 3
+#define OPT 2
+#define OPT_M 3
 #define NOT_A_SEPARATOR -1
 int _is_separator(const std::string& s, const std::unordered_map<std::string,uint>& ht_cmd2idx){
-    if      ( _is_opt_short(s)             ){ return OPT_S;
-    }else if( _is_opt_full (s)             ){ return OPT_F;
-    }else if( _is_cmd      (s, ht_cmd2idx) ){ return CMD;
+    if      ( _is_opt_fs         (s)             ){ return OPT;
+    }else if( _is_opt_multi_short(s)             ){ return OPT_M;
+    }else if( _is_cmd            (s, ht_cmd2idx) ){ return CMD;
     }
     return NOT_A_SEPARATOR;
 }
@@ -201,8 +204,8 @@ bool _parse_argc_argv(
         int type = _is_separator(s, ht_cmd2idx);
         if(type!=-1){
             if      (prev_type==CMD  ){ std::vector<std::string> v; std::swap(v, tmp_args); res_cmd_args  <<= std::move(v);
-            }else if(prev_type==OPT_F){ std::vector<std::string> v; std::swap(v, tmp_args); res_opt_vArgs <<= std::move(v);
-            }else if(prev_type==OPT_S){
+            }else if(prev_type==OPT  ){ std::vector<std::string> v; std::swap(v, tmp_args); res_opt_vArgs <<= std::move(v);
+            }else if(prev_type==OPT_M){
                 // parse "-abc" -> "-a", "-b" and "-c"
                 
                 if(tmp_args.size()!=1){ errMsg+=sstd::pdbg_err_str(("The input option defined by sstd::arg_rule::opt() can NOT take arguments inputted as `"+sstd::to_string(tmp_args)+"`.\n").c_str()); return -1; }
@@ -217,8 +220,8 @@ bool _parse_argc_argv(
         tmp_args.push_back(std::move(s));
     }
     if      (prev_type==CMD  ){ res_cmd_args  <<= std::move(tmp_args); // TODO: operator の先でmove が機能するようにする
-    }else if(prev_type==OPT_F){ res_opt_vArgs <<= std::move(tmp_args);
-    }else if(prev_type==OPT_S){
+    }else if(prev_type==OPT  ){ res_opt_vArgs <<= std::move(tmp_args);
+    }else if(prev_type==OPT_M){
         // parse "-abc" -> "-a", "-b" and "-c"
         
         if(tmp_args.size()!=1){ errMsg+=sstd::pdbg_err_str(("The input option defined by sstd::arg_rule::opt() can NOT take arguments inputted as `"+sstd::to_string(tmp_args)+"`.\n").c_str()); return -1; }
@@ -232,9 +235,9 @@ bool _parse_argc_argv(
     return 0;
 }
 #undef NOT_A_SEPARATOR
+#undef OPT_M
+#undef OPT
 #undef CMD
-#undef OPT_F
-#undef OPT_S
 #undef DEFAULT
 
 //---
@@ -389,7 +392,9 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
     // parse option
     std::vector<bool> opt_vRule_inited(opt_vRule.size(), false);
     int res1 = _process_opt     (this->errMsg, opt_vRule_inited, opt_vArgs, opt_vRule, ht_opt2idx_short, ht_opt2idx_full);
+    sstd::printn_all(res1);
     int res2 = _process_opt_init(this->errMsg, opt_vRule, opt_vRule_inited);
+    sstd::printn_all(res2);
     if(res1==-1 || res2==-1){ return -1; }
     
     return cmd_id;

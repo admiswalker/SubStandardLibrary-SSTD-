@@ -200,6 +200,21 @@ TEST(argparse, short_opt_3){
     ASSERT_TRUE(opt_c==true);
 }
 
+TEST(argparse, short_opt_arg_1){
+    std::vector<const char*> args = {"./a.out", "-o", "T"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    bool opt=true;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::opt(opt, false, "-o", "--option", 1)
+                          );
+    ASSERT_EQ(cmd_id, sstd::arg_rule::num_command_does_not_exist);
+    ASSERT_TRUE(opt==true);
+}
+
 /*
 // char
 TEST(argparse, cmd_char){
@@ -226,7 +241,7 @@ TEST(argparse, cmd_vchar){
 // Negative testing / 異常系
 
 // options
-TEST(argparse, NT_opt_undefined_opt_full){
+TEST(argparse, NT_opt_undefined_opt){
     std::vector<const char*> args = {"./a.out", "--undefined-opt", "xxx"};
     const int argc = args.size();
     const char **argv = args.data();
