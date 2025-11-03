@@ -75,14 +75,14 @@ int sstd__str2voidp(void* return_val_ptr, const int type, const std::vector<std:
 int _get_cmd_id(const struct sstd::arg_rule::cmd_rule& cmdRule){ return cmdRule.cmd_id; }
 int _get_cmd_id(const struct sstd::arg_rule::opt_rule& optRule){ return 0; }
 template<typename T>
-int _fill_result_arg_by_val(std::string& errMsg, const T& rule, const std::vector<std::string>& cmd_args){
+int _fill_result_arg_by_val(std::string& errMsg, const T& rule, const std::vector<std::string>& input_args){
 
-    std::vector<std::string> args = cmd_args&&sstd::slice(1,sstd::end());
+    std::vector<std::string> args = input_args&&sstd::slice(1,sstd::end());
     uint arg_len = rule.expected_num_of_args;
     
     int res=0;
     if(arg_len!=-1 && args.size()!=arg_len){
-        errMsg+=sstd::pdbg_err_str(("The number of input argument(s) is `"+std::to_string(args.size())+"` ("+sstd::to_string(cmd_args)+"). But `"+std::to_string(arg_len)+"` argument(s) are expected by the definition of sstd::arg_rule::opt().\n").c_str());
+        errMsg+=sstd::pdbg_err_str(("The number of input argument(s) is `"+std::to_string(args.size())+"` ("+sstd::to_string(input_args)+"). But `"+std::to_string(arg_len)+"` argument(s) are expected by the definition of sstd::arg_rule::opt().\n").c_str());
         res = -1;
     }
 
@@ -92,7 +92,7 @@ int _fill_result_arg_by_val(std::string& errMsg, const T& rule, const std::vecto
     if(res==0 && args.size()!=0){
         res = sstd__str2voidp(ptr, type, args);
         if(res==-1){
-            errMsg+=sstd::pdbg_err_str(("The input arguments of `"+sstd::to_string(cmd_args)+"` is failed to convert to `"+sstd::typeNum2str(type)+"` type.\n").c_str());
+            errMsg+=sstd::pdbg_err_str(("The input arguments of `"+sstd::to_string(input_args)+"` is failed to convert to `"+sstd::typeNum2str(type)+"` type.\n").c_str());
         }else if(res==-2){
             errMsg+=sstd::pdbg_err_str(("The input data type of `"+sstd::typeNum2str(type)+"` is our of support.\n").c_str());
         }
@@ -277,6 +277,7 @@ std::vector<int> _parse_opt(const std::vector<std::vector<std::string>>& opt_vAr
 }
 
 int _process_opt(std::string& errMsg,
+                 std::vector<bool>& opt_vRule_inited,
                  const std::vector<std::vector<std::string>>& opt_vArgs,
                  const std::vector<struct sstd::arg_rule::opt_rule>& opt_vRule,
                  const std::unordered_map<std::string,uint>& ht_opt2idx_short,
@@ -297,10 +298,32 @@ int _process_opt(std::string& errMsg,
             return -1;
         }
         int res = _fill_result_arg_by_val(errMsg, opt_vRule[opt_idx], opt_vArgs[opt_idx]);
+        opt_vRule_inited[opt_idx] = true; // Even if the `_fill_result_arg_by_val` failed, this function tried to update the option by default value.
         if(res!=0){ return -1; }
     }
     
     return 0;
+}
+
+int _process_opt_init(std::string& errMsg,
+                      const std::vector<struct sstd::arg_rule::opt_rule>& opt_vRule,
+                      const std::vector<bool>& opt_vRule_inited)
+{
+    int res=0;
+    
+    for(uint i=0; i<opt_vRule_inited.size(); ++i){
+        if(opt_vRule_inited[i]){ continue; }
+
+        int   type = opt_vRule[i].return_val_type;
+        void* ptr  = opt_vRule[i].return_val_ptr;
+        bool tf = _fill_by_initial_val(ptr, type, opt_vRule[i].initial_val_ptr);
+        if(!tf){
+            errMsg+=sstd::pdbg_err_str(("Failed to init default value. Data type is `"+sstd::typeNum2str(type)+"`.\n").c_str());
+            res = -1;
+        }
+    }
+    
+    return res;
 }
 
 //---
@@ -340,8 +363,11 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
     int cmd_id = _process_cmd(this->errMsg, cmd_args, cmd_vRule, ht_cmd2idx);
     
     // parse option
-    int res = _process_opt(this->errMsg, opt_vArgs, opt_vRule, ht_opt2idx_short, ht_opt2idx_full);
-    if(res==-1){ return -1; }
+    std::vector<bool> opt_vRule_inited(opt_vRule.size(), false);
+    int res_o1 = _process_opt     (this->errMsg, opt_vRule_inited, opt_vArgs, opt_vRule, ht_opt2idx_short, ht_opt2idx_full);
+    int res_o2 = _process_opt_init(this->errMsg, opt_vRule, opt_vRule_inited);
+    if(res_o1==-1){ return -1; }
+    if(res_o2==-1){ return -1; }
     
     return cmd_id;
 }
