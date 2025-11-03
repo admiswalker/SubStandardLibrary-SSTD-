@@ -314,7 +314,12 @@ int _process_opt(std::string& errMsg,
     
     std::vector<std::tuple<uint,uint>> vDuplicated = sstd__duplicated(opt_vIdx);
     if(vDuplicated.size()!=0){
-        errMsg = "ERROR: There are duplicated definition in the arg input.";
+        std::string err = "There are duplicated input in the arg. The duplicated options are follows:";
+        for(uint i=0; i<vDuplicated.size(); ++i){
+            err += " `"+opt_vRule[ std::get<0>(vDuplicated[i]) ].opt_full+" ("+opt_vRule[ std::get<0>(vDuplicated[i]) ].opt_short+")`";
+        }
+        err += ".\n";
+        errMsg+=sstd::pdbg_err_str(err.c_str());
         return -1;
     }
     for(uint i=0; i<opt_vIdx.size(); ++i){
