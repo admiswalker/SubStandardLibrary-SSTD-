@@ -215,7 +215,6 @@ TEST(argparse, short_opt_arg_1){
     ASSERT_TRUE(opt==true);
 }
 
-/*
 // char
 TEST(argparse, cmd_char){
 }
@@ -232,11 +231,10 @@ TEST(argparse, cmd_vchar){
     int cmd_id = ap.parse(argc, argv
                           , sstd::arg_rule::cmd((int)CmdID::SAMPLE_CMD, v, {}, "cmd", -1)
                           );
-    sstd::printn(ap.err());
     ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);
     ASSERT_TRUE(v==std::vector<char>({'a','b','c'}));
 }
-*/
+
 //---
 // Negative testing / 異常系
 
