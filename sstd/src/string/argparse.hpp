@@ -43,6 +43,11 @@ namespace sstd{
 //---
 
 namespace sstd::arg_rule{
+    const static int num_error                  = -1;
+    const static int num_command_does_not_exist = -2;
+    
+    //---
+    
     struct cmd_rule{
         int cmd_id                     = -1;
         int   return_val_type          = sstd::num_null;
