@@ -186,6 +186,7 @@ int _is_separator(const std::string& s, const std::unordered_map<std::string,uin
 }
 std::vector<std::vector<std::string>> _split_opt_m(bool& res, std::string& errMsg, const std::vector<std::string>& args){ // split multi short option
     // parse "-abc" -> "-a", "-b", "-c"
+    
     std::vector<std::vector<std::string>> res_vv;
     res=true;
     if(args.size()!=1){ errMsg+=sstd::pdbg_err_str(("The multiple short options defined by sstd::arg_rule::opt() can NOT take arguments inputted as `"+sstd::to_string(args)+"`. Please separate the short options inputted if you want to use them with arguments.\n").c_str()); res=false; return res_vv; }
