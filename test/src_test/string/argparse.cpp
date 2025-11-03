@@ -179,6 +179,26 @@ TEST(argparse, short_opt_2){
     ASSERT_TRUE(opt_a==true);
     ASSERT_TRUE(opt_b==true);
 }
+TEST(argparse, short_opt_3){
+    std::vector<const char*> args = {"./a.out", "-abc"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    bool opt_a=false;
+    bool opt_b=false;
+    bool opt_c=false;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::opt(opt_a, true, "-a", "--option-a", 0)
+                          , sstd::arg_rule::opt(opt_b, true, "-b", "--option-b", 0)
+                          , sstd::arg_rule::opt(opt_c, true, "-c", "--option-c", 0)
+                          );
+    ASSERT_EQ(cmd_id, sstd::arg_rule::num_command_does_not_exist);
+    ASSERT_TRUE(opt_a==true);
+    ASSERT_TRUE(opt_b==true);
+    ASSERT_TRUE(opt_c==true);
+}
 
 /*
 // char
