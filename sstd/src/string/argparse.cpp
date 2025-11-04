@@ -60,6 +60,22 @@ bool sstd__str2val(char& return_val, const std::vector<std::string>& v){
     
     return true;
 }
+
+#define SSTD_STR2VAL_INTEGER(T, FN_S2I)         \
+    if(v.size()!=1){ return false; }            \
+    if(!sstd::isNum(v[0])){ return false; }     \
+                                                \
+    return_val=(T)FN_S2I(v[0]);                 \
+                                                \
+    return true;
+bool sstd__str2val( int8 & return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER( int8,  std::stol  ); }
+
+bool sstd__str2val(uint8 & return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER(uint8,  std::stoul ); }
+bool sstd__str2val(uint16& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER(uint16, std::stoul ); }
+bool sstd__str2val(uint32& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER(uint32, std::stoul ); }
+bool sstd__str2val(uint64& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER(uint64, std::stoull); }
+#undef SSTD_STR2VAL_INTEGER
+
 bool sstd__str2val(std::vector<char>& return_val, const std::vector<std::string>& v){
     for(uint i=0; i<v.size(); ++i){
         if(v[i].size()!=1){ return false; }
@@ -80,6 +96,11 @@ int sstd__str2voidp(void* return_val_ptr, const int type, const std::vector<std:
     switch(type){
     case sstd::num_bool:      { if(!sstd__str2val(*(bool              *)return_val_ptr, v)){return -1;} } break;
     case sstd::num_char:      { if(!sstd__str2val(*(char              *)return_val_ptr, v)){return -1;} } break;
+    case sstd::num_int8:      { if(!sstd__str2val(*( int8             *)return_val_ptr, v)){return -1;} } break;
+    case sstd::num_uint8:     { if(!sstd__str2val(*(uint8             *)return_val_ptr, v)){return -1;} } break;
+    case sstd::num_uint16:    { if(!sstd__str2val(*(uint16            *)return_val_ptr, v)){return -1;} } break;
+    case sstd::num_uint32:    { if(!sstd__str2val(*(uint32            *)return_val_ptr, v)){return -1;} } break;
+    case sstd::num_uint64:    { if(!sstd__str2val(*(uint64            *)return_val_ptr, v)){return -1;} } break;
     case sstd::num_vec_char:  { if(!sstd__str2val(*(std::vector<char> *)return_val_ptr, v)){return -1;} } break;
     case sstd::num_vec_int32: { if(!sstd__str2val(*(std::vector<int32>*)return_val_ptr, v)){return -1;} } break;
     default: { return -2; }

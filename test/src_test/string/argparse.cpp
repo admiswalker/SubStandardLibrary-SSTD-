@@ -2,6 +2,7 @@
 #include "../../gtest_parallel/test_main.hpp"
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
+// Complicated tests
 /*
 enum class CmdID{
                  EMPTY,
@@ -120,33 +121,8 @@ TEST(argparse, cmd_expect_m1_in_3){
     ASSERT_TRUE(vlineNum==std::vector<int>({1,3,5}));
 }
 
-//---
-// Normal testing / 正常系
-
-// bool
-#define TEST_OPT_BOOL(ARGS, DEFAULT, CNT, ANS)                          \
-    const int argc = ARGS.size();                                       \
-    const char **argv = ARGS.data();                                    \
-                                                                        \
-    bool rm_hs=!ANS;                                                    \
-                                                                        \
-    sstd::argparse ap;                                                  \
-    int cmd_id = ap.parse(argc, argv                                    \
-                          , sstd::arg_rule::opt(rm_hs, DEFAULT, "-o", "--option", CNT) \
-                          );                                            \
-    ASSERT_EQ(cmd_id, sstd::arg_rule::num_command_does_not_exist);      \
-    ASSERT_TRUE(rm_hs==ANS);
-TEST(argparse, opt_bool_full_true_as_default ){ std::vector<const char*> args = {"./a.out", "--option"}; TEST_OPT_BOOL(args, true,  0, true);   }
-TEST(argparse, opt_bool_full_false_as_default){ std::vector<const char*> args = {"./a.out", "--option"}; TEST_OPT_BOOL(args, false, 0, false); }
-
-TEST(argparse, opt_bool_full_true_1){ std::vector<const char*> args = {"./a.out", "--option", "true"}; TEST_OPT_BOOL(args, false, 1, true); }
-TEST(argparse, opt_bool_full_True_1){ std::vector<const char*> args = {"./a.out", "--option", "True"}; TEST_OPT_BOOL(args, false, 1, true); }
-TEST(argparse, opt_bool_full_T_1   ){ std::vector<const char*> args = {"./a.out", "--option", "T"};    TEST_OPT_BOOL(args, false, 1, true); }
-TEST(argparse, opt_bool_full_1_1   ){ std::vector<const char*> args = {"./a.out", "--option", "1"};    TEST_OPT_BOOL(args, false, 1, true); }
-TEST(argparse, opt_bool_full_false_1){ std::vector<const char*> args = {"./a.out", "--option", "false"}; TEST_OPT_BOOL(args, true, 1, false); }
-TEST(argparse, opt_bool_full_False_1){ std::vector<const char*> args = {"./a.out", "--option", "False"}; TEST_OPT_BOOL(args, true, 1, false); }
-TEST(argparse, opt_bool_full_F_1    ){ std::vector<const char*> args = {"./a.out", "--option", "F"    }; TEST_OPT_BOOL(args, true, 1, false); }
-TEST(argparse, opt_bool_full_0_1    ){ std::vector<const char*> args = {"./a.out", "--option", "0"    }; TEST_OPT_BOOL(args, true, 1, false); }
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// Normal testing for parsing / パーシング正常系
 
 TEST(argparse, short_opt_1){
     std::vector<const char*> args = {"./a.out", "-a"};
@@ -215,43 +191,8 @@ TEST(argparse, short_opt_arg_1){
     ASSERT_TRUE(opt==true);
 }
 
-// char
-TEST(argparse, cmd_char){
-    std::vector<const char*> args = {"./a.out", "cmd", "a"};
-    const int argc = args.size();
-    const char **argv = args.data();
-
-    enum class CmdID{SAMPLE_CMD};
-    
-    char res;
-
-    sstd::argparse ap;
-    int cmd_id = ap.parse(argc, argv
-                          , sstd::arg_rule::cmd((int)CmdID::SAMPLE_CMD, res, 'x', "cmd", -1)
-                          );
-    ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);
-    ASSERT_TRUE(res=='a');
-//    ASSERT_TRUE(false);
-}
-TEST(argparse, cmd_vchar){
-    std::vector<const char*> args = {"./a.out", "cmd", "a", "b", "c"};
-    const int argc = args.size();
-    const char **argv = args.data();
-
-    enum class CmdID{SAMPLE_CMD};
-    
-    std::vector<char> v;
-
-    sstd::argparse ap;
-    int cmd_id = ap.parse(argc, argv
-                          , sstd::arg_rule::cmd((int)CmdID::SAMPLE_CMD, v, {}, "cmd", -1)
-                          );
-    ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);
-    ASSERT_TRUE(v==std::vector<char>({'a','b','c'}));
-}
-
-//---
-// Negative testing / 異常系
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// Negative testing for parsing / パーシング異常系
 
 // options
 TEST(argparse, NT_opt_undefined_opt){
@@ -556,6 +497,136 @@ TEST(argparse, NT_cmd_duplicated){
     
     ASSERT_TRUE(vlineNum==std::vector<int>({9,8,7}));
 }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// Normal testing for value conversion / 正常系 (値変換)
+
+//---
+// bool
+#define TEST_OPT_BOOL(ARGS, DEFAULT, CNT, ANS)                          \
+    const int argc = ARGS.size();                                       \
+    const char **argv = ARGS.data();                                    \
+                                                                        \
+    bool rm_hs=!ANS;                                                    \
+                                                                        \
+    sstd::argparse ap;                                                  \
+    int cmd_id = ap.parse(argc, argv                                    \
+                          , sstd::arg_rule::opt(rm_hs, DEFAULT, "-o", "--option", CNT) \
+                          );                                            \
+    ASSERT_EQ(cmd_id, sstd::arg_rule::num_command_does_not_exist);      \
+    ASSERT_TRUE(rm_hs==ANS);
+TEST(argparse, opt_bool_full_true_as_default ){ std::vector<const char*> args = {"./a.out", "--option"}; TEST_OPT_BOOL(args, true,  0, true);   }
+TEST(argparse, opt_bool_full_false_as_default){ std::vector<const char*> args = {"./a.out", "--option"}; TEST_OPT_BOOL(args, false, 0, false); }
+
+TEST(argparse, opt_bool_full_true_1){ std::vector<const char*> args = {"./a.out", "--option", "true"}; TEST_OPT_BOOL(args, false, 1, true); }
+TEST(argparse, opt_bool_full_True_1){ std::vector<const char*> args = {"./a.out", "--option", "True"}; TEST_OPT_BOOL(args, false, 1, true); }
+TEST(argparse, opt_bool_full_T_1   ){ std::vector<const char*> args = {"./a.out", "--option", "T"};    TEST_OPT_BOOL(args, false, 1, true); }
+TEST(argparse, opt_bool_full_1_1   ){ std::vector<const char*> args = {"./a.out", "--option", "1"};    TEST_OPT_BOOL(args, false, 1, true); }
+TEST(argparse, opt_bool_full_false_1){ std::vector<const char*> args = {"./a.out", "--option", "false"}; TEST_OPT_BOOL(args, true, 1, false); }
+TEST(argparse, opt_bool_full_False_1){ std::vector<const char*> args = {"./a.out", "--option", "False"}; TEST_OPT_BOOL(args, true, 1, false); }
+TEST(argparse, opt_bool_full_F_1    ){ std::vector<const char*> args = {"./a.out", "--option", "F"    }; TEST_OPT_BOOL(args, true, 1, false); }
+TEST(argparse, opt_bool_full_0_1    ){ std::vector<const char*> args = {"./a.out", "--option", "0"    }; TEST_OPT_BOOL(args, true, 1, false); }
+
+//---
+// char
+TEST(argparse, cmd_char){
+    std::vector<const char*> args = {"./a.out", "cmd", "a"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    enum class CmdID{SAMPLE_CMD};
+    
+    char res;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::cmd((int)CmdID::SAMPLE_CMD, res, 'x', "cmd", -1)
+                          );
+    ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);
+    ASSERT_TRUE(res=='a');
+//    ASSERT_TRUE(false);
+}
+TEST(argparse, cmd_vchar){
+    std::vector<const char*> args = {"./a.out", "cmd", "a", "b", "c"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    enum class CmdID{SAMPLE_CMD};
+    
+    std::vector<char> v;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::cmd((int)CmdID::SAMPLE_CMD, v, {}, "cmd", -1)
+                          );
+    ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);
+    ASSERT_TRUE(v==std::vector<char>({'a','b','c'}));
+}
+
+//---
+// uchar
+
+// Skipp (same with uint8)
+
+//---
+// int8, int16, int32, int64, uint8, uint16, uint32, uint64
+
+#define TEST_NUMERIC_TYPES(TYPE, CNT, DEFAULT, ARG_STR, ANS)            \
+    std::vector<const char*> args = {"./a.out", "cmd", ARG_STR};        \
+    const int argc = args.size();                                       \
+    const char **argv = args.data();                                    \
+                                                                        \
+    enum class CmdID{SAMPLE_CMD};                                       \
+                                                                        \
+    TYPE res;                                                           \
+                                                                        \
+    sstd::argparse ap;                                                  \
+    int cmd_id = ap.parse(argc, argv                                    \
+                          , sstd::arg_rule::cmd((int)CmdID::SAMPLE_CMD, res, DEFAULT, "cmd", CNT) \
+                          );                                            \
+    ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);                          \
+    ASSERT_TRUE(res==ANS);
+/*
+TEST(argparse, cmd_i8_1 ){ TEST_NUMERIC_TYPES( int8,  1, ( int8 )-128, "0", 0); }
+TEST(argparse, cmd_i8_2 ){ TEST_NUMERIC_TYPES( int8,  1, ( int8 ) 127, "0", 0); }
+TEST(argparse, cmd_i8_3 ){ TEST_NUMERIC_TYPES( int8,  1, ( int8 )0, "-128", -128); }
+TEST(argparse, cmd_i8_4 ){ TEST_NUMERIC_TYPES( int8,  1, ( int8 )0, "127", 127); }
+*/
+TEST(argparse, cmd_u8_1 ){ TEST_NUMERIC_TYPES(uint8,  1, (uint8 )255, "0", 0); }
+TEST(argparse, cmd_u8_2 ){ TEST_NUMERIC_TYPES(uint8,  1, (uint8 )0, "255", 255); }
+
+TEST(argparse, cmd_u16_1){ TEST_NUMERIC_TYPES(uint16, 1, (uint16)65535, "0", 0); }
+TEST(argparse, cmd_u16_2){ TEST_NUMERIC_TYPES(uint16, 1, (uint16)0, "65535", 65535); }
+
+TEST(argparse, cmd_u32_1){ TEST_NUMERIC_TYPES(uint32, 1, (uint32)4294967295, "0", 0); }
+TEST(argparse, cmd_u32_2){ TEST_NUMERIC_TYPES(uint32, 1, (uint32)0, "4294967295", 4294967295); }
+
+TEST(argparse, cmd_u64_1){ TEST_NUMERIC_TYPES(uint64, 1, (uint64)18446744073709551615ull, "0", 0); }
+TEST(argparse, cmd_u64_2){ TEST_NUMERIC_TYPES(uint64, 1, (uint64)0, "18446744073709551615", 18446744073709551615ull); }
+
+#undef TEST_NUMERIC_TYPES
+
+//---
+// uint8
+/*
+TEST(argparse, cmd_uint8){
+    std::vector<const char*> args = {"./a.out", "cmd", "255"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    enum class CmdID{SAMPLE_CMD};
+    
+    uint8 res;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::cmd((int)CmdID::SAMPLE_CMD, res, (uint8)0, "cmd", 1)
+                          );
+    ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);
+    ASSERT_TRUE(res==(uint8)255);
+}
+*/
+// vec_uint8
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
