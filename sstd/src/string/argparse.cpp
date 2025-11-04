@@ -52,6 +52,14 @@ bool sstd__str2val(bool& return_val, const std::vector<std::string>& v){
     
     return false;
 }
+bool sstd__str2val(char& return_val, const std::vector<std::string>& v){
+    if(v.size()!=1){ return false; }
+    if(v[0].size()!=1){ return false; }
+    
+    return_val=(char)v[0][0];
+    
+    return true;
+}
 bool sstd__str2val(std::vector<char>& return_val, const std::vector<std::string>& v){
     for(uint i=0; i<v.size(); ++i){
         if(v[i].size()!=1){ return false; }
@@ -71,6 +79,7 @@ int sstd__str2voidp(void* return_val_ptr, const int type, const std::vector<std:
     
     switch(type){
     case sstd::num_bool:      { if(!sstd__str2val(*(bool              *)return_val_ptr, v)){return -1;} } break;
+    case sstd::num_char:      { if(!sstd__str2val(*(char              *)return_val_ptr, v)){return -1;} } break;
     case sstd::num_vec_char:  { if(!sstd__str2val(*(std::vector<char> *)return_val_ptr, v)){return -1;} } break;
     case sstd::num_vec_int32: { if(!sstd__str2val(*(std::vector<int32>*)return_val_ptr, v)){return -1;} } break;
     default: { return -2; }

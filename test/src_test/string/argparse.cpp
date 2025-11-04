@@ -217,6 +217,21 @@ TEST(argparse, short_opt_arg_1){
 
 // char
 TEST(argparse, cmd_char){
+    std::vector<const char*> args = {"./a.out", "cmd", "a"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    enum class CmdID{SAMPLE_CMD};
+    
+    char res;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::cmd((int)CmdID::SAMPLE_CMD, res, 'x', "cmd", -1)
+                          );
+    ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);
+    ASSERT_TRUE(res=='a');
+//    ASSERT_TRUE(false);
 }
 TEST(argparse, cmd_vchar){
     std::vector<const char*> args = {"./a.out", "cmd", "a", "b", "c"};
