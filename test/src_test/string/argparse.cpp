@@ -592,6 +592,11 @@ TEST(argparse, cmd_i8_2 ){ TEST_NUMERIC_TYPES( int8,  1, ( int8 ) 127, "0", 0); 
 TEST(argparse, cmd_i8_3 ){ TEST_NUMERIC_TYPES( int8,  1, ( int8 )0, "-128", -128); }
 TEST(argparse, cmd_i8_4 ){ TEST_NUMERIC_TYPES( int8,  1, ( int8 )0, "127", 127); }
 
+TEST(argparse, cmd_i16_1){ TEST_NUMERIC_TYPES( int16, 1, ( int16)-32768, "0", 0); }
+TEST(argparse, cmd_i16_2){ TEST_NUMERIC_TYPES( int16, 1, ( int16) 32767, "0", 0); }
+TEST(argparse, cmd_i16_3){ TEST_NUMERIC_TYPES( int16, 1, ( int16)0, "-32768", -32768); }
+TEST(argparse, cmd_i16_4){ TEST_NUMERIC_TYPES( int16, 1, ( int16)0, "32767", 32767); }
+
 TEST(argparse, cmd_u8_1 ){ TEST_NUMERIC_TYPES(uint8,  1, (uint8 )255, "0", 0); }
 TEST(argparse, cmd_u8_2 ){ TEST_NUMERIC_TYPES(uint8,  1, (uint8 )0, "255", 255); }
 
