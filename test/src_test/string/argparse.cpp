@@ -602,6 +602,11 @@ TEST(argparse, cmd_i32_2){ TEST_NUMERIC_TYPES( int32, 1, ( int32) 2147483647, "0
 TEST(argparse, cmd_i32_3){ TEST_NUMERIC_TYPES( int32, 1, ( int32)0, "-2147483648", -2147483648); }
 TEST(argparse, cmd_i32_4){ TEST_NUMERIC_TYPES( int32, 1, ( int32)0, "2147483647", 2147483647); }
 
+TEST(argparse, cmd_i64_1){ TEST_NUMERIC_TYPES( int64, 1, ( int64)-9223372036854775808ll, "0", 0); }
+TEST(argparse, cmd_i64_2){ TEST_NUMERIC_TYPES( int64, 1, ( int64) 9223372036854775807, "0", 0); }
+TEST(argparse, cmd_i64_3){ TEST_NUMERIC_TYPES( int64, 1, ( int64)0, "-9223372036854775808", -9223372036854775808ll); }
+TEST(argparse, cmd_i64_4){ TEST_NUMERIC_TYPES( int64, 1, ( int64)0, "9223372036854775807", 9223372036854775807ll); }
+
 TEST(argparse, cmd_u8_1 ){ TEST_NUMERIC_TYPES(uint8,  1, (uint8 )255, "0", 0); }
 TEST(argparse, cmd_u8_2 ){ TEST_NUMERIC_TYPES(uint8,  1, (uint8 )0, "255", 255); }
 
