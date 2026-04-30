@@ -586,12 +586,12 @@ TEST(argparse, cmd_vchar){
                           );                                            \
     ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);                          \
     ASSERT_TRUE(res==ANS);
-/*
+
 TEST(argparse, cmd_i8_1 ){ TEST_NUMERIC_TYPES( int8,  1, ( int8 )-128, "0", 0); }
 TEST(argparse, cmd_i8_2 ){ TEST_NUMERIC_TYPES( int8,  1, ( int8 ) 127, "0", 0); }
 TEST(argparse, cmd_i8_3 ){ TEST_NUMERIC_TYPES( int8,  1, ( int8 )0, "-128", -128); }
 TEST(argparse, cmd_i8_4 ){ TEST_NUMERIC_TYPES( int8,  1, ( int8 )0, "127", 127); }
-*/
+
 TEST(argparse, cmd_u8_1 ){ TEST_NUMERIC_TYPES(uint8,  1, (uint8 )255, "0", 0); }
 TEST(argparse, cmd_u8_2 ){ TEST_NUMERIC_TYPES(uint8,  1, (uint8 )0, "255", 255); }
 

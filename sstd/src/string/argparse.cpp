@@ -63,17 +63,17 @@ bool sstd__str2val(char& return_val, const std::vector<std::string>& v){
 
 #define SSTD_STR2VAL_INTEGER(T, FN_S2I)         \
     if(v.size()!=1){ return false; }            \
-    if(!sstd::isNum(v[0])){ return false; }     \
                                                 \
-    return_val=(T)FN_S2I(v[0]);                 \
+    char *pEnd;                                 \
+    return_val=(T)FN_S2I(v[0].c_str(), &pEnd, 0);       \
                                                 \
-    return true;
-bool sstd__str2val( int8 & return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER( int8,  std::stol  ); }
+    return *pEnd=='\0';
+bool sstd__str2val( int8 & return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER( int8,  std::strtol  ); }
 
-bool sstd__str2val(uint8 & return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER(uint8,  std::stoul ); }
-bool sstd__str2val(uint16& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER(uint16, std::stoul ); }
-bool sstd__str2val(uint32& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER(uint32, std::stoul ); }
-bool sstd__str2val(uint64& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER(uint64, std::stoull); }
+bool sstd__str2val(uint8 & return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER(uint8,  std::strtoul ); }
+bool sstd__str2val(uint16& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER(uint16, std::strtoul ); }
+bool sstd__str2val(uint32& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER(uint32, std::strtoul ); }
+bool sstd__str2val(uint64& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER(uint64, std::strtoull); }
 #undef SSTD_STR2VAL_INTEGER
 
 bool sstd__str2val(std::vector<char>& return_val, const std::vector<std::string>& v){

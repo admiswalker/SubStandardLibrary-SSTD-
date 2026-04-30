@@ -85,7 +85,7 @@ namespace sstd::arg_rule{
         
         return res;
     }
-
+    
     //---
     
     template<typename T>
@@ -141,5 +141,4 @@ public:
     const std::vector<struct sstd::arg_rule::cmd_rule>& _get_arg_vCmd(){ return arg_vCmd; }
     const std::vector<struct sstd::arg_rule::opt_rule>& _get_arg_vOpt(){ return arg_vOpt; }
 };
-
 
