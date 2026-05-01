@@ -569,7 +569,7 @@ TEST(argparse, cmd_vchar){
 // Skipp (same with uint8)
 
 //---
-// int8, int16, int32, int64, uint8, uint16, uint32, uint64
+// int8, int16, int32, int64, uint8, uint16, uint32, uint64, float, double
 
 #define TEST_NUMERIC_TYPES(TYPE, CNT, DEFAULT, ARG_STR, ANS)            \
     std::vector<const char*> args = {"./a.out", "cmd", ARG_STR};        \
@@ -585,7 +585,7 @@ TEST(argparse, cmd_vchar){
                           , sstd::arg_rule::cmd((int)CmdID::SAMPLE_CMD, res, DEFAULT, "cmd", CNT) \
                           );                                            \
     ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);                          \
-    ASSERT_TRUE(res==ANS);
+    ASSERT_EQ(res, (TYPE)ANS);
 
 TEST(argparse, cmd_i8_1 ){ TEST_NUMERIC_TYPES( int8,  1, ( int8 )-128, "0", 0); }
 TEST(argparse, cmd_i8_2 ){ TEST_NUMERIC_TYPES( int8,  1, ( int8 ) 127, "0", 0); }
@@ -603,7 +603,7 @@ TEST(argparse, cmd_i32_3){ TEST_NUMERIC_TYPES( int32, 1, ( int32)0, "-2147483648
 TEST(argparse, cmd_i32_4){ TEST_NUMERIC_TYPES( int32, 1, ( int32)0, "2147483647", 2147483647); }
 
 TEST(argparse, cmd_i64_1){ TEST_NUMERIC_TYPES( int64, 1, ( int64)-9223372036854775808ll, "0", 0); }
-TEST(argparse, cmd_i64_2){ TEST_NUMERIC_TYPES( int64, 1, ( int64) 9223372036854775807, "0", 0); }
+TEST(argparse, cmd_i64_2){ TEST_NUMERIC_TYPES( int64, 1, ( int64) 9223372036854775807ll, "0", 0); }
 TEST(argparse, cmd_i64_3){ TEST_NUMERIC_TYPES( int64, 1, ( int64)0, "-9223372036854775808", -9223372036854775808ll); }
 TEST(argparse, cmd_i64_4){ TEST_NUMERIC_TYPES( int64, 1, ( int64)0, "9223372036854775807", 9223372036854775807ll); }
 
@@ -618,6 +618,16 @@ TEST(argparse, cmd_u32_2){ TEST_NUMERIC_TYPES(uint32, 1, (uint32)0, "4294967295"
 
 TEST(argparse, cmd_u64_1){ TEST_NUMERIC_TYPES(uint64, 1, (uint64)18446744073709551615ull, "0", 0); }
 TEST(argparse, cmd_u64_2){ TEST_NUMERIC_TYPES(uint64, 1, (uint64)0, "18446744073709551615", 18446744073709551615ull); }
+
+TEST(argparse, cmd_float_1){ TEST_NUMERIC_TYPES(float, 1, (float)-1.234, "0.0", 0.0); }
+TEST(argparse, cmd_float_2){ TEST_NUMERIC_TYPES(float, 1, (float) 1.234, "0.0", 0.0); }
+TEST(argparse, cmd_float_3){ TEST_NUMERIC_TYPES(float, 1, (float) 0.0, "-1.234", -1.234); }
+TEST(argparse, cmd_float_4){ TEST_NUMERIC_TYPES(float, 1, (float) 0.0, "1.234", 1.234); }
+
+TEST(argparse, cmd_double_1){ TEST_NUMERIC_TYPES(double, 1, (double)-1.234, "0.0", 0.0); }
+TEST(argparse, cmd_double_2){ TEST_NUMERIC_TYPES(double, 1, (double) 1.234, "0.0", 0.0); }
+TEST(argparse, cmd_double_3){ TEST_NUMERIC_TYPES(double, 1, (double) 0.0, "-1.234", -1.234); }
+TEST(argparse, cmd_double_4){ TEST_NUMERIC_TYPES(double, 1, (double) 0.0, "1.234", 1.234); }
 
 #undef TEST_NUMERIC_TYPES
 

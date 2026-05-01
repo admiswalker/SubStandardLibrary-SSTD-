@@ -61,6 +61,8 @@ bool sstd__str2val(char& return_val, const std::vector<std::string>& v){
     return true;
 }
 
+//---
+
 #define SSTD_STR2VAL_INTEGER(T, FN_S2I)         \
     if(v.size()!=1){ return false; }            \
                                                 \
@@ -68,6 +70,7 @@ bool sstd__str2val(char& return_val, const std::vector<std::string>& v){
     return_val=(T)FN_S2I(v[0].c_str(), &pEnd, 0);       \
                                                 \
     return *pEnd=='\0';
+
 bool sstd__str2val( int8 & return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER( int8,   std::strtol  ); }
 bool sstd__str2val( int16& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER( int16,  std::strtol  ); }
 bool sstd__str2val( int32& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER( int32,  std::strtol  ); }
@@ -77,7 +80,25 @@ bool sstd__str2val(uint8 & return_val, const std::vector<std::string>& v){ SSTD_
 bool sstd__str2val(uint16& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER(uint16, std::strtoul ); }
 bool sstd__str2val(uint32& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER(uint32, std::strtoul ); }
 bool sstd__str2val(uint64& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER(uint64, std::strtoull); }
+
 #undef SSTD_STR2VAL_INTEGER
+
+//---
+
+#define SSTD_STR2VAL_FLOAT(T, FN_S2I)         \
+    if(v.size()!=1){ return false; }            \
+                                                \
+    char *pEnd;                                 \
+    return_val=(T)FN_S2I(v[0].c_str(), &pEnd);  \
+                                                \
+    return *pEnd=='\0';
+
+bool sstd__str2val( float& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_FLOAT( float, std::strtof); }
+bool sstd__str2val(double& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_FLOAT(double, std::strtod); }
+
+#undef SSTD_STR2VAL_FLOAT
+
+//---
 
 bool sstd__str2val(std::vector<char>& return_val, const std::vector<std::string>& v){
     for(uint i=0; i<v.size(); ++i){
@@ -107,6 +128,8 @@ int sstd__str2voidp(void* return_val_ptr, const int type, const std::vector<std:
     case sstd::num_uint16:    { if(!sstd__str2val(*(uint16            *)return_val_ptr, v)){return -1;} } break;
     case sstd::num_uint32:    { if(!sstd__str2val(*(uint32            *)return_val_ptr, v)){return -1;} } break;
     case sstd::num_uint64:    { if(!sstd__str2val(*(uint64            *)return_val_ptr, v)){return -1;} } break;
+    case sstd::num_float:     { if(!sstd__str2val(*(float             *)return_val_ptr, v)){return -1;} } break;
+    case sstd::num_double:    { if(!sstd__str2val(*(double            *)return_val_ptr, v)){return -1;} } break;
     case sstd::num_vec_char:  { if(!sstd__str2val(*(std::vector<char> *)return_val_ptr, v)){return -1;} } break;
     case sstd::num_vec_int32: { if(!sstd__str2val(*(std::vector<int32>*)return_val_ptr, v)){return -1;} } break;
     default: { return -2; }
