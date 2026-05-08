@@ -32,7 +32,10 @@ std::vector<std::tuple<uint,uint>> sstd__duplicated(const std::vector<T>& v){
 
 bool _fill_by_initial_val(void* ptr, const int type, const sstd::void_ptr& initial_val_ptr){
     switch(type){
+        // TODO:
+        // int8 とかも引数が与えられないとこの関数が呼び出されるので、ここの実装が必要なはず。
     case sstd::num_bool:      { std::swap(*(bool*)ptr,               *(bool*)initial_val_ptr.ptr()              ); } break;
+    case sstd::num_vec_uint8: { std::swap(*(std::vector<uint8>*)ptr, *(std::vector<uint8>*)initial_val_ptr.ptr()); } break;
     case sstd::num_vec_int32: { std::swap(*(std::vector<int32>*)ptr, *(std::vector<int32>*)initial_val_ptr.ptr()); } break;
     default: { return false; }
     }
@@ -64,24 +67,35 @@ bool sstd__str2val(char& return_val, const std::vector<std::string>& v){
 //---
 
 #define SSTD_STR2VAL_INTEGER(T, FN_S2I)         \
-    if(v.size()!=1){ return false; }            \
-                                                \
     char *pEnd;                                 \
-    return_val=(T)FN_S2I(v[0].c_str(), &pEnd, 0);       \
-                                                \
+    return_val=(T)FN_S2I(s.c_str(), &pEnd, 0);  \
     return *pEnd=='\0';
 
-bool sstd__str2val( int8 & return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER( int8,   std::strtol  ); }
-bool sstd__str2val( int16& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER( int16,  std::strtol  ); }
-bool sstd__str2val( int32& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER( int32,  std::strtol  ); }
-bool sstd__str2val( int64& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER( int64,  std::strtol  ); }
-
-bool sstd__str2val(uint8 & return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER(uint8,  std::strtoul ); }
-bool sstd__str2val(uint16& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER(uint16, std::strtoul ); }
-bool sstd__str2val(uint32& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER(uint32, std::strtoul ); }
-bool sstd__str2val(uint64& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER(uint64, std::strtoull); }
+bool sstd__str2val( int8 & return_val, const             std::string & s){ SSTD_STR2VAL_INTEGER( int8,  std::strtol  ); }
+bool sstd__str2val( int16& return_val, const             std::string & s){ SSTD_STR2VAL_INTEGER( int16, std::strtol  ); }
+bool sstd__str2val( int32& return_val, const             std::string & s){ SSTD_STR2VAL_INTEGER( int32, std::strtol  ); }
+bool sstd__str2val( int64& return_val, const             std::string & s){ SSTD_STR2VAL_INTEGER( int64, std::strtol  ); }
+bool sstd__str2val(uint8 & return_val, const             std::string & s){ SSTD_STR2VAL_INTEGER(uint8 , std::strtoul ); }
+bool sstd__str2val(uint16& return_val, const             std::string & s){ SSTD_STR2VAL_INTEGER(uint16, std::strtoul ); }
+bool sstd__str2val(uint32& return_val, const             std::string & s){ SSTD_STR2VAL_INTEGER(uint32, std::strtoul ); }
+bool sstd__str2val(uint64& return_val, const             std::string & s){ SSTD_STR2VAL_INTEGER(uint64, std::strtoull); }
 
 #undef SSTD_STR2VAL_INTEGER
+
+#define SSTD_STR2VAL_INTEGER_VEC()                      \
+    if(v.size()!=1){ return false; }                    \
+    return sstd__str2val(return_val, v[0].c_str());
+
+bool sstd__str2val( int8 & return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER_VEC(); }
+bool sstd__str2val( int16& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER_VEC(); }
+bool sstd__str2val( int32& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER_VEC(); }
+bool sstd__str2val( int64& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER_VEC(); }
+bool sstd__str2val(uint8 & return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER_VEC(); }
+bool sstd__str2val(uint16& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER_VEC(); }
+bool sstd__str2val(uint32& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER_VEC(); }
+bool sstd__str2val(uint64& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER_VEC(); }
+
+#undef SSTD_STR2VAL_INTEGER_VEC
 
 //---
 
@@ -104,6 +118,14 @@ bool sstd__str2val(std::vector<char>& return_val, const std::vector<std::string>
     for(uint i=0; i<v.size(); ++i){
         if(v[i].size()!=1){ return false; }
         return_val.push_back( (char)v[i][0] );
+    }
+    return true;
+}
+bool sstd__str2val(std::vector<uint8>& return_val, const std::vector<std::string>& v){
+    for(uint i=0; i<v.size(); ++i){
+        uint8 tmp;
+        if(!sstd__str2val(tmp, v[i])){ return false; }
+        return_val.push_back( tmp );
     }
     return true;
 }
@@ -131,6 +153,7 @@ int sstd__str2voidp(void* return_val_ptr, const int type, const std::vector<std:
     case sstd::num_float:     { if(!sstd__str2val(*(float             *)return_val_ptr, v)){return -1;} } break;
     case sstd::num_double:    { if(!sstd__str2val(*(double            *)return_val_ptr, v)){return -1;} } break;
     case sstd::num_vec_char:  { if(!sstd__str2val(*(std::vector<char> *)return_val_ptr, v)){return -1;} } break;
+    case sstd::num_vec_uint8: { if(!sstd__str2val(*(std::vector<uint8>*)return_val_ptr, v)){return -1;} } break;
     case sstd::num_vec_int32: { if(!sstd__str2val(*(std::vector<int32>*)return_val_ptr, v)){return -1;} } break;
     default: { return -2; }
     }
@@ -142,7 +165,7 @@ int _get_cmd_id(const struct sstd::arg_rule::cmd_rule& cmdRule){ return cmdRule.
 int _get_cmd_id(const struct sstd::arg_rule::opt_rule& optRule){ return 0; }
 template<typename T>
 int _fill_result_arg_by_val(std::string& errMsg, const T& rule, const std::vector<std::string>& input_args){
-
+    
     std::vector<std::string> args = input_args&&sstd::slice(1,sstd::end());
     int arg_len = rule.expected_num_of_args;
     
@@ -151,7 +174,7 @@ int _fill_result_arg_by_val(std::string& errMsg, const T& rule, const std::vecto
         errMsg+=sstd::pdbg_err_str(("The number of input argument(s) is `"+std::to_string(args.size())+"` ("+sstd::to_string(input_args)+"). But `"+std::to_string(arg_len)+"` argument(s) are expected by the definition of sstd::arg_rule::opt().\n").c_str());
         res = -1;
     }
-
+    
     int   type = rule.return_val_type;
     void* ptr  = rule.return_val_ptr;
     

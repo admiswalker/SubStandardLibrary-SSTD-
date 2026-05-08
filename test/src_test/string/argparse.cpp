@@ -651,7 +651,137 @@ TEST(argparse, cmd_uint8){
     ASSERT_TRUE(res==(uint8)255);
 }
 */
+
+//---
+// std::vector<T>. `T` is bool, char, int8, int16, int32, int64, uint8, uint16, uint32, uint64, float, double or std::string.
+/*
+#define TEST_VEC_NUMERIC_TYPES(TYPE, CNT, DEFAULT, ARG_STR, ANS)        \
+    std::vector<const char*> args = {"./a.out", "cmd", ARG_STR};        \
+    const int argc = args.size();                                       \
+    const char **argv = args.data();                                    \
+                                                                        \
+    enum class CmdID{SAMPLE_CMD};                                       \
+                                                                        \
+    TYPE res;                                                           \
+                                                                        \
+    sstd::argparse ap;                                                  \
+    int cmd_id = ap.parse(argc, argv                                    \
+                          , sstd::arg_rule::cmd((int)CmdID::SAMPLE_CMD, res, DEFAULT, "cmd", CNT) \
+                          );                                            \
+    ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);                          \
+    ASSERT_EQ(res, (TYPE)ANS);
+
+#define TEST_VEC_NUMERIC_TYPES(TYPE, CNT, ...)                          \
+    std::vector<const char*> args = {"./a.out", "cmd", __VA_ARGS__};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    enum class CmdID{SAMPLE_CMD};
+    
+    std::vector<TYPE> res_v_u8;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::cmd((int)CmdID::SAMPLE_CMD, res_v_u8, std::vector<TYPE>({}), "cmd", -1)
+                          );
+// sstd::printn_all(ap.err());
+    ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);
+#define TEST_VEC_NUMERIC_TYPES_ANS(...)        \
+    ASSERT_TRUE(res_v_u8==std::vector<uint8>({__VA_ARGS__}));
+
+TEST(argparse, cmd_i8_1 ){ TEST_NUMERIC_TYPES( int8,  1, ( int8 )-128, "0", 0); }
+
+#undef TEST_VEC_NUMERIC_TYPES_ANS
+#undef TEST_VEC_NUMERIC_TYPES
+//*/
+//*
 // vec_uint8
+TEST(argparse, cmd_v_u8_arg0){
+    std::vector<const char*> args = {"./a.out", "cmd"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    enum class CmdID{SAMPLE_CMD};
+    
+    std::vector<uint8> res_v_u8;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::cmd((int)CmdID::SAMPLE_CMD, res_v_u8, std::vector<uint8>({}), "cmd", -1)
+                          );
+//    sstd::printn_all(ap.err());
+    ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);
+    ASSERT_TRUE(res_v_u8==std::vector<uint8>({}));
+}
+TEST(argparse, cmd_v_u8_arg1){
+    std::vector<const char*> args = {"./a.out", "cmd", "1"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    enum class CmdID{SAMPLE_CMD};
+    
+    std::vector<uint8> res_v_u8;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::cmd((int)CmdID::SAMPLE_CMD, res_v_u8, std::vector<uint8>({}), "cmd", -1)
+                          );
+//    sstd::printn_all(ap.err());
+    ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);
+    ASSERT_TRUE(res_v_u8==std::vector<uint8>({1}));
+}
+TEST(argparse, cmd_v_u8_arg2){
+    std::vector<const char*> args = {"./a.out", "cmd", "1", "2"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    enum class CmdID{SAMPLE_CMD};
+    
+    std::vector<uint8> res_v_u8;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::cmd((int)CmdID::SAMPLE_CMD, res_v_u8, std::vector<uint8>({}), "cmd", -1)
+                          );
+//    sstd::printn_all(ap.err());
+    ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);
+    ASSERT_TRUE(res_v_u8==std::vector<uint8>({1,2}));
+}
+TEST(argparse, cmd_v_u8_arg3){
+    std::vector<const char*> args = {"./a.out", "cmd", "1", "2", "3"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    enum class CmdID{SAMPLE_CMD};
+    
+    std::vector<uint8> res_v_u8;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::cmd((int)CmdID::SAMPLE_CMD, res_v_u8, std::vector<uint8>({}), "cmd", -1)
+                          );
+//    sstd::printn_all(ap.err());
+    ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);
+    ASSERT_TRUE(res_v_u8==std::vector<uint8>({1,2,3}));
+}
+TEST(argparse, cmd_v_u8_arg0_default_value){
+    std::vector<const char*> args = {"./a.out", "cmd"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    enum class CmdID{SAMPLE_CMD};
+    
+    std::vector<uint8> res_v_u8;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::cmd((int)CmdID::SAMPLE_CMD, res_v_u8, std::vector<uint8>({9,8,7}), "cmd", -1)
+                          );
+//    sstd::printn_all(ap.err());
+    ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);
+    ASSERT_TRUE(res_v_u8==std::vector<uint8>({9,8,7}));
+}
+//*/
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
