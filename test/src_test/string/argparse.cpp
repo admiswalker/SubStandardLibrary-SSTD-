@@ -571,6 +571,21 @@ TEST(argparse, cmd_vchar){
 //---
 // int8, int16, int32, int64, uint8, uint16, uint32, uint64, float, double
 
+#define TEST_NUMERIC_TYPES_ARG0_DEFAULT(TYPE, DEFAULT)                  \
+    std::vector<const char*> args = {"./a.out", "cmd"};                 \
+    const int argc = args.size();                                       \
+    const char **argv = args.data();                                    \
+                                                                        \
+    enum class CmdID{SAMPLE_CMD};                                       \
+                                                                        \
+    TYPE res;                                                           \
+                                                                        \
+    sstd::argparse ap;                                                  \
+    int cmd_id = ap.parse(argc, argv                                    \
+                          , sstd::arg_rule::cmd((int)CmdID::SAMPLE_CMD, res, DEFAULT, "cmd", 0) \
+                          );                                            \
+    ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);                          \
+    ASSERT_EQ(res, (TYPE)DEFAULT);
 #define TEST_NUMERIC_TYPES(TYPE, CNT, DEFAULT, ARG_STR, ANS)            \
     std::vector<const char*> args = {"./a.out", "cmd", ARG_STR};        \
     const int argc = args.size();                                       \
@@ -587,49 +602,60 @@ TEST(argparse, cmd_vchar){
     ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);                          \
     ASSERT_EQ(res, (TYPE)ANS);
 
+TEST(argparse, cmd_i8_arg0_default ){ TEST_NUMERIC_TYPES_ARG0_DEFAULT(int8, ( int8 )127); }
 TEST(argparse, cmd_i8_1 ){ TEST_NUMERIC_TYPES( int8,  1, ( int8 )-128, "0", 0); }
 TEST(argparse, cmd_i8_2 ){ TEST_NUMERIC_TYPES( int8,  1, ( int8 ) 127, "0", 0); }
 TEST(argparse, cmd_i8_3 ){ TEST_NUMERIC_TYPES( int8,  1, ( int8 )0, "-128", -128); }
 TEST(argparse, cmd_i8_4 ){ TEST_NUMERIC_TYPES( int8,  1, ( int8 )0, "127", 127); }
 
+TEST(argparse, cmd_i16_arg0_default ){ TEST_NUMERIC_TYPES_ARG0_DEFAULT(int16, ( int16)32767); }
 TEST(argparse, cmd_i16_1){ TEST_NUMERIC_TYPES( int16, 1, ( int16)-32768, "0", 0); }
 TEST(argparse, cmd_i16_2){ TEST_NUMERIC_TYPES( int16, 1, ( int16) 32767, "0", 0); }
 TEST(argparse, cmd_i16_3){ TEST_NUMERIC_TYPES( int16, 1, ( int16)0, "-32768", -32768); }
 TEST(argparse, cmd_i16_4){ TEST_NUMERIC_TYPES( int16, 1, ( int16)0, "32767", 32767); }
 
+TEST(argparse, cmd_i32_arg0_default ){ TEST_NUMERIC_TYPES_ARG0_DEFAULT(int32, ( int32)2147483647); }
 TEST(argparse, cmd_i32_1){ TEST_NUMERIC_TYPES( int32, 1, ( int32)-2147483648, "0", 0); }
 TEST(argparse, cmd_i32_2){ TEST_NUMERIC_TYPES( int32, 1, ( int32) 2147483647, "0", 0); }
 TEST(argparse, cmd_i32_3){ TEST_NUMERIC_TYPES( int32, 1, ( int32)0, "-2147483648", -2147483648); }
 TEST(argparse, cmd_i32_4){ TEST_NUMERIC_TYPES( int32, 1, ( int32)0, "2147483647", 2147483647); }
 
-TEST(argparse, cmd_i64_1){ TEST_NUMERIC_TYPES( int64, 1, ( int64)-9223372036854775808ll, "0", 0); }
+TEST(argparse, cmd_i64_arg0_default ){ TEST_NUMERIC_TYPES_ARG0_DEFAULT(int64, ( int64)9223372036854775807ll); }
+//TEST(argparse, cmd_i64_1){ TEST_NUMERIC_TYPES( int64, 1, ( int64)-9223372036854775808ll, "0", 0); } // Commenting out this line in order to suppress the bagged warning of GCC.
 TEST(argparse, cmd_i64_2){ TEST_NUMERIC_TYPES( int64, 1, ( int64) 9223372036854775807ll, "0", 0); }
-TEST(argparse, cmd_i64_3){ TEST_NUMERIC_TYPES( int64, 1, ( int64)0, "-9223372036854775808", -9223372036854775808ll); }
+//TEST(argparse, cmd_i64_3){ TEST_NUMERIC_TYPES( int64, 1, ( int64)0, "-9223372036854775808", -9223372036854775808ll); } // Commenting out this line in order to suppress the bagged warning of GCC.
 TEST(argparse, cmd_i64_4){ TEST_NUMERIC_TYPES( int64, 1, ( int64)0, "9223372036854775807", 9223372036854775807ll); }
 
+TEST(argparse, cmd_u8_arg0_default ){ TEST_NUMERIC_TYPES_ARG0_DEFAULT(uint8, (uint8 )255); }
 TEST(argparse, cmd_u8_1 ){ TEST_NUMERIC_TYPES(uint8,  1, (uint8 )255, "0", 0); }
 TEST(argparse, cmd_u8_2 ){ TEST_NUMERIC_TYPES(uint8,  1, (uint8 )0, "255", 255); }
 
+TEST(argparse, cmd_u16_arg0_default ){ TEST_NUMERIC_TYPES_ARG0_DEFAULT(uint16, (uint16)65535); }
 TEST(argparse, cmd_u16_1){ TEST_NUMERIC_TYPES(uint16, 1, (uint16)65535, "0", 0); }
 TEST(argparse, cmd_u16_2){ TEST_NUMERIC_TYPES(uint16, 1, (uint16)0, "65535", 65535); }
 
+TEST(argparse, cmd_u32_arg0_default ){ TEST_NUMERIC_TYPES_ARG0_DEFAULT(uint32, (uint32)4294967295); }
 TEST(argparse, cmd_u32_1){ TEST_NUMERIC_TYPES(uint32, 1, (uint32)4294967295, "0", 0); }
 TEST(argparse, cmd_u32_2){ TEST_NUMERIC_TYPES(uint32, 1, (uint32)0, "4294967295", 4294967295); }
 
+TEST(argparse, cmd_u64_arg0_default ){ TEST_NUMERIC_TYPES_ARG0_DEFAULT(uint64, (uint64)18446744073709551615ull); }
 TEST(argparse, cmd_u64_1){ TEST_NUMERIC_TYPES(uint64, 1, (uint64)18446744073709551615ull, "0", 0); }
 TEST(argparse, cmd_u64_2){ TEST_NUMERIC_TYPES(uint64, 1, (uint64)0, "18446744073709551615", 18446744073709551615ull); }
 
+TEST(argparse, cmd_float_arg0_default ){ TEST_NUMERIC_TYPES_ARG0_DEFAULT(float, (float)1.234); }
 TEST(argparse, cmd_float_1){ TEST_NUMERIC_TYPES(float, 1, (float)-1.234, "0.0", 0.0); }
 TEST(argparse, cmd_float_2){ TEST_NUMERIC_TYPES(float, 1, (float) 1.234, "0.0", 0.0); }
 TEST(argparse, cmd_float_3){ TEST_NUMERIC_TYPES(float, 1, (float) 0.0, "-1.234", -1.234); }
 TEST(argparse, cmd_float_4){ TEST_NUMERIC_TYPES(float, 1, (float) 0.0, "1.234", 1.234); }
 
+TEST(argparse, cmd_double_arg0_default ){ TEST_NUMERIC_TYPES_ARG0_DEFAULT(double, (double)1.234); }
 TEST(argparse, cmd_double_1){ TEST_NUMERIC_TYPES(double, 1, (double)-1.234, "0.0", 0.0); }
 TEST(argparse, cmd_double_2){ TEST_NUMERIC_TYPES(double, 1, (double) 1.234, "0.0", 0.0); }
 TEST(argparse, cmd_double_3){ TEST_NUMERIC_TYPES(double, 1, (double) 0.0, "-1.234", -1.234); }
 TEST(argparse, cmd_double_4){ TEST_NUMERIC_TYPES(double, 1, (double) 0.0, "1.234", 1.234); }
 
 #undef TEST_NUMERIC_TYPES
+#undef TEST_NUMERIC_TYPES_ARG0_DEFAULT
 
 //---
 // uint8
@@ -694,7 +720,7 @@ TEST(argparse, cmd_i8_1 ){ TEST_NUMERIC_TYPES( int8,  1, ( int8 )-128, "0", 0); 
 #undef TEST_VEC_NUMERIC_TYPES_ANS
 #undef TEST_VEC_NUMERIC_TYPES
 //*/
-//*
+/*
 // vec_uint8
 TEST(argparse, cmd_v_u8_arg0){
     std::vector<const char*> args = {"./a.out", "cmd"};

@@ -32,9 +32,17 @@ std::vector<std::tuple<uint,uint>> sstd__duplicated(const std::vector<T>& v){
 
 bool _fill_by_initial_val(void* ptr, const int type, const sstd::void_ptr& initial_val_ptr){
     switch(type){
-        // TODO:
-        // int8 とかも引数が与えられないとこの関数が呼び出されるので、ここの実装が必要なはず。
-    case sstd::num_bool:      { std::swap(*(bool*)ptr,               *(bool*)initial_val_ptr.ptr()              ); } break;
+    case sstd::num_bool:      { std::swap(*(bool  *)ptr,              *(bool  *)initial_val_ptr.ptr()           ); } break;
+    case sstd::num_int8:      { std::swap(*( int8 *)ptr,              *( int8 *)initial_val_ptr.ptr()           ); } break;
+    case sstd::num_int16:     { std::swap(*( int16*)ptr,              *( int16*)initial_val_ptr.ptr()           ); } break;
+    case sstd::num_int32:     { std::swap(*( int32*)ptr,              *( int32*)initial_val_ptr.ptr()           ); } break;
+    case sstd::num_int64:     { std::swap(*( int64*)ptr,              *( int64*)initial_val_ptr.ptr()           ); } break;
+    case sstd::num_uint8:     { std::swap(*(uint8 *)ptr,              *(uint8 *)initial_val_ptr.ptr()           ); } break;
+    case sstd::num_uint16:    { std::swap(*(uint16*)ptr,              *(uint16*)initial_val_ptr.ptr()           ); } break;
+    case sstd::num_uint32:    { std::swap(*(uint32*)ptr,              *(uint32*)initial_val_ptr.ptr()           ); } break;
+    case sstd::num_uint64:    { std::swap(*(uint64*)ptr,              *(uint64*)initial_val_ptr.ptr()           ); } break;
+    case sstd::num_float:     { std::swap(*(float *)ptr,              *(float *)initial_val_ptr.ptr()           ); } break;
+    case sstd::num_double:    { std::swap(*(double*)ptr,              *(double*)initial_val_ptr.ptr()           ); } break;
     case sstd::num_vec_uint8: { std::swap(*(std::vector<uint8>*)ptr, *(std::vector<uint8>*)initial_val_ptr.ptr()); } break;
     case sstd::num_vec_int32: { std::swap(*(std::vector<int32>*)ptr, *(std::vector<int32>*)initial_val_ptr.ptr()); } break;
     default: { return false; }
