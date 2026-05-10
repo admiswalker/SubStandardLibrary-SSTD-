@@ -738,6 +738,30 @@ TEST(argparse, cmd_i8_1 ){ TEST_NUMERIC_TYPES( int8,  1, ( int8 )-128, "0", 0); 
     if(ap.err().size()!=0){ sstd::printn_all(ap.err()); }               \
     ASSERT_EQ(cmd_id, (int)CmdID::CMD_ID_NAME);                         \
     ASSERT_TRUE(res_vec==ANS);
+TEST(argparse, cmd_v_i8_arg0_default_value){ std::vector<const char*> ARGS={"./a.out","cmd"}; std::vector<int8> DEFAULT={-9,8,7}; std::vector<int8> ANS={-9,8,7}; TEST_VEC_NUMERIC_TYPES(int8, ARGS, DEFAULT, ANS); }
+TEST(argparse, cmd_v_i8_arg0){ std::vector<const char*> ARGS={"./a.out","cmd"             }; std::vector<int8> DEFAULT={}; std::vector<int8> ANS={      }; TEST_VEC_NUMERIC_TYPES(int8, ARGS, DEFAULT, ANS); }
+TEST(argparse, cmd_v_i8_arg1){ std::vector<const char*> ARGS={"./a.out","cmd","-1"        }; std::vector<int8> DEFAULT={}; std::vector<int8> ANS={-1    }; TEST_VEC_NUMERIC_TYPES(int8, ARGS, DEFAULT, ANS); }
+TEST(argparse, cmd_v_i8_arg2){ std::vector<const char*> ARGS={"./a.out","cmd","-1","2"    }; std::vector<int8> DEFAULT={}; std::vector<int8> ANS={-1,2  }; TEST_VEC_NUMERIC_TYPES(int8, ARGS, DEFAULT, ANS); }
+TEST(argparse, cmd_v_i8_arg3){ std::vector<const char*> ARGS={"./a.out","cmd","-1","2","3"}; std::vector<int8> DEFAULT={}; std::vector<int8> ANS={-1,2,3}; TEST_VEC_NUMERIC_TYPES(int8, ARGS, DEFAULT, ANS); }
+
+TEST(argparse, cmd_v_i16_arg0_default_value){ std::vector<const char*> ARGS={"./a.out","cmd"}; std::vector<int16> DEFAULT={-9,8,7}; std::vector<int16> ANS={-9,8,7}; TEST_VEC_NUMERIC_TYPES(int16, ARGS, DEFAULT, ANS); }
+TEST(argparse, cmd_v_i16_arg0){ std::vector<const char*> ARGS={"./a.out","cmd"             }; std::vector<int16> DEFAULT={}; std::vector<int16> ANS={      }; TEST_VEC_NUMERIC_TYPES(int16, ARGS, DEFAULT, ANS); }
+TEST(argparse, cmd_v_i16_arg1){ std::vector<const char*> ARGS={"./a.out","cmd","-1"        }; std::vector<int16> DEFAULT={}; std::vector<int16> ANS={-1    }; TEST_VEC_NUMERIC_TYPES(int16, ARGS, DEFAULT, ANS); }
+TEST(argparse, cmd_v_i16_arg2){ std::vector<const char*> ARGS={"./a.out","cmd","-1","2"    }; std::vector<int16> DEFAULT={}; std::vector<int16> ANS={-1,2  }; TEST_VEC_NUMERIC_TYPES(int16, ARGS, DEFAULT, ANS); }
+TEST(argparse, cmd_v_i16_arg3){ std::vector<const char*> ARGS={"./a.out","cmd","-1","2","3"}; std::vector<int16> DEFAULT={}; std::vector<int16> ANS={-1,2,3}; TEST_VEC_NUMERIC_TYPES(int16, ARGS, DEFAULT, ANS); }
+
+TEST(argparse, cmd_v_i32_arg0_default_value){ std::vector<const char*> ARGS={"./a.out","cmd"}; std::vector<int32> DEFAULT={-9,8,7}; std::vector<int32> ANS={-9,8,7}; TEST_VEC_NUMERIC_TYPES(int32, ARGS, DEFAULT, ANS); }
+TEST(argparse, cmd_v_i32_arg0){ std::vector<const char*> ARGS={"./a.out","cmd"             }; std::vector<int32> DEFAULT={}; std::vector<int32> ANS={      }; TEST_VEC_NUMERIC_TYPES(int32, ARGS, DEFAULT, ANS); }
+TEST(argparse, cmd_v_i32_arg1){ std::vector<const char*> ARGS={"./a.out","cmd","-1"        }; std::vector<int32> DEFAULT={}; std::vector<int32> ANS={-1    }; TEST_VEC_NUMERIC_TYPES(int32, ARGS, DEFAULT, ANS); }
+TEST(argparse, cmd_v_i32_arg2){ std::vector<const char*> ARGS={"./a.out","cmd","-1","2"    }; std::vector<int32> DEFAULT={}; std::vector<int32> ANS={-1,2  }; TEST_VEC_NUMERIC_TYPES(int32, ARGS, DEFAULT, ANS); }
+TEST(argparse, cmd_v_i32_arg3){ std::vector<const char*> ARGS={"./a.out","cmd","-1","2","3"}; std::vector<int32> DEFAULT={}; std::vector<int32> ANS={-1,2,3}; TEST_VEC_NUMERIC_TYPES(int32, ARGS, DEFAULT, ANS); }
+
+TEST(argparse, cmd_v_i64_arg0_default_value){ std::vector<const char*> ARGS={"./a.out","cmd"}; std::vector<int64> DEFAULT={-9,8,7}; std::vector<int64> ANS={-9,8,7}; TEST_VEC_NUMERIC_TYPES(int64, ARGS, DEFAULT, ANS); }
+TEST(argparse, cmd_v_i64_arg0){ std::vector<const char*> ARGS={"./a.out","cmd"             }; std::vector<int64> DEFAULT={}; std::vector<int64> ANS={      }; TEST_VEC_NUMERIC_TYPES(int64, ARGS, DEFAULT, ANS); }
+TEST(argparse, cmd_v_i64_arg1){ std::vector<const char*> ARGS={"./a.out","cmd","-1"        }; std::vector<int64> DEFAULT={}; std::vector<int64> ANS={-1    }; TEST_VEC_NUMERIC_TYPES(int64, ARGS, DEFAULT, ANS); }
+TEST(argparse, cmd_v_i64_arg2){ std::vector<const char*> ARGS={"./a.out","cmd","-1","2"    }; std::vector<int64> DEFAULT={}; std::vector<int64> ANS={-1,2  }; TEST_VEC_NUMERIC_TYPES(int64, ARGS, DEFAULT, ANS); }
+TEST(argparse, cmd_v_i64_arg3){ std::vector<const char*> ARGS={"./a.out","cmd","-1","2","3"}; std::vector<int64> DEFAULT={}; std::vector<int64> ANS={-1,2,3}; TEST_VEC_NUMERIC_TYPES(int64, ARGS, DEFAULT, ANS); }
+
 TEST(argparse, cmd_v_u8_arg0_default_value){ std::vector<const char*> ARGS={"./a.out","cmd"}; std::vector<uint8> DEFAULT={9,8,7}; std::vector<uint8> ANS={9,8,7}; TEST_VEC_NUMERIC_TYPES(uint8, ARGS, DEFAULT, ANS); }
 TEST(argparse, cmd_v_u8_arg0){ std::vector<const char*> ARGS={"./a.out","cmd"            }; std::vector<uint8> DEFAULT={}; std::vector<uint8> ANS={     }; TEST_VEC_NUMERIC_TYPES(uint8, ARGS, DEFAULT, ANS); }
 TEST(argparse, cmd_v_u8_arg1){ std::vector<const char*> ARGS={"./a.out","cmd","1"        }; std::vector<uint8> DEFAULT={}; std::vector<uint8> ANS={1    }; TEST_VEC_NUMERIC_TYPES(uint8, ARGS, DEFAULT, ANS); }

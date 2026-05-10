@@ -43,7 +43,10 @@ bool _fill_by_initial_val(void* ptr, const int type, const sstd::void_ptr& initi
     case sstd::num_uint64:    { std::swap(*(uint64*)ptr,              *(uint64*)initial_val_ptr.ptr()           ); } break;
     case sstd::num_float:     { std::swap(*(float *)ptr,              *(float *)initial_val_ptr.ptr()           ); } break;
     case sstd::num_double:    { std::swap(*(double*)ptr,              *(double*)initial_val_ptr.ptr()           ); } break;
-    case sstd::num_vec_int32: { std::swap(*(std::vector<int32>*)ptr, *(std::vector<int32>*)initial_val_ptr.ptr()); } break;
+    case sstd::num_vec_int8  : { std::swap(*(std::vector< int8 >*)ptr, *(std::vector< int8 >*)initial_val_ptr.ptr()); } break;
+    case sstd::num_vec_int16 : { std::swap(*(std::vector< int16>*)ptr, *(std::vector< int16>*)initial_val_ptr.ptr()); } break;
+    case sstd::num_vec_int32 : { std::swap(*(std::vector< int32>*)ptr, *(std::vector< int32>*)initial_val_ptr.ptr()); } break;
+    case sstd::num_vec_int64 : { std::swap(*(std::vector< int64>*)ptr, *(std::vector< int64>*)initial_val_ptr.ptr()); } break;
     case sstd::num_vec_uint8 : { std::swap(*(std::vector<uint8 >*)ptr, *(std::vector<uint8 >*)initial_val_ptr.ptr()); } break;
     case sstd::num_vec_uint16: { std::swap(*(std::vector<uint16>*)ptr, *(std::vector<uint16>*)initial_val_ptr.ptr()); } break;
     case sstd::num_vec_uint32: { std::swap(*(std::vector<uint32>*)ptr, *(std::vector<uint32>*)initial_val_ptr.ptr()); } break;
@@ -132,13 +135,6 @@ bool sstd__str2val(std::vector<char>& return_val, const std::vector<std::string>
     }
     return true;
 }
-bool sstd__str2val(std::vector<int32>& return_val, const std::vector<std::string>& v){
-    for(uint i=0; i<v.size(); ++i){
-        if(!sstd::isNum(v[i])){ return false; }
-        return_val.push_back( std::stoi(v[i]) );
-    }
-    return true;
-}
 
 #define SSTD_STR2VAL_VEC_VEC(TYPE)                      \
     for(uint i=0; i<v.size(); ++i){                     \
@@ -147,6 +143,10 @@ bool sstd__str2val(std::vector<int32>& return_val, const std::vector<std::string
         return_val.push_back( tmp );                    \
     }                                                   \
     return true;
+bool sstd__str2val(std::vector< int8 >& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_VEC_VEC( int8 ); }
+bool sstd__str2val(std::vector< int16>& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_VEC_VEC( int16); }
+bool sstd__str2val(std::vector< int32>& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_VEC_VEC( int32); }
+bool sstd__str2val(std::vector< int64>& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_VEC_VEC( int64); }
 bool sstd__str2val(std::vector<uint8 >& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_VEC_VEC(uint8 ); }
 bool sstd__str2val(std::vector<uint16>& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_VEC_VEC(uint16); }
 bool sstd__str2val(std::vector<uint32>& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_VEC_VEC(uint32); }
@@ -169,7 +169,10 @@ int sstd__str2voidp(void* return_val_ptr, const int type, const std::vector<std:
     case sstd::num_float:     { if(!sstd__str2val(*(float             *)return_val_ptr, v)){return -1;} } break;
     case sstd::num_double:    { if(!sstd__str2val(*(double            *)return_val_ptr, v)){return -1;} } break;
     case sstd::num_vec_char:  { if(!sstd__str2val(*(std::vector<char> *)return_val_ptr, v)){return -1;} } break;
-    case sstd::num_vec_int32: { if(!sstd__str2val(*(std::vector<int32>*)return_val_ptr, v)){return -1;} } break;
+    case sstd::num_vec_int8  : { if(!sstd__str2val(*(std::vector< int8 >*)return_val_ptr, v)){return -1;} } break;
+    case sstd::num_vec_int16 : { if(!sstd__str2val(*(std::vector< int16>*)return_val_ptr, v)){return -1;} } break;
+    case sstd::num_vec_int32 : { if(!sstd__str2val(*(std::vector< int32>*)return_val_ptr, v)){return -1;} } break;
+    case sstd::num_vec_int64 : { if(!sstd__str2val(*(std::vector< int64>*)return_val_ptr, v)){return -1;} } break;
     case sstd::num_vec_uint8 : { if(!sstd__str2val(*(std::vector<uint8 >*)return_val_ptr, v)){return -1;} } break;
     case sstd::num_vec_uint16: { if(!sstd__str2val(*(std::vector<uint16>*)return_val_ptr, v)){return -1;} } break;
     case sstd::num_vec_uint32: { if(!sstd__str2val(*(std::vector<uint32>*)return_val_ptr, v)){return -1;} } break;
