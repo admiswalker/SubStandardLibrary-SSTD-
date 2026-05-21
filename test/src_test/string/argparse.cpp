@@ -809,6 +809,12 @@ TEST(argparse, cmd_v_double_arg0){ std::vector<const char*> ARGS={"./a.out","cmd
 TEST(argparse, cmd_v_double_arg1){ std::vector<const char*> ARGS={"./a.out","cmd","1.0"            }; std::vector<double> DEFAULT={}; std::vector<double> ANS={1    }; TEST_VEC_NUMERIC_TYPES(double, ARGS, DEFAULT, ANS); }
 TEST(argparse, cmd_v_double_arg2){ std::vector<const char*> ARGS={"./a.out","cmd","1.0","2.0"      }; std::vector<double> DEFAULT={}; std::vector<double> ANS={1,2  }; TEST_VEC_NUMERIC_TYPES(double, ARGS, DEFAULT, ANS); }
 TEST(argparse, cmd_v_double_arg3){ std::vector<const char*> ARGS={"./a.out","cmd","1.0","2.0","3.0"}; std::vector<double> DEFAULT={}; std::vector<double> ANS={1,2,3}; TEST_VEC_NUMERIC_TYPES(double, ARGS, DEFAULT, ANS); }
+
+TEST(argparse, cmd_v_str_arg0_default_value){ std::vector<const char*> ARGS={"./a.out","cmd"}; std::vector<std::string> DEFAULT={"def","bc","a"}; std::vector<std::string> ANS={"def","bc","a"}; TEST_VEC_NUMERIC_TYPES(std::string, ARGS, DEFAULT, ANS); }
+TEST(argparse, cmd_v_str_arg0){ std::vector<const char*> ARGS={"./a.out","cmd"               }; std::vector<std::string> DEFAULT={}; std::vector<std::string> ANS={              }; TEST_VEC_NUMERIC_TYPES(std::string, ARGS, DEFAULT, ANS); }
+TEST(argparse, cmd_v_str_arg1){ std::vector<const char*> ARGS={"./a.out","cmd","a"           }; std::vector<std::string> DEFAULT={}; std::vector<std::string> ANS={"a"           }; TEST_VEC_NUMERIC_TYPES(std::string, ARGS, DEFAULT, ANS); }
+TEST(argparse, cmd_v_str_arg2){ std::vector<const char*> ARGS={"./a.out","cmd","a","bc"      }; std::vector<std::string> DEFAULT={}; std::vector<std::string> ANS={"a","bc"      }; TEST_VEC_NUMERIC_TYPES(std::string, ARGS, DEFAULT, ANS); }
+TEST(argparse, cmd_v_str_arg3){ std::vector<const char*> ARGS={"./a.out","cmd","a","bc","def"}; std::vector<std::string> DEFAULT={}; std::vector<std::string> ANS={"a","bc","def"}; TEST_VEC_NUMERIC_TYPES(std::string, ARGS, DEFAULT, ANS); }
 #undef TEST_VEC_NUMERIC_TYPES
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
