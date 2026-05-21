@@ -52,6 +52,8 @@ bool _fill_by_initial_val(void* ptr, const int type, const sstd::void_ptr& initi
     case sstd::num_vec_uint16: { std::swap(*(std::vector<uint16>*)ptr, *(std::vector<uint16>*)initial_val_ptr.ptr()); } break;
     case sstd::num_vec_uint32: { std::swap(*(std::vector<uint32>*)ptr, *(std::vector<uint32>*)initial_val_ptr.ptr()); } break;
     case sstd::num_vec_uint64: { std::swap(*(std::vector<uint64>*)ptr, *(std::vector<uint64>*)initial_val_ptr.ptr()); } break;
+    case sstd::num_vec_float : { std::swap(*(std::vector<float >*)ptr, *(std::vector<float >*)initial_val_ptr.ptr()); } break;
+    case sstd::num_vec_double: { std::swap(*(std::vector<double>*)ptr, *(std::vector<double>*)initial_val_ptr.ptr()); } break;
     default: { return false; }
     }
     return true;
@@ -88,8 +90,13 @@ bool sstd__str2val(uint16& return_val, const             std::string & s){ SSTD_
 bool sstd__str2val(uint32& return_val, const             std::string & s){ SSTD_STR2VAL_INTEGER(uint32, std::strtoul ); }
 bool sstd__str2val(uint64& return_val, const             std::string & s){ SSTD_STR2VAL_INTEGER(uint64, std::strtoull); }
 #undef SSTD_STR2VAL_INTEGER
-
-//---
+#define SSTD_STR2VAL_FLOAT(T, FN_S2I)           \
+    char *pEnd;                                 \
+    return_val=(T)FN_S2I(s.c_str(), &pEnd);     \
+    return *pEnd=='\0';
+bool sstd__str2val( float& return_val, const             std::string & s){ SSTD_STR2VAL_FLOAT( float, std::strtof); }
+bool sstd__str2val(double& return_val, const             std::string & s){ SSTD_STR2VAL_FLOAT(double, std::strtod); }
+#undef SSTD_STR2VAL_FLOAT
 
 #define SSTD_STR2VAL_INTEGER_VEC()                      \
     if(v.size()!=1){ return false; }                    \
@@ -103,22 +110,9 @@ bool sstd__str2val(uint8 & return_val, const std::vector<std::string>& v){ SSTD_
 bool sstd__str2val(uint16& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER_VEC(); }
 bool sstd__str2val(uint32& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER_VEC(); }
 bool sstd__str2val(uint64& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER_VEC(); }
+bool sstd__str2val(float & return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER_VEC(); }
+bool sstd__str2val(double& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER_VEC(); }
 #undef SSTD_STR2VAL_INTEGER_VEC
-
-//---
-
-#define SSTD_STR2VAL_FLOAT(T, FN_S2I)         \
-    if(v.size()!=1){ return false; }            \
-                                                \
-    char *pEnd;                                 \
-    return_val=(T)FN_S2I(v[0].c_str(), &pEnd);  \
-                                                \
-    return *pEnd=='\0';
-
-bool sstd__str2val( float& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_FLOAT( float, std::strtof); }
-bool sstd__str2val(double& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_FLOAT(double, std::strtod); }
-
-#undef SSTD_STR2VAL_FLOAT
 
 //---
 
@@ -146,6 +140,8 @@ bool sstd__str2val(std::vector<uint8 >& return_val, const std::vector<std::strin
 bool sstd__str2val(std::vector<uint16>& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_VEC_VEC(uint16); }
 bool sstd__str2val(std::vector<uint32>& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_VEC_VEC(uint32); }
 bool sstd__str2val(std::vector<uint64>& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_VEC_VEC(uint64); }
+bool sstd__str2val(std::vector<float >& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_VEC_VEC(float ); }
+bool sstd__str2val(std::vector<double>& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_VEC_VEC(double); }
 #undef SSTD_STR2VAL_VEC_VEC
 
 int sstd__str2voidp(void* return_val_ptr, const int type, const std::vector<std::string>& v){
@@ -173,6 +169,8 @@ int sstd__str2voidp(void* return_val_ptr, const int type, const std::vector<std:
     case sstd::num_vec_uint16: { if(!sstd__str2val(*(std::vector<uint16>*)return_val_ptr, v)){return -1;} } break;
     case sstd::num_vec_uint32: { if(!sstd__str2val(*(std::vector<uint32>*)return_val_ptr, v)){return -1;} } break;
     case sstd::num_vec_uint64: { if(!sstd__str2val(*(std::vector<uint64>*)return_val_ptr, v)){return -1;} } break;
+    case sstd::num_vec_float : { if(!sstd__str2val(*(std::vector<float >*)return_val_ptr, v)){return -1;} } break;
+    case sstd::num_vec_double: { if(!sstd__str2val(*(std::vector<double>*)return_val_ptr, v)){return -1;} } break;
     default: { return -2; }
     }
     

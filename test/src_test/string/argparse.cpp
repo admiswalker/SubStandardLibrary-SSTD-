@@ -791,6 +791,12 @@ TEST(argparse, cmd_v_u64_arg0){ std::vector<const char*> ARGS={"./a.out","cmd"  
 TEST(argparse, cmd_v_u64_arg1){ std::vector<const char*> ARGS={"./a.out","cmd","1"        }; std::vector<uint64> DEFAULT={}; std::vector<uint64> ANS={1    }; TEST_VEC_NUMERIC_TYPES(uint64, ARGS, DEFAULT, ANS); }
 TEST(argparse, cmd_v_u64_arg2){ std::vector<const char*> ARGS={"./a.out","cmd","1","2"    }; std::vector<uint64> DEFAULT={}; std::vector<uint64> ANS={1,2  }; TEST_VEC_NUMERIC_TYPES(uint64, ARGS, DEFAULT, ANS); }
 TEST(argparse, cmd_v_u64_arg3){ std::vector<const char*> ARGS={"./a.out","cmd","1","2","3"}; std::vector<uint64> DEFAULT={}; std::vector<uint64> ANS={1,2,3}; TEST_VEC_NUMERIC_TYPES(uint64, ARGS, DEFAULT, ANS); }
+
+TEST(argparse, cmd_v_float_arg0_default_value){ std::vector<const char*> ARGS={"./a.out","cmd"}; std::vector<float> DEFAULT={9,8,7}; std::vector<float> ANS={9,8,7}; TEST_VEC_NUMERIC_TYPES(float, ARGS, DEFAULT, ANS); }
+TEST(argparse, cmd_v_float_arg0){ std::vector<const char*> ARGS={"./a.out","cmd"                  }; std::vector<float> DEFAULT={}; std::vector<float> ANS={     }; TEST_VEC_NUMERIC_TYPES(float, ARGS, DEFAULT, ANS); }
+TEST(argparse, cmd_v_float_arg1){ std::vector<const char*> ARGS={"./a.out","cmd","1.0"            }; std::vector<float> DEFAULT={}; std::vector<float> ANS={1    }; TEST_VEC_NUMERIC_TYPES(float, ARGS, DEFAULT, ANS); }
+TEST(argparse, cmd_v_float_arg2){ std::vector<const char*> ARGS={"./a.out","cmd","1.0","2.0"      }; std::vector<float> DEFAULT={}; std::vector<float> ANS={1,2  }; TEST_VEC_NUMERIC_TYPES(float, ARGS, DEFAULT, ANS); }
+TEST(argparse, cmd_v_float_arg3){ std::vector<const char*> ARGS={"./a.out","cmd","1.0","2.0","3.0"}; std::vector<float> DEFAULT={}; std::vector<float> ANS={1,2,3}; TEST_VEC_NUMERIC_TYPES(float, ARGS, DEFAULT, ANS); }
 #undef TEST_VEC_NUMERIC_TYPES
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
