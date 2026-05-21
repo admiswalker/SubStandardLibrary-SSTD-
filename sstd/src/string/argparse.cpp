@@ -137,7 +137,7 @@ bool sstd__str2val(std::vector<char>& return_val, const std::vector<std::string>
         return_val.push_back( tmp );                    \
     }                                                   \
     return true;
-bool sstd__str2val(std::vector<bool  >& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_VEC_VEC( int8 ); }
+bool sstd__str2val(std::vector<bool  >& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_VEC_VEC(bool  ); }
 bool sstd__str2val(std::vector< int8 >& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_VEC_VEC( int8 ); }
 bool sstd__str2val(std::vector< int16>& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_VEC_VEC( int16); }
 bool sstd__str2val(std::vector< int32>& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_VEC_VEC( int32); }
