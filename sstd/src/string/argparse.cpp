@@ -44,6 +44,7 @@ bool _fill_by_initial_val(void* ptr, const int type, const sstd::void_ptr& initi
     case sstd::num_float     : { std::swap(*(            float  *)ptr, *(            float  *)initial_val_ptr.ptr()); } break;
     case sstd::num_double    : { std::swap(*(            double *)ptr, *(            double *)initial_val_ptr.ptr()); } break;
     case sstd::num_vec_bool  : { std::swap(*(std::vector<bool  >*)ptr, *(std::vector<bool  >*)initial_val_ptr.ptr()); } break;
+    case sstd::num_vec_char  : { std::swap(*(std::vector<char  >*)ptr, *(std::vector<char  >*)initial_val_ptr.ptr()); } break; // same as uint8
     case sstd::num_vec_int8  : { std::swap(*(std::vector< int8 >*)ptr, *(std::vector< int8 >*)initial_val_ptr.ptr()); } break;
     case sstd::num_vec_int16 : { std::swap(*(std::vector< int16>*)ptr, *(std::vector< int16>*)initial_val_ptr.ptr()); } break;
     case sstd::num_vec_int32 : { std::swap(*(std::vector< int32>*)ptr, *(std::vector< int32>*)initial_val_ptr.ptr()); } break;
@@ -69,12 +70,9 @@ bool sstd__str2val(bool& return_val, const std::string& s){
     
     return false;
 }
-bool sstd__str2val(char& return_val, const std::vector<std::string>& v){
-    if(v.size()!=1){ return false; }
-    if(v[0].size()!=1){ return false; }
-    
-    return_val=(char)v[0][0];
-    
+bool sstd__str2val(char& return_val, const std::string& s){
+    if(s.size()!=1){ return false; }
+    return_val=(char)s[0];
     return true;
 }
 #define SSTD_STR2VAL_INTEGER(T, FN_S2I)         \
@@ -102,6 +100,7 @@ bool sstd__str2val(double& return_val, const             std::string & s){ SSTD_
     if(v.size()!=1){ return false; }                    \
     return sstd__str2val(return_val, v[0].c_str());
 bool sstd__str2val(bool  & return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER_VEC(); }
+bool sstd__str2val(char  & return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER_VEC(); }
 bool sstd__str2val( int8 & return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER_VEC(); }
 bool sstd__str2val( int16& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER_VEC(); }
 bool sstd__str2val( int32& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_INTEGER_VEC(); }
@@ -116,14 +115,6 @@ bool sstd__str2val(double& return_val, const std::vector<std::string>& v){ SSTD_
 
 //---
 
-bool sstd__str2val(std::vector<char>& return_val, const std::vector<std::string>& v){
-    for(uint i=0; i<v.size(); ++i){
-        if(v[i].size()!=1){ return false; }
-        return_val.push_back( (char)v[i][0] );
-    }
-    return true;
-}
-
 #define SSTD_STR2VAL_VEC_VEC(TYPE)                      \
     for(uint i=0; i<v.size(); ++i){                     \
         TYPE tmp;                                       \
@@ -132,6 +123,7 @@ bool sstd__str2val(std::vector<char>& return_val, const std::vector<std::string>
     }                                                   \
     return true;
 bool sstd__str2val(std::vector<bool  >& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_VEC_VEC(bool  ); }
+bool sstd__str2val(std::vector<char  >& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_VEC_VEC(char  ); }
 bool sstd__str2val(std::vector< int8 >& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_VEC_VEC( int8 ); }
 bool sstd__str2val(std::vector< int16>& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_VEC_VEC( int16); }
 bool sstd__str2val(std::vector< int32>& return_val, const std::vector<std::string>& v){ SSTD_STR2VAL_VEC_VEC( int32); }
