@@ -569,7 +569,7 @@ TEST(argparse, cmd_vchar){
 // Skipp (same with uint8)
 
 //---
-// int8, int16, int32, int64, uint8, uint16, uint32, uint64, float, double
+// int8, int16, int32, int64, uint8, uint16, uint32, uint64, float, double, std::string
 
 #define TEST_NUMERIC_TYPES_ARG0_DEFAULT(TYPE, DEFAULT)                  \
     std::vector<const char*> args = {"./a.out", "cmd"};                 \
@@ -584,6 +584,7 @@ TEST(argparse, cmd_vchar){
     int cmd_id = ap.parse(argc, argv                                    \
                           , sstd::arg_rule::cmd((int)CmdID::SAMPLE_CMD, res, DEFAULT, "cmd", 0) \
                           );                                            \
+    if(ap.err().size()!=0){ sstd::printn_all(ap.err()); }               \
     ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);                          \
     ASSERT_EQ(res, (TYPE)DEFAULT);
 #define TEST_NUMERIC_TYPES(TYPE, CNT, DEFAULT, ARG_STR, ANS)            \
@@ -599,6 +600,7 @@ TEST(argparse, cmd_vchar){
     int cmd_id = ap.parse(argc, argv                                    \
                           , sstd::arg_rule::cmd((int)CmdID::SAMPLE_CMD, res, DEFAULT, "cmd", CNT) \
                           );                                            \
+    if(ap.err().size()!=0){ sstd::printn_all(ap.err()); }               \
     ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);                          \
     ASSERT_EQ(res, (TYPE)ANS);
 
@@ -654,12 +656,12 @@ TEST(argparse, cmd_double_2){ TEST_NUMERIC_TYPES(double, 1, (double) 1.234, "0.0
 TEST(argparse, cmd_double_3){ TEST_NUMERIC_TYPES(double, 1, (double) 0.0, "-1.234", -1.234); }
 TEST(argparse, cmd_double_4){ TEST_NUMERIC_TYPES(double, 1, (double) 0.0, "1.234", 1.234); }
 
+TEST(argparse, cmd_str_arg0_default ){ TEST_NUMERIC_TYPES_ARG0_DEFAULT(std::string, (std::string)"abc"); }
+TEST(argparse, cmd_str_1){ TEST_NUMERIC_TYPES(std::string, 1, (std::string)"xxx", "abc", "abc"); }
+TEST(argparse, cmd_str_2){ TEST_NUMERIC_TYPES(std::string, 1, (std::string)"abc", "xxx", "xxx"); }
+
 #undef TEST_NUMERIC_TYPES
 #undef TEST_NUMERIC_TYPES_ARG0_DEFAULT
-
-// std::string
-
-// TODO
 
 //---
 // std::vector<T>. `T` is bool, char, int8, int16, int32, int64, uint8, uint16, uint32, uint64, float, double or std::string.
