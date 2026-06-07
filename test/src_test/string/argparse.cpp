@@ -121,6 +121,63 @@ TEST(argparse, cmd_expect_m1_in_3){
     ASSERT_TRUE(vlineNum==std::vector<int>({1,3,5}));
 }
 
+//---
+
+TEST(argparse, complicated_test_02){
+
+    // example input
+    std::vector<const char*> args = {
+                    "./a.out",
+                    "cmd",
+                    "-a", "-bc", "-def",
+                    "src_path", "dst_path"
+    };
+    const int argc = args.size();
+    const char **argv = args.data();
+    
+    enum class CmdID{
+                     EMPTY,
+                     CMD
+    };
+    
+    bool rm_hs=false, rm_ts=false;
+    std::vector<std::string> vCmdArgs;
+    
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::cmd((int)CmdID::EMPTY, "", 0)
+                          , sstd::arg_rule::cmd((int)CmdID::CMD, vCmdArgs, {}, "cmd", 2)
+                          , sstd::arg_rule::opt(rm_hs, true, "-a", "--option-a", 0)
+                          , sstd::arg_rule::opt(rm_ts, true, "-b", "--option-b", 0)
+                          , sstd::arg_rule::opt(rm_ts, true, "-c", "--option-c", 0)
+                          , sstd::arg_rule::opt(rm_ts, true, "-d", "--option-d", 0)
+                          , sstd::arg_rule::opt(rm_ts, true, "-e", "--option-e", 0)
+                          , sstd::arg_rule::opt(rm_ts, true, "-f", "--option-f", 0)
+                    );
+//    sstd::printn_all(cmd_id);
+    if(cmd_id==-1){ sstd::printn_all(ap.err()); }
+    ASSERT_EQ(cmd_id, (int)CmdID::CMD);
+    
+    switch(cmd_id){
+    case (int)CmdID::EMPTY : {
+//        ap.print_help();
+    } break;
+    case (int)CmdID::CMD: {
+        // process get lines
+        sstd::printn_all(vCmdArgs);
+//        ASSERT_TRUE(vlineNum==std::vector<int>({1,3,5}));
+//        ASSERT_TRUE(rm_hs==true);
+//        ASSERT_TRUE(rm_ts==true);
+    } break;
+    case (int)sstd::arg_rule::num_error : {
+        sstd::pdbg_err("%s", ap.err().c_str());
+    } break;
+    default : {
+        sstd::pdbg_err("Unexpected error.");
+    }
+    }
+}
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Normal testing for parsing / パーシング正常系
 
