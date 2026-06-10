@@ -129,7 +129,14 @@ TEST(argparse, complicated_test_02){
     std::vector<const char*> args = {
                     "./a.out",
                     "cmd",
-                    "-a", "-bc", "-def",
+                    "-a", "1", "2",
+                    "-b",
+                    "-cd",
+//                    "-e", "true",
+//                    "-f=true",
+//                    "-g", "false",
+//                    "-h=true",
+//                    "--rectangle", "5", "5", "5", "5",
                     "src_path", "dst_path"
     };
     const int argc = args.size();

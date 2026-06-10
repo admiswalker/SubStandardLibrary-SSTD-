@@ -316,13 +316,56 @@ int _parse_argc_argv(
                       
                       // input variables:
                       const int argc, const char* argv[],
-                      const std::unordered_map<std::string,uint>& ht_cmd2idx)
+                      const std::unordered_map<std::string,uint>& ht_cmd2idx,
+                      const std::unordered_map<std::string,uint>& ht_opt2idx_short,
+                      const std::unordered_map<std::string,uint>& ht_opt2idx_full)
 {
+    // Ex.
+    //    in:
+    //        argv == [./a.out cmd -a 1 2 -b -cd -e true -f=true -g false -h=true --rectangle 5 5 5 5 src_path dst_path]
+    //   out:
+    //        res_cmd_args == [cmd src_path dst_path]
+    //        res_opt_vArgs == [[-a 1 2],
+    //                          [-b],
+    //                          [-c],
+    //                          [-d],
+    //                          [-e true],
+    //                          [-f true],  <- Note: `=` is removed
+    //                          [-g true],
+    //                          [-h false], <- Note: `=` is removed
+    //                          [--rectangle 5 5 5 5]]
+    
+    for(uint i=1; i<(uint)argc; ++i){
+        int type = _is_separator(argv[i], ht_cmd2idx);
+        
+        if      (type==CMD){
+            // command
+            res_cmd_args <<= std::move(s);
+            
+        }else if(type==OPT){
+            int opt_arg_len = _get_arg_len(ht_opt2idx_full, s);
+            int arg_len = _get_arg_len(ht_opt2idx_full, s);
+            bool res; res_opt_vArgs <<= _extract_opt_by_length(res, errMsg, argv, argc, i, opt_arg_len); if(!res){ return -1; }
+            i += res_opt_vArgs.back().size(); // get the last size by back() member function.
+            
+        }else if(type==OPT_M && s.size()==2){
+            int opt_arg_len = _get_arg_len(ht_opt2idx_short, s);
+            bool res; res_opt_vArgs <<= _extract_opt_by_length(res, errMsg, argv, argc, i, opt_arg_len); if(!res){ return -1; }
+            i += res_opt_vArgs.back().size(); // get the last size by back() member function.
+            
+        }else if(type==OPT_M){
+            bool res; res_opt_vArgs <<= _split_opt_m(res, errMsg, v); if(!res){ return -1; }
+            
+        }
+    }
+    
+    //---
+    
     int prev_type=DEFAULT;
     std::vector<std::string> tmp_args;
     for(uint i=1; i<(uint)argc; ++i){
         std::string s = argv[i];
-
+        
         int type = _is_separator(s, ht_cmd2idx);
         if(type!=-1){
             std::vector<std::string> v; std::swap(v, tmp_args);
@@ -342,6 +385,32 @@ int _parse_argc_argv(
     }
     
     return 0;
+    /*
+    int prev_type=DEFAULT;
+    std::vector<std::string> tmp_args;
+    for(uint i=1; i<(uint)argc; ++i){
+        std::string s = argv[i];
+        
+        int type = _is_separator(s, ht_cmd2idx);
+        if(type!=-1){
+            std::vector<std::string> v; std::swap(v, tmp_args);
+            
+            if      (prev_type==CMD  ){           res_cmd_args  <<= std::move(v);
+            }else if(prev_type==OPT  ){           res_opt_vArgs <<= std::move(v);
+            }else if(prev_type==OPT_M){ bool res; res_opt_vArgs <<= _split_opt_m(res, errMsg, v); if(!res){ return -1; }
+            }
+            prev_type = type;
+        }
+        
+        tmp_args.push_back(std::move(s));
+    }
+    if      (prev_type==CMD  ){           res_cmd_args  <<= std::move(tmp_args); // TODO: operator の先でmove が機能するようにする
+    }else if(prev_type==OPT  ){           res_opt_vArgs <<= std::move(tmp_args);
+    }else if(prev_type==OPT_M){ bool res; res_opt_vArgs <<= _split_opt_m(res, errMsg, tmp_args); if(!res){ return -1; }
+    }
+    
+    return 0;
+    */
 }
 #undef NOT_A_SEPARATOR
 #undef OPT_M
@@ -501,7 +570,7 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
     int res_p = _parse_argc_argv(this->errMsg, cmd_args, opt_vArgs, argc, argv, ht_cmd2idx);
     
     // parse command
-    int cmd_id = _process_cmd(this->errMsg, cmd_args, cmd_vRule, ht_cmd2idx);
+    int cmd_id = _process_cmd(this->errMsg, cmd_args, cmd_vRule, ht_cmd2idx, ht_opt2idx_short, ht_opt2idx_full);
     
     // parse option
     std::vector<bool> opt_vRule_inited(opt_vRule.size(), false);
