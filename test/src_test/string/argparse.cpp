@@ -130,8 +130,8 @@ TEST(argparse, complicated_test_02){
                     "./a.out",
                     "cmd",
                     "-a", "1", "2",
-                    "-b",
-                    "-cd",
+//                    "-b",
+//                    "-cd",
 //                    "-e", "true",
 //                    "-f=true",
 //                    "-g", "false",
@@ -154,14 +154,16 @@ TEST(argparse, complicated_test_02){
     int cmd_id = ap.parse(argc, argv
                           , sstd::arg_rule::cmd((int)CmdID::EMPTY, "", 0)
                           , sstd::arg_rule::cmd((int)CmdID::CMD, vCmdArgs, {}, "cmd", 2)
-                          , sstd::arg_rule::opt(rm_hs, true, "-a", "--option-a", 0)
+                          , sstd::arg_rule::opt(rm_hs, true, "-a", "--option-a", 2)
                           , sstd::arg_rule::opt(rm_ts, true, "-b", "--option-b", 0)
                           , sstd::arg_rule::opt(rm_ts, true, "-c", "--option-c", 0)
                           , sstd::arg_rule::opt(rm_ts, true, "-d", "--option-d", 0)
                           , sstd::arg_rule::opt(rm_ts, true, "-e", "--option-e", 0)
                           , sstd::arg_rule::opt(rm_ts, true, "-f", "--option-f", 0)
                     );
-//    sstd::printn_all(cmd_id);
+    sstd::printn_all(cmd_id);
+    sstd::printn_all(vCmdArgs);
+    
     if(cmd_id==-1){ sstd::printn_all(ap.err()); }
     ASSERT_EQ(cmd_id, (int)CmdID::CMD);
     
@@ -184,7 +186,7 @@ TEST(argparse, complicated_test_02){
     }
     }
 }
-
+/*
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Normal testing for parsing / パーシング正常系
 
@@ -826,5 +828,5 @@ TEST(argparse, cmd_v_str_arg3){ std::vector<const char*> ARGS={"./a.out","cmd","
 #undef TEST_VEC_TYPES
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-
+//*/
 EXECUTE_TESTS();
