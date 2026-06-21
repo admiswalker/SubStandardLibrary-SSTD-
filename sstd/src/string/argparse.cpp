@@ -520,41 +520,6 @@ int _process_cmd(std::string& errMsg,
 
 //---
 
-int _get_opt(const std::string& opt, const std::unordered_map<std::string,uint>& ht_opt2idx){
-    auto itr = ht_opt2idx.find( opt );
-    if(itr==ht_opt2idx.end()){ return -1; }
-    return itr->second;
-}
-std::vector<int> _parse_opt(const std::vector<std::vector<std::string>>& opt_vArgs,
-                             const std::vector<struct sstd::arg_rule::opt_rule>& opt_vRule,
-                             const std::unordered_map<std::string,uint>& ht_opt2idx_short,
-                             const std::unordered_map<std::string,uint>& ht_opt2idx_full)
-{
-    std::vector<int> res_opt_vIdx;
-    
-    for(uint i=0; i<opt_vArgs.size(); ++i){
-        const std::vector<std::string>& optArgs = opt_vArgs[i];
-        
-        if(optArgs.size()==0){
-            res_opt_vIdx.push_back(-1);
-        }else if(_is_opt_short(optArgs[0])){
-            // Opt is short.
-            const std::string& opts = optArgs[0];
-            for(uint is=1; is<opts.size(); ++is){ // skip '-'
-                int opt_idx = _get_opt(std::string("-")+opts[is], ht_opt2idx_short);
-                res_opt_vIdx.push_back(opt_idx);
-            }
-        }else{
-            // Opt is full.
-            const std::string& opt = optArgs[0];
-            int opt_idx = _get_opt(opt, ht_opt2idx_full);
-            res_opt_vIdx.push_back(opt_idx);
-        }
-    }
-    
-    return res_opt_vIdx;
-}
-
 int _process_opt(std::string& errMsg,
                  std::vector<bool>& opt_vRule_inited,
                  const std::vector<int>& opt_vIdx,
@@ -563,8 +528,6 @@ int _process_opt(std::string& errMsg,
                  const std::unordered_map<std::string,uint>& ht_opt2idx_short,
                  const std::unordered_map<std::string,uint>& ht_opt2idx_full)
 {
-//    std::vector<int> opt_vIdx = _parse_opt(opt_vArgs, opt_vRule, ht_opt2idx_short, ht_opt2idx_full);
-    
     std::vector<std::tuple<uint,uint>> vDuplicated = sstd__duplicated(opt_vIdx);
     if(vDuplicated.size()!=0){
         std::string err = "There are duplicated input in the arg. The duplicated options are follows:";
