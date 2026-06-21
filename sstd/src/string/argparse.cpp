@@ -182,42 +182,58 @@ int sstd__str2voidp(void* return_val_ptr, const int type, const std::vector<std:
 
 int _get_cmd_id(const struct sstd::arg_rule::cmd_rule& cmdRule){ return cmdRule.cmd_id; }
 int _get_cmd_id(const struct sstd::arg_rule::opt_rule& optRule){ return 0; }
+
+#define COMMON_ERR_MSG sstd::pdbg_err_str(("Failed to init default value. Data type is `"+sstd::typeNum2str(type)+"`.\n").c_str());
+
 template<typename T>
 int _fill_result_arg_by_val(std::string& errMsg, const T& rule, const std::vector<std::string>& input_args){
     
     std::vector<std::string> args = input_args&&sstd::slice(1,sstd::end());
     int arg_len = rule.expected_num_of_args;
     
-    int res=0;
-    if(arg_len!=-1 && (int)args.size()!=arg_len){
-        errMsg+=sstd::pdbg_err_str(("The number of input argument(s) is `"+std::to_string(args.size())+"` ("+sstd::to_string(input_args)+"). But `"+std::to_string(arg_len)+"` argument(s) are expected by the definition of sstd::arg_rule::opt().\n").c_str());
-        res = -1;
-    }
-    
     int   type = rule.return_val_type;
     void* ptr  = rule.return_val_ptr;
     
-    if(res==0 && args.size()!=0){
-        res = sstd__str2voidp(ptr, type, args);
+    if(arg_len!=-1 && (int)args.size()!=arg_len){
+        errMsg+=sstd::pdbg_err_str(("The number of input argument(s) is `"+std::to_string(args.size())+"` ("+sstd::to_string(input_args)+"). But `"+std::to_string(arg_len)+"` argument(s) are expected by the definition of sstd::arg_rule::opt().\n").c_str());
+        errMsg+=COMMON_ERR_MSG;
+        return -1;
+    }
+    
+    if(args.size()!=0){
+        // args.size()!=0
+        
+        int res = sstd__str2voidp(ptr, type, args);
         if(res==-1){
             errMsg+=sstd::pdbg_err_str(("The input arguments of `"+sstd::to_string(input_args)+"` is failed to convert to `"+sstd::typeNum2str(type)+"` type.\n").c_str());
+            errMsg+=COMMON_ERR_MSG;
+            return -1;
         }else if(res==-2){
             errMsg+=sstd::pdbg_err_str(("The input data type of `"+sstd::typeNum2str(type)+"` is our of support.\n").c_str());
-        }
-    }
-    if(res!=0 || args.size()==0){
-        bool tf = _fill_by_initial_val(ptr, type, rule.initial_val_ptr);
-        if(!tf){
-            errMsg+=sstd::pdbg_err_str(("Failed to init default value. Data type is `"+sstd::typeNum2str(type)+"`.\n").c_str());
+            errMsg+=COMMON_ERR_MSG;
             return -1;
         }
-    }
-    if(res!=0){
-        return -1;
+        
+    }else{
+        // args.size()==0
+        
+        if(type==sstd::num_bool){
+            
+            *(bool*)ptr = true;
+            
+        }else{
+            bool tf = _fill_by_initial_val(ptr, type, rule.initial_val_ptr);
+            if(!tf){
+                errMsg+=sstd::pdbg_err_str(("Failed to init default value. Data type is `"+sstd::typeNum2str(type)+"`.\n").c_str());
+                return -1;
+            }
+        }
     }
     
     return _get_cmd_id(rule);
 }
+
+#undef COMMON_ERR_MSG
 
 //---
 
@@ -545,6 +561,7 @@ int _process_opt(std::string& errMsg,
             return -1;
         }
         int res = _fill_result_arg_by_val(errMsg, opt_vRule[opt_idx], opt_vArgs[opt_idx]);
+        sstd::printn_all(res);
         opt_vRule_inited[opt_idx] = true; // Even if the `_fill_result_arg_by_val` failed, this function tried to update the option by default value.
         if(res!=0){ return -1; }
     }
