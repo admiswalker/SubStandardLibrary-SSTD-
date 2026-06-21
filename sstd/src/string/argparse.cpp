@@ -282,32 +282,35 @@ bool _is_opt_fs(const std::string& s){
 
 //---
 
-bool _is_cmd(const std::string& s, int& res_len, const std::vector<struct sstd::arg_rule::cmd_rule>& cmd_vRule, const std::unordered_map<std::string,uint>& ht_cmd2idx){
+bool _is_cmd(const std::string& s, int& ret_rule_idx, int& res_len, const std::vector<struct sstd::arg_rule::cmd_rule>& cmd_vRule, const std::unordered_map<std::string,uint>& ht_cmd2idx){
     auto itr = ht_cmd2idx.find( s );
     if(itr==ht_cmd2idx.end()){ return false; }
+    ret_rule_idx = itr->second;
     res_len = cmd_vRule[itr->second].expected_num_of_args;
     return true;
 }
-bool _is_opt_short(const std::string& s, int& res_len, const std::vector<struct sstd::arg_rule::opt_rule>& opt_vRule, const std::unordered_map<std::string,uint>& ht_opt2idx_short){
+bool _is_opt_short(const std::string& s, int& ret_rule_idx, int& res_len, const std::vector<struct sstd::arg_rule::opt_rule>& opt_vRule, const std::unordered_map<std::string,uint>& ht_opt2idx_short){
     if(!_is_opt_short(s)){ return false; }
     
     auto itr = ht_opt2idx_short.find( s );
     if(itr==ht_opt2idx_short.end()){ return false; }
+    ret_rule_idx = itr->second;
     res_len = opt_vRule[itr->second].expected_num_of_args;
     
     return true;
 }
-bool _is_opt_full(const std::string& s, int& res_len, const std::vector<struct sstd::arg_rule::opt_rule>& opt_vRule, const std::unordered_map<std::string,uint>& ht_opt2idx_full){
+bool _is_opt_full(const std::string& s, int& ret_rule_idx, int& res_len, const std::vector<struct sstd::arg_rule::opt_rule>& opt_vRule, const std::unordered_map<std::string,uint>& ht_opt2idx_full){
     if(!_is_opt_full(s)){ return false; }
     
     auto itr = ht_opt2idx_full.find( s );
     if(itr==ht_opt2idx_full.end()){ return false; }
+    ret_rule_idx = itr->second;
     res_len = opt_vRule[itr->second].expected_num_of_args;
     
     return true;
 }
-bool _is_opt_fs(const std::string& s, int& res_len, const std::vector<struct sstd::arg_rule::opt_rule>& opt_vRule, const std::unordered_map<std::string,uint>& ht_opt2idx_short, const std::unordered_map<std::string,uint>& ht_opt2idx_full){
-    return ( _is_opt_short(s, res_len, opt_vRule, ht_opt2idx_short) || _is_opt_full(s, res_len, opt_vRule, ht_opt2idx_full) );
+bool _is_opt_fs(const std::string& s, int& ret_rule_idx, int& res_len, const std::vector<struct sstd::arg_rule::opt_rule>& opt_vRule, const std::unordered_map<std::string,uint>& ht_opt2idx_short, const std::unordered_map<std::string,uint>& ht_opt2idx_full){
+    return ( _is_opt_short(s, ret_rule_idx, res_len, opt_vRule, ht_opt2idx_short) || _is_opt_full(s, ret_rule_idx, res_len, opt_vRule, ht_opt2idx_full) );
 }
 
 #define DEFAULT 0
@@ -319,7 +322,7 @@ void _arg_type_and_len(
                       std::string& errMsg,
                       
                       // return variables:
-                      int& res_type, int& res_len,
+                      int& res_type, int& rule_idx, int& res_len,
                       
                       // input variables:
                       const std::string& s,
@@ -329,9 +332,9 @@ void _arg_type_and_len(
                       const std::unordered_map<std::string,uint>& ht_opt2idx_short,
                       const std::unordered_map<std::string,uint>& ht_opt2idx_full)
 {
-    if      ( _is_opt_fs         (s, res_len, opt_vRule, ht_opt2idx_short, ht_opt2idx_full) ){ res_type=OPT;   return;
-    }else if( _is_opt_multi_short(s)                                                        ){ res_type=OPT_M; return; // This case can NOT return the `res_len` variable.
-    }else if( _is_cmd            (s, res_len, cmd_vRule, ht_cmd2idx)                        ){ res_type=CMD;   return;
+    if      ( _is_opt_fs         (s, rule_idx, res_len, opt_vRule, ht_opt2idx_short, ht_opt2idx_full) ){ res_type=OPT;   return;
+    }else if( _is_opt_multi_short(s /*, rule_idx (TO BE IMPLIMENTED LATER)*/ )                        ){ res_type=OPT_M; return; // This case can NOT return the `res_len` variable.
+    }else if( _is_cmd            (s, rule_idx, res_len, cmd_vRule, ht_cmd2idx)                        ){ res_type=CMD;   return;
     }
     
     res_type=NOT_A_SEPARATOR;
@@ -368,13 +371,14 @@ std::vector<std::string> _extract_opt_by_length(bool& res, std::string& errMsg, 
     if      (arg_len==-1){
         sstd::printn_all("ERROR: NOT implimented.");
     }else if(arg_len== 0){
-        sstd::printn_all("ERROR: NOT implimented.");
+            res_v <<= (std::string)argv[i]; // ex: '-a' -> 1 option + 0 args.
+            
     }else if(arg_len>= 1){
         uint extract_cnt=0;
         for(; i<(uint)argc; ++i){
             res_v <<= (std::string)argv[i];
             ++extract_cnt;
-            if(extract_cnt>arg_len){ break; } // ex: '-a 1 2 3' -> 1 option + 3 args.
+            if(extract_cnt>(uint)arg_len){ break; } // ex: '-a 1 2 3' -> 1 option + 3 args.
         }
     }else{
         // ERROR
@@ -388,7 +392,9 @@ int _parse_argc_argv(
                       std::string& errMsg,
                       
                       // return variables:
+                      int& ret_cmd_idx,
                       std::vector<std::string>& res_cmd_args,
+                      std::vector<int>& ret_opt_vIdx,
                       std::vector<std::vector<std::string>>& res_opt_vArgs,
                       
                       // input variables:
@@ -417,19 +423,23 @@ int _parse_argc_argv(
     int cmd_arg_len=0;
     
     for(uint i=1; i<(uint)argc; ++i){
-        int type=0,arg_len=0; _arg_type_and_len(errMsg, type, arg_len, argv[i], cmd_vRule, opt_vRule, ht_cmd2idx, ht_opt2idx_short, ht_opt2idx_full);
+        sstd::printn_all(argv[i]);
+        int type=0,rule_idx=-1,arg_len=0; _arg_type_and_len(errMsg, type, rule_idx, arg_len, argv[i], cmd_vRule, opt_vRule, ht_cmd2idx, ht_opt2idx_short, ht_opt2idx_full);
         sstd::printn_all(type);
         sstd::printn_all(arg_len);
         
         if      (type==CMD){
             // command
+            ret_cmd_idx = rule_idx;
             res_cmd_args <<= (std::string)argv[i];
             cmd_arg_len = arg_len;
             
         }else if(type==OPT){
+            ret_opt_vIdx <<= rule_idx;
             bool res; res_opt_vArgs <<= _extract_opt_by_length(res, errMsg, argc, argv, i, arg_len); if(!res){ return -1; }
             
         }else if(type==OPT_M){
+//            ret_opt_vIdx <<= rule_idx;
             bool res; res_opt_vArgs <<= _split_opt_m(res, errMsg, (std::string)argv[i]); if(!res){ return -1; }
             
         }else{
@@ -492,6 +502,7 @@ int _parse_cmd(const std::string& cmd,
 }
 
 int _process_cmd(std::string& errMsg,
+                 const int cmd_idx,
                  const std::vector<std::string>& cmd_args,
                  const std::vector<struct sstd::arg_rule::cmd_rule>& cmd_vRule,
                  const std::unordered_map<std::string,uint>& ht_cmd2idx)
@@ -499,7 +510,8 @@ int _process_cmd(std::string& errMsg,
     int cmd_id = sstd::arg_rule::num_command_does_not_exist;
     
     if(cmd_args.size()!=0){
-        int cmd_idx = _parse_cmd(cmd_args[0], ht_cmd2idx); if(cmd_idx==-1){ return -1; }
+//        int cmd_idx = _parse_cmd(cmd_args[0], ht_cmd2idx);
+        if(cmd_idx==-1){ return -1; }
         cmd_id = _fill_result_arg_by_val(errMsg, cmd_vRule[cmd_idx], cmd_args); if(cmd_id==-1){ return -1; }
     }
     
@@ -545,12 +557,13 @@ std::vector<int> _parse_opt(const std::vector<std::vector<std::string>>& opt_vAr
 
 int _process_opt(std::string& errMsg,
                  std::vector<bool>& opt_vRule_inited,
+                 const std::vector<int>& opt_vIdx,
                  const std::vector<std::vector<std::string>>& opt_vArgs,
                  const std::vector<struct sstd::arg_rule::opt_rule>& opt_vRule,
                  const std::unordered_map<std::string,uint>& ht_opt2idx_short,
                  const std::unordered_map<std::string,uint>& ht_opt2idx_full)
 {
-    std::vector<int> opt_vIdx = _parse_opt(opt_vArgs, opt_vRule, ht_opt2idx_short, ht_opt2idx_full);
+//    std::vector<int> opt_vIdx = _parse_opt(opt_vArgs, opt_vRule, ht_opt2idx_short, ht_opt2idx_full);
     
     std::vector<std::tuple<uint,uint>> vDuplicated = sstd__duplicated(opt_vIdx);
     if(vDuplicated.size()!=0){
@@ -627,16 +640,19 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
     }
     
     // Parse input argc and argv
+    int cmd_idx;
     std::vector<std::string> cmd_args;
+    std::vector<int> opt_vIdx;
     std::vector<std::vector<std::string>> opt_vArgs;
-    int res_p = _parse_argc_argv(this->errMsg, cmd_args, opt_vArgs, argc, argv, cmd_vRule, opt_vRule, ht_cmd2idx, ht_opt2idx_short, ht_opt2idx_full);
+    int res_p = _parse_argc_argv(this->errMsg, cmd_idx, cmd_args, opt_vIdx, opt_vArgs, argc, argv, cmd_vRule, opt_vRule, ht_cmd2idx, ht_opt2idx_short, ht_opt2idx_full);
+    sstd::printn_all(opt_vIdx);
     
     // parse command
-    int cmd_id = _process_cmd(this->errMsg, cmd_args, cmd_vRule, ht_cmd2idx);
+    int cmd_id = _process_cmd(this->errMsg, cmd_idx, cmd_args, cmd_vRule, ht_cmd2idx);
     
     // parse option
     std::vector<bool> opt_vRule_inited(opt_vRule.size(), false);
-    int res_o1 = _process_opt     (this->errMsg, opt_vRule_inited, opt_vArgs, opt_vRule, ht_opt2idx_short, ht_opt2idx_full);
+    int res_o1 = _process_opt     (this->errMsg, opt_vRule_inited, opt_vIdx, opt_vArgs, opt_vRule, ht_opt2idx_short, ht_opt2idx_full);
     int res_o2 = _process_opt_init(this->errMsg, opt_vRule, opt_vRule_inited);
     
     if(res_p==-1 || res_o1==-1 || res_o2==-1){ return -1; }

@@ -130,7 +130,7 @@ TEST(argparse, complicated_test_02){
                     "./a.out",
                     "cmd",
                     "-a", "1", "2",
-//                    "-b",
+                    "-b",
 //                    "-cd",
 //                    "-e", "true",
 //                    "-f=true",
@@ -146,7 +146,9 @@ TEST(argparse, complicated_test_02){
                      EMPTY,
                      CMD
     };
-    
+
+    std::vector<int> ret_optA;
+    bool ret_optB=false;
     bool rm_hs=false, rm_ts=false;
     std::vector<std::string> vCmdArgs;
     
@@ -154,8 +156,8 @@ TEST(argparse, complicated_test_02){
     int cmd_id = ap.parse(argc, argv
                           , sstd::arg_rule::cmd((int)CmdID::EMPTY, "", 0)
                           , sstd::arg_rule::cmd((int)CmdID::CMD, vCmdArgs, {}, "cmd", 2)
-                          , sstd::arg_rule::opt(rm_hs, true, "-a", "--option-a", 2)
-                          , sstd::arg_rule::opt(rm_ts, true, "-b", "--option-b", 0)
+                          , sstd::arg_rule::opt(ret_optA, std::vector<int>({}), "-a", "--option-a", 2)
+                          , sstd::arg_rule::opt(ret_optB, true, "-b", "--option-b", 0)
                           , sstd::arg_rule::opt(rm_ts, true, "-c", "--option-c", 0)
                           , sstd::arg_rule::opt(rm_ts, true, "-d", "--option-d", 0)
                           , sstd::arg_rule::opt(rm_ts, true, "-e", "--option-e", 0)
@@ -165,24 +167,27 @@ TEST(argparse, complicated_test_02){
     sstd::printn_all(vCmdArgs);
     
     if(cmd_id==-1){ sstd::printn_all(ap.err()); }
-    ASSERT_EQ(cmd_id, (int)CmdID::CMD);
     
     switch(cmd_id){
     case (int)CmdID::EMPTY : {
+        sstd::pdbg_err("%s", ap.err().c_str());
+        ASSERT_TRUE(false);
 //        ap.print_help();
     } break;
     case (int)CmdID::CMD: {
         // process get lines
-        sstd::printn_all(vCmdArgs);
-//        ASSERT_TRUE(vlineNum==std::vector<int>({1,3,5}));
-//        ASSERT_TRUE(rm_hs==true);
-//        ASSERT_TRUE(rm_ts==true);
+//        sstd::printn_all(vCmdArgs);
+//        sstd::printn_all(ret_v_a);
+        ASSERT_TRUE(vCmdArgs==std::vector<std::string>({"src_path", "dst_path"}));
+        ASSERT_TRUE(ret_optA==std::vector<int>({1, 2}));
     } break;
     case (int)sstd::arg_rule::num_error : {
         sstd::pdbg_err("%s", ap.err().c_str());
+        ASSERT_TRUE(false);
     } break;
     default : {
-        sstd::pdbg_err("Unexpected error.");
+        sstd::pdbg_err("%s", ap.err().c_str());
+        ASSERT_TRUE(false);
     }
     }
 }
