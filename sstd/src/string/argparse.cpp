@@ -479,7 +479,7 @@ int _parse_argc_argv(
             //res_opt_vArgs <<= std::vector<std::vector<std::string>>(v_rule_idx.size(), {""}); // make empty `std::vector<std::string>("")`, `v_rule_idx.size()` times.
             std::string tmp=argv[i];
             for(uint i2=1; i2<tmp.size(); ++i2){
-                res_opt_vArgs <<= std::vector<std::string>({std::string("-")+std::string(1,tmp[i2])});
+                res_opt_vArgs <<= std::vector<std::string>({std::string("-")+std::string(1,tmp[i2])}); // TODO: この [-a, -b, -c] をわざわざ受け渡すのは埋め込むのは無駄なので、あとで消す。
             }
             
         }else{
@@ -550,8 +550,6 @@ int _process_cmd(std::string& errMsg,
     int cmd_id = sstd::arg_rule::num_command_does_not_exist;
     
     if(cmd_args.size()!=0){
-//        int cmd_idx = _parse_cmd(cmd_args[0], ht_cmd2idx);
-        if(cmd_idx==-1){ return -1; }
         cmd_id = _fill_result_arg_by_val(errMsg, cmd_vRule[cmd_idx], cmd_args); if(cmd_id==-1){ return -1; }
     }
     
@@ -649,6 +647,8 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
     std::vector<int> opt_vIdx;
     std::vector<std::vector<std::string>> opt_vArgs;
     int res_p = _parse_argc_argv(this->errMsg, cmd_idx, cmd_args, opt_vIdx, opt_vArgs, argc, argv, cmd_vRule, opt_vRule, ht_cmd2idx, ht_opt2idx_short, ht_opt2idx_full);
+    if(cmd_idx==-1){ return -1; } // TODO: エラーメッセージを書く
+    
     sstd::printn_all(opt_vIdx);
     
     // parse command
