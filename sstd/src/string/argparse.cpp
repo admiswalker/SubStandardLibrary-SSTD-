@@ -180,6 +180,42 @@ int sstd__str2voidp(void* return_val_ptr, const int type, const std::vector<std:
     return 0;
 }
 
+//---
+// TODO: sstd/src/string/strEdit.cpp に移動する。
+
+std::vector<std::string> _asAX(const char* str, const char X, const int maxsplit){ // <- 既存の _asAX をこれの maxsplit=-1 で置換できるはず。
+    if(maxsplit==0){ return std::vector<std::string>({str}); }
+    std::vector<std::string> splitList;
+    
+    std::string buf;
+    uint i=0;
+//    while(str[i]!='\0'){ if(' '==str[i]){++i;}else{break;} } // skip space
+    while(str[i]!='\0'){
+        if(maxsplit>=0 && splitList.size()==(uint)maxsplit){
+            buf += (const char*)&str[i];
+            break;
+        }
+
+        if(str[i]==X){
+//            sstd::rstrip_ow(buf); splitList.push_back(buf); buf.clear();
+            splitList.push_back(buf); buf.clear();
+            ++i;
+//            while(str[i]!=0){ if(' '==str[i]){++i;}else{break;} } // skip space
+        }else{
+            buf+=str[i];
+            ++i;
+        }
+    }
+//    if(buf.size()!=0){ sstd::rstrip_ow(buf); splitList.push_back(buf); }
+    if(buf.size()!=0){ splitList.push_back(buf); }
+//    if(i>=1 && str[i-1]==X){ splitList.push_back(std::string()); }
+    return splitList;
+}
+std::vector<std::string> sstd__split(const        char* str, const char X, int maxsplit){ return _asAX(str,          X, maxsplit); }
+std::vector<std::string> sstd__split(const std::string& str, const char X, int maxsplit){ return _asAX(str.c_str(),  X, maxsplit); }
+
+//---
+
 int _get_cmd_id(const struct sstd::arg_rule::cmd_rule& cmdRule){ return cmdRule.cmd_id; }
 int _get_cmd_id(const struct sstd::arg_rule::opt_rule& optRule){ return 0; }
 
@@ -458,9 +494,25 @@ int _parse_argc_argv(
     
     for(uint i=1; i<(uint)argc; ++i){
         sstd::printn_all(argv[i]);
-//        int type=0,rule_idx=-1,arg_len=0; _arg_type_and_len(errMsg, type, rule_idx, arg_len, argv[i], cmd_vRule, opt_vRule, ht_cmd2idx, ht_opt2idx_short, ht_opt2idx_full);
+
+        std::vector<std::string> v = sstd__split(argv[i], '=', 1); // "-f=true" -> ["-f" "true"]
+        std::string opt_candidate = std::move(v[0]);
+        std::string val_candidate = v.size()>=2 ? std::move(v[1]) : "";
+        
         int type=0; std::vector<int> v_rule_idx; int arg_len=0;
-        _arg_type_and_len(errMsg, type, v_rule_idx, arg_len, argv[i], cmd_vRule, opt_vRule, ht_cmd2idx, ht_opt2idx_short, ht_opt2idx_full);
+//        _arg_type_and_len(errMsg, type, v_rule_idx, arg_len, argv[i], cmd_vRule, opt_vRule, ht_cmd2idx, ht_opt2idx_short, ht_opt2idx_full);
+        _arg_type_and_len(errMsg, type, v_rule_idx, arg_len, opt_candidate, cmd_vRule, opt_vRule, ht_cmd2idx, ht_opt2idx_short, ht_opt2idx_full);
+        if(val_candidate.size()!=0){
+            if(type==CMD || type==OPT_M){
+                errMsg+=sstd::pdbg_err_str(("The input argument of `"+sstd::to_string(argv[i])+"` is command or multiple short option. These types can NOT take the assignment operator of `=`.\n").c_str());
+                return -1;
+            }
+            if(type==OPT && arg_len!=1){
+                errMsg+=sstd::pdbg_err_str(("When the assignment operator of `=` is in use, only 1 argument expected. But the option of `"+opt_candidate+"` expects "+std::to_string(arg_len)+" arguments.\n").c_str());
+                return -1;
+            }
+        }
+        
         sstd::printn_all(type);
         sstd::printn_all(arg_len);
         
@@ -472,7 +524,12 @@ int _parse_argc_argv(
             
         }else if(type==OPT){
             ret_opt_vIdx <<= (int)v_rule_idx[0];
-            bool res; res_opt_vArgs <<= _extract_opt_by_length(res, errMsg, argc, argv, i, arg_len); if(!res){ return -1; }
+            sstd::printn_all(val_candidate);
+            if(val_candidate.size()==0){
+                bool res; res_opt_vArgs <<= _extract_opt_by_length(res, errMsg, argc, argv, i, arg_len); if(!res){ return -1; }
+            }else{
+                res_opt_vArgs <<= std::vector<std::string>({std::move(opt_candidate),std::move(val_candidate)});
+            }
             
         }else if(type==OPT_M){
             ret_opt_vIdx <<= v_rule_idx;

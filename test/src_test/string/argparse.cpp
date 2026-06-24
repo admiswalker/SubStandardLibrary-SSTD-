@@ -132,8 +132,8 @@ TEST(argparse, complicated_test_02){
                     "-a", "1", "2",
                     "-b",
                     "-cd",
-//                    "-e", "true",
-//                    "-f=true",
+                    "-e", "true",
+                    "-f=true",
 //                    "-g", "false",
 //                    "-h=true",
 //                    "--rectangle", "5", "5", "5", "5",
@@ -149,7 +149,7 @@ TEST(argparse, complicated_test_02){
 
     std::vector<std::string> vCmdArgs;
     std::vector<int> vOptA;
-    bool optB=false,optC=false,optD=false;
+    bool optB=false,optC=false,optD=false,optE=false,optF=false;
     bool rm_hs=false, rm_ts=false;
     
     sstd::argparse ap;
@@ -160,8 +160,9 @@ TEST(argparse, complicated_test_02){
                           , sstd::arg_rule::opt( optB, false, "-b", "--option-b", 0)
                           , sstd::arg_rule::opt( optC, false, "-c", "--option-c", 0)
                           , sstd::arg_rule::opt( optD, false, "-d", "--option-d", 0)
-                          , sstd::arg_rule::opt(rm_ts, true, "-e", "--option-e", 0)
-                          , sstd::arg_rule::opt(rm_ts, true, "-f", "--option-f", 0)
+                          , sstd::arg_rule::opt( optE, false, "-e", "--option-e", 1)
+//                          , sstd::arg_rule::opt( optE, false, "-e", "--option-e", 0) // TODO: このケース、要検討。
+                          , sstd::arg_rule::opt( optF, false, "-f", "--option-f", 1)
                     );
     sstd::printn_all(cmd_id);
     sstd::printn_all(vCmdArgs);
@@ -183,6 +184,7 @@ TEST(argparse, complicated_test_02){
         ASSERT_TRUE( optB );
         ASSERT_TRUE( optC );
         ASSERT_TRUE( optD );
+        ASSERT_TRUE( optE );
     } break;
     case (int)sstd::arg_rule::num_error : {
         sstd::pdbg_err("%s", ap.err().c_str());
