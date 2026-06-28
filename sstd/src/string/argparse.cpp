@@ -361,8 +361,8 @@ bool _is_opt_multi_short(const std::string& s, std::vector<int>& v_rule_idx, con
         int type    = opt_vRule[itr->second].return_val_type;
         int arg_len = opt_vRule[itr->second].expected_num_of_args;
         if(arg_len!=0){
-            std::string msg = "ERROR: multi_short option can not take arguments. But this data type `"+sstd::typeNum2str(type)+"` expects "+std::to_string(arg_len)+" arguments";
-            sstd::pdbg_err_str(msg.c_str());
+            std::string msg = "ERROR: multi_short option like `"+s+"` can not take arguments. But this data type `"+sstd::typeNum2str(type)+"` expects "+std::to_string(arg_len)+" argument(s). As defined by sstd::arg_rule::opt().";
+            sstd::printn_all(msg.c_str());
             // TODO : ここは、エラーをきちんと返すように修正する
         }
     }
