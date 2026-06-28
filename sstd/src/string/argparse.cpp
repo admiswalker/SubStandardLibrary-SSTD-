@@ -497,10 +497,9 @@ int _parse_argc_argv(
 
         std::vector<std::string> v = sstd__split(argv[i], '=', 1); // "-f=true" -> ["-f" "true"]
         std::string opt_candidate = std::move(v[0]);
-        std::string val_candidate = v.size()>=2 ? std::move(v[1]) : "";
+        std::string val_candidate = v.size()==2 ? std::move(v[1]) : "";
         
         int type=0; std::vector<int> v_rule_idx; int arg_len=0;
-//        _arg_type_and_len(errMsg, type, v_rule_idx, arg_len, argv[i], cmd_vRule, opt_vRule, ht_cmd2idx, ht_opt2idx_short, ht_opt2idx_full);
         _arg_type_and_len(errMsg, type, v_rule_idx, arg_len, opt_candidate, cmd_vRule, opt_vRule, ht_cmd2idx, ht_opt2idx_short, ht_opt2idx_full);
         if(val_candidate.size()!=0){
             if(type==CMD || type==OPT_M){
@@ -605,6 +604,10 @@ int _process_cmd(std::string& errMsg,
                  const std::unordered_map<std::string,uint>& ht_cmd2idx)
 {
     int cmd_id = sstd::arg_rule::num_command_does_not_exist;
+    if(cmd_idx==-1){
+        errMsg+=sstd::pdbg_err_str(("The input argument(s) of `"+sstd::to_string(cmd_args)+"` is NOT defnied by sstd::cmd_rule::opt() as an input option.\n").c_str());
+        return cmd_id;
+    }
     
     if(cmd_args.size()!=0){
         cmd_id = _fill_result_arg_by_val(errMsg, cmd_vRule[cmd_idx], cmd_args); if(cmd_id==-1){ return -1; }
@@ -635,14 +638,9 @@ int _process_opt(std::string& errMsg,
     }
     for(uint i=0; i<opt_vIdx.size(); ++i){
         int opt_idx = opt_vIdx[i];
-        if(opt_idx==-1){
-            errMsg+=sstd::pdbg_err_str(("The input argument(s) of `"+sstd::to_string(opt_vArgs[i])+"` is NOT defnied by sstd::arg_rule::opt() as an input option.\n").c_str());
-            return -1;
-        }
         int res = _fill_result_arg_by_val(errMsg, opt_vRule[opt_idx], opt_vArgs[opt_idx]);
-        sstd::printn_all(res);
-        opt_vRule_inited[opt_idx] = true; // Even if the `_fill_result_arg_by_val` failed, this function tried to update the option by default value.
         if(res!=0){ return -1; }
+        opt_vRule_inited[opt_idx] = true; // Even if the `_fill_result_arg_by_val` failed, this function tried to update the option by default value.
     }
     
     return 0;
@@ -699,17 +697,18 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
     }
     
     // Parse input argc and argv
-    int cmd_idx;
+    int cmd_idx=-1;
     std::vector<std::string> cmd_args;
     std::vector<int> opt_vIdx;
     std::vector<std::vector<std::string>> opt_vArgs;
     int res_p = _parse_argc_argv(this->errMsg, cmd_idx, cmd_args, opt_vIdx, opt_vArgs, argc, argv, cmd_vRule, opt_vRule, ht_cmd2idx, ht_opt2idx_short, ht_opt2idx_full);
-    if(cmd_idx==-1){ return -1; } // TODO: エラーメッセージを書く
     
+    sstd::printn_all(cmd_idx);
     sstd::printn_all(opt_vIdx);
     
     // parse command
     int cmd_id = _process_cmd(this->errMsg, cmd_idx, cmd_args, cmd_vRule, ht_cmd2idx);
+    sstd::printn_all(cmd_id);
     
     // parse option
     std::vector<bool> opt_vRule_inited(opt_vRule.size(), false);

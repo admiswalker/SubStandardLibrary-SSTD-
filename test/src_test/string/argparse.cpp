@@ -134,9 +134,9 @@ TEST(argparse, complicated_test_02){
                     "-cd",
                     "-e", "true",
                     "-f=true",
-//                    "-g", "false",
-//                    "-h=true",
-//                    "--rectangle", "5", "5", "5", "5",
+                    "-g", "false",
+                    "-h=false",
+                    "--rectangle", "5", "5", "5", "5",
                     "src_path", "dst_path"
     };
     const int argc = args.size();
@@ -148,8 +148,8 @@ TEST(argparse, complicated_test_02){
     };
 
     std::vector<std::string> vCmdArgs;
-    std::vector<int> vOptA;
-    bool optB=false,optC=false,optD=false,optE=false,optF=false;
+    std::vector<int> vOptA, vOptR;
+    bool optB=false,optC=false,optD=false,optE=false,optF=false,optG=true,optH=true;
     bool rm_hs=false, rm_ts=false;
     
     sstd::argparse ap;
@@ -163,6 +163,9 @@ TEST(argparse, complicated_test_02){
                           , sstd::arg_rule::opt( optE, false, "-e", "--option-e", 1)
 //                          , sstd::arg_rule::opt( optE, false, "-e", "--option-e", 0) // TODO: このケース、要検討。
                           , sstd::arg_rule::opt( optF, false, "-f", "--option-f", 1)
+                          , sstd::arg_rule::opt( optG,  true, "-g", "--option-g", 1)
+                          , sstd::arg_rule::opt( optH,  true, "-h", "--option-h", 1)
+                          , sstd::arg_rule::opt(vOptR, std::vector<int>({0,0,0,0}), "-r", "--rectangle", 4)
                     );
     sstd::printn_all(cmd_id);
     sstd::printn_all(vCmdArgs);
@@ -177,14 +180,16 @@ TEST(argparse, complicated_test_02){
     } break;
     case (int)CmdID::CMD: {
         // process get lines
-//        sstd::printn_all(vCmdArgs);
-//        sstd::printn_all(ret_v_a);
         ASSERT_TRUE(vCmdArgs==std::vector<std::string>({"src_path", "dst_path"}));
-        ASSERT_TRUE(vOptA==std::vector<int>({1, 2}));
+        ASSERT_EQ(vOptA, std::vector<int>({1, 2}));
         ASSERT_TRUE( optB );
         ASSERT_TRUE( optC );
         ASSERT_TRUE( optD );
         ASSERT_TRUE( optE );
+        ASSERT_TRUE( optF );
+        ASSERT_FALSE( optG );
+        ASSERT_FALSE( optH );
+        ASSERT_EQ(vOptR, std::vector<int>({5,5,5,5}));
     } break;
     case (int)sstd::arg_rule::num_error : {
         sstd::pdbg_err("%s", ap.err().c_str());
@@ -196,7 +201,7 @@ TEST(argparse, complicated_test_02){
     }
     }
 }
-/*
+//*
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Normal testing for parsing / パーシング正常系
 
@@ -271,38 +276,6 @@ TEST(argparse, short_opt_arg_1){
 // Negative testing for parsing / パーシング異常系
 
 // options
-TEST(argparse, NT_opt_undefined_opt){
-    std::vector<const char*> args = {"./a.out", "--undefined-opt", "xxx"};
-    const int argc = args.size();
-    const char **argv = args.data();
-
-    bool opt=true;
-
-    sstd::argparse ap;
-    int cmd_id = ap.parse(argc, argv
-                          , sstd::arg_rule::opt(opt, false, "-o", "--option", 0)
-                          );
-    ASSERT_EQ(cmd_id, sstd::arg_rule::num_error);
-    
-    ASSERT_TRUE(sstd::strIn(R"(error: The input argument(s) of `["--undefined-opt" "xxx"]` is NOT defnied by sstd::arg_rule::opt() as an input option.)", ap.err()));
-    ASSERT_TRUE(opt==false);
-}
-TEST(argparse, NT_opt_undefined_opt_short){
-    std::vector<const char*> args = {"./a.out", "--d"};
-    const int argc = args.size();
-    const char **argv = args.data();
-
-    bool opt_a=true;
-
-    sstd::argparse ap;
-    int cmd_id = ap.parse(argc, argv
-                          , sstd::arg_rule::opt(opt_a, false, "-o", "--option", 0)
-                          );
-    ASSERT_EQ(cmd_id, sstd::arg_rule::num_error);
-    
-    ASSERT_TRUE(sstd::strIn(R"(error: The input argument(s) of `["--d"]` is NOT defnied by sstd::arg_rule::opt() as an input option.)", ap.err()));
-    ASSERT_TRUE(opt_a==false);
-}
 TEST(argparse, NT_opt_invalid_arg){
     std::vector<const char*> args = {"./a.out", "--option", "xxx"};
     const int argc = args.size();
@@ -318,7 +291,7 @@ TEST(argparse, NT_opt_invalid_arg){
     
     ASSERT_TRUE(sstd::strIn(R"(error: The input arguments of `["--option" "xxx"]` is failed to convert to `bool` type.)", ap.err()));
     ASSERT_TRUE(opt==false);
-}
+}/*
 TEST(argparse, NT_opt_less_arg){
     std::vector<const char*> args = {"./a.out", "--option"};
     const int argc = args.size();
@@ -485,6 +458,57 @@ TEST(argparse, NT_opt_duplicated_short_2b){
 
 
 // commands
+TEST(argparse, NT_opt_undefined_cmd_1){
+    std::vector<const char*> args = {"./a.out", "cmdX", "xxx"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    enum class CmdID{
+                     CMD_A
+    };
+    
+    std::vector<int> vlineNum;
+    
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::cmd((int)CmdID::CMD_A, vlineNum, {9, 8, 7}, "cmdA", -1)
+                          );
+    ASSERT_EQ(cmd_id, sstd::arg_rule::num_command_does_not_exist);
+    
+    ASSERT_TRUE(sstd::strIn(R"(error: The input argument(s) of `["--undefined-opt" "xxx"]` is NOT defnied by sstd::cmd_rule::opt() as an input option.)", ap.err()));
+}
+TEST(argparse, NT_opt_undefined_cmd_2){
+    std::vector<const char*> args = {"./a.out", "--undefined-opt", "xxx"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    bool opt=true;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::opt(opt, false, "-o", "--option", 0)
+                          );
+    ASSERT_EQ(cmd_id, sstd::arg_rule::num_command_does_not_exist);
+    
+    ASSERT_TRUE(sstd::strIn(R"(error: The input argument(s) of `["--undefined-opt" "xxx"]` is NOT defnied by sstd::cmd_rule::opt() as an input option.)", ap.err()));
+    ASSERT_TRUE(opt==false);
+}
+TEST(argparse, NT_opt_undefined_cmd_3){
+    std::vector<const char*> args = {"./a.out", "--d"};
+    const int argc = args.size();
+    const char **argv = args.data();
+
+    bool opt_a=true;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::opt(opt_a, false, "-o", "--option", 0)
+                          );
+    ASSERT_EQ(cmd_id, sstd::arg_rule::num_command_does_not_exist);
+    
+    ASSERT_TRUE(sstd::strIn(R"(error: The input argument(s) of `["--d"]` is NOT defnied by sstd::cmd_rule::opt() as an input option.)", ap.err()));
+    ASSERT_TRUE(opt_a==false);
+}
 TEST(argparse, NT_cmd_invalid_arg){
     std::vector<const char*> args = {"./a.out", "get-lines", "a", "b", "c"};
     const int argc = args.size();
