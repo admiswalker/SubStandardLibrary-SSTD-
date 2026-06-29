@@ -324,7 +324,7 @@ TEST(argparse, NT_opt_invalid_arg_short_1){
     ASSERT_EQ(cmd_id, sstd::arg_rule::num_error);
     sstd::printn_all(ap.err());
     
-    ASSERT_TRUE(sstd::strIn(R"(error: The multiple short options defined by sstd::arg_rule::opt() can NOT take arguments inputted as `["-ab" "T" "T"]`. Please separate the short options inputted if you want to use them with arguments.)", ap.err()));
+    ASSERT_TRUE(sstd::strIn(R"(error: multi_short option like `-ab` can not take arguments. But the short option of `-a` with data type `bool` expects 1 argument(s). As defined by sstd::arg_rule::opt().)", ap.err()));
     ASSERT_TRUE(opt_a==false);
     ASSERT_TRUE(opt_b==false);
 }
