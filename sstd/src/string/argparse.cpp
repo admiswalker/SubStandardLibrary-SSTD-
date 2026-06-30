@@ -397,17 +397,15 @@ bool _arg_type_and_len(
 {
     int rule_idx=-1;
     
-    if( _is_opt_short(s) ){
+    if( _is_opt_short(s) && _get_short_opt_ruleIdx_argLen(rule_idx, arg_len, opt_vRule, ht_opt2idx_short, s) ){
 
-        _get_short_opt_ruleIdx_argLen(rule_idx, arg_len, opt_vRule, ht_opt2idx_short, s);
         res_type = OPT;
         v_rule_idx <<= rule_idx;
         
         return true;
     }
-    if( _is_opt_full(s) ){
+    if( _is_opt_full(s) && _get_full_opt_ruleIdx_argLen(rule_idx, arg_len, opt_vRule, ht_opt2idx_full, s) ){
         
-        _get_full_opt_ruleIdx_argLen(rule_idx, arg_len, opt_vRule, ht_opt2idx_full, s);
         res_type = OPT;
         v_rule_idx <<= rule_idx;
         
@@ -416,6 +414,7 @@ bool _arg_type_and_len(
     if( _is_opt_multi_short(s) ){
         
         bool res = _get_multi_short_opt_vRuleIdx(errMsg, v_rule_idx, opt_vRule, ht_opt2idx_short, s);
+        if(!res){ return false; }
         res_type = OPT_M;
         
         return true;
@@ -498,7 +497,8 @@ int _parse_argc_argv(
         std::string val_candidate = v.size()==2 ? std::move(v[1]) : "";
         
         int type=0; std::vector<int> v_rule_idx; int arg_len=0;
-        _arg_type_and_len(errMsg, type, v_rule_idx, arg_len, opt_candidate, cmd_vRule, opt_vRule, ht_cmd2idx, ht_opt2idx_short, ht_opt2idx_full);
+        bool res = _arg_type_and_len(errMsg, type, v_rule_idx, arg_len, opt_candidate, cmd_vRule, opt_vRule, ht_cmd2idx, ht_opt2idx_short, ht_opt2idx_full);
+        if(!res){ return -1; }
         if(val_candidate.size()!=0){
             if(type==CMD || type==OPT_M){
                 errMsg+=sstd::pdbg_err_str(("The input argument of `"+sstd::to_string(argv[i])+"` is command or multiple short option. These types can NOT take the assignment operator of `=`.\n").c_str());
@@ -512,6 +512,7 @@ int _parse_argc_argv(
         
         sstd::printn_all(type);
         sstd::printn_all(arg_len);
+        sstd::printn_all(v_rule_idx);
         
         if      (type==CMD){
             // command
@@ -580,7 +581,17 @@ int _process_cmd(std::string& errMsg,
     }
     
     if(cmd_args.size()!=0){
-        cmd_id = _fill_result_arg_by_val(errMsg, cmd_vRule[cmd_idx], cmd_args); if(cmd_id==-1){ return -1; }
+        cmd_id = _fill_result_arg_by_val(errMsg, cmd_vRule[cmd_idx], cmd_args);
+        
+        if(cmd_id==-1){
+            int   type = cmd_vRule[cmd_idx].return_val_type;
+            void* ptr  = cmd_vRule[cmd_idx].return_val_ptr;
+            bool tf = _fill_by_initial_val(ptr, type, cmd_vRule[cmd_idx].initial_val_ptr);
+            if(!tf){
+                errMsg+=sstd::pdbg_err_str(("Failed to init default value. Data type is `"+sstd::typeNum2str(type)+"`.\n").c_str());
+            }
+            return -1;
+        }
     }
     
     return cmd_id;
@@ -682,8 +693,11 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
     
     // parse option
     std::vector<bool> opt_vRule_inited(opt_vRule.size(), false);
+    sstd::printn_all(opt_vRule_inited);
     int res_o1 = _process_opt     (this->errMsg, opt_vRule_inited, opt_vIdx, opt_vArgs, opt_vRule, ht_opt2idx_short, ht_opt2idx_full);
+    sstd::printn_all(res_o1);
     int res_o2 = _process_opt_init(this->errMsg, opt_vRule, opt_vRule_inited);
+    sstd::printn_all(res_o2);
     
     if(res_p==-1 || res_o1==-1 || res_o2==-1){ return -1; }
     return cmd_id;

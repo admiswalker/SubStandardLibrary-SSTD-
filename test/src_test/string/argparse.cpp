@@ -329,7 +329,7 @@ TEST(argparse, NT_opt_invalid_arg_short_1){
     ASSERT_TRUE(opt_b==false);
 }
 
-/*TEST(argparse, NT_opt_duplicated_1){
+TEST(argparse, NT_opt_duplicated_1){
     std::vector<const char*> args = {"./a.out", "--option-a", "--option-a"};
     const int argc = args.size();
     const char **argv = args.data();
@@ -459,8 +459,8 @@ TEST(argparse, NT_opt_undefined_cmd_1){
                           , sstd::arg_rule::cmd((int)CmdID::CMD_A, vlineNum, {9, 8, 7}, "cmdA", -1)
                           );
     ASSERT_EQ(cmd_id, sstd::arg_rule::num_command_does_not_exist);
-    
-    ASSERT_TRUE(sstd::strIn(R"(error: The input argument(s) of `["--undefined-opt" "xxx"]` is NOT defnied by sstd::cmd_rule::opt() as an input option.)", ap.err()));
+
+    ASSERT_TRUE(sstd::strIn(R"(error: The input argument(s) of `["cmdX" "xxx"]` is NOT defnied by sstd::cmd_rule::opt() as an input option.)", ap.err()));
 }
 TEST(argparse, NT_opt_undefined_cmd_2){
     std::vector<const char*> args = {"./a.out", "--undefined-opt", "xxx"};
@@ -473,6 +473,7 @@ TEST(argparse, NT_opt_undefined_cmd_2){
     int cmd_id = ap.parse(argc, argv
                           , sstd::arg_rule::opt(opt, false, "-o", "--option", 0)
                           );
+    sstd::printn_all(cmd_id);
     ASSERT_EQ(cmd_id, sstd::arg_rule::num_command_does_not_exist);
     
     ASSERT_TRUE(sstd::strIn(R"(error: The input argument(s) of `["--undefined-opt" "xxx"]` is NOT defnied by sstd::cmd_rule::opt() as an input option.)", ap.err()));
@@ -515,7 +516,7 @@ TEST(argparse, NT_cmd_invalid_arg){
     ASSERT_TRUE(sstd::strIn(R"(error: The input arguments of `["get-lines" "a" "b" "c"]` is failed to convert to `vec_int32` type.)", ap.err()));
     
     ASSERT_TRUE(vlineNum==std::vector<int>({9,8,7}));
-}
+}/*
 TEST(argparse, NT_cmd_less_arg){
     std::vector<const char*> args = {"./a.out", "get-lines", "1", "3"};
     const int argc = args.size();
