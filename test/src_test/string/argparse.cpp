@@ -516,7 +516,7 @@ TEST(argparse, NT_cmd_invalid_arg){
     ASSERT_TRUE(sstd::strIn(R"(error: The input arguments of `["get-lines" "a" "b" "c"]` is failed to convert to `vec_int32` type.)", ap.err()));
     
     ASSERT_TRUE(vlineNum==std::vector<int>({9,8,7}));
-}/*
+}
 TEST(argparse, NT_cmd_less_arg){
     std::vector<const char*> args = {"./a.out", "get-lines", "1", "3"};
     const int argc = args.size();
@@ -601,8 +601,8 @@ TEST(argparse, NT_cmd_duplicated){
                           );                                            \
     ASSERT_EQ(cmd_id, sstd::arg_rule::num_command_does_not_exist);      \
     ASSERT_TRUE(rm_hs==ANS);
-TEST(argparse, opt_bool_full_true_as_default ){ std::vector<const char*> args = {"./a.out", "--option"}; TEST_OPT_BOOL(args, true,  0, true);   }
-TEST(argparse, opt_bool_full_false_as_default){ std::vector<const char*> args = {"./a.out", "--option"}; TEST_OPT_BOOL(args, false, 0, false); }
+TEST(argparse, opt_bool_full_true_as_default ){ std::vector<const char*> args = {"./a.out", "--option"}; TEST_OPT_BOOL(args, true,  0, true ); }
+TEST(argparse, opt_bool_full_false_as_default){ std::vector<const char*> args = {"./a.out"            }; TEST_OPT_BOOL(args, false, 0, false); }
 
 TEST(argparse, opt_bool_full_true_1){ std::vector<const char*> args = {"./a.out", "--option", "true"}; TEST_OPT_BOOL(args, false, 1, true); }
 TEST(argparse, opt_bool_full_True_1){ std::vector<const char*> args = {"./a.out", "--option", "True"}; TEST_OPT_BOOL(args, false, 1, true); }
