@@ -150,7 +150,6 @@ TEST(argparse, complicated_test_02){
     std::vector<std::string> vCmdArgs;
     std::vector<int> vOptA, vOptR;
     bool optB=false,optC=false,optD=false,optE=false,optF=false,optG=true,optH=true;
-    bool rm_hs=false, rm_ts=false;
     
     sstd::argparse ap;
     int cmd_id = ap.parse(argc, argv
@@ -166,8 +165,6 @@ TEST(argparse, complicated_test_02){
                           , sstd::arg_rule::opt( optH,  true, "-h", "--option-h", 1)
                           , sstd::arg_rule::opt(vOptR, std::vector<int>({0,0,0,0}), "-r", "--rectangle", 4)
                     );
-    sstd::printn_all(cmd_id);
-    sstd::printn_all(vCmdArgs);
     
     if(cmd_id==-1){ sstd::printn_all(ap.err()); }
     
@@ -321,7 +318,6 @@ TEST(argparse, NT_opt_invalid_arg_short_1){
                           , sstd::arg_rule::opt(opt_b, false, "-b", "--option-b", 1)
                           );
     ASSERT_EQ(cmd_id, sstd::arg_rule::num_error);
-    sstd::printn_all(ap.err());
     
     ASSERT_TRUE(sstd::strIn(R"(error: multi_short option like `-ab` can not take arguments. But the short option of `-a` with data type `bool` expects 1 argument(s). As defined by sstd::arg_rule::opt().)", ap.err()));
     ASSERT_TRUE(opt_a==false);
@@ -472,7 +468,6 @@ TEST(argparse, NT_cmd_undefined_2){
     int cmd_id = ap.parse(argc, argv
                           , sstd::arg_rule::opt(opt, false, "-o", "--option", 0)
                           );
-    sstd::printn_all(cmd_id);
     ASSERT_EQ(cmd_id, sstd::arg_rule::num_command_does_not_exist);
     
     ASSERT_TRUE(sstd::strIn(R"(error: The input argument(s) of `["--undefined-opt" "xxx"]` is NOT defnied by sstd::cmd_rule::opt() as an input option.)", ap.err()));

@@ -491,8 +491,6 @@ int _parse_argc_argv(
     int cmd_arg_len=0;
     
     for(uint i=1; i<(uint)argc; ++i){
-        sstd::printn_all(argv[i]);
-
         std::vector<std::string> v = sstd__split(argv[i], '=', 1); // "-f=true" -> ["-f" "true"]
         std::string opt_candidate = std::move(v[0]);
         std::string val_candidate = v.size()==2 ? std::move(v[1]) : "";
@@ -511,10 +509,6 @@ int _parse_argc_argv(
             }
         }
         
-        sstd::printn_all(type);
-        sstd::printn_all(arg_len);
-        sstd::printn_all(v_rule_idx);
-        
         if      (type==CMD){
             // command
             ret_cmd_idx = (int)v_rule_idx[0];
@@ -523,7 +517,6 @@ int _parse_argc_argv(
             
         }else if(type==OPT){
             ret_opt_vIdx <<= (int)v_rule_idx[0];
-            sstd::printn_all(val_candidate);
             if(val_candidate.size()==0){
                 bool res; res_opt_vArgs <<= _extract_opt_by_length(res, errMsg, argc, argv, i, arg_len); if(!res){ return -1; }
             }else{
@@ -535,14 +528,13 @@ int _parse_argc_argv(
             //res_opt_vArgs <<= std::vector<std::vector<std::string>>(v_rule_idx.size(), {""}); // make empty `std::vector<std::string>("")`, `v_rule_idx.size()` times.
             std::string tmp=argv[i];
             for(uint i2=1; i2<tmp.size(); ++i2){
-                res_opt_vArgs <<= std::vector<std::string>({std::string("-")+std::string(1,tmp[i2])}); // TODO: この [-a, -b, -c] をわざわざ受け渡すのは埋め込むのは無駄なので、あとで消す。
+                res_opt_vArgs <<= std::vector<std::string>({std::string("-")+tmp[i2]}); // Invedding [-a, -b, -c] is the wast of memory, but to keep for easy debugging and error message handling.
             }
             
         }else{
             res_cmd_args <<= (std::string)argv[i];
             
         }
-        printf("\n");
     }
 
     if( ret_cmd_idx!=-1 && cmd_arg_len!=-1 && res_cmd_args.size()!=cmd_arg_len+1 ){ return -1; }
@@ -684,20 +676,13 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
     std::vector<std::vector<std::string>> opt_vArgs;
     int res_p = _parse_argc_argv(this->errMsg, cmd_idx, cmd_args, opt_vIdx, opt_vArgs, argc, argv, cmd_vRule, opt_vRule, ht_cmd2idx, ht_opt2idx_short, ht_opt2idx_full);
     
-    sstd::printn_all(cmd_idx);
-    sstd::printn_all(opt_vIdx);
-    
     // parse command
     int cmd_id = _process_cmd(this->errMsg, cmd_idx, cmd_args, cmd_vRule, ht_cmd2idx);
-    sstd::printn_all(cmd_id);
     
     // parse option
     std::vector<bool> opt_vRule_inited(opt_vRule.size(), false);
-    sstd::printn_all(opt_vRule_inited);
     int res_o1 = _process_opt     (this->errMsg, opt_vRule_inited, opt_vIdx, opt_vArgs, opt_vRule, ht_opt2idx_short, ht_opt2idx_full);
-    sstd::printn_all(res_o1);
     int res_o2 = _process_opt_init(this->errMsg, opt_vRule, opt_vRule_inited);
-    sstd::printn_all(res_o2);
     
     if(res_p==-1 || res_o1==-1 || res_o2==-1){ return -1; }
     return cmd_id;
