@@ -486,7 +486,8 @@ int _parse_argc_argv(
     //                          [-g true],
     //                          [-h false], <- Note: `=` is removed
     //                          [--rectangle 5 5 5 5]]
-    
+
+    ret_cmd_idx=-1;
     int cmd_arg_len=0;
     
     for(uint i=1; i<(uint)argc; ++i){
@@ -544,10 +545,7 @@ int _parse_argc_argv(
         printf("\n");
     }
 
-//    if(cmd_arg_len==???){} // validation
-
-    sstd::printn_all(res_cmd_args);
-    sstd::printn_all(res_opt_vArgs);
+    if( ret_cmd_idx!=-1 && cmd_arg_len!=-1 && res_cmd_args.size()!=cmd_arg_len+1 ){ return -1; }
 
     return 0;
 }
@@ -584,6 +582,8 @@ int _process_cmd(std::string& errMsg,
         cmd_id = _fill_result_arg_by_val(errMsg, cmd_vRule[cmd_idx], cmd_args);
         
         if(cmd_id==-1){
+            // If the `_fill_result_arg_by_val()` failed, `sstd::argparse()` tried to fill the value by default.
+            
             int   type = cmd_vRule[cmd_idx].return_val_type;
             void* ptr  = cmd_vRule[cmd_idx].return_val_ptr;
             bool tf = _fill_by_initial_val(ptr, type, cmd_vRule[cmd_idx].initial_val_ptr);
@@ -678,7 +678,7 @@ int sstd::argparse::_parse(const int argc, const char* argv[]
     }
     
     // Parse input argc and argv
-    int cmd_idx=-1;
+    int cmd_idx;
     std::vector<std::string> cmd_args;
     std::vector<int> opt_vIdx;
     std::vector<std::vector<std::string>> opt_vArgs;

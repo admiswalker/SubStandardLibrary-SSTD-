@@ -161,7 +161,6 @@ TEST(argparse, complicated_test_02){
                           , sstd::arg_rule::opt( optC, false, "-c", "--option-c", 0)
                           , sstd::arg_rule::opt( optD, false, "-d", "--option-d", 0)
                           , sstd::arg_rule::opt( optE, false, "-e", "--option-e", 1)
-//                          , sstd::arg_rule::opt( optE, false, "-e", "--option-e", 0) // TODO: このケース、要検討。
                           , sstd::arg_rule::opt( optF, false, "-f", "--option-f", 1)
                           , sstd::arg_rule::opt( optG,  true, "-g", "--option-g", 1)
                           , sstd::arg_rule::opt( optH,  true, "-h", "--option-h", 1)
@@ -201,7 +200,7 @@ TEST(argparse, complicated_test_02){
     }
     }
 }
-//*
+
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Normal testing for parsing / パーシング正常系
 
@@ -443,7 +442,7 @@ TEST(argparse, NT_opt_duplicated_short_2b){
 
 
 // commands
-TEST(argparse, NT_opt_undefined_cmd_1){
+TEST(argparse, NT_cmd_undefined_1){
     std::vector<const char*> args = {"./a.out", "cmdX", "xxx"};
     const int argc = args.size();
     const char **argv = args.data();
@@ -462,7 +461,7 @@ TEST(argparse, NT_opt_undefined_cmd_1){
 
     ASSERT_TRUE(sstd::strIn(R"(error: The input argument(s) of `["cmdX" "xxx"]` is NOT defnied by sstd::cmd_rule::opt() as an input option.)", ap.err()));
 }
-TEST(argparse, NT_opt_undefined_cmd_2){
+TEST(argparse, NT_cmd_undefined_2){
     std::vector<const char*> args = {"./a.out", "--undefined-opt", "xxx"};
     const int argc = args.size();
     const char **argv = args.data();
@@ -479,7 +478,7 @@ TEST(argparse, NT_opt_undefined_cmd_2){
     ASSERT_TRUE(sstd::strIn(R"(error: The input argument(s) of `["--undefined-opt" "xxx"]` is NOT defnied by sstd::cmd_rule::opt() as an input option.)", ap.err()));
     ASSERT_TRUE(opt==false);
 }
-TEST(argparse, NT_opt_undefined_cmd_3){
+TEST(argparse, NT_cmd_undefined_3){
     std::vector<const char*> args = {"./a.out", "--d"};
     const int argc = args.size();
     const char **argv = args.data();
@@ -848,5 +847,5 @@ TEST(argparse, cmd_v_str_arg3){ std::vector<const char*> ARGS={"./a.out","cmd","
 #undef TEST_VEC_TYPES
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-//*/
+
 EXECUTE_TESTS();
