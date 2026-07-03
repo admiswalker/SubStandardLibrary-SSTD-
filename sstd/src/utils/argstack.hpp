@@ -1,3 +1,8 @@
+#pragma once
+#include <tuple>
+#include <utility>
+#include <vector>
+
 namespace sstd{
     template<typename T>
     void _argstack(std::vector<T>& res_stack, T&& obj){
