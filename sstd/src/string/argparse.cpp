@@ -6,27 +6,7 @@
 #include "../string/ssprintf.hpp"
 #include "../string/strEdit.hpp"
 #include "../string/strmatch.hpp"
-
-//---
-
-template<typename T>
-std::vector<std::tuple<uint,uint>> sstd__duplicated(const std::vector<T>& v){
-    std::unordered_map<T,uint> tbl_idx_cnt; // index, count
-
-    for(uint i=0; i<v.size(); ++i){
-        auto [itr, inserted] = tbl_idx_cnt.insert({v[i], 1});
-        if(!inserted){ ++(itr->second); }
-    }
-    
-    std::vector<std::tuple<uint,uint>> out_vDuplicated; // index of `v_in`, count
-    for(auto itr=tbl_idx_cnt.begin(); itr!=tbl_idx_cnt.end(); ++itr){
-        if(itr->second>=2){
-            out_vDuplicated.push_back(std::make_tuple(itr->first, itr->second));
-        }
-    }
-    
-    return out_vDuplicated;
-}
+#include "../utils/vector/duplicated.hpp"
 
 //---
 
@@ -599,7 +579,7 @@ int _process_opt(std::string& errMsg,
                  const std::unordered_map<std::string,uint>& ht_opt2idx_short,
                  const std::unordered_map<std::string,uint>& ht_opt2idx_full)
 {
-    std::vector<std::tuple<uint,uint>> vDuplicated = sstd__duplicated(opt_vIdx);
+    std::vector<std::tuple<int,uint>> vDuplicated = sstd::duplicated_key_cnt(opt_vIdx);
     if(vDuplicated.size()!=0){
         std::string err = "There are duplicated input in the arg. The duplicated options are follows:";
         for(uint i=0; i<vDuplicated.size(); ++i){

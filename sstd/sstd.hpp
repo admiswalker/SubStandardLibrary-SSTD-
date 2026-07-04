@@ -88,6 +88,7 @@
 #include "src/time/sleep.hpp" // use_sstd_gcc4_4_7
 
 #include "src/utils/argstack.hpp"
+#include "src/utils/vector/duplicated.hpp"
 
 //---
 
