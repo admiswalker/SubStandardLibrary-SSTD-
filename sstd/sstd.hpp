@@ -27,6 +27,7 @@
 
 // 数値計算系の関数 (スプライン補完等)
 
+#include "src/cast/str2val.hpp"
 #include "src/cast/typeConversion.hpp"
 
 #include "src/container/matrixContainer_binary/bmat.hpp"

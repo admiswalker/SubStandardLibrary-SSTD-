@@ -6,6 +6,7 @@
 # このファイルに記載されたテストコードは "$ make" コマンドでビルドされます．
 # また，テスト実行は，実行対象として判定されます．
 
+../test/src_test/cast/str2val.cpp                 # <- THIS
 #../test/src_test/cast/typeConversion.cpp
 #../test/src_test/container/matrixContainer_binary/bmat.cpp
 #../test/src_test/container/matrixContainer_colMajor/mat_c.cpp
@@ -41,7 +42,7 @@
 #../test/src_test/print/pdbg.cpp
 #../test/src_test/print/print_printn_printn_all.cpp
 #../test/src_test/python/c2py.cpp
-#../test/src_test/string/argparse.cpp
+#../test/src_test/string/argparse.cpp                # <- THIS
 #../test/src_test/string/encode_decode.cpp
 #../test/src_test/string/strEdit.cpp
 #../test/src_test/string/strmatch.cpp
@@ -50,5 +51,5 @@
 #../test/src_test/sys/system.cpp
 #../test/src_test/time/measureTime.cpp
 #../test/src_test/time/time.cpp
-../test/src_test/utils/argstack.cpp
-../test/src_test/utils/vector/duplicated.cpp
+#../test/src_test/utils/argstack.cpp                 # <- THIS
+#../test/src_test/utils/vector/duplicated.cpp        # <- THIS
