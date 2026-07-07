@@ -24,8 +24,8 @@ namespace sstd{
     
     std::vector<std::string> split(const char*        str, const char X);
     std::vector<std::string> split(const std::string& str, const char X);
-//    std::vector<std::string> split(const char*        str, const char X, int maxsplit); // TODO
-//    std::vector<std::string> split(const std::string& str, const char X, int maxsplit); // TODO
+    std::vector<std::string> split(const char*        str, const char X, int maxsplit);
+    std::vector<std::string> split(const std::string& str, const char X, int maxsplit);
     
     std::vector<std::string> split(const char*        str, const char*        X);
     std::vector<std::string> split(const std::string& str, const std::string& X);
