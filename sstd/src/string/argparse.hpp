@@ -10,15 +10,12 @@ namespace sstd::arg_rule{
     const static int num_error                  = -1;
     const static int num_command_does_not_exist = -2;
     
-    //---
-    
     struct cmd_rule{
         int cmd_id                     = -1;
         int   return_val_type          = sstd::num_null;
         void* return_val_ptr           = NULL;
         sstd::void_ptr initial_val_ptr;
         std::string cmd;
-//        int cmd_len                    = 0;
         int expected_num_of_args       = 0;
     };
     struct opt_rule{
@@ -27,11 +24,8 @@ namespace sstd::arg_rule{
         sstd::void_ptr initial_val_ptr;
         std::string opt_full;
         std::string opt_short;
-//        int opt_len                    = 0;
         int expected_num_of_args       = 0;
     };
-    
-    //---
     
     struct sstd::arg_rule::cmd_rule cmd(const char* ps); // temporal implementation (delete this line later)
     struct sstd::arg_rule::cmd_rule cmd(const int cmd_id,                                      const char* cmd, const int expected_num_of_args);
@@ -49,9 +43,6 @@ namespace sstd::arg_rule{
         
         return res;
     }
-    
-    //---
-    
     template<typename T>
     struct sstd::arg_rule::opt_rule opt(T& return_val, const T& initial_val, const char* opt_short, const char* opt_full, const int expected_num_of_args){
         
@@ -65,10 +56,6 @@ namespace sstd::arg_rule{
         
         return res;
     }
-
-    //---
-}
-namespace sstd::_argparse{
 }
 
 namespace sstd{
@@ -76,10 +63,7 @@ namespace sstd{
     std::string to_string(const sstd::arg_rule::opt_rule& rhs);
 }
 
-//---
-
 namespace sstd{ class argparse; }
-
 class sstd::argparse{
 private:
     std::vector<struct sstd::arg_rule::cmd_rule> arg_vCmd;
