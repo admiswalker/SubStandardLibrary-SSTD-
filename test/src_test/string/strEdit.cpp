@@ -807,6 +807,74 @@ TEST(strEdit, strip_quotes__ret_ret_c_dq_single_r){
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+TEST(strEdit, lower){
+    std::string s;
+    s="";    sstd::lower(s); ASSERT_STREQ(s.c_str(), ""   );
+    
+    s="abc"; sstd::lower(s); ASSERT_STREQ(s.c_str(), "abc");
+    
+    s="Abc"; sstd::lower(s); ASSERT_STREQ(s.c_str(), "abc");
+    s="aBc"; sstd::lower(s); ASSERT_STREQ(s.c_str(), "abc");
+    s="abC"; sstd::lower(s); ASSERT_STREQ(s.c_str(), "abc");
+    
+    s="ABc"; sstd::lower(s); ASSERT_STREQ(s.c_str(), "abc");
+    s="AbC"; sstd::lower(s); ASSERT_STREQ(s.c_str(), "abc");
+    s="aBC"; sstd::lower(s); ASSERT_STREQ(s.c_str(), "abc");
+    
+    s="ABC"; sstd::lower(s); ASSERT_STREQ(s.c_str(), "abc");
+}
+TEST(strEdit, lowered){
+    std::string s;
+    s="";    ASSERT_STREQ(sstd::lowered(s).c_str(), ""   ); ASSERT_STREQ(s.c_str(), ""   );
+    
+    s="abc"; ASSERT_STREQ(sstd::lowered(s).c_str(), "abc"); ASSERT_STREQ(s.c_str(), "abc");
+    
+    s="Abc"; ASSERT_STREQ(sstd::lowered(s).c_str(), "abc"); ASSERT_STREQ(s.c_str(), "Abc");
+    s="aBc"; ASSERT_STREQ(sstd::lowered(s).c_str(), "abc"); ASSERT_STREQ(s.c_str(), "aBc");
+    s="abC"; ASSERT_STREQ(sstd::lowered(s).c_str(), "abc"); ASSERT_STREQ(s.c_str(), "abC");
+    
+    s="ABc"; ASSERT_STREQ(sstd::lowered(s).c_str(), "abc"); ASSERT_STREQ(s.c_str(), "ABc");
+    s="AbC"; ASSERT_STREQ(sstd::lowered(s).c_str(), "abc"); ASSERT_STREQ(s.c_str(), "AbC");
+    s="aBC"; ASSERT_STREQ(sstd::lowered(s).c_str(), "abc"); ASSERT_STREQ(s.c_str(), "aBC");
+    
+    s="ABC"; ASSERT_STREQ(sstd::lowered(s).c_str(), "abc"); ASSERT_STREQ(s.c_str(), "ABC");
+}
+
+TEST(strEdit, upper){
+    std::string s;
+    s="";    sstd::upper(s); ASSERT_STREQ(s.c_str(), ""   );
+    
+    s="abc"; sstd::upper(s); ASSERT_STREQ(s.c_str(), "ABC");
+    
+    s="Abc"; sstd::upper(s); ASSERT_STREQ(s.c_str(), "ABC");
+    s="aBc"; sstd::upper(s); ASSERT_STREQ(s.c_str(), "ABC");
+    s="abC"; sstd::upper(s); ASSERT_STREQ(s.c_str(), "ABC");
+    
+    s="ABc"; sstd::upper(s); ASSERT_STREQ(s.c_str(), "ABC");
+    s="AbC"; sstd::upper(s); ASSERT_STREQ(s.c_str(), "ABC");
+    s="aBC"; sstd::upper(s); ASSERT_STREQ(s.c_str(), "ABC");
+    
+    s="ABC"; sstd::upper(s); ASSERT_STREQ(s.c_str(), "ABC");
+}
+TEST(strEdit, uppered){
+    std::string s;
+    s="";    ASSERT_STREQ(sstd::uppered(s).c_str(), ""   ); ASSERT_STREQ(s.c_str(), ""   );
+    
+    s="abc"; ASSERT_STREQ(sstd::uppered(s).c_str(), "ABC"); ASSERT_STREQ(s.c_str(), "abc");
+    
+    s="Abc"; ASSERT_STREQ(sstd::uppered(s).c_str(), "ABC"); ASSERT_STREQ(s.c_str(), "Abc");
+    s="aBc"; ASSERT_STREQ(sstd::uppered(s).c_str(), "ABC"); ASSERT_STREQ(s.c_str(), "aBc");
+    s="abC"; ASSERT_STREQ(sstd::uppered(s).c_str(), "ABC"); ASSERT_STREQ(s.c_str(), "abC");
+    
+    s="ABc"; ASSERT_STREQ(sstd::uppered(s).c_str(), "ABC"); ASSERT_STREQ(s.c_str(), "ABc");
+    s="AbC"; ASSERT_STREQ(sstd::uppered(s).c_str(), "ABC"); ASSERT_STREQ(s.c_str(), "AbC");
+    s="aBC"; ASSERT_STREQ(sstd::uppered(s).c_str(), "ABC"); ASSERT_STREQ(s.c_str(), "aBC");
+    
+    s="ABC"; ASSERT_STREQ(sstd::uppered(s).c_str(), "ABC"); ASSERT_STREQ(s.c_str(), "ABC");
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
 TEST(strEdit, join_c_0){
     std::vector<std::string> v_in = {};
     std::string ans = "";

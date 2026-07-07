@@ -1,41 +1,11 @@
 #include "str2val.hpp"
 #include "../print/print.hpp" // for debug
+#include "../string/strEdit.hpp"
 #include "../string/strmatch.hpp"
 
-void sstd__lower(      std::string& s){
-    for(uint i=0; i<s.size(); ++i){
-        if('A'<=s[i] && s[i]<='Z'){ s[i]+=(uint)0x20; } // 'A': 0x41 -> 'a': 0x61
-    }
-}
-std::string sstd__lowered(const std::string& s){
-    std::string res;
-    for(uint i=0; i<s.size(); ++i){
-        res += s[i];
-        if('A'<=res[i] && res[i]<='Z'){ res[i]+=(uint)0x20; } // 'A': 0x41 -> 'a': 0x61
-    }
-    return res;
-}
-
-//---
-
-void sstd__uppered(      std::string& s){
-    for(uint i=0; i<s.size(); ++i){
-        if('a'<=s[i] && s[i]<='z'){ s[i]-=(uint)0x20; } // 'a': 0x61 -> 'A': 0x41
-    }
-}
-std::string sstd__uppered(const std::string& s){
-    std::string res;
-    for(uint i=0; i<s.size(); ++i){
-        res += s[i];
-        if('a'<=res[i] && res[i]<='z'){ res[i]-=(uint)0x20; } // 'a': 0x61 -> 'A': 0x41
-    }
-    return res;
-}
-
-//---
 
 bool sstd::str2val(     bool  & return_val, const std::string& s_in){
-    std::string s = sstd__lowered(s_in);
+    std::string s = sstd::lowered(s_in);
 
     if      (s=="true"  || s=="t" || s=="yes" || s=="y" || s=="on"  || s=="1"){ return_val=true;  return true;
     }else if(s=="false" || s=="f" || s=="no"  || s=="n" || s=="off" || s=="0"){ return_val=false; return true;

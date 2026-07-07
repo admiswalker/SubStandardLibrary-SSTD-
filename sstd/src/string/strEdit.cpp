@@ -694,6 +694,36 @@ std::string sstd::strip_quotes(const std::string& str){ bool ret_sq, ret_dq; ret
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
+void sstd::lower  (      std::string& s){
+    for(uint i=0; i<s.size(); ++i){
+        if('A'<=s[i] && s[i]<='Z'){ s[i]+=(uint)0x20; } // 'A': 0x41 -> 'a': 0x61
+    }
+}
+std::string sstd::lowered(const std::string& s){
+    std::string res;
+    for(uint i=0; i<s.size(); ++i){
+        res += s[i];
+        if('A'<=res[i] && res[i]<='Z'){ res[i]+=(uint)0x20; } // 'A': 0x41 -> 'a': 0x61
+    }
+    return res;
+}
+
+void sstd::upper  (      std::string& s){
+    for(uint i=0; i<s.size(); ++i){
+        if('a'<=s[i] && s[i]<='z'){ s[i]-=(uint)0x20; } // 'a': 0x61 -> 'A': 0x41
+    }
+}
+std::string sstd::uppered(const std::string& s){
+    std::string res;
+    for(uint i=0; i<s.size(); ++i){
+        res += s[i];
+        if('a'<=res[i] && res[i]<='z'){ res[i]-=(uint)0x20; } // 'a': 0x61 -> 'A': 0x41
+    }
+    return res;
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
 template <typename T>
 std::string _join(const std::vector<std::string>& v, T delimiter){
     std::string ret;

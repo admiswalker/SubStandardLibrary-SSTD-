@@ -107,6 +107,14 @@ namespace sstd{
     
     //---
     
+    void        lower  (      std::string& s);
+    std::string lowered(const std::string& s);
+    
+    void        upper  (      std::string& s);
+    std::string uppered(const std::string& s);
+    
+    //---
+    
     std::string join(const std::vector<std::string>& v, const        char  delimiter);
     std::string join(const std::vector<std::string>& v, const        char* delimiter);
     std::string join(const std::vector<std::string>& v, const std::string& delimiter);
