@@ -404,7 +404,7 @@ int _parse_argc_argv(
         }
     }
 
-    if( ret_cmd_idx!=-1 && cmd_arg_len!=-1 && res_cmd_args.size()!=cmd_arg_len+1 ){ return -1; }
+    if( ret_cmd_idx!=-1 && cmd_arg_len!=-1 && (int)res_cmd_args.size()!=cmd_arg_len+1 ){ return -1; }
 
     return 0;
 }
