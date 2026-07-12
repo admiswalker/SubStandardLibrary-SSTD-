@@ -4,6 +4,20 @@
 #include "../definitions/typeDef.h"
 
 namespace sstd{
+    bool str2val(                 bool   & return_val, const                    char*  s);
+    bool str2val(                 char   & return_val, const                    char*  s);
+    bool str2val(                  int8  & return_val, const                    char*  s);
+    bool str2val(                  int16 & return_val, const                    char*  s);
+    bool str2val(                  int32 & return_val, const                    char*  s);
+    bool str2val(                  int64 & return_val, const                    char*  s);
+    bool str2val(                 uint8  & return_val, const                    char*  s);
+    bool str2val(                 uint16 & return_val, const                    char*  s);
+    bool str2val(                 uint32 & return_val, const                    char*  s);
+    bool str2val(                 uint64 & return_val, const                    char*  s);
+    bool str2val(                  float & return_val, const                    char*  s);
+    bool str2val(                 double & return_val, const                    char*  s);
+    bool str2val(            std::string & return_val, const                    char*  s);
+
     bool str2val(                 bool   & return_val, const             std::string & s);
     bool str2val(                 char   & return_val, const             std::string & s);
     bool str2val(                  int8  & return_val, const             std::string & s);
