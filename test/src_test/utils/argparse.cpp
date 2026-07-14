@@ -428,7 +428,7 @@ TEST(argparse, NT_opt_duplicated_short_2b){
                           , sstd::arg_rule::opt(opt_b, false, "-b", "--option-b", 0)
                           );
     ASSERT_EQ(cmd_id, sstd::arg_rule::num_error);
-    sstd::printn_all(ap.err());
+//    sstd::printn_all(ap.err());
     
     ASSERT_TRUE(sstd::strIn(R"(error: There are duplicated input in the arg. The duplicated options are follows: )", ap.err()));
     ASSERT_TRUE(sstd::strIn(R"(`--option-b (-b)`)", ap.err()));

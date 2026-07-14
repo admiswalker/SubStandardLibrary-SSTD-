@@ -166,12 +166,6 @@ std::string sstd::to_string(const sstd::arg_rule::opt_rule& rhs){
 
 //---
 
-struct sstd::arg_rule::cmd_rule sstd::arg_rule::cmd(const char* cmd){
-    sstd::arg_rule::cmd_rule res;
-    res.cmd                  = std::string(cmd);
-    return res;
-}
-
 struct sstd::arg_rule::cmd_rule sstd::arg_rule::cmd(const int cmd_id,                                      const char* cmd, const int expected_num_of_args){
     sstd::arg_rule::cmd_rule res;
     res.cmd_id               = cmd_id;

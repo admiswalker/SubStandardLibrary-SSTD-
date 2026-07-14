@@ -27,7 +27,6 @@ namespace sstd::arg_rule{
         int expected_num_of_args       = 0;
     };
     
-    struct sstd::arg_rule::cmd_rule cmd(const char* ps); // temporal implementation (delete this line later)
     struct sstd::arg_rule::cmd_rule cmd(const int cmd_id,                                      const char* cmd, const int expected_num_of_args);
     
     template<typename T>
