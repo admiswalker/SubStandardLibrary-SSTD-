@@ -75,12 +75,12 @@ public:
     const std::string& err() const;
     
 
-    int _parse(const int argc, const char* argv[]
+    int _parse(int argc, char* argv[]
                , const std::vector<struct sstd::arg_rule::cmd_rule>& arg_vCmd
                , const std::vector<struct sstd::arg_rule::opt_rule>& arg_vOpt);
 
     template<class... Args>
-    int parse(const int argc, const char* argv[], Args... args){
+    int parse(int argc, char* argv[], Args... args){
         sstd::argstack(std::make_tuple(&arg_vCmd, &arg_vOpt), args...);
         return sstd::argparse::_parse(argc, argv, arg_vCmd, arg_vOpt);
     }

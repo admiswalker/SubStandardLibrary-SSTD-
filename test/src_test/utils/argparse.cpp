@@ -2,42 +2,34 @@
 #include "../../gtest_parallel/test_main.hpp"
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-// Complicated tests
-/*
-enum class CmdID{
-                 EMPTY,
-                 GET_LINES,
-                 GET_LINE
-};
-TEST(argparse, example01){
+// interface test
 
-    bool rm_hs, rm_ts;
-    std::vector<int> vlineNum;
-    int num;
-
-    sstd::argparse ap;
-    int cmd_id = ap(argc, argv,
-                    sstd::argparse::cmd_rule(CmdID::EMPTY, "", 0),
-                    sstd::argparse::cmd_rule(CmdID::GET_LINES, vlineNum, {}, "get lines", -1),
-                    sstd::argparse::cmd_rule(CmdID::GET_LINE , num,       0, "get line" ,  1),
-                    sstd::argparse::opt_rule(rm_hs, false, "-h", "--rm-head-spaces", 1),
-                    sstd::argparse::opt_rule(rm_ts, false, "-t", "--rm-tail-spaces", 1)
-                    );
+int main_interface_test(int argc, char *argv[]){
+    enum class CmdID{
+                     EMPTY
+    };
     
-    switch(cmd_id){
-    case CmdID::EMPTY : { ap.print_help(); } break;
-    case CmdID::GET_LINES: { // process get lines
-    } break;
-    case CmdID::GET_LINE : { // process get line
-    } break;
-    default : { printf("error: %s\n", ap.error.c_str()); }
-    }
+    sstd::argparse ap;
+    ap.parse(argc, argv
+             , sstd::arg_rule::cmd((int)CmdID::EMPTY, "", 0)
+             );
     
     return 0;
 }
-//*/
 
-//---
+TEST(argparse, parse_interface){
+    // example input
+    std::vector<const char*> args = {
+                    "./a.out", "cp", "src", "dst"
+    };
+    int argc = args.size();
+    char **argv = (char**)args.data();
+
+    main_interface_test(argc, argv);
+}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+// Complicated tests
 
 TEST(argparse, complicated_test_01){
 
@@ -51,8 +43,8 @@ TEST(argparse, complicated_test_01){
                     "--rm-head-spaces",
                     "--rm-tail-spaces"
     };
-    const int argc = args.size();
-    const char **argv = args.data();
+    int argc = args.size();
+    char **argv = (char**)args.data();
     
     enum class CmdID{
                      EMPTY,
@@ -101,8 +93,8 @@ TEST(argparse, complicated_test_01){
 
 TEST(argparse, cmd_expect_m1_in_3){
     std::vector<const char*> args = {"./a.out", "get-lines", "1", "3", "5"};
-    const int argc = args.size();
-    const char **argv = args.data();
+    int argc = args.size();
+    char **argv = (char**)args.data();
     
     enum class CmdID{
                      EMPTY,
@@ -139,8 +131,8 @@ TEST(argparse, complicated_test_02){
                     "--rectangle", "5", "5", "5", "5",
                     "src_path", "dst_path"
     };
-    const int argc = args.size();
-    const char **argv = args.data();
+    int argc = args.size();
+    char **argv = (char**)args.data();
     
     enum class CmdID{
                      EMPTY,
@@ -203,8 +195,8 @@ TEST(argparse, complicated_test_02){
 
 TEST(argparse, short_opt_1){
     std::vector<const char*> args = {"./a.out", "-a"};
-    const int argc = args.size();
-    const char **argv = args.data();
+    int argc = args.size();
+    char **argv = (char**)args.data();
 
     bool opt_a=false;
 
@@ -217,8 +209,8 @@ TEST(argparse, short_opt_1){
 }
 TEST(argparse, short_opt_2){
     std::vector<const char*> args = {"./a.out", "-ab"};
-    const int argc = args.size();
-    const char **argv = args.data();
+    int argc = args.size();
+    char **argv = (char**)args.data();
 
     bool opt_a=false;
     bool opt_b=false;
@@ -234,8 +226,8 @@ TEST(argparse, short_opt_2){
 }
 TEST(argparse, short_opt_3){
     std::vector<const char*> args = {"./a.out", "-abc"};
-    const int argc = args.size();
-    const char **argv = args.data();
+    int argc = args.size();
+    char **argv = (char**)args.data();
 
     bool opt_a=false;
     bool opt_b=false;
@@ -255,8 +247,8 @@ TEST(argparse, short_opt_3){
 
 TEST(argparse, short_opt_arg_1){
     std::vector<const char*> args = {"./a.out", "-o", "T"};
-    const int argc = args.size();
-    const char **argv = args.data();
+    int argc = args.size();
+    char **argv = (char**)args.data();
 
     bool opt=true;
 
@@ -274,8 +266,8 @@ TEST(argparse, short_opt_arg_1){
 // options
 TEST(argparse, NT_opt_invalid_arg){
     std::vector<const char*> args = {"./a.out", "--option", "xxx"};
-    const int argc = args.size();
-    const char **argv = args.data();
+    int argc = args.size();
+    char **argv = (char**)args.data();
 
     bool opt=true;
 
@@ -290,8 +282,8 @@ TEST(argparse, NT_opt_invalid_arg){
 }
 TEST(argparse, NT_opt_less_arg){
     std::vector<const char*> args = {"./a.out", "--option"};
-    const int argc = args.size();
-    const char **argv = args.data();
+    int argc = args.size();
+    char **argv = (char**)args.data();
 
     bool opt=true;
 
@@ -306,8 +298,8 @@ TEST(argparse, NT_opt_less_arg){
 }
 TEST(argparse, NT_opt_invalid_arg_short_1){
     std::vector<const char*> args = {"./a.out", "-ab", "T", "T"};
-    const int argc = args.size();
-    const char **argv = args.data();
+    int argc = args.size();
+    char **argv = (char**)args.data();
 
     bool opt_a=true;
     bool opt_b=true;
@@ -326,8 +318,8 @@ TEST(argparse, NT_opt_invalid_arg_short_1){
 
 TEST(argparse, NT_opt_duplicated_1){
     std::vector<const char*> args = {"./a.out", "--option-a", "--option-a"};
-    const int argc = args.size();
-    const char **argv = args.data();
+    int argc = args.size();
+    char **argv = (char**)args.data();
 
     bool opt_a=true;
 
@@ -342,8 +334,8 @@ TEST(argparse, NT_opt_duplicated_1){
 }
 TEST(argparse, NT_opt_duplicated_2){
     std::vector<const char*> args = {"./a.out", "--option-a", "--option-a", "--option-b", "--option-b"};
-    const int argc = args.size();
-    const char **argv = args.data();
+    int argc = args.size();
+    char **argv = (char**)args.data();
 
     bool opt_a=true;
     bool opt_b=true;
@@ -363,8 +355,8 @@ TEST(argparse, NT_opt_duplicated_2){
 }
 TEST(argparse, NT_opt_duplicated_short_1a){
     std::vector<const char*> args = {"./a.out", "-a", "-a"};
-    const int argc = args.size();
-    const char **argv = args.data();
+    int argc = args.size();
+    char **argv = (char**)args.data();
 
     bool opt_a=true;
 
@@ -379,8 +371,8 @@ TEST(argparse, NT_opt_duplicated_short_1a){
 }
 TEST(argparse, NT_opt_duplicated_short_1b){
     std::vector<const char*> args = {"./a.out", "-aa"};
-    const int argc = args.size();
-    const char **argv = args.data();
+    int argc = args.size();
+    char **argv = (char**)args.data();
 
     bool opt_a=true;
 
@@ -395,8 +387,8 @@ TEST(argparse, NT_opt_duplicated_short_1b){
 }
 TEST(argparse, NT_opt_duplicated_short_2a){
     std::vector<const char*> args = {"./a.out", "-a", "-a", "-b", "-b"};
-    const int argc = args.size();
-    const char **argv = args.data();
+    int argc = args.size();
+    char **argv = (char**)args.data();
 
     bool opt_a=true;
     bool opt_b=true;
@@ -416,8 +408,8 @@ TEST(argparse, NT_opt_duplicated_short_2a){
 }
 TEST(argparse, NT_opt_duplicated_short_2b){
     std::vector<const char*> args = {"./a.out", "-aabb"};
-    const int argc = args.size();
-    const char **argv = args.data();
+    int argc = args.size();
+    char **argv = (char**)args.data();
 
     bool opt_a=true;
     bool opt_b=true;
@@ -441,8 +433,8 @@ TEST(argparse, NT_opt_duplicated_short_2b){
 // commands
 TEST(argparse, NT_cmd_undefined_1){
     std::vector<const char*> args = {"./a.out", "cmdX", "xxx"};
-    const int argc = args.size();
-    const char **argv = args.data();
+    int argc = args.size();
+    char **argv = (char**)args.data();
 
     enum class CmdID{
                      CMD_A
@@ -460,8 +452,8 @@ TEST(argparse, NT_cmd_undefined_1){
 }
 TEST(argparse, NT_cmd_undefined_2){
     std::vector<const char*> args = {"./a.out", "--undefined-opt", "xxx"};
-    const int argc = args.size();
-    const char **argv = args.data();
+    int argc = args.size();
+    char **argv = (char**)args.data();
 
     bool opt=true;
 
@@ -476,8 +468,8 @@ TEST(argparse, NT_cmd_undefined_2){
 }
 TEST(argparse, NT_cmd_undefined_3){
     std::vector<const char*> args = {"./a.out", "--d"};
-    const int argc = args.size();
-    const char **argv = args.data();
+    int argc = args.size();
+    char **argv = (char**)args.data();
 
     bool opt_a=true;
 
@@ -492,8 +484,8 @@ TEST(argparse, NT_cmd_undefined_3){
 }
 TEST(argparse, NT_cmd_invalid_arg){
     std::vector<const char*> args = {"./a.out", "get-lines", "a", "b", "c"};
-    const int argc = args.size();
-    const char **argv = args.data();
+    int argc = args.size();
+    char **argv = (char**)args.data();
 
     enum class CmdID{
                      EMPTY,
@@ -514,8 +506,8 @@ TEST(argparse, NT_cmd_invalid_arg){
 }
 TEST(argparse, NT_cmd_less_arg){
     std::vector<const char*> args = {"./a.out", "get-lines", "1", "3"};
-    const int argc = args.size();
-    const char **argv = args.data();
+    int argc = args.size();
+    char **argv = (char**)args.data();
 
     enum class CmdID{
                      EMPTY,
@@ -536,8 +528,8 @@ TEST(argparse, NT_cmd_less_arg){
 }
 TEST(argparse, NT_cmd_more_arg){
     std::vector<const char*> args = {"./a.out", "get-lines", "1", "3", "5", "7"};
-    const int argc = args.size();
-    const char **argv = args.data();
+    int argc = args.size();
+    char **argv = (char**)args.data();
 
     enum class CmdID{
                      EMPTY,
@@ -558,8 +550,8 @@ TEST(argparse, NT_cmd_more_arg){
 }
 TEST(argparse, NT_cmd_duplicated){
     std::vector<const char*> args = {"./a.out", "get-lines", "1", "3", "5", "get-lines", "7", "9", "10"};
-    const int argc = args.size();
-    const char **argv = args.data();
+    int argc = args.size();
+    char **argv = (char**)args.data();
 
     enum class CmdID{
                      EMPTY,
@@ -585,8 +577,8 @@ TEST(argparse, NT_cmd_duplicated){
 //---
 // bool
 #define TEST_OPT_BOOL(ARGS, DEFAULT, CNT, ANS)                          \
-    const int argc = ARGS.size();                                       \
-    const char **argv = ARGS.data();                                    \
+    int argc = args.size();                                             \
+    char **argv = (char**)args.data();                                  \
                                                                         \
     bool rm_hs=!ANS;                                                    \
                                                                         \
@@ -612,8 +604,8 @@ TEST(argparse, opt_bool_full_0_1    ){ std::vector<const char*> args = {"./a.out
 // char
 TEST(argparse, cmd_char){
     std::vector<const char*> args = {"./a.out", "cmd", "a"};
-    const int argc = args.size();
-    const char **argv = args.data();
+    int argc = args.size();
+    char **argv = (char**)args.data();
 
     enum class CmdID{SAMPLE_CMD};
     
@@ -629,8 +621,8 @@ TEST(argparse, cmd_char){
 }
 TEST(argparse, cmd_vchar){
     std::vector<const char*> args = {"./a.out", "cmd", "a", "b", "c"};
-    const int argc = args.size();
-    const char **argv = args.data();
+    int argc = args.size();
+    char **argv = (char**)args.data();
 
     enum class CmdID{SAMPLE_CMD};
     
@@ -652,10 +644,10 @@ TEST(argparse, cmd_vchar){
 //---
 // int8, int16, int32, int64, uint8, uint16, uint32, uint64, float, double, std::string
 
-#define TEST_TYPES_ARG0_DEFAULT(TYPE, DEFAULT)                  \
+#define TEST_TYPES_ARG0_DEFAULT(TYPE, DEFAULT)                          \
     std::vector<const char*> args = {"./a.out", "cmd"};                 \
-    const int argc = args.size();                                       \
-    const char **argv = args.data();                                    \
+    int argc = args.size();                                             \
+    char **argv = (char**)args.data();                                  \
                                                                         \
     enum class CmdID{SAMPLE_CMD};                                       \
                                                                         \
@@ -668,10 +660,10 @@ TEST(argparse, cmd_vchar){
     if(ap.err().size()!=0){ sstd::printn_all(ap.err()); }               \
     ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);                          \
     ASSERT_EQ(res, (TYPE)DEFAULT);
-#define TEST_TYPES(TYPE, CNT, DEFAULT, ARG_STR, ANS)            \
+#define TEST_TYPES(TYPE, CNT, DEFAULT, ARG_STR, ANS)                    \
     std::vector<const char*> args = {"./a.out", "cmd", ARG_STR};        \
-    const int argc = args.size();                                       \
-    const char **argv = args.data();                                    \
+    int argc = args.size();                                             \
+    char **argv = (char**)args.data();                                  \
                                                                         \
     enum class CmdID{SAMPLE_CMD};                                       \
                                                                         \
@@ -747,10 +739,10 @@ TEST(argparse, cmd_str_2){ TEST_TYPES(std::string, 1, (std::string)"abc", "xxx",
 //---
 // std::vector<T>. `T` is bool, char, int8, int16, int32, int64, uint8, uint16, uint32, uint64, float, double or std::string.
 
-#define TEST_VEC_TYPES(TYPE, ARGS, DEFAULT, ANS)                \
+#define TEST_VEC_TYPES(TYPE, ARGS, DEFAULT, ANS)                        \
     std::vector<const char*> args = ARGS;                               \
-    const int argc = args.size();                                       \
-    const char **argv = args.data();                                    \
+    int argc = args.size();                                             \
+    char **argv = (char**)args.data();                                  \
                                                                         \
     enum class CmdID{CMD_ID_NAME};                                      \
                                                                         \

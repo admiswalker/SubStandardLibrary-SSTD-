@@ -291,7 +291,7 @@ bool _arg_type_and_len(
     res_type=NOT_A_SEPARATOR;
     return true;
 }
-std::vector<std::string> _extract_opt_by_length(bool& res, std::string& errMsg, const int argc, const char* argv[], uint& i, const int arg_len){
+std::vector<std::string> _extract_opt_by_length(bool& res, std::string& errMsg, int argc, char* argv[], uint& i, const int arg_len){
     
     std::vector<std::string> res_v;
     res=true;
@@ -326,7 +326,7 @@ int _parse_argc_argv(
                       std::vector<std::vector<std::string>>& res_opt_vArgs,
                       
                       // input variables:
-                      const int argc, const char* argv[],
+                      int argc, char* argv[],
                       const std::vector<struct sstd::arg_rule::cmd_rule>& cmd_vRule,
                       const std::vector<struct sstd::arg_rule::opt_rule>& opt_vRule,
                       const std::unordered_map<std::string,uint>& ht_cmd2idx,
@@ -508,7 +508,7 @@ sstd::argparse::~argparse(){}
 
 const std::string& sstd::argparse::err() const { return this->errMsg; }
 
-int sstd::argparse::_parse(const int argc, const char* argv[]
+int sstd::argparse::_parse(int argc, char* argv[]
                            , const std::vector<struct sstd::arg_rule::cmd_rule>& cmd_vRule
                            , const std::vector<struct sstd::arg_rule::opt_rule>& opt_vRule)
 {
