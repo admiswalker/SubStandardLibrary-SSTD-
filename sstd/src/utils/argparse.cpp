@@ -39,6 +39,7 @@ bool _fill_by_initial_val(void* ptr, const int type, const sstd::void_ptr& initi
     case sstd::num_vec_float : { std::swap(*(std::vector<     float >*)ptr, *(std::vector<     float >*)initial_val_ptr.ptr()); } break;
     case sstd::num_vec_double: { std::swap(*(std::vector<     double>*)ptr, *(std::vector<     double>*)initial_val_ptr.ptr()); } break;
     case sstd::num_vec_str   : { std::swap(*(std::vector<std::string>*)ptr, *(std::vector<std::string>*)initial_val_ptr.ptr()); } break;
+    case sstd::num_null      : {} break; // Do nothing.
     default: { return false; }
     }
     return true;
@@ -315,6 +316,13 @@ std::vector<std::string> _extract_opt_by_length(bool& res, std::string& errMsg, 
     
     return res_v;
 }
+int _cmd2idx(const std::unordered_map<std::string,uint>& ht_cmd2idx, const std::string& cmd)
+{
+    auto itr = ht_cmd2idx.find( cmd );
+    if(itr==ht_cmd2idx.end()){ return -1; }
+    int cmd_idx = (int)itr->second;
+    return cmd_idx;
+}
 
 int _parse_argc_argv(
                       std::string& errMsg,
@@ -398,6 +406,15 @@ int _parse_argc_argv(
         }
     }
 
+    // for the empty command
+    if(ret_cmd_idx==-1){
+        ret_cmd_idx = _cmd2idx(ht_cmd2idx, "");
+        if(ret_cmd_idx!=-1){
+            res_cmd_args >>= ""; // push empty command ("") at the front of std::vector<std::string>.
+            cmd_arg_len = cmd_vRule[ ret_cmd_idx ].expected_num_of_args;
+        }
+    }
+    
     if( ret_cmd_idx!=-1 && cmd_arg_len!=-1 && (int)res_cmd_args.size()!=cmd_arg_len+1 ){ return -1; }
 
     return 0;
@@ -409,15 +426,6 @@ int _parse_argc_argv(
 #undef DEFAULT
 
 //---
-
-int _parse_cmd(const std::string& cmd,
-                const std::unordered_map<std::string,uint>& ht_cmd2idx)
-{
-    auto itr = ht_cmd2idx.find( cmd );
-    if(itr==ht_cmd2idx.end()){ return -1; }
-    int cmd_idx = (int)itr->second;
-    return cmd_idx;
-}
 
 int _process_cmd(std::string& errMsg,
                  const int cmd_idx,

@@ -193,6 +193,25 @@ TEST(argparse, complicated_test_02){
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // Normal testing for parsing / パーシング正常系
 
+TEST(argparse, cmd_0){
+    std::vector<const char*> args = {"./a.out"};
+    int argc = args.size();
+    char **argv = (char**)args.data();
+
+    bool opt_a=false;
+
+    enum class CmdID{
+                     EMPTY
+    };
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::cmd((int)CmdID::EMPTY, "", 0)
+                          );
+    ASSERT_EQ(cmd_id, (int)CmdID::EMPTY);
+}
+
+//---
+
 TEST(argparse, short_opt_1){
     std::vector<const char*> args = {"./a.out", "-a"};
     int argc = args.size();
