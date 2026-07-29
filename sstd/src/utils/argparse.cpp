@@ -531,11 +531,17 @@ int sstd::argparse::_parse(int argc, char* argv[]
     std::unordered_map<std::string,uint> ht_opt2idx_short;
     std::unordered_map<std::string,uint> ht_opt2idx_full;
     for(uint i=0; i<opt_vRule.size(); ++i){
-        auto [s_itr, s_inserted] = ht_opt2idx_short.insert({opt_vRule[i].opt_short, i});
-        if(!s_inserted){ this->errMsg="sstd::argparse::_parse() failed. The duplicated option definition by `sstd::arg_rule::opt()`. The `"+opt_vRule[i].opt_short+"` already exists.";  return -1; }
+        if(opt_vRule[i].opt_short.size()!=0){
+            auto [s_itr, s_inserted] = ht_opt2idx_short.insert({opt_vRule[i].opt_short, i});
+            if(!s_inserted){ this->errMsg="sstd::argparse::_parse() failed. The duplicated option definition by `sstd::arg_rule::opt()`. The `"+opt_vRule[i].opt_short+"` already exists.";  return -1; }
+        }
         
-        auto [f_itr, f_inserted] = ht_opt2idx_full.insert({opt_vRule[i].opt_full, i});
-        if(!f_inserted){ this->errMsg="sstd::argparse::_parse() failed. The duplicated option definition by `sstd::arg_rule::opt()`. The `"+opt_vRule[i].opt_full+"` already exists.";  return -1; }
+        if(opt_vRule[i].opt_full.size()!=0){
+            auto [f_itr, f_inserted] = ht_opt2idx_full.insert({opt_vRule[i].opt_full, i});
+            if(!f_inserted){ this->errMsg="sstd::argparse::_parse() failed. The duplicated option definition by `sstd::arg_rule::opt()`. The `"+opt_vRule[i].opt_full+"` already exists.";  return -1; }
+        }
+
+        if(opt_vRule[i].opt_short.size()==0 && opt_vRule[i].opt_full.size()==0){ this->errMsg="sstd::argparse::_parse() failed. An empty option can only be specified for one side. At least, eiether `opt_short` or `opt_full` must have a value when defining an option by `sstd::arg_rule::opt()`.";  return -1; }
     }
     
     // Parse input argc and argv
