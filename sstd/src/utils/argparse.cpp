@@ -373,7 +373,7 @@ int _parse_argc_argv(
                 return -1;
             }
             if(type==OPT && arg_len!=1){
-                errMsg+=sstd::pdbg_err_str(("When the assignment operator of `=` is in use, only 1 argument expected. But the option of `"+opt_candidate+"` expects "+std::to_string(arg_len)+" arguments.\n").c_str());
+                errMsg+=sstd::pdbg_err_str(("When the assignment operator of `=` is in use, only 1 argument expected. But the option `"+opt_candidate+"` expects "+std::to_string(arg_len)+" arguments.\n").c_str());
                 return -1;
             }
         }
@@ -434,25 +434,25 @@ int _process_cmd(std::string& errMsg,
                  const std::unordered_map<std::string,uint>& ht_cmd2idx)
 {
     int cmd_id = sstd::arg_rule::num_command_does_not_exist;
+    if(cmd_args.size()==0){ return cmd_id; }
+    
     if(cmd_idx==-1){
         errMsg+=sstd::pdbg_err_str(("The input argument(s) of `"+sstd::to_string(cmd_args)+"` is NOT defnied by sstd::cmd_rule::opt() as an input option.\n").c_str());
         return cmd_id;
     }
     
-    if(cmd_args.size()!=0){
-        cmd_id = _fill_result_arg_by_val(errMsg, cmd_vRule[cmd_idx], cmd_args);
+    cmd_id = _fill_result_arg_by_val(errMsg, cmd_vRule[cmd_idx], cmd_args);
+    
+    if(cmd_id==-1){
+        // If the `_fill_result_arg_by_val()` failed, `sstd::argparse()` tried to fill the value by default.
         
-        if(cmd_id==-1){
-            // If the `_fill_result_arg_by_val()` failed, `sstd::argparse()` tried to fill the value by default.
-            
-            int   type = cmd_vRule[cmd_idx].return_val_type;
-            void* ptr  = cmd_vRule[cmd_idx].return_val_ptr;
-            bool tf = _fill_by_initial_val(ptr, type, cmd_vRule[cmd_idx].initial_val_ptr);
-            if(!tf){
-                errMsg+=sstd::pdbg_err_str(("Failed to init default value. Data type is `"+sstd::typeNum2str(type)+"`.\n").c_str());
-            }
-            return -1;
+        int   type = cmd_vRule[cmd_idx].return_val_type;
+        void* ptr  = cmd_vRule[cmd_idx].return_val_ptr;
+        bool tf = _fill_by_initial_val(ptr, type, cmd_vRule[cmd_idx].initial_val_ptr);
+        if(!tf){
+            errMsg+=sstd::pdbg_err_str(("Failed to init default value. Data type is `"+sstd::typeNum2str(type)+"`.\n").c_str());
         }
+        return -1;
     }
     
     return cmd_id;
