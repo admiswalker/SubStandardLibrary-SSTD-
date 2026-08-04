@@ -355,7 +355,7 @@ int _parse_argc_argv(
     //                          [-g true],
     //                          [-h false], <- Note: `=` is removed
     //                          [--rectangle 5 5 5 5]]
-
+    
     ret_cmd_idx=-1;
     int cmd_arg_len=0;
     
@@ -480,7 +480,7 @@ int _process_opt(std::string& errMsg,
     }
     for(uint i=0; i<opt_vIdx.size(); ++i){
         int opt_idx = opt_vIdx[i];
-        int res = _fill_result_arg_by_val(errMsg, opt_vRule[opt_idx], opt_vArgs[opt_idx]);
+        int res = _fill_result_arg_by_val(errMsg, opt_vRule[opt_idx], opt_vArgs[i]);
         if(res!=0){ return -1; }
         opt_vRule_inited[opt_idx] = true; // Even if the `_fill_result_arg_by_val` failed, this function tried to update the option by default value.
     }

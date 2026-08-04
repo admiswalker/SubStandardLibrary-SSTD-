@@ -635,6 +635,36 @@ TEST(argparse, opt_bool_full_False_1){ std::vector<const char*> args = {"./a.out
 TEST(argparse, opt_bool_full_F_1    ){ std::vector<const char*> args = {"./a.out", "--option", "F"    }; TEST_OPT_BOOL(args, true, 1, false); }
 TEST(argparse, opt_bool_full_0_1    ){ std::vector<const char*> args = {"./a.out", "--option", "0"    }; TEST_OPT_BOOL(args, true, 1, false); }
 
+TEST(argparse, opt_bool__skip_first_option_test_to_detect_loop_consistency){
+    std::vector<const char*> args = {"./a.out", "-b"};
+    int argc = args.size();
+    char **argv = (char**)args.data();
+    
+    enum class CmdID{
+                     EMPTY
+                     , CMD1
+                     , CMD2
+    };
+
+    bool opt_a=false, opt_b=false;
+    
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+    , sstd::arg_rule::cmd((int)CmdID::EMPTY, "", 0)
+    , sstd::arg_rule::opt(opt_a, false, "-a", "--option-a", 0)
+    , sstd::arg_rule::opt(opt_b, false, "-b", "--option-b", 0)
+    );
+    
+    switch(cmd_id){
+    case (int)CmdID::EMPTY:{
+        ASSERT_FALSE(opt_a);
+        ASSERT_TRUE(opt_b);
+	
+    }break;
+    default:{ sstd::pdbg_err("%s", ap.err().c_str()); ASSERT_TRUE(false); }
+    }
+}
+
 //---
 // char
 TEST(argparse, cmd_char){
@@ -870,5 +900,5 @@ TEST(argparse, cmd_v_str_arg3){ std::vector<const char*> ARGS={"./a.out","cmd","
 #undef TEST_VEC_TYPES
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-
+//*/
 EXECUTE_TESTS();
