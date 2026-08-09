@@ -913,9 +913,9 @@ TEST(argparse, help_cmd){
 
     sstd::argparse ap;
     int cmd_id = ap.parse(argc, argv
-                          , sstd::arg_rule::cmd((int)CmdID::SAMPLE_CMD, res, 'x', "cmd", -1)
-                          , sstd::arg_rule::opt(opt_a, false, "-a", "--option-a",  1)
-                          , sstd::arg_rule::opt(opt_b, false, "-b", "--option-b", -1)
+                          , sstd::arg_rule::cmd((int)CmdID::SAMPLE_CMD, res, 'x', "cmd", -1, "This is a description of cmd.")
+                          , sstd::arg_rule::opt(opt_a, false, "-a", "--option-a",  1, "This is a description of --option-a.")
+                          , sstd::arg_rule::opt(opt_b, false, "-b", "--option-b", -1, "This is a description of --option-b.")
                           );
     ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);
     ASSERT_TRUE(res=='a');

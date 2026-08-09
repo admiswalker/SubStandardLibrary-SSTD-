@@ -16,6 +16,7 @@ namespace sstd::arg_rule{
         void* return_val_ptr           = NULL;
         sstd::void_ptr initial_val_ptr;
         std::string cmd;
+        std::string description; // for help()
         int expected_num_of_args       = 0;
     };
     struct opt_rule{
@@ -24,6 +25,7 @@ namespace sstd::arg_rule{
         sstd::void_ptr initial_val_ptr;
         std::string opt_full;
         std::string opt_short;
+        std::string description; // for help()
         int expected_num_of_args       = 0;
     };
     
@@ -43,6 +45,14 @@ namespace sstd::arg_rule{
         return res;
     }
     template<typename T>
+    struct sstd::arg_rule::cmd_rule cmd(const int cmd_id, T& return_val, const T& initial_val, const char* cmd, const int expected_num_of_args, const char* description){
+        
+        struct cmd_rule res = sstd::arg_rule::cmd(cmd_id, return_val, initial_val, cmd, expected_num_of_args);
+        res.description     = description;
+        
+        return res;
+    }
+    template<typename T>
     struct sstd::arg_rule::opt_rule opt(T& return_val, const T& initial_val, const char* opt_short, const char* opt_full, const int expected_num_of_args){
         
         struct opt_rule res;
@@ -52,6 +62,14 @@ namespace sstd::arg_rule{
         res.opt_short            = std::string(opt_short);
         res.opt_full             = std::string(opt_full );
         res.expected_num_of_args = expected_num_of_args;
+        
+        return res;
+    }
+    template<typename T>
+    struct sstd::arg_rule::opt_rule opt(T& return_val, const T& initial_val, const char* opt_short, const char* opt_full, const int expected_num_of_args, const char* description){
+        
+        struct opt_rule res = sstd::arg_rule::opt(return_val, initial_val, opt_short, opt_full, expected_num_of_args);
+        res.description     = description;
         
         return res;
     }
