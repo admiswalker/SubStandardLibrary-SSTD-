@@ -65,15 +65,17 @@ namespace sstd{
 namespace sstd{ class argparse; }
 class sstd::argparse{
 private:
+    std::string exeName;
     std::vector<struct sstd::arg_rule::cmd_rule> arg_vCmd;
     std::vector<struct sstd::arg_rule::opt_rule> arg_vOpt;
     std::string errMsg;
+    std::string hlpMsg;
     
 public:
     argparse();
     ~argparse();
     const std::string& err() const;
-    
+    const std::string& help();
 
     int _parse(int argc, char* argv[]
                , const std::vector<struct sstd::arg_rule::cmd_rule>& arg_vCmd

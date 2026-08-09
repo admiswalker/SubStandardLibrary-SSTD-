@@ -2,6 +2,7 @@
 #include "../cast/str2val.hpp"
 #include "../container/vector/slice.hpp"
 #include "../container/vector/stdVector_expansion.hpp"
+#include "../file/path.hpp"
 #include "../print/pdbg.hpp"
 #include "../print/print.hpp" // for debug
 #include "../string/ssprintf.hpp"
@@ -515,16 +516,36 @@ sstd::argparse::argparse(){}
 sstd::argparse::~argparse(){}
 
 const std::string& sstd::argparse::err() const { return this->errMsg; }
+std::string _arg_num2str(int expected_num_of_args){
+    return (expected_num_of_args>=0 ? sstd::to_string(expected_num_of_args) : "Variable length");
+}
+const std::string& sstd::argparse::help(){
+    if(this->hlpMsg.size()!=0){ return this->hlpMsg; }
+
+    this->hlpMsg += "usage: "+this->exeName+" [command] [options]\n";
+    this->hlpMsg += "\n";
+    this->hlpMsg += "[command]\n";
+    for(uint i=0; i<arg_vCmd.size(); ++i){ this->hlpMsg += "  "+arg_vCmd[i].cmd+"\n"; }
+    this->hlpMsg += "\n";
+    this->hlpMsg += "[options]\n";
+    for(uint i=0; i<arg_vOpt.size(); ++i){ this->hlpMsg += "  "+arg_vOpt[i].opt_full+" ("+arg_vOpt[i].opt_short+"): "+_arg_num2str(arg_vOpt[i].expected_num_of_args)+" arguments expected\n"; }
+    
+    return this->hlpMsg;
+}
 
 int sstd::argparse::_parse(int argc, char* argv[]
                            , const std::vector<struct sstd::arg_rule::cmd_rule>& cmd_vRule
                            , const std::vector<struct sstd::arg_rule::opt_rule>& opt_vRule)
 {
+    // Set exeName
+    if(argc<1){ this->errMsg="sstd::argparse::_parse() failed. The inputted argc and argv is too samll."; return -1; }
+    this->exeName = sstd::path2fileName(argv[0]);
+    
     // Process cmd_vRule
     std::unordered_map<std::string,uint> ht_cmd2idx;
     for(uint i=0; i<cmd_vRule.size(); ++i){
         auto [itr, inserted] = ht_cmd2idx.insert({cmd_vRule[i].cmd, i});
-        if(!inserted){ this->errMsg="sstd::argparse::_parse() failed. The duplicated command definition by `sstd::arg_rule::cmd()`. The `"+cmd_vRule[i].cmd+"` already exists.";  return -1; }
+        if(!inserted){ this->errMsg="sstd::argparse::_parse() failed. The duplicated command definition by `sstd::arg_rule::cmd()`. The `"+cmd_vRule[i].cmd+"` already exists."; return -1; }
     }
     
     // Process opt_vRule
@@ -533,15 +554,15 @@ int sstd::argparse::_parse(int argc, char* argv[]
     for(uint i=0; i<opt_vRule.size(); ++i){
         if(opt_vRule[i].opt_short.size()!=0){
             auto [s_itr, s_inserted] = ht_opt2idx_short.insert({opt_vRule[i].opt_short, i});
-            if(!s_inserted){ this->errMsg="sstd::argparse::_parse() failed. The duplicated option definition by `sstd::arg_rule::opt()`. The `"+opt_vRule[i].opt_short+"` already exists.";  return -1; }
+            if(!s_inserted){ this->errMsg="sstd::argparse::_parse() failed. The duplicated option definition by `sstd::arg_rule::opt()`. The `"+opt_vRule[i].opt_short+"` already exists."; return -1; }
         }
         
         if(opt_vRule[i].opt_full.size()!=0){
             auto [f_itr, f_inserted] = ht_opt2idx_full.insert({opt_vRule[i].opt_full, i});
-            if(!f_inserted){ this->errMsg="sstd::argparse::_parse() failed. The duplicated option definition by `sstd::arg_rule::opt()`. The `"+opt_vRule[i].opt_full+"` already exists.";  return -1; }
+            if(!f_inserted){ this->errMsg="sstd::argparse::_parse() failed. The duplicated option definition by `sstd::arg_rule::opt()`. The `"+opt_vRule[i].opt_full+"` already exists."; return -1; }
         }
 
-        if(opt_vRule[i].opt_short.size()==0 && opt_vRule[i].opt_full.size()==0){ this->errMsg="sstd::argparse::_parse() failed. An empty option can only be specified for one side. At least, eiether `opt_short` or `opt_full` must have a value when defining an option by `sstd::arg_rule::opt()`.";  return -1; }
+        if(opt_vRule[i].opt_short.size()==0 && opt_vRule[i].opt_full.size()==0){ this->errMsg="sstd::argparse::_parse() failed. An empty option can only be specified for one side. At least, eiether `opt_short` or `opt_full` must have a value when defining an option by `sstd::arg_rule::opt()`."; return -1; }
     }
     
     // Parse input argc and argv

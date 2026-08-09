@@ -900,5 +900,33 @@ TEST(argparse, cmd_v_str_arg3){ std::vector<const char*> ARGS={"./a.out","cmd","
 #undef TEST_VEC_TYPES
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
-//*/
+
+TEST(argparse, help_cmd){
+    std::vector<const char*> args = {"./a.out", "cmd", "a"};
+    int argc = args.size();
+    char **argv = (char**)args.data();
+
+    enum class CmdID{SAMPLE_CMD};
+    
+    char res;
+    bool opt_a, opt_b;
+
+    sstd::argparse ap;
+    int cmd_id = ap.parse(argc, argv
+                          , sstd::arg_rule::cmd((int)CmdID::SAMPLE_CMD, res, 'x', "cmd", -1)
+                          , sstd::arg_rule::opt(opt_a, false, "-a", "--option-a",  1)
+                          , sstd::arg_rule::opt(opt_b, false, "-b", "--option-b", -1)
+                          );
+    ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);
+    ASSERT_TRUE(res=='a');
+//    ASSERT_TRUE(false);
+    printf("%s", ap.help().c_str());
+}
+//TEST(argparse, help_opt){
+//}
+//TEST(argparse, help_cmd_opt){
+//}
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
 EXECUTE_TESTS();
