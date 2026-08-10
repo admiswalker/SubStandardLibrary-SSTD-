@@ -15,7 +15,7 @@
 bool _fill_by_initial_val(void* ptr, const int type, const sstd::void_ptr& initial_val_ptr){
     switch(type){
     case sstd::num_bool      : { std::swap(*(                 bool   *)ptr, *(                 bool   *)initial_val_ptr.ptr()); } break;
-//  case sstd::num_char      : { std::swap(*(                 char   *)ptr, *(                 char   *)initial_val_ptr.ptr()); } break;
+    case sstd::num_char      : { std::swap(*(                 char   *)ptr, *(                 char   *)initial_val_ptr.ptr()); } break;
     case sstd::num_int8      : { std::swap(*(                  int8  *)ptr, *(                  int8  *)initial_val_ptr.ptr()); } break;
     case sstd::num_int16     : { std::swap(*(                  int16 *)ptr, *(                  int16 *)initial_val_ptr.ptr()); } break;
     case sstd::num_int32     : { std::swap(*(                  int32 *)ptr, *(                  int32 *)initial_val_ptr.ptr()); } break;
@@ -523,12 +523,16 @@ const std::string& sstd::argparse::help(){
     if(this->hlpMsg.size()!=0){ return this->hlpMsg; }
 
     this->hlpMsg += "usage: "+this->exeName+" [command] [options]\n";
-    this->hlpMsg += "\n";
-    this->hlpMsg += "[command]\n";
-    for(uint i=0; i<arg_vCmd.size(); ++i){ this->hlpMsg += "  "+arg_vCmd[i].cmd+": "+arg_vCmd[i].description+"\n"; }
-    this->hlpMsg += "\n";
-    this->hlpMsg += "[options]\n";
-    for(uint i=0; i<arg_vOpt.size(); ++i){ this->hlpMsg += "  "+arg_vOpt[i].opt_full+"|"+arg_vOpt[i].opt_short+" "+_arg_num2str(arg_vOpt[i].expected_num_of_args)+": "+arg_vOpt[i].description+"\n"; }
+    if(arg_vCmd.size()!=0){
+        this->hlpMsg += "\n";
+        this->hlpMsg += "[command]\n";
+        for(uint i=0; i<arg_vCmd.size(); ++i){ this->hlpMsg += "  "+arg_vCmd[i].cmd+": "+arg_vCmd[i].description+"\n"; }
+    }
+    if(arg_vOpt.size()!=0){
+        this->hlpMsg += "\n";
+        this->hlpMsg += "[options]\n";
+        for(uint i=0; i<arg_vOpt.size(); ++i){ this->hlpMsg += "  "+arg_vOpt[i].opt_full+"|"+arg_vOpt[i].opt_short+" "+_arg_num2str(arg_vOpt[i].expected_num_of_args)+": "+arg_vOpt[i].description+"\n"; }
+    }
     
     return this->hlpMsg;
 }
