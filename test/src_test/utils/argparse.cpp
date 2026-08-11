@@ -920,58 +920,60 @@ TEST(argparse, cmd_v_str_arg3){ std::vector<const char*> ARGS={"./a.out","cmd","
 // help
 
 TEST(argparse, help_cmd_and_opt){
-    std::vector<const char*> args = {"./a.out", "cmd"};
+    std::vector<const char*> args = {"./a.out", "cmd1"};
     int argc = args.size();
     char **argv = (char**)args.data();
 
-    enum class CmdID{SAMPLE_CMD};
+    enum class CmdID{CMD1, CMD2};
     
     char res;
     bool opt_a, opt_b;
 
     sstd::argparse ap;
     int cmd_id = ap.parse(argc, argv
-                          , sstd::arg_rule::cmd((int)CmdID::SAMPLE_CMD, res, 'x', "cmd", -1, "This is a description of cmd.")
+                          , sstd::arg_rule::cmd((int)CmdID::CMD1, res, 'x', "cmd1", -1, "This is a description of cmd1.")
+                          , sstd::arg_rule::cmd((int)CmdID::CMD2, res, 'x', "cmd2",  0, "This is a description of cmd2.")
                           , sstd::arg_rule::opt(opt_a, false, "-a", "--option-a",  1, "This is a description of --option-a.")
                           , sstd::arg_rule::opt(opt_b, false, "-b", "--option-b", -1, "This is a description of --option-b.")
                           );
     if(ap.err().size()!=0){ sstd::printn(ap.err()); }
-    ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);
+    ASSERT_EQ(cmd_id, (int)CmdID::CMD1);
 //    printf("%s", ap.help().c_str());
     
     ASSERT_STREQ(("\n"+ap.help()).c_str(), R"(
-usage: a.out [command] [options]
+usage: a.out [command] [option(s)...]
 
-[command]
-  cmd: This is a description of cmd.
+[command(s)]
+  cmd1 [variadicArg(s)...]: This is a description of cmd1.
+  cmd2 [0arg(s)...]: This is a description of cmd2.
 
-[options]
+[option(s)]
   --option-a|-a [1arg(s)...]: This is a description of --option-a.
-  --option-b|-b [VariadicArg(s)...]: This is a description of --option-b.
+  --option-b|-b [variadicArg(s)...]: This is a description of --option-b.
 )");
 }
 TEST(argparse, help_cmd){
-    std::vector<const char*> args = {"./a.out", "cmd"};
+    std::vector<const char*> args = {"./a.out", "cmd1"};
     int argc = args.size();
     char **argv = (char**)args.data();
 
-    enum class CmdID{SAMPLE_CMD};
+    enum class CmdID{CMD1};
     
     char res;
 
     sstd::argparse ap;
     int cmd_id = ap.parse(argc, argv
-                          , sstd::arg_rule::cmd((int)CmdID::SAMPLE_CMD, res, 'x', "cmd", -1, "This is a description of cmd.")
+                          , sstd::arg_rule::cmd((int)CmdID::CMD1, res, 'x', "cmd1", -1, "This is a description of cmd1.")
                           );
     if(ap.err().size()!=0){ sstd::printn(ap.err()); }
-    ASSERT_EQ(cmd_id, (int)CmdID::SAMPLE_CMD);
+    ASSERT_EQ(cmd_id, (int)CmdID::CMD1);
 //    printf("%s", ap.help().c_str());
     
     ASSERT_STREQ(("\n"+ap.help()).c_str(), R"(
-usage: a.out [command] [options]
+usage: a.out [command] [option(s)...]
 
-[command]
-  cmd: This is a description of cmd.
+[command(s)]
+  cmd1 [variadicArg(s)...]: This is a description of cmd1.
 )");
 }
 TEST(argparse, help_opt){
@@ -991,11 +993,11 @@ TEST(argparse, help_opt){
 //    printf("%s", ap.help().c_str());
     
     ASSERT_STREQ(("\n"+ap.help()).c_str(), R"(
-usage: a.out [command] [options]
+usage: a.out [command] [option(s)...]
 
-[options]
+[option(s)]
   --option-a|-a [1arg(s)...]: This is a description of --option-a.
-  --option-b|-b [VariadicArg(s)...]: This is a description of --option-b.
+  --option-b|-b [variadicArg(s)...]: This is a description of --option-b.
 )");
 }
 

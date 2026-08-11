@@ -517,20 +517,20 @@ sstd::argparse::~argparse(){}
 
 const std::string& sstd::argparse::err() const { return this->errMsg; }
 std::string _arg_num2str(int expected_num_of_args){
-    return (expected_num_of_args>=0 ? "["+sstd::to_string(expected_num_of_args)+"arg(s)...]" : "[VariadicArg(s)...]");
+    return (expected_num_of_args>=0 ? "["+sstd::to_string(expected_num_of_args)+"arg(s)...]" : "[variadicArg(s)...]");
 }
 const std::string& sstd::argparse::help(){
     if(this->hlpMsg.size()!=0){ return this->hlpMsg; }
 
-    this->hlpMsg += "usage: "+this->exeName+" [command] [options]\n";
+    this->hlpMsg += "usage: "+this->exeName+" [command] [option(s)...]\n";
     if(arg_vCmd.size()!=0){
         this->hlpMsg += "\n";
-        this->hlpMsg += "[command]\n";
-        for(uint i=0; i<arg_vCmd.size(); ++i){ this->hlpMsg += "  "+arg_vCmd[i].cmd+": "+arg_vCmd[i].description+"\n"; }
+        this->hlpMsg += "[command(s)]\n";
+        for(uint i=0; i<arg_vCmd.size(); ++i){ this->hlpMsg += "  "+arg_vCmd[i].cmd+" "+_arg_num2str(arg_vCmd[i].expected_num_of_args)+": "+arg_vCmd[i].description+"\n"; }
     }
     if(arg_vOpt.size()!=0){
         this->hlpMsg += "\n";
-        this->hlpMsg += "[options]\n";
+        this->hlpMsg += "[option(s)]\n";
         for(uint i=0; i<arg_vOpt.size(); ++i){ this->hlpMsg += "  "+arg_vOpt[i].opt_full+"|"+arg_vOpt[i].opt_short+" "+_arg_num2str(arg_vOpt[i].expected_num_of_args)+": "+arg_vOpt[i].description+"\n"; }
     }
     
