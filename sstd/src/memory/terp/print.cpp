@@ -8,62 +8,67 @@
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 // define internal functjions
 
-void _print_terp_str(const sstd::terp::var& rhs);
-void _print_terp_list_internal(const sstd::terp::var& rhs);
-void _print_terp_list(const sstd::terp::var& rhs);
-void _print_terp_hash(const sstd::terp::var& rhs);
+std::string _to_string_terp_str(const sstd::terp::var& rhs);
+std::string _to_string_terp_list_internal(const sstd::terp::var& rhs);
+std::string _to_string_terp_list(const sstd::terp::var& rhs);
+std::string _to_string_terp_hash(const sstd::terp::var& rhs);
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-void _print_terp_str(const sstd::terp::var& rhs){
-    printf("\"%s\"", rhs.to<std::string>().c_str());
+std::string _to_string_terp_str(const sstd::terp::var& rhs){
+    return sstd::ssprintf("\"%s\"", rhs.to<std::string>().c_str());
 }
-void _print_terp_list_internal(const sstd::terp::var& rhs){
+std::string _to_string_terp_list_internal(const sstd::terp::var& rhs){
+    std::string res;
     switch(rhs.typeNum()){
-    case sstd::num_str          : { _print_terp_str (rhs); } break;
-    case sstd::num_vec_terp_var : { _print_terp_list(rhs); } break;
-    case sstd::num_hash_terp_var: { _print_terp_hash(rhs); } break;
+    case sstd::num_str          : { res+=_to_string_terp_str (rhs); } break;
+    case sstd::num_vec_terp_var : { res+=_to_string_terp_list(rhs); } break;
+    case sstd::num_hash_terp_var: { res+=_to_string_terp_hash(rhs); } break;
     case sstd::num_null: {} break;
-    default: { sstd::pdbg("ERROR"); } break;
+    default: { res+=sstd::pdbg_err_str("ERROR"); } break;
     }
+    return res;
 }
-void _print_terp_list(const sstd::terp::var& rhs){
-    printf("[");
+std::string _to_string_terp_list(const sstd::terp::var& rhs){
+    std::string res;
+    res += "[";
     if(rhs.size()>=1){
-        for(uint i=0; i<rhs.size()-1; ++i){ _print_terp_list_internal(rhs[i]); printf(" "); }
-        _print_terp_list_internal( rhs[rhs.size()-1] );
+        for(uint i=0; i<rhs.size()-1; ++i){ res+=_to_string_terp_list_internal(rhs[i]); res+=" "; }
+        res += _to_string_terp_list_internal( rhs[rhs.size()-1] );
     }
-    printf("]");
+    res += "]";
+    return res;
 }
-void _print_terp_hash(const sstd::terp::var& rhs){
-    printf("{");
+std::string _to_string_terp_hash(const sstd::terp::var& rhs){
+    std::string res;
+    res += "{";
     for(auto itr=rhs.begin(); itr!=rhs.end(); ++itr){
-        if(itr!=rhs.begin()){ printf(", "); }
-        printf("\"%s\": ", itr.first_to<std::string>().c_str()); // _print_terp_list_internal(itr.first());
-        _print_terp_list_internal(itr.second());
+        if(itr!=rhs.begin()){ res+=", "; }
+        res += sstd::ssprintf("\"%s\": ", itr.first_to<std::string>().c_str()); // _to_string_terp_list_internal(itr.first());
+        res += _to_string_terp_list_internal(itr.second());
     }
-    printf("}");
+    res += "}";
+    return res;
 }
 
 //---
 
-#define sstd_print_terp_var_base(rhs)                                   \
-    switch(rhs.typeNum()){                                              \
-    case sstd::num_str          : { _print_terp_str (rhs); } break;     \
-    case sstd::num_vec_terp_var : { _print_terp_list(rhs); } break;     \
-    case sstd::num_hash_terp_var: { _print_terp_hash(rhs); } break;     \
-    case sstd::num_null: {} break;                                      \
-    default: { sstd::pdbg("ERROR"); } break;                            \
+std::string sstd::to_string(const sstd::terp::var& rhs){
+    std::string res;
+    switch(rhs.typeNum()){
+    case sstd::num_str          : { res+=_to_string_terp_str (rhs); } break;
+    case sstd::num_vec_terp_var : { res+=_to_string_terp_list(rhs); } break;
+    case sstd::num_hash_terp_var: { res+=_to_string_terp_hash(rhs); } break;
+    case sstd::num_null: {} break;
+    default: { res+=sstd::pdbg_err_str("ERROR"); } break;
     }
-
-void sstd::print_base(const sstd::terp::var& rhs){ sstd_print_terp_var_base(rhs); }
-
-#undef sstd_print_terp_var_base
+    return res;
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 
-void sstd::print_base(const sstd::terp::var* rhs){
-    printf("%p", rhs); 
+std::string sstd::to_string(const sstd::terp::var* rhs){
+    return sstd::ssprintf("%p", rhs); 
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------

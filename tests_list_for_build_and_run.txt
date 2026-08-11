@@ -6,6 +6,7 @@
 # このファイルに記載されたテストコードは "$ make" コマンドでビルドされます．
 # また，テスト実行は，実行対象として判定されます．
 
+../test/src_test/cast/str2val.cpp
 ../test/src_test/cast/typeConversion.cpp
 ../test/src_test/container/matrixContainer_binary/bmat.cpp
 ../test/src_test/container/matrixContainer_colMajor/mat_c.cpp
@@ -49,3 +50,6 @@
 ../test/src_test/sys/system.cpp
 ../test/src_test/time/measureTime.cpp
 ../test/src_test/time/time.cpp
+../test/src_test/utils/argparse.cpp
+../test/src_test/utils/argstack.cpp
+../test/src_test/utils/vector/duplicated.cpp

@@ -234,6 +234,22 @@ TEST(strEdit, split_s_c){ TEST_SPLIT_CS_X(' ', std::string(" a  b, c"), "", "a",
 
 //---
 
+#define TEST_SPLIT_X_MAX_C(X_IN, S_IN, MAX, ...)                        \
+    std::vector<std::string> ret_v = sstd::split(S_IN, X_IN, MAX); /* TEST THIS LINE */ \
+    /* sstd::printn(ret_v); */                                          \
+    if(ret_v != std::vector<std::string>({__VA_ARGS__}) ){ sstd::printn_all(ret_v); }\
+    ASSERT_TRUE(ret_v == std::vector<std::string>({__VA_ARGS__}) );
+
+TEST(strEdit, split_x_max_c_0){ TEST_SPLIT_X_MAX_C(' ', " a  b, c ", 0, " a  b, c "); }
+TEST(strEdit, split_x_max_c_1){ TEST_SPLIT_X_MAX_C(' ', " a  b,  c ", 1, "", "a  b,  c "); }
+TEST(strEdit, split_x_max_c_2){ TEST_SPLIT_X_MAX_C(' ', "  a  b,  c  ", 2, "", "", "a  b,  c  "); }
+TEST(strEdit, split_x_max_c_3){ TEST_SPLIT_X_MAX_C(' ', "  a  b,  c  ", 3, "", "", "a", " b,  c  "); }
+TEST(strEdit, split_x_max_s){ TEST_SPLIT_X_MAX_C(' ', std::string(" a  b,  c "), 1, "", "a  b,  c "); }
+
+#undef TEST_SPLIT_X_MAX_C
+
+//---
+
 #define TEST_SPLIT_SS_X(X_IN, S_IN, ...)                                 \
     std::vector<std::string> ret_v = sstd::split(S_IN, X_IN); /* TEST THIS LINE */ \
     /* sstd::printn(ret_v); */                                          \
@@ -804,6 +820,74 @@ TEST(strEdit, strip_quotes__ret_ret_c_dq_single_r){
 }
 
 #undef TEST_strip_quotes__ret_ret_c
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+TEST(strEdit, lower){
+    std::string s;
+    s="";    sstd::lower(s); ASSERT_STREQ(s.c_str(), ""   );
+    
+    s="abc"; sstd::lower(s); ASSERT_STREQ(s.c_str(), "abc");
+    
+    s="Abc"; sstd::lower(s); ASSERT_STREQ(s.c_str(), "abc");
+    s="aBc"; sstd::lower(s); ASSERT_STREQ(s.c_str(), "abc");
+    s="abC"; sstd::lower(s); ASSERT_STREQ(s.c_str(), "abc");
+    
+    s="ABc"; sstd::lower(s); ASSERT_STREQ(s.c_str(), "abc");
+    s="AbC"; sstd::lower(s); ASSERT_STREQ(s.c_str(), "abc");
+    s="aBC"; sstd::lower(s); ASSERT_STREQ(s.c_str(), "abc");
+    
+    s="ABC"; sstd::lower(s); ASSERT_STREQ(s.c_str(), "abc");
+}
+TEST(strEdit, lowered){
+    std::string s;
+    s="";    ASSERT_STREQ(sstd::lowered(s).c_str(), ""   ); ASSERT_STREQ(s.c_str(), ""   );
+    
+    s="abc"; ASSERT_STREQ(sstd::lowered(s).c_str(), "abc"); ASSERT_STREQ(s.c_str(), "abc");
+    
+    s="Abc"; ASSERT_STREQ(sstd::lowered(s).c_str(), "abc"); ASSERT_STREQ(s.c_str(), "Abc");
+    s="aBc"; ASSERT_STREQ(sstd::lowered(s).c_str(), "abc"); ASSERT_STREQ(s.c_str(), "aBc");
+    s="abC"; ASSERT_STREQ(sstd::lowered(s).c_str(), "abc"); ASSERT_STREQ(s.c_str(), "abC");
+    
+    s="ABc"; ASSERT_STREQ(sstd::lowered(s).c_str(), "abc"); ASSERT_STREQ(s.c_str(), "ABc");
+    s="AbC"; ASSERT_STREQ(sstd::lowered(s).c_str(), "abc"); ASSERT_STREQ(s.c_str(), "AbC");
+    s="aBC"; ASSERT_STREQ(sstd::lowered(s).c_str(), "abc"); ASSERT_STREQ(s.c_str(), "aBC");
+    
+    s="ABC"; ASSERT_STREQ(sstd::lowered(s).c_str(), "abc"); ASSERT_STREQ(s.c_str(), "ABC");
+}
+
+TEST(strEdit, upper){
+    std::string s;
+    s="";    sstd::upper(s); ASSERT_STREQ(s.c_str(), ""   );
+    
+    s="abc"; sstd::upper(s); ASSERT_STREQ(s.c_str(), "ABC");
+    
+    s="Abc"; sstd::upper(s); ASSERT_STREQ(s.c_str(), "ABC");
+    s="aBc"; sstd::upper(s); ASSERT_STREQ(s.c_str(), "ABC");
+    s="abC"; sstd::upper(s); ASSERT_STREQ(s.c_str(), "ABC");
+    
+    s="ABc"; sstd::upper(s); ASSERT_STREQ(s.c_str(), "ABC");
+    s="AbC"; sstd::upper(s); ASSERT_STREQ(s.c_str(), "ABC");
+    s="aBC"; sstd::upper(s); ASSERT_STREQ(s.c_str(), "ABC");
+    
+    s="ABC"; sstd::upper(s); ASSERT_STREQ(s.c_str(), "ABC");
+}
+TEST(strEdit, uppered){
+    std::string s;
+    s="";    ASSERT_STREQ(sstd::uppered(s).c_str(), ""   ); ASSERT_STREQ(s.c_str(), ""   );
+    
+    s="abc"; ASSERT_STREQ(sstd::uppered(s).c_str(), "ABC"); ASSERT_STREQ(s.c_str(), "abc");
+    
+    s="Abc"; ASSERT_STREQ(sstd::uppered(s).c_str(), "ABC"); ASSERT_STREQ(s.c_str(), "Abc");
+    s="aBc"; ASSERT_STREQ(sstd::uppered(s).c_str(), "ABC"); ASSERT_STREQ(s.c_str(), "aBc");
+    s="abC"; ASSERT_STREQ(sstd::uppered(s).c_str(), "ABC"); ASSERT_STREQ(s.c_str(), "abC");
+    
+    s="ABc"; ASSERT_STREQ(sstd::uppered(s).c_str(), "ABC"); ASSERT_STREQ(s.c_str(), "ABc");
+    s="AbC"; ASSERT_STREQ(sstd::uppered(s).c_str(), "ABC"); ASSERT_STREQ(s.c_str(), "AbC");
+    s="aBC"; ASSERT_STREQ(sstd::uppered(s).c_str(), "ABC"); ASSERT_STREQ(s.c_str(), "aBC");
+    
+    s="ABC"; ASSERT_STREQ(sstd::uppered(s).c_str(), "ABC"); ASSERT_STREQ(s.c_str(), "ABC");
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 

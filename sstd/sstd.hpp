@@ -27,6 +27,7 @@
 
 // 数値計算系の関数 (スプライン補完等)
 
+#include "src/cast/str2val.hpp"
 #include "src/cast/typeConversion.hpp"
 
 #include "src/container/matrixContainer_binary/bmat.hpp"
@@ -85,6 +86,10 @@
 #include "src/time/measureTime.hpp"
 #include "src/time/time.hpp"
 #include "src/time/sleep.hpp" // use_sstd_gcc4_4_7
+
+#include "src/utils/argparse.hpp"
+#include "src/utils/argstack.hpp"
+#include "src/utils/vector/duplicated.hpp"
 
 //---
 

@@ -160,12 +160,42 @@ std::vector<std::string> _asAX(const char* str, const char X){
     if(i>=1 && str[i-1]==X){ splitList.push_back(std::string()); }
     return splitList;
 }
+std::vector<std::string> _asAX(const char* str, const char X, const int maxsplit){
+    if(maxsplit==0){ return std::vector<std::string>({str}); }
+    std::vector<std::string> splitList;
+    
+    std::string buf;
+    uint i=0;
+//    while(str[i]!='\0'){ if(' '==str[i]){++i;}else{break;} } // skip space
+    while(str[i]!='\0'){
+        if(maxsplit>=0 && splitList.size()==(uint)maxsplit){
+            buf += (const char*)&str[i];
+            break;
+        }
+
+        if(str[i]==X){
+//            sstd::rstrip_ow(buf); splitList.push_back(buf); buf.clear();
+            splitList.push_back(buf); buf.clear();
+            ++i;
+//            while(str[i]!=0){ if(' '==str[i]){++i;}else{break;} } // skip space
+        }else{
+            buf+=str[i];
+            ++i;
+        }
+    }
+//    if(buf.size()!=0){ sstd::rstrip_ow(buf); splitList.push_back(buf); }
+    if(buf.size()!=0){ splitList.push_back(buf); }
+//    if(i>=1 && str[i-1]==X){ splitList.push_back(std::string()); }
+    return splitList;
+}
 std::vector<std::string> sstd::split(const        char* str              ){ return _asAX_rmSpace(str,         ' ',       -1); }
 std::vector<std::string> sstd::split(const std::string& str              ){ return _asAX_rmSpace(str.c_str(), ' ',       -1); }
 std::vector<std::string> sstd::split(const char*        str, int maxsplit){ return _asAX_rmSpace(str,         ' ', maxsplit); }
 std::vector<std::string> sstd::split(const std::string& str, int maxsplit){ return _asAX_rmSpace(str.c_str(), ' ', maxsplit); }
-std::vector<std::string> sstd::split(const        char* str, const char X){ return _asAX(str,          X ); }
-std::vector<std::string> sstd::split(const std::string& str, const char X){ return _asAX(str.c_str(),  X ); }
+std::vector<std::string> sstd::split(const        char* str, const char X){ return _asAX(str,         X); }
+std::vector<std::string> sstd::split(const std::string& str, const char X){ return _asAX(str.c_str(), X); }
+std::vector<std::string> sstd::split(const char*        str, const char X, int maxsplit){ return _asAX(str,         X, maxsplit); }
+std::vector<std::string> sstd::split(const std::string& str, const char X, int maxsplit){ return _asAX(str.c_str(), X, maxsplit); }
 
 std::vector<std::string> _split_ss_base(const char* str, const uint str_len, const char* X, const uint X_len){
     if(X_len==0){ return std::vector<std::string>({str}); }
@@ -691,6 +721,36 @@ std::string sstd::strip_quotes(bool& ret_sq, bool& ret_dq, const std::string& st
 }
 std::string sstd::strip_quotes(const        char* str){ bool ret_sq, ret_dq; return sstd::strip_quotes(ret_sq, ret_dq, str); }
 std::string sstd::strip_quotes(const std::string& str){ bool ret_sq, ret_dq; return sstd::strip_quotes(ret_sq, ret_dq, str); }
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------
+
+void sstd::lower  (      std::string& s){
+    for(uint i=0; i<s.size(); ++i){
+        if('A'<=s[i] && s[i]<='Z'){ s[i]+=(uint)0x20; } // 'A': 0x41 -> 'a': 0x61
+    }
+}
+std::string sstd::lowered(const std::string& s){
+    std::string res;
+    for(uint i=0; i<s.size(); ++i){
+        res += s[i];
+        if('A'<=res[i] && res[i]<='Z'){ res[i]+=(uint)0x20; } // 'A': 0x41 -> 'a': 0x61
+    }
+    return res;
+}
+
+void sstd::upper  (      std::string& s){
+    for(uint i=0; i<s.size(); ++i){
+        if('a'<=s[i] && s[i]<='z'){ s[i]-=(uint)0x20; } // 'a': 0x61 -> 'A': 0x41
+    }
+}
+std::string sstd::uppered(const std::string& s){
+    std::string res;
+    for(uint i=0; i<s.size(); ++i){
+        res += s[i];
+        if('a'<=res[i] && res[i]<='z'){ res[i]-=(uint)0x20; } // 'a': 0x61 -> 'A': 0x41
+    }
+    return res;
+}
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------
 

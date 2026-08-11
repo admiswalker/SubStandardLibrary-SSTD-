@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <iostream>
 #include <string>
 #include <vector>
 #include <unordered_set>
@@ -10,75 +11,81 @@
 
 namespace sstd{
     // forward declaration
-    template <typename T> void print_base(const std::vector<T>& rhs);
-    template <typename T> void print_base(const std::unordered_set<T>& rhs);
-    template <typename T_lhs, typename T_rhs> void print_base(const std::unordered_map<T_lhs, T_rhs>& rhs);
-    template <typename... Types> void print_base(const std::tuple<Types...>& rhs);
+    template <typename T> std::string to_string(const std::vector<T>& rhs);
+    template <typename T> std::string to_string(const std::unordered_set<T>& rhs);
+    template <typename T_lhs, typename T_rhs> std::string to_string(const std::unordered_map<T_lhs, T_rhs>& rhs);
+    template <typename... Types> std::string to_string(const std::tuple<Types...>& rhs);
 
     //---
-    // print_base()
+    // to_string()
     
-    void print_base(const  void* rhs);
-    void print_base(const  bool  rhs);
-    void print_base(const  char  rhs);
-    void print_base(const  int8  rhs);
-    void print_base(const  int16 rhs);
-    void print_base(const  int32 rhs);
-    void print_base(const  int64 rhs);
-    void print_base(const uint8  rhs);
-    void print_base(const uint16 rhs);
-    void print_base(const uint32 rhs);
-    void print_base(const uint64 rhs);
-    void print_base(const float  rhs);
-    void print_base(const double rhs);
-    void print_base(const        char* rhs);
-    void print_base(const std::string& rhs);
-    void print_base(const struct pathAndType& rhs);
+    std::string to_string(const  void* rhs);
+    std::string to_string(const  bool  rhs);
+    std::string to_string(const  char  rhs);
+    std::string to_string(const  int8  rhs);
+    std::string to_string(const  int16 rhs);
+    std::string to_string(const  int32 rhs);
+    std::string to_string(const  int64 rhs);
+    std::string to_string(const uint8  rhs);
+    std::string to_string(const uint16 rhs);
+    std::string to_string(const uint32 rhs);
+    std::string to_string(const uint64 rhs);
+    std::string to_string(const float  rhs);
+    std::string to_string(const double rhs);
+    std::string to_string(const        char* rhs);
+    std::string to_string(const std::string& rhs);
+    std::string to_string(const struct pathAndType& rhs);
     template <typename T>
-    void print_base(const std::vector<T>& rhs){
-        printf("[");
+    std::string to_string(const std::vector<T>& rhs){
+        std::string s;
+        s+="[";
         if(rhs.size()>=1){
-            for(uint i=0; i<rhs.size()-1; ++i){ sstd::print_base(rhs[i]); printf(" "); }
-            sstd::print_base( rhs[rhs.size()-1] );
+            for(uint i=0; i<rhs.size()-1; ++i){ s+=sstd::to_string(rhs[i])+" "; }
+            s+=sstd::to_string( rhs[rhs.size()-1] );
         }
-        printf("]");
+        s+="]";
+        return s;
     }
     template <typename T>
-    void print_base(const std::unordered_set<T>& rhs){
-        printf("{");
+    std::string to_string(const std::unordered_set<T>& rhs){
+        std::string s;
+        s+="{";
         for(auto itr=rhs.begin();;){
-            sstd::print_base(*itr);
+            s+=sstd::to_string(*itr);
             ++itr;
-            if(itr!=rhs.end()){ printf(", "); continue; }
+            if(itr!=rhs.end()){ s+=", "; continue; }
             break;
         }
-        printf("}");
+        s+="}";
+        return s;
     }
     template <typename T_lhs, typename T_rhs>
-    void print_base(const std::unordered_map<T_lhs, T_rhs>& rhs){
-        printf("{");
+    std::string to_string(const std::unordered_map<T_lhs, T_rhs>& rhs){
+        std::string s;
+        s+="{";
         for(auto itr=rhs.begin(); itr!=rhs.end(); ++itr){
-            if(itr!=rhs.begin()){ printf(","); }
-            printf(" (key: "); sstd::print_base(itr->first);
-            printf(", value: "); sstd::print_base(itr->second);
-            printf(")");
+            if(itr!=rhs.begin()){ s+=","; }
+            s+=" (key: "+sstd::to_string(itr->first)+", value: "+sstd::to_string(itr->second)+")";
         }
-        printf(" }");
+        s+=" }";
+        return s;
     }
     template<typename TupleT, size_t ID>
-    void _print_tuple_base(const TupleT& rhs, const size_t idx){
-        if(idx!=0){ printf(", "); }
-        print_base( std::get<ID>(rhs) );
+    void _tuple_to_str_internal(std::string& res_s, const TupleT& rhs, const size_t idx){
+        if(idx!=0){ res_s+=", "; }
+        res_s+=sstd::to_string( std::get<ID>(rhs) );
     }
     template<typename TupleT, size_t... IDs>
-    void _print_tuple(const TupleT& rhs, std::index_sequence<IDs...>){
-        (..., ( _print_tuple_base<TupleT,IDs>(rhs, IDs) ));
+    void _tuple_to_str_internal_base(std::string& res_s, const TupleT& rhs, std::index_sequence<IDs...>){
+        (..., ( _tuple_to_str_internal<TupleT,IDs>(res_s, rhs, IDs) ));
     }
     template<typename... Types>
-    void print_base(const std::tuple<Types...>& rhs){
-        printf("(");
-        sstd::_print_tuple(rhs, std::make_index_sequence<sizeof...(Types)>());
-        printf(")");
+    std::string to_string(const std::tuple<Types...>& rhs){
+        std::string s;
+        s+="(";
+        sstd::_tuple_to_str_internal_base(s, rhs, std::make_index_sequence<sizeof...(Types)>());
+        s+=")";
+        return s;
     }
 
     //---
@@ -86,8 +93,7 @@ namespace sstd{
     
     template <typename T>
     void print(const T& rhs){
-        print_base(rhs);
-        printf("\n");
+        std::cout << sstd::to_string(rhs) + "\n";
     }
     
     //---

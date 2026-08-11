@@ -1,7 +1,9 @@
 ﻿#pragma once
 
 #include <stdio.h>
+#include "../string/ssprintf.hpp"
 #include "../sys/pause.hpp"
+
 
 namespace sstd{
     // need to inline in order to avoid mulple definition

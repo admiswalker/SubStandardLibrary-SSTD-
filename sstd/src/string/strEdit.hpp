@@ -24,8 +24,8 @@ namespace sstd{
     
     std::vector<std::string> split(const char*        str, const char X);
     std::vector<std::string> split(const std::string& str, const char X);
-//    std::vector<std::string> split(const char*        str, const char X, int maxsplit); // TODO
-//    std::vector<std::string> split(const std::string& str, const char X, int maxsplit); // TODO
+    std::vector<std::string> split(const char*        str, const char X, int maxsplit);
+    std::vector<std::string> split(const std::string& str, const char X, int maxsplit);
     
     std::vector<std::string> split(const char*        str, const char*        X);
     std::vector<std::string> split(const std::string& str, const std::string& X);
@@ -104,6 +104,14 @@ namespace sstd{
     std::string strip_quotes(                            const std::string& str);
     std::string strip_quotes(bool& ret_sq, bool& ret_dq, const        char* str); // _sq: single quatation, _dq: double quotation
     std::string strip_quotes(bool& ret_sq, bool& ret_dq, const std::string& str); // _sq: single quatation, _dq: double quotation
+    
+    //---
+    
+    void        lower  (      std::string& s);
+    std::string lowered(const std::string& s);
+    
+    void        upper  (      std::string& s);
+    std::string uppered(const std::string& s);
     
     //---
     

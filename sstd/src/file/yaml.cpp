@@ -962,7 +962,7 @@ bool sstd_yaml::_token2token_merge_multilines(std::vector<sstd_yaml::token>& io)
             }
         }
 
-        if(aa_val_stack.size()>=2){ sstd::pdbg_err("Duplicated anchor (&) definition. Troubled definition names: "); sstd::print_base(aa_val_stack); printf(".\n"); return false; }
+        if(aa_val_stack.size()>=2){ sstd::pdbg_err("Duplicated anchor (&) definition. Troubled definition names: "); printf("%s.\n",sstd::to_string(aa_val_stack).c_str()); return false; }
         if(aa_val_stack.size()==1){
             tmp.ref_type = ref_type_stack[0]; ref_type_stack.clear();
             tmp.aa_val   = aa_val_stack  [0]; aa_val_stack.clear();
